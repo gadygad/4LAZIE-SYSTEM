@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPLOAD NOTES - Admin Portal</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Premium Global CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-dark navbar-custom sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/dashboard">
+                <span class="brand-font fs-3 fw-bold"><i class="bi bi-journal-text text-dark me-2"></i>4LAZIE <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NOTES</span></span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <div id="liveClock" class="badge bg-dark border border-secondary text-secondary rounded-pill py-2 px-3 small fw-semibold d-none d-md-inline-block">
+                    <i class="bi bi-calendar3 me-2 text-info"></i><span id="liveDate">Date</span> 
+                    <span class="text-secondary mx-1">|</span> 
+                    <i class="bi bi-clock me-1 text-warning"></i><span id="liveTime">00:00:00</span>
+                </div>
+                <span class="text-secondary d-none d-md-inline">Welcome, <strong class="text-light" th:text="${user.name}">John Doe</strong> 
+                    <span class="badge bg-danger ms-1">ADMIN</span>
+                </span>
+                <a href="/logout" class="btn btn-outline-danger btn-sm rounded-pill"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        
+        <!-- Alerts -->
+        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${param.success}">Note uploaded successfully!</span>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${param.error}">Error during upload!</span>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Column: Upload Form -->
+            <div class="col-lg-8">
+                <div class="section-card">
+                    <div class="text-center mb-5">
+                        <h1 class="display-4 fw-bold brand-font mb-2" style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📤 UPLOAD NOTES</h1>
+                        <p class="text-secondary">Publish new study materials, select the course level and semester, and upload files.</p>
+                    </div>
+
+                    <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-4">
+                        <div>
+                            <label for="title" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Title:</label>
+                            <input type="text" name="title" id="title" class="form-control form-control-custom" placeholder="Enter note title..." required>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="levelNo" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Level:</label>
+                                <select name="levelNo" id="levelNo" class="form-select form-select-custom" required>
+                                    <option value="4">Level 4</option>
+                                    <option value="5">Level 5</option>
+                                    <option value="6">Level 6</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="semesterNo" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Semester:</label>
+                                <select name="semesterNo" id="semesterNo" class="form-select form-select-custom" required>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="category" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Category Type:</label>
+                            <select name="category" id="category" class="form-select form-select-custom" required>
+                                <option value="Note">Note</option>
+                                <option value="Past Paper">Past Paper</option>
+                                <option value="Assignment">Assignment</option>
+                                <option value="Video Tutorial">Video Tutorial</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="file" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">File:</label>
+                            <input type="file" name="file" id="file" class="form-control form-control-custom" accept=".pdf,.doc,.docx,.ppt,.pptx" required>
+                        </div>
+
+                        <div class="d-grid mt-2">
+                            <button type="submit" class="btn btn-gradient py-3 fs-5"><i class="bi bi-upload me-2"></i>UPLOAD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Sidebar Navigation -->
+            <div class="col-lg-4">
+                <div class="sidebar-card">
+                    <h4 class="brand-font fw-bold mb-4" style="font-size: 1.25rem;">
+                        <i class="bi bi-folder-fill text-warning me-2"></i>Sidebar
+                    </h4>
+                    <div class="d-flex flex-column gap-1">
+                        <a href="/dashboard" class="sidebar-nav-item">
+                            <i class="bi bi-grid-fill"></i>Dashboard
+                        </a>
+                        <a href="/upload" class="sidebar-nav-item active" th:if="${user.role == 'ADMIN'}">
+                            <i class="bi bi-cloud-arrow-up-fill text-primary"></i>UPLOAD NOTES
+                        </a>
+                        <a href="#" class="sidebar-nav-item" onclick="comingSoon(event, 'MY NOTES')">
+                            <i class="bi bi-journal-bookmark-fill"></i>MY NOTES
+                        </a>
+                        <a href="#" class="sidebar-nav-item" onclick="comingSoon(event, 'Favorites')">
+                            <i class="bi bi-star-fill"></i>Favorites
+                        </a>
+                        <a href="#" class="sidebar-nav-item" onclick="comingSoon(event, 'Profile')">
+                            <i class="bi bi-person-fill"></i>Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function comingSoon(e, feature) {
+            e.preventDefault();
+            alert(feature + " feature is coming soon!");
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('liveDate').innerText = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('liveTime').innerText = now.toTimeString().split(' ')[0];
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

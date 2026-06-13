@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUEST VIEW - LEVEL NOTES</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Premium Global CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <style>
+        body { background: var(--bg-dark); color: var(--text-main); }
+        .guest-hero { padding: 4rem 0 2rem; text-align: left; }
+        .section-header { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; }
+        
+        .list-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .list-card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        
+        .permissions-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .restricted-item { cursor: pointer; }
+        
+        /* Custom Apple-like Accordion */
+        .accordion-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 16px !important;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .accordion-item:hover {
+            border-color: var(--border-accent) !important;
+            box-shadow: var(--shadow-lg);
+        }
+        .accordion-button {
+            background: transparent !important;
+            color: var(--text-main) !important;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 1.2rem;
+            box-shadow: none !important;
+            transition: all 0.3s ease;
+        }
+        .accordion-button:not(.collapsed) {
+            color: var(--primary) !important;
+            background: rgba(0, 0, 0, 0.02) !important;
+        }
+        .accordion-button::after {
+            filter: brightness(0); /* Black arrows for light mode */
+        }
+        .accordion-body {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.01);
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .sub-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+        }
+        .sub-item:last-child {
+            margin-bottom: 0;
+        }
+        .sub-item:hover {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: var(--border-accent);
+            transform: translateX(5px);
+        }
+        
+        .premium-icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            margin-right: 1rem;
+        }
+        .icon-primary { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .icon-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .icon-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-light navbar-custom sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
+                <span class="fs-4 fw-bold">4LAZIE</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <a href="/login" class="btn btn-outline-dark btn-sm rounded-pill px-3">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="col-lg-9 col-xl-8">
+                
+                <div class="guest-hero animate-fade-in mb-4">
+                    <div class="mb-3">
+                        <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-radius: 20px; font-weight: 600; padding: 6px 12px; letter-spacing: 0.5px;">
+                            Smart Learning Made Easy
+                        </span>
+                    </div>
+                    <h1 class="fw-bold mb-2 gradient-text" style="font-size: 2.25rem;">📚 4LAZIE</h1>
+                    <h2 class="text-secondary fw-bold fs-5 mb-3" th:text="'NTA LEVEL ' + ${selectedLevel} + ' - SEMESTER ' + ${selectedSemester}">NTA LEVEL 4 - SEMESTER 1</h2>
+                    
+                    <p class="text-secondary mb-4" style="font-size: 0.95rem; max-width: 600px; line-height: 1.6;">
+                        Vinjari na upakue notes zilizothibitishwa, mitihani iliyopita, na majibu ya assignments kwa ajili ya muhula huu ili kujiandaa vyema.
+                    </p>
+                    
+                    <div class="search-container mb-2 position-relative" style="max-width: 500px;">
+                        <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+                        <input type="text" class="form-control" placeholder="Search topics, modules, or past papers..." 
+                               style="padding: 14px 20px 14px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
+                               onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
+                               onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
+                    </div>
+                </div>
+                
+                <!-- Open Notes Section -->
+                <h3 class="fw-bold mb-4 mt-4 text-dark d-flex align-items-center">
+                    <div class="premium-icon-box icon-primary"><i class="bi bi-book-half fs-5"></i></div> COURSE NOTES
+                </h3>
+                <div class="list-card mb-5">
+                    <div th:each="note : ${notes}" th:if="${note.category == 'Note'}" class="sub-item w-100 mb-3 border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" style="box-shadow: var(--shadow-sm);">
+                        <div class="d-flex align-items-center">
+                            <div class="premium-icon-box icon-primary" style="width: 36px; height: 36px; min-width: 36px;"><i class="bi bi-file-earmark-text fs-6"></i></div>
+                            <span class="fw-bold text-dark text-uppercase" style="font-size: 0.95rem;" th:text="${note.title}">NOTE TITLE</span>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <a th:href="@{'/view/' + ${note.id}}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-4 py-2 fw-semibold d-flex align-items-center" style="font-size: 0.85rem;"><i class="bi bi-eye me-2"></i>Read</a>
+                            <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm btn-dark rounded-pill px-4 py-2 fw-semibold d-flex align-items-center" style="font-size: 0.85rem;"><i class="bi bi-cloud-arrow-down me-2"></i>Download</a>
+                        </div>
+                    </div>
+                    
+                    <div th:if="${notes == null || #lists.isEmpty(notes.?[category == 'Note'])}" class="text-center p-4" style="background: var(--card-bg); border-radius: 16px; border: 1px dashed var(--border-subtle);">
+                        <i class="bi bi-journal-x text-secondary fs-1 mb-2 d-block"></i>
+                        <p class="text-secondary fw-semibold mb-0">No free notes available for this section yet.</p>
+                    </div>
+                </div>
+
+                <h3 class="fw-bold mb-4 text-warning d-flex align-items-center">
+                    <div class="premium-icon-box icon-warning"><i class="bi bi-lock-fill fs-5"></i></div> Premium Materials
+                </h3>
+                <div class="accordion accordion-flush" id="learningMaterials">
+
+                    <!-- Assignments Section -->
+                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+                        <h2 class="accordion-header" id="headingAss">
+                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAss" aria-expanded="false" aria-controls="collapseAss" style="font-size: 0.9rem;">
+                                <i class="bi bi-journal-text me-3 text-warning"></i> 2. ASSIGNMENTS
+                            </button>
+                        </h2>
+                        <div id="collapseAss" class="accordion-collapse collapse" aria-labelledby="headingAss" data-bs-parent="#learningMaterials">
+                            <div class="accordion-body">
+                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">CURRENT ASSIGNMENTS</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">ASSIGNMENT 1 (2026)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                
+                                <h6 class="text-secondary mb-3 mt-4" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">PAST YEARS</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">ASSIGNMENT 1 (2025)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">ASSIGNMENT 1 (2024)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAT 1 Section -->
+                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+                        <h2 class="accordion-header" id="headingCat1">
+                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCat1" aria-expanded="false" aria-controls="collapseCat1" style="font-size: 0.9rem;">
+                                <i class="bi bi-journal-check me-3 text-warning"></i> 3. CAT 1
+                            </button>
+                        </h2>
+                        <div id="collapseCat1" class="accordion-collapse collapse" aria-labelledby="headingCat1" data-bs-parent="#learningMaterials">
+                            <div class="accordion-body">
+                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Current CAT 1</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 1 (2026)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                
+                                <h6 class="text-secondary mb-3 mt-4" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Past Papers</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 1 (2025)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 1 (2024)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAT 2 Section -->
+                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+                        <h2 class="accordion-header" id="headingCat2">
+                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCat2" aria-expanded="false" aria-controls="collapseCat2" style="font-size: 0.9rem;">
+                                <i class="bi bi-journal-check me-3 text-warning"></i> 4. CAT 2
+                            </button>
+                        </h2>
+                        <div id="collapseCat2" class="accordion-collapse collapse" aria-labelledby="headingCat2" data-bs-parent="#learningMaterials">
+                            <div class="accordion-body">
+                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Current CAT 2</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 2 (2026)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                
+                                <h6 class="text-secondary mb-3 mt-4" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Past Papers</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 2 (2025)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 2 (2024)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UE Section -->
+                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+                        <h2 class="accordion-header" id="headingUE">
+                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUE" aria-expanded="false" aria-controls="collapseUE" style="font-size: 0.9rem;">
+                                <i class="bi bi-award me-3 text-warning"></i> 5. UNIVERSITY EXAMINATION (UE)
+                            </button>
+                        </h2>
+                        <div id="collapseUe" class="accordion-collapse collapse" aria-labelledby="headingUe" data-bs-parent="#learningMaterials">
+                            <div class="accordion-body">
+                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">UE PAST PAPERS</h6>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">UE EXAM (2025)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">UE EXAM (2024)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
+                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">UE EXAM (2023)</span></div>
+                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-start gap-3 mt-5">
+                    <a href="/register" class="btn btn-premium px-4 py-2 fs-6 fw-bold text-uppercase">Register for Full Access</a>
+                    <a href="/login" class="btn btn-outline-dark px-4 py-2 fs-6 fw-bold text-uppercase" style="border-radius: 14px;">Login</a>
+                </div>
+
+                <!-- Permissions -->
+                <div class="permissions-box row mt-5">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-check-circle-fill text-success me-2"></i>What Can a Guest Do?</h4>
+                        <ul class="list-unstyled text-secondary" style="font-size: 0.95rem;">
+                            <li class="mb-3">View the Home Page</li>
+                            <li class="mb-3">Browse NTA Levels</li>
+                            <li class="mb-3">View Subjects</li>
+                            <li class="mb-3">Download Selected NOTES</li>
+                            <li class="mb-3">Search for General NOTES</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-x-circle-fill text-danger me-2"></i>What Can't a Guest Do?</h4>
+                        <ul class="list-unstyled text-secondary" style="font-size: 0.95rem;">
+                            <li class="mb-3">Access CAT 1 & 2 Past Papers</li>
+                            <li class="mb-3">View & Submit Assignments</li>
+                            <li class="mb-3">Access Solutions/Marking Schemes</li>
+                            <li class="mb-3">Save Notes & Create Profile</li>
+                            <li class="mb-3">View Download History</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Restricted Access Modal -->
+    <div class="modal fade" id="restrictedModal" tabindex="-1" aria-labelledby="restrictedModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
+                <div class="modal-body p-5 text-center">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10" style="width: 80px; height: 80px;">
+                            <i class="bi bi-lock-fill text-danger" style="font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                    <h3 class="fw-bold mb-3 text-dark">Access Restricted</h3>
+                    <p class="text-secondary mb-4 fs-5">Create a free account to access:</p>
+                    
+                    <div class="text-start d-inline-block text-secondary mb-5 fs-6">
+                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>CAT 1 PAST PAPERS</div>
+                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>CAT 2 PAST PAPERS</div>
+                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>ASSIGNMENTS</div>
+                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>Personal Profile</div>
+                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>SAVED NOTES</div>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <a href="/register" class="btn btn-premium w-100 py-3 fs-5">Register Now</a>
+                        <a href="/login" class="btn btn-outline-dark w-100 py-3 fs-5" style="border-radius: 14px;">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
+        <div class="container text-secondary small">
+            &copy; 2026 4LAZIE. Built with Spring Boot & Thymeleaf.
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
