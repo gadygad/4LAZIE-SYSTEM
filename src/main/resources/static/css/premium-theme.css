@@ -1108,11 +1108,13 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 .sidebar-hover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .sidebar-hover-content {
-    margin-left: 24px;
-    border-left: 1px dashed rgba(255, 255, 255, 0.15);
-    padding-left: 8px;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    min-width: 200px;
 }
 .sidebar-hover-content a {
     display: flex;
@@ -1132,11 +1134,12 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .sidebar-hover-content a::before {
     content: '';
     position: absolute;
-    left: -9px;
+    left: -2px;
     top: 50%;
     transform: translateY(-50%);
     width: 6px;
-    height: 1px;
+    height: 6px;
+    border-radius: 50%;
     background: rgba(255, 255, 255, 0.15);
     transition: all 0.3s ease;
 }
