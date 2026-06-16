@@ -285,19 +285,13 @@
     <a th:href="@{${selectedLevel != null} ? '/semesters?level=' + selectedLevel : '/'}" class="btn btn-outline-light mt-3 px-4 rounded-pill">Select Another Semester</a>
 </div>
 
-        </div>
+        </div> <!-- Close container -->
 
-    </div>
-
-    <!-- Footer -->
-    <footer class="text-center py-4 border-top" style="border-color: var(--border-color) !important; margin-top: 5rem;">
-        <div class="container text-secondary small">
-            &copy; 2026 STUDENT NOTES SYSTEM. Built with Spring Boot & Thymeleaf.
-        </div>
-    </footer>
-
-        </div>
-    </div>
+        <!-- Shared Premium Footer -->
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+        
+    </div> <!-- Close main-content -->
+</div> <!-- Close page-layout -->
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
