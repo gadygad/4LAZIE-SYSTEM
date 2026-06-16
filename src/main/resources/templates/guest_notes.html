@@ -154,7 +154,7 @@
 
     <!-- Header Navigation -->
     <nav class="navbar navbar-light navbar-custom sticky-top py-3" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020;">
-        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+        <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="/" style="text-decoration: none;">
                 <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
                 <div class="d-flex flex-column align-items-start">
@@ -190,7 +190,9 @@
                 </div>
             </div>
 
-            <div th:replace="~{fragments/navbar_actions :: actions}"></div>
+            <div class="d-flex align-items-center">
+                <a href="/login" class="btn btn-premium btn-sm rounded-pill px-4 py-2 fw-bold" style="font-size: 0.9rem;">Login</a>
+            </div>
         </div>
     </nav>
     <hr style="margin: 0; border: none; height: 3px; background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899); opacity: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
