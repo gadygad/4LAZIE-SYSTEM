@@ -1050,3 +1050,118 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     transform: rotate(-90deg);
 }
 
+
+/* Core Page Layout Engine */
+.page-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+}
+
+.hero-sidebar {
+    width: 270px;
+    height: auto !important; /* Allow it to stretch */
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    z-index: 1000;
+    box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);
+}
+
+.hero-sidebar::-webkit-scrollbar { width: 6px; }
+.hero-sidebar::-webkit-scrollbar-track { background: transparent; }
+.hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+.hero-sidebar:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); }
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Critical for flexbox text overflow */
+    overflow-x: hidden;
+    background-color: #f8fafc;
+}
+
+@media (max-width: 991.98px) {
+    .page-layout {
+        flex-direction: column;
+    }
+    .hero-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+}
+
+/* Sidebar Accordion Styles */
+.sidebar-hover-item { position: relative; margin-bottom: 5px; }
+.sidebar-hover-btn {
+    background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
+    padding: 10px 16px; width: 100%; text-align: left;
+    font-family: 'Outfit', sans-serif; font-weight: 500;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.3s ease; cursor: pointer;
+}
+.sidebar-hover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.sidebar-hover-content {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    min-width: 200px;
+}
+.sidebar-hover-content a {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-bottom: 2px;
+    position: relative;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+}
+.sidebar-hover-content a::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+}
+.sidebar-hover-content a:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.sidebar-hover-content a:hover::before {
+    width: 8px;
+    background: var(--primary);
+}
+/* Active styling for selected links */
+.sidebar-hover-content a[style*="color: #fff"] {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    color: #fff !important;
+}
+.sidebar-hover-content a[style*="color: #fff"]::before {
+    background: var(--primary);
+    width: 10px;
+}
+.sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
+.sidebar-hover-btn[aria-expanded="true"] i.chevron { transform: rotate(90deg); }

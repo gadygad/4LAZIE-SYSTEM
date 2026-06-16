@@ -1,4 +1,282 @@
-<!DOCTYPE html>
+def get_login_html():
+    return """<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - 4LAZIE Premium</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --accent: #f59e0b;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1120;
+            overflow: hidden; /* Hide scrollbars for the animated background */
+        }
+        
+        /* Animated Background */
+        .bg-mesh {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; overflow: hidden;
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.6;
+        }
+        .orb-1 { width: 600px; height: 600px; background: rgba(59, 130, 246, 0.4); top: -200px; left: -100px; animation-delay: 0s; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(139, 92, 246, 0.4); bottom: -100px; right: -100px; animation-delay: -5s; }
+        .orb-3 { width: 400px; height: 400px; background: rgba(236, 72, 153, 0.3); top: 30%; left: 40%; animation-delay: -10s; }
+        .orb-4 { width: 300px; height: 300px; background: rgba(245, 158, 11, 0.2); bottom: 20%; left: 10%; animation-delay: -15s; }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 30px) scale(1.1); }
+            100% { transform: translate(-30px, 50px) scale(0.9); }
+        }
+
+        .auth-wrapper {
+            position: relative; z-index: 10; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center; padding: 2rem;
+        }
+        
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            overflow: hidden; max-width: 1100px; width: 100%; display: flex;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-card:hover { transform: translateY(-5px); }
+        
+        /* Left Panel - Branding */
+        .panel-brand {
+            flex: 1.2; padding: 4rem; position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        
+        /* Right Panel - Form */
+        .panel-form {
+            flex: 1; padding: 4rem 3.5rem; background: rgba(11, 17, 32, 0.5);
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        
+        /* Form Controls */
+        .form-floating { position: relative; margin-bottom: 1.5rem; }
+        .form-control-custom {
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 1.2rem 1.5rem; color: #fff; font-size: 1rem;
+            transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-control-custom:focus {
+            background: rgba(255,255,255,0.05); border-color: var(--primary); outline: none;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-control-custom::placeholder { color: rgba(255,255,255,0.3); }
+        .floating-label {
+            position: absolute; top: -10px; left: 15px; background: #0f172a; padding: 0 8px;
+            font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;
+            border-radius: 4px; pointer-events: none; transition: 0.3s ease;
+        }
+        .form-control-custom:focus ~ .floating-label { color: var(--primary); }
+        
+        /* Button */
+        .btn-premium {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border: none; border-radius: 16px; padding: 1.2rem; width: 100%;
+            color: #fff; font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700;
+            letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden;
+        }
+        .btn-premium::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.5s ease;
+        }
+        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4); color: #fff; }
+        .btn-premium:hover::before { left: 100%; }
+        
+        /* Typography */
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .logo-gradient {
+            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        
+        /* Shimmer badge */
+        .shimmer-badge {
+            position: relative; overflow: hidden; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; padding: 6px 16px;
+            display: inline-flex; align-items: center; cursor: pointer; transition: all 0.3s ease;
+        }
+        .shimmer-badge:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: scale(1.05); }
+        .shimmer-badge::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg); animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .glass-card { flex-direction: column; }
+            .panel-brand { padding: 3rem 2rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .panel-form { padding: 3rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-mesh">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="glass-card">
+            
+            <!-- Left Panel -->
+            <div class="panel-brand">
+                <div>
+                    <!-- Clickable Logo -->
+                    <a href="/" class="text-decoration-none d-inline-block mb-5">
+                        <div class="d-flex align-items-center">
+                            <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 3rem; letter-spacing: -1.5px; line-height: 1;" class="logo-gradient">4LAZIE</span>
+                            <div class="shimmer-badge ms-3">
+                                <i class="bi bi-lightning-charge-fill me-2" style="color: #f59e0b; filter: drop-shadow(0 0 5px rgba(245,158,11,0.6));"></i>
+                                <span style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: #fff; text-transform: uppercase;">SMART IN BRAIN</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <h1 class="display-5 fw-bold mb-4 text-white" style="font-family: 'Outfit', sans-serif; letter-spacing: -1px; line-height: 1.2;">
+                        Unlock Your <br><span style="color: var(--primary);">Academic Potential.</span>
+                    </h1>
+                    <p class="fs-5 text-secondary mb-5" style="line-height: 1.6; max-width: 90%;">
+                        Experience a premium learning ecosystem. Access expertly curated notes, comprehensive past papers, and exclusive resources designed to elevate your grades.
+                    </p>
+
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center p-3 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(59,130,246,0.1)'; this.style.borderColor='rgba(59,130,246,0.2)'; this.style.transform='translateX(10px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='none';">
+                            <div style="width: 45px; height: 45px; border-radius: 12px; background: rgba(59,130,246,0.2); color: #60a5fa; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px;"><i class="bi bi-journal-richtext"></i></div>
+                            <div>
+                                <h6 class="text-white mb-1 fw-bold font-outfit" style="font-family: 'Outfit', sans-serif;">Premium Lecture Notes</h6>
+                                <p class="text-secondary mb-0" style="font-size: 0.8rem;">Structured unit by unit for easy reading.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center p-3 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(139,92,246,0.1)'; this.style.borderColor='rgba(139,92,246,0.2)'; this.style.transform='translateX(10px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='none';">
+                            <div style="width: 45px; height: 45px; border-radius: 12px; background: rgba(139,92,246,0.2); color: #c084fc; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px;"><i class="bi bi-file-earmark-check-fill"></i></div>
+                            <div>
+                                <h6 class="text-white mb-1 fw-bold font-outfit" style="font-family: 'Outfit', sans-serif;">CATs & University Exams</h6>
+                                <p class="text-secondary mb-0" style="font-size: 0.8rem;">Past papers complete with marking schemes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel -->
+            <div class="panel-form">
+                <div class="mb-5 text-center d-lg-none">
+                    <!-- Mobile Clickable Logo -->
+                    <a href="/" class="text-decoration-none d-inline-block">
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2.5rem; letter-spacing: -1px; line-height: 1;" class="logo-gradient">4LAZIE</span>
+                        <div class="shimmer-badge mt-2 mx-auto d-flex">
+                            <i class="bi bi-lightning-charge-fill me-2" style="color: #f59e0b;"></i>
+                            <span style="font-family: 'Outfit', sans-serif; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; color: #fff; text-transform: uppercase;">SMART IN BRAIN</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="text-center mb-5">
+                    <h2 class="text-white fw-bold mb-2" style="font-family: 'Outfit', sans-serif; font-size: 2rem;">Welcome Back</h2>
+                    <p class="text-secondary" style="font-size: 0.95rem;">Enter your credentials to continue your session.</p>
+                </div>
+
+                <!-- Alerts -->
+                <div th:if="${param.registered}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399;">
+                    <i class="bi bi-check-circle-fill fs-5 me-3"></i> <span>Registration successful! Please log in.</span>
+                </div>
+                <div th:if="${param.error}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.2); color: #fb7185;">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 me-3"></i> <span>Invalid email or password.</span>
+                </div>
+                <div th:if="${param.logout}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: #60a5fa;">
+                    <i class="bi bi-info-circle-fill fs-5 me-3"></i> <span>You have securely logged out.</span>
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="form-floating">
+                        <input type="email" name="email" class="form-control-custom" placeholder="name@example.com" required>
+                        <span class="floating-label">Email Address</span>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" name="password" class="form-control-custom" placeholder="••••••••" required>
+                        <span class="floating-label">Password</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-5 px-2">
+                        <div class="form-check d-flex align-items-center gap-2 m-0 p-0">
+                            <input class="form-check-input m-0" type="checkbox" name="remember" id="remember" style="width: 18px; height: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;" />
+                            <label class="form-check-label text-secondary" for="remember" style="font-size: 0.85rem; cursor: pointer;">Keep me signed in</label>
+                        </div>
+                        <a href="#" class="text-decoration-none" style="font-size: 0.85rem; color: #60a5fa; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#93c5fd'" onmouseout="this.style.color='#60a5fa'">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-premium mb-4">
+                        Sign In Securely <i class="bi bi-arrow-right-short fs-4"></i>
+                    </button>
+                    
+                    <!-- Divider -->
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="flex-grow-1" style="height: 1px; background: rgba(255,255,255,0.1);"></div>
+                        <span class="px-3 text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">OR CONTINUE WITH</span>
+                        <div class="flex-grow-1" style="height: 1px; background: rgba(255,255,255,0.1);"></div>
+                    </div>
+
+                    <button type="button" class="btn w-100 py-3 d-flex align-items-center justify-content-center gap-3 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='none';">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20">
+                        Google Account
+                    </button>
+                </form>
+
+                <p class="text-center mt-5 text-secondary" style="font-size: 0.95rem;">
+                    Don't have an account? 
+                    <a th:href="@{/register}" class="text-decoration-none ms-1 fw-bold position-relative" style="color: #60a5fa; padding-bottom: 2px;" onmouseover="this.style.color='#93c5fd'; this.children[0].style.width='100%';" onmouseout="this.style.color='#60a5fa'; this.children[0].style.width='0';">
+                        Create one now
+                        <span style="position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: #93c5fd; transition: width 0.3s ease;"></span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>"""
+
+def get_register_html():
+    return """<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -292,4 +570,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html>"""
+
+with open("src/main/resources/templates/login.html", "w") as f:
+    f.write(get_login_html())
+    
+with open("src/main/resources/templates/register.html", "w") as f:
+    f.write(get_register_html())
+    
+print("Auth pages generated successfully.")
