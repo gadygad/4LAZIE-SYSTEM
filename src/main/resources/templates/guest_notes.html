@@ -255,26 +255,23 @@
     </style>
     <!-- Open Notes Section -->
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 mt-0 gap-3">
-                    <div class="d-flex align-items-center p-3 rounded-4 position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(12px); flex-grow: 1; max-width: 500px;">
-                        <!-- Decorative blob -->
-                        <div class="position-absolute" style="top: -15px; right: -15px; width: 50px; height: 50px; background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
-                        
-                        <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; min-width: 44px; background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #ffffff; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); border-radius: 12px; font-size: 1.2rem;">
-                            <i class="bi bi-journal-album"></i>
-                        </div> 
-                        <div class="flex-grow-1">
-                            <h2 class="fw-bold m-0 fs-6" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: 0.2px; text-transform: uppercase;">
-                                <span th:text="${selectedProgram == 'DIP_IT' ? 'DIP IN IT' : (selectedProgram == 'DIP_CSE' ? 'DIP IN CSE' : (selectedProgram == 'DIP_CE' ? 'DIP IN CE' : (selectedProgram == 'DIP_ME' ? 'DIP IN ME' : 'MODULES')))}">MODULES</span> 
-                            </h2>
-                            <div class="mt-1 d-flex align-items-center" style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 600;">
-                                <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.65rem; letter-spacing: 0.5px;">
-                                    <i class="bi bi-layers-fill me-1"></i>
-                                    <span>LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
-                                </span>
-                                <span th:if="${selectedSemester != null}" th:text="'SEMESTER ' + ${selectedSemester}" style="color: #64748b; font-weight: 500;">SEMESTER 1</span>
-                            </div>
+                <div class="d-flex align-items-center p-2 px-3 rounded-pill position-relative overflow-hidden mb-3" style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.8)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); backdrop-filter: blur(10px); max-width: max-content;">
+                    <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; min-width: 36px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 50%; font-size: 1rem;">
+                        <i class="bi bi-journal-album"></i>
+                    </div> 
+                    <div class="d-flex align-items-center flex-wrap">
+                        <h2 class="fw-bold m-0 me-3" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; text-transform: uppercase; font-size: 1.1rem;">
+                            <span th:text="${selectedProgram == 'DIP_IT' ? 'DIP IN IT' : (selectedProgram == 'DIP_CSE' ? 'DIP IN CSE' : (selectedProgram == 'DIP_CE' ? 'DIP IN CE' : (selectedProgram == 'DIP_ME' ? 'DIP IN ME' : 'MODULES')))}">MODULES</span> 
+                        </h2>
+                        <div class="d-flex align-items-center border-start ps-3" style="border-color: rgba(0,0,0,0.08) !important; font-family: 'Outfit', sans-serif;">
+                            <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.3px;">
+                                <i class="bi bi-layers-fill me-1"></i>
+                                <span>LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
+                            </span>
+                            <span th:if="${selectedSemester != null}" th:text="'SEM ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 0.85rem;">SEM 1</span>
                         </div>
                     </div>
+                </div>
                     
                     <!-- Semester Switcher Pills -->
                     <div class="semester-switcher" style="background: transparent; padding: 4px; display: inline-flex; gap: 10px;">

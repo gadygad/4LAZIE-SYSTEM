@@ -184,24 +184,21 @@
             <div class="col-lg-7">
         <div class="row align-items-center mb-4">
             <div class="col-md-12">
-                <div class="d-flex align-items-center p-3 rounded-4 position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(12px);">
-                    <!-- Decorative blob -->
-                    <div class="position-absolute" style="top: -15px; right: -15px; width: 60px; height: 60px; background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
-                    
-                    <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; min-width: 48px; background: linear-gradient(135deg, #2563eb, #60a5fa); color: #ffffff; box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); border-radius: 14px; font-size: 1.3rem;">
+                <div class="d-flex align-items-center p-2 px-3 rounded-pill position-relative overflow-hidden" style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.8)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); backdrop-filter: blur(10px); max-width: max-content;">
+                    <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; min-width: 36px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 50%; font-size: 1rem;">
                         <i class="bi bi-journal-richtext"></i>
                     </div>
-                    <div class="flex-grow-1">
-                        <h3 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.3px; font-size: 1.3rem;">
+                    <div class="d-flex align-items-center flex-wrap">
+                        <h3 class="fw-bold m-0 me-3" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; font-size: 1.1rem;">
                             <span th:text="${selectedLevel != null ? 'Level ' + selectedLevel : 'All Levels'}">Level 4</span>
-                            <span th:if="${selectedSemester != null}" th:text="' / Sem ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 1.1rem;"> / Sem 1</span>
+                            <span th:if="${selectedSemester != null}" th:text="' / Sem ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 0.95rem;"> / Sem 1</span>
                         </h3>
-                        <div class="d-flex align-items-center mt-1">
-                            <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px;">
+                        <div class="d-flex align-items-center border-start ps-3" style="border-color: rgba(0,0,0,0.08) !important;">
+                            <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.3px;">
                                 <i class="bi bi-tag-fill me-1"></i>
                                 <span th:text="${selectedCategory != null ? selectedCategory + 's' : 'All Materials'}">All Materials</span>
                             </span>
-                            <span class="text-muted" style="font-size: 0.8rem; font-weight: 500;" th:text="${notes.size() + ' resources found'}">0 resources found</span>
+                            <span class="text-muted" style="font-size: 0.75rem; font-weight: 500;" th:text="${notes.size() + ' resources'}">0 resources</span>
                         </div>
                     </div>
                 </div>
