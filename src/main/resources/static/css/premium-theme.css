@@ -1050,3 +1050,48 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     transform: rotate(-90deg);
 }
 
+
+/* Core Page Layout Engine */
+.page-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+}
+
+.hero-sidebar {
+    width: 320px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    z-index: 1000;
+    box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);
+}
+
+.hero-sidebar::-webkit-scrollbar { width: 6px; }
+.hero-sidebar::-webkit-scrollbar-track { background: transparent; }
+.hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+.hero-sidebar:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); }
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Critical for flexbox text overflow */
+    overflow-x: hidden;
+    background-color: #f8fafc;
+}
+
+@media (max-width: 991.98px) {
+    .page-layout {
+        flex-direction: column;
+    }
+    .hero-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+}
