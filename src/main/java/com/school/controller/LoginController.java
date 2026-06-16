@@ -26,7 +26,8 @@ public class LoginController {
     private NoteRepository noteRepository;
 
     @GetMapping("/login")
-    public String login(@RequestParam(value = "level", required = false) Integer level,
+    public String login(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
+                        @RequestParam(value = "level", required = false) Integer level,
                         @RequestParam(value = "search", required = false) String search,
                         HttpSession session, Model model) {
         if (session.getAttribute("user") != null) {
@@ -40,13 +41,13 @@ public class LoginController {
 
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
-            notes = noteRepository.searchNotesByLevel(level, search.trim()).stream()
+            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim()).stream()
                     .filter(Note::getIsPublic)
                     .limit(3)
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
-            notes = noteRepository.findByLevelNoOrderByIdDesc(level).stream()
+            notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
                     .filter(Note::getIsPublic)
                     .limit(3)
                     .collect(Collectors.toList());
@@ -54,30 +55,9 @@ public class LoginController {
         
         model.addAttribute("notes", notes);
         model.addAttribute("selectedLevel", level);
+        model.addAttribute("selectedProgram", program);
 
         return "login";
     }
 
-    @PostMapping("/login")
-    public String doLogin(@RequestParam("email") String email,
-                          @RequestParam("password") String password,
-                          HttpSession session,
-                          Model model) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (user.getPassword().equals(password)) {
-                session.setAttribute("user", user);
-                return "redirect:/dashboard";
-            }
-        }
-        model.addAttribute("error", "Invalid email or password!");
-        return "login";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/";
-    }
 }

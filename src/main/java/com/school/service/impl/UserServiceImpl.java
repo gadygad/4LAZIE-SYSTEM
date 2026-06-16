@@ -4,6 +4,7 @@ import com.school.model.User;
 import com.school.repository.UserRepository;
 import com.school.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User registerUser(User user, MultipartFile profilePic) throws Exception {
@@ -35,6 +39,12 @@ public class UserServiceImpl implements UserService {
                 throw new Exception("Failed to upload profile picture: " + e.getMessage());
             }
         }
+        
+        // Hash the password if it's not already hashed (dummy check)
+        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
         // Save the new user
         return userRepository.save(user);
     }

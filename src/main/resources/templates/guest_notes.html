@@ -10,8 +10,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Premium Global CSS -->
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <style>
-        body { background: var(--bg-dark); color: var(--text-main); }
+        body { background: var(--bg-main); color: var(--text-main); }
         .guest-hero { padding: 4rem 0 2rem; text-align: left; }
         .section-header { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; }
         
@@ -111,218 +112,285 @@
         .icon-primary { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
         .icon-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
         .icon-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    
+        .page-layout { display: flex; min-height: 100vh; background-color: var(--bg-main); }
+        .hero-sidebar {
+            width: 340px;
+            background: rgba(11, 17, 32, 0.92); /* Midnight Blue with transparency */
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 40px 20px;
+            display: flex; flex-direction: column; justify-content: flex-start;
+            position: relative; overflow: visible;
+            box-shadow: 10px 0 40px rgba(0,0,0,0.5);
+            flex-shrink: 0; z-index: 10;
+        }
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column; overflow-x: hidden;
+        }
+        .orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: 1; pointer-events: none; }
+        .orb-1 { width: 350px; height: 350px; top: -100px; right: -150px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); }
+        .orb-2 { width: 300px; height: 300px; bottom: -50px; left: -150px; background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%); }
+        .orb-3 { width: 250px; height: 250px; top: 40%; left: 20%; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); }
+
+        .sidebar-hover-item { position: relative; margin-bottom: 5px; }
+        .sidebar-hover-btn {
+            background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
+            padding: 10px 16px; width: 100%; text-align: left;
+            font-family: 'Outfit', sans-serif; font-weight: 500;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .sidebar-hover-btn { border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-hover-btn:hover { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px); }
+        .sidebar-hover-content {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            margin-left: 5px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 150px;
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .sidebar-hover-item:hover .sidebar-hover-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        .sidebar-hover-content a {
+            display: block; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem;
+            padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;
+        }
+        .sidebar-hover-content a:hover { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(3px); }
+        .sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
+        .sidebar-hover-item:hover .sidebar-hover-btn i.chevron { transform: rotate(-90deg); }
+</style>
+
+    <style>
+        
     </style>
 </head>
+
 <body>
 
+    <div class="page-layout">
+        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
+        
+        <div class="main-content">
+
+
     <!-- Header Navigation -->
-    <nav class="navbar navbar-light navbar-custom sticky-top py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
+    <nav class="navbar navbar-light navbar-custom sticky-top py-3" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="/" style="text-decoration: none;">
                 <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
-                <span class="fs-4 fw-bold">4LAZIE</span>
+                <span class="fs-3 me-2" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1;">4LAZIE</span>
+                <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 6px 16px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                    <!-- Shimmer overlay -->
+                    <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                    <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
+                        <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
+                    </span>
+                    <style>
+                        @keyframes shimmer-glow {
+                            0% { left: -100%; }
+                            20% { left: 200%; }
+                            100% { left: 200%; }
+                        }
+                    </style>
+                </div>
             </a>
+            
+            <!-- Search Bar moved to navbar -->
+            <div class="search-container position-relative mx-3 d-none d-md-block" style="flex-grow: 1; max-width: 450px;">
+                <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
+                <input type="text" class="form-control" placeholder="Search modules, notes, or past papers..." 
+                       style="padding: 12px 20px 12px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                       onfocus="this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'; this.style.borderColor='var(--primary)'; this.style.background='#fff';"
+                       onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
+            </div>
+
             <div class="d-flex align-items-center">
-                <a href="/login" class="btn btn-outline-dark btn-sm rounded-pill px-3">Login</a>
+                <a href="/login" class="btn btn-premium btn-sm rounded-pill px-4 py-2 fw-bold" style="font-size: 0.9rem;">Login</a>
             </div>
         </div>
     </nav>
+    <hr style="margin: 0; border: none; height: 3px; background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899); opacity: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
 
     <div class="container my-5">
         <div class="row animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="col-lg-9 col-xl-8">
+            <div class="col-lg-7">
                 
-                <div class="guest-hero animate-fade-in mb-4">
-                    <div class="mb-3">
-                        <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-radius: 20px; font-weight: 600; padding: 6px 12px; letter-spacing: 0.5px;">
-                            Smart Learning Made Easy
-                        </span>
+                
+    <style>
+        .module-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            background-color: transparent;
+        }
+        .module-item:hover {
+            background-color: #ffffff;
+        }
+        .module-dropdown {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out, margin 0.3s ease-in-out;
+            padding-left: 3.5rem;
+            padding-right: 1.5rem;
+            margin-bottom: 0;
+        }
+        .module-item:hover .module-dropdown {
+            max-height: 300px;
+            opacity: 1;
+            margin-bottom: 15px;
+        }
+        .dropdown-icon {
+            transition: transform 0.3s ease;
+        }
+        .module-item:hover .dropdown-icon {
+            transform: rotate(180deg);
+        }
+        .unit-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+        }
+        .unit-item:hover {
+            background-color: #ffffff;
+            border-color: var(--border-subtle);
+            color: var(--primary);
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+    </style>
+    <!-- Open Notes Section -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 mt-0 gap-3">
+                    <div class="d-flex align-items-center p-2 rounded-4" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; min-width: 44px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); border-radius: 12px; font-size: 1.2rem;">
+                            <i class="bi bi-journal-album"></i>
+                        </div> 
+                        <div>
+                            <h2 class="fw-bold m-0 fs-6" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: 0.5px; text-transform: uppercase;">
+                                <span th:text="${selectedProgram == 'DIP_IT' ? 'DIP IN IT' : (selectedProgram == 'DIP_CSE' ? 'DIP IN CSE' : (selectedProgram == 'DIP_CE' ? 'DIP IN CE' : (selectedProgram == 'DIP_ME' ? 'DIP IN ME' : 'MODULES')))}">MODULES</span> 
+                            </h2>
+                            <div class="mt-1" style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 600;">
+                                <span style="color: #64748b;">LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
+                                <span th:if="${selectedSemester != null}" style="color: #cbd5e1; margin: 0 6px;">|</span>
+                                <span th:if="${selectedSemester != null}" th:text="'SEMESTER ' + ${selectedSemester}" style="color: #f59e0b;">SEMESTER 1</span>
+                            </div>
+                        </div>
                     </div>
-                    <h1 class="fw-bold mb-2 gradient-text" style="font-size: 2.25rem;">📚 4LAZIE</h1>
-                    <h2 class="text-secondary fw-bold fs-5 mb-3" th:text="'NTA LEVEL ' + ${selectedLevel} + ' - SEMESTER ' + ${selectedSemester}">NTA LEVEL 4 - SEMESTER 1</h2>
                     
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem; max-width: 600px; line-height: 1.6;">
-                        Vinjari na upakue notes zilizothibitishwa, mitihani iliyopita, na majibu ya assignments kwa ajili ya muhula huu ili kujiandaa vyema.
-                    </p>
-                    
-                    <div class="search-container mb-2 position-relative" style="max-width: 500px;">
-                        <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
-                        <input type="text" class="form-control" placeholder="Search topics, modules, or past papers..." 
-                               style="padding: 14px 20px 14px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
-                               onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
-                               onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
+                    <!-- Semester Switcher Pills -->
+                    <div class="semester-switcher" style="background: transparent; padding: 4px; display: inline-flex; gap: 10px;">
+                        <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
+                           class="btn btn-sm border-0" 
+                           th:classappend="${selectedSemester == 1 ? 'premium-pill-active' : 'premium-pill-inactive'}"
+                           style="border-radius: 50px; padding: 4px 16px; font-weight: 600; font-size: 0.75rem; transition: all 0.3s ease;">
+                           Semester 1
+                        </a>
+                        <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
+                           class="btn btn-sm border-0" 
+                           th:classappend="${selectedSemester == 2 ? 'premium-pill-active' : 'premium-pill-inactive'}"
+                           style="border-radius: 50px; padding: 4px 16px; font-weight: 600; font-size: 0.75rem; transition: all 0.3s ease;">
+                           Semester 2
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${#maps.isEmpty(groupedNotes)}" class="d-flex align-items-center p-3 mb-5" style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; border: 1px dashed rgba(245, 158, 11, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1);">
+                        <i class="bi bi-folder-x text-warning fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">No Modules Uploaded Yet</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.8rem;">Study materials for this level and semester will appear here once uploaded.</p>
                     </div>
                 </div>
                 
-                <!-- Open Notes Section -->
-                <h3 class="fw-bold mb-4 mt-4 text-dark d-flex align-items-center">
-                    <div class="premium-icon-box icon-primary"><i class="bi bi-book-half fs-5"></i></div> COURSE NOTES
-                </h3>
-                <div class="list-card mb-5">
-                    <div th:each="note : ${notes}" th:if="${note.category == 'Note'}" class="sub-item w-100 mb-3 border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" style="box-shadow: var(--shadow-sm);">
-                        <div class="d-flex align-items-center">
-                            <div class="premium-icon-box icon-primary" style="width: 36px; height: 36px; min-width: 36px;"><i class="bi bi-file-earmark-text fs-6"></i></div>
-                            <span class="fw-bold text-dark text-uppercase" style="font-size: 0.95rem;" th:text="${note.title}">NOTE TITLE</span>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
-                            <a th:href="@{'/view/' + ${note.id}}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-4 py-2 fw-semibold d-flex align-items-center" style="font-size: 0.85rem;"><i class="bi bi-eye me-2"></i>Read</a>
-                            <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm btn-dark rounded-pill px-4 py-2 fw-semibold d-flex align-items-center" style="font-size: 0.85rem;"><i class="bi bi-cloud-arrow-down me-2"></i>Download</a>
-                        </div>
-                    </div>
+                <!-- Dynamic Modules Section -->
+                <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
+
+            </div> <!-- Close col-lg-7 -->
+
+            <!-- RIGHT: PREMIUM FEATURES -->
+            <div class="col-lg-5 mt-5 mt-lg-0">
+                <div class="sticky-top" style="top: 100px;">
+                    <h3 class="section-title text-start mb-4" style="font-size: 1.5rem; color: #f59e0b; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
                     
-                    <div th:if="${notes == null || #lists.isEmpty(notes.?[category == 'Note'])}" class="text-center p-4" style="background: var(--card-bg); border-radius: 16px; border: 1px dashed var(--border-subtle);">
-                        <i class="bi bi-journal-x text-secondary fs-1 mb-2 d-block"></i>
-                        <p class="text-secondary fw-semibold mb-0">No free notes available for this section yet.</p>
-                    </div>
-                </div>
-
-                <h3 class="fw-bold mb-4 text-warning d-flex align-items-center">
-                    <div class="premium-icon-box icon-warning"><i class="bi bi-lock-fill fs-5"></i></div> Premium Materials
-                </h3>
-                <div class="accordion accordion-flush" id="learningMaterials">
-
-                    <!-- Assignments Section -->
-                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
-                        <h2 class="accordion-header" id="headingAss">
-                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAss" aria-expanded="false" aria-controls="collapseAss" style="font-size: 0.9rem;">
-                                <i class="bi bi-journal-text me-3 text-warning"></i> 2. ASSIGNMENTS
-                            </button>
-                        </h2>
-                        <div id="collapseAss" class="accordion-collapse collapse" aria-labelledby="headingAss" data-bs-parent="#learningMaterials">
-                            <div class="accordion-body">
-                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">CURRENT ASSIGNMENTS</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">ASSIGNMENT 1 (2026)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                    <div class="premium-card position-relative" style="background: linear-gradient(145deg, #f8fafc, #ffffff); border-radius: 20px; border: 1px solid rgba(245, 158, 11, 0.2); box-shadow: 0 15px 35px rgba(37, 99, 235, 0.05), inset 0 0 0 1px rgba(255,255,255,0.5); overflow: hidden;">
+                        <!-- Decorative Top Border -->
+                        <div style="height: 4px; width: 100%; background: linear-gradient(90deg, #f59e0b, #2563eb);"></div>
+                        
+                        <!-- Background Glow -->
+                        <div class="position-absolute" style="top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
+                        
+                        <div class="p-4 relative z-1">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="icon-box" style="width: 45px; height: 45px; min-width: 45px; border-radius: 14px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2)); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245,158,11,0.15);">
+                                    <i class="bi bi-star-fill" style="color: #f59e0b; font-size: 1.2rem;"></i>
                                 </div>
-                                
-                                <h6 class="text-secondary mb-3 mt-4" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">PAST YEARS</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">ASSIGNMENT 1 (2025)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">ASSIGNMENT 1 (2024)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
+                                <div>
+                                    <h4 class="mb-0 fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b; letter-spacing: 0.5px;">Unlock Premium</h4>
+                                    <p class="mb-0 text-secondary" style="font-size: 0.8rem;">Get full access to all resources</p>
                                 </div>
                             </div>
+
+                            <ul class="list-unstyled mb-4 d-flex flex-column gap-3">
+                                <li class="d-flex align-items-center p-2 rounded-3" style="background: rgba(37,99,235,0.03); border: 1px solid rgba(37,99,235,0.05); transition: transform 0.2s;" onmouseover="this.style.transform='translateX(5px)';" onmouseout="this.style.transform='none';">
+                                    <i class="bi bi-file-earmark-pdf-fill me-3" style="color: #2563eb; font-size: 1.1rem;"></i>
+                                    <span class="fw-semibold flex-grow-1" style="font-size: 0.85rem; color: #1e293b;">CAT 1 & 2 Past Papers</span>
+                                    <i class="bi bi-lock-fill text-muted" style="font-size: 0.8rem;"></i>
+                                </li>
+                                <li class="d-flex align-items-center p-2 rounded-3" style="background: rgba(37,99,235,0.03); border: 1px solid rgba(37,99,235,0.05); transition: transform 0.2s;" onmouseover="this.style.transform='translateX(5px)';" onmouseout="this.style.transform='none';">
+                                    <i class="bi bi-journal-check me-3" style="color: #2563eb; font-size: 1.1rem;"></i>
+                                    <span class="fw-semibold flex-grow-1" style="font-size: 0.85rem; color: #1e293b;">Assignments & Solutions</span>
+                                    <i class="bi bi-lock-fill text-muted" style="font-size: 0.8rem;"></i>
+                                </li>
+                                <li class="d-flex align-items-center p-2 rounded-3" style="background: rgba(37,99,235,0.03); border: 1px solid rgba(37,99,235,0.05); transition: transform 0.2s;" onmouseover="this.style.transform='translateX(5px)';" onmouseout="this.style.transform='none';">
+                                    <i class="bi bi-award-fill me-3" style="color: #2563eb; font-size: 1.1rem;"></i>
+                                    <span class="fw-semibold flex-grow-1" style="font-size: 0.85rem; color: #1e293b;">University Exams (UE)</span>
+                                    <i class="bi bi-lock-fill text-muted" style="font-size: 0.8rem;"></i>
+                                </li>
+                            </ul>
+
+                            <div style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px dashed rgba(245, 158, 11, 0.3);">
+                                <p class="mb-0 text-center" style="font-size: 0.75rem; color: #64748b; line-height: 1.5;">Create a free account to download all past papers, assignments, and premium notes without limits.</p>
+                            </div>
+
+                            <a href="/register" class="btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2 position-relative overflow-hidden" 
+                               style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 0.9rem; font-family: 'Outfit', sans-serif; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;" 
+                               onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 25px rgba(245, 158, 11, 0.4)';" 
+                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(245, 158, 11, 0.3)';">
+                                <i class="bi bi-person-plus-fill"></i> Create Free Account
+                                <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 3s infinite;"></div>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- CAT 1 Section -->
-                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
-                        <h2 class="accordion-header" id="headingCat1">
-                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCat1" aria-expanded="false" aria-controls="collapseCat1" style="font-size: 0.9rem;">
-                                <i class="bi bi-journal-check me-3 text-warning"></i> 3. CAT 1
-                            </button>
-                        </h2>
-                        <div id="collapseCat1" class="accordion-collapse collapse" aria-labelledby="headingCat1" data-bs-parent="#learningMaterials">
-                            <div class="accordion-body">
-                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Current CAT 1</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 1 (2026)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                
-                                <h6 class="text-secondary mb-3 mt-4" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Past Papers</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 1 (2025)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 1 (2024)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CAT 2 Section -->
-                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
-                        <h2 class="accordion-header" id="headingCat2">
-                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCat2" aria-expanded="false" aria-controls="collapseCat2" style="font-size: 0.9rem;">
-                                <i class="bi bi-journal-check me-3 text-warning"></i> 4. CAT 2
-                            </button>
-                        </h2>
-                        <div id="collapseCat2" class="accordion-collapse collapse" aria-labelledby="headingCat2" data-bs-parent="#learningMaterials">
-                            <div class="accordion-body">
-                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Current CAT 2</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 2 (2026)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                
-                                <h6 class="text-secondary mb-3 mt-4" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Past Papers</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 2 (2025)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark">CAT 2 (2024)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- UE Section -->
-                    <div class="accordion-item mb-2" style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
-                        <h2 class="accordion-header" id="headingUE">
-                            <button class="accordion-button collapsed text-uppercase fw-bold py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUE" aria-expanded="false" aria-controls="collapseUE" style="font-size: 0.9rem;">
-                                <i class="bi bi-award me-3 text-warning"></i> 5. UNIVERSITY EXAMINATION (UE)
-                            </button>
-                        </h2>
-                        <div id="collapseUe" class="accordion-collapse collapse" aria-labelledby="headingUe" data-bs-parent="#learningMaterials">
-                            <div class="accordion-body">
-                                <h6 class="text-secondary mb-3 mt-2" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">UE PAST PAPERS</h6>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">UE EXAM (2025)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">UE EXAM (2024)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                                <div class="sub-item restricted-item" data-bs-toggle="modal" data-bs-target="#restrictedModal">
-                                    <div><i class="bi bi-lock-fill me-3 text-warning"></i><span class="fw-bold text-dark text-uppercase">UE EXAM (2023)</span></div>
-                                    <span class="badge bg-warning text-dark rounded-pill">Premium</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <div th:replace="~{fragments/sjuit_components :: trending_notes}"></div>
                 </div>
 
-                <div class="d-flex justify-content-start gap-3 mt-5">
-                    <a href="/register" class="btn btn-premium px-4 py-2 fs-6 fw-bold text-uppercase">Register for Full Access</a>
-                    <a href="/login" class="btn btn-outline-dark px-4 py-2 fs-6 fw-bold text-uppercase" style="border-radius: 14px;">Login</a>
-                </div>
-
-                <!-- Permissions -->
-                <div class="permissions-box row mt-5">
-                    <div class="col-md-6 mb-4 mb-md-0">
-                        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-check-circle-fill text-success me-2"></i>What Can a Guest Do?</h4>
-                        <ul class="list-unstyled text-secondary" style="font-size: 0.95rem;">
-                            <li class="mb-3">View the Home Page</li>
-                            <li class="mb-3">Browse NTA Levels</li>
-                            <li class="mb-3">View Subjects</li>
-                            <li class="mb-3">Download Selected NOTES</li>
-                            <li class="mb-3">Search for General NOTES</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-x-circle-fill text-danger me-2"></i>What Can't a Guest Do?</h4>
-                        <ul class="list-unstyled text-secondary" style="font-size: 0.95rem;">
-                            <li class="mb-3">Access CAT 1 & 2 Past Papers</li>
-                            <li class="mb-3">View & Submit Assignments</li>
-                            <li class="mb-3">Access Solutions/Marking Schemes</li>
-                            <li class="mb-3">Save Notes & Create Profile</li>
-                            <li class="mb-3">View Download History</li>
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
         </div>
     </div>
 
@@ -356,14 +424,15 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center py-4 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
-        <div class="container text-secondary small">
-            &copy; 2026 4LAZIE. Built with Spring Boot & Thymeleaf.
-        </div>
-    </footer>
+
+
+</div>
+
+    <!-- Shared Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div>
 </body>
 </html>

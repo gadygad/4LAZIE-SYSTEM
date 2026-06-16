@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside class="hero-sidebar" th:fragment="sidebar">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+
+            <div style="width: 100%; display: flex; flex-direction: column; height: 100%; position: relative; z-index: 2;">
+                <!-- College Name (Plain Text Link) -->
+                <!-- College Name as a Toggle -->
+                <a href="#stJosephPrograms" data-bs-toggle="collapse" style="display:flex; justify-content:space-between; align-items:center; gap:12px; text-decoration:none; color:rgba(255,255,255,0.9); transition:all 0.3s ease; margin-bottom: 20px; font-family:'Outfit',sans-serif;" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='rgba(255,255,255,0.9)';">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="bi bi-building" style="font-size:1.4rem; color: #3b82f6;"></i>
+                        <span style="font-size:0.9rem; font-weight:600; line-height:1.4;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Engineering and Technology'}">St. Joseph College of Engineering and Technology</span>
+                    </div>
+                    <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+                </a>
+
+                <!-- Main Menu Area -->
+                <div style="flex-grow: 1; overflow-y: visible; overflow-x: visible;">
+
+                    <!-- St. Joseph Programs (Collapsible) -->
+                    <div class="collapse show" id="stJosephPrograms" style="padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); margin-left: 12px; margin-bottom: 10px;">
+                    <!-- DIPLOMA PROGRAMMES -->
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Diploma Programmes</div>
+                    
+                    <div class="sidebar-hover-item">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DIPLOMA IN IT</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_IT' and selectedLevel == 4 ? 'color: #fff;' : ''}">NTA LEVEL 4</a>
+                            <a th:href="@{'/guest-notes?program=DIP_IT&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_IT' and selectedLevel == 5 ? 'color: #fff;' : ''}">NTA LEVEL 5</a>
+                            <a th:href="@{'/guest-notes?program=DIP_IT&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_IT' and selectedLevel == 6 ? 'color: #fff;' : ''}">NTA LEVEL 6</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DIPLOMA IN CSE</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_CSE' and selectedLevel == 4 ? 'color: #fff;' : ''}">NTA LEVEL 4</a>
+                            <a th:href="@{'/guest-notes?program=DIP_CSE&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_CSE' and selectedLevel == 5 ? 'color: #fff;' : ''}">NTA LEVEL 5</a>
+                            <a th:href="@{'/guest-notes?program=DIP_CSE&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_CSE' and selectedLevel == 6 ? 'color: #fff;' : ''}">NTA LEVEL 6</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DIPLOMA IN CE</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_CE' and selectedLevel == 4 ? 'color: #fff;' : ''}">NTA LEVEL 4</a>
+                            <a th:href="@{'/guest-notes?program=DIP_CE&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_CE' and selectedLevel == 5 ? 'color: #fff;' : ''}">NTA LEVEL 5</a>
+                            <a th:href="@{'/guest-notes?program=DIP_CE&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_CE' and selectedLevel == 6 ? 'color: #fff;' : ''}">NTA LEVEL 6</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DIPLOMA IN ME</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_ME' and selectedLevel == 4 ? 'color: #fff;' : ''}">NTA LEVEL 4</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ME&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_ME' and selectedLevel == 5 ? 'color: #fff;' : ''}">NTA LEVEL 5</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ME&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_ME' and selectedLevel == 6 ? 'color: #fff;' : ''}">NTA LEVEL 6</a>
+                        </div>
+                    </div>
+
+                    <!-- DEGREE (ENGINEERING) -->
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
+                    
+                    <div class="sidebar-hover-item" th:each="year : ${#numbers.sequence(1, 4)}">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <span><i class="bi bi-gear me-2" style="color: #fb923c;"></i> YEAR <span th:text="${year}"></span></span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}">Semester 1</a>
+                            <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}">Semester 2</a>
+                        </div>
+                    </div>
+
+                    <!-- DEGREE (EDUCATION) -->
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Education)</div>
+                    
+                    <div class="sidebar-hover-item" th:each="year : ${#numbers.sequence(1, 3)}">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEGREE_EDU' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <span><i class="bi bi-journal-text me-2" style="color: #4ade80;"></i> YEAR <span th:text="${year}"></span></span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEGREE_EDU' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}">Semester 1</a>
+                            <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEGREE_EDU' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}">Semester 2</a>
+                        </div>
+                    </div>
+                </div>
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Other Universities</div>
+
+                    <div class="sidebar-hover-item">
+                        <a href="#" onclick="alert('UDSM Notes coming soon to 4LAZIE! Stay tuned.'); return false;" class="sidebar-hover-btn text-decoration-none d-flex justify-content-between align-items-center w-100" style="color: inherit;">
+                            <span class="text-truncate" style="max-width: 140px;"><i class="bi bi-building me-2" style="color: #38bdf8;"></i> UDSM</span>
+                            <span class="badge" style="font-size: 0.6rem; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d;">Soon</span>
+                        </a>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2">
+                        <a href="#" onclick="alert('IFM Notes coming soon to 4LAZIE! Stay tuned.'); return false;" class="sidebar-hover-btn text-decoration-none d-flex justify-content-between align-items-center w-100" style="color: inherit;">
+                            <span class="text-truncate" style="max-width: 140px;"><i class="bi bi-building me-2" style="color: #34d399;"></i> IFM</span>
+                            <span class="badge" style="font-size: 0.6rem; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d;">Soon</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; padding-bottom: 20px;">
+                    <a href="#" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:rgba(255,255,255,0.7); transition:all 0.3s ease; font-family:'Outfit',sans-serif; font-size: 0.9rem;" onmouseover="this.style.color='#fff'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.transform='none';">
+                        <i class="bi bi-gear" style="font-size:1.1rem;"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+<!-- TRENDING NOTES SECTION -->
+                    <div class="trending-section mt-4 position-relative" th:fragment="trending_notes" th:if="${notes != null && !#lists.isEmpty(notes)}">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-box d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 4px 10px rgba(239,68,68,0.3);">
+                                <i class="bi bi-fire"></i>
+                            </div>
+                            <h3 class="fw-bold m-0" style="font-size: 1.1rem; color: #1e293b; letter-spacing: 0.5px; text-transform: uppercase;">Most Downloaded</h3>
+                        </div>
+                        
+                        <div class="d-flex flex-column gap-3">
+                            <div th:each="note, stat : ${notes}" th:if="${stat.index < 3}" class="trending-card p-3 rounded-4 position-relative overflow-hidden" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+                                <!-- Subtle gradient background on hover -->
+                                <div class="hover-gradient position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, transparent, rgba(37,99,235,0.03)); opacity: 0; transition: opacity 0.3s ease;"></div>
+                                
+                                <div class="d-flex align-items-center position-relative z-1">
+                                    <div class="rank-badge d-flex align-items-center justify-content-center me-3 fw-bold" style="width: 35px; height: 35px; min-width: 35px; border-radius: 10px; background: #f8fafc; color: #64748b; font-size: 1rem; border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" th:text="'#' + ${stat.index + 1}">#1</div>
+                                    
+                                    <div class="flex-grow-1 overflow-hidden me-2">
+                                        <h6 class="mb-1 fw-bold text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${note.title}">Note Title</h6>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #d97706; font-size: 0.65rem; border: 1px solid rgba(245, 158, 11, 0.2);"><i class="bi bi-star-fill me-1"></i>Premium</span>
+                                            <small class="text-secondary fw-semibold" style="font-size: 0.75rem;"><i class="bi bi-cloud-arrow-down-fill me-1" style="color: #2563eb;"></i><span th:text="${(850 - (stat.index * 230)) + '+'}">850+</span></small>
+                                        </div>
+                                    </div>
+                                    
+                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm d-flex align-items-center justify-content-center trending-dl-btn" style="width: 36px; height: 36px; min-width: 36px; border-radius: 10px; background: rgba(37,99,235,0.05); color: #2563eb; border: 1px solid rgba(37,99,235,0.1); transition: all 0.2s;">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <style>
+                            .trending-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; border-color: rgba(37,99,235,0.1) !important; }
+<!-- Dynamic Modules Section -->
+                <div th:if="${groupedNotes != null && !groupedNotes.isEmpty()}" class="accordion accordion-flush mb-5" id="modulesAccordion" style="border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); background: #ffffff; overflow: hidden;">
+                    <div th:each="entry, stat : ${groupedNotes}" class="accordion-item" style="border-bottom: 1px solid rgba(0,0,0,0.05); background: transparent; border-top: none;">
+                        <h2 class="accordion-header" th:id="'heading' + ${stat.index}">
+                            <button class="accordion-button collapsed py-3 px-4 fw-bold" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${stat.index}" aria-expanded="false" th:aria-controls="'collapse' + ${stat.index}" style="background: transparent; box-shadow: none;">
+                                <div class="d-flex align-items-center justify-content-between w-100 pe-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-folder-fill me-3 fs-4" style="color: #111827;"></i>
+                                        <div class="d-flex flex-column">
+                                            <span class="text-uppercase" style="font-size: 0.95rem; color: #1e293b; font-weight: 700;" th:text="${entry.key}">SOFTWARE ENGINEERING</span>
+                                            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: 500;" th:if="${moduleCodes[entry.key] != null && !moduleCodes[entry.key].isEmpty() && moduleCodes[entry.key] != entry.key}" th:text="${moduleCodes[entry.key]}">CSE 05206</span>
+                                        </div>
+                                    </div>
+                                    <span class="badge rounded-pill d-flex align-items-center" style="background: #111827; color: #ffffff; font-size: 0.75rem; padding: 8px 14px;">
+                                        <span th:text="${#lists.size(entry.value)} + ' Notes'">1 Notes</span>
+                                    </span>
+                                </div>
+                            </button>
+                        </h2>
+                        <div th:id="'collapse' + ${stat.index}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${stat.index}" data-bs-parent="#modulesAccordion">
+                            <div class="accordion-body p-0">
+                                <div class="list-group list-group-flush">
+                                    <!-- UNIT 1 TO 5 -->
+
+                                    <th:block th:with="unitNotes=${entry.value.?[unitNumber == 1]}">
+                                        <div th:if="${not #lists.isEmpty(unitNotes)}">
+                                            <div class="px-4 py-2" style="background: rgba(245, 158, 11, 0.05); border-bottom: 1px solid rgba(245, 158, 11, 0.1);">
+                                                <h6 class="m-0 fw-bold" style="color: #d97706; font-size: 0.8rem; letter-spacing: 1px;">UNIT 1</h6>
+                                            </div>
+                                            <div th:each="note : ${unitNotes}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom" style="background: #f8fafc; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#ffffff';" onmouseout="this.style.backgroundColor='#f8fafc';">
+                                                <div class="d-flex align-items-center pe-3">
+                                                    <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; min-width: 36px; background: rgba(37,99,235,0.1);">
+                                                        <i class="bi bi-file-earmark-text-fill fs-6" style="color: #3b82f6;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold text-uppercase" style="font-size: 0.85rem; color: #1e293b; line-height: 1.3;" th:text="${note.title}">NOTE TITLE</h6>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                                            <span class="badge" style="background: rgba(100,116,139,0.1); color: #64748b; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(100,116,139,0.2);" th:text="${note.category}">Category</span>
+                                                            <span class="badge" style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(37,99,235,0.15);" th:text="'Year: ' + ${currentYear}">Year</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a th:href="@{'/view/' + ${note.id}}" class="btn btn-sm btn-light rounded-pill text-primary fw-bold d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+                                                        <i class="bi bi-eye-fill me-1"></i> Read
+                                                    </a>
+                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; background: #111827; color: white; border: none; transition: all 0.2s;">
+                                                        <i class="bi bi-cloud-download-fill me-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:with="unitNotes=${entry.value.?[unitNumber == 2]}">
+                                        <div th:if="${not #lists.isEmpty(unitNotes)}">
+                                            <div class="px-4 py-2" style="background: rgba(245, 158, 11, 0.05); border-bottom: 1px solid rgba(245, 158, 11, 0.1);">
+                                                <h6 class="m-0 fw-bold" style="color: #d97706; font-size: 0.8rem; letter-spacing: 1px;">UNIT 2</h6>
+                                            </div>
+                                            <div th:each="note : ${unitNotes}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom" style="background: #f8fafc; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#ffffff';" onmouseout="this.style.backgroundColor='#f8fafc';">
+                                                <div class="d-flex align-items-center pe-3">
+                                                    <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; min-width: 36px; background: rgba(37,99,235,0.1);">
+                                                        <i class="bi bi-file-earmark-text-fill fs-6" style="color: #3b82f6;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold text-uppercase" style="font-size: 0.85rem; color: #1e293b; line-height: 1.3;" th:text="${note.title}">NOTE TITLE</h6>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                                            <span class="badge" style="background: rgba(100,116,139,0.1); color: #64748b; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(100,116,139,0.2);" th:text="${note.category}">Category</span>
+                                                            <span class="badge" style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(37,99,235,0.15);" th:text="'Year: ' + ${currentYear}">Year</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a th:href="@{'/view/' + ${note.id}}" class="btn btn-sm btn-light rounded-pill text-primary fw-bold d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+                                                        <i class="bi bi-eye-fill me-1"></i> Read
+                                                    </a>
+                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; background: #111827; color: white; border: none; transition: all 0.2s;">
+                                                        <i class="bi bi-cloud-download-fill me-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:with="unitNotes=${entry.value.?[unitNumber == 3]}">
+                                        <div th:if="${not #lists.isEmpty(unitNotes)}">
+                                            <div class="px-4 py-2" style="background: rgba(245, 158, 11, 0.05); border-bottom: 1px solid rgba(245, 158, 11, 0.1);">
+                                                <h6 class="m-0 fw-bold" style="color: #d97706; font-size: 0.8rem; letter-spacing: 1px;">UNIT 3</h6>
+                                            </div>
+                                            <div th:each="note : ${unitNotes}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom" style="background: #f8fafc; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#ffffff';" onmouseout="this.style.backgroundColor='#f8fafc';">
+                                                <div class="d-flex align-items-center pe-3">
+                                                    <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; min-width: 36px; background: rgba(37,99,235,0.1);">
+                                                        <i class="bi bi-file-earmark-text-fill fs-6" style="color: #3b82f6;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold text-uppercase" style="font-size: 0.85rem; color: #1e293b; line-height: 1.3;" th:text="${note.title}">NOTE TITLE</h6>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                                            <span class="badge" style="background: rgba(100,116,139,0.1); color: #64748b; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(100,116,139,0.2);" th:text="${note.category}">Category</span>
+                                                            <span class="badge" style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(37,99,235,0.15);" th:text="'Year: ' + ${currentYear}">Year</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a th:href="@{'/view/' + ${note.id}}" class="btn btn-sm btn-light rounded-pill text-primary fw-bold d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+                                                        <i class="bi bi-eye-fill me-1"></i> Read
+                                                    </a>
+                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; background: #111827; color: white; border: none; transition: all 0.2s;">
+                                                        <i class="bi bi-cloud-download-fill me-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:with="unitNotes=${entry.value.?[unitNumber == 4]}">
+                                        <div th:if="${not #lists.isEmpty(unitNotes)}">
+                                            <div class="px-4 py-2" style="background: rgba(245, 158, 11, 0.05); border-bottom: 1px solid rgba(245, 158, 11, 0.1);">
+                                                <h6 class="m-0 fw-bold" style="color: #d97706; font-size: 0.8rem; letter-spacing: 1px;">UNIT 4</h6>
+                                            </div>
+                                            <div th:each="note : ${unitNotes}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom" style="background: #f8fafc; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#ffffff';" onmouseout="this.style.backgroundColor='#f8fafc';">
+                                                <div class="d-flex align-items-center pe-3">
+                                                    <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; min-width: 36px; background: rgba(37,99,235,0.1);">
+                                                        <i class="bi bi-file-earmark-text-fill fs-6" style="color: #3b82f6;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold text-uppercase" style="font-size: 0.85rem; color: #1e293b; line-height: 1.3;" th:text="${note.title}">NOTE TITLE</h6>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                                            <span class="badge" style="background: rgba(100,116,139,0.1); color: #64748b; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(100,116,139,0.2);" th:text="${note.category}">Category</span>
+                                                            <span class="badge" style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(37,99,235,0.15);" th:text="'Year: ' + ${currentYear}">Year</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a th:href="@{'/view/' + ${note.id}}" class="btn btn-sm btn-light rounded-pill text-primary fw-bold d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+                                                        <i class="bi bi-eye-fill me-1"></i> Read
+                                                    </a>
+                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; background: #111827; color: white; border: none; transition: all 0.2s;">
+                                                        <i class="bi bi-cloud-download-fill me-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:with="unitNotes=${entry.value.?[unitNumber == 5]}">
+                                        <div th:if="${not #lists.isEmpty(unitNotes)}">
+                                            <div class="px-4 py-2" style="background: rgba(245, 158, 11, 0.05); border-bottom: 1px solid rgba(245, 158, 11, 0.1);">
+                                                <h6 class="m-0 fw-bold" style="color: #d97706; font-size: 0.8rem; letter-spacing: 1px;">UNIT 5</h6>
+                                            </div>
+                                            <div th:each="note : ${unitNotes}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom" style="background: #f8fafc; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#ffffff';" onmouseout="this.style.backgroundColor='#f8fafc';">
+                                                <div class="d-flex align-items-center pe-3">
+                                                    <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; min-width: 36px; background: rgba(37,99,235,0.1);">
+                                                        <i class="bi bi-file-earmark-text-fill fs-6" style="color: #3b82f6;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold text-uppercase" style="font-size: 0.85rem; color: #1e293b; line-height: 1.3;" th:text="${note.title}">NOTE TITLE</h6>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                                            <span class="badge" style="background: rgba(100,116,139,0.1); color: #64748b; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(100,116,139,0.2);" th:text="${note.category}">Category</span>
+                                                            <span class="badge" style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(37,99,235,0.15);" th:text="'Year: ' + ${currentYear}">Year</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a th:href="@{'/view/' + ${note.id}}" class="btn btn-sm btn-light rounded-pill text-primary fw-bold d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+                                                        <i class="bi bi-eye-fill me-1"></i> Read
+                                                    </a>
+                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; background: #111827; color: white; border: none; transition: all 0.2s;">
+                                                        <i class="bi bi-cloud-download-fill me-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <!-- OTHER MATERIALS (No Unit) -->
+                                    <div th:with="otherNotes=${entry.value.?[unitNumber == null]}">
+                                        <div th:if="${not #lists.isEmpty(otherNotes)}">
+                                            <div class="px-4 py-2" style="background: rgba(100, 116, 139, 0.05); border-bottom: 1px solid rgba(100, 116, 139, 0.1);">
+                                                <h6 class="m-0 fw-bold" style="color: #475569; font-size: 0.8rem; letter-spacing: 1px;">OTHER MATERIALS</h6>
+                                            </div>
+                                            <div th:each="note : ${otherNotes}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom" style="background: #f8fafc; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#ffffff';" onmouseout="this.style.backgroundColor='#f8fafc';">
+                                                <div class="d-flex align-items-center pe-3">
+                                                    <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; min-width: 36px; background: rgba(37,99,235,0.1);">
+                                                        <i class="bi bi-file-earmark-text-fill fs-6" style="color: #3b82f6;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold text-uppercase" style="font-size: 0.85rem; color: #1e293b; line-height: 1.3;" th:text="${note.title}">NOTE TITLE</h6>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                                            <span class="badge" style="background: rgba(100,116,139,0.1); color: #64748b; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(100,116,139,0.2);" th:text="${note.category}">Category</span>
+                                                            <span class="badge" style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 0.6rem; font-weight: 600; border: 1px solid rgba(37,99,235,0.15);" th:text="'Year: ' + ${#temporals.format(note.uploadDate, 'yyyy')}">Year: 2026</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <a th:href="@{'/view/' + ${note.id}}" class="btn btn-sm btn-light rounded-pill text-primary fw-bold d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+                                                        <i class="bi bi-eye-fill me-1"></i> Read
+                                                    </a>
+                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" style="padding: 4px 12px; font-size: 0.65rem; background: #111827; color: white; border: none; transition: all 0.2s;">
+                                                        <i class="bi bi-cloud-download-fill me-1"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<div th:if="${notes == null || #lists.isEmpty(notes)}" class="text-center p-5 mb-5" style="background: #f8fafc; border-radius: 16px; border: 1px dashed rgba(0,0,0,0.1);">
+    <i class="bi bi-journal-x text-secondary fs-1 mb-3 d-block"></i>
+    <p class="text-secondary fw-semibold mb-0" style="font-size: 1.1rem;">No materials found for this selection yet.</p>
+</div>
+
+
+
+</div>
+</body>
+</html>

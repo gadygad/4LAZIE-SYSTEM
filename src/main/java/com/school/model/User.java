@@ -42,6 +42,10 @@ public class User {
     @Column(name = "date_joined", columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime dateJoined;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+
     // Constructors
     public User() {
         this.role = "STUDENT"; // Default role
@@ -144,5 +148,13 @@ public class User {
 
     public void setDateJoined(LocalDateTime dateJoined) {
         this.dateJoined = dateJoined;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 }

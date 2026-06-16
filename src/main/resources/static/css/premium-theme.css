@@ -939,42 +939,58 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 .level-dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 10px);
     left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    transform: translateX(-50%) translateY(8px);
+    background: #ffffff;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 14px;
     padding: 0.5rem;
-    min-width: 140px;
+    min-width: 160px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    z-index: 100;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(59, 130, 246, 0.1);
+    z-index: 1000;
 }
 
 .level-dropdown-wrapper:hover .level-dropdown-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(5px);
+    transform: translateX(-50%) translateY(0px);
 }
 
 .level-dropdown-menu a {
     display: block;
-    color: var(--text-muted);
+    color: #334155;
     text-decoration: none;
-    padding: 0.6rem 1rem;
+    padding: 0.65rem 1.2rem;
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 8px;
     transition: all 0.2s ease;
     text-align: center;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.3px;
 }
 
 .level-dropdown-menu a:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
     color: #ffffff;
+    transform: scale(1.02);
+}
+
+/* Semester Pills styling (Light Theme & Premium Hover) */
+.premium-pill-inactive {
+    background-color: transparent !important;
+    color: #475569 !important;
+}
+.premium-pill-inactive:hover {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    color: #f59e0b !important;
+}
+.premium-pill-active {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
 }

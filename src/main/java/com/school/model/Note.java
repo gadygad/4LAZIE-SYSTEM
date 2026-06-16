@@ -14,11 +14,20 @@ public class Note {
     @Column(name = "title", length = 200)
     private String title;
 
+    @Column(name = "program_type", length = 50)
+    private String programType = "DIPLOMA"; // e.g., DIPLOMA, DEGREE_ENG, DEGREE_EDU
+
     @Column(name = "level")
-    private Integer levelNo; // 4, 5, 6
+    private Integer levelNo; // 4, 5, 6 for Diploma OR 1, 2, 3, 4 for Degree Years
 
     @Column(name = "semester")
     private Integer semesterNo; // 1, 2
+
+    @Column(name = "module_name", length = 150)
+    private String moduleName;
+
+    @Column(name = "module_code", length = 20)
+    private String moduleCode;
 
     @Column(name = "category", length = 50)
     private String category; // Note, Past Paper, Assignment, Video Tutorial
@@ -35,20 +44,38 @@ public class Note {
     @Column(name = "download_count", nullable = false, columnDefinition = "int default 0")
     private Integer downloadCount = 0;
 
+    @Column(name = "unit_number")
+    private Integer unitNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+
     // Constructors
     public Note() {
     }
 
-    public Note(String title, String filename, Integer levelNo, Integer semesterNo, String category, LocalDateTime uploadDate) {
+    public Note(String title, String filename, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
         this.title = title;
         this.filename = filename;
+        this.programType = programType;
         this.levelNo = levelNo;
         this.semesterNo = semesterNo;
         this.category = category;
+        this.moduleName = moduleName;
+        this.moduleCode = moduleCode;
         this.uploadDate = uploadDate;
     }
 
     // Getters and Setters
+    public String getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(String programType) {
+        this.programType = programType;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -79,6 +106,22 @@ public class Note {
 
     public void setSemesterNo(Integer semesterNo) {
         this.semesterNo = semesterNo;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public String getModuleCode() {
+        return moduleCode;
+    }
+
+    public void setModuleCode(String moduleCode) {
+        this.moduleCode = moduleCode;
     }
 
     public String getCategory() {
@@ -119,5 +162,21 @@ public class Note {
 
     public void setDownloadCount(Integer downloadCount) {
         this.downloadCount = downloadCount;
+    }
+
+    public Integer getUnitNumber() {
+        return unitNumber;
+    }
+
+    public void setUnitNumber(Integer unitNumber) {
+        this.unitNumber = unitNumber;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 }

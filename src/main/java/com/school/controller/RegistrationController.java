@@ -16,6 +16,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.school.repository.UserRepository;
+import com.school.repository.InstitutionRepository;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -29,9 +30,13 @@ public class RegistrationController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private InstitutionRepository institutionRepository;
+
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
+        model.addAttribute("institutions", institutionRepository.findAll());
         return "register";
     }
 
@@ -86,6 +91,7 @@ public class RegistrationController {
                     user.setSemester(1); // Default
                     user.setYear(1); // Default
                     user.setCourseProgram("General Studies"); // Default
+                    institutionRepository.findById(1L).ifPresent(user::setInstitution); // Default to SJCET
                     userService.registerUser(user, null);
                 }
                 session.setAttribute("user", user);
