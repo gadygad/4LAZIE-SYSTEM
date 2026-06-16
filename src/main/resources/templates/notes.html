@@ -241,10 +241,19 @@
     </div>
 </div>
 
-<div th:if="${notes == null || #lists.isEmpty(notes)}" class="text-center p-5 mb-5" style="background: #f8fafc; border-radius: 16px; border: 1px dashed rgba(0,0,0,0.1);">
-    <i class="bi bi-journal-x text-secondary fs-1 mb-3 d-block"></i>
-    <p class="text-secondary fw-semibold mb-0" style="font-size: 1.1rem;">No materials found for this selection yet.</p>
-    <a th:href="@{${selectedLevel != null} ? '/semesters?level=' + selectedLevel : '/'}" class="btn btn-outline-light mt-3 px-4 rounded-pill">Select Another Semester</a>
+<div th:if="${notes == null || #lists.isEmpty(notes)}" class="text-center p-5 mb-5" style="background: rgba(16, 185, 129, 0.03); border-radius: 20px; border: 1px dashed rgba(16, 185, 129, 0.3);">
+    <div class="d-inline-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1); border-radius: 50%;">
+        <i class="bi bi-folder-x" style="color: #10b981; font-size: 2rem;"></i>
+    </div>
+    <h4 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #0f172a;">No Materials Found</h4>
+    <p class="text-secondary mb-4 mx-auto" style="font-size: 0.95rem; max-width: 400px; line-height: 1.5;">We couldn't find any resources for your current selection. Try changing the category or going back.</p>
+    <a href="/dashboard" 
+       class="btn px-4 py-2 fw-bold" 
+       style="background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); font-size: 0.9rem; letter-spacing: 0.5px; transition: all 0.3s ease;"
+       onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.4)';"
+       onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)';">
+       <i class="bi bi-arrow-left me-2"></i> Go Back to Dashboard
+    </a>
 </div>
 
             </div> <!-- Close col-lg-7 -->
