@@ -17,6 +17,8 @@
         .page-layout { display: flex; min-height: 100vh; }
         .hero-sidebar {
             width: 340px;
+            height: auto !important; /* Allow flexbox to stretch it */
+            min-height: 100vh;
             background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); /* Premium dark theme */
             padding: 40px 20px;
             display: flex; flex-direction: column; justify-content: flex-start;
@@ -339,12 +341,11 @@
         </div> <!-- Close row animate-fade-in -->
 
         </div> <!-- Close container -->
-
-        <!-- Shared Premium Footer -->
-        <footer th:replace="~{fragments/footer :: footer}"></footer>
-        
     </div> <!-- Close main-content -->
 </div> <!-- Close page-layout -->
+
+<!-- Shared Premium Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
