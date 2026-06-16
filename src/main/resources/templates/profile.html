@@ -207,29 +207,7 @@
                 </div>
             </div>
 
-            <div class="d-flex align-items-center dropdown">
-                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
-                   style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: all 0.3s ease;"
-                   onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.08)'; this.style.transform='translateY(-1px)';" 
-                   onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.04)'; this.style.transform='none';">
-                    <img th:if="${user.profilePicture}" th:src="@{'/uploads/' + ${user.profilePicture}}" alt="Profile" class="rounded-circle me-2" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <img th:unless="${user.profilePicture}" src="https://ui-avatars.com/api/?name=Student&background=2563eb&color=fff" alt="Profile" class="rounded-circle me-2" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <div class="d-flex flex-column justify-content-center me-2">
-                        <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: #1e293b;" th:text="${user.name}">John Doe</span>
-                        <span class="text-muted lh-1 mt-1" style="font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Student</span>
-                    </div>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2" aria-labelledby="profileDropdown" style="border-radius: 16px; min-width: 220px; overflow: hidden; animation: fadeIn 0.2s ease-out;">
-                    <li class="px-3 py-2 border-bottom" style="background: rgba(248, 250, 252, 0.5);">
-                        <p class="mb-0 fw-bold text-dark" style="font-size: 0.85rem;" th:text="${user.name}">John Doe</p>
-                        <p class="mb-0 text-muted" style="font-size: 0.75rem;" th:text="${user.courseProgram != null ? user.courseProgram : 'Student'}">DIP IN IT</p>
-                    </li>
-                    <li><a class="dropdown-item py-2 mt-1 fw-medium" href="/profile" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-person me-2 text-primary"></i>My Profile</a></li>
-                    <li><a class="dropdown-item py-2 fw-medium" href="#" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-gear me-2 text-secondary"></i>Settings</a></li>
-                    <li><hr class="dropdown-divider my-1"></li>
-                    <li><a class="dropdown-item py-2 mb-1 fw-medium text-danger" href="/logout" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
+            <div th:replace="~{fragments/navbar_actions :: actions}"></div>
         </div>
     </nav>
 
