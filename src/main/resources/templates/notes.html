@@ -11,7 +11,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Premium Global CSS -->
-    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css?v=2.1}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <style>
         .page-layout { display: flex; min-height: 100vh; }
@@ -34,29 +34,7 @@
         .orb-2 { width: 250px; height: 250px; bottom: -50px; left: -100px; background: radial-gradient(circle, rgba(29,78,216,0.2) 0%, transparent 70%); }
         .orb-3 { width: 200px; height: 200px; top: 50%; left: 30%; background: radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%); }
 
-        .sidebar-hover-item { position: relative; margin-bottom: 5px; }
-        .sidebar-hover-btn {
-            background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
-            padding: 10px 16px; width: 100%; text-align: left;
-            font-family: 'Outfit', sans-serif; font-weight: 500;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s ease; cursor: pointer;
-        }
-        .sidebar-hover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .sidebar-hover-content {
-            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
-            opacity: 0; padding: 0 16px; margin-left: 10px; border-left: 2px solid rgba(255,255,255,0.1);
-        }
-        .sidebar-hover-item:hover .sidebar-hover-content {
-            max-height: 150px; opacity: 1; padding: 10px 16px;
-        }
-        .sidebar-hover-content a {
-            display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem;
-            padding: 6px 0; transition: color 0.2s;
-        }
-        .sidebar-hover-content a:hover { color: #fff; }
-        .sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
-        .sidebar-hover-item:hover .sidebar-hover-btn i.chevron { transform: rotate(180deg); }
+        
     </style>
 
     <style>

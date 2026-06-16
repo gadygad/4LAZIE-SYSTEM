@@ -27,7 +27,7 @@
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Diploma Programmes</div>
                     
                     <div class="sidebar-hover-item">
-                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" href="#menuDipIt" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" data-bs-target="#menuDipIt" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DIPLOMA IN IT</span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="sidebar-hover-item mt-2">
-                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" href="#menuDipCse" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" data-bs-target="#menuDipCse" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DIPLOMA IN CSE</span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="sidebar-hover-item mt-2">
-                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" href="#menuDipCe" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" data-bs-target="#menuDipCe" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DIPLOMA IN CE</span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="sidebar-hover-item mt-2">
-                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" href="#menuDipMe" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" data-bs-target="#menuDipMe" role="button" aria-expanded="false" th:style="${selectedProgram == 'DIP_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DIPLOMA IN ME</span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
@@ -78,7 +78,7 @@
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
                     
                     <div class="sidebar-hover-item" th:each="year : ${#numbers.sequence(1, 4)}">
-                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" th:href="'#menuDegEng' + ${year}" role="button" aria-expanded="false" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" th:data-bs-target="'#menuDegEng' + ${year}" role="button" aria-expanded="false" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-gear me-2" style="color: #fb923c;"></i> YEAR <span th:text="${year}"></span></span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
@@ -92,7 +92,7 @@
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Education)</div>
                     
                     <div class="sidebar-hover-item" th:each="year : ${#numbers.sequence(1, 3)}">
-                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" th:href="'#menuDegEdu' + ${year}" role="button" aria-expanded="false" th:style="${selectedProgram == 'DEGREE_EDU' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                        <div class="sidebar-hover-btn" data-bs-toggle="collapse" th:data-bs-target="'#menuDegEdu' + ${year}" role="button" aria-expanded="false" th:style="${selectedProgram == 'DEGREE_EDU' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-journal-text me-2" style="color: #4ade80;"></i> YEAR <span th:text="${year}"></span></span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
