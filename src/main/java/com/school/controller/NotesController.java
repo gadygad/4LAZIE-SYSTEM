@@ -180,6 +180,7 @@ public class NotesController {
                              @RequestParam(value = "moduleName", required = false) String moduleName,
                              @RequestParam(value = "moduleCode", required = false) String moduleCode,
                              @RequestParam(value = "category", required = false) String category,
+                             @RequestParam(value = "unitNumber", required = false) Integer unitNumber,
                              @RequestParam("file") MultipartFile file,
                              HttpSession session) {
         User loggedInUser = (User) session.getAttribute("user");
@@ -203,6 +204,7 @@ public class NotesController {
             note.setModuleName(moduleName != null && !moduleName.trim().isEmpty() ? moduleName.trim().toUpperCase() : "GENERAL MODULE");
             note.setModuleCode(moduleCode != null ? moduleCode.trim().toUpperCase() : "");
             note.setCategory(category == null || category.trim().isEmpty() ? "Note" : category);
+            note.setUnitNumber(unitNumber);
             note.setFilename(filename);
             note.setUploadDate(LocalDateTime.now());
             noteRepository.save(note);

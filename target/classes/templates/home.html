@@ -16,24 +16,100 @@
     <!-- Premium Global CSS -->
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <style>
-        .hero-wrapper {
+        /* ── SIDEBAR LAYOUT ── */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .page-layout {
+            display: flex;
+            flex: 1;
+            min-height: calc(100vh - 64px);
+        }
+        /* Left Sidebar */
+        .hero-sidebar {
+            width: 300px;
+            min-width: 300px;
+            background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); /* Premium dark theme */
+            position: sticky;
+            top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 32px 20px;
+            z-index: 10;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        /* Custom Scrollbar for Sidebar */
+        .hero-sidebar::-webkit-scrollbar { width: 6px; }
+        .hero-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .hero-sidebar:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); }
+        /* Orbs */
+        .hero-sidebar .orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-sidebar .orb-1 {
+            width: 260px; height: 260px;
+            top: -80px; right: -80px;
+            background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
+        }
+        .hero-sidebar .orb-2 {
+            width: 220px; height: 220px;
+            bottom: -60px; left: -60px;
+            background: radial-gradient(circle, rgba(59,130,246,0.35) 0%, transparent 70%);
+        }
+        .hero-sidebar .orb-3 {
+            width: 160px; height: 160px;
+            top: 50%; left: 30%;
+            background: radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%);
+        }
+
+        .sidebar-accordion .accordion-button::after {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        .sidebar-accordion .accordion-button:focus {
+            box-shadow: none;
+        }
+        /* Glass card inside sidebar */
+        .sidebar-glass-card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 22px;
+            padding: 28px 22px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             position: relative;
-            overflow: hidden;
-            background:
-                radial-gradient(circle at top left,
-                    rgba(59, 130, 246, .15),
-                    transparent 40%),
-                radial-gradient(circle at bottom right,
-                    rgba(99, 102, 241, .12),
-                    transparent 40%);
-            border-bottom: 1px solid var(--border-subtle);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        @media (max-width: 768px) {
+            .hero-sidebar { display: none; }
+            .page-layout { flex-direction: column; }
         }
 
         .hero-section {
-            padding: 40px 0 80px;
+            padding: 40px 0 20px;
             display: flex;
             align-items: center;
-            min-height: 100vh;
+            min-height: auto;
         }
 
         .hero-section .row {
@@ -88,9 +164,9 @@
         }
 
         .horizontal-section {
-            padding: 6rem 0;
-            border-top: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.01);
+            padding: 2rem 0;
+            border-top: none;
+            background: transparent;
         }
 
         .bg-darker {
@@ -278,356 +354,515 @@
         .register-text a:hover {
             text-decoration: underline;
         }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                margin-top: 5px !important;
+            }
+            to {
+                opacity: 1;
+                margin-top: 15px !important;
+            }
+        }
+        .dropdown-menu.show {
+            animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* NTA Navbar Dropdown */
+        .nta-nav-item {
+            position: relative;
+        }
+        .nta-nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+        .nta-nav-item:hover .nta-nav-btn {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        .nta-nav-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(15px);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-width: 200px;
+            padding: 12px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 50;
+            border: 1px solid var(--border-subtle);
+        }
+        .nta-nav-item:hover .nta-nav-dropdown {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(5px);
+        }
+        .nta-nav-dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 9px 14px;
+            border-radius: 8px;
+            color: #334155;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .nta-nav-dropdown a:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
     </style>
 </head>
 
 <body>
 
-    <header class="navbar navbar-custom sticky-top">
+    <header class="navbar navbar-custom sticky-top" style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
         <div class="container d-flex justify-content-between align-items-center">
-            <div>
-                <span class="brand-font fw-bold fs-4">
+            <a href="/" class="text-decoration-none d-flex flex-column align-items-start">
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">
                     4LAZIE
                 </span>
-                <small class="text-secondary ms-2">
-                    Smart Learning Made Easy
-                </small>
-            </div>
+                <div class="d-none d-md-flex align-items-center position-relative mt-1" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                    <!-- Shimmer overlay -->
+                    <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                    <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
+                        <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
+                    </span>
+                    <style>
+                        @keyframes shimmer-glow {
+                            0% { left: -100%; }
+                            20% { left: 200%; }
+                            100% { left: 200%; }
+                        }
+                    </style>
+                </div>
+            </a>
 
-        </div>
-    </header>
-
-    <!-- HERO SECTION -->
-    <section class="hero-wrapper">
-        <div class="container hero-section animate-fade-in">
-            <div class="row w-100 align-items-start">
-                <!-- Left Text -->
-                <div class="col-lg-7 hero-text mb-5 mb-lg-0 pe-lg-5">
-
-
-                    <div class="hero-nta-levels mt-5">
-                        <p class="text-secondary fw-bold mb-3" style="font-size: 0.95rem; max-width: 600px; line-height: 1.6;">
-                            Select your level and semester to browse verified notes, past papers, and assignment solutions.
-                        </p>
-                        
-                        <div class="search-container mb-5 position-relative" style="max-width: 500px;">
-                            <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
-                            <input type="text" class="form-control" placeholder="Search topics, modules, or past papers..." 
-                                   style="padding: 14px 20px 14px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
-                                   onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
-                                   onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
-                        </div>
-
-                        <h3 class="fw-bold mb-3" style="font-size: 1.8rem; letter-spacing: -0.5px;">NTA LEVELS</h3>
-                        <div class="d-flex flex-row gap-4 align-items-center">
-                            <div class="level-dropdown-wrapper">
-                                <span class="level-link fw-bold">NTA LEVEL 4</span>
-                                <div class="level-dropdown-menu">
-                                    <a th:href="@{'/guest-notes?level=4&semester=1'}">Semester 1</a>
-                                    <a th:href="@{'/guest-notes?level=4&semester=2'}">Semester 2</a>
-                                </div>
-                            </div>
-                            
-                            <span class="text-secondary" style="opacity: 0.3;">|</span>
-                            
-                            <div class="level-dropdown-wrapper">
-                                <span class="level-link fw-bold">NTA LEVEL 5</span>
-                                <div class="level-dropdown-menu">
-                                    <a th:href="@{'/guest-notes?level=5&semester=1'}">Semester 1</a>
-                                    <a th:href="@{'/guest-notes?level=5&semester=2'}">Semester 2</a>
-                                </div>
-                            </div>
-                            
-                            <span class="text-secondary" style="opacity: 0.3;">|</span>
-                            
-                            <div class="level-dropdown-wrapper">
-                                <span class="level-link fw-bold">NTA LEVEL 6</span>
-                                <div class="level-dropdown-menu">
-                                    <a th:href="@{'/guest-notes?level=6&semester=1'}">Semester 1</a>
-                                    <a th:href="@{'/guest-notes?level=6&semester=2'}">Semester 2</a>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Program Nav Links -->
+            <div class="d-none d-md-flex align-items-center gap-1" style="margin-right: 1rem;">
+                <!-- DIPLOMA -->
+                <div class="position-relative nta-nav-item">
+                    <a th:href="@{'/guest-notes?program=DIPLOMA&level=4&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
+                        DIPLOMA <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="nta-nav-dropdown">
+                        <a th:href="@{'/guest-notes?program=DIPLOMA&level=4'}"><i class="bi bi-journal-text me-2"></i>NTA LEVEL 4</a>
+                        <a th:href="@{'/guest-notes?program=DIPLOMA&level=5'}"><i class="bi bi-journal-text me-2"></i>NTA LEVEL 5</a>
+                        <a th:href="@{'/guest-notes?program=DIPLOMA&level=6'}"><i class="bi bi-journal-text me-2"></i>NTA LEVEL 6</a>
                     </div>
                 </div>
+                <!-- DEGREE (ENG) -->
+                <div class="position-relative nta-nav-item">
+                    <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=1&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
+                        DEGREE (ENG) <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="nta-nav-dropdown">
+                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=1'}"><i class="bi bi-journal-text me-2"></i>YEAR 1</a>
+                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=2'}"><i class="bi bi-journal-text me-2"></i>YEAR 2</a>
+                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=3'}"><i class="bi bi-journal-text me-2"></i>YEAR 3</a>
+                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=4'}"><i class="bi bi-journal-text me-2"></i>YEAR 4</a>
+                    </div>
+                </div>
+                <!-- DEGREE (EDU) -->
+                <div class="position-relative nta-nav-item">
+                    <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=1&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
+                        DEGREE (EDU) <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="nta-nav-dropdown">
+                        <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=1'}"><i class="bi bi-journal-text me-2"></i>YEAR 1</a>
+                        <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=2'}"><i class="bi bi-journal-text me-2"></i>YEAR 2</a>
+                        <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=3'}"><i class="bi bi-journal-text me-2"></i>YEAR 3</a>
+                    </div>
+                </div>
+            </div>
 
-                <!-- Right Login Form -->
-                <div class="col-lg-5">
-                    <div class="login-box">
-                        <div class="login-logo">
-                            🎓
+            <div class="d-none d-md-flex mx-auto align-items-center justify-content-center gap-2" style="max-width: 400px; flex: 1;">
+                <div class="search-container position-relative flex-grow-1">
+                    <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+                    <input type="text" class="form-control" placeholder="Search topics, modules, or past papers..." 
+                           style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
+                           onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
+                           onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
+                </div>
+                <a href="#" class="text-secondary" title="see more" data-bs-toggle="tooltip" data-bs-placement="bottom" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s ease; text-decoration: none;" onmouseover="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--primary)';" onmouseout="this.style.background='transparent'; this.style.color='var(--text-muted)';">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </a>
+            </div>
+
+            <div class="dropdown d-flex justify-content-end align-items-center" style="width: 150px;">
+                <a href="#" class="btn btn-primary fw-bold rounded-pill px-4 dropdown-toggle" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">Sign In</a>
+                
+                <div class="dropdown-menu dropdown-menu-end p-0 border-0 shadow-lg" aria-labelledby="loginDropdown" style="width: 380px; border-radius: 16px; background: white; margin-top: 15px;">
+                    <div class="login-box w-100 m-0" style="padding: 24px; box-shadow: none; background: white; border-radius: 16px;">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #1e293b; margin: 0; font-size: 1.5rem; text-transform: none;">Sign in</h3>
                         </div>
-                        <h2 style="text-transform: lowercase; text-align: center;">student login</h2>
-                        <p class="subtitle-text" style="text-transform: lowercase; text-align: center;">
-                            Access your academic dashboard
+                        <p class="text-secondary mb-3" style="font-size: 0.9rem; text-transform: none; text-align: left;">
+                            Get access to more learning features
                         </p>
-
-                        <div th:if="${param.registered}" class="alert alert-success" role="alert">
-                            Registration successful! You can now log in.
+                        
+                        <div class="mb-3" style="font-size: 0.9rem;">
+                            <span class="text-secondary">Don't have an account?</span> 
+                            <a th:href="@{/register}" style="color: var(--primary); text-decoration: none; font-weight: 500;">Register</a>
+                        </div>
+                        
+                        <div class="d-flex gap-2 mb-3">
+                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" height="20" alt="Google">
+                            </a>
+                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg" width="20" height="20" alt="Facebook">
+                            </a>
+                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <i class="bi bi-github text-dark" style="font-size: 1.2rem;"></i>
+                            </a>
+                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                <i class="bi bi-shield-lock text-primary" style="font-size: 1.2rem;"></i>
+                            </a>
                         </div>
 
-                        <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                            Invalid username or password.
+                        <div class="d-flex align-items-center my-3">
+                            <hr class="flex-grow-1" style="border-color: var(--border-subtle); margin: 0;">
+                            <span class="mx-3 text-secondary" style="font-size: 0.85rem;">or</span>
+                            <hr class="flex-grow-1" style="border-color: var(--border-subtle); margin: 0;">
                         </div>
 
-                        <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                        <div th:if="${param.error}" class="alert alert-danger py-2 px-3" role="alert" style="font-size: 0.85rem;">
+                            Invalid credentials.
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-success py-2 px-3" role="alert" style="font-size: 0.85rem;">
                             You have been logged out.
                         </div>
 
                         <form th:action="@{/login}" method="post" novalidate>
                             <div class="form-group mb-3">
-                                <label style="text-transform: lowercase;">username</label>
-                                <input type="text" name="username" class="premium-input" placeholder="enter username"
-                                    required />
+                                <input type="email" name="email" class="form-control shadow-none" placeholder="Email" required 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 1px solid var(--border-subtle); font-size: 0.95rem;" 
+                                       onfocus="this.style.borderColor='var(--primary)';" onblur="this.style.borderColor='var(--border-subtle)';" />
                             </div>
 
-                            <div class="form-group mb-4">
-                                <label style="text-transform: lowercase;">password</label>
-                                <input type="password" name="password" class="premium-input"
-                                    placeholder="enter password" required />
+                            <div class="form-group mb-2 position-relative">
+                                <input type="password" name="password" id="loginPassword" class="form-control shadow-none" placeholder="Password" required 
+                                       style="border-radius: 8px; padding: 12px 45px 12px 16px; border: 1px solid var(--border-subtle); font-size: 0.95rem;"
+                                       onfocus="this.style.borderColor='var(--primary)';" onblur="this.style.borderColor='var(--border-subtle)';" />
+                                <i class="bi bi-eye position-absolute" id="togglePassword" style="right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b;"></i>
                             </div>
 
-                            <div class="options-row mb-4">
-                                <label class="d-flex align-items-center gap-2"
-                                    style="font-size: 0.85rem; font-weight: 500; cursor: pointer; text-transform: lowercase;">
-                                    <input type="checkbox" name="remember"
-                                        style="width: 16px; height: 16px; accent-color: var(--primary);" />
-                                    remember me
-                                </label>
-                                <a href="#" class="forgot-link" style="text-transform: lowercase;">forgot password?</a>
+                            <div class="text-start mb-4 mt-2">
+                                <a href="#" style="text-decoration: none; color: #1e293b; font-size: 0.85rem; font-weight: 500;">Forgot your password?</a>
                             </div>
 
-                            <button type="submit" class="btn-premium w-100 py-3"
-                                style="text-transform: lowercase;">login securely</button>
+                            <button type="submit" class="btn w-100" style="background-color: var(--primary); color: white; border-radius: 8px; padding: 12px; font-weight: 600; font-size: 1rem; transition: background 0.3s;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='var(--primary)'">Sign In</button>
                         </form>
-
-                        <div class="register-text">
-                            Don't have an account? <a th:href="@{/register}">Register Here</a>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
+    <!-- ══════════════════════════════════════ -->
+    <!-- PAGE LAYOUT: SIDEBAR LEFT + CONTENT RIGHT -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="page-layout">
 
+        <!-- ── LEFT HERO SIDEBAR ── -->
+        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
+        <!-- end sidebar -->
 
-    <!-- POPULAR NOTES SECTION -->
-    <section class="py-4 my-3">
-        <div class="container">
+        <!-- ── MAIN CONTENT (RIGHT) ── -->
+        <div class="main-content">
+
+    <!-- COMBINED POPULAR NOTES & PREMIUM SECTION -->
+    <section class="py-5 my-2">
+
+        <div class="container-fluid px-4 px-lg-5">
             <style>
                 @keyframes pulse-live {
                     0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
                     70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
                     100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
                 }
+                .premium-accordion-item:hover .accordion-button {
+                    color: var(--primary);
+                    background-color: white !important;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+                }
+                .premium-accordion-item:hover .accordion-collapse {
+                    display: block !important;
+                }
+                .premium-accordion-item:hover .accordion-button::after {
+                    transform: rotate(-180deg);
+                }
+                /* Premium features layout */
+                .premium-grid {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 15px;
+                }
+                .premium-grid .premium-item {
+                    background: white;
+                    border: 1px solid var(--border-subtle);
+                    border-radius: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 1.25rem 1.75rem;
+                    transition: all 0.3s ease;
+                    text-decoration: none;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+                }
+                .premium-grid .premium-item:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+                    border-color: #cbd5e1;
+                }
             </style>
-            <div class="d-flex justify-content-between align-items-center mb-5 position-relative">
-                <!-- Decorative background glow -->
-                <div class="position-absolute" style="width: 200px; height: 100px; background: radial-gradient(ellipse, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); top: -20px; left: -50px; z-index: -1;"></div>
-                
-                <div class="d-flex align-items-center gap-3">
-                    <div style="width: 6px; height: 50px; background: linear-gradient(180deg, #3b82f6, #ec4899); border-radius: 8px; box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);"></div>
-                    <div>
-                        <div class="d-flex align-items-center gap-2 mb-1">
-                            <span class="d-flex align-items-center gap-2 badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(16, 185, 129, 0.2);">
-                                <span style="width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; animation: pulse-live 2s infinite;"></span>
-                                Trending Now
-                            </span>
-                        </div>
-                        <h2 class="fw-bold mb-0" style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(to right, #0f172a, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            POPULAR NOTES
-                        </h2>
+            <div class="row g-5">
+                <!-- LEFT COLUMN: POPULAR NOTES LIST -->
+                <div class="col-lg-7">
+                    <div class="mb-4 position-relative">
+                        <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">RECOMMENDED NOTES</h3>
+                        <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Handpicked study materials just for you</p>
                     </div>
-                </div>
-                
-                <a href="#" class="fw-bold text-decoration-none d-flex align-items-center gap-2 text-uppercase" 
-                   style="color: #ffffff; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 10px 26px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);"
-                   onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 15px 30px rgba(59, 130, 246, 0.35)'; this.style.background='linear-gradient(135deg, #1e293b 0%, #3b82f6 100%)'; this.querySelector('i').style.transform='translateX(5px)';" 
-                   onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 20px rgba(15, 23, 42, 0.15)'; this.style.background='linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'; this.querySelector('i').style.transform='none';">
-                    VIEW ALL <i class="bi bi-arrow-right fs-5" style="transition: transform 0.3s ease;"></i>
-                </a>
-            </div>
 
-            <div class="row g-3">
-                <div th:each="note : ${popularNotes}" class="col-lg-4 col-md-6">
-                    <div class="pop-note-card position-relative h-100 d-flex flex-column"
-                        style="background: #ffffff; border: 1px solid rgba(0,0,0,0.04); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);"
-                        onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 50px rgba(0,0,0,0.08)';"
-                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 40px rgba(0,0,0,0.03)';">
-                        
-                        <!-- Top Header with Icon and Badge -->
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="icon-box shadow-sm" style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.1) 100%); color: #2563eb; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
-                                <i class="bi bi-journal-bookmark-fill fs-4"></i>
+                    <div class="accordion accordion-flush mt-4" id="popularNotesAccordion">
+                        <!-- Dynamic List of Notes -->
+                        <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item" style="background: transparent; border: none; margin-bottom: 1.25rem;">
+                            <h2 class="accordion-header" th:id="'heading' + ${note.id}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${note.id}" aria-expanded="false" th:aria-controls="'collapse' + ${note.id}"
+                                    style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
+                                    
+                                    <div class="d-flex align-items-center gap-3 w-100 me-3">
+                                        <!-- Icon -->
+                                        <div style="color: #2563eb; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-journal-bookmark-fill fs-4"></i>
+                                        </div>
+                                        
+                                        <!-- Title -->
+                                        <div style="flex-grow: 1; text-transform: uppercase; display: flex; align-items: center; gap: 15px;">
+                                            <span style="color: #f59e0b;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(16,185,129,0.2);" th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div th:id="'collapse' + ${note.id}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${note.id}" data-bs-parent="#popularNotesAccordion">
+                                <div class="accordion-body" style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
+                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                                        <!-- Description -->
+                                        <div>
+                                            <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">Verified Notes</p>
+                                            <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access high-quality study materials tailored for your NTA level. Download or read online.</p>
+                                        </div>
+                                        
+                                        <!-- Action Buttons -->
+                                        <div class="d-flex gap-2 flex-shrink-0">
+                                            <a href="#" th:onclick="'loadPreview(' + ${note.id} + ', '' + ${note.title} + ''); return false;'" class="btn fw-bold d-flex align-items-center justify-content-center" 
+                                               style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                                               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
+                                               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                                                <i class="bi bi-eye me-1"></i> Read
+                                            </a>
+                                            <a th:href="@{'/download/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
+                                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
+                                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
+                                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
+                                                <i class="bi bi-cloud-arrow-down me-1"></i> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px;" th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
                         </div>
 
-                        <!-- Content -->
-                        <h4 class="fw-bold mb-1 text-dark text-uppercase" style="font-size: 1.05rem; letter-spacing: -0.2px;" th:text="${note.title}">NOTE TITLE</h4>
-                        <p class="mb-3" style="color: #64748b; font-size: 0.85rem; line-height: 1.4; font-weight: 400;">
-                            These are verified notes. Download or read them easily from anywhere.
-                        </p>
-
-                        <!-- Action Buttons -->
-                        <div class="mt-auto d-flex justify-content-center gap-3">
-                            <a th:href="@{'/view/' + ${note.id}}" target="_blank" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                               style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 16px; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
-                               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
-                               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
-                                <i class="bi bi-eye me-2" style="font-size: 1.1rem;"></i> Read
-                            </a>
-                            <a th:href="@{'/download/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 8px; padding: 6px 16px; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(37,99,235,0.3);"
-                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.4)';" 
-                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(37,99,235,0.3)';">
-                                <i class="bi bi-cloud-arrow-down me-2" style="font-size: 1.1rem;"></i> Get
-                            </a>
+                        <!-- Fallback if no notes -->
+                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="text-center py-5" style="background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                            <div style="width: 80px; height: 80px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                                <i class="bi bi-journal-x fs-1"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-2" style="font-family: 'Outfit', sans-serif;">No Notes Available</h4>
+                            <p class="text-secondary fw-medium" style="max-width: 400px; margin: 0 auto;">Check back soon! New recommended notes will appear here once uploaded by instructors.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Fallback kama hakuna notes -->
-                <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="col-12 text-center py-5">
-                    <div style="width: 80px; height: 80px; background: rgba(0,0,0,0.02); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                        <i class="bi bi-journal-x text-muted fs-1"></i>
+                <!-- RIGHT COLUMN: PREMIUM FEATURES -->
+                <div class="col-lg-5">
+                    <div class="sticky-top" style="top: 100px;">
+                        <div class="mb-4 position-relative">
+                            <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
+                            <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Exclusive tools & resources</p>
+                        </div>
+                        
+                        <div class="premium-grid mb-4 d-flex flex-column gap-2">
+                            <a href="/register" class="premium-item p-3 rounded-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgba(0,0,0,0.04); background: white; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 1 PAST PAPERS</span>
+                                <span class="arrow text-secondary" style="font-size: 0.85rem;"><i class="bi bi-lock-fill"></i></span>
+                            </a>
+                            <a href="/register" class="premium-item p-3 rounded-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgba(0,0,0,0.04); background: white; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 2 PAST PAPERS</span>
+                                <span class="arrow text-secondary" style="font-size: 0.85rem;"><i class="bi bi-lock-fill"></i></span>
+                            </a>
+                            <a href="/register" class="premium-item p-3 rounded-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgba(0,0,0,0.04); background: white; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">ASSIGNMENTS & SOLUTIONS</span>
+                                <span class="arrow text-secondary" style="font-size: 0.85rem;"><i class="bi bi-lock-fill"></i></span>
+                            </a>
+                            <a href="/register" class="premium-item p-3 rounded-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgba(0,0,0,0.04); background: white; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">UNIVERSITY EXAMS (UE)</span>
+                                <span class="arrow text-secondary" style="font-size: 0.85rem;"><i class="bi bi-lock-fill"></i></span>
+                            </a>
+                        </div>
+
+                        <!-- Access Restricted Banner (PREMIUM DESIGN) -->
+                        <div class="premium-unlock-card position-relative overflow-hidden mb-4" style="background: linear-gradient(145deg, #0f172a, #1e1b4b); border-radius: 20px; padding: 30px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); z-index: 1;">
+                            
+                            <!-- Glowing background effect -->
+                            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at top right, rgba(245,158,11,0.15) 0%, transparent 40%); z-index: -1; pointer-events: none;"></div>
+                            
+                            <!-- Premium Icon -->
+                            <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: rgba(245,158,11,0.1); border-radius: 14px; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 20px rgba(245,158,11,0.2);">
+                                <i class="bi bi-rocket-takeoff-fill fs-4" style="color: #f59e0b;"></i>
+                            </div>
+                            
+                            <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; margin-bottom: 10px; font-size: 1.5rem; letter-spacing: -0.5px; background: linear-gradient(90deg, #f59e0b, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Unlock Premium Access</h4>
+                            
+                            <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 25px; line-height: 1.6; font-weight: 400;">
+                                Join our platform today to get unlimited access to <span class="text-white fw-semibold">past papers</span>, <span class="text-white fw-semibold">assignments</span>, and <span class="text-white fw-semibold">premium notes</span> curated for your success.
+                            </p>
+                            
+                            <a href="/register" class="btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2 position-relative overflow-hidden premium-btn-hover text-decoration-none" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 1.05rem; box-shadow: 0 8px 25px rgba(245,158,11,0.4); transition: all 0.3s ease; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">
+                                <span style="position: relative; z-index: 2;">Create Free Account</span>
+                                <i class="bi bi-arrow-right" style="position: relative; z-index: 2;"></i>
+                                <!-- Button Shine Effect -->
+                                <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-20deg); transition: all 0.5s ease; z-index: 1;" class="btn-shine"></div>
+                            </a>
+                        </div>
+                        <style>
+                            .premium-btn-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(245,158,11,0.5) !important; }
+                            .premium-btn-hover:hover .btn-shine { left: 200% !important; transition: all 0.8s ease; }
+                            .premium-unlock-card { transition: all 0.3s ease; }
+                            .premium-unlock-card:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15) !important; border-color: rgba(255,255,255,0.1) !important; }
+                        </style>
                     </div>
-                    <h4 class="fw-bold text-dark mb-2">No Notes Found</h4>
-                    <p class="text-secondary fw-medium" style="max-width: 400px; margin: 0 auto;">When new notes are uploaded by instructors, they will appear here automatically.</p>
+                </div>
+            </div>
+            
+            <!-- Document Preview Modal (hidden by default) -->
+            <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
+                    <div class="modal-content border-0" style="border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+                        <div class="modal-header border-0 bg-light" style="padding: 1.5rem;">
+                            <h5 class="modal-title fw-bold text-dark d-flex align-items-center" id="previewModalLabel" style="font-family: 'Outfit', sans-serif;">
+                                <i class="bi bi-book me-2 text-primary"></i> <span id="modalDocumentTitle">Online Reader</span>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0" style="height: 75vh; background: #f8fafc; position: relative;">
+                            <!-- Placeholder Message -->
+                            <div id="previewPlaceholder" class="text-center p-5" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <h6 class="fw-bold text-dark">Loading Document...</h6>
+                            </div>
+                            
+                            <!-- Iframe -->
+                            <iframe id="docPreviewFrame" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; display: none;"></iframe>
+                        </div>
+                        <div class="modal-footer border-0 bg-light justify-content-between" style="padding: 1rem 1.5rem;">
+                            <button type="button" class="btn btn-light border fw-bold px-4 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Close</button>
+                            <a id="previewDownloadBtn" href="#" class="btn fw-bold d-flex align-items-center px-4 py-2" 
+                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(37,99,235,0.2);">
+                                <i class="bi bi-cloud-arrow-down me-2"></i> Download Document
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+    <!-- Script for Auto-opening Dropdown on Error/Logout -->
+    <script th:if="${param.error != null or param.logout != null or param.registered != null}">
+        document.addEventListener("DOMContentLoaded", function() {
+            var loginBtn = document.getElementById('loginDropdown');
+            if (loginBtn) {
+                var loginDropdown = new bootstrap.Dropdown(loginBtn);
+                loginDropdown.show();
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#loginPassword');
+            if(togglePassword && password) {
+                togglePassword.addEventListener('click', function (e) {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.classList.toggle('bi-eye');
+                    this.classList.toggle('bi-eye-slash');
+                });
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+            <script>
+                function loadPreview(id, title) {
+                    const placeholder = document.getElementById('previewPlaceholder');
+                    const iframe = document.getElementById('docPreviewFrame');
+                    const downloadBtn = document.getElementById('previewDownloadBtn');
+                    const modalTitle = document.getElementById('modalDocumentTitle');
+                    
+                    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+                    previewModal.show();
+                    
+                    modalTitle.innerText = title;
+                    
+                    placeholder.style.display = 'block';
+                    iframe.style.display = 'none';
+                    
+                    iframe.src = '/view/' + id;
+                    
+                    iframe.onload = function() {
+                        placeholder.style.display = 'none';
+                        iframe.style.display = 'block';
+                    };
+                    
+                    downloadBtn.href = '/download/' + id;
+                }
+            </script>
         </div>
     </section>
+    
+    
+    <!-- Shared FOOTER -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-    <!-- PREMIUM FEATURES SECTION -->
-    <section class="horizontal-section">
-        <div class="container">
-            <h2 class="section-title text-start mb-4 text-warning" style="font-size: 2rem; text-transform: uppercase;">PREMIUM FEATURES 🔒</h2>
-
-            <div class="row justify-content-center">
-                <div class="col-lg-12">
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-6 mb-2">
-                            <a href="/register" class="premium-item text-start p-4" style="background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; display: flex; align-items: center; justify-content: space-between;">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1.1rem;">CAT 1 PAST PAPERS</span>
-                                <span class="arrow text-dark">→</span>
-                            </a>
-                        </div>
-
-                        <div class="col-md-6 mb-2">
-                            <a href="/register" class="premium-item text-start p-4" style="background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; display: flex; align-items: center; justify-content: space-between;">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1.1rem;">CAT 2 PAST PAPERS</span>
-                                <span class="arrow text-dark">→</span>
-                            </a>
-                        </div>
-
-                        <div class="col-md-6 mb-2">
-                            <a href="/register" class="premium-item text-start p-4" style="background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; display: flex; align-items: center; justify-content: space-between;">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1.1rem;">ASSIGNMENTS & SOLUTIONS</span>
-                                <span class="arrow text-dark">→</span>
-                            </a>
-                        </div>
-
-                        <div class="col-md-6 mb-2">
-                            <a href="/register" class="premium-item text-start p-4" style="background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; display: flex; align-items: center; justify-content: space-between;">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1.1rem;">UNIVERSITY EXAMS (UE)</span>
-                                <span class="arrow text-dark">→</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Premium CTA Box -->
-                    <div class="premium-cta-box mt-5">
-                        <div class="lock-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-                                viewBox="0 0 16 16">
-                                <path
-                                    d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
-                            </svg>
-                        </div>
-                        <h3 class="fw-bold" style="letter-spacing: -0.5px; text-transform: lowercase;">unlock premium
-                            access</h3>
-                        <p class="text-secondary mb-4 fs-5">Join 4LAZIE to access thousands of exclusive study materials
-                            and analytics.</p>
-                        <a href="/register"
-                            class="btn btn-premium btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm d-inline-flex align-items-center gap-2"
-                            style="font-size: 1.1rem; text-transform: lowercase;">
-                            create free account
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                viewBox="0 0 16 16">
-                                <path fill-rule="evenodd"
-                                    d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-
-    <!-- FOOTER -->
-    <footer class="footer-custom pt-5 pb-4 mt-5">
-        <div class="container">
-            <div class="row align-items-start">
-                <div class="col-lg-5 mb-4 mb-lg-0 text-start">
-                    <h3 class="fw-bold mb-3 gradient-text">📚 4LAZIE</h3>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem; line-height: 1.6;">Smart learning made easy. Accelerate your grades with premium academic resources tailored for your success.</p>
-                </div>
-                <div class="col-lg-2 offset-lg-1 col-md-4 mb-4 text-start">
-                    <h5 class="fw-bold text-dark mb-3 text-uppercase" style="font-family: 'Outfit', sans-serif; font-size: 1rem;">Platform</h5>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-secondary text-decoration-none" style="transition: color 0.3s;"
-                            onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='var(--text-muted)'">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                viewBox="0 0 16 16">
-                                <path
-                                    d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-                            </svg>
-                        </a>
-                        <a href="#" class="text-secondary text-decoration-none" style="transition: color 0.3s;"
-                            onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='var(--text-muted)'">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                viewBox="0 0 16 16">
-                                <path
-                                    d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-4 mb-4 text-start">
-                    <h5 class="fw-bold text-dark mb-3 text-uppercase" style="font-family: 'Outfit', sans-serif; font-size: 1rem;">Legal</h5>
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><a href="/login" class="text-secondary text-decoration-none hover-white"
-                                onmouseover="this.style.color='#ffffff'"
-                                onmouseout="this.style.color='var(--text-muted)'">Premium Notes</a></li>
-                        <li class="mb-2"><a href="/login" class="text-secondary text-decoration-none hover-white"
-                                onmouseover="this.style.color='#ffffff'"
-                                onmouseout="this.style.color='var(--text-muted)'">Past Papers</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4 col-md-12 text-lg-end text-md-start mt-4 mt-lg-0">
-                    <div class="d-flex flex-column align-items-lg-end">
-
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <p class="text-secondary mb-2 mb-md-0" style="font-size: 0.9rem;">&copy; 2026 4LAZIE Student Notes
-                    System. All rights reserved.</p>
-                <div class="d-flex gap-4">
-                    <a href="#" class="text-secondary text-decoration-none" style="font-size: 0.85rem;"
-                        onmouseover="this.style.color='#ffffff'"
-                        onmouseout="this.style.color='var(--text-muted)'">Privacy Policy</a>
-                    <a href="#" class="text-secondary text-decoration-none" style="font-size: 0.85rem;"
-                        onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='var(--text-muted)'">Terms
-                        of Service</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        </div><!-- end .main-content -->
+    </div><!-- end .page-layout -->
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -939,42 +939,114 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 .level-dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 10px);
     left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    transform: translateX(-50%) translateY(8px);
+    background: #ffffff;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 14px;
     padding: 0.5rem;
-    min-width: 140px;
+    min-width: 160px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    z-index: 100;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(59, 130, 246, 0.1);
+    z-index: 1000;
 }
 
 .level-dropdown-wrapper:hover .level-dropdown-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(5px);
+    transform: translateX(-50%) translateY(0px);
 }
 
 .level-dropdown-menu a {
     display: block;
-    color: var(--text-muted);
+    color: #334155;
     text-decoration: none;
-    padding: 0.6rem 1rem;
+    padding: 0.65rem 1.2rem;
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 8px;
     transition: all 0.2s ease;
     text-align: center;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.3px;
 }
 
 .level-dropdown-menu a:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
     color: #ffffff;
+    transform: scale(1.02);
 }
+
+/* Semester Pills styling (Light Theme & Premium Hover) */
+.premium-pill-inactive {
+    background-color: transparent !important;
+    color: #475569 !important;
+}
+.premium-pill-inactive:hover {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    color: #f59e0b !important;
+}
+.premium-pill-active {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Sidebar Flyout Menu */
+.sidebar-hover-item { position: relative; margin-bottom: 5px; width: 100%; }
+.sidebar-hover-btn {
+    background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
+    padding: 10px 16px; width: 100%; text-align: left;
+    font-family: 'Outfit', sans-serif; font-weight: 500;
+    display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+}
+.sidebar-hover-btn:hover { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px); }
+.sidebar-hover-content {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 10px;
+    width: 220px;
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 10px 10px 40px rgba(0,0,0,0.5);
+    padding: 10px;
+    z-index: 1050;
+}
+.sidebar-hover-content::before {
+    content: ''; position: absolute; top: 0; left: -15px; width: 15px; height: 100%;
+}
+.sidebar-hover-item:hover .sidebar-hover-content,
+.sidebar-hover-item.active .sidebar-hover-content {
+    display: block !important;
+    animation: flyoutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes flyoutRight {
+    from { opacity: 0; transform: translateX(-10px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.sidebar-hover-content a {
+    display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    padding: 10px 14px; border-radius: 8px; transition: all 0.2s ease;
+}
+.sidebar-hover-content a:hover { color: #fff; background: rgba(59, 130, 246, 0.2); transform: translateX(5px); }
+.sidebar-hover-btn i.chevron { transition: transform 0.3s ease; transform: rotate(-90deg); }
+.sidebar-hover-item:hover .sidebar-hover-btn i.chevron,
+.sidebar-hover-item.active .sidebar-hover-btn i.chevron { transform: rotate(0deg); }
+
+/* Collapse Chevron Animation */
+[data-bs-toggle="collapse"] .bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+[data-bs-toggle="collapse"].collapsed .bi-chevron-down {
+    transform: rotate(-90deg);
+}
+

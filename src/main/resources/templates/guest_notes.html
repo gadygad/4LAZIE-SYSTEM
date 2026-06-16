@@ -125,6 +125,11 @@
             box-shadow: 10px 0 40px rgba(0,0,0,0.5);
             flex-shrink: 0; z-index: 10;
         }
+        /* Custom Scrollbar for Sidebar */
+        .hero-sidebar::-webkit-scrollbar { width: 6px; }
+        .hero-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .hero-sidebar:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); }
         .main-content {
             flex-grow: 1; display: flex; flex-direction: column; overflow-x: hidden;
         }
@@ -132,47 +137,6 @@
         .orb-1 { width: 350px; height: 350px; top: -100px; right: -150px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); }
         .orb-2 { width: 300px; height: 300px; bottom: -50px; left: -150px; background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%); }
         .orb-3 { width: 250px; height: 250px; top: 40%; left: 20%; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); }
-
-        .sidebar-hover-item { position: relative; margin-bottom: 5px; }
-        .sidebar-hover-btn {
-            background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
-            padding: 10px 16px; width: 100%; text-align: left;
-            font-family: 'Outfit', sans-serif; font-weight: 500;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s ease; cursor: pointer;
-        }
-        .sidebar-hover-btn { border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sidebar-hover-btn:hover { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px); }
-        .sidebar-hover-content {
-            position: absolute;
-            top: 0;
-            left: 100%;
-            margin-left: 5px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 150px;
-            padding: 8px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        .sidebar-hover-item:hover .sidebar-hover-content {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-        .sidebar-hover-content a {
-            display: block; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem;
-            padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;
-        }
-        .sidebar-hover-content a:hover { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(3px); }
-        .sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
-        .sidebar-hover-item:hover .sidebar-hover-btn i.chevron { transform: rotate(-90deg); }
 </style>
 
     <style>
@@ -193,8 +157,9 @@
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="/" style="text-decoration: none;">
                 <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
-                <span class="fs-3 me-2" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1;">4LAZIE</span>
-                <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 6px 16px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                <div class="d-flex flex-column align-items-start">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">4LAZIE</span>
+                    <div class="d-none d-sm-flex align-items-center position-relative mt-1" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
                     <!-- Shimmer overlay -->
                     <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
                     <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
@@ -207,6 +172,7 @@
                             100% { left: 200%; }
                         }
                     </style>
+                </div>
                 </div>
             </a>
             
@@ -327,70 +293,60 @@
                         <p class="text-muted mb-0" style="font-size: 0.8rem;">Study materials for this level and semester will appear here once uploaded.</p>
                     </div>
                 </div>
-                
+
                 <!-- Dynamic Modules Section -->
                 <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
 
             </div> <!-- Close col-lg-7 -->
 
-            <!-- RIGHT: PREMIUM FEATURES -->
-            <div class="col-lg-5 mt-5 mt-lg-0">
+            <!-- RIGHT COLUMN: PREMIUM FEATURES & TRENDING NOTES -->
+            <div class="col-lg-5 mt-5 mt-lg-0 ps-lg-4">
                 <div class="sticky-top" style="top: 100px;">
-                    <h3 class="section-title text-start mb-4" style="font-size: 1.5rem; color: #f59e0b; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
-                    
-                    <div class="premium-card position-relative" style="background: linear-gradient(145deg, #f8fafc, #ffffff); border-radius: 20px; border: 1px solid rgba(245, 158, 11, 0.2); box-shadow: 0 15px 35px rgba(37, 99, 235, 0.05), inset 0 0 0 1px rgba(255,255,255,0.5); overflow: hidden;">
-                        <!-- Decorative Top Border -->
-                        <div style="height: 4px; width: 100%; background: linear-gradient(90deg, #f59e0b, #2563eb);"></div>
-                        
-                        <!-- Background Glow -->
-                        <div class="position-absolute" style="top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
-                        
-                        <div class="p-4 relative z-1">
-                            <div class="d-flex align-items-center gap-3 mb-4">
-                                <div class="icon-box" style="width: 45px; height: 45px; min-width: 45px; border-radius: 14px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2)); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245,158,11,0.15);">
-                                    <i class="bi bi-star-fill" style="color: #f59e0b; font-size: 1.2rem;"></i>
-                                </div>
-                                <div>
-                                    <h4 class="mb-0 fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b; letter-spacing: 0.5px;">Unlock Premium</h4>
-                                    <p class="mb-0 text-secondary" style="font-size: 0.8rem;">Get full access to all resources</p>
-                                </div>
-                            </div>
-
-                            <ul class="list-unstyled mb-4 d-flex flex-column gap-3">
-                                <li class="d-flex align-items-center p-2 rounded-3" style="background: rgba(37,99,235,0.03); border: 1px solid rgba(37,99,235,0.05); transition: transform 0.2s;" onmouseover="this.style.transform='translateX(5px)';" onmouseout="this.style.transform='none';">
-                                    <i class="bi bi-file-earmark-pdf-fill me-3" style="color: #2563eb; font-size: 1.1rem;"></i>
-                                    <span class="fw-semibold flex-grow-1" style="font-size: 0.85rem; color: #1e293b;">CAT 1 & 2 Past Papers</span>
-                                    <i class="bi bi-lock-fill text-muted" style="font-size: 0.8rem;"></i>
-                                </li>
-                                <li class="d-flex align-items-center p-2 rounded-3" style="background: rgba(37,99,235,0.03); border: 1px solid rgba(37,99,235,0.05); transition: transform 0.2s;" onmouseover="this.style.transform='translateX(5px)';" onmouseout="this.style.transform='none';">
-                                    <i class="bi bi-journal-check me-3" style="color: #2563eb; font-size: 1.1rem;"></i>
-                                    <span class="fw-semibold flex-grow-1" style="font-size: 0.85rem; color: #1e293b;">Assignments & Solutions</span>
-                                    <i class="bi bi-lock-fill text-muted" style="font-size: 0.8rem;"></i>
-                                </li>
-                                <li class="d-flex align-items-center p-2 rounded-3" style="background: rgba(37,99,235,0.03); border: 1px solid rgba(37,99,235,0.05); transition: transform 0.2s;" onmouseover="this.style.transform='translateX(5px)';" onmouseout="this.style.transform='none';">
-                                    <i class="bi bi-award-fill me-3" style="color: #2563eb; font-size: 1.1rem;"></i>
-                                    <span class="fw-semibold flex-grow-1" style="font-size: 0.85rem; color: #1e293b;">University Exams (UE)</span>
-                                    <i class="bi bi-lock-fill text-muted" style="font-size: 0.8rem;"></i>
-                                </li>
-                            </ul>
-
-                            <div style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px dashed rgba(245, 158, 11, 0.3);">
-                                <p class="mb-0 text-center" style="font-size: 0.75rem; color: #64748b; line-height: 1.5;">Create a free account to download all past papers, assignments, and premium notes without limits.</p>
-                            </div>
-
-                            <a href="/register" class="btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2 position-relative overflow-hidden" 
-                               style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 0.9rem; font-family: 'Outfit', sans-serif; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;" 
-                               onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 25px rgba(245, 158, 11, 0.4)';" 
-                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(245, 158, 11, 0.3)';">
-                                <i class="bi bi-person-plus-fill"></i> Create Free Account
-                                <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 3s infinite;"></div>
-                            </a>
-                        </div>
+                    <div class="mb-4 position-relative">
+                        <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
+                        <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Exclusive tools & resources</p>
                     </div>
+                    
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-4">
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 1 PAST PAPERS</h6>
+                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
+                        </li>
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 2 PAST PAPERS</h6>
+                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
+                        </li>
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">ASSIGNMENTS & SOLUTIONS</h6>
+                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
+                        </li>
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">UNIVERSITY EXAMS (UE)</h6>
+                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
+                        </li>
+                    </ul>
 
-                    <div th:replace="~{fragments/sjuit_components :: trending_notes}"></div>
+                    <!-- Premium Unlock CTA -->
+                    <div class="premium-cta-card mb-5 position-relative overflow-hidden" style="background: #1a1d29; border-radius: 14px; padding: 16px 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); transition: all 0.3s ease;">
+                        
+                        <!-- Rocket Icon Box -->
+                        <div style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);">
+                            <i class="bi bi-rocket-takeoff-fill" style="color: #f59e0b; font-size: 0.95rem;"></i>
+                        </div>
+
+                        <!-- Content -->
+                        <h6 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #f59e0b; font-size: 1rem; letter-spacing: 0.2px;">Unlock Premium Access</h6>
+                        <p class="mb-3" style="color: rgba(255,255,255,0.7); font-size: 0.75rem; line-height: 1.4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                            Join our platform today to get unlimited access to <span class="fw-bold text-white">past papers</span>, <span class="fw-bold text-white">assignments</span>, and <span class="fw-bold text-white">premium notes</span> curated for your success.
+                        </p>
+
+                        <!-- Button -->
+                        <a href="/register" class="btn w-100 fw-bold d-flex justify-content-center align-items-center gap-2" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: none; border-radius: 8px; padding: 8px 0; font-size: 0.8rem; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(245, 158, 11, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            Create Free Account <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
-
+            </div>
         </div>
     </div>
 
@@ -422,17 +378,15 @@
                 </div>
             </div>
         </div>
-    </div>
-
-
-
-</div>
+    </div> <!-- Close modal -->
 
     <!-- Shared Footer -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
+    </div> <!-- Close main-content -->
+</div> <!-- Close page-layout -->
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</div>
 </body>
 </html>

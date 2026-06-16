@@ -13,7 +13,12 @@
     <!-- Premium Global CSS -->
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+
+    <style>
+        
+    </style>
 </head>
+
 <body>
 
     <!-- Header Navbar -->
@@ -84,14 +89,38 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label for="category" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Category Type:</label>
-                            <select name="category" id="category" class="form-select form-select-custom" required>
-                                <option value="Note">Note</option>
-                                <option value="Past Paper">Past Paper</option>
-                                <option value="Assignment">Assignment</option>
-                                <option value="Video Tutorial">Video Tutorial</option>
-                            </select>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="moduleName" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Module Name (e.g., SERVER ADMINISTRATION):</label>
+                                <input type="text" name="moduleName" id="moduleName" class="form-control form-control-custom" placeholder="Enter module name..." required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="moduleCode" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Module Code:</label>
+                                <input type="text" name="moduleCode" id="moduleCode" class="form-control form-control-custom" placeholder="e.g. ITT 05201">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="category" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Category Type:</label>
+                                <select name="category" id="category" class="form-select form-select-custom" required onchange="toggleUnit()">
+                                    <option value="Note">Note</option>
+                                    <option value="Past Paper">Past Paper</option>
+                                    <option value="Assignment">Assignment</option>
+                                    <option value="Video Tutorial">Video Tutorial</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="unitNumberDiv">
+                                <label for="unitNumber" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Unit (Notes Only):</label>
+                                <select name="unitNumber" id="unitNumber" class="form-select form-select-custom">
+                                    <option value="">-- None --</option>
+                                    <option value="1">Unit 1</option>
+                                    <option value="2">Unit 2</option>
+                                    <option value="3">Unit 3</option>
+                                    <option value="4">Unit 4</option>
+                                    <option value="5">Unit 5</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div>
@@ -150,6 +179,18 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        function toggleUnit() {
+            var category = document.getElementById('category').value;
+            var unitDiv = document.getElementById('unitNumberDiv');
+            if (category === 'Note') {
+                unitDiv.style.display = 'block';
+            } else {
+                unitDiv.style.display = 'none';
+                document.getElementById('unitNumber').value = '';
+            }
+        }
+        toggleUnit(); // initial call
     </script>
 </body>
 </html>
