@@ -118,51 +118,61 @@
                 <style>
                     .category-scroll-container::-webkit-scrollbar { display: none; }
                     .premium-filter-btn {
-                        padding: 10px 24px;
+                        padding: 10px 26px;
                         border-radius: 50px;
-                        font-weight: 600;
-                        font-size: 0.9rem;
-                        letter-spacing: 0.3px;
-                        transition: all 0.3s ease;
+                        font-weight: 700;
+                        font-size: 0.8rem;
+                        font-family: 'Outfit', sans-serif;
+                        text-transform: uppercase;
+                        letter-spacing: 0.8px;
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                         white-space: nowrap;
                         text-decoration: none;
                         display: inline-flex;
                         align-items: center;
-                        border: 1px solid rgba(0,0,0,0.05);
+                        border: 1px solid rgba(0,0,0,0.06);
                         background: #ffffff;
                         color: #64748b;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
                     }
                     .premium-filter-btn:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-                        color: #2563eb;
-                        border-color: rgba(37,99,235,0.2);
+                        transform: translateY(-3px);
+                        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+                        color: #059669;
+                        border-color: rgba(16, 185, 129, 0.3);
                     }
                     .premium-filter-btn.active {
-                        background: linear-gradient(135deg, #2563eb, #3b82f6);
+                        background: linear-gradient(135deg, #059669, #10b981);
                         color: #ffffff;
                         border: none;
-                        box-shadow: 0 8px 20px rgba(37,99,235,0.3);
+                        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+                        transform: translateY(-1px);
+                    }
+                    .premium-filter-btn i {
+                        font-size: 1.1rem;
+                        transition: all 0.3s ease;
+                    }
+                    .premium-filter-btn:hover i {
+                        transform: scale(1.1);
                     }
                 </style>
                 
                 <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester}}" 
                    class="premium-filter-btn me-3" 
                    th:classappend="${selectedCategory == null} ? 'active' : ''">
-                   <i class="bi bi-grid-fill me-2" th:classappend="${selectedCategory == null} ? 'text-white' : 'text-primary'"></i> All Resources
+                   <i class="bi bi-grid-fill me-2" th:classappend="${selectedCategory == null} ? 'text-white' : 'text-success'"></i> All Resources
                 </a>
 
                 <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Note'}" 
                    class="premium-filter-btn me-3" 
                    th:classappend="${selectedCategory == 'Note'} ? 'active' : ''">
-                   <i class="bi bi-journal-text me-2" th:classappend="${selectedCategory == 'Note'} ? 'text-white' : 'text-info'"></i> Notes
+                   <i class="bi bi-journal-text me-2" th:classappend="${selectedCategory == 'Note'} ? 'text-white' : 'text-success'"></i> Notes
                 </a>
 
                 <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Past Paper'}" 
                    class="premium-filter-btn me-3" 
                    th:classappend="${selectedCategory == 'Past Paper'} ? 'active' : ''">
-                   <i class="bi bi-file-earmark-pdf-fill me-2" th:classappend="${selectedCategory == 'Past Paper'} ? 'text-white' : 'text-danger'"></i> Past Papers
+                   <i class="bi bi-file-earmark-pdf-fill me-2" th:classappend="${selectedCategory == 'Past Paper'} ? 'text-white' : 'text-success'"></i> Past Papers
                 </a>
 
                 <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Assignment'}" 
@@ -174,7 +184,7 @@
                 <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Video Tutorial'}" 
                    class="premium-filter-btn" 
                    th:classappend="${selectedCategory == 'Video Tutorial'} ? 'active' : ''">
-                   <i class="bi bi-play-circle-fill me-2" th:classappend="${selectedCategory == 'Video Tutorial'} ? 'text-white' : 'text-warning'"></i> Video Tutorials
+                   <i class="bi bi-play-circle-fill me-2" th:classappend="${selectedCategory == 'Video Tutorial'} ? 'text-white' : 'text-success'"></i> Video Tutorials
                 </a>
             </div>
         </div>
