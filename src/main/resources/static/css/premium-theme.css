@@ -1096,3 +1096,24 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         position: relative;
     }
 }
+
+/* Sidebar Accordion Styles */
+.sidebar-hover-item { position: relative; margin-bottom: 5px; }
+.sidebar-hover-btn {
+    background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
+    padding: 10px 16px; width: 100%; text-align: left;
+    font-family: 'Outfit', sans-serif; font-weight: 500;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.3s ease; cursor: pointer;
+}
+.sidebar-hover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.sidebar-hover-content {
+    margin-left: 10px; border-left: 2px solid rgba(255,255,255,0.1); padding-left: 10px;
+}
+.sidebar-hover-content a {
+    display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem;
+    padding: 8px 10px; transition: color 0.2s;
+}
+.sidebar-hover-content a:hover { color: #fff; }
+.sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
+.sidebar-hover-btn[aria-expanded="true"] i.chevron { transform: rotate(90deg); }
