@@ -113,6 +113,7 @@ public class NotesController {
         }
         model.addAttribute("notes", notes);
         model.addAttribute("selectedProgram", program);
+        model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
         return "notes";
     }
 

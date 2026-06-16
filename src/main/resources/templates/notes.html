@@ -64,100 +64,7 @@
 
 <body>
     <div class="page-layout">
-        <aside class="hero-sidebar">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
-
-            <div style="width: 100%; display: flex; flex-direction: column; height: 100%; position: relative; z-index: 2;">
-                <!-- College Name (Plain Text Link) -->
-                <a href="https://www.sjuit.ac.tz/" target="_blank" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:rgba(255,255,255,0.9); transition:all 0.3s ease; margin-bottom: 40px;" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='rgba(255,255,255,0.9)';">
-                    <i class="bi bi-building" style="font-size:1.4rem;"></i>
-                    <span style="font-size:0.9rem; font-weight:600; font-family:'Outfit',sans-serif; line-height:1.4;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Engineering and Technology'}">St. Joseph College of Engineering and Technology</span>
-                </a>
-
-                <!-- NTA Levels Dropdown Menu -->
-                <div style="flex-grow: 1; overflow-y: auto;">
-                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Selected Level</div>
-                    
-                    <div class="sidebar-hover-item" th:if="${selectedLevel == 4}">
-                        <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
-                            <span><i class="bi bi-book me-2" style="color: #60a5fa;"></i> NTA LEVEL 4</span>
-                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
-                        </div>
-                        <div class="sidebar-hover-content">
-                            <a th:href="@{'/notes?level=4&semester=1'}">Semester 1</a>
-                            <a th:href="@{'/notes?level=4&semester=2'}">Semester 2</a>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-hover-item" th:if="${selectedLevel == 5}">
-                        <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
-                            <span><i class="bi bi-book me-2" style="color: #a78bfa;"></i> NTA LEVEL 5</span>
-                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
-                        </div>
-                        <div class="sidebar-hover-content">
-                            <a th:href="@{'/notes?level=5&semester=1'}">Semester 1</a>
-                            <a th:href="@{'/notes?level=5&semester=2'}">Semester 2</a>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-hover-item" th:if="${selectedLevel == 6}">
-                        <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
-                            <span><i class="bi bi-book me-2" style="color: #f472b6;"></i> NTA LEVEL 6</span>
-                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
-                        </div>
-                        <div class="sidebar-hover-content">
-                            <a th:href="@{'/notes?level=6&semester=1'}">Semester 1</a>
-                            <a th:href="@{'/notes?level=6&semester=2'}">Semester 2</a>
-                        </div>
-                    </div>
-
-                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Other Levels</div>
-
-                    <div class="sidebar-hover-item" th:if="${selectedLevel != 4}">
-                        <div class="sidebar-hover-btn">
-                            <span><i class="bi bi-book me-2" style="color: #60a5fa;"></i> NTA LEVEL 4</span>
-                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
-                        </div>
-                        <div class="sidebar-hover-content">
-                            <a th:href="@{'/notes?level=4&semester=1'}">Semester 1</a>
-                            <a th:href="@{'/notes?level=4&semester=2'}">Semester 2</a>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-hover-item" th:if="${selectedLevel != 5}">
-                        <div class="sidebar-hover-btn">
-                            <span><i class="bi bi-book me-2" style="color: #a78bfa;"></i> NTA LEVEL 5</span>
-                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
-                        </div>
-                        <div class="sidebar-hover-content">
-                            <a th:href="@{'/notes?level=5&semester=1'}">Semester 1</a>
-                            <a th:href="@{'/notes?level=5&semester=2'}">Semester 2</a>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-hover-item" th:if="${selectedLevel != 6}">
-                        <div class="sidebar-hover-btn">
-                            <span><i class="bi bi-book me-2" style="color: #f472b6;"></i> NTA LEVEL 6</span>
-                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
-                        </div>
-                        <div class="sidebar-hover-content">
-                            <a th:href="@{'/notes?level=6&semester=1'}">Semester 1</a>
-                            <a th:href="@{'/notes?level=6&semester=2'}">Semester 2</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Settings -->
-                <div style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; padding-bottom: 20px;">
-                    <a href="#" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:rgba(255,255,255,0.7); transition:all 0.3s ease; font-family:'Outfit',sans-serif; font-size: 0.9rem;" onmouseover="this.style.color='#fff'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.transform='none';">
-                        <i class="bi bi-gear" style="font-size:1.1rem;"></i>
-                        <span>Settings</span>
-                    </a>
-                </div>
-            </div>
-        </aside>
+        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
         
         <div class="main-content">
     <!-- Header Navbar -->
@@ -234,6 +141,8 @@
         </div>
 
         <!-- Section Title -->
+        <div class="row animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="col-lg-7">
         <div class="row align-items-center mb-4">
             <div class="col-md-8">
                 <div class="d-flex align-items-center p-3 rounded-4" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
@@ -284,6 +193,54 @@
     <p class="text-secondary fw-semibold mb-0" style="font-size: 1.1rem;">No materials found for this selection yet.</p>
     <a th:href="@{${selectedLevel != null} ? '/semesters?level=' + selectedLevel : '/'}" class="btn btn-outline-light mt-3 px-4 rounded-pill">Select Another Semester</a>
 </div>
+
+            </div> <!-- Close col-lg-7 -->
+
+            <!-- RIGHT COLUMN: UNLOCKED PREMIUM FEATURES & TRENDING NOTES -->
+            <div class="col-lg-5 mt-5 mt-lg-0 ps-lg-4">
+                <div class="sticky-top" style="top: 100px;">
+                    <div class="mb-4 position-relative">
+                        <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #10b981; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(16, 185, 129, 0.4);">YOUR RESOURCES</h3>
+                        <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Unlocked premium materials</p>
+                    </div>
+                    
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-4">
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(16, 185, 129, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <div class="icon-box me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                <i class="bi bi-file-earmark-pdf-fill"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.85rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 1 PAST PAPERS</h6>
+                            <i class="bi bi-arrow-right-circle-fill ms-auto" style="color: #10b981; font-size: 1.1rem;"></i>
+                        </li>
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(16, 185, 129, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <div class="icon-box me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                <i class="bi bi-file-earmark-pdf-fill"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.85rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 2 PAST PAPERS</h6>
+                            <i class="bi bi-arrow-right-circle-fill ms-auto" style="color: #10b981; font-size: 1.1rem;"></i>
+                        </li>
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(16, 185, 129, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <div class="icon-box me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                <i class="bi bi-journal-check"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.85rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">ASSIGNMENTS & SOLUTIONS</h6>
+                            <i class="bi bi-arrow-right-circle-fill ms-auto" style="color: #10b981; font-size: 1.1rem;"></i>
+                        </li>
+                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(16, 185, 129, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <div class="icon-box me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                <i class="bi bi-mortarboard-fill"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.85rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">UNIVERSITY EXAMS (UE)</h6>
+                            <i class="bi bi-arrow-right-circle-fill ms-auto" style="color: #10b981; font-size: 1.1rem;"></i>
+                        </li>
+                    </ul>
+
+                    <!-- Trending Notes Component -->
+                    <div th:replace="~{fragments/sjuit_components :: trending_notes(notes=${popularNotes})}"></div>
+                </div>
+            </div>
+
+        </div> <!-- Close row animate-fade-in -->
 
         </div> <!-- Close container -->
 
