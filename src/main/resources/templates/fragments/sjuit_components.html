@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<aside class="hero-sidebar" th:fragment="sidebar">
+<aside class="hero-sidebar" th:fragment="sidebar" style="background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);">
             <div class="orb orb-1"></div>
             <div class="orb orb-2"></div>
             <div class="orb orb-3"></div>
@@ -164,7 +164,7 @@
                         <style>
                             .trending-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; border-color: rgba(37,99,235,0.1) !important; }
 <!-- Dynamic Modules Section -->
-                <div th:if="${groupedNotes != null && !groupedNotes.isEmpty()}" class="accordion accordion-flush mb-5" id="modulesAccordion" style="border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); background: #ffffff; overflow: hidden;">
+                <div th:fragment="notes_accordion" th:if="${groupedNotes != null && !groupedNotes.isEmpty()}" class="accordion accordion-flush mb-5" id="modulesAccordion" style="border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); background: #ffffff; overflow: hidden;">
                     <div th:each="entry, stat : ${groupedNotes}" class="accordion-item" style="border-bottom: 1px solid rgba(0,0,0,0.05); background: transparent; border-top: none;">
                         <h2 class="accordion-header" th:id="'heading' + ${stat.index}">
                             <button class="accordion-button collapsed py-3 px-4 fw-bold" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${stat.index}" aria-expanded="false" th:aria-controls="'collapse' + ${stat.index}" style="background: transparent; box-shadow: none;">
