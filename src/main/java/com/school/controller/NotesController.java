@@ -3,6 +3,8 @@ package com.school.controller;
 import com.school.model.Note;
 import com.school.model.User;
 import com.school.repository.NoteRepository;
+import com.school.repository.CourseRepository;
+import com.school.repository.SubjectRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -37,6 +39,12 @@ public class NotesController {
 
     @Autowired
     private NoteRepository noteRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @GetMapping("/home")
     public String home(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
@@ -148,6 +156,18 @@ public class NotesController {
                 moduleCodes.put(modName, note.getModuleCode());
             }
         }
+        
+        // Fetch subjects for this program, level, and semester to display even if empty
+        List<com.school.model.Course> courses = courseRepository.findByProgramType(program);
+        if (!courses.isEmpty()) {
+            com.school.model.Course course = courses.get(0);
+            List<com.school.model.Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), level, semester);
+            for (com.school.model.Subject sub : subjects) {
+                groupedNotes.putIfAbsent(sub.getName(), new ArrayList<>());
+                moduleCodes.putIfAbsent(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
+            }
+        }
+
         model.addAttribute("groupedNotes", groupedNotes);
         model.addAttribute("moduleCodes", moduleCodes);
         
