@@ -447,7 +447,41 @@
 <div th:fragment="notes_accordion" th:if="${groupedNotes != null && !groupedNotes.isEmpty()}" class="mb-5">
     
     <div th:each="entry, stat : ${groupedNotes}" class="mb-4" style="animation: fadeInUp 0.5s ease forwards;" th:styleappend="'animation-delay: ' + (${stat.index} * 0.1) + 's;'">
-        <div class="p-4 bg-white position-relative overflow-hidden" 
+        
+        <!-- CASE 1: EMPTY SUBJECTS (GOLD PREMIUM ANIMATED DESIGN) -->
+        <div th:if="${entry.value.isEmpty()}" class="p-4 bg-white position-relative overflow-hidden" 
+             style="border-radius: 20px; border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 10px 30px rgba(245, 158, 11, 0.08); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;"
+             onmouseover="this.style.transform='translateY(-5px) scale(1.01)'; this.style.boxShadow='0 20px 40px rgba(245, 158, 11, 0.2)'; this.style.borderColor='rgba(245, 158, 11, 0.6)';"
+             onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 30px rgba(245, 158, 11, 0.08)'; this.style.borderColor='rgba(245, 158, 11, 0.3)';">
+            
+            <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25" 
+                 style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(217, 119, 6, 0.1)); pointer-events: none; z-index: 0;">
+            </div>
+            
+            <div class="position-absolute" style="top: -20px; right: -20px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(251,191,36,0.3) 0%, transparent 70%); border-radius: 50%;"></div>
+            <div class="position-absolute" style="bottom: -20px; left: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(217,119,6,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+
+            <div class="d-flex align-items-center position-relative z-1">
+                <div class="icon-box rounded-circle d-flex align-items-center justify-content-center me-4 shadow-sm" 
+                     style="width: 70px; height: 70px; min-width: 70px; color: white; background: linear-gradient(135deg, #f59e0b, #b45309); border: 3px solid #fef3c7; transition: transform 0.5s ease;"
+                     onmouseover="this.style.transform='rotate(360deg)';">
+                    <i class="bi bi-star-fill fs-3" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="mb-0 fw-bold text-uppercase" style="color: #78350f; font-family: 'Outfit', sans-serif; letter-spacing: -0.5px; font-size: 1.5rem;" th:text="${entry.key}">MODULE NAME</h4>
+                        <span class="badge" style="font-size: 0.8rem; padding: 8px 16px; border-radius: 50px; font-weight: 700; color: #b45309; background: rgba(251, 191, 36, 0.2); border: 1px solid rgba(251, 191, 36, 0.4); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);" th:text="${moduleCodes[entry.key] != null && !moduleCodes[entry.key].isEmpty() && moduleCodes[entry.key] != entry.key ? moduleCodes[entry.key] : 'SUBJECT'}">CODE</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <p class="mb-0" style="color: #92400e; font-size: 0.95rem; font-weight: 500;"><i class="bi bi-hourglass-split me-1"></i> <i>Course materials & assignments coming soon...</i></p>
+                        <span class="badge rounded-pill" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #f59e0b; padding: 5px 12px; font-size: 0.7rem; font-weight: 600; border: 1px solid rgba(245, 158, 11, 0.5);"><i class="bi bi-lock-fill me-1"></i> PREMIUM PENDING</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CASE 2: MODULES WITH NOTES -->
+        <div th:unless="${entry.value.isEmpty()}" class="p-4 bg-white position-relative overflow-hidden" 
              style="border-radius: 20px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 10px 30px rgba(0,0,0,0.04); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
             
             <!-- Dynamic colorful gradient background -->
