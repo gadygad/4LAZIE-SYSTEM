@@ -1165,3 +1165,47 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 .sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
 .sidebar-hover-btn[aria-expanded="true"] i.chevron { transform: rotate(90deg); }
+
+/* Global Mobile Responsive Layout adjustments (strictly for screens < 992px) */
+@media (max-width: 991.98px) {
+    /* Stack the sidebar and main content vertically */
+    .page-layout {
+        flex-direction: column !important;
+    }
+    
+    /* Make the sidebar full width and let it fit its content on mobile */
+    .hero-sidebar {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 20px 15px !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
+
+    /* Navbar container spacing on mobile */
+    .navbar-custom .container {
+        flex-wrap: wrap !important;
+        gap: 10px;
+        justify-content: center !important;
+    }
+    
+    /* Make the logo container take full width and center on mobile if needed */
+    .navbar-brand {
+        margin-right: 0 !important;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Push search and actions to next row cleanly if flex-wrap occurs */
+    .search-container {
+        order: 3;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 10px 0 !important;
+    }
+}
+
