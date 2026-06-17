@@ -4,21 +4,23 @@
     <div th:fragment="actions" class="d-flex align-items-center">
         <!-- Action Buttons -->
         <div class="d-flex align-items-center me-2 me-md-4">
-            <!-- Home Button -->
-            <a href="/" class="d-flex align-items-center justify-content-center me-3 text-decoration-none position-relative" 
-               style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-               onmouseover="this.style.boxShadow='0 8px 25px rgba(37, 99, 235, 0.25), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(37, 99, 235, 0.3)'; this.querySelector('i').style.color='#2563eb';" 
-               onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.4)'; this.querySelector('i').style.color='#64748b';">
-                <i class="bi bi-house-door-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
-            </a>
+            <!-- Premium Home & Notification Buttons for Logged In Users Only -->
+            <div th:if="${session.user != null}" class="d-flex align-items-center">
+                <!-- Home Button -->
+                <a href="/" class="d-flex align-items-center justify-content-center me-3 text-decoration-none position-relative" 
+                   style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                   onmouseover="this.style.boxShadow='0 8px 25px rgba(37, 99, 235, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(37, 99, 235, 0.4)'; this.querySelector('i').style.color='#2563eb';" 
+                   onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
+                    <i class="bi bi-house-door-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
+                </a>
 
-            <!-- Notification Button -->
-            <div class="dropdown me-3">
-                <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                   style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                   onmouseover="this.style.boxShadow='0 8px 25px rgba(245, 158, 11, 0.25), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(245, 158, 11, 0.3)'; this.querySelector('i').style.color='#f59e0b';" 
-                   onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.4)'; this.querySelector('i').style.color='#64748b';">
-                    <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
+                <!-- Notification Button -->
+                <div class="dropdown me-3">
+                    <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                       onmouseover="this.style.boxShadow='0 8px 25px rgba(245, 158, 11, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(245, 158, 11, 0.4)'; this.querySelector('i').style.color='#f59e0b';" 
+                       onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
+                        <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
                     <!-- Notification Badge with Pulse -->
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); animation: pulse-danger 2s infinite;">
                         3
@@ -75,6 +77,7 @@
                         <a href="#" class="text-decoration-none fw-bold" style="font-size: 0.9rem; color: #2563eb; transition: color 0.2s;" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#2563eb'">View All Notifications</a>
                     </li>
                 </ul>
+                </div>
             </div>
 
             <!-- Standalone Sign Out Button -->
