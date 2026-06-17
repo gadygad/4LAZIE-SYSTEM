@@ -103,15 +103,14 @@ public class DatabaseInitializer implements CommandLineRunner {
                     "SERVER ADMINISTRATION", "CSE 05201", 125));
             noteRepository.save(createNote("Web Designing", "web_design.pdf", "DIP_CSE", 5, 2, "Note", "WEB DESIGNING",
                     "CSE 05202", 110));
-            noteRepository.save(createNote("Computer Architecture and Assembly Language Programming",
+            noteRepository.save(createNote("Computer Architecture and Assembly Programming Language",
                     "comp_arch_asm.pdf", "DIP_CSE", 5, 2, "Note",
-                    "COMPUTER ARCHITECTURE AND ASSEMBLY LANGUAGE PROGRAMMING", "CSE 05203", 95));
-            noteRepository.save(createNote("Computer Network", "comp_network.pdf", "DIP_CSE", 5, 2, "Note",
-                    "COMPUTER NETWORK", "CSE 05204", 130));
-            noteRepository.save(createNote("Microprocessor and Microcontroller", "micro_proc.pdf", "DIP_CSE", 5, 2,
-                    "Note", "MICROPROCESSOR AND MICROCONTROLLER", "CSE 05205", 100));
+                    "COMPUTER ARCHITECTURE AND ASSEMBLY PROGRAMMING LANGUAGE", "CSE 05203", 95));
+            noteRepository.save(createNote("Computer Networks", "comp_network.pdf", "DIP_CSE", 5, 2, "Note",
+                    "COMPUTER NETWORKS", "CSE 05204", 130));
             noteRepository.save(createNote("Basic Data Communication", "data_comm.pdf", "DIP_CSE", 5, 2, "Note",
                     "BASIC DATA COMMUNICATION", "CSE 05206", 85));
+
 
             // DIP_CE (Civil Engineering) - Level 4 Semester 1
             noteRepository.save(createNote("Engineering Drawing", "eng_drawing.pdf", "DIP_CE", 4, 1, "Note",
