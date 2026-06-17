@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class DataInitializer {
+public class CurriculumInitializer {
 
     @Bean
-    public CommandLineRunner initData(CourseRepository courseRepository, SubjectRepository subjectRepository) {
+    public CommandLineRunner initCurriculumData(CourseRepository courseRepository, SubjectRepository subjectRepository) {
         return args -> {
             // Check if course already exists
             List<Course> courses = courseRepository.findByProgramType("DIP_IT");
