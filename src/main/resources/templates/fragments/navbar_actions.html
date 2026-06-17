@@ -82,8 +82,8 @@
 
             <!-- Standalone Sign Out Button -->
             <div th:if="${session.user != null}">
-                <a href="/logout" class="btn btn-danger rounded-pill px-3 d-flex align-items-center" style="font-weight: 600; font-family: 'Outfit', sans-serif; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;">
-                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                <a href="/logout" class="btn btn-danger rounded-pill px-2 px-sm-3 d-flex align-items-center me-1 me-sm-2" style="font-weight: 600; font-family: 'Outfit', sans-serif; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;">
+                    <i class="bi bi-box-arrow-right me-0 me-sm-2"></i> <span class="d-none d-sm-inline">Logout</span>
                 </a>
             </div>
         </div>
@@ -93,9 +93,13 @@
                style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.6); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
                onmouseover="this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-2px)';" 
                onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)'; this.style.transform='none';">
-                <img th:if="${session.user != null and session.user.profilePicture != null}" th:src="@{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
-                <img th:unless="${session.user != null and session.user.profilePicture != null}" src="https://ui-avatars.com/api/?name=Student&background=2563eb&color=fff" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
-                <div class="d-flex flex-column justify-content-center me-2">
+                <img th:if="${session.user != null and session.user.profilePicture != null}" th:src="@{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <img th:unless="${session.user != null and session.user.profilePicture != null}" src="https://ui-avatars.com/api/?name=Student&background=2563eb&color=fff" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <!-- Mobile-only avatar without margin -->
+                <img th:if="${session.user != null and session.user.profilePicture != null}" th:src="@{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-sm-none" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <img th:unless="${session.user != null and session.user.profilePicture != null}" src="https://ui-avatars.com/api/?name=Student&background=2563eb&color=fff" alt="Profile" class="rounded-circle d-sm-none" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                
+                <div class="d-none d-sm-flex flex-column justify-content-center me-2">
                     <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</span>
                     <span class="text-muted lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Premium</span>
                 </div>
