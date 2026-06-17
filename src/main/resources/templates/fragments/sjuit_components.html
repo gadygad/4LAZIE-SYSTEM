@@ -165,34 +165,50 @@
         let content = item.querySelector('.sidebar-hover-content');
         if (!content) return;
         
+        const isMobile = window.innerWidth < 992;
+        
         item.querySelector('.chevron').style.transform = 'rotate(90deg)';
         item.style.background = 'rgba(255,255,255,0.05)';
 
-        // Remove from current parent and append to body if not already
-        if (content.parentElement === item) {
-            document.body.appendChild(content);
-            content.sourceItem = item;
-            
-            // Add hover handlers to the content itself
-            content.onmouseenter = function() { clearTimeout(flyoutTimeout); };
-            content.onmouseleave = function() { hideFlyout(item); };
-        }
+        if (!isMobile) {
+            // Remove from current parent and append to body if not already
+            if (content.parentElement === item) {
+                document.body.appendChild(content);
+                content.sourceItem = item;
+                
+                // Add hover handlers to the content itself
+                content.onmouseenter = function() { clearTimeout(flyoutTimeout); };
+                content.onmouseleave = function() { hideFlyout(item); };
+            }
 
-        // Calculate absolute position
-        const rect = item.getBoundingClientRect();
+            // Calculate absolute position
+            const rect = item.getBoundingClientRect();
+            content.style.position = 'fixed';
+            content.style.top = rect.top + 'px';
+            content.style.left = (rect.right + 5) + 'px'; // 5px gap
+            content.style.zIndex = '9999';
+            content.style.animation = 'flyoutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            content.style.maxHeight = 'none';
+        } else {
+            // Mobile behavior: act as an accordion
+            content.sourceItem = item;
+            content.style.position = 'static';
+            content.style.width = '100%';
+            content.style.marginTop = '10px';
+            content.style.zIndex = 'auto';
+            content.style.animation = 'none';
+            // Disable mouseleave hide on mobile to allow tapping links easily
+            item.onmouseleave = null;
+        }
+        
         content.style.display = 'block';
-        content.style.position = 'fixed';
-        content.style.top = rect.top + 'px';
-        content.style.left = (rect.right + 5) + 'px'; // 5px gap
-        content.style.zIndex = '9999';
-        content.style.animation = 'flyoutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-        content.style.maxHeight = 'none';
         content.style.opacity = '1';
         
         activeFlyout = content;
     }
 
     function hideFlyout(item) {
+        if (window.innerWidth < 992) return; // Don't auto-hide on mobile
         flyoutTimeout = setTimeout(() => {
             if (activeFlyout && activeFlyout.sourceItem === item) {
                 hideFlyoutImmediate();
@@ -207,7 +223,9 @@
             if (activeFlyout.sourceItem) {
                 activeFlyout.sourceItem.querySelector('.chevron').style.transform = 'rotate(0deg)';
                 activeFlyout.sourceItem.style.background = 'transparent';
-                activeFlyout.sourceItem.appendChild(activeFlyout);
+                if (activeFlyout.parentElement !== activeFlyout.sourceItem) {
+                    activeFlyout.sourceItem.appendChild(activeFlyout);
+                }
             }
             activeFlyout = null;
         }
