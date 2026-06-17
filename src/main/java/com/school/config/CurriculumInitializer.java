@@ -18,17 +18,17 @@ public class CurriculumInitializer {
     public CommandLineRunner initCurriculumData(CourseRepository courseRepository, SubjectRepository subjectRepository) {
         return args -> {
             // Check if course already exists
-            List<Course> courses = courseRepository.findByProgramType("DIP_IT");
-            Course diplomaIT;
+            List<Course> courses = courseRepository.findByProgramType("DIP_CSE");
+            Course diplomaCSE;
             if (courses.isEmpty()) {
-                diplomaIT = new Course("DIPLOMA IN IT", "DIP_IT");
-                diplomaIT = courseRepository.save(diplomaIT);
+                diplomaCSE = new Course("DIPLOMA IN CSE", "DIP_CSE");
+                diplomaCSE = courseRepository.save(diplomaCSE);
             } else {
-                diplomaIT = courses.get(0);
+                diplomaCSE = courses.get(0);
             }
 
             // Check if subjects for level 5 semester 2 exist
-            List<Subject> existingSubjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaIT.getId(), 5, 2);
+            List<Subject> existingSubjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 5, 2);
             if (existingSubjects.isEmpty()) {
                 List<String> moduleNames = Arrays.asList(
                         "SERVER ADMINISTRATION",
@@ -43,7 +43,7 @@ public class CurriculumInitializer {
                     subject.setName(name);
                     subject.setSemesterNo(2);
                     subject.setLevelNo(5);
-                    subject.setCourse(diplomaIT);
+                    subject.setCourse(diplomaCSE);
                     subject.setCode("DIP" + (520 + moduleNames.indexOf(name) + 1));
                     subjectRepository.save(subject);
                 }

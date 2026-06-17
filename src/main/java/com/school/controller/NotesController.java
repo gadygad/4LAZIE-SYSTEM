@@ -389,6 +389,17 @@ public class NotesController {
             }
         }
         
+        // Fetch subjects for this program, level, and semester to display even if empty
+        List<com.school.model.Course> courses = courseRepository.findByProgramType(program);
+        if (!courses.isEmpty()) {
+            com.school.model.Course course = courses.get(0);
+            List<com.school.model.Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), level, semester);
+            for (com.school.model.Subject sub : subjects) {
+                groupedNotes.putIfAbsent(sub.getName(), new ArrayList<>());
+                moduleCodes.putIfAbsent(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
+            }
+        }
+        
         model.addAttribute("selectedProgram", program);
         model.addAttribute("selectedLevel", level);
         model.addAttribute("selectedSemester", semester);
