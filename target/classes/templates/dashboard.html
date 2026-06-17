@@ -14,7 +14,118 @@
     
 
     <style>
+        /* Premium Dropdown Styles */
+        .premium-dropdown {
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(12px) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+            padding: 12px !important;
+            min-width: 240px;
+        }
+        .premium-dropdown .dropdown-item {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #475569;
+        }
+        .premium-dropdown .dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            color: #10b981;
+            transform: translateX(4px);
+        }
+        .premium-dropdown .dropdown-header {
+            font-weight: 800;
+            color: #10b981;
+            letter-spacing: 1px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
         
+        /* Premium Quick Switcher Buttons */
+        .premium-quick-btn {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: #fff;
+            color: #64748b;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            text-decoration: none;
+        }
+        .premium-quick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(16,185,129,0.15);
+            color: #10b981;
+            border-color: rgba(16,185,129,0.3);
+        }
+        .premium-quick-btn.active {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff !important;
+            border: none;
+            box-shadow: 0 6px 15px rgba(16,185,129,0.3);
+        }
+        .premium-quick-btn.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,0.4);
+        }
+        .premium-quick-btn i {
+            transition: color 0.3s ease;
+        }
+        .premium-quick-btn.active i {
+            color: #fff !important;
+        }
+        .premium-quick-btn:hover:not(.active) i {
+            color: #10b981 !important;
+        }
+        
+        /* Premium Degree Quick Switcher Buttons */
+        .premium-quick-btn-deg {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: #fff;
+            color: #64748b;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            text-decoration: none;
+        }
+        .premium-quick-btn-deg:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99,102,241,0.15);
+            color: #6366f1;
+            border-color: rgba(99,102,241,0.3);
+        }
+        .premium-quick-btn-deg.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #fff !important;
+            border: none;
+            box-shadow: 0 6px 15px rgba(99,102,241,0.3);
+        }
+        .premium-quick-btn-deg.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99,102,241,0.4);
+        }
+        .premium-quick-btn-deg i {
+            transition: color 0.3s ease;
+        }
+        .premium-quick-btn-deg.active i {
+            color: #fff !important;
+        }
+        .premium-quick-btn-deg:hover:not(.active) i {
+            color: #6366f1 !important;
+        }
     </style>
 </head>
 
@@ -49,7 +160,7 @@
             </a>
             
             <!-- Search Bar moved to navbar -->
-            <div class="search-container position-relative mx-3 d-none d-md-block" style="flex-grow: 1; max-width: 450px;">
+            <div class="search-container position-relative mx-3" style="flex-grow: 1; max-width: 450px;">
                 <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
                 <input type="text" id="smartSearchInput" autocomplete="off" class="form-control" placeholder="Search modules, notes, or past papers..." 
                        style="padding: 12px 20px 12px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
@@ -134,14 +245,26 @@
                         <!-- Dropdown for Program Switching -->
                         <div class="dropdown me-3">
                             <h2 class="fw-bold m-0 d-flex align-items-center dropdown-toggle" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; text-transform: uppercase; font-size: 1.1rem; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#0f172a'" data-bs-toggle="dropdown" aria-expanded="false" title="Click to change course">
-                                <span th:text="${selectedProgram == 'DIP_IT' ? 'DIP IN IT' : (selectedProgram == 'DIP_CSE' ? 'DIP IN CSE' : (selectedProgram == 'DIP_CE' ? 'DIP IN CE' : (selectedProgram == 'DIP_ME' ? 'DIP IN ME' : 'MODULES')))}">MODULES</span>
+                                <span th:text="${selectedProgram != null ? (selectedProgram.startsWith('DIP_') ? 'DIP IN ' + selectedProgram.substring(4) : (selectedProgram.startsWith('DEG_') ? 'DEG IN ' + selectedProgram.substring(4) : (selectedProgram == 'DEGREE_EDU' ? 'DEGREE EDU' : 'MODULES'))) : 'MODULES'}">MODULES</span>
                             </h2>
-                            <ul class="dropdown-menu border-0 shadow-sm rounded-4" style="font-family: 'Outfit', sans-serif; border: 1px solid rgba(0,0,0,0.05) !important;">
-                                <li><h6 class="dropdown-header fw-bold text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">Badilisha Kozi</h6></li>
+                            <ul class="dropdown-menu premium-dropdown rounded-4" style="font-family: 'Outfit', sans-serif;">
+                                <li><h6 class="dropdown-header fw-bold text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">DIPLOMA</h6></li>
                                 <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_IT&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-laptop me-2 text-muted"></i>DIP IN IT</a></li>
                                 <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_CSE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-terminal me-2 text-muted"></i>DIP IN CSE</a></li>
                                 <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_CE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-cone-striped me-2 text-muted"></i>DIP IN CE</a></li>
                                 <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_ME&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-gear-wide-connected me-2 text-muted"></i>DIP IN ME</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_EEE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-lightning me-2 text-muted"></i>DIP IN EEE</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_MTE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-robot me-2 text-muted"></i>DIP IN MTE</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_ECE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-broadcast me-2 text-muted"></i>DIP IN ECE</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header fw-bold text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">DEGREE</h6></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_IT&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-laptop me-2 text-muted"></i>DEG IN IT</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_CSE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-terminal me-2 text-muted"></i>DEG IN CSE</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_CE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-cone-striped me-2 text-muted"></i>DEG IN CE</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_ME&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-gear-wide-connected me-2 text-muted"></i>DEG IN ME</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_EEE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-lightning me-2 text-muted"></i>DEG IN EEE</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_MTE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-robot me-2 text-muted"></i>DEG IN MTE</a></li>
+                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_ECE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-broadcast me-2 text-muted"></i>DEG IN ECE</a></li>
                             </ul>
                         </div>
                         
@@ -192,35 +315,100 @@
                 <div class="sticky-top" style="top: 100px;">
                 
                     <!-- QUICK COURSE SWITCHER -->
-                    <div class="mb-4 position-relative">
-                        <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">Badilisha Kozi Haraka</h3>
-                        <p class="m-0 mt-1 mb-3" style="font-size: 0.75rem; font-weight: 500; color: #64748b;">Chagua kozi nyingine kutazama notes zake</p>
+                    <div class="mb-4 position-relative p-4 rounded-4" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 10px 40px rgba(0,0,0,0.04);">
+                        <h3 class="m-0 d-flex align-items-center" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">
+                            <i class="bi bi-grid-fill me-2" style="background: linear-gradient(135deg, #10b981, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> Course Navigator
+                        </h3>
+                        <p class="m-0 mt-1 mb-4" style="font-size: 0.75rem; font-weight: 500; color: #64748b;">Fast-switch between Diploma and Degree programs</p>
                         
-                        <div class="d-flex flex-wrap gap-2">
-                            <a th:href="@{'/dashboard?program=DIP_IT&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                               class="btn btn-sm d-flex align-items-center justify-content-center"
-                               th:style="${selectedProgram == 'DIP_IT' ? 'background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; box-shadow: 0 4px 10px rgba(16,185,129,0.3);' : 'background: #fff; color: #64748b; border: 1px solid rgba(0,0,0,0.05);'}"
-                               style="border-radius: 10px; font-size: 0.8rem; font-weight: 600; padding: 8px 16px; transition: all 0.3s ease;">
-                               <i class="bi bi-laptop me-2" th:classappend="${selectedProgram == 'DIP_IT' ? 'text-white' : 'text-success'}"></i> IT
-                            </a>
-                            <a th:href="@{'/dashboard?program=DIP_CSE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                               class="btn btn-sm d-flex align-items-center justify-content-center"
-                               th:style="${selectedProgram == 'DIP_CSE' ? 'background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; box-shadow: 0 4px 10px rgba(16,185,129,0.3);' : 'background: #fff; color: #64748b; border: 1px solid rgba(0,0,0,0.05);'}"
-                               style="border-radius: 10px; font-size: 0.8rem; font-weight: 600; padding: 8px 16px; transition: all 0.3s ease;">
-                               <i class="bi bi-terminal me-2" th:classappend="${selectedProgram == 'DIP_CSE' ? 'text-white' : 'text-success'}"></i> CSE
-                            </a>
-                            <a th:href="@{'/dashboard?program=DIP_CE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                               class="btn btn-sm d-flex align-items-center justify-content-center"
-                               th:style="${selectedProgram == 'DIP_CE' ? 'background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; box-shadow: 0 4px 10px rgba(16,185,129,0.3);' : 'background: #fff; color: #64748b; border: 1px solid rgba(0,0,0,0.05);'}"
-                               style="border-radius: 10px; font-size: 0.8rem; font-weight: 600; padding: 8px 16px; transition: all 0.3s ease;">
-                               <i class="bi bi-cone-striped me-2" th:classappend="${selectedProgram == 'DIP_CE' ? 'text-white' : 'text-success'}"></i> CE
-                            </a>
-                            <a th:href="@{'/dashboard?program=DIP_ME&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                               class="btn btn-sm d-flex align-items-center justify-content-center"
-                               th:style="${selectedProgram == 'DIP_ME' ? 'background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; box-shadow: 0 4px 10px rgba(16,185,129,0.3);' : 'background: #fff; color: #64748b; border: 1px solid rgba(0,0,0,0.05);'}"
-                               style="border-radius: 10px; font-size: 0.8rem; font-weight: 600; padding: 8px 16px; transition: all 0.3s ease;">
-                               <i class="bi bi-gear-wide-connected me-2" th:classappend="${selectedProgram == 'DIP_ME' ? 'text-white' : 'text-success'}"></i> ME
-                            </a>
+                        <!-- DIPLOMA CATEGORY -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 me-2 rounded-pill" style="font-weight: 700; letter-spacing: 1px; font-size: 0.65rem;"><i class="bi bi-award me-1"></i> DIPLOMA</span>
+                                <div style="flex-grow: 1; height: 1px; background: linear-gradient(90deg, rgba(16,185,129,0.3), transparent);"></div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a th:href="@{'/dashboard?program=DIP_IT&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_IT' ? 'active' : ''}">
+                                   <i class="bi bi-laptop me-2"></i> IT
+                                </a>
+                                <a th:href="@{'/dashboard?program=DIP_CSE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_CSE' ? 'active' : ''}">
+                                   <i class="bi bi-terminal me-2"></i> CSE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DIP_CE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_CE' ? 'active' : ''}">
+                                   <i class="bi bi-cone-striped me-2"></i> CE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DIP_ME&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_ME' ? 'active' : ''}">
+                                   <i class="bi bi-gear-wide-connected me-2"></i> ME
+                                </a>
+                                <a th:href="@{'/dashboard?program=DIP_EEE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_EEE' ? 'active' : ''}">
+                                   <i class="bi bi-lightning me-2"></i> EEE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DIP_MTE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_MTE' ? 'active' : ''}">
+                                   <i class="bi bi-robot me-2"></i> MTE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DIP_ECE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
+                                   th:classappend="${selectedProgram == 'DIP_ECE' ? 'active' : ''}">
+                                   <i class="bi bi-broadcast me-2"></i> ECE
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- DEGREE CATEGORY -->
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-indigo bg-opacity-10 text-indigo border border-indigo border-opacity-25 px-3 py-1 me-2 rounded-pill" style="font-weight: 700; letter-spacing: 1px; font-size: 0.65rem; color: #6366f1; border-color: rgba(99,102,241,0.3) !important;"><i class="bi bi-mortarboard-fill me-1"></i> DEGREE</span>
+                                <div style="flex-grow: 1; height: 1px; background: linear-gradient(90deg, rgba(99,102,241,0.3), transparent);"></div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a th:href="@{'/dashboard?program=DEG_IT&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_IT' ? 'active' : ''}">
+                                   <i class="bi bi-laptop me-2"></i> IT
+                                </a>
+                                <a th:href="@{'/dashboard?program=DEG_CSE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_CSE' ? 'active' : ''}">
+                                   <i class="bi bi-terminal me-2"></i> CSE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DEG_CE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_CE' ? 'active' : ''}">
+                                   <i class="bi bi-cone-striped me-2"></i> CE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DEG_ME&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_ME' ? 'active' : ''}">
+                                   <i class="bi bi-gear-wide-connected me-2"></i> ME
+                                </a>
+                                <a th:href="@{'/dashboard?program=DEG_EEE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_EEE' ? 'active' : ''}">
+                                   <i class="bi bi-lightning me-2"></i> EEE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DEG_MTE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_MTE' ? 'active' : ''}">
+                                   <i class="bi bi-robot me-2"></i> MTE
+                                </a>
+                                <a th:href="@{'/dashboard?program=DEG_ECE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
+                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
+                                   th:classappend="${selectedProgram == 'DEG_ECE' ? 'active' : ''}">
+                                   <i class="bi bi-broadcast me-2"></i> ECE
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <hr style="border-color: rgba(0,0,0,0.05); margin: 20px 0;">

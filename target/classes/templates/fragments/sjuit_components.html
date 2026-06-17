@@ -28,7 +28,10 @@
                     
                     <div class="sidebar-hover-item" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
                         <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
-                            <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DIPLOMA IN IT</span>
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DIPLOMA IN IT</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Information Technology</span>
+                            </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
                         <div class="sidebar-hover-content">
@@ -43,7 +46,10 @@
 
                     <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
                         <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
-                            <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DIPLOMA IN CSE</span>
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DIPLOMA IN CSE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Computer Science & Engineering</span>
+                            </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
                         <div class="sidebar-hover-content">
@@ -58,7 +64,10 @@
 
                     <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
                         <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
-                            <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DIPLOMA IN CE</span>
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DIPLOMA IN CE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Civil Engineering</span>
+                            </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
                         <div class="sidebar-hover-content">
@@ -73,7 +82,10 @@
 
                     <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
                         <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
-                            <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DIPLOMA IN ME</span>
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DIPLOMA IN ME</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechanical Engineering</span>
+                            </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
                         <div class="sidebar-hover-content">
@@ -86,17 +98,172 @@
                         </div>
                     </div>
 
-                    <!-- DEGREE (ENGINEERING) -->
-                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
-                    
-                    <div class="sidebar-hover-item" th:each="year : ${#numbers.sequence(1, 4)}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
-                            <span><i class="bi bi-gear me-2" style="color: #fb923c;"></i> YEAR <span th:text="${year}"></span></span>
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_EEE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-lightning me-2" style="color: #fcd34d;"></i> DIPLOMA IN EEE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electrical and Electronics</span>
+                            </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
                         <div class="sidebar-hover-content">
-                            <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}">Semester 1</a>
-                            <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEGREE_ENG' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}">Semester 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_EEE' and selectedLevel == 4 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 4 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=2'}" th:style="${selectedProgram == 'DIP_EEE' and selectedLevel == 4 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 4 - Sem 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_EEE&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_EEE' and selectedLevel == 5 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 5 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_EEE&level=5&semester=2'}" th:style="${selectedProgram == 'DIP_EEE' and selectedLevel == 5 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 5 - Sem 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_EEE&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_EEE' and selectedLevel == 6 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 6 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_EEE&level=6&semester=2'}" th:style="${selectedProgram == 'DIP_EEE' and selectedLevel == 6 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 6 - Sem 2</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_MTE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-robot me-2" style="color: #94a3b8;"></i> DIPLOMA IN MTE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechatronics Engineering</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_MTE' and selectedLevel == 4 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 4 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=2'}" th:style="${selectedProgram == 'DIP_MTE' and selectedLevel == 4 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 4 - Sem 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_MTE&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_MTE' and selectedLevel == 5 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 5 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_MTE&level=5&semester=2'}" th:style="${selectedProgram == 'DIP_MTE' and selectedLevel == 5 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 5 - Sem 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_MTE&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_MTE' and selectedLevel == 6 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 6 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_MTE&level=6&semester=2'}" th:style="${selectedProgram == 'DIP_MTE' and selectedLevel == 6 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 6 - Sem 2</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_ECE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-broadcast me-2" style="color: #f43f5e;"></i> DIPLOMA IN ECE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electronics Communication</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/guest-notes?program=DIP_ECE&level=4&semester=1'}" th:style="${selectedProgram == 'DIP_ECE' and selectedLevel == 4 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 4 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ECE&level=4&semester=2'}" th:style="${selectedProgram == 'DIP_ECE' and selectedLevel == 4 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 4 - Sem 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ECE&level=5&semester=1'}" th:style="${selectedProgram == 'DIP_ECE' and selectedLevel == 5 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 5 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ECE&level=5&semester=2'}" th:style="${selectedProgram == 'DIP_ECE' and selectedLevel == 5 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 5 - Sem 2</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ECE&level=6&semester=1'}" th:style="${selectedProgram == 'DIP_ECE' and selectedLevel == 6 and selectedSemester == 1 ? 'color: #fff;' : ''}">Level 6 - Sem 1</a>
+                            <a th:href="@{'/guest-notes?program=DIP_ECE&level=6&semester=2'}" th:style="${selectedProgram == 'DIP_ECE' and selectedLevel == 6 and selectedSemester == 2 ? 'color: #fff;' : ''}">Level 6 - Sem 2</a>
+                        </div>
+                    </div>
+
+                                        <!-- DEGREE (ENGINEERING) -->
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
+                    
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DEGREE IN IT</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Information Technology</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_IT&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_IT' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_IT&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_IT' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DEGREE IN CSE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Computer Science & Engineering</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_CSE&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_CSE' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_CSE&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_CSE' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DEGREE IN CE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Civil Engineering</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_CE&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_CE' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_CE&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_CE' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DEGREE IN ME</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechanical Engineering</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_ME&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_ME' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_ME&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_ME' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_EEE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-lightning me-2" style="color: #fcd34d;"></i> DEGREE IN EEE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electrical and Electronics</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_EEE&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_EEE' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_EEE&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_EEE' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_MTE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-robot me-2" style="color: #94a3b8;"></i> DEGREE IN MTE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechatronics Engineering</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_MTE&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_MTE' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_MTE&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_MTE' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_ECE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-broadcast me-2" style="color: #f43f5e;"></i> DEGREE IN ECE</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electronics Communication</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
+                                <a th:href="@{'/guest-notes?program=DEG_ECE&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_ECE' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a th:href="@{'/guest-notes?program=DEG_ECE&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_ECE' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
                         </div>
                     </div>
 
@@ -165,34 +332,50 @@
         let content = item.querySelector('.sidebar-hover-content');
         if (!content) return;
         
+        const isMobile = window.innerWidth < 992;
+        
         item.querySelector('.chevron').style.transform = 'rotate(90deg)';
         item.style.background = 'rgba(255,255,255,0.05)';
 
-        // Remove from current parent and append to body if not already
-        if (content.parentElement === item) {
-            document.body.appendChild(content);
-            content.sourceItem = item;
-            
-            // Add hover handlers to the content itself
-            content.onmouseenter = function() { clearTimeout(flyoutTimeout); };
-            content.onmouseleave = function() { hideFlyout(item); };
-        }
+        if (!isMobile) {
+            // Remove from current parent and append to body if not already
+            if (content.parentElement === item) {
+                document.body.appendChild(content);
+                content.sourceItem = item;
+                
+                // Add hover handlers to the content itself
+                content.onmouseenter = function() { clearTimeout(flyoutTimeout); };
+                content.onmouseleave = function() { hideFlyout(item); };
+            }
 
-        // Calculate absolute position
-        const rect = item.getBoundingClientRect();
+            // Calculate absolute position
+            const rect = item.getBoundingClientRect();
+            content.style.position = 'fixed';
+            content.style.top = rect.top + 'px';
+            content.style.left = (rect.right + 5) + 'px'; // 5px gap
+            content.style.zIndex = '9999';
+            content.style.animation = 'flyoutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            content.style.maxHeight = 'none';
+        } else {
+            // Mobile behavior: act as an accordion
+            content.sourceItem = item;
+            content.style.position = 'static';
+            content.style.width = '100%';
+            content.style.marginTop = '10px';
+            content.style.zIndex = 'auto';
+            content.style.animation = 'none';
+            // Disable mouseleave hide on mobile to allow tapping links easily
+            item.onmouseleave = null;
+        }
+        
         content.style.display = 'block';
-        content.style.position = 'fixed';
-        content.style.top = rect.top + 'px';
-        content.style.left = (rect.right + 5) + 'px'; // 5px gap
-        content.style.zIndex = '9999';
-        content.style.animation = 'flyoutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-        content.style.maxHeight = 'none';
         content.style.opacity = '1';
         
         activeFlyout = content;
     }
 
     function hideFlyout(item) {
+        if (window.innerWidth < 992) return; // Don't auto-hide on mobile
         flyoutTimeout = setTimeout(() => {
             if (activeFlyout && activeFlyout.sourceItem === item) {
                 hideFlyoutImmediate();
@@ -207,7 +390,9 @@
             if (activeFlyout.sourceItem) {
                 activeFlyout.sourceItem.querySelector('.chevron').style.transform = 'rotate(0deg)';
                 activeFlyout.sourceItem.style.background = 'transparent';
-                activeFlyout.sourceItem.appendChild(activeFlyout);
+                if (activeFlyout.parentElement !== activeFlyout.sourceItem) {
+                    activeFlyout.sourceItem.appendChild(activeFlyout);
+                }
             }
             activeFlyout = null;
         }

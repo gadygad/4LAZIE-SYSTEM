@@ -436,51 +436,66 @@
 
 <body>
 
-    <header class="navbar navbar-custom sticky-top" style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
+    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(203, 213, 225, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);">
         <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-            <a href="/" class="text-decoration-none d-flex flex-column align-items-start">
-                <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">
-                    4LAZIE
-                </span>
-                <div class="d-none d-md-flex align-items-center position-relative mt-1" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
-                    <!-- Shimmer overlay -->
-                    <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
-                    <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
-                        <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
+            
+            <!-- Left side: Hamburger + Logo -->
+            <div class="d-flex align-items-center gap-2">
+                <!-- Premium Hamburger Menu for Mobile -->
+                <button class="btn d-md-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#guestMobileSidebar" aria-controls="guestMobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
+                    <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+                </button>
+                
+                <a href="/" class="text-decoration-none d-flex flex-row align-items-center gap-2 ms-1 ms-sm-0">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.6rem; color: #0f172a; letter-spacing: -1px; line-height: 1;">
+                        4LAZIE
                     </span>
-                    <style>
-                        @keyframes shimmer-glow {
-                            0% { left: -100%; }
-                            20% { left: 200%; }
-                            100% { left: 200%; }
-                        }
-                    </style>
-                </div>
-            </a>
+                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 3px 10px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                        <span style="font-size: 0.55rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
+                            <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.65rem;"></i> SMART IN BRAIN
+                        </span>
+                        <style>
+                            @keyframes shimmer-glow {
+                                0% { left: -100%; }
+                                20% { left: 200%; }
+                                100% { left: 200%; }
+                            }
+                        </style>
+                    </div>
+                </a>
+            </div>
 
             <!-- Program Nav Links -->
             <div class="d-none d-md-flex align-items-center gap-1" style="margin-right: 1rem;">
                 <!-- DIPLOMA -->
                 <div class="position-relative nta-nav-item">
-                    <a th:href="@{'/guest-notes?program=DIPLOMA&level=4&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
+                    <a th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
                         DIPLOMA <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
                     </a>
-                    <div class="nta-nav-dropdown">
-                        <a th:href="@{'/guest-notes?program=DIPLOMA&level=4'}"><i class="bi bi-journal-text me-2"></i>NTA LEVEL 4</a>
-                        <a th:href="@{'/guest-notes?program=DIPLOMA&level=5'}"><i class="bi bi-journal-text me-2"></i>NTA LEVEL 5</a>
-                        <a th:href="@{'/guest-notes?program=DIPLOMA&level=6'}"><i class="bi bi-journal-text me-2"></i>NTA LEVEL 6</a>
+                    <div class="nta-nav-dropdown" style="min-width: 220px;">
+                        <a th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}"><i class="bi bi-laptop me-2"></i>DIP IN IT</a>
+                        <a th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=1'}"><i class="bi bi-terminal me-2"></i>DIP IN CSE</a>
+                        <a th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=1'}"><i class="bi bi-cone-striped me-2"></i>DIP IN CE</a>
+                        <a th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=1'}"><i class="bi bi-gear-wide-connected me-2"></i>DIP IN ME</a>
+                        <a th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=1'}"><i class="bi bi-lightning me-2"></i>DIP IN EEE</a>
+                        <a th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=1'}"><i class="bi bi-robot me-2"></i>DIP IN MTE</a>
+                        <a th:href="@{'/guest-notes?program=DIP_ECE&level=4&semester=1'}"><i class="bi bi-broadcast me-2"></i>DIP IN ECE</a>
                     </div>
                 </div>
                 <!-- DEGREE (ENG) -->
                 <div class="position-relative nta-nav-item">
-                    <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=1&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
+                    <a th:href="@{'/guest-notes?program=DEG_CSE&level=1&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
                         DEGREE (ENG) <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
                     </a>
-                    <div class="nta-nav-dropdown">
-                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=1'}"><i class="bi bi-journal-text me-2"></i>YEAR 1</a>
-                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=2'}"><i class="bi bi-journal-text me-2"></i>YEAR 2</a>
-                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=3'}"><i class="bi bi-journal-text me-2"></i>YEAR 3</a>
-                        <a th:href="@{'/guest-notes?program=DEGREE_ENG&level=4'}"><i class="bi bi-journal-text me-2"></i>YEAR 4</a>
+                    <div class="nta-nav-dropdown" style="min-width: 220px;">
+                        <a th:href="@{'/guest-notes?program=DEG_IT&level=1&semester=1'}"><i class="bi bi-laptop me-2"></i>DEG IN IT</a>
+                        <a th:href="@{'/guest-notes?program=DEG_CSE&level=1&semester=1'}"><i class="bi bi-terminal me-2"></i>DEG IN CSE</a>
+                        <a th:href="@{'/guest-notes?program=DEG_CE&level=1&semester=1'}"><i class="bi bi-cone-striped me-2"></i>DEG IN CE</a>
+                        <a th:href="@{'/guest-notes?program=DEG_ME&level=1&semester=1'}"><i class="bi bi-gear-wide-connected me-2"></i>DEG IN ME</a>
+                        <a th:href="@{'/guest-notes?program=DEG_EEE&level=1&semester=1'}"><i class="bi bi-lightning me-2"></i>DEG IN EEE</a>
+                        <a th:href="@{'/guest-notes?program=DEG_MTE&level=1&semester=1'}"><i class="bi bi-robot me-2"></i>DEG IN MTE</a>
+                        <a th:href="@{'/guest-notes?program=DEG_ECE&level=1&semester=1'}"><i class="bi bi-broadcast me-2"></i>DEG IN ECE</a>
                     </div>
                 </div>
                 <!-- DEGREE (EDU) -->
@@ -509,10 +524,12 @@
                 </a>
             </div>
 
-            <div class="dropdown d-flex justify-content-end align-items-center" style="width: 150px;">
-                <a href="#" class="btn btn-primary fw-bold rounded-pill px-4 dropdown-toggle" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">Sign In</a>
+            <div class="dropdown d-flex justify-content-end align-items-center" style="width: auto;">
+                <a href="#" class="btn btn-primary fw-bold rounded-pill px-3 py-2 dropdown-toggle d-flex align-items-center gap-2" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">
+                    <i class="bi bi-person-fill" style="font-size: 1.1rem;"></i> <span>Sign In</span>
+                </a>
                 
-                <div class="dropdown-menu dropdown-menu-end p-0 border-0 shadow-lg" aria-labelledby="loginDropdown" style="width: 380px; border-radius: 16px; background: white; margin-top: 15px;">
+                <div class="dropdown-menu dropdown-menu-end p-0 border-0 shadow-lg" aria-labelledby="loginDropdown" style="width: 380px; max-width: calc(100vw - 30px); border-radius: 16px; background: white; margin-top: 15px;">
                     <div class="login-box w-100 m-0" style="padding: 24px; box-shadow: none; background: white; border-radius: 16px;">
                         
                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -641,9 +658,11 @@
             <div class="row g-5">
                 <!-- LEFT COLUMN: POPULAR NOTES LIST -->
                 <div class="col-lg-7">
-                    <div class="mb-4 position-relative">
-                        <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">RECOMMENDED NOTES</h3>
-                        <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Handpicked study materials just for you</p>
+                    <div class="d-flex align-items-center gap-3 mb-4 position-relative">
+                        <div>
+                            <h3 class="m-0 section-title" style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #f59e0b; letter-spacing: -0.5px; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">RECOMMENDED NOTES</h3>
+                            <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Handpicked study materials just for you</p>
+                        </div>
                     </div>
 
                     <div class="accordion accordion-flush mt-4" id="popularNotesAccordion">
@@ -697,12 +716,12 @@
                         </div>
 
                         <!-- Fallback if no notes -->
-                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="text-center py-5" style="background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
-                            <div style="width: 80px; height: 80px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                                <i class="bi bi-journal-x fs-1"></i>
+                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="text-center py-5 px-4" style="background: linear-gradient(145deg, #ffffff, #f8fafc); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.05), inset 0 2px 0 rgba(255,255,255,1); border: 1px solid rgba(0,0,0,0.05);">
+                            <div style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1)); color: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.1), inset 0 2px 5px rgba(255,255,255,0.5);">
+                                <i class="bi bi-journal-x" style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.3));"></i>
                             </div>
-                            <h4 class="fw-bold text-dark mb-2" style="font-family: 'Outfit', sans-serif;">No Notes Available</h4>
-                            <p class="text-secondary fw-medium" style="max-width: 400px; margin: 0 auto;">Check back soon! New recommended notes will appear here once uploaded by instructors.</p>
+                            <h3 class="fw-bold text-dark mb-3" style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; letter-spacing: -0.5px;">No Notes Found</h3>
+                            <p class="text-secondary fw-medium mx-auto" style="max-width: 400px; font-size: 1.05rem; line-height: 1.6;">We're currently preparing the best study materials for this level. Please check back soon!</p>
                         </div>
                     </div>
                 </div>
@@ -710,9 +729,11 @@
                 <!-- RIGHT COLUMN: PREMIUM FEATURES -->
                 <div class="col-lg-5">
                     <div class="sticky-top" style="top: 100px;">
-                        <div class="mb-4 position-relative">
-                            <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
-                            <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Exclusive tools & resources</p>
+                        <div class="d-flex align-items-center gap-3 mb-4 position-relative mt-5 mt-lg-0">
+                            <div>
+                                <h3 class="m-0 section-title" style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #3b82f6; letter-spacing: -0.5px; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(59, 130, 246, 0.4);">PREMIUM FEATURES</h3>
+                                <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Exclusive tools & resources</p>
+                            </div>
                         </div>
                         
                         <div class="premium-grid mb-4 d-flex flex-column gap-2">
@@ -735,23 +756,24 @@
                         </div>
 
                         <!-- Access Restricted Banner (PREMIUM DESIGN) -->
-                        <div class="premium-unlock-card position-relative overflow-hidden mb-4" style="background: linear-gradient(145deg, #0f172a, #1e1b4b); border-radius: 20px; padding: 30px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); z-index: 1;">
+                        <div class="premium-unlock-card position-relative overflow-hidden mb-4" style="background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.95)); border-radius: 16px; padding: 20px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.08); z-index: 1; backdrop-filter: blur(10px);">
                             
                             <!-- Glowing background effect -->
-                            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at top right, rgba(245,158,11,0.15) 0%, transparent 40%); z-index: -1; pointer-events: none;"></div>
+                            <div style="position: absolute; top: -30%; left: -30%; width: 150%; height: 150%; background: radial-gradient(circle at top right, rgba(245,158,11,0.1) 0%, transparent 50%); z-index: -1; pointer-events: none;"></div>
                             
-                            <!-- Premium Icon -->
-                            <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: rgba(245,158,11,0.1); border-radius: 14px; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 20px rgba(245,158,11,0.2);">
-                                <i class="bi bi-rocket-takeoff-fill fs-4" style="color: #f59e0b;"></i>
+                            <!-- Header with Icon inline -->
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(245,158,11,0.15); border-radius: 8px; border: 1px solid rgba(245,158,11,0.3); box-shadow: 0 0 10px rgba(245,158,11,0.2);">
+                                    <i class="bi bi-rocket-takeoff-fill" style="color: #f59e0b; font-size: 0.9rem;"></i>
+                                </div>
+                                <h4 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; background: linear-gradient(90deg, #f59e0b, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Unlock Premium</h4>
                             </div>
                             
-                            <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; margin-bottom: 10px; font-size: 1.5rem; letter-spacing: -0.5px; background: linear-gradient(90deg, #f59e0b, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Unlock Premium Access</h4>
-                            
-                            <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 25px; line-height: 1.6; font-weight: 400;">
-                                Join our platform today to get unlimited access to <span class="text-white fw-semibold">past papers</span>, <span class="text-white fw-semibold">assignments</span>, and <span class="text-white fw-semibold">premium notes</span> curated for your success.
+                            <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 16px; line-height: 1.5; font-weight: 400;">
+                                Get unlimited access to <span class="text-white fw-semibold">past papers</span>, <span class="text-white fw-semibold">assignments</span>, and <span class="text-white fw-semibold">premium notes</span> curated for your success.
                             </p>
                             
-                            <a href="/register" class="btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2 position-relative overflow-hidden premium-btn-hover text-decoration-none" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 1.05rem; box-shadow: 0 8px 25px rgba(245,158,11,0.4); transition: all 0.3s ease; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">
+                            <a href="/register" class="btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2 position-relative overflow-hidden premium-btn-hover text-decoration-none" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 10px; border-radius: 10px; font-size: 0.85rem; box-shadow: 0 4px 15px rgba(245,158,11,0.3); transition: all 0.3s ease; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">
                                 <span style="position: relative; z-index: 2;">Create Free Account</span>
                                 <i class="bi bi-arrow-right" style="position: relative; z-index: 2;"></i>
                                 <!-- Button Shine Effect -->
@@ -860,12 +882,34 @@
     
     <!-- Shared FOOTER -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-
         </div><!-- end .main-content -->
     </div><!-- end .page-layout -->
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
+    <!-- Mobile Offcanvas Sidebar for Guests -->
+    <div class="offcanvas offcanvas-start border-0" tabindex="-1" id="guestMobileSidebar" aria-labelledby="guestMobileSidebarLabel" style="width: 280px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%);">
+        <div class="offcanvas-header border-bottom border-secondary border-opacity-25 pb-3">
+            <h5 class="offcanvas-title text-white fw-bold d-flex align-items-center" id="guestMobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
+                <span class="logo-gradient" style="background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">4LAZIE</span>
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0 custom-scrollbar">
+            <!-- Reuse the sidebar fragment, but override display -->
+            <style>
+                .offcanvas .hero-sidebar {
+                    display: block !important;
+                    width: 100% !important;
+                    position: static !important;
+                    height: auto !important;
+                    min-height: 100%;
+                }
+            </style>
+            <div th:replace="~{fragments/sjuit_components :: sidebar}"></div>
+        </div>
+    </div>
+
+</body>
 </html>

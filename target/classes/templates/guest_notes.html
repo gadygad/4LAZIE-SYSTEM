@@ -177,7 +177,7 @@
             </a>
             
             <!-- Search Bar moved to navbar -->
-            <div class="search-container position-relative mx-3 d-none d-md-block" style="flex-grow: 1; max-width: 450px;">
+            <div class="search-container position-relative mx-3" style="flex-grow: 1; max-width: 450px;">
                 <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
                 <input type="text" id="smartSearchInput" autocomplete="off" class="form-control" placeholder="Search modules, notes, or past papers..." 
                        style="padding: 12px 20px 12px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
@@ -261,7 +261,7 @@
                     </div> 
                     <div class="d-flex align-items-center flex-wrap">
                         <h2 class="fw-bold m-0 me-3" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; text-transform: uppercase; font-size: 1.1rem;">
-                            <span th:text="${selectedProgram == 'DIP_IT' ? 'DIP IN IT' : (selectedProgram == 'DIP_CSE' ? 'DIP IN CSE' : (selectedProgram == 'DIP_CE' ? 'DIP IN CE' : (selectedProgram == 'DIP_ME' ? 'DIP IN ME' : 'MODULES')))}">MODULES</span> 
+                            <span th:text="${selectedProgram != null ? (selectedProgram.startsWith('DIP_') ? 'DIP IN ' + selectedProgram.substring(4) : (selectedProgram.startsWith('DEG_') ? 'DEG IN ' + selectedProgram.substring(4) : (selectedProgram == 'DEGREE_EDU' ? 'DEGREE EDU' : 'MODULES'))) : 'MODULES'}">MODULES</span>
                         </h2>
                         <div class="d-flex align-items-center border-start ps-3" style="border-color: rgba(0,0,0,0.08) !important; font-family: 'Outfit', sans-serif;">
                             <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.3px;">
