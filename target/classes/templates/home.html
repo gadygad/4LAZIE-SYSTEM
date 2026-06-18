@@ -511,18 +511,42 @@
                 </div>
             </div>
 
+            <!-- Search Bar (center) -->
             <div class="d-none d-md-flex mx-auto align-items-center justify-content-center gap-2" style="max-width: 400px; flex: 1;">
                 <div class="search-container position-relative flex-grow-1">
                     <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
-                    <input type="text" class="form-control" placeholder="Search topics, modules, or past papers..." 
+                    <input type="text" id="smartSearchInput" class="form-control" placeholder="Search topics, modules, or past papers..." 
                            style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
                            onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
-                           onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
-                </div>
+                           onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';"
+                           autocomplete="off">
+                    <!-- Ctrl+K Shortcut Hint -->
+                    <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
+                </div>  
                 <a href="#" class="text-secondary" title="see more" data-bs-toggle="tooltip" data-bs-placement="bottom" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s ease; text-decoration: none;" onmouseover="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--primary)';" onmouseout="this.style.background='transparent'; this.style.color='var(--text-muted)';">
                     <i class="bi bi-three-dots-vertical"></i>
                 </a>
             </div>
+
+            <script>
+                // Hide on scroll
+                let lastScroll = 0;
+                window.addEventListener('scroll', () => {
+                    const navbar = document.getElementById('mainNavbar');
+                    const currentScroll = window.pageYOffset;
+                    if (currentScroll > lastScroll && currentScroll > 100) navbar.classList.add('hide-on-scroll');
+                    else navbar.classList.remove('hide-on-scroll');
+                    lastScroll = currentScroll;
+                });
+
+                // Ctrl+K Shortcut
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        document.getElementById('smartSearchInput').focus();
+                    }
+                });
+            </script>
 
             <div class="dropdown d-flex justify-content-end align-items-center" style="width: auto;">
                 <a href="#" class="btn btn-primary fw-bold rounded-pill px-3 py-2 dropdown-toggle d-flex align-items-center gap-2" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">
@@ -910,6 +934,41 @@
             <div th:replace="~{fragments/sjuit_components :: sidebar}"></div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smart Search Ctrl+K Shortcut
+        const searchInput = document.getElementById('smartSearchInput');
+        if (searchInput) {
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }
+
+        // Smart Hide-on-Scroll Navbar
+        let lastScrollTop = 0;
+        const navbar = document.querySelector('.navbar-custom');
+        
+        if (navbar) {
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scroll Down
+                    navbar.classList.add('navbar-hidden');
+                    navbar.classList.remove('navbar-visible');
+                } else {
+                    // Scroll Up
+                    navbar.classList.remove('navbar-hidden');
+                    navbar.classList.add('navbar-visible');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+            }, { passive: true });
+        }
+    });
+    </script>
 
 </body>
 </html>

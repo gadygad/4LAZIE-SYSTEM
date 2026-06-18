@@ -171,6 +171,9 @@
                 <div id="searchResults" class="position-absolute w-100 bg-white shadow-lg d-none" style="top: 100%; left: 0; z-index: 1050; margin-top: 8px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); max-height: 350px; overflow-y: auto;">
                     <!-- Results will be injected here via JS -->
                 </div>
+                
+                <!-- Ctrl+K Shortcut Hint -->
+                <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
             </div>
 
             <div th:replace="~{fragments/navbar_actions :: actions}"></div>
@@ -548,6 +551,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
             }, 400); // 400ms debounce
         });
+        
+        // Ctrl+K Shortcut to focus search
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    }
+
+    // Smart Hide-on-Scroll Navbar
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar-custom');
+    
+    if (navbar) {
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scroll Down
+                navbar.classList.add('navbar-hidden');
+                navbar.classList.remove('navbar-visible');
+            } else {
+                // Scroll Up
+                navbar.classList.remove('navbar-hidden');
+                navbar.classList.add('navbar-visible');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+        }, { passive: true });
     }
 });
 </script>

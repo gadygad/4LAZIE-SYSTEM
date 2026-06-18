@@ -7,6 +7,11 @@
             <div class="orb orb-2"></div>
             <div class="orb orb-3"></div>
 
+            <!-- Sidebar Toggle Button -->
+            <button id="sidebarToggleBtn" class="btn btn-sm shadow-sm" style="position:absolute; right: -15px; top: 30px; border-radius: 50%; width: 32px; height: 32px; background: #3b82f6; color: #fff; z-index: 100; border: 3px solid #1c1f30; display: flex; align-items: center; justify-content: center; padding: 0; transition: transform 0.3s ease;">
+                <i class="bi bi-chevron-left toggle-icon" style="font-size: 0.9rem; font-weight: bold;"></i>
+            </button>
+
             <div style="width: 100%; display: flex; flex-direction: column; height: 100%; position: relative; z-index: 2;">
                 <!-- College Name (Plain Text Link) -->
                 <!-- College Name as a Toggle -->
@@ -404,6 +409,37 @@
         if (!e.target.closest('.sidebar-hover-item') && !e.target.closest('.sidebar-hover-content')) {
             hideFlyoutImmediate();
         }
+    });
+
+    // Sidebar Collapse Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.hero-sidebar');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+
+        // Check local storage for preference
+        const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+        if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+            toggleIcon.classList.replace('bi-chevron-left', 'bi-chevron-right');
+        }
+
+        // Auto collapse on smaller screens on load
+        if (window.innerWidth < 1200 && !localStorage.getItem('sidebar_collapsed')) {
+            sidebar.classList.add('collapsed');
+            toggleIcon.classList.replace('bi-chevron-left', 'bi-chevron-right');
+        }
+
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                localStorage.setItem('sidebar_collapsed', 'true');
+                toggleIcon.classList.replace('bi-chevron-left', 'bi-chevron-right');
+            } else {
+                localStorage.setItem('sidebar_collapsed', 'false');
+                toggleIcon.classList.replace('bi-chevron-right', 'bi-chevron-left');
+            }
+        });
     });
 </script>
         </aside>
