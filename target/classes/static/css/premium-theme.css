@@ -1038,9 +1038,9 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     padding: 10px 14px; border-radius: 8px; transition: all 0.2s ease;
 }
 .sidebar-hover-content a:hover { color: #fff; background: rgba(59, 130, 246, 0.2); transform: translateX(5px); }
-.sidebar-hover-btn i.chevron { transition: transform 0.3s ease; transform: rotate(-90deg); }
+.sidebar-hover-btn i.chevron { transition: transform 0.3s ease; transform: rotate(0deg); }
 .sidebar-hover-item:hover .sidebar-hover-btn i.chevron,
-.sidebar-hover-item.active .sidebar-hover-btn i.chevron { transform: rotate(0deg); }
+.sidebar-hover-item.active .sidebar-hover-btn i.chevron { transform: translateX(3px); }
 
 /* Collapse Chevron Animation */
 [data-bs-toggle="collapse"] .bi-chevron-down {
@@ -1235,6 +1235,15 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     margin-right: 0 !important;
     font-size: 1.4rem !important;
 }
+.hero-sidebar.collapsed .premium-sidebar-badge span,
+.hero-sidebar.collapsed .premium-sidebar-badge .bi-chevron-down {
+    display: none !important;
+}
+.hero-sidebar.collapsed .premium-sidebar-badge {
+    padding: 12px !important;
+    justify-content: center !important;
+    margin: 20px 10px !important;
+}
 
 /* 2. Smart Navbar Scroll */
 .navbar-custom {
@@ -1268,3 +1277,156 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     opacity: 0;
 }
 
+/* --- PREMIUM UI V2 ENHANCEMENTS --- */
+
+/* 1. Sidebar Premium Badge (Institution Name) */
+.premium-sidebar-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 20px 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.premium-sidebar-badge:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+}
+.premium-sidebar-badge .icon-container {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: white;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+/* 2. Sidebar Active Item Indicator */
+.sidebar-hover-item.active .sidebar-hover-btn {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent) !important;
+    border-left: 3px solid #3b82f6 !important;
+    border-radius: 0 8px 8px 0 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+.sidebar-hover-item.active .sidebar-hover-btn i {
+    color: #3b82f6 !important;
+}
+
+/* 3. Sleek Gradient Headers */
+.premium-gradient-header {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #1e293b, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    position: relative;
+    padding-bottom: 8px;
+    margin-bottom: 0;
+}
+.premium-gradient-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
+}
+.premium-gradient-header.warning {
+    background: linear-gradient(90deg, #1e293b, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.premium-gradient-header.warning::after {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+/* 4. Unlock Premium Card V2 (Animated Gradient Border & 3D Float) */
+.premium-unlock-card-v2 {
+    position: relative;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.02);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-style: preserve-3d;
+}
+.premium-unlock-card-v2::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(45deg, #f59e0b, #fbbf24, #10b981, #3b82f6, #8b5cf6, #ec4899);
+    background-size: 300% 300%;
+    z-index: -2;
+    animation: gradientShift 6s ease infinite;
+    border-radius: 22px;
+}
+.premium-unlock-card-v2::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px; right: 2px; bottom: 2px;
+    background: #ffffff;
+    z-index: -1;
+    border-radius: 18px;
+}
+.premium-unlock-card-v2:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 20px rgba(245, 158, 11, 0.15);
+}
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Button Shimmer Effect for Premium Card */
+.btn-shimmer {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+.btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-25deg);
+    animation: shimmerSlide 3s infinite;
+}
+.btn-shimmer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
+    color: white;
+}
+@keyframes shimmerSlide {
+    0% { left: -100%; }
+    20% { left: 200%; }
+    100% { left: 200%; }
+}
+
+/* Fix for Search Bar Overlap */
+.search-container input {
+    padding-right: 70px !important;
+}

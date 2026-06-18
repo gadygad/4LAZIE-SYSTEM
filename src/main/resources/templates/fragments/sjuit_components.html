@@ -15,12 +15,14 @@
             <div style="width: 100%; display: flex; flex-direction: column; height: 100%; position: relative; z-index: 2;">
                 <!-- College Name (Plain Text Link) -->
                 <!-- College Name as a Toggle -->
-                <a href="#stJosephPrograms" data-bs-toggle="collapse" style="display:flex; justify-content:space-between; align-items:center; gap:12px; text-decoration:none; color:rgba(255,255,255,0.9); transition:all 0.3s ease; margin-bottom: 20px; font-family:'Outfit',sans-serif;" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='rgba(255,255,255,0.9)';">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <i class="bi bi-building" style="font-size:1.4rem; color: #3b82f6;"></i>
-                        <span style="font-size:0.9rem; font-weight:600; line-height:1.4;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Engineering and Technology'}">St. Joseph College of Engineering and Technology</span>
+                <a href="#stJosephPrograms" data-bs-toggle="collapse" class="premium-sidebar-badge text-decoration-none">
+                    <div class="d-flex align-items-center flex-grow-1" style="gap: 12px; min-width: 0;">
+                        <div class="icon-container flex-shrink-0">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <span class="text-white text-truncate" style="font-size: 0.85rem; font-weight: 700; line-height: 1.3;" title="St. Joseph College of Engineering and Technology" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Engineering and Technology'}">St. Joseph College of Engineering and Technology</span>
                     </div>
-                    <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+                    <i class="bi bi-chevron-down flex-shrink-0" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; transition: transform 0.3s;"></i>
                 </a>
 
                 <!-- Main Menu Area -->
@@ -31,8 +33,8 @@
                     <!-- DIPLOMA PROGRAMMES -->
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Diploma Programmes</div>
                     
-                    <div class="sidebar-hover-item" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item" th:classappend="${selectedProgram == 'DIP_IT' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DIPLOMA IN IT</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Information Technology</span>
@@ -49,8 +51,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_CSE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DIPLOMA IN CSE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Computer Science & Engineering</span>
@@ -67,8 +69,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_CE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DIPLOMA IN CE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Civil Engineering</span>
@@ -85,8 +87,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_ME' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DIPLOMA IN ME</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechanical Engineering</span>
@@ -103,8 +105,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_EEE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_EEE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-lightning me-2" style="color: #fcd34d;"></i> DIPLOMA IN EEE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electrical and Electronics</span>
@@ -121,8 +123,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_MTE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_MTE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-robot me-2" style="color: #94a3b8;"></i> DIPLOMA IN MTE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechatronics Engineering</span>
@@ -139,8 +141,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DIP_ECE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_ECE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-broadcast me-2" style="color: #f43f5e;"></i> DIPLOMA IN ECE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electronics Communication</span>
@@ -160,8 +162,8 @@
                                         <!-- DEGREE (ENGINEERING) -->
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
                     
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_IT' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_IT' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DEGREE IN IT</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Information Technology</span>
@@ -176,8 +178,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_CSE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CSE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DEGREE IN CSE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Computer Science & Engineering</span>
@@ -192,8 +194,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_CE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DEGREE IN CE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Civil Engineering</span>
@@ -208,8 +210,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_ME' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_ME' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DEGREE IN ME</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechanical Engineering</span>
@@ -224,8 +226,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_EEE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_EEE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-lightning me-2" style="color: #fcd34d;"></i> DEGREE IN EEE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electrical and Electronics</span>
@@ -240,8 +242,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_MTE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_MTE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-robot me-2" style="color: #94a3b8;"></i> DEGREE IN MTE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechatronics Engineering</span>
@@ -256,8 +258,8 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
-                        <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEG_ECE' ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_ECE' ? 'active' : ''}" onmouseenter="showFlyout(this)" onmouseleave="hideFlyout(this)">
+                        <div class="sidebar-hover-btn">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-broadcast me-2" style="color: #f43f5e;"></i> DEGREE IN ECE</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Electronics Communication</span>

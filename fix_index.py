@@ -1,4 +1,6 @@
-with open('src/main/resources/templates/home.html', 'r') as f:
+import re
+
+with open('src/main/resources/templates/index.html', 'r') as f:
     content = f.read()
 
 # 1. Update RECOMMENDED NOTES header
@@ -12,9 +14,6 @@ new_premium_header = """<h3 class="premium-gradient-header">PREMIUM FEATURES</h3
 content = content.replace(old_premium_header, new_premium_header)
 
 # 3. Unlock Premium Card replacement
-# The old card starts at: <!-- Access Restricted Banner (PREMIUM DESIGN) -->
-# and ends before </style> or next div
-import re
 pattern_card = re.compile(r'<!-- Access Restricted Banner \(PREMIUM DESIGN\) -->.*?<style>.*?</style>', re.DOTALL)
 
 new_card = """<!-- Access Restricted Banner (PREMIUM DESIGN V2) -->
@@ -36,7 +35,7 @@ new_card = """<!-- Access Restricted Banner (PREMIUM DESIGN V2) -->
 
 content = re.sub(pattern_card, new_card, content)
 
-with open('src/main/resources/templates/home.html', 'w') as f:
+with open('src/main/resources/templates/index.html', 'w') as f:
     f.write(content)
 
-print("home.html updated.")
+print("index.html updated.")
