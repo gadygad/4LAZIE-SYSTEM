@@ -44,4 +44,14 @@ public class HomeController {
     public String init() {
         return "Init is handled by data.sql now";
     }
+
+    @GetMapping("/about")
+    public String about() {
+        return "about";
+    }
+
+    @GetMapping("/premium")
+    public String premium() {
+        return "premium";
+    }
 }

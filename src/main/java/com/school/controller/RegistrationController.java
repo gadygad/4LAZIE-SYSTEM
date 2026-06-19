@@ -42,14 +42,10 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user,
-                               @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
                                @RequestParam(value = "profilePic", required = false) MultipartFile profilePic,
                                HttpSession session,
                                Model model) {
         try {
-            if (confirmPassword == null || !confirmPassword.equals(user.getPassword())) {
-                throw new Exception("Passwords do not match!");
-            }
             // Persist the new user (profile picture handled by service)
             userService.registerUser(user, profilePic);
             

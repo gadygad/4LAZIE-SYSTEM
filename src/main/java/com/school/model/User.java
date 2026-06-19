@@ -23,6 +23,9 @@ public class User {
     @Column(name = "role", length = 20, nullable = false, columnDefinition = "varchar(20) default 'STUDENT'")
     private String role; // STUDENT, ADMIN
 
+    @Column(name = "is_premium", columnDefinition = "boolean default false")
+    private Boolean isPremium = false;
+
     // New profile fields
     @Column(name = "profile_picture", length = 255)
     private String profilePicture;
@@ -99,6 +102,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Boolean getIsPremium() {
+        return isPremium;
+    }
+
+    public void setIsPremium(Boolean isPremium) {
+        this.isPremium = isPremium;
     }
 
     // New getters and setters

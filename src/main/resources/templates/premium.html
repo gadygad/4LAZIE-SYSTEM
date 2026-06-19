@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4LAZIE Premium - Unlock Your Potential</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Premium Global CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Abstract Dark Orbs */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            animation: float 12s infinite ease-in-out alternate;
+        }
+        .orb-1 {
+            width: 500px; height: 500px;
+            background: rgba(245, 158, 11, 0.15); /* Gold */
+            top: -100px; left: -150px;
+        }
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: rgba(124, 58, 237, 0.15); /* Purple */
+            top: 30%; right: -100px;
+            animation-delay: -4s;
+        }
+        .orb-3 {
+            width: 600px; height: 600px;
+            background: rgba(59, 130, 246, 0.1); /* Blue */
+            bottom: -200px; left: 10%;
+            animation-delay: -8s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-40px) scale(1.1); }
+        }
+
+        /* Navbar tweaks for dark mode */
+        .navbar-custom {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .nta-nav-btn { color: #cbd5e1 !important; }
+        .nta-nav-item:hover .nta-nav-btn { background: rgba(255, 255, 255, 0.05) !important; color: #fff !important; }
+
+        .hero-section {
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+        
+        .premium-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title .gold-text {
+            background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            line-height: 1.7;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-column: column;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 40px rgba(245, 158, 11, 0.1);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+            font-size: 1.05rem;
+        }
+
+        .feature-list li i {
+            color: #f59e0b;
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .pricing-section {
+            margin-bottom: 100px;
+        }
+
+        .price-tag {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 20px 0 10px;
+        }
+
+        .price-subtext {
+            font-size: 1rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            font-weight: 700;
+            padding: 16px 30px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+
+        /* Testimonial / Guarantee */
+        .guarantee-box {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR (Dark variant) -->
+    <header class="navbar navbar-custom sticky-top py-3">
+        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+            <div class="d-flex align-items-center gap-2">
+                <a href="/" class="text-decoration-none d-flex flex-row align-items-center gap-2">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.6rem; color: #ffffff; letter-spacing: -1px; line-height: 1;">
+                        4LAZIE
+                    </span>
+                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 3px 10px; border-radius: 50px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <span style="font-size: 0.55rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #f59e0b; display: flex; align-items: center; white-space: nowrap;">
+                            <i class="bi bi-star-fill me-1"></i> PREMIUM
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Global Nav Links -->
+            <div class="d-none d-md-flex align-items-center gap-1">
+                <div class="position-relative nta-nav-item">
+                    <a href="/" class="nta-nav-btn text-decoration-none d-inline-block">Home</a>
+                </div>
+                <div class="position-relative nta-nav-item">
+                    <a href="/about" class="nta-nav-btn text-decoration-none d-inline-block">About Us</a>
+                </div>
+                <div class="position-relative nta-nav-item">
+                    <a href="/premium" class="nta-nav-btn text-decoration-none d-inline-block" style="color: #f59e0b !important; background: rgba(245, 158, 11, 0.1) !important;">Premium</a>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
+                <a href="/login" class="btn fw-bold rounded-pill px-4 py-2" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.background='rgba(255,255,255,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.1)';">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Background Orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <main class="container position-relative" style="z-index: 1;">
+        
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="premium-badge">
+                <i class="bi bi-gem"></i> The Ultimate Edge
+            </div>
+            <h1 class="hero-title">Unlock Your <span class="gold-text">Full Potential</span></h1>
+            <p class="hero-subtitle">Gain exclusive access to our complete archive of university exams, detailed assignment solutions, and ad-free offline downloads.</p>
+        </section>
+
+        <!-- Pricing & Features Section -->
+        <section class="pricing-section row justify-content-center">
+            
+            <!-- Standard / Free Tier Comparison (Optional context) -->
+            <div class="col-lg-5 mb-4">
+                <div class="glass-card" style="background: rgba(30, 41, 59, 0.3); border-color: rgba(255,255,255,0.05);">
+                    <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #94a3b8;">Basic Access</h3>
+                    <div class="price-tag" style="color: #94a3b8;">Free</div>
+                    <div class="price-subtext">Forever</div>
+                    
+                    <ul class="feature-list mt-5">
+                        <li><i class="bi bi-check2 text-secondary"></i> <span>Access to Standard Lecture Notes</span></li>
+                        <li><i class="bi bi-check2 text-secondary"></i> <span>Basic Module Searching</span></li>
+                        <li style="opacity: 0.4;"><i class="bi bi-x-lg text-secondary"></i> <span>No Past Papers (UE)</span></li>
+                        <li style="opacity: 0.4;"><i class="bi bi-x-lg text-secondary"></i> <span>No Assignment Solutions</span></li>
+                        <li style="opacity: 0.4;"><i class="bi bi-x-lg text-secondary"></i> <span>Limited Daily Downloads</span></li>
+                    </ul>
+                    
+                    <div class="mt-auto pt-4">
+                        <a href="/register" class="btn fw-bold w-100 py-3 rounded-4" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">Current Plan</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Tier -->
+            <div class="col-lg-5 mb-4">
+                <div class="glass-card position-relative" style="border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 20px 50px rgba(245, 158, 11, 0.15);">
+                    <!-- Decorative corner glow -->
+                    <div style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.4), transparent); border-radius: 0 30px 0 0;"></div>
+                    
+                    <h3 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #f59e0b;">Premium Access</h3>
+                    <div class="price-tag">TBA</div>
+                    <div class="price-subtext">Pricing Coming Soon</div>
+                    
+                    <ul class="feature-list mt-5">
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>Full Archive:</strong> All Past University Exams (UE)</li>
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>Complete Solutions:</strong> CAT 1, CAT 2 &amp; Assignments</li>
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>Unlimited Downloads:</strong> Save everything for offline use</li>
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>Priority Updates:</strong> Get new materials before anyone else</li>
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>Ad-Free Experience:</strong> Zero distractions while you study</li>
+                    </ul>
+                    
+                    <div class="mt-auto pt-4 position-relative z-index-2">
+                        <a href="/register" class="btn btn-gold">Get Notified</a>
+                        <p class="text-center mt-3 mb-0" style="font-size: 0.8rem; color: #94a3b8;">Create a free account to be the first to know when Premium launches.</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Trust Section -->
+        <section class="mb-5 pb-5">
+            <div class="guarantee-box">
+                <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #10b981; margin-bottom: 15px; display: inline-block;"></i>
+                <h4 style="font-family: 'Outfit', sans-serif; font-weight: 700; margin-bottom: 15px;">Quality Guarantee</h4>
+                <p style="color: #cbd5e1; font-size: 1rem; margin: 0; line-height: 1.6;">
+                    Premium materials are meticulously sourced and verified. We take pride in offering the highest quality study guides to ensure you are fully prepared for your exams.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Shared FOOTER -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

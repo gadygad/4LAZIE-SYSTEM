@@ -22,7 +22,7 @@
 <body>
 
     <!-- Header Navbar -->
-    <nav class="navbar navbar-dark navbar-custom sticky-top py-3">
+    <nav class="navbar navbar-dark navbar-custom sticky-top py-1">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/dashboard">
                 <span class="brand-font fs-3 fw-bold"><i class="bi bi-journal-text text-dark me-2"></i>4LAZIE <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NOTES</span></span>
@@ -58,7 +58,10 @@
                     <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-4">
                         <div>
                             <label for="title" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Title:</label>
-                            <input type="text" name="title" id="title" class="form-control form-control-custom" placeholder="Enter note title..." required>
+                            <input type="text" name="title" id="title" class="form-control form-control-custom" placeholder="e.g. Unit 1 Notes, Assignment 1, CAT 1 2024, UE 2023..." required>
+                            <div class="form-text text-muted" style="font-size: 0.8rem;">
+                                <strong>Tip:</strong> For past papers, explicitly include "CAT 1", "CAT 2", or "UE" in the title so students can find them easily.
+                            </div>
                         </div>
 
                         <div class="row g-3">
@@ -94,9 +97,9 @@
                             <div class="col-md-6">
                                 <label for="category" class="form-label fw-bold text-secondary text-uppercase small tracking-wider">Category Type:</label>
                                 <select name="category" id="category" class="form-select form-select-custom" required onchange="toggleUnit()">
-                                    <option value="Note">Note</option>
-                                    <option value="Past Paper">Past Paper</option>
-                                    <option value="Assignment">Assignment</option>
+                                    <option value="Note">Note (Free)</option>
+                                    <option value="Past Paper">Past Paper (Exclusive - CAT/UE)</option>
+                                    <option value="Assignment">Assignment (Exclusive)</option>
                                     <option value="Video Tutorial">Video Tutorial</option>
                                 </select>
                             </div>

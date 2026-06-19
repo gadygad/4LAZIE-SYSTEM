@@ -1,4 +1,4 @@
-/* Premium Global Theme */
+﻿/* Premium Global Theme */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap');
 
@@ -1145,9 +1145,11 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Critical for flexbox text overflow */
+    min-width: 0;
     overflow-x: hidden;
     background-color: #f8fafc;
+    position: relative;
+    
 }
 
 @media (max-width: 991.98px) {
@@ -1427,4 +1429,491 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 /* Fix for Search Bar Overlap */
 .search-container input {
     padding-right: 70px !important;
+}
+
+/* --- DARK MODE SETTINGS --- */
+:root {
+    --bg-light: #f8fafc;
+    --text-main: #1e293b;
+    --card-bg: #ffffff;
+    --border-color: rgba(0,0,0,0.1);
+    --muted-text: #64748b;
+}
+
+body.dark-mode {
+    --bg-light: #0f172a;
+    --text-main: #f8fafc;
+    --card-bg: #1e293b;
+    --border-color: rgba(255,255,255,0.1);
+    --muted-text: #94a3b8;
+    background-color: var(--bg-light) !important;
+    color: var(--text-main) !important;
+}
+
+body.dark-mode .bg-light { background-color: var(--bg-light) !important; }
+body.dark-mode .card,
+body.dark-mode .premium-unlock-card-v2::after,
+body.dark-mode .bg-white,
+body.dark-mode .dropdown-menu {
+    background-color: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+body.dark-mode .text-dark { color: var(--text-main) !important; }
+body.dark-mode .text-muted, body.dark-mode .text-secondary { color: var(--muted-text) !important; }
+
+body.dark-mode .border-bottom, body.dark-mode .border-top { border-color: var(--border-color) !important; }
+
+body.dark-mode .form-control {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: rgba(255,255,255,0.1) !important;
+}
+body.dark-mode .form-control::placeholder { color: #94a3b8 !important; }
+body.dark-mode .navbar-custom { background: rgba(15, 23, 42, 0.85) !important; }
+body.dark-mode .dark-mode-toggle-btn {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.85)) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+}
+body.dark-mode .darkModeIcon { color: #fcd34d !important; }
+
+
+/* --- SKELETON LOADING --- */
+.skeleton {
+    background: #e2e8f0;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite linear;
+    border-radius: 4px;
+}
+body.dark-mode .skeleton {
+    background: #1e293b;
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+}
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+.skeleton-text { height: 12px; margin-bottom: 8px; width: 100%; }
+.skeleton-text.short { width: 60%; }
+.skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; }
+.skeleton-btn { height: 28px; width: 80px; border-radius: 50px; }
+
+
+/* =============================================
+   PREMIUM SIDEBAR � NAVIGATION STYLES
+   ============================================= */
+.hero-sidebar {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+    border-right: 1px solid rgba(255,255,255,0.07) !important;
+    box-shadow: 4px 0 30px rgba(0,0,0,0.3) !important;
+    width: 270px !important;
+    min-width: 270px !important;
+    height: 100vh !important;
+    position: sticky !important;
+    top: 0 !important;
+    overflow-y: auto !important; overflow-x: hidden !important;
+    padding: 0 !important;
+    transform: none !important;
+    border-radius: 0 !important;
+    left: 0 !important;
+    z-index: 1000;
+    flex-shrink: 0;
+}
+.hero-sidebar::-webkit-scrollbar { width: 4px; }
+.hero-sidebar::-webkit-scrollbar-track { background: transparent; }
+.hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.sidebar-header {
+    padding: 20px 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    background: linear-gradient(180deg, #0f172a 0%, rgba(15,23,42,0.95) 100%);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.sidebar-section-label {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.35);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Outfit', sans-serif;
+    padding: 16px 16px 6px;
+}
+
+.program-item {
+    position: relative;
+    margin: 2px 8px;
+}
+
+.program-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+    color: rgba(255,255,255,0.75);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+.program-btn:hover {
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+}
+.program-btn.active-program {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    border-left: 3px solid #3b82f6;
+}
+.program-btn .prog-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+.program-btn .prog-name {
+    flex-grow: 1;
+    line-height: 1.3;
+}
+.program-btn .prog-chevron {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+.program-btn.open .prog-chevron {
+    transform: rotate(180deg);
+    color: rgba(255,255,255,0.6);
+}
+
+/* Inline Premium Sidebar Dropdowns */
+.program-levels {
+    display: none;
+    margin: 2px 8px 4px 16px;
+    border-left: 2px solid rgba(255,255,255,0.08);
+    padding-left: 12px;
+    overflow: hidden;
+}
+.program-levels.open {
+    display: block;
+    animation: sidebarSlideDown 0.25s ease forwards;
+}
+@keyframes sidebarSlideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.program-btn.open .prog-chevron {
+    transform: rotate(180deg) !important;
+    color: #fff;
+}
+
+/* Inner section dropdowns (Notes, Assessments, Past Papers) */
+.section-dropdown-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: background 0.2s ease;
+}
+.section-dropdown-btn:hover { background: rgba(0,0,0,0.03); }
+.section-dropdown-btn .sect-chevron {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+.section-dropdown-btn.open .sect-chevron { transform: rotate(180deg); }
+.section-dropdown-body {
+    display: none;
+    padding: 8px 0 4px;
+}
+.section-dropdown-body.open {
+    display: block;
+    animation: sectionFadeIn 0.25s ease forwards;
+}
+@keyframes sectionFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
+*/
+   
+.program-btn {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 14px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 8px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.program-btn:hover {
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
+}
+.program-btn.active-program {
+    background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15)) !important;
+    border: 1px solid rgba(139,92,246,0.3) !important;
+    border-left: 4px solid #8b5cf6 !important;
+}
+.program-btn .prog-icon {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+}
+
+/* Premium Flyout Menu */
+@media (min-width: 992px) {
+    .program-levels {
+        background: rgba(15, 23, 42, 0.85) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 16px !important;
+        padding: 16px !important;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2) !important;
+    }
+    
+    /* Small pointer triangle pointing to sidebar */
+    .program-levels::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: -6px;
+        width: 12px;
+        height: 12px;
+        background: rgba(15, 23, 42, 0.95);
+        border-left: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        transform: rotate(45deg);
+    }
+}
+
+/* NTA Levels */
+.level-group {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px !important;
+    transition: all 0.3s ease;
+}
+.level-group:hover {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.level-group-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    color: #fff !important;
+    padding: 4px 10px !important;
+    border-radius: 6px;
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+    margin-bottom: 8px !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Semester Selections */
+.sem-link {
+    background: rgba(0,0,0,0.2) !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    margin-bottom: 4px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.3s ease !important;
+    position: relative;
+    overflow: hidden;
+}
+.sem-link::after {
+    content: '\F282'; /* bi-chevron-right */
+    font-family: bootstrap-icons;
+    position: absolute;
+    right: 12px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    color: #fcd34d;
+    font-size: 0.7rem;
+}
+.sem-link:hover {
+    background: linear-gradient(90deg, rgba(59,130,246,0.15), rgba(139,92,246,0.1)) !important;
+    border: 1px solid rgba(139,92,246,0.3) !important;
+    color: #fff !important;
+    transform: translateX(4px) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+}
+.sem-link:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+.sem-link.active-link {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(59,130,246,0.4) !important;
+}
+.sem-link .sem-dot {
+    display: none !important; /* Remove the old dot */
+}
+.sem-link::before {
+    content: '\F4B4'; /* bi-journal-bookmark */
+    font-family: bootstrap-icons;
+    margin-right: 8px;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    transition: color 0.3s ease;
+}
+.sem-link:hover::before {
+    color: #fcd34d;
+}
+.sem-link.active-link::before {
+    color: #fff;
+}
+
+
+/* ==========================================================
+   ULTRA PREMIUM SIDEBAR SELECTION (NTA Level, Course, Sem)
+   ========================================================== */
+   
+.program-btn {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 4px !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease !important;
+    border-left: 3px solid transparent !important;
+}
+.program-btn:hover {
+    background: rgba(255,255,255,0.04) !important;
+    transform: none !important;
+}
+.program-btn.active-program {
+    background: rgba(59,130,246,0.08) !important;
+    border-left: 3px solid #3b82f6 !important;
+}
+.program-btn .prog-icon {
+    box-shadow: none !important;
+    background: rgba(255,255,255,0.05) !important;
+}
+.program-btn.active-program .prog-icon {
+    background: rgba(59,130,246,0.2) !important;
+    color: #60a5fa !important;
+}
+
+/* NTA Levels - Clean Timeline Style */
+.level-group {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 0 8px 16px !important;
+    margin-bottom: 0 !important;
+    border-left: 1px solid rgba(255,255,255,0.08) !important;
+    margin-left: 30px !important;
+    position: relative;
+    transition: none !important;
+}
+.level-group:hover {
+    background: transparent !important;
+    border-left: 1px solid rgba(255,255,255,0.15) !important;
+}
+.level-group-label {
+    display: inline-block !important;
+    background: transparent !important;
+    color: #64748b !important;
+    padding: 12px 0 6px 0 !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    text-transform: uppercase;
+}
+
+/* Semester Selections - Clean Rows */
+.sem-link {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 6px 10px 6px 0 !important;
+    margin-bottom: 2px !important;
+    font-size: 0.75rem !important;
+    color: #94a3b8 !important;
+    transition: all 0.2s ease !important;
+    position: relative;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: none !important;
+}
+.sem-link::after, .sem-link::before {
+    display: none !important; /* Remove those ugly pseudo-elements */
+}
+.sem-link:hover {
+    background: transparent !important;
+    color: #fff !important;
+    transform: translateX(4px) !important;
+    box-shadow: none !important;
+}
+.sem-link.active-link {
+    background: transparent !important;
+    color: #60a5fa !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+.sem-link .sem-dot {
+    display: block !important;
+    width: 10px !important;
+    height: 1px !important;
+    background: rgba(255,255,255,0.15) !important;
+    margin-right: 12px !important;
+    transition: all 0.2s !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.sem-link:hover .sem-dot {
+    background: rgba(255,255,255,0.4) !important;
+    width: 16px !important;
+}
+.sem-link.active-link .sem-dot {
+    background: #3b82f6 !important;
+    width: 16px !important;
+    height: 2px !important;
 }
