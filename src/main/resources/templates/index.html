@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Premium Global CSS -->
@@ -19,16 +22,19 @@
             flex-direction: column;
             min-height: 100vh;
         }
+
         .page-layout {
             display: flex;
             flex: 1;
             min-height: calc(100vh - 64px);
         }
+
         /* Left Sidebar */
         .hero-sidebar {
             width: 300px;
             min-width: 300px;
-            background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); /* Premium dark theme */
+            background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%);
+            /* Premium dark theme */
             position: sticky;
             top: 64px;
             height: calc(100vh - 64px);
@@ -40,44 +46,86 @@
             justify-content: flex-start;
             padding: 32px 20px;
             z-index: 10;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         /* Custom Scrollbar for Sidebar */
-        .hero-sidebar::-webkit-scrollbar { width: 6px; }
-        .hero-sidebar::-webkit-scrollbar-track { background: transparent; }
-        .hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        .hero-sidebar:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); }
+        .hero-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .hero-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .hero-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .hero-sidebar:hover::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
         /* Orbs */
         .hero-sidebar .orb {
             position: absolute;
             border-radius: 50%;
             pointer-events: none;
         }
+
         .hero-sidebar .orb-1 {
-            width: 260px; height: 260px;
-            top: -80px; right: -80px;
-            background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
-        }
-        .hero-sidebar .orb-2 {
-            width: 220px; height: 220px;
-            bottom: -60px; left: -60px;
-            background: radial-gradient(circle, rgba(59,130,246,0.35) 0%, transparent 70%);
-        }
-        .hero-sidebar .orb-3 {
-            width: 160px; height: 160px;
-            top: 50%; left: 30%;
-            background: radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%);
+            width: 260px;
+            height: 260px;
+            top: -80px;
+            right: -80px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
         }
 
-        .sidebar-hover-item { position: relative; margin-bottom: 5px; width: 100%; }
-        .sidebar-hover-btn {
-            background: transparent; color: rgba(255,255,255,0.9); border: none; border-radius: 8px;
-            padding: 10px 16px; width: 100%; text-align: left;
-            font-family: 'Outfit', sans-serif; font-weight: 500;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s ease; cursor: pointer;
+        .hero-sidebar .orb-2 {
+            width: 220px;
+            height: 220px;
+            bottom: -60px;
+            left: -60px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, transparent 70%);
         }
-        .sidebar-hover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        .hero-sidebar .orb-3 {
+            width: 160px;
+            height: 160px;
+            top: 50%;
+            left: 30%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+        }
+
+        .sidebar-hover-item {
+            position: relative;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        .sidebar-hover-btn {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            width: 100%;
+            text-align: left;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-hover-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
         .sidebar-hover-content {
             display: none;
             margin-left: 15px;
@@ -89,44 +137,73 @@
             padding: 8px;
             transition: all 0.3s ease;
         }
+
         .sidebar-hover-item:hover .sidebar-hover-content {
             display: block;
             animation: fadeInDown 0.3s ease;
         }
+
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .sidebar-hover-content a {
-            display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem;
-            padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
-        .sidebar-hover-content a:hover { color: #fff; background: rgba(255,255,255,0.1); transform: translateX(3px); }
-        .sidebar-hover-btn i.chevron { transition: transform 0.3s ease; }
-        .sidebar-hover-item:hover .sidebar-hover-btn i.chevron { transform: rotate(180deg); }
+
+        .sidebar-hover-content a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(3px);
+        }
+
+        .sidebar-hover-btn i.chevron {
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-hover-item:hover .sidebar-hover-btn i.chevron {
+            transform: rotate(180deg);
+        }
 
         .sidebar-accordion .accordion-button::after {
             filter: invert(1) grayscale(100%) brightness(200%);
         }
+
         .sidebar-accordion .accordion-button:focus {
             box-shadow: none;
         }
+
         /* Glass card inside sidebar */
         .sidebar-glass-card {
-            background: rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.07);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.13);
+            border: 1px solid rgba(255, 255, 255, 0.13);
             border-radius: 22px;
             padding: 28px 22px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
+
         /* Main content area */
         .main-content {
             flex: 1;
@@ -134,18 +211,26 @@
             background: #f8fafc;
             padding-bottom: 50px;
         }
+
         @media (max-width: 768px) {
-            .hero-sidebar { display: none; }
-            .page-layout { flex-direction: column; }
+            .hero-sidebar {
+                display: none;
+            }
+
+            .page-layout {
+                flex-direction: column;
+            }
         }
 
         .hero-section .row {
             align-items: center;
         }
+
         .hero-text {
             color: var(--text-main);
             padding-right: 80px;
         }
+
         .hero-text h1 {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
@@ -156,10 +241,12 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .hero-text p {
             font-size: 1.3rem;
             max-width: 650px;
         }
+
         .hero-features {
             list-style: none;
             padding: 0;
@@ -169,6 +256,7 @@
             margin-top: 40px;
             margin-bottom: 2.5rem;
         }
+
         .hero-features li {
             font-size: 1.2rem;
             display: flex;
@@ -176,30 +264,32 @@
             gap: 12px;
             color: var(--text-muted);
             font-weight: 500;
-            background: rgba(0, 0, 0, 0.03); /* Adapted for light mode */
-            border: 1px solid rgba(0, 0, 0, 0.08); /* Adapted for light mode */
+            background: rgba(0, 0, 0, 0.03);
+            /* Adapted for light mode */
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            /* Adapted for light mode */
             border-radius: 14px;
             padding: 16px;
             margin: 0;
         }
-        
+
         .horizontal-section {
             padding: 2rem 0;
             border-top: none;
             background: transparent;
         }
-        
+
         .bg-darker {
             background: rgba(0, 0, 0, 0.2);
         }
-        
+
         .nta-cards {
             display: flex;
             justify-content: center;
             gap: 2rem;
             flex-wrap: wrap;
         }
-        
+
         .nta-card {
             background: linear-gradient(135deg, rgba(0, 0, 0, .05), rgba(0, 0, 0, .02));
             backdrop-filter: blur(20px);
@@ -220,12 +310,12 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .nta-card:hover {
             border-color: var(--primary);
             box-shadow: var(--shadow-glow);
             color: var(--primary);
-            
+
             /* User's merged hover properties */
             transform: translateY(-8px) scale(1.03);
         }
@@ -246,7 +336,7 @@
             align-items: center;
             text-align: center;
             gap: 1.5rem;
-            
+
             /* User's merged properties */
             min-height: 320px;
             justify-content: center;
@@ -266,7 +356,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .pop-title {
             font-family: 'Outfit', sans-serif;
             font-weight: 600;
@@ -283,16 +373,17 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-subtle);
-            box-shadow: 
+            box-shadow:
                 0 30px 60px rgba(0, 0, 0, .15),
                 0 0 40px rgba(0, 0, 0, .10);
             transition: .4s;
             margin: 0 auto;
         }
-        
+
         .login-box:hover {
             transform: translateY(-5px);
         }
+
         .login-box h2 {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
@@ -300,15 +391,18 @@
             font-size: 2rem;
             text-align: center;
         }
+
         .subtitle-text {
             color: var(--text-muted);
             margin-bottom: 2.5rem;
             font-size: 1rem;
             text-align: center;
         }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
@@ -316,6 +410,7 @@
             font-size: 0.95rem;
             color: var(--text-main);
         }
+
         .premium-input {
             width: 100%;
             padding: 14px 18px;
@@ -326,11 +421,13 @@
             transition: var(--transition-smooth);
             font-size: 1rem;
         }
+
         .premium-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
+
         .options-row {
             display: flex;
             justify-content: space-between;
@@ -338,27 +435,32 @@
             margin-bottom: 2.5rem;
             font-size: 0.95rem;
         }
+
         .forgot-link {
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition-smooth);
         }
+
         .forgot-link:hover {
             text-decoration: underline;
         }
+
         .register-text {
             text-align: center;
             margin-top: 2rem;
             font-size: 1rem;
             color: var(--text-muted);
         }
+
         .register-text a {
             color: var(--primary);
             font-weight: 600;
             text-decoration: none;
             transition: var(--transition-smooth);
         }
+
         .register-text a:hover {
             text-decoration: underline;
         }
@@ -368,11 +470,13 @@
                 opacity: 0;
                 margin-top: 5px !important;
             }
+
             to {
                 opacity: 1;
                 margin-top: 15px !important;
             }
         }
+
         .dropdown-menu.show {
             animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -396,10 +500,12 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
+
         .nta-nav-item:hover .nta-nav-btn {
             background: rgba(59, 130, 246, 0.1);
             color: var(--primary);
         }
+
         .nta-nav-dropdown {
             position: absolute;
             top: 100%;
@@ -407,7 +513,7 @@
             transform: translateX(-50%) translateY(15px);
             background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             min-width: 200px;
             padding: 12px;
             opacity: 0;
@@ -417,12 +523,14 @@
             z-index: 50;
             border: 1px solid var(--border-subtle);
         }
+
         .nta-nav-item:hover .nta-nav-dropdown {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
             transform: translateX(-50%) translateY(5px);
         }
+
         .nta-nav-dropdown a {
             display: flex;
             align-items: center;
@@ -435,179 +543,90 @@
             text-decoration: none;
             transition: all 0.2s ease;
         }
+
         .nta-nav-dropdown a:hover {
             background: linear-gradient(135deg, #3b82f6, #6366f1);
             color: #fff;
         }
     </style>
 </head>
+
 <body>
 
-    <header class="navbar navbar-custom sticky-top" style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
+    <header class="navbar navbar-custom sticky-top"
+        style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
         <div class="container d-flex justify-content-between align-items-center flex-nowrap">
             <a href="/" class="text-decoration-none d-flex flex-column align-items-start">
-                <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">
+                <span
+                    style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">
                     4LAZIE
                 </span>
-                <div class="d-none d-md-flex align-items-center position-relative mt-1" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                <div class="d-none d-md-flex align-items-center position-relative mt-1"
+                    style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
                     <!-- Shimmer overlay -->
-                    <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
-                    <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
-                        <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
+                    <div
+                        style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;">
+                    </div>
+                    <span
+                        style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
+                        <i class="bi bi-lightning-charge-fill me-1"
+                            style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i>
+                        SMART IN BRAIN
                     </span>
                     <style>
                         @keyframes shimmer-glow {
-                            0% { left: -100%; }
-                            20% { left: 200%; }
-                            100% { left: 200%; }
+                            0% {
+                                left: -100%;
+                            }
+
+                            20% {
+                                left: 200%;
+                            }
+
+                            100% {
+                                left: 200%;
+                            }
                         }
                     </style>
                 </div>
             </a>
 
-            <!-- Program Nav Links -->
-            <div class="d-none d-md-flex align-items-center gap-1" style="margin-right: 1rem;">
-                <!-- DIPLOMA -->
-                <div class="position-relative nta-nav-item">
-                    <a th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
-                        DIPLOMA <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
-                    </a>
-                    <div class="nta-nav-dropdown" style="min-width: 220px;">
-                        <a th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}"><i class="bi bi-laptop me-2"></i>DIP IN IT</a>
-                        <a th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=1'}"><i class="bi bi-terminal me-2"></i>DIP IN CSE</a>
-                        <a th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=1'}"><i class="bi bi-cone-striped me-2"></i>DIP IN CE</a>
-                        <a th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=1'}"><i class="bi bi-gear-wide-connected me-2"></i>DIP IN ME</a>
-                        <a th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=1'}"><i class="bi bi-lightning me-2"></i>DIP IN EEE</a>
-                        <a th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=1'}"><i class="bi bi-robot me-2"></i>DIP IN MTE</a>
-                        <a th:href="@{'/guest-notes?program=DIP_ECE&level=4&semester=1'}"><i class="bi bi-broadcast me-2"></i>DIP IN ECE</a>
-                    </div>
-                </div>
-                <!-- DEGREE (ENG) -->
-                <div class="position-relative nta-nav-item">
-                    <a th:href="@{'/guest-notes?program=DEG_CSE&level=1&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
-                        DEGREE (ENG) <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
-                    </a>
-                    <div class="nta-nav-dropdown" style="min-width: 220px;">
-                        <a th:href="@{'/guest-notes?program=DEG_IT&level=1&semester=1'}"><i class="bi bi-laptop me-2"></i>DEG IN IT</a>
-                        <a th:href="@{'/guest-notes?program=DEG_CSE&level=1&semester=1'}"><i class="bi bi-terminal me-2"></i>DEG IN CSE</a>
-                        <a th:href="@{'/guest-notes?program=DEG_CE&level=1&semester=1'}"><i class="bi bi-cone-striped me-2"></i>DEG IN CE</a>
-                        <a th:href="@{'/guest-notes?program=DEG_ME&level=1&semester=1'}"><i class="bi bi-gear-wide-connected me-2"></i>DEG IN ME</a>
-                        <a th:href="@{'/guest-notes?program=DEG_EEE&level=1&semester=1'}"><i class="bi bi-lightning me-2"></i>DEG IN EEE</a>
-                        <a th:href="@{'/guest-notes?program=DEG_MTE&level=1&semester=1'}"><i class="bi bi-robot me-2"></i>DEG IN MTE</a>
-                        <a th:href="@{'/guest-notes?program=DEG_ECE&level=1&semester=1'}"><i class="bi bi-broadcast me-2"></i>DEG IN ECE</a>
-                    </div>
-                </div>
-                <!-- DEGREE (EDU) -->
-                <div class="position-relative nta-nav-item">
-                    <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=1&semester=1'}" class="nta-nav-btn text-decoration-none d-inline-block">
-                        DEGREE (EDU) <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
-                    </a>
-                    <div class="nta-nav-dropdown">
-                        <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=1'}"><i class="bi bi-journal-text me-2"></i>YEAR 1</a>
-                        <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=2'}"><i class="bi bi-journal-text me-2"></i>YEAR 2</a>
-                        <a th:href="@{'/guest-notes?program=DEGREE_EDU&level=3'}"><i class="bi bi-journal-text me-2"></i>YEAR 3</a>
-                    </div>
-                </div>
-
-                <!-- PREMIUM FEATURES -->
-                <div class="position-relative nta-nav-item ms-2">
-                    <a href="#" class="nta-nav-btn text-decoration-none d-inline-flex align-items-center" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.1)); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 50px; padding: 6px 14px; font-weight: 700; color: #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(245, 158, 11, 0.25)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.15)';">
-                        <i class="bi bi-star-fill me-2" style="font-size: 0.8rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.8));"></i> PREMIUM
-                    </a>
-                    <div class="nta-nav-dropdown" style="min-width: 220px; right: 0; left: auto; transform: translateY(10px); border: 1px solid rgba(245, 158, 11, 0.2); background: rgba(255, 255, 255, 0.98); box-shadow: 0 10px 40px rgba(245, 158, 11, 0.15);">
-                        <div style="padding: 10px 14px; font-size: 0.7rem; font-weight: 800; color: #f59e0b; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 5px;">Exclusive Features</div>
-                        <a href="#" onclick="alert('Past Papers coming soon!'); return false;" style="color: #334155;"><i class="bi bi-file-earmark-pdf me-2" style="color: #ef4444;"></i> Past Papers & Mock Exams</a>
-                        <a href="#" onclick="alert('Video Tutorials coming soon!'); return false;" style="color: #334155;"><i class="bi bi-play-circle me-2" style="color: #3b82f6;"></i> Video Tutorials & Guides</a>
-                        <a href="#" onclick="alert('AI Assistant coming soon!'); return false;" style="color: #334155;"><i class="bi bi-robot me-2" style="color: #8b5cf6;"></i> Lazie AI Assistant</a>
-                        <a href="#" onclick="alert('Discussion Forums coming soon!'); return false;" style="color: #334155;"><i class="bi bi-chat-quote me-2" style="color: #10b981;"></i> Student Forums</a>
-                    </div>
-                </div>
-            </div>
-
             <!-- Search Bar (center) -->
-            <div class="d-none d-md-flex mx-auto align-items-center justify-content-center gap-2" style="max-width: 400px; flex: 1;">
+            <div class="d-none d-md-flex mx-auto align-items-center justify-content-center gap-2"
+                style="max-width: 400px; flex: 1;">
                 <div class="search-container position-relative flex-grow-1">
-                    <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
-                    <input type="text" id="smartSearchInput" class="form-control" placeholder="Search topics, modules, or past papers..." 
-                           style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
-                           onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
-                           onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
+                    <i class="bi bi-search position-absolute text-muted"
+                        style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+                    <input type="text" id="smartSearchInput" class="form-control"
+                        placeholder="Search topics, modules, or past papers..."
+                        style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
+                        onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
+                        onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';">
                     <!-- Ctrl+K Shortcut Hint -->
                     <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
                 </div>
-                <a href="#" class="text-secondary" title="see more" data-bs-toggle="tooltip" data-bs-placement="bottom" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s ease; text-decoration: none;" onmouseover="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--primary)';" onmouseout="this.style.background='transparent'; this.style.color='var(--text-muted)';">
-                    <i class="bi bi-three-dots-vertical"></i>
-                </a>
+                <div class="dropdown position-relative">
+                    <button type="button" class="btn text-secondary p-0 border-0" onclick="const m = this.nextElementSibling; m.classList.toggle('show');" onblur="setTimeout(() => this.nextElementSibling.classList.remove('show'), 200)" title="see more" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s ease; background: transparent;" onmouseover="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--primary)';" onmouseout="this.style.background='transparent'; this.style.color='#6c757d';">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 position-absolute" style="top: 100%; right: 0; border-radius: 16px; font-family: 'Outfit', sans-serif; padding: 12px 8px; min-width: 220px; z-index: 1050;">
+                        <li><h6 class="dropdown-header fw-bold text-uppercase" style="letter-spacing: 1.5px; font-size: 0.7rem; color: #94a3b8;">Search Filters</h6></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-journal-text text-primary"></i></div> Lecture Notes</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(16,185,129,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-file-earmark-check text-success"></i></div> Past Papers</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(245,158,11,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-pen text-warning"></i></div> Assignments</a></li>
+                        <li><hr class="dropdown-divider my-2" style="opacity: 0.05;"></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(148,163,184,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-sort-down text-secondary"></i></div> Sort by Newest</a></li>
+                        <li><hr class="dropdown-divider my-2" style="opacity: 0.05;"></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3 text-danger" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(239,68,68,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-chat-left-text"></i></div> Request a Note</a></li>
+                    </ul>
+                </div>
+                <style>@keyframes dropdownPop { 0% { opacity: 0; transform: scale(0.95) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } } .dropdown-item { transition: all 0.2s ease; margin-bottom: 4px; border-radius: 10px; } .dropdown-item:hover { background-color: #f8fafc !important; color: #0f172a !important; transform: translateX(4px); }</style>
             </div>
 
-            <div class="dropdown d-flex justify-content-end align-items-center" style="width: 150px;">
-                <a href="#" class="btn btn-primary fw-bold rounded-pill px-4 dropdown-toggle" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">Sign In</a>
-                
-                <div class="dropdown-menu dropdown-menu-end p-0 border-0 shadow-lg" aria-labelledby="loginDropdown" style="width: 380px; border-radius: 16px; background: white; margin-top: 15px;">
-                    <div class="login-box w-100 m-0" style="padding: 24px; box-shadow: none; background: white; border-radius: 16px;">
-                        
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #1e293b; margin: 0; font-size: 1.5rem; text-transform: none;">Sign in</h3>
-                        </div>
-                        <p class="text-secondary mb-3" style="font-size: 0.9rem; text-transform: none; text-align: left;">
-                            Get access to more learning features
-                        </p>
-                        
-                        <div class="mb-3" style="font-size: 0.9rem;">
-                            <span class="text-secondary">Don't have an account?</span> 
-                            <a th:href="@{/register}" style="color: var(--primary); text-decoration: none; font-weight: 500;">Register</a>
-                        </div>
-                        
-                        <div class="d-flex gap-2 mb-3">
-                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" height="20" alt="Google">
-                            </a>
-                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg" width="20" height="20" alt="Facebook">
-                            </a>
-                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                <i class="bi bi-github text-dark" style="font-size: 1.2rem;"></i>
-                            </a>
-                            <a href="#" class="btn flex-fill d-flex justify-content-center align-items-center" style="border-radius: 8px; border: 1px solid var(--border-subtle); height: 44px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                <i class="bi bi-shield-lock text-primary" style="font-size: 1.2rem;"></i>
-                            </a>
-                        </div>
-
-                        <div class="d-flex align-items-center my-3">
-                            <hr class="flex-grow-1" style="border-color: var(--border-subtle); margin: 0;">
-                            <span class="mx-3 text-secondary" style="font-size: 0.85rem;">or</span>
-                            <hr class="flex-grow-1" style="border-color: var(--border-subtle); margin: 0;">
-                        </div>
-
-                        <div th:if="${param.error}" class="alert alert-danger py-2 px-3" role="alert" style="font-size: 0.85rem;">
-                            Invalid credentials.
-                        </div>
-                        <div th:if="${param.logout}" class="alert alert-success py-2 px-3" role="alert" style="font-size: 0.85rem;">
-                            You have been logged out.
-                        </div>
-
-                        <form th:action="@{/login}" method="post" novalidate>
-                            <div class="form-group mb-3">
-                                <input type="email" name="email" class="form-control shadow-none" placeholder="Email" required 
-                                       style="border-radius: 8px; padding: 12px 16px; border: 1px solid var(--border-subtle); font-size: 0.95rem;" 
-                                       onfocus="this.style.borderColor='var(--primary)';" onblur="this.style.borderColor='var(--border-subtle)';" />
-                            </div>
-
-                            <div class="form-group mb-2 position-relative">
-                                <input type="password" name="password" id="loginPassword" class="form-control shadow-none" placeholder="Password" required 
-                                       style="border-radius: 8px; padding: 12px 45px 12px 16px; border: 1px solid var(--border-subtle); font-size: 0.95rem;"
-                                       onfocus="this.style.borderColor='var(--primary)';" onblur="this.style.borderColor='var(--border-subtle)';" />
-                                <i class="bi bi-eye position-absolute" id="togglePassword" style="right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b;"></i>
-                            </div>
-
-                            <div class="text-start mb-4 mt-2">
-                                <a href="#" style="text-decoration: none; color: #1e293b; font-size: 0.85rem; font-weight: 500;">Forgot your password?</a>
-                            </div>
-
-                            <button type="submit" class="btn w-100" style="background-color: var(--primary); color: white; border-radius: 8px; padding: 12px; font-weight: 600; font-size: 1rem; transition: background 0.3s;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='var(--primary)'">Sign In</button>
-                        </form>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
+                <a href="#" class="btn fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                    <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #f59e0b;"></i> <span>Sign In</span>
+                </a>
             </div>
         </div>
     </header>
@@ -622,306 +641,342 @@
         <!-- end sidebar -->
 
         <!-- ── MAIN CONTENT (RIGHT) ── -->
-        <div class="main-content">
+        <div class="main-content d-flex flex-column" style="min-height: calc(100vh - 64px);">
 
-    <!-- COMBINED POPULAR NOTES & PREMIUM SECTION -->
-    <section class="py-5 my-2">
-        <div class="container-fluid px-4 px-lg-5">
+            <!-- COMBINED POPULAR NOTES & PREMIUM SECTION -->
+            <section class="py-5 my-2">
+                <div class="container-fluid px-4 px-lg-5">
 
-            <style>
-                .accordion-button:not(.collapsed) {
-                    color: var(--primary);
-                    background-color: white !important;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-                }
-                .accordion-button:focus {
-                    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
-                    border-color: rgba(59, 130, 246, 0.5);
-                }
-                .accordion-button::after {
-                    transition: transform 0.3s ease;
-                }
-                .premium-accordion-item:hover .accordion-button {
-                    color: var(--primary);
-                    background-color: white !important;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-                }
-                .premium-accordion-item:hover .accordion-collapse {
-                    display: block !important;
-                }
-                .premium-accordion-item:hover .accordion-button::after {
-                    transform: rotate(-180deg);
-                }
-                /* Premium features layout */
-                .premium-grid {
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    gap: 15px;
-                }
-                .premium-grid .premium-item {
-                    background: white;
-                    border: 1px solid var(--border-subtle);
-                    border-radius: 16px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 1.25rem 1.75rem;
-                    transition: all 0.3s ease;
-                    text-decoration: none;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-                }
-                .premium-grid .premium-item:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-                    border-color: #cbd5e1;
-                }
-            </style>
-            
-            <div class="row g-5">
-                <!-- Upande wa Notes (Left) -->
-                <div class="col-lg-7">
-                    <div class="d-flex align-items-center gap-3 mb-4 position-relative">
-                        <div>
-                            <h3 class="premium-gradient-header warning">RECOMMENDED NOTES</h3>
-                            <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Handpicked study materials just for you</p>
+                    <style>
+                        .accordion-button:not(.collapsed) {
+                            color: var(--primary);
+                            background-color: white !important;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+                        }
+
+                        .accordion-button:focus {
+                            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+                            border-color: rgba(59, 130, 246, 0.5);
+                        }
+
+                        .accordion-button::after {
+                            transition: transform 0.3s ease;
+                        }
+
+                        .premium-accordion-item:hover .accordion-button {
+                            color: var(--primary);
+                            background-color: white !important;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+                        }
+
+                        .premium-accordion-item:hover .accordion-collapse {
+                            display: block !important;
+                        }
+
+                        .premium-accordion-item:hover .accordion-button::after {
+                            transform: rotate(-180deg);
+                        }
+
+                        /* Premium features layout */
+                        .premium-grid {
+                            display: grid;
+                            grid-template-rows: 1fr;
+                            gap: 15px;
+                        }
+
+                        .premium-grid .premium-item {
+                            background: white;
+                            border: 1px solid var(--border-subtle);
+                            border-radius: 16px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 1.25rem 1.75rem;
+                            transition: all 0.3s ease;
+                            text-decoration: none;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+                        }
+
+                        .premium-grid .premium-item:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+                            border-color: #cbd5e1;
+                        }
+                    </style>
+
+                    <div class="row g-5">
+                        <!-- Upande wa Notes (Left) -->
+                        <div class="col-lg-7">
+                            <div class="d-flex align-items-center gap-3 mb-4 position-relative">
+                                <div>
+                                    <h5 class="fw-bold" style="color: #f59e0b; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; border-bottom: 3px solid #fde047; padding-bottom: 5px; display: inline-block;">RECOMMENDED NOTES</h5>
+                                    <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">
+                                        Handpicked study materials just for you</p>
+                                </div>
+                            </div>
+                            <div class="accordion accordion-flush" id="popularNotesAccordion">
+
+                                <!-- NOTE 1 -->
+                                <div class="accordion-item premium-accordion-item"
+                                    style="background: transparent; border: none; margin-bottom: 1.25rem;">
+                                    <h2 class="accordion-header" id="heading1">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
+                                            aria-controls="collapse1"
+                                            style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
+
+                                            <div class="d-flex align-items-center gap-3 w-100 me-3">
+                                                <!-- Icon -->
+                                                <div
+                                                    style="color: #f59e0b; display: flex; align-items: center; justify-content: center;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                                        fill="currentColor" class="bi bi-journal-text"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" />
+                                                        <path
+                                                            d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
+                                                        <path
+                                                            d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
+                                                    </svg>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <div style="flex-grow: 1; text-transform: uppercase;">
+                                                    <span>1. JAVA NOTES</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1"
+                                        data-bs-parent="#popularNotesAccordion">
+                                        <div class="accordion-body"
+                                            style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
+                                            <div
+                                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                                                <!-- Description -->
+                                                <div>
+                                                    <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">
+                                                        Object-oriented programming</p>
+                                                    <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access
+                                                        high-quality study materials tailored for your NTA level.</p>
+                                                </div>
+
+                                                <!-- Action Buttons -->
+                                                <div class="d-flex gap-3 flex-shrink-0">
+                                                    <a href="#" onclick="loadPreview(1, 'JAVA NOTES'); return false;"
+                                                        class="btn fw-bold d-flex align-items-center justify-content-center"
+                                                        style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                                                        onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';"
+                                                        onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                                                        <i class="bi bi-eye me-2"></i> Read
+                                                    </a>
+                                                    <a href="#"
+                                                        class="btn fw-bold d-flex align-items-center justify-content-center"
+                                                        style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
+                                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';"
+                                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
+                                                        <i class="bi bi-cloud-arrow-down me-2"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- NOTE 2 -->
+                                <div class="accordion-item premium-accordion-item"
+                                    style="background: transparent; border: none; margin-bottom: 1.25rem;">
+                                    <h2 class="accordion-header" id="heading2">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false"
+                                            aria-controls="collapse2"
+                                            style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
+
+                                            <div class="d-flex align-items-center gap-3 w-100 me-3">
+                                                <!-- Icon -->
+                                                <div
+                                                    style="color: #f59e0b; display: flex; align-items: center; justify-content: center;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                                        fill="currentColor" class="bi bi-journal-text"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" />
+                                                        <path
+                                                            d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
+                                                        <path
+                                                            d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
+                                                    </svg>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <div style="flex-grow: 1; text-transform: uppercase;">
+                                                    <span>2. DATABASE NOTES</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2"
+                                        data-bs-parent="#popularNotesAccordion">
+                                        <div class="accordion-body"
+                                            style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
+                                            <div
+                                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                                                <!-- Description -->
+                                                <div>
+                                                    <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">SQL &
+                                                        relational design</p>
+                                                    <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access
+                                                        high-quality study materials tailored for your NTA level.</p>
+                                                </div>
+
+                                                <!-- Action Buttons -->
+                                                <div class="d-flex gap-3 flex-shrink-0">
+                                                    <a href="#"
+                                                        onclick="loadPreview(2, 'DATABASE NOTES'); return false;"
+                                                        class="btn fw-bold d-flex align-items-center justify-content-center"
+                                                        style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                                                        onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';"
+                                                        onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                                                        <i class="bi bi-eye me-2"></i> Read
+                                                    </a>
+                                                    <a href="#"
+                                                        class="btn fw-bold d-flex align-items-center justify-content-center"
+                                                        style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
+                                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';"
+                                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
+                                                        <i class="bi bi-cloud-arrow-down me-2"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- NOTE 3 -->
+                                <div class="accordion-item premium-accordion-item"
+                                    style="background: transparent; border: none; margin-bottom: 1.25rem;">
+                                    <h2 class="accordion-header" id="heading3">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false"
+                                            aria-controls="collapse3"
+                                            style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
+
+                                            <div class="d-flex align-items-center gap-3 w-100 me-3">
+                                                <!-- Icon -->
+                                                <div
+                                                    style="color: #f59e0b; display: flex; align-items: center; justify-content: center;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                                        fill="currentColor" class="bi bi-journal-text"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" />
+                                                        <path
+                                                            d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
+                                                        <path
+                                                            d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
+                                                    </svg>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <div style="flex-grow: 1; text-transform: uppercase;">
+                                                    <span>3. NETWORK NOTES</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                                        data-bs-parent="#popularNotesAccordion">
+                                        <div class="accordion-body"
+                                            style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
+                                            <div
+                                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                                                <!-- Description -->
+                                                <div>
+                                                    <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">
+                                                        Protocols & infrastructure</p>
+                                                    <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access
+                                                        high-quality study materials tailored for your NTA level.</p>
+                                                </div>
+
+                                                <!-- Action Buttons -->
+                                                <div class="d-flex gap-3 flex-shrink-0">
+                                                    <a href="#" onclick="loadPreview(3, 'NETWORK NOTES'); return false;"
+                                                        class="btn fw-bold d-flex align-items-center justify-content-center"
+                                                        style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                                                        onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';"
+                                                        onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                                                        <i class="bi bi-eye me-2"></i> Read
+                                                    </a>
+                                                    <a href="#"
+                                                        class="btn fw-bold d-flex align-items-center justify-content-center"
+                                                        style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
+                                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';"
+                                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
+                                                        <i class="bi bi-cloud-arrow-down me-2"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: PREMIUM FEATURES -->
+                        <div class="col-lg-5">
+                            <div class="sticky-top" style="top: 100px;">
+                                <div th:replace="~{fragments/sjuit_components :: premium_sidebar}"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="accordion accordion-flush" id="popularNotesAccordion">
-                        
-                        <!-- NOTE 1 -->
-                        <div class="accordion-item premium-accordion-item" style="background: transparent; border: none; margin-bottom: 1.25rem;">
-                            <h2 class="accordion-header" id="heading1">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapse1"
-                                    style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
-                                    
-                                    <div class="d-flex align-items-center gap-3 w-100 me-3">
-                                        <!-- Icon -->
-                                        <div style="color: #f59e0b; display: flex; align-items: center; justify-content: center;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-journal-text" viewBox="0 0 16 16">
-                                              <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                                              <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                                              <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                                            </svg>
-                                        </div>
-                                        
-                                        <!-- Title -->
-                                        <div style="flex-grow: 1; text-transform: uppercase;">
-                                            <span>1. JAVA NOTES</span>
-                                        </div>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1" data-bs-parent="#popularNotesAccordion">
-                                <div class="accordion-body" style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
-                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <!-- Description -->
-                                        <div>
-                                            <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">Object-oriented programming</p>
-                                            <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access high-quality study materials tailored for your NTA level.</p>
-                                        </div>
-                                        
-                                        <!-- Action Buttons -->
-                                        <div class="d-flex gap-3 flex-shrink-0">
-                                            <a href="#" onclick="loadPreview(1, 'JAVA NOTES'); return false;" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
-                                               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
-                                               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
-                                                <i class="bi bi-eye me-2"></i> Read
-                                            </a>
-                                            <a href="#" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
-                                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
-                                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
-                                                <i class="bi bi-cloud-arrow-down me-2"></i> Download
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- NOTE 2 -->
-                        <div class="accordion-item premium-accordion-item" style="background: transparent; border: none; margin-bottom: 1.25rem;">
-                            <h2 class="accordion-header" id="heading2">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2"
-                                    style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
-                                    
-                                    <div class="d-flex align-items-center gap-3 w-100 me-3">
-                                        <!-- Icon -->
-                                        <div style="color: #f59e0b; display: flex; align-items: center; justify-content: center;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-journal-text" viewBox="0 0 16 16">
-                                              <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                                              <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                                              <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                                            </svg>
-                                        </div>
-                                        
-                                        <!-- Title -->
-                                        <div style="flex-grow: 1; text-transform: uppercase;">
-                                            <span>2. DATABASE NOTES</span>
-                                        </div>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#popularNotesAccordion">
-                                <div class="accordion-body" style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
-                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <!-- Description -->
-                                        <div>
-                                            <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">SQL & relational design</p>
-                                            <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access high-quality study materials tailored for your NTA level.</p>
-                                        </div>
-                                        
-                                        <!-- Action Buttons -->
-                                        <div class="d-flex gap-3 flex-shrink-0">
-                                            <a href="#" onclick="loadPreview(2, 'DATABASE NOTES'); return false;" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
-                                               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
-                                               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
-                                                <i class="bi bi-eye me-2"></i> Read
-                                            </a>
-                                            <a href="#" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
-                                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
-                                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
-                                                <i class="bi bi-cloud-arrow-down me-2"></i> Download
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- NOTE 3 -->
-                        <div class="accordion-item premium-accordion-item" style="background: transparent; border: none; margin-bottom: 1.25rem;">
-                            <h2 class="accordion-header" id="heading3">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3"
-                                    style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
-                                    
-                                    <div class="d-flex align-items-center gap-3 w-100 me-3">
-                                        <!-- Icon -->
-                                        <div style="color: #f59e0b; display: flex; align-items: center; justify-content: center;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-journal-text" viewBox="0 0 16 16">
-                                              <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                                              <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                                              <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                                            </svg>
-                                        </div>
-                                        
-                                        <!-- Title -->
-                                        <div style="flex-grow: 1; text-transform: uppercase;">
-                                            <span>3. NETWORK NOTES</span>
-                                        </div>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#popularNotesAccordion">
-                                <div class="accordion-body" style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
-                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <!-- Description -->
-                                        <div>
-                                            <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">Protocols & infrastructure</p>
-                                            <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access high-quality study materials tailored for your NTA level.</p>
-                                        </div>
-                                        
-                                        <!-- Action Buttons -->
-                                        <div class="d-flex gap-3 flex-shrink-0">
-                                            <a href="#" onclick="loadPreview(3, 'NETWORK NOTES'); return false;" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
-                                               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
-                                               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
-                                                <i class="bi bi-eye me-2"></i> Read
-                                            </a>
-                                            <a href="#" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
-                                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
-                                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
-                                                <i class="bi bi-cloud-arrow-down me-2"></i> Download
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT: PREMIUM FEATURES -->
-                <div class="col-lg-5">
-                    <div class="sticky-top" style="top: 100px;">
-                        <h3 class="section-title text-start mb-4" style="font-size: 1.5rem; color: #f59e0b; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
-                        
-                        <div class="premium-grid mb-4">
-                            <a href="/register" class="premium-item">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1rem;"><i class="bi bi-file-earmark-text me-2 text-primary"></i> CAT 1 PAST PAPERS</span>
-                                <span class="arrow text-secondary"><i class="bi bi-lock-fill"></i></span>
-                            </a>
-                            <a href="/register" class="premium-item">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1rem;"><i class="bi bi-file-earmark-text me-2 text-primary"></i> CAT 2 PAST PAPERS</span>
-                                <span class="arrow text-secondary"><i class="bi bi-lock-fill"></i></span>
-                            </a>
-                            <a href="/register" class="premium-item">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1rem;"><i class="bi bi-journal-check me-2 text-primary"></i> ASSIGNMENTS & SOLUTIONS</span>
-                                <span class="arrow text-secondary"><i class="bi bi-lock-fill"></i></span>
-                            </a>
-                            <a href="/register" class="premium-item">
-                                <span class="icon-text text-dark text-uppercase fw-bold" style="font-size: 1rem;"><i class="bi bi-award me-2 text-primary"></i> UNIVERSITY EXAMS (UE)</span>
-                                <span class="arrow text-secondary"><i class="bi bi-lock-fill"></i></span>
-                            </a>
-                        </div>
-
-                        <!-- Access Restricted Banner (PREMIUM DESIGN V2) -->
-                        <div class="premium-unlock-card-v2 mb-4 text-center">
-                            <div class="d-flex align-items-center justify-content-center mb-3">
-                                <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(245,158,11,0.1); border-radius: 12px; color: #f59e0b; font-size: 1.5rem; margin-right: 15px;">
-                                    <i class="bi bi-rocket-takeoff-fill"></i>
-                                </div>
-                                <h4 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; color: #1e293b;">Unlock Premium</h4>
-                            </div>
-                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 24px; line-height: 1.6;">
-                                Get unlimited access to <strong class="text-dark">past papers</strong>, <strong class="text-dark">assignments</strong>, and <strong class="text-dark">premium notes</strong> curated for your success.
-                            </p>
-                            <a href="/register" class="btn w-100 btn-shimmer fw-bold d-flex align-items-center justify-content-center gap-2 text-decoration-none" style="padding: 14px; border-radius: 14px; font-size: 1rem; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">
-                                <span>Create Free Account</span>
-                                <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Document Preview Modal -->
-                    <a href="/register" class="restricted-banner d-block text-center text-decoration-none" style="padding: 3rem; border-radius: 20px;">
-                        <div class="restricted-title mb-2" style="font-size: 1.5rem; text-transform: lowercase;">access restricted</div>
+                    <!-- Document Preview Modal -->
+                    <a href="/register" class="restricted-banner d-block text-center text-decoration-none"
+                        style="padding: 3rem; border-radius: 20px;">
+                        <div class="restricted-title mb-2" style="font-size: 1.5rem; text-transform: lowercase;">access
+                            restricted</div>
                         <p class="restricted-text mb-0 fs-5">register to unlock all features</p>
                     </a>
                 </div>
-            </div>
         </div>
+    </div>
     </section>
 
     <!-- CTA SECTION -->
     <section class="horizontal-section py-5">
         <div class="container">
-            <div class="cta-box text-center position-relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); border-radius: 24px; padding: 60px 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05);">
+            <div class="cta-box text-center position-relative overflow-hidden"
+                style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); border-radius: 24px; padding: 60px 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05);">
                 <!-- Glowing orbs for CTA -->
-                <div style="position: absolute; top: -50%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(40px);"></div>
-                <div style="position: absolute; bottom: -50%; right: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(40px);"></div>
-                
+                <div
+                    style="position: absolute; top: -50%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(40px);">
+                </div>
+                <div
+                    style="position: absolute; bottom: -50%; right: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(40px);">
+                </div>
+
                 <div class="position-relative z-1">
-                    <div class="mb-4 d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 64px; height: 64px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
+                    <div class="mb-4 d-inline-flex align-items-center justify-content-center rounded-circle"
+                        style="width: 64px; height: 64px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
                         <i class="bi bi-rocket-takeoff-fill" style="font-size: 1.8rem; color: #f59e0b;"></i>
                     </div>
-                    <h2 class="mb-3" style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 800; color: #ffffff; letter-spacing: -1px;">
-                        Ready to Unlock <span style="background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Premium Features?</span>
+                    <h2 class="mb-3"
+                        style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 800; color: #ffffff; letter-spacing: -1px;">
+                        Ready to Unlock <span
+                            style="background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Premium
+                            Features?</span>
                     </h2>
-                    <p class="mx-auto mb-5 text-secondary" style="font-size: 1.1rem; max-width: 600px; line-height: 1.6;">
-                        Join thousands of students and gain full access to exclusive CAT assessments, assignments, premium past papers, and your personalized learning dashboard.
+                    <p class="mx-auto mb-5 text-secondary"
+                        style="font-size: 1.1rem; max-width: 600px; line-height: 1.6;">
+                        Join thousands of students and gain full access to exclusive CAT assessments, assignments,
+                        premium past papers, and your personalized learning dashboard.
                     </p>
-                    <a href="/register" class="btn fw-bold px-5 py-3 rounded-pill position-relative overflow-hidden text-decoration-none" 
-                       style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; font-size: 1.1rem; letter-spacing: 0.5px; border: none; box-shadow: 0 10px 25px rgba(245,158,11,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center;"
-                       onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 30px rgba(245,158,11,0.4)';"
-                       onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 25px rgba(245,158,11,0.3)';">
+                    <a href="/register"
+                        class="btn fw-bold px-5 py-3 rounded-pill position-relative overflow-hidden text-decoration-none"
+                        style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; font-size: 1.1rem; letter-spacing: 0.5px; border: none; box-shadow: 0 10px 25px rgba(245,158,11,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center;"
+                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 30px rgba(245,158,11,0.4)';"
+                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 25px rgba(245,158,11,0.3)';">
                         <span>Create Account Now</span>
                         <i class="bi bi-arrow-right ms-2 fs-5"></i>
                     </a>
@@ -932,16 +987,18 @@
 
 
 
-      <!-- Shared FOOTER -->
+    <!-- Shared FOOTER -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-        </div><!-- end .main-content -->
+    </div><!-- end .main-content -->
     </div><!-- end .page-layout -->
+
+
 
 
     <!-- Script for Auto-opening Dropdown on Error/Logout -->
     <script th:if="${param.error != null or param.logout != null or param.registered != null}">
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             var loginBtn = document.getElementById('loginDropdown');
             if (loginBtn) {
                 var loginDropdown = new bootstrap.Dropdown(loginBtn);
@@ -950,10 +1007,10 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const togglePassword = document.querySelector('#togglePassword');
             const password = document.querySelector('#loginPassword');
-            if(togglePassword && password) {
+            if (togglePassword && password) {
                 togglePassword.addEventListener('click', function (e) {
                     const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                     password.setAttribute('type', type);
@@ -966,41 +1023,47 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Smart Search Ctrl+K Shortcut
-        const searchInput = document.getElementById('smartSearchInput');
-        if (searchInput) {
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    searchInput.focus();
-                }
-            });
-        }
 
-        // Smart Hide-on-Scroll Navbar
-        let lastScrollTop = 0;
-        const navbar = document.querySelector('.navbar-custom');
-        
-        if (navbar) {
-            window.addEventListener('scroll', function() {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                if (scrollTop > lastScrollTop && scrollTop > 100) {
-                    // Scroll Down
-                    navbar.classList.add('navbar-hidden');
-                    navbar.classList.remove('navbar-visible');
-                } else {
-                    // Scroll Up
-                    navbar.classList.remove('navbar-hidden');
-                    navbar.classList.add('navbar-visible');
-                }
-                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
-            }, { passive: true });
-        }
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Smart Search Ctrl+K Shortcut
+            const searchInput = document.getElementById('smartSearchInput');
+            if (searchInput) {
+                document.addEventListener('keydown', function (e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            // Smart Hide-on-Scroll Navbar
+            let lastScrollTop = 0;
+            const navbar = document.querySelector('.navbar-custom');
+
+            if (navbar) {
+                window.addEventListener('scroll', function () {
+                    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    if (scrollTop > lastScrollTop && scrollTop > 100) {
+                        // Scroll Down
+                        navbar.classList.add('navbar-hidden');
+                        navbar.classList.remove('navbar-visible');
+                    } else {
+                        // Scroll Up
+                        navbar.classList.remove('navbar-hidden');
+                        navbar.classList.add('navbar-visible');
+                    }
+                    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+                }, { passive: true });
+            }
+        });
     </script>
 
 </body>
+
 </html>
+
+
+
+
+

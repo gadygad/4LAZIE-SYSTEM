@@ -246,6 +246,14 @@ public class NotesController {
             return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
         }
 
+        // Exclusive Resource Check Logic
+        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note")) {
+            if (loggedInUser == null) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, "/login").build();
+            }
+        }
+
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
 
@@ -328,6 +336,13 @@ public class NotesController {
             return "redirect:/login";
         }
         
+        // Exclusive Resource Check Logic
+        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note")) {
+            if (loggedInUser == null) {
+                return "redirect:/login";
+            }
+        }
+        
         model.addAttribute("note", note);
         model.addAttribute("user", loggedInUser);
         
@@ -341,6 +356,13 @@ public class NotesController {
         
         if (note != null && !note.getIsPublic() && loggedInUser == null) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+        }
+
+        // Exclusive Resource Check Logic
+        if (note != null && note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note")) {
+            if (loggedInUser == null) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+            }
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
@@ -407,5 +429,14 @@ public class NotesController {
         model.addAttribute("moduleCodes", moduleCodes);
         model.addAttribute("notes", notes);
         return "guest_notes";
+    }
+
+    @GetMapping("/upgrade")
+    public String upgrade(HttpSession session, Model model) {
+        User loggedInUser = (User) session.getAttribute("user");
+        if (loggedInUser == null) return "redirect:/login";
+
+        model.addAttribute("user", loggedInUser);
+        return "upgrade";
     }
 }

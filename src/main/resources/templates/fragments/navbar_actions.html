@@ -2,10 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <div th:fragment="actions" class="d-flex align-items-center">
+        <!-- Global Search Bar -->
+        <div class="search-container position-relative me-3 d-none d-md-block" style="width: 280px;">
+            <form th:action="@{${session.user != null ? '/notes' : '/guest-notes'}}" method="get" class="m-0">
+                <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; z-index: 5;"></i>
+                <input type="text" name="search" th:value="${searchQuery}" class="form-control position-relative" placeholder="Search notes, past papers..."
+                       style="padding: 6px 16px 6px 40px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;"
+                       onfocus="this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'; this.style.background='#ffffff';"
+                       onblur="this.style.boxShadow='none'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
+            </form>
+        </div>
+
         <!-- Action Buttons -->
         <div class="d-flex align-items-center me-2 me-md-4">
             <!-- Premium Home & Notification Buttons -->
             <div class="d-flex align-items-center">
+                <!-- Dark Mode Toggle Button -->
+                <button id="darkModeToggleGlobal" class="d-flex align-items-center justify-content-center me-3 text-decoration-none position-relative dark-mode-toggle-btn" 
+                   style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;"
+                   onmouseover="this.style.boxShadow='0 8px 25px rgba(100, 116, 139, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)';" 
+                   onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none';">
+                    <i class="bi bi-moon-stars-fill darkModeIcon" style="color: #64748b; font-size: 1.1rem; transition: color 0.3s, transform 0.5s;"></i>
+                </button>
+
                 <!-- Home Button -->
                 <a href="/" class="d-flex align-items-center justify-content-center me-3 text-decoration-none position-relative" 
                    style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
@@ -123,3 +142,41 @@
     </div>
 </body>
 </html>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtns = document.querySelectorAll('.dark-mode-toggle-btn');
+            const icons = document.querySelectorAll('.darkModeIcon');
+            
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                icons.forEach(i => {
+                    i.classList.remove('bi-moon-stars-fill');
+                    i.classList.add('bi-sun-fill');
+                });
+            }
+
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.body.classList.toggle('dark-mode');
+                    let theme = 'light';
+                    if (document.body.classList.contains('dark-mode')) {
+                        theme = 'dark';
+                        icons.forEach(i => {
+                            i.classList.remove('bi-moon-stars-fill');
+                            i.classList.add('bi-sun-fill');
+                        });
+                    } else {
+                        icons.forEach(i => {
+                            i.classList.remove('bi-sun-fill');
+                            i.classList.add('bi-moon-stars-fill');
+                        });
+                    }
+                    localStorage.setItem('theme', theme);
+                });
+            });
+        });
+    </script>
+

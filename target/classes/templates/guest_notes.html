@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Premium Global CSS -->
-    <link rel="stylesheet" th:href="@{/css/premium-theme.css?v=2.3}">
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css?v=2.4}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <style>
         body { background: var(--bg-main); color: var(--text-main); }
@@ -114,65 +114,30 @@
         .icon-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
     
         .page-layout { display: flex; min-height: 100vh; background-color: var(--bg-main); }
-        .hero-sidebar {
-            width: 340px;
-            background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); /* Premium dark theme */
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 40px 20px;
-            display: flex; flex-direction: column; justify-content: flex-start;
-            position: relative; overflow: visible;
-            box-shadow: 10px 0 40px rgba(0,0,0,0.5);
-            flex-shrink: 0; z-index: 10;
-        }
-        /* Custom Scrollbar for Sidebar */
-        .hero-sidebar::-webkit-scrollbar { width: 6px; }
-        .hero-sidebar::-webkit-scrollbar-track { background: transparent; }
-        .hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        .hero-sidebar:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); }
-        .main-content {
-            flex-grow: 1; display: flex; flex-direction: column; overflow-x: hidden;
-        }
-        .orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: 1; pointer-events: none; }
-        .orb-1 { width: 350px; height: 350px; top: -100px; right: -150px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); }
-        .orb-2 { width: 300px; height: 300px; bottom: -50px; left: -150px; background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%); }
-        .orb-3 { width: 250px; height: 250px; top: 40%; left: 20%; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); }
-</style>
-
-    <style>
-        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+        @keyframes slideDown { from { opacity: 0; margin-top: 5px !important; } to { opacity: 1; margin-top: 15px !important; } }
+        .dropdown-menu.show { animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
 
 <body>
 
-    <div class="page-layout">
-        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-        
-        <div class="main-content">
-
-
-    <!-- Header Navigation -->
-    <nav class="navbar navbar-light navbar-custom sticky-top py-3" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020;">
-        <div class="container d-flex justify-content-between align-items-center">
+    <!-- Premium Header Navigation -->
+    <nav class="navbar navbar-light navbar-custom sticky-top py-1" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020; border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="/" style="text-decoration: none;">
-                <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
-                <div class="d-flex flex-column align-items-start">
-                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">4LAZIE</span>
-                    <div class="d-none d-sm-flex align-items-center position-relative mt-1" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
-                    <!-- Shimmer overlay -->
-                    <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
-                    <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
-                        <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
-                    </span>
-                    <style>
-                        @keyframes shimmer-glow {
-                            0% { left: -100%; }
-                            20% { left: 200%; }
-                            100% { left: 200%; }
-                        }
-                    </style>
+                <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateX(-3px)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='none';">
+                    <i class="bi bi-arrow-left" style="font-size: 1rem; color: #3b82f6;"></i>
                 </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.5rem; color: #0f172a; letter-spacing: -1px; line-height: 1;">4LAZIE</span>
+                    <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                        <!-- Shimmer overlay -->
+                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                        <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
+                            <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
+                        </span>
+                    </div>
                 </div>
             </a>
             
@@ -180,9 +145,9 @@
             <div class="search-container position-relative mx-3" style="flex-grow: 1; max-width: 450px;">
                 <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
                 <input type="text" id="smartSearchInput" autocomplete="off" class="form-control" placeholder="Search modules, notes, or past papers..." 
-                       style="padding: 12px 20px 12px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                       style="padding: 8px 16px 8px 45px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
                        onfocus="this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'; this.style.borderColor='var(--primary)'; this.style.background='#fff';"
-                       onblur="setTimeout(() => { document.getElementById('searchResults').classList.add('d-none'); }, 200); this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
+                       onblur="setTimeout(() => { document.getElementById('searchResults')?.classList.add('d-none'); }, 200); this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
                 
                 <!-- Search Results Dropdown -->
                 <div id="searchResults" class="position-absolute w-100 bg-white shadow-lg d-none" style="top: 100%; left: 0; z-index: 1050; margin-top: 8px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); max-height: 350px; overflow-y: auto;">
@@ -193,16 +158,23 @@
                 <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
             </div>
 
-            <div class="d-flex align-items-center">
-                <a href="/login" class="btn btn-premium btn-sm rounded-pill px-4 py-2 fw-bold" style="font-size: 0.9rem;">Login</a>
+            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
+                <a href="#" class="btn fw-bold rounded-pill px-3 py-1 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                    <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #f59e0b;"></i> <span>Sign In</span>
+                </a>
             </div>
         </div>
     </nav>
-    <hr style="margin: 0; border: none; height: 3px; background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899); opacity: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
 
-    <div class="container my-5">
+    <div class="page-layout">
+        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
+        
+        <div class="main-content d-flex flex-column" style="min-height: 100vh;">
+
+    <div class="flex-grow-1">
+    <div class="container-fluid px-4 px-xl-5 my-4">
         <div class="row animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="col-lg-7">
+            <div class="col-md-7 col-xl-8">
                 
                 
     <style>
@@ -257,24 +229,19 @@
         }
     </style>
     <!-- Open Notes Section -->
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 mt-0 gap-3">
-                <div class="d-flex align-items-center p-2 px-3 rounded-pill position-relative overflow-hidden mb-3" style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.8)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); backdrop-filter: blur(10px); max-width: max-content;">
-                    <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; min-width: 36px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 50%; font-size: 1rem;">
-                        <i class="bi bi-journal-album"></i>
-                    </div> 
-                    <div class="d-flex align-items-center flex-wrap">
-                        <h2 class="fw-bold m-0 me-3" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; text-transform: uppercase; font-size: 1.1rem;">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 mt-2 gap-3 pb-2" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-journal-text me-2" style="color: #10b981; font-size: 1.2rem;"></i>
+                        <h2 class="fw-bold m-0 me-3" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: 0.5px; text-transform: uppercase; font-size: 1rem;">
                             <span th:text="${selectedProgram != null ? (selectedProgram.startsWith('DIP_') ? 'DIP IN ' + selectedProgram.substring(4) : (selectedProgram.startsWith('DEG_') ? 'DEG IN ' + selectedProgram.substring(4) : (selectedProgram == 'DEGREE_EDU' ? 'DEGREE EDU' : 'MODULES'))) : 'MODULES'}">MODULES</span>
                         </h2>
-                        <div class="d-flex align-items-center border-start ps-3" style="border-color: rgba(0,0,0,0.08) !important; font-family: 'Outfit', sans-serif;">
-                            <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.3px;">
-                                <i class="bi bi-layers-fill me-1"></i>
-                                <span>LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
+                        <div class="d-flex align-items-center" style="font-family: 'Outfit', sans-serif;">
+                            <span class="badge bg-light text-secondary border px-2 py-1 me-2" style="font-weight: 600; font-size: 0.65rem; letter-spacing: 0.5px;">
+                                LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
                             </span>
-                            <span th:if="${selectedSemester != null}" th:text="'SEM ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 0.85rem;">SEM 1</span>
+                            <span th:if="${selectedSemester != null}" th:text="'SEM ' + ${selectedSemester}" style="color: #94a3b8; font-weight: 600; font-size: 0.75rem;">SEM 1</span>
                         </div>
                     </div>
-                </div>
                     
                     <!-- Semester Switcher Pills -->
                     <div class="semester-switcher" style="background: transparent; padding: 4px; display: inline-flex; gap: 10px;">
@@ -293,110 +260,270 @@
                     </div>
                 </div>
 
-                
-                <!-- Empty State -->
-                <div th:if="${#maps.isEmpty(groupedNotes)}" class="d-flex align-items-center p-3 mb-5" style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; border: 1px dashed rgba(245, 158, 11, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1);">
-                        <i class="bi bi-folder-x text-warning fs-5"></i>
+                <!-- Premium Section Header for Modules -->
+                <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
+                    <div class="d-flex align-items-center" style="background: linear-gradient(to right, rgba(245, 158, 11, 0.08), transparent); padding: 6px 16px; border-radius: 50px; border-left: 3px solid #f59e0b;">
+                        <i class="bi bi-stack me-2" style="color: #d97706; font-size: 0.9rem;"></i>
+                        <h4 class="fw-bold mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #92400e; letter-spacing: 2px; font-size: 0.8rem;">
+                            MODULE NAMES
+                        </h4>
+                    </div>
+                    <div class="flex-grow-1 ms-3" style="height: 1px; background: linear-gradient(to right, rgba(245, 158, 11, 0.2), transparent);"></div>
+                </div>
+ 
+                <!-- Empty State (General) -->
+                <div th:if="${#maps.isEmpty(groupedNotes) and !(selectedLevel == 4 and selectedSemester == 1)}" class="d-flex align-items-center p-3 mb-5" style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; border: 1px dashed rgba(245, 158, 11, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; background: rgba(245, 158, 11, 0.1);">
+                        <i class="bi bi-folder-x" style="color: #d97706; font-size: 1.25rem;"></i>
                     </div>
                     <div>
-                        <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">No Modules Uploaded Yet</h6>
-                        <p class="text-muted mb-0" style="font-size: 0.8rem;">Study materials for this level and semester will appear here once uploaded.</p>
+                        <h6 class="mb-1 fw-bold" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;">No Modules Uploaded Yet</h6>
+                        <p class="mb-0" style="color: #475569; font-size: 0.85rem;">Study materials for this level and semester will appear here once uploaded.</p>
                     </div>
+                </div>
+
+                <!-- Custom State for Level 4 Sem 1 (General Subjects) -->
+                <div th:if="${#maps.isEmpty(groupedNotes) and selectedLevel == 4 and selectedSemester == 1}" class="mb-4">
+                     <div class="accordion custom-accordion" id="accordionGeneral">
+                        <!-- Module 1 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #f59e0b; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(245, 158, 11, 0.1);">
+                                        <i class="bi bi-journal-text text-warning" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #92400e 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">COMMUNICATION SKILLS</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(245, 158, 11, 0.1); color: #d97706; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                        
+                        <!-- Module 2 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #3b82f6; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(59, 130, 246, 0.1);">
+                                        <i class="bi bi-calculator text-primary" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #1e3a8a 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">BASIC ENGINEERING MATHEMATICS</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                        
+                        <!-- Module 3 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #10b981; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(16, 185, 129, 0.1);">
+                                        <i class="bi bi-lightbulb text-success" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #064e3b 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">BASIC ENGINEERING PHYSICS</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                     </div>
+                </div>
+
+                <!-- Custom State for Level 4 Sem 2 (General Subjects) -->
+                <div th:if="${#maps.isEmpty(groupedNotes) and selectedLevel == 4 and selectedSemester == 2}" class="mb-4">
+                     <div class="accordion custom-accordion" id="accordionGeneralSem2">
+                        <!-- Module 1 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #f59e0b; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(245, 158, 11, 0.1);">
+                                        <i class="bi bi-briefcase text-warning" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #92400e 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">ENGINEERING ENTREPRENEURSHIP</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(245, 158, 11, 0.1); color: #d97706; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                        
+                        <!-- Module 2 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #3b82f6; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(59, 130, 246, 0.1);">
+                                        <i class="bi bi-pc-display text-primary" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #1e3a8a 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">COMPUTER APPLICATION</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                     </div>
+                </div>
+
+                <!-- Custom State for Level 5 Sem 1 (General Subjects) -->
+                <div th:if="${#maps.isEmpty(groupedNotes) and selectedLevel == 5 and selectedSemester == 1}" class="mb-4">
+                     <div class="accordion custom-accordion" id="accordionGeneralL5Sem1">
+                        <!-- Module 1 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #f59e0b; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(245, 158, 11, 0.1);">
+                                        <i class="bi bi-flask text-warning" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #92400e 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">APPLIED CHEMISTRY</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(245, 158, 11, 0.1); color: #d97706; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                        
+                        <!-- Module 2 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #3b82f6; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(59, 130, 246, 0.1);">
+                                        <i class="bi bi-calculator text-primary" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #1e3a8a 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">ENGINEERING MATHEMATICS</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+
+                        <!-- Module 3 -->
+                        <div class="accordion-item mb-2" style="border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 4px rgba(0,0,0,0.01);">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent d-flex align-items-center p-2 px-3" type="button" style="border-left: 3px solid #10b981; box-shadow: none;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 me-2" style="width: 28px; height: 28px; background: rgba(16, 185, 129, 0.1);">
+                                        <i class="bi bi-journal-text text-success" style="font-size: 0.85rem;"></i>
+                                    </div>
+                                    <div class="d-flex flex-column text-start">
+                                        <h6 class="mb-0 fw-bold text-uppercase" style="background: linear-gradient(to right, #064e3b 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.3px; font-size: 0.75rem; line-height: 1.3;">COMMUNICATION SKILLS</h6>
+                                    </div>
+                                    <span class="badge ms-auto" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 0.55rem; letter-spacing: 0.5px; padding: 4px 8px;">PENDING</span>
+                                </button>
+                            </h2>
+                        </div>
+                     </div>
                 </div>
 
                 <!-- Dynamic Modules Section -->
-                    <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
-                </div>
+                <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
 
-            </div> <!-- Close col-lg-7 -->
+            </div> <!-- Close col-md-7 -->
 
             <!-- RIGHT COLUMN: PREMIUM FEATURES & TRENDING NOTES -->
-            <div class="col-lg-5 mt-5 mt-lg-0 ps-lg-4">
+            <div class="col-md-5 col-xl-4 mt-5 mt-md-0 ps-md-4">
                 <div class="sticky-top" style="top: 100px;">
-                    <div class="mb-4 position-relative">
-                        <h3 class="m-0" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 3px; text-decoration-color: rgba(245, 158, 11, 0.4);">PREMIUM FEATURES</h3>
-                        <p class="m-0 mt-3" style="font-size: 0.8rem; font-weight: 500; color: #64748b;">Exclusive tools & resources</p>
-                    </div>
-                    
-                    <ul class="list-unstyled d-flex flex-column gap-2 mb-4">
-                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';" onclick="openPremiumModal()">
-                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 1 PAST PAPERS</h6>
-                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
-                        </li>
-                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';" onclick="openPremiumModal()">
-                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">CAT 2 PAST PAPERS</h6>
-                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
-                        </li>
-                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';" onclick="openPremiumModal()">
-                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">ASSIGNMENTS & SOLUTIONS</h6>
-                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
-                        </li>
-                        <li class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(245, 158, 11, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';" onclick="openPremiumModal()">
-                            <h6 class="fw-bold mb-0" style="color: #1e293b !important; font-size: 0.8rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;">UNIVERSITY EXAMS (UE)</h6>
-                            <i class="bi bi-lock-fill ms-auto" style="color: #cbd5e1; font-size: 0.85rem;"></i>
-                        </li>
-                    </ul>
-
-                    <!-- Premium Unlock CTA -->
-                    <div class="premium-cta-card mb-5 position-relative overflow-hidden" style="background: #1a1d29; border-radius: 14px; padding: 16px 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); transition: all 0.3s ease;">
-                        
-                        <!-- Rocket Icon Box -->
-                        <div style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);">
-                            <i class="bi bi-rocket-takeoff-fill" style="color: #f59e0b; font-size: 0.95rem;"></i>
-                        </div>
-
-                        <!-- Content -->
-                        <h6 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #f59e0b; font-size: 1rem; letter-spacing: 0.2px;">Unlock Premium Access</h6>
-                        <p class="mb-3" style="color: rgba(255,255,255,0.7); font-size: 0.75rem; line-height: 1.4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                            Join our platform today to get unlimited access to <span class="fw-bold text-white">past papers</span>, <span class="fw-bold text-white">assignments</span>, and <span class="fw-bold text-white">premium notes</span> curated for your success.
-                        </p>
-
-                        <!-- Button -->
-                        <a href="/register" class="btn w-100 fw-bold d-flex justify-content-center align-items-center gap-2" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: none; border-radius: 8px; padding: 8px 0; font-size: 0.8rem; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(245, 158, 11, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                            Create Free Account <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
+                    <div th:replace="~{fragments/sjuit_components :: premium_sidebar}"></div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Restricted Access Modal -->
-    <div class="modal fade" id="restrictedModal" tabindex="-1" aria-labelledby="restrictedModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0" style="background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
-                <div class="modal-body p-5 text-center">
-                    <div class="mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10" style="width: 80px; height: 80px;">
-                            <i class="bi bi-lock-fill text-danger" style="font-size: 2.5rem;"></i>
-                        </div>
-                    </div>
-                    <h3 class="fw-bold mb-3 text-dark">Access Restricted</h3>
-                    <p class="text-secondary mb-4 fs-5">Create a free account to access:</p>
-                    
-                    <div class="text-start d-inline-block text-secondary mb-5 fs-6">
-                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>CAT 1 PAST PAPERS</div>
-                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>CAT 2 PAST PAPERS</div>
-                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>ASSIGNMENTS</div>
-                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>Personal Profile</div>
-                        <div class="mb-3"><i class="bi bi-check2 text-success fs-5 me-2"></i>SAVED NOTES</div>
-                    </div>
-                    
-                    <div class="d-flex flex-column gap-3">
-                        <a href="/register" class="btn btn-premium w-100 py-3 fs-5">Register Now</a>
-                        <a href="/login" class="btn btn-outline-dark w-100 py-3 fs-5" style="border-radius: 14px;">Login</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> <!-- Close modal -->
-
-    <!-- Shared Footer -->
+    <!-- Shared FOOTER -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-    </div> <!-- Close main-content -->
-</div> <!-- Close page-layout -->
+    </div><!-- end .main-content -->
+    </div><!-- end .page-layout -->
+
+    <!-- PREMIUM GLASS MODAL FOR LOGIN -->
+    <div class="modal fade" id="premiumLoginModal" tabindex="-1" aria-labelledby="premiumLoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content premium-modal">
+                <style>
+                    .premium-modal {
+                        background: rgba(255, 255, 255, 0.15) !important;
+                        backdrop-filter: blur(25px) !important;
+                        -webkit-backdrop-filter: blur(25px) !important;
+                        border: 1px solid rgba(255,255,255,0.8) !important;
+                        border-top: 1px solid rgba(255, 255, 255, 1) !important;
+                        border-left: 1px solid rgba(255, 255, 255, 1) !important;
+                        box-shadow: 0 35px 60px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.3) !important;
+                        border-radius: 28px !important;
+                        padding: 30px !important;
+                    }
+                    .premium-drop-input {
+                        background: rgba(255, 255, 255, 0.5) !important;
+                        border: 1px solid rgba(255, 255, 255, 0.7) !important;
+                        color: #0f172a !important;
+                        border-radius: 12px !important;
+                        padding: 12px 16px !important;
+                        font-size: 0.95rem !important;
+                        font-weight: 500;
+                        transition: all 0.3s ease !important;
+                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+                    }
+                    .premium-drop-input:focus {
+                        background: rgba(255, 255, 255, 0.8) !important;
+                        border-color: #f59e0b !important;
+                        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2) !important;
+                        outline: none;
+                    }
+                    .premium-drop-input::placeholder { color: rgba(15, 23, 42, 0.5) !important; font-weight: 400; }
+                    .premium-drop-btn {
+                        background: #0f172a;
+                        border: none; border-radius: 12px; padding: 1rem; width: 100%;
+                        color: #fff; font-size: 1rem; font-weight: 700; letter-spacing: 0.5px;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+                        display: flex; align-items: center; justify-content: center; gap: 8px;
+                    }
+                    .premium-drop-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 15px 25px rgba(15, 23, 42, 0.3);
+                        background: #1e293b;
+                    }
+                </style>
+
+                <button type="button" class="btn-close shadow-none position-absolute" data-bs-dismiss="modal" aria-label="Close" style="top: 20px; right: 20px; z-index: 10;"></button>
+
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 54px; height: 54px; background: rgba(245, 158, 11, 0.15); border-radius: 16px; color: #d97706; font-size: 1.8rem; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <h3 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.5px;">Sign In</h3>
+                    <p class="m-0 mt-1" style="font-size: 0.9rem; color: rgba(15, 23, 42, 0.6); font-weight: 500;">Unlock premium study materials</p>
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control premium-drop-input shadow-none" placeholder="Email Address" required>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <input type="password" name="password" class="form-control premium-drop-input shadow-none" placeholder="Password" required>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 px-1">
+                        <a href="#" class="text-decoration-none" style="font-size: 0.85rem; color: #d97706; font-weight: 600;">Forgot Password?</a>
+                        <a th:href="@{/register}" class="text-decoration-none" style="font-size: 0.85rem; color: #0f172a; font-weight: 700;">Create Account</a>
+                    </div>
+
+                    <button type="submit" class="premium-drop-btn mb-3">
+                        Sign In Securely <i class="bi bi-arrow-right-short fs-5"></i>
+                    </button>
+                    
+                    <a href="#" class="btn w-100 d-flex align-items-center justify-content-center gap-2" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 12px; padding: 0.9rem; color: #0f172a; font-size: 0.95rem; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.9)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.6)';">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" height="20" alt="Google"> 
+                        Google Account
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Exclusive Modal Component (Placed here to avoid z-index trap) -->
+<div th:replace="~{fragments/sjuit_components :: restricted_modal}"></div>
+<div th:replace="~{fragments/sjuit_components :: preview_modal}"></div>
 
     <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -517,3 +644,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+
+

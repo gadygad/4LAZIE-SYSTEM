@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About 4LAZIE - Smart in Brain</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Premium Global CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Abstract Background Orbs */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .orb-primary {
+            width: 400px; height: 400px;
+            background: rgba(59, 130, 246, 0.2);
+            top: -100px; left: -100px;
+        }
+        .orb-accent {
+            width: 300px; height: 300px;
+            background: rgba(168, 85, 247, 0.2);
+            top: 20%; right: -50px;
+            animation-delay: -3s;
+        }
+        .orb-warning {
+            width: 350px; height: 350px;
+            background: rgba(245, 158, 11, 0.15);
+            bottom: -50px; left: 20%;
+            animation-delay: -6s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .hero-section {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .highlight-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .meaning-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            padding: 60px 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.05), inset 0 2px 0 rgba(255,255,255,1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .meaning-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.08), inset 0 2px 0 rgba(255,255,255,1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .quote-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #f59e0b, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.2;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-family: serif;
+        }
+
+        .meaning-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .meaning-subtext {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        .feature-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 30px;
+            height: 100%;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 30px;
+            padding: 80px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin: 80px 0;
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.4);
+        }
+
+        /* Nav styling reuse */
+        .nta-nav-item { position: relative; }
+        .nta-nav-btn {
+            background: transparent; border: none; color: #334155; font-weight: 600; font-size: 0.95rem;
+            padding: 8px 16px; border-radius: 8px; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; text-decoration: none;
+        }
+        .nta-nav-item:hover .nta-nav-btn { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+        
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(203, 213, 225, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);">
+        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+            <div class="d-flex align-items-center gap-2">
+                <a href="/" class="text-decoration-none d-flex flex-row align-items-center gap-2">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.6rem; color: #0f172a; letter-spacing: -1px; line-height: 1;">
+                        4LAZIE
+                    </span>
+                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 3px 10px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); overflow: hidden;">
+                        <span style="font-size: 0.55rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
+                            <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.65rem;"></i> SMART IN BRAIN
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Global Nav Links -->
+            <div class="d-none d-md-flex align-items-center gap-1">
+                <div class="position-relative nta-nav-item">
+                    <a href="/" class="nta-nav-btn text-decoration-none d-inline-block">
+                        <i class="bi bi-house me-1"></i> Home
+                    </a>
+                </div>
+                <div class="position-relative nta-nav-item">
+                    <a href="/about" class="nta-nav-btn text-decoration-none d-inline-block" style="color: #2563eb; background: rgba(59, 130, 246, 0.1);">
+                        <i class="bi bi-info-circle me-1"></i> About Us
+                    </a>
+                </div>
+                <div class="position-relative nta-nav-item">
+                    <a href="/premium" class="nta-nav-btn text-decoration-none d-inline-block" style="color: #f59e0b;">
+                        <i class="bi bi-star-fill me-1"></i> Premium
+                    </a>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
+                <a href="/login" class="btn fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                    <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #f59e0b;"></i> <span>Sign In</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Background Orbs -->
+    <div class="bg-orb orb-primary"></div>
+    <div class="bg-orb orb-accent"></div>
+    <div class="bg-orb orb-warning"></div>
+
+    <main class="container position-relative" style="z-index: 1;">
+        
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="d-inline-flex align-items-center gap-2 mb-3" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 6px 16px; border-radius: 50px;">
+                <span class="spinner-grow spinner-grow-sm text-primary" role="status" style="width: 8px; height: 8px;"></span>
+                <span class="fw-bold" style="color: #2563eb; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">Our Story</span>
+            </div>
+            <h1 class="hero-title">Redefining the <br><span class="highlight-text">Way You Study</span></h1>
+            <p class="hero-subtitle">We believe that learning shouldn't be about endless searching. It should be about absorbing knowledge efficiently and effectively.</p>
+        </section>
+
+        <!-- Core Meaning Section (4LAZIE) -->
+        <section class="row justify-content-center mb-5 pb-5">
+            <div class="col-lg-10">
+                <div class="meaning-card">
+                    <div class="quote-icon">"</div>
+                    <div class="meaning-text">
+                        <span style="color: #64748b; font-weight: 600;">4LAZIE</span> implies<br>
+                        "Smart in the <span style="background: linear-gradient(to right, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Brain</span>, but Lazy in the <span style="background: linear-gradient(to right, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Search</span>."
+                    </div>
+                    <p class="meaning-subtext mt-4 mx-auto" style="max-width: 700px; line-height: 1.8;">
+                        Brilliant minds shouldn't waste their energy hunting for scattered lecture notes or past papers. 
+                        We do the heavy lifting of finding, organizing, and verifying academic materials so that you can dedicate 100% of your brainpower to actually learning and acing your exams.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- What We Do / Features -->
+        <section class="py-5">
+            <div class="text-center mb-5">
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.5rem; color: #0f172a;">Why Choose Us?</h2>
+                <p class="text-secondary" style="font-size: 1.1rem;">We provide everything you need in one centralized platform.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Box 1 -->
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <div class="feature-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Verified Quality</h4>
+                        <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">Every note and document on our platform is carefully vetted to ensure accuracy and relevance to your specific curriculum.</p>
+                    </div>
+                </div>
+                <!-- Box 2 -->
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <div class="feature-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
+                            <i class="bi bi-archive"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Ultimate Archive</h4>
+                        <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">From lecture notes to past university exams, we maintain a massive, organized library that saves you countless hours of searching.</p>
+                    </div>
+                </div>
+                <!-- Box 3 -->
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <div class="feature-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Seamless Access</h4>
+                        <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">Access your study materials instantly from any device. Download them for offline reading or study directly on the web.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <!-- Decorative circle -->
+            <div style="position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%); top: -200px; left: -100px;"></div>
+            
+            <div class="position-relative z-index-2">
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 3rem; margin-bottom: 20px;">Ready to Study Smarter?</h2>
+                <p style="color: rgba(255,255,255,0.7); font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px;">
+                    Join thousands of smart students who trust 4LAZIE to simplify their academic journey. Stop searching, start learning.
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="/register" class="btn fw-bold px-5 py-3" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 16px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='none';">
+                        Create Free Account
+                    </a>
+                    <a href="/" class="btn fw-bold px-5 py-3" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; font-size: 1.1rem; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.1)';">
+                        Explore Notes
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Shared FOOTER -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
