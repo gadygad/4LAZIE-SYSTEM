@@ -488,10 +488,14 @@
         </div>
 
         <!-- UPLOAD FORM SECTION -->
-        <div class="premium-card">
-            <div class="d-flex align-items-center mb-4 pb-3" style="border-bottom: 1px solid var(--border-color);">
-                <i class="bi bi-cloud-arrow-up-fill fs-4 me-3" style="color: var(--gold-primary);"></i>
-                <h2 class="m-0" style="font-weight: 700; font-size: 1.4rem; color: var(--text-main);">Upload New Material</h2>
+        <div class="premium-card mx-auto" style="max-width: 850px; padding: 3rem 2.5rem; background: linear-gradient(145deg, #ffffff, #fffdf8); border: 2px solid rgba(212, 175, 55, 0.5); box-shadow: 0 20px 50px rgba(212, 175, 55, 0.12); border-radius: 24px; position: relative; overflow: hidden;">
+            
+            <!-- Decorative Gold Top Accent -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #B8860B, #FFD700, #D4AF37);"></div>
+
+            <div class="d-flex align-items-center justify-content-center mb-4 pb-3" style="border-bottom: 2px dashed rgba(212, 175, 55, 0.3);">
+                <i class="bi bi-cloud-arrow-up-fill fs-2 me-3" style="color: #D4AF37; text-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);"></i>
+                <h2 class="m-0" style="font-weight: 800; font-size: 1.6rem; color: #996515; text-transform: uppercase; letter-spacing: 1.5px;">Upload New Material</h2>
             </div>
 
             <form th:action="@{/admin/upload-note}" method="post" enctype="multipart/form-data">
@@ -602,7 +606,7 @@
                             <input class="file-input" type="file" name="file" required id="fileInput" onchange="updateFileName(this)">
                         </div>
                         
-                        <button type="submit" class="btn-gold mt-auto">
+                        <button type="submit" class="btn-gold mt-auto" style="padding: 1rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);">
                             <i class="bi bi-cloud-upload-fill me-2"></i> Publish Material
                         </button>
                     </div>
