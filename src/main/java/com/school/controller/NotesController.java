@@ -257,6 +257,12 @@ public class NotesController {
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
 
+        if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .build();
+        }
+
         String filename = note.getFilename();
         if (filename == null || filename.isEmpty()) filename = "note-" + id + ".txt";
 
@@ -363,6 +369,12 @@ public class NotesController {
             if (loggedInUser == null) {
                 return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
             }
+        }
+
+        if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .build();
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
