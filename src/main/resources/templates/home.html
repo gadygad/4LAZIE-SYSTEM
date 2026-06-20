@@ -556,8 +556,14 @@
                 });
             </script>
 
-            <div class="dropdown d-flex justify-content-end align-items-center" style="width: auto;">
-                <a href="#" class="btn btn-primary fw-bold rounded-pill px-3 py-2 dropdown-toggle d-flex align-items-center gap-2" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">
+            <div class="d-flex justify-content-end align-items-center gap-2" style="width: auto;">
+                <!-- Mobile Only: Our Story Pill -->
+                <a th:href="@{/about}" class="d-md-none text-decoration-none d-flex align-items-center" style="font-size: 0.8rem; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 6px 12px; border-radius: 50px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                    <i class="bi bi-stars me-1"></i> Story
+                </a>
+
+                <div class="dropdown d-flex justify-content-end align-items-center">
+                    <a href="#" class="btn btn-primary fw-bold rounded-pill px-3 py-2 dropdown-toggle d-flex align-items-center gap-2" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)';">
                     <i class="bi bi-person-fill" style="font-size: 1.1rem;"></i> <span>Sign In</span>
                 </a>
                 
@@ -626,6 +632,7 @@
                         </form>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </header>
