@@ -349,34 +349,18 @@ public class NotesController {
     }
 
     @GetMapping("/stream/{id}")
-    public void streamNote(@PathVariable("id") Integer id, jakarta.servlet.http.HttpServletResponse response) {
+    public Object streamNote(@PathVariable("id") Integer id, HttpSession session) {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             try {
-                java.net.URL url = new java.net.URL(note.getFileUrl());
-                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-
-                if (connection.getResponseCode() == 200) {
-                    String filename = note.getFilename() != null ? note.getFilename() : "document-" + id + ".pdf";
-                    response.setContentType("application/pdf");
-                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"");
-
-                    try (java.io.InputStream in = connection.getInputStream();
-                         java.io.OutputStream out = response.getOutputStream()) {
-                        byte[] buffer = new byte[4096];
-                        int length;
-                        while ((length = in.read(buffer)) > 0) {
-                            out.write(buffer, 0, length);
-                        }
-                        out.flush();
-                    }
-                    return;
-                }
+                String encodedUrl = java.net.URLEncoder.encode(note.getFileUrl(), "UTF-8");
+                String gDocsUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, gDocsUrl)
+                        .build();
             } catch (Exception e) {
-                // Fallback
+                // fallback
             }
         }
 
@@ -390,23 +374,18 @@ public class NotesController {
                     String mimeType = Files.probeContentType(filePath);
                     if (mimeType == null) mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
                     
-                    response.setContentType(mimeType);
-                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"");
-                    
-                    Files.copy(filePath, response.getOutputStream());
-                    response.getOutputStream().flush();
-                    return;
+                    Resource resource = new UrlResource(filePath.toUri());
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.parseMediaType(mimeType))
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
+                            .body(resource);
                 }
             }
         } catch (Exception e) { }
 
-        try {
-            String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
-            response.setContentType(MediaType.TEXT_HTML_VALUE);
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"");
-            response.getWriter().write(mockHtml);
-            response.getWriter().flush();
-        } catch (Exception e) {}
+        String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
+        ByteArrayResource mockResource = new ByteArrayResource(mockHtml.getBytes());
+        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"").body(mockResource);
     }
 
     @GetMapping("/guest-notes")
