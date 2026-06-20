@@ -497,12 +497,17 @@
 
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label">Module Name</label>
-                                <input type="text" name="moduleName" class="form-control" placeholder="e.g. Programming Concepts" required>
+                                <label class="form-label d-flex align-items-center">
+                                    Module Name 
+                                    <span id="moduleLoading" class="spinner-border spinner-border-sm ms-2 d-none" style="color: var(--gold-primary);" role="status"></span>
+                                </label>
+                                <select name="moduleName" id="moduleNameSelect" class="form-select" required style="transition: all 0.3s ease;">
+                                    <option value="" disabled selected>Select Program & Level first...</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Module Code</label>
-                                <input type="text" name="moduleCode" class="form-control" placeholder="e.g. ITT 04101" required>
+                                <input type="text" name="moduleCode" id="moduleCodeInput" class="form-control" placeholder="Auto-filled" readonly required style="background-color: #F8FAFC; border-style: dashed; color: var(--text-muted);">
                             </div>
                         </div>
                     </div>
@@ -542,6 +547,81 @@
                 subMsg.textContent = 'File selected and ready to upload';
             }
         }
+
+        // Dynamic Subjects Fetching Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const programSelect = document.querySelector('select[name="programType"]');
+            const levelSelect = document.querySelector('select[name="levelNo"]');
+            const semesterSelect = document.querySelector('select[name="semesterNo"]');
+            const moduleNameSelect = document.getElementById('moduleNameSelect');
+            const moduleCodeInput = document.getElementById('moduleCodeInput');
+            const loadingSpinner = document.getElementById('moduleLoading');
+
+            let subjectsData = [];
+
+            function fetchSubjects() {
+                const program = programSelect.value;
+                const level = levelSelect.value;
+                const semester = semesterSelect.value;
+
+                if (!program || !level || !semester) return;
+
+                loadingSpinner.classList.remove('d-none');
+                moduleNameSelect.innerHTML = '<option value="" disabled selected>Fetching Modules...</option>';
+                moduleNameSelect.style.borderColor = 'var(--gold-primary)';
+                moduleCodeInput.value = '';
+
+                fetch(`/api/subjects?programType=${encodeURIComponent(program)}&levelNo=${level}&semesterNo=${semester}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        subjectsData = data;
+                        loadingSpinner.classList.add('d-none');
+                        moduleNameSelect.style.borderColor = '#CBD5E1';
+                        moduleNameSelect.innerHTML = '<option value="" disabled selected>Select Module...</option>';
+                        
+                        if (data.length === 0) {
+                            moduleNameSelect.innerHTML = '<option value="" disabled selected>No modules found for this selection</option>';
+                            // Fallback if no subjects in DB
+                            moduleNameSelect.innerHTML += '<option value="GENERAL MODULE">GENERAL MODULE</option>';
+                        } else {
+                            data.forEach(subject => {
+                                const option = document.createElement('option');
+                                option.value = subject.name;
+                                option.textContent = subject.name;
+                                moduleNameSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error fetching subjects', err);
+                        loadingSpinner.classList.add('d-none');
+                        moduleNameSelect.style.borderColor = '#EF4444';
+                        moduleNameSelect.innerHTML = '<option value="" disabled selected>Error loading. Try again.</option>';
+                    });
+            }
+
+            programSelect.addEventListener('change', fetchSubjects);
+            levelSelect.addEventListener('change', fetchSubjects);
+            semesterSelect.addEventListener('change', fetchSubjects);
+
+            moduleNameSelect.addEventListener('change', function() {
+                const selectedName = this.value;
+                const subject = subjectsData.find(s => s.name === selectedName);
+                if (subject) {
+                    moduleCodeInput.value = subject.code || 'N/A';
+                    moduleCodeInput.style.borderColor = 'var(--gold-primary)';
+                    moduleCodeInput.style.backgroundColor = '#FFFFFF';
+                    moduleCodeInput.style.color = 'var(--text-main)';
+                } else {
+                    moduleCodeInput.value = '';
+                }
+            });
+            
+            // Initial fetch if all three happen to have values
+            if (programSelect.value && levelSelect.value && semesterSelect.value) {
+                fetchSubjects();
+            }
+        });
     </script>
 </body>
 </html>
