@@ -48,6 +48,15 @@ public class AdminController {
                 return "redirect:/admin";
             }
 
+            // Check for duplication BEFORE uploading to Cloudinary
+            boolean exists = noteRepository.existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(
+                    title, programType, levelNo, semesterNo, moduleName, unitNumber);
+                    
+            if (exists) {
+                redirectAttributes.addFlashAttribute("error", "Duplication Error: A material with the exact same Title, Program, Level, Semester, and Unit already exists!");
+                return "redirect:/admin";
+            }
+
             // 1. Upload to Cloudinary
             String fileUrl = fileStorageService.uploadFile(file);
 
