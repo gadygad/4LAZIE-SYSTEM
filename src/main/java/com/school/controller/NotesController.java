@@ -242,17 +242,6 @@ public class NotesController {
         if (note == null) return ResponseEntity.notFound().build();
 
         User loggedInUser = (User) session.getAttribute("user");
-        if (loggedInUser == null && !note.getIsPublic()) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
-        }
-
-        // Exclusive Resource Check Logic
-        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note")) {
-            if (loggedInUser == null) {
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, "/login").build();
-            }
-        }
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
@@ -359,17 +348,6 @@ public class NotesController {
     public Object streamNote(@PathVariable("id") Integer id, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("user");
         Note note = noteRepository.findById(id).orElse(null);
-        
-        if (note != null && !note.getIsPublic() && loggedInUser == null) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
-        }
-
-        // Exclusive Resource Check Logic
-        if (note != null && note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note")) {
-            if (loggedInUser == null) {
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
-            }
-        }
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
