@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
@@ -791,11 +791,8 @@
     </div>
     <script>
     function openPreviewModal(noteId, title) {
-        document.getElementById('previewModalTitle').textContent = title;
-        document.getElementById('previewFrame').src = '/view/' + noteId;
-        document.getElementById('previewDownloadLink').href = '/download/' + noteId;
-        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-        modal.show();
+        // Redirect directly to the beautifully redesigned full-screen reading page
+        window.location.href = '/view/' + noteId;
     }
     </script>
 </div>
