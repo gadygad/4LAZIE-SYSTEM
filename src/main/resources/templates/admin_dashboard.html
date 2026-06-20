@@ -13,14 +13,14 @@
     
     <style>
         :root {
-            --bg-dark: #070B19;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --gold-primary: #D4AF37;
-            --gold-light: #F3E5AB;
-            --gold-gradient: linear-gradient(135deg, #F9D423 0%, #FF4E50 100%); /* Warm premium gradient */
-            --gold-classic: linear-gradient(135deg, #FFDF00 0%, #D4AF37 50%, #996515 100%);
-            --text-muted: #94a3b8;
-            --border-color: rgba(212, 175, 55, 0.15);
+            --bg-dark: #0A0A0A; /* Deeper black for high contrast */
+            --bg-card: rgba(18, 18, 18, 0.7); /* Subtle dark grey glass */
+            --gold-primary: #C5A059; /* Soft, premium gold */
+            --gold-light: #EAE0C8; /* Faded gold for text */
+            --gold-gradient: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); /* Pure gold, no red */
+            --gold-classic: linear-gradient(135deg, #E6C27A 0%, #C5A059 50%, #A67C00 100%); /* Elegant subtle gold */
+            --text-muted: #A0A0A0;
+            --border-color: rgba(197, 160, 89, 0.15);
             --sidebar-width: 280px;
         }
 
@@ -32,8 +32,8 @@
             overflow-x: hidden;
             /* Subtle radial gradients for premium feel */
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.08), transparent 25%);
+                radial-gradient(circle at 15% 50%, rgba(197, 160, 89, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(197, 160, 89, 0.08), transparent 25%);
         }
 
         /* ----- SIDEBAR ----- */
@@ -43,7 +43,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            background: rgba(11, 15, 25, 0.8);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(20px);
             border-right: 1px solid var(--border-color);
             padding: 2rem 1.5rem;
@@ -107,9 +107,9 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(197, 160, 89, 0.08);
             color: var(--gold-light);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(197, 160, 89, 0.15);
         }
 
         .nav-link.active i {
@@ -256,12 +256,12 @@
         .form-control:focus, .form-select:focus {
             background: rgba(0, 0, 0, 0.5);
             border-color: var(--gold-primary);
-            box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 0 0.25rem rgba(197, 160, 89, 0.15);
             color: #fff;
         }
 
         .form-select option {
-            background-color: #0f172a;
+            background-color: #121212;
             color: #fff;
         }
 
@@ -275,15 +275,15 @@
             width: 100%;
             height: 160px;
             padding: 1.5rem;
-            border: 2px dashed rgba(212, 175, 55, 0.4);
+            border: 1px dashed rgba(197, 160, 89, 0.4);
             border-radius: 16px;
-            background: rgba(212, 175, 55, 0.03);
+            background: rgba(197, 160, 89, 0.02);
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .file-drop-area:hover {
-            background: rgba(212, 175, 55, 0.08);
+            background: rgba(197, 160, 89, 0.06);
             border-color: var(--gold-primary);
         }
 
@@ -318,7 +318,7 @@
         /* ----- BUTTONS ----- */
         .btn-premium {
             background: var(--gold-classic);
-            color: #000;
+            color: #121212;
             font-weight: 700;
             border: none;
             border-radius: 12px;
@@ -327,13 +327,13 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
             width: 100%;
         }
 
         .btn-premium:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4);
             color: #000;
         }
 
@@ -458,7 +458,7 @@
                 </div>
             </div>
             <div class="col-md-8 col-lg-9">
-                <div class="glass-card h-100 d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border-color: rgba(212, 175, 55, 0.3);">
+                <div class="glass-card h-100 d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%); border-color: var(--border-color);">
                     <h4 style="color: var(--gold-primary); font-weight: 700; margin-bottom: 0.5rem; font-size: 1.25rem;">
                         <i class="bi bi-lightning-charge-fill me-2"></i> Cloudinary Integration Active
                     </h4>
@@ -582,7 +582,7 @@
                 const msg = input.parentElement.querySelector('.file-msg');
                 const subMsg = input.parentElement.querySelector('.file-sub-msg');
                 msg.textContent = fileName;
-                msg.style.color = '#D4AF37';
+                msg.style.color = '#C5A059';
                 subMsg.textContent = 'File selected and ready to upload';
             }
         }
