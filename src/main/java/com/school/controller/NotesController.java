@@ -349,14 +349,35 @@ public class NotesController {
     }
 
     @GetMapping("/stream/{id}")
-    public Object streamNote(@PathVariable("id") Integer id, HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("user");
+    public void streamNote(@PathVariable("id") Integer id, jakarta.servlet.http.HttpServletResponse response) {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
-                    .build();
+            try {
+                java.net.URL url = new java.net.URL(note.getFileUrl());
+                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+
+                if (connection.getResponseCode() == 200) {
+                    String filename = note.getFilename() != null ? note.getFilename() : "document-" + id + ".pdf";
+                    response.setContentType("application/pdf");
+                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"");
+
+                    try (java.io.InputStream in = connection.getInputStream();
+                         java.io.OutputStream out = response.getOutputStream()) {
+                        byte[] buffer = new byte[4096];
+                        int length;
+                        while ((length = in.read(buffer)) > 0) {
+                            out.write(buffer, 0, length);
+                        }
+                        out.flush();
+                    }
+                    return;
+                }
+            } catch (Exception e) {
+                // Fallback
+            }
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
@@ -365,23 +386,27 @@ public class NotesController {
         try {
             if (note != null && note.getFilename() != null) {
                 Path filePath = Paths.get("uploads").resolve(note.getFilename());
-                Resource resource = new UrlResource(filePath.toUri());
-
-                if (resource.exists() && resource.isReadable()) {
+                if (Files.exists(filePath) && Files.isReadable(filePath)) {
                     String mimeType = Files.probeContentType(filePath);
                     if (mimeType == null) mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
                     
-                    return ResponseEntity.ok()
-                            .contentType(MediaType.parseMediaType(mimeType))
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
-                            .body(resource);
+                    response.setContentType(mimeType);
+                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"");
+                    
+                    Files.copy(filePath, response.getOutputStream());
+                    response.getOutputStream().flush();
+                    return;
                 }
             }
         } catch (Exception e) { }
 
-        String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
-        ByteArrayResource mockResource = new ByteArrayResource(mockHtml.getBytes());
-        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"").body(mockResource);
+        try {
+            String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
+            response.setContentType(MediaType.TEXT_HTML_VALUE);
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"");
+            response.getWriter().write(mockHtml);
+            response.getWriter().flush();
+        } catch (Exception e) {}
     }
 
     @GetMapping("/guest-notes")
