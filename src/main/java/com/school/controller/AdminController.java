@@ -25,6 +25,7 @@ public class AdminController {
     @GetMapping
     public String adminDashboard(Model model) {
         model.addAttribute("totalNotes", noteRepository.count());
+        model.addAttribute("notes", noteRepository.findAllByOrderByIdDesc());
         return "admin_dashboard";
     }
 
@@ -88,6 +89,22 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "An error occurred while saving the file: " + e.getMessage());
         }
 
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/delete-note/{id}")
+    public String deleteNote(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            if (noteRepository.existsById(id)) {
+                noteRepository.deleteById(id);
+                redirectAttributes.addFlashAttribute("success", "Material successfully deleted.");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Material not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error deleting material: " + e.getMessage());
+        }
         return "redirect:/admin";
     }
 }
