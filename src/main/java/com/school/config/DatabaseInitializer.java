@@ -175,7 +175,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     private Note createNote(String title, String filename, String program, int level, int semester, String type,
             String moduleName, String moduleCode, int downloads) {
-        Note note = new Note(title, filename, program, level, semester, type, moduleName, moduleCode,
+        Note note = new Note(title, filename, program, level, semester, type, moduleName, moduleCode, "2023/2024",
                 LocalDateTime.now().minusDays((long) (Math.random() * 10)));
         note.setDownloadCount(downloads);
         return note;

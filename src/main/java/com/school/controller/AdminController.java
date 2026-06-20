@@ -37,6 +37,7 @@ public class AdminController {
             @RequestParam("category") String category,
             @RequestParam("moduleName") String moduleName,
             @RequestParam("moduleCode") String moduleCode,
+            @RequestParam("academicYear") String academicYear,
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) {
 
@@ -49,7 +50,7 @@ public class AdminController {
             // 1. Upload to Cloudinary
             String fileUrl = fileStorageService.uploadFile(file);
 
-            // 2. Save Note to DB
+            // 2. Save Note to DB (Constructor auto-converts title and academicYear to UPPERCASE)
             Note note = new Note(
                     title,
                     file.getOriginalFilename(),
@@ -60,6 +61,7 @@ public class AdminController {
                     category,
                     moduleName,
                     moduleCode,
+                    academicYear,
                     LocalDateTime.now()
             );
             noteRepository.save(note);

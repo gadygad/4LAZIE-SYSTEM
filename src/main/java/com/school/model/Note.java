@@ -38,6 +38,9 @@ public class Note {
     @Column(name = "file_url", length = 500)
     private String fileUrl;
 
+    @Column(name = "academic_year", length = 20)
+    private String academicYear;
+
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
 
@@ -59,8 +62,8 @@ public class Note {
     }
 
     // Backwards compatible constructor for existing initializers
-    public Note(String title, String filename, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
-        this.title = title;
+    public Note(String title, String filename, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, String academicYear, LocalDateTime uploadDate) {
+        this.title = title != null ? title.toUpperCase() : null;
         this.filename = filename;
         this.fileUrl = "";
         this.programType = programType;
@@ -69,11 +72,12 @@ public class Note {
         this.category = category;
         this.moduleName = moduleName;
         this.moduleCode = moduleCode;
+        this.academicYear = academicYear != null ? academicYear.toUpperCase() : null;
         this.uploadDate = uploadDate;
     }
 
-    public Note(String title, String filename, String fileUrl, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
-        this.title = title;
+    public Note(String title, String filename, String fileUrl, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, String academicYear, LocalDateTime uploadDate) {
+        this.title = title != null ? title.toUpperCase() : null;
         this.filename = filename;
         this.fileUrl = fileUrl;
         this.programType = programType;
@@ -82,7 +86,16 @@ public class Note {
         this.category = category;
         this.moduleName = moduleName;
         this.moduleCode = moduleCode;
+        this.academicYear = academicYear != null ? academicYear.toUpperCase() : null;
         this.uploadDate = uploadDate;
+    }
+
+    public String getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(String academicYear) {
+        this.academicYear = academicYear != null ? academicYear.toUpperCase() : null;
     }
 
     // Getters and Setters
@@ -107,7 +120,7 @@ public class Note {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = title != null ? title.toUpperCase() : null;
     }
 
     public Integer getLevelNo() {
