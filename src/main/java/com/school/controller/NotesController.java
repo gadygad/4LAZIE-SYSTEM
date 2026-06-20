@@ -349,18 +349,48 @@ public class NotesController {
     }
 
     @GetMapping("/stream/{id}")
-    public Object streamNote(@PathVariable("id") Integer id, HttpSession session) {
+    public void streamNote(@PathVariable("id") Integer id, jakarta.servlet.http.HttpServletResponse response) {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             try {
-                String encodedUrl = java.net.URLEncoder.encode(note.getFileUrl(), "UTF-8");
-                String gDocsUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, gDocsUrl)
-                        .build();
+                java.net.URL url = new java.net.URL(note.getFileUrl());
+                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                connection.setRequestProperty("Accept", "*/*");
+                connection.setInstanceFollowRedirects(true);
+                connection.connect();
+
+                // If Cloudinary redirects, follow it (HttpURLConnection follows automatically within same protocol)
+                int status = connection.getResponseCode();
+                if (status == java.net.HttpURLConnection.HTTP_MOVED_TEMP || status == java.net.HttpURLConnection.HTTP_MOVED_PERM || status == java.net.HttpURLConnection.HTTP_SEE_OTHER) {
+                    String newUrl = connection.getHeaderField("Location");
+                    connection = (java.net.HttpURLConnection) new java.net.URL(newUrl).openConnection();
+                    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                    connection.connect();
+                    status = connection.getResponseCode();
+                }
+
+                if (status == 200) {
+                    String filename = note.getFilename() != null ? note.getFilename() : "document-" + id + ".pdf";
+                    response.setContentType("application/pdf");
+                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"");
+
+                    try (java.io.InputStream in = connection.getInputStream();
+                         java.io.OutputStream out = response.getOutputStream()) {
+                        byte[] buffer = new byte[8192];
+                        int length;
+                        while ((length = in.read(buffer)) > 0) {
+                            out.write(buffer, 0, length);
+                        }
+                        out.flush();
+                    }
+                    return; // Successfully proxied
+                }
             } catch (Exception e) {
-                // fallback
+                // Fallback to mock html
+                System.err.println("Proxy failed: " + e.getMessage());
             }
         }
 
@@ -374,18 +404,23 @@ public class NotesController {
                     String mimeType = Files.probeContentType(filePath);
                     if (mimeType == null) mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
                     
-                    Resource resource = new UrlResource(filePath.toUri());
-                    return ResponseEntity.ok()
-                            .contentType(MediaType.parseMediaType(mimeType))
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
-                            .body(resource);
+                    response.setContentType(mimeType);
+                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"");
+                    
+                    Files.copy(filePath, response.getOutputStream());
+                    response.getOutputStream().flush();
+                    return;
                 }
             }
         } catch (Exception e) { }
 
-        String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
-        ByteArrayResource mockResource = new ByteArrayResource(mockHtml.getBytes());
-        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"").body(mockResource);
+        try {
+            String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
+            response.setContentType(MediaType.TEXT_HTML_VALUE);
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"");
+            response.getWriter().write(mockHtml);
+            response.getWriter().flush();
+        } catch (Exception e) {}
     }
 
     @GetMapping("/guest-notes")
