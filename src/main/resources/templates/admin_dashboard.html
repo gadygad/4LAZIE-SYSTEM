@@ -872,13 +872,24 @@
     <!-- Script to update file name visually when selected -->
     <script>
         function updateFileName(input) {
-            const fileName = input.files[0]?.name;
+            const fileName = input.files && input.files[0] ? input.files[0].name : null;
             if (fileName) {
-                const msg = input.parentElement.querySelector('.file-msg');
-                const subMsg = input.parentElement.querySelector('.file-sub-msg');
-                msg.textContent = fileName;
-                msg.style.color = '#C5A059';
-                subMsg.textContent = 'File selected and ready to upload';
+                const container = input.closest('.file-drop-area');
+                if (container) {
+                    const msg = container.querySelector('.file-msg');
+                    const subMsg = container.querySelector('.file-sub-msg');
+                    if (msg) {
+                        msg.textContent = fileName;
+                        msg.style.color = '#B8860B';
+                    }
+                    if (subMsg) {
+                        subMsg.textContent = 'File selected and ready to upload';
+                    }
+                    // Visual feedback on the container
+                    container.style.borderColor = '#B8860B';
+                    container.style.backgroundColor = '#FFFDF8';
+                    container.style.boxShadow = '0 5px 15px rgba(212, 175, 55, 0.15)';
+                }
             }
         }
 
