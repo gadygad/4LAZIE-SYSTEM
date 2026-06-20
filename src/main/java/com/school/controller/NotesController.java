@@ -246,19 +246,14 @@ public class NotesController {
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
 
-        if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            try {
-                Resource resource = new UrlResource(note.getFileUrl());
-                if (resource.exists() && resource.isReadable()) {
-                    String filename = note.getFilename() != null ? note.getFilename() : "note-" + id + ".pdf";
-                    return ResponseEntity.ok()
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                            .body(resource);
-                }
-            } catch (MalformedURLException e) {
-                // Fallback to existing logic if URL is bad
+        if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            String downloadUrl = note.getFileUrl();
+            if (downloadUrl.contains("/upload/")) {
+                downloadUrl = downloadUrl.replace("/upload/", "/upload/fl_attachment/");
             }
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, downloadUrl)
+                    .build();
         }
 
         String filename = note.getFilename();
@@ -359,18 +354,9 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            try {
-                Resource resource = new UrlResource(note.getFileUrl());
-                if (resource.exists() && resource.isReadable()) {
-                    String filename = note.getFilename() != null ? note.getFilename() : "document-" + id + ".pdf";
-                    return ResponseEntity.ok()
-                            .contentType(MediaType.APPLICATION_PDF)
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
-                            .body(resource);
-                }
-            } catch (MalformedURLException e) {
-                // Fallback
-            }
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .build();
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
