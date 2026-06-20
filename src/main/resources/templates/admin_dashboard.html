@@ -530,6 +530,8 @@
                 border: 2px dashed rgba(212, 175, 55, 0.5);
                 background-color: rgba(253, 251, 247, 0.8);
                 border-radius: 12px;
+                height: 120px;
+                padding: 1rem;
                 transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             }
             .upload-form-section .file-drop-area:hover {
@@ -537,6 +539,17 @@
                 background-color: #FFFDF8;
                 transform: translateY(-3px);
                 box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+            }
+            .upload-form-section .file-drop-area .file-icon {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            .upload-form-section .file-drop-area .file-msg {
+                font-size: 0.95rem;
+                font-weight: 700;
+            }
+            .upload-form-section .file-drop-area .file-sub-msg {
+                font-size: 0.75rem;
             }
         </style>
         <div class="mt-4 mb-5 upload-form-section" style="max-width: 650px; padding: 0; background: transparent; border: none; box-shadow: none; position: relative;">
@@ -654,7 +667,7 @@
                             <input class="file-input" type="file" name="file" required id="fileInput" onchange="updateFileName(this)">
                         </div>
                         
-                        <button type="submit" class="btn-gold mt-auto" style="padding: 1.2rem; font-size: 1.1rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 12px; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35); transition: all 0.3s ease;">
+                        <button type="submit" class="btn-gold mt-auto mb-3" style="padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 30px; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
                             <i class="bi bi-cloud-upload-fill me-2"></i> Publish Material
                         </button>
                     </div>
