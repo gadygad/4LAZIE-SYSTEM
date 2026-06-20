@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About 4LAZIE - Smart in Brain</title>
+    <title>Our Story - 4LAZIE Premium</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -15,44 +15,52 @@
     
     <style>
         body {
-            background-color: #f8fafc;
+            background-color: #fcfdfd; /* Extremely light premium background */
             overflow-x: hidden;
             font-family: 'Inter', sans-serif;
+            color: #334155;
         }
 
-        /* Abstract Background Orbs */
+        /* Abstract Premium Orbs - Gold Edition */
         .bg-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(100px);
+            filter: blur(120px);
             z-index: -1;
-            animation: float 10s infinite ease-in-out alternate;
+            animation: float 12s infinite ease-in-out alternate;
         }
         .orb-primary {
-            width: 400px; height: 400px;
-            background: rgba(59, 130, 246, 0.2);
-            top: -100px; left: -100px;
+            width: 500px; height: 500px;
+            background: rgba(245, 158, 11, 0.15); /* Gold */
+            top: -150px; left: -150px;
         }
         .orb-accent {
-            width: 300px; height: 300px;
-            background: rgba(168, 85, 247, 0.2);
-            top: 20%; right: -50px;
-            animation-delay: -3s;
+            width: 400px; height: 400px;
+            background: rgba(251, 191, 36, 0.1); /* Lighter Gold */
+            top: 20%; right: -100px;
+            animation-delay: -4s;
         }
-        .orb-warning {
-            width: 350px; height: 350px;
-            background: rgba(245, 158, 11, 0.15);
-            bottom: -50px; left: 20%;
-            animation-delay: -6s;
+        .orb-dark {
+            width: 450px; height: 450px;
+            background: rgba(15, 23, 42, 0.05); /* Subtle dark contrast */
+            bottom: -50px; left: 15%;
+            animation-delay: -8s;
         }
 
         @keyframes float {
             0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-30px) scale(1.05); }
+            100% { transform: translateY(-40px) scale(1.05); }
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #d97706 0%, #fbbf24 50%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
         .hero-section {
-            padding: 120px 0 80px;
+            padding: 140px 0 100px;
             text-align: center;
             position: relative;
         }
@@ -60,167 +68,220 @@
         .hero-title {
             font-family: 'Outfit', sans-serif;
             font-weight: 900;
-            font-size: 4.5rem;
+            font-size: 5rem;
             line-height: 1.1;
             letter-spacing: -2px;
             margin-bottom: 24px;
-            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .highlight-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #0f172a;
         }
 
         .hero-subtitle {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             color: #64748b;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto 40px;
-            line-height: 1.7;
+            line-height: 1.8;
+            font-weight: 300;
         }
 
-        .meaning-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 30px;
-            padding: 60px 40px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.05), inset 0 2px 0 rgba(255,255,255,1);
-            text-align: center;
+        /* The Story Card */
+        .story-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 40px;
+            padding: 80px 60px;
+            box-shadow: 0 40px 100px rgba(245, 158, 11, 0.08), inset 0 2px 0 rgba(255,255,255,1);
+            text-align: left;
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .meaning-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.08), inset 0 2px 0 rgba(255,255,255,1);
-            border-color: rgba(59, 130, 246, 0.3);
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 50px 120px rgba(245, 158, 11, 0.12), inset 0 2px 0 rgba(255,255,255,1);
+            border-color: rgba(245, 158, 11, 0.4);
         }
 
-        .quote-icon {
-            font-size: 4rem;
-            background: linear-gradient(135deg, #f59e0b, #f43f5e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0.2;
+        .story-card::before {
+            content: '';
             position: absolute;
-            top: 20px;
-            left: 30px;
-            font-family: serif;
+            top: 0; left: 0;
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
         }
 
-        .meaning-text {
+        .story-heading {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            color: #1e293b;
-            line-height: 1.3;
-            letter-spacing: -0.5px;
+            color: #0f172a;
+            margin-bottom: 30px;
             position: relative;
             z-index: 2;
         }
 
-        .meaning-subtext {
-            font-size: 1.1rem;
-            color: #64748b;
-            margin-top: 20px;
-            font-weight: 500;
+        .story-paragraph {
+            font-size: 1.15rem;
+            color: #475569;
+            line-height: 1.9;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
         }
 
-        .feature-box {
-            background: #ffffff;
+        /* Live Counters */
+        .counter-box {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
             border-radius: 24px;
-            padding: 40px 30px;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: all 0.4s ease;
+        }
+        .counter-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        .counter-number {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+        .counter-label {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Steps Section */
+        .step-card {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 50px 40px;
             height: 100%;
             border: 1px solid rgba(0,0,0,0.04);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            transition: all 0.3s ease;
+            position: relative;
+            transition: all 0.4s ease;
         }
-
-        .feature-box:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            border-color: rgba(59, 130, 246, 0.2);
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+            border-color: rgba(245, 158, 11, 0.3);
         }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 24px;
+        .step-number {
+            position: absolute;
+            top: -25px;
+            right: 30px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 6rem;
+            color: rgba(245, 158, 11, 0.08);
+            line-height: 1;
+            transition: color 0.4s ease;
+        }
+        .step-card:hover .step-number {
+            color: rgba(245, 158, 11, 0.15);
+        }
+        .step-icon {
+            width: 70px; height: 70px;
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin-bottom: 30px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+            color: #d97706;
         }
 
         .cta-section {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            border-radius: 30px;
-            padding: 80px 40px;
+            border-radius: 40px;
+            padding: 100px 40px;
             text-align: center;
             color: white;
             position: relative;
             overflow: hidden;
-            margin: 80px 0;
-            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.4);
+            margin: 100px 0;
+            box-shadow: 0 40px 80px rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
         }
-
-        /* Nav styling reuse */
-        .nta-nav-item { position: relative; }
-        .nta-nav-btn {
-            background: transparent; border: none; color: #334155; font-weight: 600; font-size: 0.95rem;
-            padding: 8px 16px; border-radius: 8px; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; text-decoration: none;
-        }
-        .nta-nav-item:hover .nta-nav-btn { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
         
+        /* Navbar styling */
+        .story-link-active {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #0f172a;
+            padding: 6px 12px;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .story-link-active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            border-radius: 2px;
+        }
+        .story-link-active i {
+            color: #f59e0b;
+        }
+        
+        .premium-btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white !important;
+            border: none;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s ease;
+        }
+        .premium-btn-gold:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5);
+        }
     </style>
 </head>
 <body>
 
     <!-- NAVBAR -->
-    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(203, 213, 225, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);">
+    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1px solid rgba(245, 158, 11, 0.15); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);">
         <div class="container d-flex justify-content-between align-items-center flex-nowrap">
             <div class="d-flex align-items-center gap-2">
                 <a href="/" class="text-decoration-none d-flex flex-row align-items-center gap-2">
                     <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.6rem; color: #0f172a; letter-spacing: -1px; line-height: 1;">
                         4LAZIE
                     </span>
-                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 3px 10px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); overflow: hidden;">
-                        <span style="font-size: 0.55rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
-                            <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.65rem;"></i> SMART IN BRAIN
+                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 3px 10px; border-radius: 50px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(251, 191, 36, 0.08)); border: 1px solid rgba(245, 158, 11, 0.3); overflow: hidden;">
+                        <span style="font-size: 0.55rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #d97706, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
+                            <i class="bi bi-stars me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.7rem;"></i> PREMIUM
                         </span>
                     </div>
                 </a>
             </div>
 
-            <!-- Global Nav Links -->
-            <div class="d-none d-md-flex align-items-center gap-1">
-                <div class="position-relative nta-nav-item">
-                    <a href="/" class="nta-nav-btn text-decoration-none d-inline-block">
-                        <i class="bi bi-house me-1"></i> Home
-                    </a>
-                </div>
-                <div class="position-relative nta-nav-item">
-                    <a href="/about" class="nta-nav-btn text-decoration-none d-inline-block" style="color: #2563eb; background: rgba(59, 130, 246, 0.1);">
-                        <i class="bi bi-info-circle me-1"></i> About Us
-                    </a>
-                </div>
-                <div class="position-relative nta-nav-item">
-                    <a href="/premium" class="nta-nav-btn text-decoration-none d-inline-block" style="color: #f59e0b;">
-                        <i class="bi bi-star-fill me-1"></i> Premium
-                    </a>
+            <!-- Premium Nav Links -->
+            <div class="d-none d-md-flex align-items-center gap-4" style="margin-right: 2rem;">
+                <a th:href="@{/}" class="text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; color: #64748b; transition: color 0.3s ease;" onmouseover="this.style.color='#f59e0b';" onmouseout="this.style.color='#64748b';">
+                    Home
+                </a>
+                <div class="story-link-active">
+                    <i class="bi bi-stars"></i> Our Story
                 </div>
             </div>
 
             <div class="d-flex justify-content-end align-items-center" style="width: auto;">
-                <a href="/login" class="btn fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                <a href="/login" class="btn fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="background: #0f172a; color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)';">
                     <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #f59e0b;"></i> <span>Sign In</span>
                 </a>
             </div>
@@ -230,73 +291,128 @@
     <!-- Background Orbs -->
     <div class="bg-orb orb-primary"></div>
     <div class="bg-orb orb-accent"></div>
-    <div class="bg-orb orb-warning"></div>
+    <div class="bg-orb orb-dark"></div>
 
     <main class="container position-relative" style="z-index: 1;">
         
         <!-- Hero Section -->
         <section class="hero-section">
-            <div class="d-inline-flex align-items-center gap-2 mb-3" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 6px 16px; border-radius: 50px;">
-                <span class="spinner-grow spinner-grow-sm text-primary" role="status" style="width: 8px; height: 8px;"></span>
-                <span class="fw-bold" style="color: #2563eb; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">Our Story</span>
+            <div class="d-inline-flex align-items-center gap-2 mb-4" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 8px 20px; border-radius: 50px;">
+                <i class="bi bi-award-fill" style="color: #d97706; font-size: 1.1rem;"></i>
+                <span class="fw-bold" style="color: #b45309; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;">The Origin of Excellence</span>
             </div>
-            <h1 class="hero-title">Redefining the <br><span class="highlight-text">Way You Study</span></h1>
-            <p class="hero-subtitle">We believe that learning shouldn't be about endless searching. It should be about absorbing knowledge efficiently and effectively.</p>
+            <h1 class="hero-title">The Story Behind <br><span class="gold-gradient-text">The Smart Brain.</span></h1>
+            <p class="hero-subtitle">Born out of the frustration of endless WhatsApp scrolling, built to be the ultimate centralized academic archive for ambitious students.</p>
         </section>
 
-        <!-- Core Meaning Section (4LAZIE) -->
+        <!-- The True Origin Story -->
         <section class="row justify-content-center mb-5 pb-5">
-            <div class="col-lg-10">
-                <div class="meaning-card">
-                    <div class="quote-icon">"</div>
-                    <div class="meaning-text">
-                        <span style="color: #64748b; font-weight: 600;">4LAZIE</span> implies<br>
-                        "Smart in the <span style="background: linear-gradient(to right, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Brain</span>, but Lazy in the <span style="background: linear-gradient(to right, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Search</span>."
+            <div class="col-lg-11">
+                <div class="story-card">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <h2 class="story-heading">It started with a <span class="gold-gradient-text">simple frustration.</span></h2>
+                            <p class="story-paragraph">
+                                It was exam week at SJUIT. Students were panicking, spending hours frantically scrolling through WhatsApp groups trying to find that one specific PDF for Server Administration. Some files were corrupted, others were mixed up with memes and personal chats. The chaos was overwhelming.
+                            </p>
+                            <p class="story-paragraph">
+                                We realized a fundamental truth: <strong>Brilliant minds shouldn't waste their energy hunting for study materials.</strong>
+                            </p>
+                            <p class="story-paragraph mb-0">
+                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. We created this platform to bridge the gap between academic chaos and pure clarity. We do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignments—so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
+                                Because true intelligence is knowing how to find things effortlessly. <em>Smart in the Brain, Lazy in the Search.</em>
+                            </p>
+                        </div>
+                        <div class="col-md-5 d-none d-md-block text-center position-relative">
+                            <!-- Artistic composition instead of an image -->
+                            <div style="position: relative; width: 100%; height: 350px; display: flex; align-items: center; justify-content: center;">
+                                <div style="width: 280px; height: 280px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.2)); border-radius: 50px; transform: rotate(-10deg); position: absolute;"></div>
+                                <div style="width: 280px; height: 280px; background: white; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 50px; transform: rotate(5deg); position: absolute; box-shadow: 0 20px 50px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;">
+                                    <i class="bi bi-mortarboard-fill" style="font-size: 5rem; color: #f59e0b; margin-bottom: 20px;"></i>
+                                    <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #0f172a;">Est. 2024</h4>
+                                    <p style="color: #64748b; font-size: 0.9rem; font-weight: 500;">SJUIT · Tanzania</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="meaning-subtext mt-4 mx-auto" style="max-width: 700px; line-height: 1.8;">
-                        Brilliant minds shouldn't waste their energy hunting for scattered lecture notes or past papers. 
-                        We do the heavy lifting of finding, organizing, and verifying academic materials so that you can dedicate 100% of your brainpower to actually learning and acing your exams.
-                    </p>
                 </div>
             </div>
         </section>
 
-        <!-- What We Do / Features -->
-        <section class="py-5">
+        <!-- Live Impact Counters -->
+        <section class="py-5 my-4">
             <div class="text-center mb-5">
-                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.5rem; color: #0f172a;">Why Choose Us?</h2>
-                <p class="text-secondary" style="font-size: 1.1rem;">We provide everything you need in one centralized platform.</p>
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.5rem; color: #0f172a;">Our Impact by the Numbers</h2>
+                <p class="text-secondary" style="font-size: 1.1rem;">Trusted by the smartest minds on campus.</p>
+            </div>
+            
+            <div class="row g-4 justify-content-center" id="counter-section">
+                <!-- Counter 1 -->
+                <div class="col-md-4 col-sm-6">
+                    <div class="counter-box">
+                        <div class="counter-number"><span class="count-up" data-target="15000">0</span><span style="color: #f59e0b;">+</span></div>
+                        <div class="counter-label">Study Materials</div>
+                    </div>
+                </div>
+                <!-- Counter 2 -->
+                <div class="col-md-4 col-sm-6">
+                    <div class="counter-box">
+                        <div class="counter-number"><span class="count-up" data-target="4">0</span></div>
+                        <div class="counter-label">SJUIT Programs</div>
+                    </div>
+                </div>
+                <!-- Counter 3 -->
+                <div class="col-md-4 col-sm-6">
+                    <div class="counter-box">
+                        <div class="counter-number"><span class="count-up" data-target="5000">0</span><span style="color: #f59e0b;">+</span></div>
+                        <div class="counter-label">Active Students</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works (Visual Steps) -->
+        <section class="py-5 mt-5">
+            <div class="text-center mb-5">
+                <div class="d-inline-flex align-items-center gap-2 mb-3" style="background: rgba(15, 23, 42, 0.05); padding: 6px 16px; border-radius: 50px;">
+                    <i class="bi bi-gear-fill text-dark"></i>
+                    <span class="fw-bold text-dark" style="font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">Simplicity at its best</span>
+                </div>
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 3rem; color: #0f172a;">How 4LAZIE Works</h2>
             </div>
 
-            <div class="row g-4">
-                <!-- Box 1 -->
+            <div class="row g-5 mt-3">
+                <!-- Step 1 -->
                 <div class="col-md-4">
-                    <div class="feature-box">
-                        <div class="feature-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                            <i class="bi bi-shield-check"></i>
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">
+                            <i class="bi bi-search"></i>
                         </div>
-                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Verified Quality</h4>
-                        <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">Every note and document on our platform is carefully vetted to ensure accuracy and relevance to your specific curriculum.</p>
+                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.5rem;">Search Once</h4>
+                        <p class="text-secondary" style="font-size: 1.05rem; line-height: 1.7;">Type the name of your module or topic in our global search. No digging through folders required.</p>
                     </div>
                 </div>
-                <!-- Box 2 -->
+                <!-- Step 2 -->
                 <div class="col-md-4">
-                    <div class="feature-box">
-                        <div class="feature-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
-                            <i class="bi bi-archive"></i>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">
+                            <i class="bi bi-cloud-arrow-down-fill"></i>
                         </div>
-                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Ultimate Archive</h4>
-                        <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">From lecture notes to past university exams, we maintain a massive, organized library that saves you countless hours of searching.</p>
+                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.5rem;">Instant Access</h4>
+                        <p class="text-secondary" style="font-size: 1.05rem; line-height: 1.7;">Read notes instantly via our premium web viewer, or download the PDFs directly to your device.</p>
                     </div>
                 </div>
-                <!-- Box 3 -->
+                <!-- Step 3 -->
                 <div class="col-md-4">
-                    <div class="feature-box">
-                        <div class="feature-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                            <i class="bi bi-lightning-charge"></i>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">
+                            <i class="bi bi-stars"></i>
                         </div>
-                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Seamless Access</h4>
-                        <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">Access your study materials instantly from any device. Download them for offline reading or study directly on the web.</p>
+                        <h4 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.5rem;">Ace Your Exams</h4>
+                        <p class="text-secondary" style="font-size: 1.05rem; line-height: 1.7;">Focus 100% of your energy on absorbing the knowledge. Head to your exams with ultimate confidence.</p>
                     </div>
                 </div>
             </div>
@@ -305,18 +421,19 @@
         <!-- Call to Action -->
         <section class="cta-section">
             <!-- Decorative circle -->
-            <div style="position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%); top: -200px; left: -100px;"></div>
+            <div style="position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); top: -300px; right: -200px;"></div>
+            <div style="position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); bottom: -200px; left: -100px;"></div>
             
-            <div class="position-relative z-index-2">
-                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 3rem; margin-bottom: 20px;">Ready to Study Smarter?</h2>
-                <p style="color: rgba(255,255,255,0.7); font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px;">
-                    Join thousands of smart students who trust 4LAZIE to simplify their academic journey. Stop searching, start learning.
+            <div class="position-relative" style="z-index: 2;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 3.5rem; margin-bottom: 24px; letter-spacing: -1px;">Ready to Study Smarter?</h2>
+                <p style="color: rgba(255,255,255,0.8); font-size: 1.25rem; max-width: 650px; margin: 0 auto 40px; line-height: 1.8;">
+                    Join thousands of smart students who trust 4LAZIE to simplify their academic journey. Stop searching, start learning today.
                 </p>
-                <div class="d-flex gap-3 justify-content-center">
-                    <a href="/register" class="btn fw-bold px-5 py-3" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 16px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='none';">
+                <div class="d-flex gap-4 justify-content-center flex-wrap">
+                    <a href="/register" class="btn premium-btn-gold fw-bold px-5 py-3 rounded-pill" style="font-size: 1.15rem;">
                         Create Free Account
                     </a>
-                    <a href="/" class="btn fw-bold px-5 py-3" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; font-size: 1.1rem; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.1)';">
+                    <a href="/" class="btn fw-bold px-5 py-3 rounded-pill" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 1.15rem; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.1)';">
                         Explore Notes
                     </a>
                 </div>
@@ -330,5 +447,47 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Count Up Animation Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const counters = document.querySelectorAll('.count-up');
+            const speed = 200; // The lower the slower
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(() => animateCounter(counter), 10);
+                } else {
+                    // Format with commas
+                    counter.innerText = target.toLocaleString();
+                }
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        animateCounter(counter);
+                        observer.unobserve(counter);
+                    }
+                });
+            }, observerOptions);
+
+            counters.forEach(counter => {
+                observer.observe(counter);
+            });
+        });
+    </script>
 </body>
 </html>
