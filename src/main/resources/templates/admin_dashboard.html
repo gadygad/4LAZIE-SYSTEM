@@ -516,8 +516,12 @@
                                     <option value="DIP_CE">Diploma in CE</option>
                                     <option value="DIP_ME">Diploma in ME</option>
                                     <option value="DIP_EEE">Diploma in EEE</option>
+                                    <option value="DIP_MTE">Diploma in MTE</option>
+                                    <option value="DIP_ECE">Diploma in ECE</option>
                                     <option value="DEG_IT">Degree in IT</option>
                                     <option value="DEG_CSE">Degree in CSE</option>
+                                    <option value="DEG_CE">Degree in CE</option>
+                                    <option value="DEG_ME">Degree in ME</option>
                                     <option value="DEGREE_EDU">Degree in Education</option>
                                 </select>
                             </div>
@@ -574,17 +578,16 @@
 
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label d-flex align-items-center">
-                                    Module Name 
-                                    <span id="moduleLoading" class="spinner-border spinner-border-sm ms-2 d-none" style="color: var(--gold-primary);" role="status"></span>
+                                <label class="form-label d-flex justify-content-between">
+                                    <span>Module Name</span>
+                                    <span id="moduleLoading" class="spinner-border spinner-border-sm text-primary d-none" role="status"></span>
                                 </label>
-                                <select name="moduleName" id="moduleNameSelect" class="form-select" required style="transition: all 0.3s ease;">
-                                    <option value="" disabled selected>Select Program & Level first...</option>
-                                </select>
+                                <input type="text" name="moduleName" id="moduleNameInput" list="moduleNameList" class="form-control" placeholder="Select or type new module..." required style="text-transform: uppercase; transition: all 0.3s ease;">
+                                <datalist id="moduleNameList"></datalist>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Module Code</label>
-                                <input type="text" name="moduleCode" id="moduleCodeInput" class="form-control" placeholder="Auto-filled" readonly required style="background-color: #F8FAFC; border-style: dashed; color: var(--text-muted);">
+                                <input type="text" name="moduleCode" id="moduleCodeInput" class="form-control" placeholder="e.g. ITT 04101" required style="text-transform: uppercase;">
                             </div>
                         </div>
                     </div>
@@ -630,7 +633,8 @@
             const programSelect = document.querySelector('select[name="programType"]');
             const levelSelect = document.querySelector('select[name="levelNo"]');
             const semesterSelect = document.querySelector('select[name="semesterNo"]');
-            const moduleNameSelect = document.getElementById('moduleNameSelect');
+            const moduleNameInput = document.getElementById('moduleNameInput');
+            const moduleNameList = document.getElementById('moduleNameList');
             const moduleCodeInput = document.getElementById('moduleCodeInput');
             const loadingSpinner = document.getElementById('moduleLoading');
 
@@ -644,36 +648,28 @@
                 if (!program || !level || !semester) return;
 
                 loadingSpinner.classList.remove('d-none');
-                moduleNameSelect.innerHTML = '<option value="" disabled selected>Fetching Modules...</option>';
-                moduleNameSelect.style.borderColor = 'var(--gold-primary)';
-                moduleCodeInput.value = '';
-
+                moduleNameInput.placeholder = 'Fetching Modules...';
+                
                 fetch(`/api/subjects?programType=${encodeURIComponent(program)}&levelNo=${level}&semesterNo=${semester}`)
                     .then(response => response.json())
                     .then(data => {
                         subjectsData = data;
                         loadingSpinner.classList.add('d-none');
-                        moduleNameSelect.style.borderColor = '#CBD5E1';
-                        moduleNameSelect.innerHTML = '<option value="" disabled selected>Select Module...</option>';
+                        moduleNameList.innerHTML = '';
+                        moduleNameInput.placeholder = 'Select or type new module...';
                         
-                        if (data.length === 0) {
-                            moduleNameSelect.innerHTML = '<option value="" disabled selected>No modules found for this selection</option>';
-                            // Fallback if no subjects in DB
-                            moduleNameSelect.innerHTML += '<option value="GENERAL MODULE">GENERAL MODULE</option>';
-                        } else {
+                        if (data.length > 0) {
                             data.forEach(subject => {
                                 const option = document.createElement('option');
                                 option.value = subject.name;
-                                option.textContent = subject.name;
-                                moduleNameSelect.appendChild(option);
+                                moduleNameList.appendChild(option);
                             });
                         }
                     })
                     .catch(err => {
                         console.error('Error fetching subjects', err);
                         loadingSpinner.classList.add('d-none');
-                        moduleNameSelect.style.borderColor = '#EF4444';
-                        moduleNameSelect.innerHTML = '<option value="" disabled selected>Error loading. Try again.</option>';
+                        moduleNameInput.placeholder = 'Error loading. Type manually.';
                     });
             }
 
@@ -681,16 +677,12 @@
             levelSelect.addEventListener('change', fetchSubjects);
             semesterSelect.addEventListener('change', fetchSubjects);
 
-            moduleNameSelect.addEventListener('change', function() {
+            moduleNameInput.addEventListener('input', function() {
                 const selectedName = this.value;
-                const subject = subjectsData.find(s => s.name === selectedName);
+                const subject = subjectsData.find(s => s.name.toUpperCase() === selectedName.toUpperCase());
                 if (subject) {
-                    moduleCodeInput.value = subject.code || 'N/A';
+                    moduleCodeInput.value = subject.code || '';
                     moduleCodeInput.style.borderColor = 'var(--gold-primary)';
-                    moduleCodeInput.style.backgroundColor = '#FFFFFF';
-                    moduleCodeInput.style.color = 'var(--text-main)';
-                } else {
-                    moduleCodeInput.value = '';
                 }
             });
             
