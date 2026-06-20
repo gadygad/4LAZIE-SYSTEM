@@ -28,8 +28,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Optional<User> userOpt = userRepository.findByEmail(email);
         
         if (userOpt.isPresent()) {
+            User user = userOpt.get();
             HttpSession session = request.getSession();
-            session.setAttribute("user", userOpt.get());
+            session.setAttribute("user", user);
+            
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                    
+            if (isAdmin) {
+                response.sendRedirect("/admin");
+                return;
+            }
         }
         
         response.sendRedirect("/dashboard");
