@@ -247,9 +247,18 @@ public class NotesController {
         noteRepository.save(note);
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
-                    .build();
+            try {
+                Resource resource = new UrlResource(note.getFileUrl());
+                if (resource.exists() && resource.isReadable()) {
+                    String filename = note.getFilename() != null ? note.getFilename() : "note-" + id + ".pdf";
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(resource);
+                }
+            } catch (MalformedURLException e) {
+                // Fallback to existing logic if URL is bad
+            }
         }
 
         String filename = note.getFilename();
@@ -350,9 +359,18 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
-                    .build();
+            try {
+                Resource resource = new UrlResource(note.getFileUrl());
+                if (resource.exists() && resource.isReadable()) {
+                    String filename = note.getFilename() != null ? note.getFilename() : "document-" + id + ".pdf";
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.APPLICATION_PDF)
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                            .body(resource);
+                }
+            } catch (MalformedURLException e) {
+                // Fallback
+            }
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
