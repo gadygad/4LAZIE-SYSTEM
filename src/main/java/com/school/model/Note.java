@@ -58,6 +58,20 @@ public class Note {
     public Note() {
     }
 
+    // Backwards compatible constructor for existing initializers
+    public Note(String title, String filename, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
+        this.title = title;
+        this.filename = filename;
+        this.fileUrl = "";
+        this.programType = programType;
+        this.levelNo = levelNo;
+        this.semesterNo = semesterNo;
+        this.category = category;
+        this.moduleName = moduleName;
+        this.moduleCode = moduleCode;
+        this.uploadDate = uploadDate;
+    }
+
     public Note(String title, String filename, String fileUrl, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
         this.title = title;
         this.filename = filename;
