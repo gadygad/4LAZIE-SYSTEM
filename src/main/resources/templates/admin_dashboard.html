@@ -763,7 +763,7 @@
                             <i class="bi bi-file-earmark-arrow-up file-icon"></i>
                             <span class="file-msg">Drag & Drop your file here</span>
                             <span class="file-sub-msg mt-2">or click to browse (PDF, DOCX, PPTX)</span>
-                            <input class="file-input" type="file" name="file" required id="fileInput" onchange="updateFileName(this)">
+                            <input class="file-input" type="file" name="file" required id="fileInput">
                         </div>
                         
                         <button type="submit" class="btn-gold mt-auto mb-3" style="padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 30px; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
@@ -871,27 +871,36 @@
     
     <!-- Script to update file name visually when selected -->
     <script>
-        function updateFileName(input) {
-            const fileName = input.files && input.files[0] ? input.files[0].name : null;
-            if (fileName) {
-                const container = input.closest('.file-drop-area');
-                if (container) {
-                    const msg = container.querySelector('.file-msg');
-                    const subMsg = container.querySelector('.file-sub-msg');
-                    if (msg) {
-                        msg.textContent = fileName;
-                        msg.style.color = '#B8860B';
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    try {
+                        const input = e.target;
+                        const fileName = input.files && input.files[0] ? input.files[0].name : null;
+                        if (fileName) {
+                            const container = input.closest('.file-drop-area');
+                            if (container) {
+                                const msg = container.querySelector('.file-msg');
+                                const subMsg = container.querySelector('.file-sub-msg');
+                                if (msg) {
+                                    msg.textContent = fileName;
+                                    msg.style.color = '#B8860B';
+                                }
+                                if (subMsg) {
+                                    subMsg.textContent = 'File selected and ready to upload';
+                                }
+                                container.style.borderColor = '#B8860B';
+                                container.style.backgroundColor = '#FFFDF8';
+                                container.style.boxShadow = '0 5px 15px rgba(212, 175, 55, 0.15)';
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Error updating file name:', err);
                     }
-                    if (subMsg) {
-                        subMsg.textContent = 'File selected and ready to upload';
-                    }
-                    // Visual feedback on the container
-                    container.style.borderColor = '#B8860B';
-                    container.style.backgroundColor = '#FFFDF8';
-                    container.style.boxShadow = '0 5px 15px rgba(212, 175, 55, 0.15)';
-                }
+                });
             }
-        }
+        });
 
         // Dynamic Subjects Fetching Logic
         document.addEventListener('DOMContentLoaded', function() {
