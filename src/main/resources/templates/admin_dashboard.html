@@ -184,9 +184,9 @@
             background: var(--bg-card);
             backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
             transition: transform 0.3s ease, border-color 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -207,32 +207,32 @@
 
         /* ----- STATS ----- */
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             background: rgba(212, 175, 55, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             color: var(--gold-primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             color: #fff;
             line-height: 1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .stat-label {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         /* ----- FORM ELEMENTS ----- */
@@ -273,10 +273,10 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 200px;
-            padding: 2rem;
+            height: 160px;
+            padding: 1.5rem;
             border: 2px dashed rgba(212, 175, 55, 0.4);
-            border-radius: 20px;
+            border-radius: 16px;
             background: rgba(212, 175, 55, 0.03);
             transition: all 0.3s ease;
             cursor: pointer;
@@ -447,8 +447,8 @@
         </div>
 
         <!-- STATS ROW -->
-        <div class="row g-4 mb-5">
-            <div class="col-md-4">
+        <div class="row g-4 mb-4">
+            <div class="col-md-4 col-lg-3">
                 <div class="glass-card h-100">
                     <div class="stat-icon">
                         <i class="bi bi-file-earmark-text-fill"></i>
@@ -457,12 +457,12 @@
                     <div class="stat-label">Total Documents</div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 col-lg-9">
                 <div class="glass-card h-100 d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border-color: rgba(212, 175, 55, 0.3);">
-                    <h3 style="color: var(--gold-primary); font-weight: 700; margin-bottom: 1rem;">
+                    <h4 style="color: var(--gold-primary); font-weight: 700; margin-bottom: 0.5rem; font-size: 1.25rem;">
                         <i class="bi bi-lightning-charge-fill me-2"></i> Cloudinary Integration Active
-                    </h3>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin: 0;">
+                    </h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0;">
                         All uploaded materials are automatically optimized and securely hosted on Cloudinary global CDN infrastructure. Ensure files meet academic standards before publishing.
                     </p>
                 </div>
@@ -470,12 +470,12 @@
         </div>
 
         <!-- UPLOAD FORM SECTION -->
-        <div class="row">
-            <div class="col-12">
-                <div class="glass-card p-4 p-md-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-11">
+                <div class="glass-card">
                     <div class="d-flex align-items-center mb-4 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <i class="bi bi-cloud-arrow-up-fill fs-3 me-3" style="color: var(--gold-primary);"></i>
-                        <h2 class="m-0" style="font-weight: 700; font-size: 1.5rem;">Upload New Material</h2>
+                        <i class="bi bi-cloud-arrow-up-fill fs-4 me-3" style="color: var(--gold-primary);"></i>
+                        <h2 class="m-0" style="font-weight: 700; font-size: 1.25rem;">Upload New Material</h2>
                     </div>
 
                     <form action="/admin/upload-note" method="post" enctype="multipart/form-data">
