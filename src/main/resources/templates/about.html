@@ -160,43 +160,93 @@
             letter-spacing: 1px;
         }
 
-        /* Steps Section */
+        /* Steps Section - Youthful & Premium */
         .step-card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 25px 25px;
+            border-radius: 16px;
+            padding: 20px 15px;
             height: 100%;
-            border: 1px solid rgba(224, 170, 62, 0.15);
+            border: 1.5px solid rgba(224, 170, 62, 0.15);
             position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            z-index: 1;
+        }
+        .step-card > * {
+            position: relative;
+            z-index: 2;
         }
         .step-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(180, 134, 8, 0.08);
-            border-color: rgba(224, 170, 62, 0.4);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(180, 134, 8, 0.12);
+            border-color: #e0aa3e;
+            background: linear-gradient(135deg, #ffffff 0%, #fffcf5 100%);
         }
+
+        /* Blooming Light Effect */
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: radial-gradient(circle, rgba(249, 217, 118, 0.4) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            transition: all 0.5s ease-out;
+            z-index: 0;
+        }
+        .step-card:hover::before {
+            width: 250px; height: 250px;
+        }
+
+        /* Pop-up Flower Emojis */
+        .step-card::after {
+            content: '🌸✨';
+            position: absolute;
+            font-size: 2.5rem;
+            bottom: -40px;
+            right: 10px;
+            opacity: 0;
+            transform: scale(0.5) rotate(-20deg);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .step-card:hover::after {
+            opacity: 0.85;
+            bottom: 10px;
+            transform: scale(1) rotate(10deg);
+        }
+
         .step-number {
             position: absolute;
-            top: -15px;
-            right: 15px;
+            top: -10px;
+            right: 10px;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 3.5rem;
-            color: rgba(224, 170, 62, 0.08);
+            font-size: 3rem;
+            color: rgba(224, 170, 62, 0.1);
             line-height: 1;
-            transition: color 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 0 !important;
         }
         .step-card:hover .step-number {
-            color: rgba(224, 170, 62, 0.15);
+            color: rgba(224, 170, 62, 0.25);
+            transform: scale(1.1) rotate(5deg);
         }
         .step-icon {
-            width: 45px; height: 45px;
+            width: 40px; height: 40px;
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem; margin-bottom: 20px;
-            background: linear-gradient(135deg, rgba(249, 217, 118, 0.2), rgba(224, 170, 62, 0.1));
-            color: #b48608;
+            font-size: 1.2rem; margin-bottom: 15px;
+            background: linear-gradient(135deg, #f9d976, #e0aa3e);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(224, 170, 62, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .step-card:hover .step-icon {
+            transform: rotate(-10deg) scale(1.1);
         }
 
         .cta-section {
