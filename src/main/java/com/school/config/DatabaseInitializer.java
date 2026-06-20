@@ -69,8 +69,12 @@ public class DatabaseInitializer implements CommandLineRunner {
                     "WEB PROGRAMMING", "ITT 05201", 160));
             noteRepository.save(createNote("Database Management Systems", "dbms_advanced.pdf", "DIP_IT", 5, 2, "Note",
                     "DATABASE MANAGEMENT SYSTEMS", "ITT 05202", 110));
-            noteRepository.save(createNote("System Administration", "sys_admin.pdf", "DIP_IT", 5, 2, "Note",
-                    "SYSTEM ADMINISTRATION", "ITT 05203", 85));
+            
+            // Server Administration Notes specifically requested by user
+            noteRepository.save(createNoteWithUnit("Server Credentials Management", "server_admin_u1.pdf", "DIP_IT", 5, 2, "Note",
+                    "SERVER ADMINISTRATION", "ITT 05203", 85, 1));
+            noteRepository.save(createNoteWithUnit("User Identity and Authentication Systems", "server_admin_u2.pdf", "DIP_IT", 5, 2, "Note",
+                    "SERVER ADMINISTRATION", "ITT 05203", 50, 2));
 
             // DIP_IT - Level 6 Semester 1
             noteRepository.save(createNote("IT Project Management", "it_pm.pdf", "DIP_IT", 6, 1, "Note",
@@ -191,6 +195,13 @@ public class DatabaseInitializer implements CommandLineRunner {
         Note note = new Note(title, filename, program, level, semester, type, moduleName, moduleCode, "2023/2024",
                 LocalDateTime.now().minusDays((long) (Math.random() * 10)));
         note.setDownloadCount(downloads);
+        return note;
+    }
+
+    private Note createNoteWithUnit(String title, String filename, String program, int level, int semester, String type,
+            String moduleName, String moduleCode, int downloads, int unitNumber) {
+        Note note = createNote(title, filename, program, level, semester, type, moduleName, moduleCode, downloads);
+        note.setUnitNumber(unitNumber);
         return note;
     }
 }
