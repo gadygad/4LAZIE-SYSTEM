@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>4LAZIE - Admin Premium Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #FFDF00 0%, #D4AF37 50%, #996515 100%);
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --gold-text: #F3E5AB;
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.15), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(212, 175, 55, 0.1), transparent 40%);
+        }
+        .navbar-premium {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .navbar-brand {
+            font-weight: 800;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+        }
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+        }
+        .form-label {
+            color: var(--gold-text);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+            color: #fff;
+        }
+        .form-control::file-selector-button {
+            background: var(--gold-gradient);
+            border: none;
+            color: #000;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 16px;
+            margin-right: 15px;
+            transition: all 0.3s;
+        }
+        .btn-gold {
+            background: var(--gold-gradient);
+            color: #0f172a;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+            color: #000;
+        }
+        .stat-card {
+            text-align: center;
+        }
+        .stat-card h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0;
+        }
+        .stat-card p {
+            color: var(--gold-text);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+        .alert-gold {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            color: #F3E5AB;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-premium sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-shield-lock-fill me-2" style="color: #D4AF37;"></i> 4LAZIE <span style="font-weight: 400; font-size: 1.2rem; color: #fff; -webkit-text-fill-color: #fff;">ADMIN</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <a href="/" class="btn btn-outline-light rounded-pill px-4" style="border-color: rgba(212, 175, 55, 0.5);"><i class="bi bi-house-door me-2"></i> Rudi Kwenye Tovuti</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="glass-card stat-card h-100 d-flex flex-column justify-content-center">
+                    <h2 th:text="${totalNotes}">0</h2>
+                    <p><i class="bi bi-files me-2"></i> Jumla ya Notes Zilizopo</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="glass-card h-100">
+                    <h4 class="mb-4" style="color: #D4AF37; font-weight: 700;"><i class="bi bi-lightning-charge me-2"></i> Karibu, Admin</h4>
+                    <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.6;">Hii ni dashibodi yako maalum kwa ajili ya kupandisha (upload) notes, past papers, na material mengine. Mafaili yote yanahifadhiwa salama kwenye Cloudinary.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${success}" class="alert alert-gold alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> <strong th:text="${success}"></strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="background: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.5); color: #fca5a5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong th:text="${error}"></strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card">
+                    <h3 class="mb-4 text-center" style="font-weight: 700; color: #fff;">
+                        <i class="bi bi-cloud-arrow-up-fill me-2" style="color: #D4AF37;"></i> Pakia (Upload) Note Mpya
+                    </h3>
+                    
+                    <form action="/admin/upload-note" method="post" enctype="multipart/form-data">
+                        <!-- CSRF Token (If Spring Security uses it, it will be auto-injected by thymeleaf for th:action, but we'll leave it simple) -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf != null}"/>
+
+                        <div class="row g-4">
+                            <!-- Title -->
+                            <div class="col-md-12">
+                                <label class="form-label">Kichwa cha Note (Title)</label>
+                                <input type="text" name="title" class="form-control" placeholder="Mfn. Introduction to Java Programming" required>
+                            </div>
+
+                            <!-- Program & Category -->
+                            <div class="col-md-6">
+                                <label class="form-label">Programu (Program Type)</label>
+                                <select name="programType" class="form-select" required>
+                                    <option value="" disabled selected>Chagua Programu...</option>
+                                    <option value="DIP_IT">DIPLOMA IN IT</option>
+                                    <option value="DIP_CSE">DIPLOMA IN CSE</option>
+                                    <option value="DIP_CE">DIPLOMA IN CE</option>
+                                    <option value="DEG_IT">DEGREE IN IT</option>
+                                    <option value="DEGREE_EDU">DEGREE IN EDU</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Aina ya Document (Category)</label>
+                                <select name="category" class="form-select" required>
+                                    <option value="Note">Notes</option>
+                                    <option value="Past Paper">Past Paper</option>
+                                    <option value="Assignment">Assignment</option>
+                                </select>
+                            </div>
+
+                            <!-- Level & Semester -->
+                            <div class="col-md-6">
+                                <label class="form-label">Mwaka / Level</label>
+                                <select name="levelNo" class="form-select" required>
+                                    <option value="4">Level 4 (Diploma Y1)</option>
+                                    <option value="5">Level 5 (Diploma Y2)</option>
+                                    <option value="6">Level 6 (Diploma Y3)</option>
+                                    <option value="1">Year 1 (Degree)</option>
+                                    <option value="2">Year 2 (Degree)</option>
+                                    <option value="3">Year 3 (Degree)</option>
+                                    <option value="4">Year 4 (Degree)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Semister</label>
+                                <select name="semesterNo" class="form-select" required>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                </select>
+                            </div>
+
+                            <!-- Module Name & Code -->
+                            <div class="col-md-6">
+                                <label class="form-label">Jina la Moduli / Somo</label>
+                                <input type="text" name="moduleName" class="form-control" placeholder="Mfn. Programming Concepts" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Code ya Moduli</label>
+                                <input type="text" name="moduleCode" class="form-control" placeholder="Mfn. ITT 04101" required>
+                            </div>
+
+                            <!-- File Upload -->
+                            <div class="col-md-12 mt-4">
+                                <div class="p-4" style="border: 2px dashed rgba(212, 175, 55, 0.5); border-radius: 16px; background: rgba(0,0,0,0.2);">
+                                    <label class="form-label d-block text-center mb-3" style="font-size: 1.2rem;"><i class="bi bi-file-earmark-pdf me-2"></i> Chagua Faili (PDF, DOCX, n.k.)</label>
+                                    <input type="file" name="file" class="form-control" required style="max-width: 500px; margin: 0 auto;">
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="col-md-12 mt-5 text-center">
+                                <button type="submit" class="btn btn-gold w-100" style="max-width: 400px;">
+                                    <i class="bi bi-cloud-upload-fill me-2"></i> PAKIA KWENYE CLOUDINARY
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
