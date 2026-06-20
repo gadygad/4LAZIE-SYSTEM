@@ -171,6 +171,19 @@ public class DatabaseInitializer implements CommandLineRunner {
             noteRepository.save(createNote("Educational Psychology", "edu_psychology.pdf", "DEGREE_EDU", 1, 1, "Note",
                     "EDUCATIONAL PSYCHOLOGY", "EDU 101", 5));
         }
+
+        // 3. Fix any existing notes that have a null unit number (Default to Unit 1)
+        java.util.List<Note> allNotes = noteRepository.findAll();
+        boolean notesUpdated = false;
+        for (Note n : allNotes) {
+            if (n.getUnitNumber() == null) {
+                n.setUnitNumber(1);
+                notesUpdated = true;
+            }
+        }
+        if (notesUpdated) {
+            noteRepository.saveAll(allNotes);
+        }
     }
 
     private Note createNote(String title, String filename, String program, int level, int semester, String type,
