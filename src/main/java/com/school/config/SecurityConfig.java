@@ -30,8 +30,8 @@ public class SecurityConfig {
                 // Allow public access to static resources and public pages
                 .requestMatchers("/", "/home", "/index", "/register", "/login", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                 .requestMatchers("/guest-notes", "/view/**", "/download/**").permitAll()
-                // Require ADMIN role for upload page
-                .requestMatchers("/upload").hasRole("ADMIN")
+                // Require ADMIN role for admin pages and upload page
+                .requestMatchers("/upload", "/admin/**").hasRole("ADMIN")
                 // All other requests require authentication
                 .anyRequest().authenticated()
             )

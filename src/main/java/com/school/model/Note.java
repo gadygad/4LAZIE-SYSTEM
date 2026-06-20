@@ -35,6 +35,9 @@ public class Note {
     @Column(name = "filename", length = 255)
     private String filename;
 
+    @Column(name = "file_url", length = 500)
+    private String fileUrl;
+
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
 
@@ -55,9 +58,10 @@ public class Note {
     public Note() {
     }
 
-    public Note(String title, String filename, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
+    public Note(String title, String filename, String fileUrl, String programType, Integer levelNo, Integer semesterNo, String category, String moduleName, String moduleCode, LocalDateTime uploadDate) {
         this.title = title;
         this.filename = filename;
+        this.fileUrl = fileUrl;
         this.programType = programType;
         this.levelNo = levelNo;
         this.semesterNo = semesterNo;
@@ -138,6 +142,14 @@ public class Note {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     public LocalDateTime getUploadDate() {
