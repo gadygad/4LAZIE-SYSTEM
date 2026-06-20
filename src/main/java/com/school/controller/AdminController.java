@@ -38,12 +38,13 @@ public class AdminController {
             @RequestParam("moduleName") String moduleName,
             @RequestParam("moduleCode") String moduleCode,
             @RequestParam("academicYear") String academicYear,
+            @RequestParam(value = "unitNumber", required = false) Integer unitNumber,
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) {
 
         try {
             if (file.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Tafadhali chagua faili la kuweka.");
+                redirectAttributes.addFlashAttribute("error", "Please select a file to upload.");
                 return "redirect:/admin";
             }
 
@@ -64,13 +65,18 @@ public class AdminController {
                     academicYear,
                     LocalDateTime.now()
             );
+            
+            if (unitNumber != null) {
+                note.setUnitNumber(unitNumber);
+            }
+            
             noteRepository.save(note);
 
-            redirectAttributes.addFlashAttribute("success", "Faili limefanikiwa kuhifadhiwa kikamilifu!");
+            redirectAttributes.addFlashAttribute("success", "File successfully uploaded and saved!");
 
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Kuna tatizo limetokea wakati wa kuhifadhi faili: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "An error occurred while saving the file: " + e.getMessage());
         }
 
         return "redirect:/admin";
