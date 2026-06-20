@@ -365,9 +365,16 @@
                             <span th:text="${selectedProgram != null ? (selectedProgram.startsWith('DIP_') ? 'DIP IN ' + selectedProgram.substring(4) : (selectedProgram.startsWith('DEG_') ? 'DEG IN ' + selectedProgram.substring(4) : (selectedProgram == 'DEGREE_EDU' ? 'DEGREE EDU' : 'MODULES'))) : 'MODULES'}">MODULES</span>
                         </h2>
                         <div class="d-flex align-items-center" style="font-family: 'Outfit', sans-serif;">
-                            <span class="badge bg-light text-secondary border px-2 py-1 me-2" style="font-weight: 600; font-size: 0.65rem; letter-spacing: 0.5px;">
-                                LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
-                            </span>
+                            <div class="dropdown me-2">
+                                <button class="btn btn-sm btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown" style="font-weight: 600; font-size: 0.65rem; letter-spacing: 0.5px; border-radius: 50px;">
+                                    LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
+                                </button>
+                                <ul class="dropdown-menu shadow-sm border-0" style="min-width: 100px; border-radius: 12px; padding: 8px;">
+                                    <li><a class="dropdown-item rounded-2 mb-1" style="font-size: 0.75rem; font-weight: 600;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">LEVEL 4</a></li>
+                                    <li><a class="dropdown-item rounded-2 mb-1" style="font-size: 0.75rem; font-weight: 600;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">LEVEL 5</a></li>
+                                    <li><a class="dropdown-item rounded-2" style="font-size: 0.75rem; font-weight: 600;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">LEVEL 6</a></li>
+                                </ul>
+                            </div>
                             <span th:if="${selectedSemester != null}" th:text="'SEM ' + ${selectedSemester}" style="color: #94a3b8; font-weight: 600; font-size: 0.75rem;">SEM 1</span>
                         </div>
                     </div>
