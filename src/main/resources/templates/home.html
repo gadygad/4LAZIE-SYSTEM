@@ -876,26 +876,30 @@
                             </div>
                         </div>
 
-                        <!-- Fallback if no notes -->
-                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="position-relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; padding: 50px 30px; text-align: center; color: white; box-shadow: 0 20px 40px rgba(15,23,42,0.4); border: 1px solid rgba(255,255,255,0.05);">
-                            <!-- Glowing background orbs -->
-                            <div style="position: absolute; top: -50px; left: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(30px);"></div>
-                            <div style="position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(30px);"></div>
+                        <!-- Fallback if no notes (Text Only Premium) -->
+                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="py-5 text-center position-relative">
+                            <!-- Subtle gold glow behind the text -->
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%); border-radius: 50%; z-index: -1;"></div>
                             
-                            <div class="position-relative z-1">
-                                <div class="mb-4 mx-auto d-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                                    <i class="bi bi-stars" style="font-size: 2.5rem; color: #f59e0b; filter: drop-shadow(0 0 10px rgba(245,158,11,0.5));"></i>
+                            <div class="mb-3">
+                                <i class="bi bi-stars" style="font-size: 2.5rem; color: #f59e0b; filter: drop-shadow(0 4px 8px rgba(245,158,11,0.4)); animation: float 3s ease-in-out infinite;"></i>
+                            </div>
+                            
+                            <h3 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; letter-spacing: -1px; color: #0f172a;">
+                                Curating the <span style="background: linear-gradient(135deg, #c59b27, #f8b500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 4px 8px rgba(197, 155, 39, 0.2));">Best Materials</span>
+                            </h3>
+                            
+                            <p class="mx-auto mb-4" style="max-width: 500px; font-size: 1.1rem; line-height: 1.8; color: #64748b; font-weight: 500;">
+                                Our academic experts are currently organizing the highest quality study packs for your level. They will appear here very soon.
+                            </p>
+                            
+                            <div class="d-inline-flex justify-content-center gap-4 align-items-center mt-2">
+                                <div class="d-flex align-items-center gap-2" style="color: #0f172a; font-weight: 700; font-family: 'Outfit', sans-serif; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    <i class="bi bi-journal-text" style="color: #f59e0b; font-size: 1.2rem;"></i> Notes
                                 </div>
-                                <h3 class="fw-bold mb-3" style="font-family: 'Outfit', sans-serif; font-size: 2rem; letter-spacing: -0.5px;">Curating the Best Materials</h3>
-                                <p class="mx-auto mb-4" style="max-width: 450px; font-size: 1.05rem; line-height: 1.7; color: rgba(255,255,255,0.7);">Our academic experts are organizing the highest quality study packs for your level. They will appear here very soon.</p>
-                                
-                                <div class="d-flex justify-content-center gap-3 flex-wrap">
-                                    <div class="px-4 py-2 rounded-pill fw-medium" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem; color: #f8fafc; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                                        <i class="bi bi-journal-text me-2" style="color: #60a5fa;"></i> Notes
-                                    </div>
-                                    <div class="px-4 py-2 rounded-pill fw-medium" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem; color: #f8fafc; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                                        <i class="bi bi-file-earmark-check me-2" style="color: #34d399;"></i> Past Papers
-                                    </div>
+                                <span style="color: #cbd5e1;">&bull;</span>
+                                <div class="d-flex align-items-center gap-2" style="color: #0f172a; font-weight: 700; font-family: 'Outfit', sans-serif; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    <i class="bi bi-file-earmark-check" style="color: #f59e0b; font-size: 1.2rem;"></i> Past Papers
                                 </div>
                             </div>
                         </div>
