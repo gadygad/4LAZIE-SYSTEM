@@ -924,7 +924,6 @@
                         flex-direction: row;
                         overflow-x: auto;
                         padding-bottom: 1.5rem;
-                        scroll-snap-type: x mandatory;
                         -webkit-overflow-scrolling: touch;
                         scrollbar-width: none; /* Firefox */
                         margin-left: -1.5rem;
@@ -939,7 +938,6 @@
                     .module-card {
                         flex: 0 0 82%;
                         max-width: 300px;
-                        scroll-snap-align: center;
                         background: rgba(255, 255, 255, 0.65);
                         backdrop-filter: blur(15px);
                         -webkit-backdrop-filter: blur(15px);
@@ -1499,8 +1497,49 @@
                 }
             }
             
+            
             window.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, true); // useCapture = true ensures we catch ALL scrolling elements
+
+        // Premium Auto-scrolling Modules Carousel (Mobile Only)
+        const modulesContainer = document.querySelector('.modules-container');
+        if (modulesContainer && window.innerWidth < 768) {
+            // Duplicate children for seamless infinite scroll
+            const children = Array.from(modulesContainer.children);
+            children.forEach(child => {
+                const clone = child.cloneNode(true);
+                modulesContainer.appendChild(clone);
+            });
+
+            let isHovered = false;
+            let currentScroll = 0;
+            const scrollSpeed = 0.8; // Smooth auto-scroll speed
+
+            const autoScroll = () => {
+                if (!isHovered) {
+                    currentScroll += scrollSpeed;
+                    modulesContainer.scrollLeft = currentScroll;
+
+                    // If we scrolled exactly the width of the original children, snap back to 0
+                    if (modulesContainer.scrollLeft >= modulesContainer.scrollWidth / 2) {
+                        currentScroll = 0;
+                        modulesContainer.scrollLeft = 0;
+                    }
+                } else {
+                    // Sync current scroll when user is manually interacting
+                    currentScroll = modulesContainer.scrollLeft;
+                }
+                requestAnimationFrame(autoScroll);
+            };
+
+            // Pause marquee on touch or hover
+            modulesContainer.addEventListener('mouseenter', () => isHovered = true);
+            modulesContainer.addEventListener('mouseleave', () => isHovered = false);
+            modulesContainer.addEventListener('touchstart', () => isHovered = true, {passive: true});
+            modulesContainer.addEventListener('touchend', () => isHovered = false, {passive: true});
+
+            requestAnimationFrame(autoScroll);
+        }
     });
     </script>
 
