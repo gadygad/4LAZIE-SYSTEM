@@ -1633,6 +1633,16 @@
                         parent.classList.add('open-mobile');
                     }
                 }
+
+                // Close flyout when clicking outside
+                document.addEventListener('click', function(event) {
+                    let isClickInsideItem = event.target.closest('.sidebar-hover-item');
+                    if (!isClickInsideItem) {
+                        document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
+                            item.classList.remove('open-mobile');
+                        });
+                    }
+                });
             </script>
         </div>
     </div>
