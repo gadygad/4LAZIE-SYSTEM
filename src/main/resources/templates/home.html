@@ -497,6 +497,37 @@
             transform: scale(1.1);
         }
 
+        /* Premium Glowing Floating Badge */
+        .floating-gold-badge {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+            animation: floatBadge 4s ease-in-out infinite;
+        }
+        .floating-gold-badge i {
+            color: #f59e0b;
+            font-size: 1rem;
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes floatBadge {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes pulseGlow {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.15); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+
         /* Mobile-Only Enhancements (Transparent Navbar & Fade-in) */
         @media (max-width: 991.98px) {
             .navbar-custom {
@@ -881,6 +912,12 @@
                     <!-- SJUIT COLLEGE INTRO (PLAIN TEXT - ENGLISH)       -->
                     <!-- ══════════════════════════════════════════════════ -->
                     <div class="mb-5">
+                        <!-- Premium Glowing Floating Badge -->
+                        <div class="floating-gold-badge mb-3 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-stars"></i>
+                            <span>No.1 Engineering Platform in Tanzania</span>
+                        </div>
+
                         <!-- College Label -->
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <i class="bi bi-mortarboard-fill" style="color: #f59e0b; font-size: 1.1rem;"></i>
