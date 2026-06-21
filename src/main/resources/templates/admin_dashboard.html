@@ -626,32 +626,54 @@
                 transform: translateY(0) scale(0.98);
             }
             .upload-form-section .file-drop-area {
-                border: 2px dashed rgba(212, 175, 55, 0.5);
-                background-color: rgba(253, 251, 247, 0.8);
-                border-radius: 12px;
-                height: 120px;
-                padding: 1rem;
+                border: 1.5px dashed rgba(212, 175, 55, 0.4);
+                background: linear-gradient(145deg, rgba(253, 251, 247, 0.9), rgba(255, 255, 255, 0.95));
+                border-radius: 14px;
+                min-height: 80px;
+                padding: 1rem 1.5rem;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 1.2rem;
                 transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.02);
             }
             .upload-form-section .file-drop-area:hover {
-                border-color: #B8860B;
-                background-color: #FFFDF8;
-                transform: translateY(-3px);
-                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+                border-color: #D4AF37;
+                background: #FFFFFF;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
             }
             .upload-form-section .file-drop-area .file-icon {
-                font-size: 2rem;
-                margin-bottom: 0.5rem;
+                font-size: 1.8rem;
+                color: #C5A059;
+                margin-bottom: 0;
+                background: rgba(212, 175, 55, 0.1);
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+            .upload-form-section .file-drop-area:hover .file-icon {
+                transform: scale(1.05) rotate(-5deg);
+                background: rgba(212, 175, 55, 0.18);
             }
             .upload-form-section .file-drop-area .file-msg {
                 font-size: 0.95rem;
                 font-weight: 700;
+                color: #1E293B;
+                margin-bottom: 0.2rem;
             }
             .upload-form-section .file-drop-area .file-sub-msg {
                 font-size: 0.75rem;
+                color: #64748B;
             }
         </style>
-        <div class="mt-4 mb-5 upload-form-section" style="max-width: 650px; padding: 0; background: transparent; border: none; box-shadow: none; position: relative;">
+        <div class="mt-4 mb-5 upload-form-section mx-auto" style="max-width: 480px; padding: 2rem; background: #FFFFFF; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.04); position: relative;">
 
             <div class="d-flex align-items-center justify-content-start mb-4 pb-3" style="border-bottom: 2px solid rgba(212, 175, 55, 0.3);">
                 <i class="bi bi-cloud-arrow-up-fill fs-2 me-3" style="color: #D4AF37; text-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);"></i>
@@ -757,17 +779,19 @@
                     </div>
 
                     <!-- File & Submit Section -->
-                    <div class="col-12 d-flex flex-column mt-3">
+                    <div class="col-12 mt-2">
                         <label class="form-label mb-2">Attached Document</label>
-                        <div class="file-drop-area flex-grow-1 mb-4">
+                        <div class="file-drop-area mb-4 position-relative">
                             <i class="bi bi-file-earmark-arrow-up file-icon"></i>
-                            <span class="file-msg">Drag & Drop your file here</span>
-                            <span class="file-sub-msg mt-2">or click to browse (PDF, DOCX, PPTX)</span>
-                            <input class="file-input" type="file" name="file" required id="fileInput">
+                            <div class="text-start">
+                                <div class="file-msg">Drag & Drop your file here</div>
+                                <div class="file-sub-msg">or click to browse (PDF, DOCX, PPTX)</div>
+                            </div>
+                            <input class="file-input position-absolute w-100 h-100 opacity-0 top-0 start-0" type="file" name="file" required id="fileInput" style="cursor: pointer; z-index: 5;">
                         </div>
                         
-                        <button type="submit" class="btn-gold mt-auto mb-3" style="padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 30px; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
-                            <i class="bi bi-cloud-upload-fill me-2"></i> Publish Material
+                        <button type="submit" class="btn-gold w-100" style="padding: 0.8rem 1.5rem; font-size: 0.95rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 12px; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25); transition: all 0.3s ease;">
+                            <i class="bi bi-cloud-upload-fill me-2 fs-5 align-middle"></i> Publish Material
                         </button>
                     </div>
                 </div>
