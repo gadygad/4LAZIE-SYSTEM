@@ -246,16 +246,30 @@
             z-index: 1020;
             transition: all 0.4s ease;
         }
+        @media (max-width: 767px) {
+            .mobile-premium-search input {
+                border: 1px solid rgba(212, 175, 55, 0.4) !important;
+                background: linear-gradient(to right, rgba(212, 175, 55, 0.02), rgba(255,255,255,1)) !important;
+                box-shadow: 0 4px 15px rgba(212, 175, 55, 0.05) !important;
+            }
+            .mobile-premium-search i.bi-search {
+                color: #d4af37 !important;
+            }
+            .mobile-premium-search .form-control:focus {
+                box-shadow: 0 0 0 4px rgba(212,175,55,0.15) !important;
+                border-color: #d4af37 !important;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- Premium Header Navigation -->
-    <nav class="navbar navbar-light premium-guest-navbar sticky-top py-2">
-        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
-            <a class="navbar-brand d-flex align-items-center" href="/" style="text-decoration: none;">
-                <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateX(-3px)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='none';">
+    <nav class="navbar navbar-light premium-guest-navbar sticky-top py-2 border-0">
+        <div class="container-fluid px-3 px-md-4 d-flex flex-wrap justify-content-between align-items-center gap-2 gap-md-0">
+            <!-- Brand (Order 1) -->
+            <a class="navbar-brand d-flex align-items-center m-0 order-1" href="/home" style="text-decoration: none;">
+                <div class="d-flex align-items-center justify-content-center me-2 me-md-3" style="width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateX(-3px)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='none';">
                     <i class="bi bi-arrow-left" style="font-size: 1rem; color: #3b82f6;"></i>
                 </div>
                 <div class="d-flex align-items-center gap-2">
@@ -270,11 +284,18 @@
                 </div>
             </a>
             
-            <!-- Search Bar moved to navbar -->
-            <div class="search-container position-relative mx-3" style="flex-grow: 1; max-width: 450px;">
-                <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
+            <!-- Mobile Sign In (Order 2 on Mobile, Hidden on Desktop) -->
+            <div class="d-flex d-md-none justify-content-end align-items-center order-2">
+                <a href="#" class="btn fw-bold rounded-pill px-3 py-1 d-flex align-items-center gap-2 m-0" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" style="background: linear-gradient(135deg, #d4af37 0%, #b48608 100%); color: #fff; border: none; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); font-size: 0.85rem;">
+                    <i class="bi bi-person-fill" style="font-size: 1rem; color: #fff;"></i> <span>Sign In</span>
+                </a>
+            </div>
+
+            <!-- Search Bar (Order 3 on Mobile, Order 2 on Desktop) -->
+            <div class="search-container position-relative mx-0 mx-md-3 order-3 order-md-2 mt-2 mt-md-0 w-100 mobile-premium-search" style="flex-grow: 1; max-width: 500px;">
+                <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem; z-index: 5;"></i>
                 <input type="text" id="smartSearchInput" autocomplete="off" class="form-control" placeholder="Search modules, notes, or past papers..." 
-                       style="padding: 8px 16px 8px 45px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                       style="padding: 10px 16px 10px 45px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
                        onfocus="this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'; this.style.borderColor='var(--primary)'; this.style.background='#fff';"
                        onblur="setTimeout(() => { document.getElementById('searchResults')?.classList.add('d-none'); }, 200); this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
                 
@@ -287,8 +308,9 @@
                 <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
             </div>
 
-            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
-                <a href="#" class="btn fw-bold rounded-pill px-3 py-1 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+            <!-- Desktop Sign In (Hidden on Mobile, Order 3 on Desktop) -->
+            <div class="d-none d-md-flex justify-content-end align-items-center order-md-3" style="width: auto;">
+                <a href="#" class="btn fw-bold rounded-pill px-3 py-1 d-flex align-items-center gap-2 m-0" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
                     <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #f59e0b;"></i> <span>Sign In</span>
                 </a>
             </div>
