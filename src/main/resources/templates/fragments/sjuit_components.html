@@ -430,8 +430,16 @@
     // Sidebar Collapse Logic
     document.addEventListener('DOMContentLoaded', function() {
         const sidebar = document.querySelector('.hero-sidebar');
+        if (!sidebar) return;
+
         const toggleBtn = document.getElementById('sidebarToggleBtn');
-        const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+        const toggleIcon = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
+
+        // Do not collapse if the sidebar is inside an offcanvas (e.g., mobile view)
+        if (sidebar.closest('.offcanvas')) {
+            if (toggleBtn) toggleBtn.style.display = 'none';
+            return;
+        }
 
         // Check local storage for preference
         const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
