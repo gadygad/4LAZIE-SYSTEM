@@ -783,20 +783,25 @@
                     </div>
 
                     <!-- File & Submit Section -->
-                    <div class="col-12 mt-2" style="position: relative; z-index: 10;">
-                        <label class="form-label mb-2">Attached Document</label>
-                        <div class="file-drop-area mb-4 position-relative">
-                            <i class="bi bi-file-earmark-arrow-up file-icon"></i>
-                            <div class="text-start">
-                                <div class="file-msg">Drag & Drop your file here</div>
-                                <div class="file-sub-msg">or click to browse (PDF, DOCX, PPTX)</div>
+                    <div class="row g-4 mt-2" style="position: relative; z-index: 10;">
+                        <div class="col-md-6">
+                            <label class="form-label mb-2">Attached Document</label>
+                            <div class="file-drop-area position-relative mb-0" style="height: 140px; padding: 1rem;">
+                                <i class="bi bi-file-earmark-arrow-up file-icon" style="font-size: 2.2rem; margin-bottom: 5px;"></i>
+                                <div class="text-center">
+                                    <div class="file-msg" style="font-size: 0.95rem;">Drag & Drop your file here</div>
+                                    <div class="file-sub-msg" style="font-size: 0.75rem;">or click to browse (PDF, DOCX, PPTX)</div>
+                                </div>
+                                <input class="file-input position-absolute w-100 h-100 opacity-0 top-0 start-0" type="file" name="file" required id="fileInput" style="cursor: pointer; z-index: 5;">
                             </div>
-                            <input class="file-input position-absolute w-100 h-100 opacity-0 top-0 start-0" type="file" name="file" required id="fileInput" style="cursor: pointer; z-index: 5;">
                         </div>
                         
-                        <button type="submit" class="btn-gold w-100" style="padding: 0.8rem 1.5rem; font-size: 0.95rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 12px; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25); transition: all 0.3s ease;">
-                            <i class="bi bi-cloud-upload-fill me-2 fs-5 align-middle"></i> Publish Material
-                        </button>
+                        <div class="col-md-6 d-flex flex-column justify-content-end">
+                            <button type="submit" class="btn-gold w-100" style="height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 12px; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2); transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);">
+                                <i class="bi bi-cloud-upload-fill mb-2" style="font-size: 2.2rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></i>
+                                Publish Material
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
