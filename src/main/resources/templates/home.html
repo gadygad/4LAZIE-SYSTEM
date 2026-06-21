@@ -2318,6 +2318,23 @@
                         });
                     }
                 });
+
+                // Reset sidebar selections when it closes
+                document.addEventListener('DOMContentLoaded', function() {
+                    let guestSidebarElement = document.getElementById('guestMobileSidebar');
+                    if (guestSidebarElement) {
+                        guestSidebarElement.addEventListener('hidden.bs.offcanvas', function () {
+                            // Close all open inner items (flyouts)
+                            document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item.open-mobile').forEach(function(item) {
+                                item.classList.remove('open-mobile');
+                            });
+                            // Close main accordion groups (Diploma / Degree)
+                            document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-group.open').forEach(function(group) {
+                                group.classList.remove('open');
+                            });
+                        });
+                    }
+                });
             </script>
         </div>
     </div>
