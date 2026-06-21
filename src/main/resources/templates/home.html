@@ -1537,7 +1537,7 @@
             
             // Mobile Bottom Nav Hide-on-Scroll & Auto-hide on Inactivity
             const bottomNav = document.querySelector('.mobile-bottom-nav');
-            if (bottomNav) {
+            if (bottomNav && !bottomNav.classList.contains('offcanvas-active')) {
                 if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
                 
                 if (scrollTop > window.lastScrollTop && scrollTop > 100) {
@@ -1561,7 +1561,7 @@
         // Show bottom nav on screen tap to easily retrieve it while reading
         document.addEventListener('touchstart', function(e) {
             const bottomNav = document.querySelector('.mobile-bottom-nav');
-            if (bottomNav && bottomNav.classList.contains('nav-hidden')) {
+            if (bottomNav && bottomNav.classList.contains('nav-hidden') && !bottomNav.classList.contains('offcanvas-active')) {
                 // Prevent showing if they are interacting with the sidebar
                 if (!e.target.closest('.offcanvas')) {
                     bottomNav.classList.remove('nav-hidden');
@@ -1572,6 +1572,25 @@
                 }
             }
         }, { passive: true });
+
+        // Hide bottom nav completely when sidebar is opened
+        const mobileSidebar = document.getElementById('guestMobileSidebar');
+        if (mobileSidebar) {
+            mobileSidebar.addEventListener('show.bs.offcanvas', function () {
+                const bottomNav = document.querySelector('.mobile-bottom-nav');
+                if (bottomNav) {
+                    bottomNav.classList.add('nav-hidden');
+                    bottomNav.classList.add('offcanvas-active');
+                }
+            });
+            mobileSidebar.addEventListener('hidden.bs.offcanvas', function () {
+                const bottomNav = document.querySelector('.mobile-bottom-nav');
+                if (bottomNav) {
+                    bottomNav.classList.remove('offcanvas-active');
+                    bottomNav.classList.remove('nav-hidden');
+                }
+            });
+        }
 
         // Premium Auto-scrolling Modules Carousel (Mobile Only)
         const modulesContainer = document.querySelector('.modules-container');
