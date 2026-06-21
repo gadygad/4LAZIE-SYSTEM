@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.school.model.User;
+import com.school.repository.UserRepository;
+import java.security.Principal;
+import java.util.Optional;
 import java.time.LocalDateTime;
 
 @Controller
@@ -22,10 +26,14 @@ public class AdminController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping
     public String adminDashboard(Model model) {
         model.addAttribute("totalNotes", noteRepository.count());
         model.addAttribute("notes", noteRepository.findAllByOrderByIdDesc());
+        model.addAttribute("users", userRepository.findAll());
         return "admin_dashboard";
     }
 
@@ -104,6 +112,74 @@ public class AdminController {
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error deleting material: " + e.getMessage());
+        }
+        return "redirect:/admin";
+    }
+
+    // --- USER MANAGEMENT ENDPOINTS ---
+
+    @PostMapping("/delete-user/{id}")
+    public String deleteUser(@PathVariable("id") Integer id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<User> userOptional = userRepository.findById(id);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                // Prevent admin from deleting themselves
+                if (principal != null && user.getEmail().equals(principal.getName())) {
+                    redirectAttributes.addFlashAttribute("error", "Action Denied: You cannot delete your own admin account.");
+                    return "redirect:/admin";
+                }
+                userRepository.deleteById(id);
+                redirectAttributes.addFlashAttribute("success", "User successfully deleted.");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "User not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error deleting user: " + e.getMessage());
+        }
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/toggle-premium/{id}")
+    public String togglePremium(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<User> userOptional = userRepository.findById(id);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.setIsPremium(user.getIsPremium() == null ? true : !user.getIsPremium());
+                userRepository.save(user);
+                redirectAttributes.addFlashAttribute("success", "User premium status successfully updated.");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "User not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error updating premium status: " + e.getMessage());
+        }
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/change-role/{id}")
+    public String changeRole(@PathVariable("id") Integer id, @RequestParam("role") String newRole, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<User> userOptional = userRepository.findById(id);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                // Prevent admin from downgrading themselves
+                if (principal != null && user.getEmail().equals(principal.getName()) && !newRole.equals("ADMIN")) {
+                    redirectAttributes.addFlashAttribute("error", "Action Denied: You cannot remove your own admin privileges.");
+                    return "redirect:/admin";
+                }
+                user.setRole(newRole);
+                userRepository.save(user);
+                redirectAttributes.addFlashAttribute("success", "User role successfully updated to " + newRole + ".");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "User not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error changing role: " + e.getMessage());
         }
         return "redirect:/admin";
     }
