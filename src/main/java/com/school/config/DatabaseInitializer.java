@@ -43,8 +43,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             // DIP_IT - Level 4 Semester 1
             noteRepository.save(createNote("Computer Fundamentals", "cf_notes.pdf", "DIP_IT", 4, 1, "Note",
                     "COMPUTER FUNDAMENTALS", "ITT 04101", 120));
-            noteRepository.save(createNote("Basic Mathematics", "math_notes.pdf", "DIP_IT", 4, 1, "Note",
-                    "BASIC MATHEMATICS", "ITT 04102", 85));
+            noteRepository.save(createNote("Engineering Mathematics", "math_notes.pdf", "DIP_IT", 4, 1, "Note",
+                    "ENGINEERING MATHEMATICS", "ITT 04102", 85));
             noteRepository.save(createNote("Communication Skills", "comm_skills.pdf", "DIP_IT", 4, 1, "Note",
                     "COMMUNICATION SKILLS", "ITT 04103", 40));
             noteRepository.save(createNote("Computer Networking", "networking_basics.pdf", "DIP_IT", 4, 1, "Note",
@@ -87,8 +87,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                     "PROGRAMMING FUNDAMENTALS", "CSE 04101", 90));
             noteRepository.save(createNote("Computer Systems", "comp_sys.pdf", "DIP_CSE", 4, 1, "Note",
                     "COMPUTER SYSTEMS", "CSE 04102", 115));
-            noteRepository.save(createNote("Basic Mathematics", "math_notes.pdf", "DIP_CSE", 4, 1, "Note",
-                    "BASIC MATHEMATICS", "ITT 04102", 80));
+            noteRepository.save(createNote("Engineering Mathematics", "math_notes.pdf", "DIP_CSE", 4, 1, "Note",
+                    "ENGINEERING MATHEMATICS", "ITT 04102", 80));
 
             // DIP_CSE - Level 4 Semester 2
             noteRepository.save(createNote("Data Structures", "data_structures.pdf", "DIP_CSE", 4, 2, "Note",
@@ -121,8 +121,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                     "ENGINEERING DRAWING", "CE 04101", 95));
             noteRepository.save(createNote("Surveying I", "surveying_1.pdf", "DIP_CE", 4, 1, "Note", "SURVEYING I",
                     "CE 04102", 80));
-            noteRepository.save(createNote("Basic Mathematics", "math_notes.pdf", "DIP_CE", 4, 1, "Note",
-                    "BASIC MATHEMATICS", "ITT 04102", 70));
+            noteRepository.save(createNote("Engineering Mathematics", "math_notes.pdf", "DIP_CE", 4, 1, "Note",
+                    "ENGINEERING MATHEMATICS", "ITT 04102", 70));
 
             // DIP_CE - Level 4 Semester 2
             noteRepository.save(createNote("Building Construction", "building_const.pdf", "DIP_CE", 4, 2, "Note",
@@ -147,8 +147,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                     "WORKSHOP TECHNOLOGY", "ME 04101", 100));
             noteRepository.save(createNote("Engineering Drawing", "eng_drawing.pdf", "DIP_ME", 4, 1, "Note",
                     "ENGINEERING DRAWING", "ME 04102", 88));
-            noteRepository.save(createNote("Basic Mathematics", "math_notes.pdf", "DIP_ME", 4, 1, "Note",
-                    "BASIC MATHEMATICS", "ITT 04102", 72));
+            noteRepository.save(createNote("Engineering Mathematics", "math_notes.pdf", "DIP_ME", 4, 1, "Note",
+                    "ENGINEERING MATHEMATICS", "ITT 04102", 72));
 
             // DIP_ME - Level 4 Semester 2
             noteRepository.save(createNote("Applied Mechanics", "applied_mech.pdf", "DIP_ME", 4, 2, "Note",
