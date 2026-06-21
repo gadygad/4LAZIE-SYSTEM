@@ -932,78 +932,89 @@
 
         // Dynamic Subjects Fetching & Tom Select Logic
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Tom Select for all standard dropdowns
-            const standardSelects = document.querySelectorAll('.form-select:not(#moduleNameInput)');
-            standardSelects.forEach(select => {
-                new TomSelect(select, {
-                    create: false,
-                    sortField: { field: "text", direction: "asc" }
+            try {
+                // Initialize Tom Select for all standard dropdowns
+                const standardSelects = document.querySelectorAll('.form-select:not(#moduleNameInput)');
+                standardSelects.forEach(select => {
+                    new TomSelect(select, {
+                        create: false,
+                        controlInput: null // Disable typing for standard selects
+                    });
                 });
-            });
 
-            // Initialize Tom Select for Module Name (Dynamic)
-            const moduleNameSelect = document.getElementById('moduleNameInput');
-            let moduleTomSelect = new TomSelect(moduleNameSelect, {
-                valueField: 'name',
-                labelField: 'name',
-                searchField: 'name',
-                create: true, // Allow admins to type new modules if not in list
-                placeholder: 'Select or type new module...',
-                onChange: function(value) {
-                    // Update module code based on selection
-                    const subject = subjectsData.find(s => s.name === value);
-                    if (subject) {
-                        moduleCodeInput.value = subject.code || '';
-                        moduleCodeInput.style.borderColor = 'var(--gold-primary)';
-                    } else {
-                        moduleCodeInput.value = ''; // Clear if it's a manually typed new module
+                // Initialize Tom Select for Module Name (Dynamic)
+                const moduleNameSelect = document.getElementById('moduleNameInput');
+                let moduleTomSelect = new TomSelect(moduleNameSelect, {
+                    valueField: 'name',
+                    labelField: 'name',
+                    searchField: 'name',
+                    create: true, // Allow admins to type new modules if not in list
+                    placeholder: 'Select or type new module...',
+                    render: {
+                        option_create: function(data, escape) {
+                            return '<div class="create">Add new module: <strong>' + escape(data.input) + '</strong>&hellip;</div>';
+                        },
+                        no_results: function(data, escape) {
+                            return '<div class="no-results">No modules found. Type to add a new one.</div>';
+                        }
+                    },
+                    onChange: function(value) {
+                        // Update module code based on selection
+                        const subject = subjectsData.find(s => s.name === value);
+                        const moduleCodeInput = document.getElementById('moduleCodeInput');
+                        if (subject && moduleCodeInput) {
+                            moduleCodeInput.value = subject.code || '';
+                            moduleCodeInput.style.borderColor = 'var(--gold-primary)';
+                        } else if (moduleCodeInput) {
+                            moduleCodeInput.value = ''; // Clear if it's a manually typed new module
+                        }
                     }
-                }
-            });
+                });
 
-            const programSelect = document.querySelector('select[name="programType"]');
-            const levelSelect = document.querySelector('select[name="levelNo"]');
-            const semesterSelect = document.querySelector('select[name="semesterNo"]');
-            const moduleCodeInput = document.getElementById('moduleCodeInput');
-            const loadingSpinner = document.getElementById('moduleLoading');
+                const programSelect = document.querySelector('select[name="programType"]');
+                const levelSelect = document.querySelector('select[name="levelNo"]');
+                const semesterSelect = document.querySelector('select[name="semesterNo"]');
+                const loadingSpinner = document.getElementById('moduleLoading');
 
-            let subjectsData = [];
+                let subjectsData = [];
 
-            function fetchSubjects() {
-                const program = programSelect.value;
-                const level = levelSelect.value;
-                const semester = semesterSelect.value;
+                function fetchSubjects() {
+                    const program = programSelect.value;
+                    const level = levelSelect.value;
+                    const semester = semesterSelect.value;
 
-                if (!program || !level || !semester) return;
+                    if (!program || !level || !semester) return;
 
-                loadingSpinner.classList.remove('d-none');
-                
-                moduleTomSelect.clear();
-                moduleTomSelect.clearOptions();
-                moduleTomSelect.load(function(callback) {
+                    if (loadingSpinner) loadingSpinner.classList.remove('d-none');
+                    
+                    moduleTomSelect.clear();
+                    moduleTomSelect.clearOptions();
+                    
                     fetch(`/api/subjects?programType=${encodeURIComponent(program)}&levelNo=${level}&semesterNo=${semester}`)
                         .then(response => response.json())
                         .then(data => {
                             subjectsData = data;
-                            loadingSpinner.classList.add('d-none');
-                            callback(data);
+                            if (loadingSpinner) loadingSpinner.classList.add('d-none');
+                            moduleTomSelect.addOption(data);
+                            moduleTomSelect.refreshOptions(false);
                         })
                         .catch(err => {
                             console.error('Error fetching subjects', err);
-                            loadingSpinner.classList.add('d-none');
-                            callback();
+                            if (loadingSpinner) loadingSpinner.classList.add('d-none');
                         });
-                });
-            }
+                }
 
-            // We need to listen to the original select change events, which TomSelect triggers
-            programSelect.addEventListener('change', fetchSubjects);
-            levelSelect.addEventListener('change', fetchSubjects);
-            semesterSelect.addEventListener('change', fetchSubjects);
+                // We need to listen to the original select change events, which TomSelect triggers
+                programSelect.addEventListener('change', fetchSubjects);
+                levelSelect.addEventListener('change', fetchSubjects);
+                semesterSelect.addEventListener('change', fetchSubjects);
 
-            // Initial fetch if all three happen to have values
-            if (programSelect.value && levelSelect.value && semesterSelect.value) {
-                fetchSubjects();
+                // Initial fetch if all three happen to have values
+                if (programSelect.value && levelSelect.value && semesterSelect.value) {
+                    fetchSubjects();
+                }
+            } catch (error) {
+                console.error("Error initializing smooth dropdowns:", error);
             }
         });
     </script>
