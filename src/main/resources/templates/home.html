@@ -432,7 +432,6 @@
             color: var(--primary);
         }
 
-        /* Mobile Bottom Navigation */
         .mobile-bottom-nav {
             position: fixed;
             bottom: 0;
@@ -445,11 +444,6 @@
             box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
             z-index: 9999; /* Ensure it is above everything */
             padding-bottom: env(safe-area-inset-bottom);
-            transform: translateY(100%) !important;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .mobile-bottom-nav.nav-visible {
-            transform: translateY(0) !important;
         }
 
         /* Premium Glass Card (Mobile-First iOS Style) */
@@ -1410,16 +1404,6 @@
                     navbar.classList.add('navbar-visible');
                 }
             }
-
-            // 2. Mobile Bottom Nav Visibility
-            const bottomNav = document.querySelector('.mobile-bottom-nav');
-            if (bottomNav) {
-                if (scrollTop > 80) {
-                    bottomNav.classList.add('nav-visible');
-                } else {
-                    bottomNav.classList.remove('nav-visible');
-                }
-            }
             
             window.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, true); // useCapture = true ensures we catch ALL scrolling elements
@@ -1427,7 +1411,7 @@
     </script>
 
     <!-- Mobile Bottom Navigation -->
-    <div class="mobile-bottom-nav d-block d-lg-none">
+    <div class="mobile-bottom-nav d-lg-none">
         <div class="mobile-bottom-nav-container">
             <a th:href="@{/}" class="nav-item-bottom active">
                 <i class="bi bi-house-door-fill"></i>
