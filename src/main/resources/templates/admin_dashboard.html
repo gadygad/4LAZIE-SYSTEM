@@ -1135,7 +1135,8 @@
                     try {
                         new TomSelect(select, {
                             create: false,
-                            maxOptions: null
+                            maxOptions: null,
+                            dropdownParent: 'body'
                         });
                     } catch (e) {
                         console.error('Failed to init TomSelect on', select.name, e);
@@ -1153,6 +1154,7 @@
                         searchField: 'name',
                         create: true,
                         placeholder: 'Select or type new module...',
+                        dropdownParent: 'body',
                         render: {
                             option_create: function(data, escape) {
                                 return '<div class="create">Add new module: <strong>' + escape(data.input) + '</strong>&hellip;</div>';
