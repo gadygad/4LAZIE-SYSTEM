@@ -431,30 +431,6 @@
             background: #f1f5f9;
             color: var(--primary);
         }
-
-        .mobile-bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 360px;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 20px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
-            border-radius: 40px;
-            z-index: 1030;
-            padding: 4px 15px;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .mobile-bottom-nav.nav-hidden {
-            transform: translate(-50%, 150%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
         /* Premium Glass Card (Mobile-First iOS Style) */
         .premium-glass-card {
             background: rgba(255, 255, 255, 0.7);
@@ -606,71 +582,6 @@
         }
         .btn-premium-gold:hover i {
             transform: translateX(4px);
-        }
-
-        .mobile-bottom-nav-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: auto;
-            width: 100%;
-        }
-        .nav-item-bottom {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.55);
-            text-decoration: none;
-            font-size: 0.65rem;
-            font-weight: 600;
-            font-family: 'Outfit', sans-serif;
-            flex: 1;
-            padding: 2px 0;
-            border-radius: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        .nav-item-bottom i {
-            font-size: 1.1rem;
-            margin-bottom: 0px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .nav-item-bottom:hover, .nav-item-bottom.active {
-            color: #fbbf24;
-            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-        }
-        .nav-item-bottom.active i {
-            background: linear-gradient(135deg, #fcd34d 0%, #d97706 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5));
-            transform: translateY(-2px) scale(1.15);
-        }
-        .nav-item-bottom:hover i, .nav-item-bottom:active i {
-            transform: translateY(-3px) scale(1.1);
-        }
-        .nav-item-bottom.active {
-            color: #f59e0b;
-        }
-        .nav-item-bottom.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            width: 20px;
-            height: 3px;
-            background: #f59e0b;
-            border-radius: 3px;
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
-        }
-        .nav-item-bottom.active i {
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 991px) {
-            body {
-                padding-bottom: 70px !important; /* Space for the bottom nav */
-            }
         }
     </style>
 </head>
@@ -1535,67 +1446,6 @@
                 }
             }
             
-            // Mobile Bottom Nav Hide-on-Scroll & Auto-hide on Inactivity
-            const bottomNav = document.querySelector('.mobile-bottom-nav');
-            if (bottomNav && !bottomNav.classList.contains('offcanvas-active')) {
-                if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
-                
-                const isAtBottom = Math.ceil(window.innerHeight + scrollTop) >= document.documentElement.scrollHeight - 50;
-
-                if (isAtBottom) {
-                    // Always show at the very bottom
-                    bottomNav.classList.remove('nav-hidden');
-                } else if (scrollTop > window.lastScrollTop && scrollTop > 100) {
-                    // Scrolling down - hide immediately
-                    bottomNav.classList.add('nav-hidden');
-                } else if (window.lastScrollTop - scrollTop > 25 || scrollTop < 100) {
-                    // Scrolling UP significantly or at top - show it
-                    bottomNav.classList.remove('nav-hidden');
-                    // Premium feature: auto-hide after reading (3s) unless at the very top
-                    if (scrollTop > 150) {
-                        window.bottomNavTimeout = setTimeout(() => {
-                            bottomNav.classList.add('nav-hidden');
-                        }, 3000);
-                    }
-                }
-            }
-            
-        window.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        }, true); // useCapture = true ensures we catch ALL scrolling elements
-
-        // Show bottom nav on screen tap to easily retrieve it while reading
-        document.addEventListener('touchstart', function(e) {
-            const bottomNav = document.querySelector('.mobile-bottom-nav');
-            if (bottomNav && bottomNav.classList.contains('nav-hidden') && !bottomNav.classList.contains('offcanvas-active')) {
-                // Prevent showing if they are interacting with the sidebar
-                if (!e.target.closest('.offcanvas')) {
-                    bottomNav.classList.remove('nav-hidden');
-                    if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
-                    window.bottomNavTimeout = setTimeout(() => {
-                        bottomNav.classList.add('nav-hidden');
-                    }, 2500);
-                }
-            }
-        }, { passive: true });
-
-        // Hide bottom nav completely when sidebar is opened
-        const mobileSidebar = document.getElementById('guestMobileSidebar');
-        if (mobileSidebar) {
-            mobileSidebar.addEventListener('show.bs.offcanvas', function () {
-                const bottomNav = document.querySelector('.mobile-bottom-nav');
-                if (bottomNav) {
-                    bottomNav.classList.add('nav-hidden');
-                    bottomNav.classList.add('offcanvas-active');
-                }
-            });
-            mobileSidebar.addEventListener('hidden.bs.offcanvas', function () {
-                const bottomNav = document.querySelector('.mobile-bottom-nav');
-                if (bottomNav) {
-                    bottomNav.classList.remove('offcanvas-active');
-                    bottomNav.classList.remove('nav-hidden');
-                }
-            });
-        }
 
         // Premium Auto-scrolling Modules Carousel (Mobile Only)
         const modulesContainer = document.querySelector('.modules-container');
@@ -1639,19 +1489,6 @@
     });
     </script>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="mobile-bottom-nav d-lg-none">
-        <div class="mobile-bottom-nav-container">
-            <a th:href="@{/}" class="nav-item-bottom active">
-                <i class="bi bi-house-door-fill"></i>
-                <span>Home</span>
-            </a>
-            <a th:href="@{/notes}" class="nav-item-bottom">
-                <i class="bi bi-journal-text"></i>
-                <span>Explore</span>
-            </a>
-        </div>
-    </div>
 
 </body>
 </html>
