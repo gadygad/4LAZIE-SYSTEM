@@ -716,6 +716,62 @@
             font-size: 1.2rem;
         }
 
+        /* Premium Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 -4px 30px rgba(0,0,0,0.08);
+            z-index: 9999;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .mobile-bottom-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 65px;
+        }
+        .nav-item-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            width: 25%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item-bottom i {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item-bottom:hover, .nav-item-bottom:active {
+            color: #4F46E5;
+        }
+        .nav-item-bottom:hover i, .nav-item-bottom:active i {
+            transform: translateY(-4px) scale(1.1);
+        }
+        .nav-item-bottom.active {
+            color: #F59E0B; /* Premium Gold */
+        }
+        .nav-item-bottom.active i {
+            color: #F59E0B;
+        }
+        
+        @media (max-width: 991px) {
+            body {
+                padding-bottom: 70px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -954,5 +1010,28 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mobile Bottom Navigation (Dashboard Version) -->
+    <div class="mobile-bottom-nav d-md-none">
+        <div class="mobile-bottom-nav-container">
+            <a th:href="@{/dashboard}" class="nav-item-bottom active">
+                <i class="bi bi-grid-fill"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/notes}" class="nav-item-bottom">
+                <i class="bi bi-journal-text"></i>
+                <span>Materials</span>
+            </a>
+            <a th:href="@{/profile}" class="nav-item-bottom">
+                <i class="bi bi-person-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="javascript:void(0)" onclick="document.getElementById('logoutFormMobile').submit();" class="nav-item-bottom" style="color: #EF4444;">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+                <form id="logoutFormMobile" th:action="@{/logout}" method="post" style="display: none;"></form>
+            </a>
+        </div>
+    </div>
 </body>
 </html>
