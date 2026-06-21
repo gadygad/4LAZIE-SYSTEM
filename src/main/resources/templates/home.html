@@ -864,6 +864,7 @@
                 @media (max-width: 767.98px) {
                     .modules-container {
                         flex-direction: row;
+                        flex-wrap: nowrap;
                         overflow-x: auto;
                         padding-bottom: 1.5rem;
                         -webkit-overflow-scrolling: touch;
@@ -1469,7 +1470,8 @@
                     navbar.classList.add('navbar-visible');
                 }
             }
-            
+            window.lastScrollTop = scrollTop;
+        }, { passive: true });
 
         // Premium Auto-scrolling Modules Carousel (Mobile Only)
         const modulesContainer = document.querySelector('.modules-container');
@@ -1507,6 +1509,7 @@
             modulesContainer.addEventListener('mouseleave', () => isHovered = false);
             modulesContainer.addEventListener('touchstart', () => isHovered = true, {passive: true});
             modulesContainer.addEventListener('touchend', () => isHovered = false, {passive: true});
+            modulesContainer.addEventListener('touchcancel', () => isHovered = false, {passive: true});
 
             requestAnimationFrame(autoScroll);
         }
