@@ -1509,19 +1509,21 @@
                 <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
             </button>
         </div>
-        <div class="offcanvas-body p-0 custom-scrollbar position-relative">
-            <!-- Reuse the sidebar fragment, but override display -->
-            <style>
-                .offcanvas .hero-sidebar {
-                    display: flex !important;
-                    flex-direction: column !important;
-                    width: 100% !important;
-                    position: static !important;
-                    height: auto !important;
-                    min-height: 100%;
-                }
-            </style>
-            <div th:replace="~{fragments/sjuit_components :: sidebar}"></div>
+        <div class="offcanvas-body p-4 custom-scrollbar position-relative" id="mobileSidebarBody">
+            <!-- College Name Link (St. Joseph College) -->
+            <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-block mb-4" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)';">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="bi bi-building" style="color: #60a5fa; font-size: 1.2rem;"></i>
+                    </div>
+                    <span class="text-white" style="font-size: 0.95rem; font-weight: 700; line-height: 1.3; font-family: 'Outfit', sans-serif;">St. Joseph College of Engineering and Technology</span>
+                    <i class="bi bi-box-arrow-up-right ms-auto" style="color: rgba(255,255,255,0.4); font-size: 0.8rem;"></i>
+                </div>
+            </a>
+
+            <!-- Placeholder for future contents -->
+            <div id="mobileSidebarDynamicContent">
+            </div>
         </div>
     </div>
 
