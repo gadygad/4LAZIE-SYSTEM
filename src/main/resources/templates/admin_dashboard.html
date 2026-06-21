@@ -695,6 +695,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Document Category</label>
                                 <select name="category" class="form-select" required>
+                                    <option value="" disabled selected>Select Category...</option>
                                     <option value="Note">Lecture Notes</option>
                                     <option value="Past Paper">Past Paper</option>
                                     <option value="Assignment">Assignment / Quiz</option>
@@ -952,8 +953,7 @@
                 const standardSelects = document.querySelectorAll('.form-select:not(#moduleNameInput)');
                 standardSelects.forEach(select => {
                     new TomSelect(select, {
-                        create: false,
-                        controlInput: null // Disable typing for standard selects
+                        create: false
                     });
                 });
 
