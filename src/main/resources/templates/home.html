@@ -619,30 +619,30 @@
 
         .sidebar-hover-content {
             display: none;
-            position: absolute;
-            top: 0;
-            left: calc(100% + 10px);
-            width: 250px;
+            position: fixed;
+            top: 50vh;
+            left: 50vw;
+            width: 85vw;
+            max-width: 320px;
             z-index: 1050;
-            margin-top: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.98);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border-radius: 16px;
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            padding: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(245, 158, 11, 0.15);
-            transition: all 0.3s ease;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            padding: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 30px rgba(245, 158, 11, 0.2);
+            opacity: 0;
         }
 
         .sidebar-hover-item.open-mobile .sidebar-hover-content {
             display: block;
-            animation: premiumFadeInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: popInCenter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        @keyframes premiumFadeInDown {
-            from { opacity: 0; transform: translateX(-15px) scale(0.95); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
+        @keyframes popInCenter {
+            from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .sidebar-hover-content a {
@@ -1541,7 +1541,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Premium Mobile Offcanvas Sidebar for Guests -->
-    <div class="offcanvas offcanvas-start border-0" tabindex="-1" id="guestMobileSidebar" aria-labelledby="guestMobileSidebarLabel" style="width: 280px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 20px 0 50px rgba(0,0,0,0.5); overflow: visible;">
+    <div class="offcanvas offcanvas-start border-0" tabindex="-1" id="guestMobileSidebar" aria-labelledby="guestMobileSidebarLabel" style="width: 280px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 20px 0 50px rgba(0,0,0,0.5); overflow: hidden;">
         
         <!-- Glowing Ambient Orbs for Premium Vibe -->
         <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
@@ -1558,7 +1558,7 @@
                 <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
             </button>
         </div>
-        <div class="offcanvas-body p-3 position-relative" id="mobileSidebarBody" style="overflow: visible !important;">
+        <div class="offcanvas-body p-3 custom-scrollbar position-relative" id="mobileSidebarBody">
             <!-- College Name Link (St. Joseph College) -->
             <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(255, 255, 255, 0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.08)';">
                 <i class="bi bi-building" style="color: #60a5fa; font-size: 1rem; flex-shrink: 0;"></i>
