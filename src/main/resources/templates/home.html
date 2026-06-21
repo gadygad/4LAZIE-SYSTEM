@@ -1540,7 +1540,12 @@
             if (bottomNav && !bottomNav.classList.contains('offcanvas-active')) {
                 if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
                 
-                if (scrollTop > window.lastScrollTop && scrollTop > 100) {
+                const isAtBottom = Math.ceil(window.innerHeight + scrollTop) >= document.documentElement.scrollHeight - 50;
+
+                if (isAtBottom) {
+                    // Always show at the very bottom
+                    bottomNav.classList.remove('nav-hidden');
+                } else if (scrollTop > window.lastScrollTop && scrollTop > 100) {
                     // Scrolling down - hide immediately
                     bottomNav.classList.add('nav-hidden');
                 } else if (window.lastScrollTop - scrollTop > 25 || scrollTop < 100) {
