@@ -578,66 +578,92 @@
 
     <!-- PREMIUM GLASS MODAL FOR LOGIN -->
     <div class="modal fade" id="premiumLoginModal" tabindex="-1" aria-labelledby="premiumLoginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content premium-modal">
                 <style>
+                    /* Base Styles (Desktop) - Untouched */
                     .premium-modal {
-                        background: rgba(255, 255, 255, 0.2) !important;
-                        backdrop-filter: blur(30px) !important;
-                        -webkit-backdrop-filter: blur(30px) !important;
-                        border: 1px solid rgba(255,255,255,0.6) !important;
-                        border-top: 1px solid rgba(255, 255, 255, 0.9) !important;
-                        border-left: 1px solid rgba(255, 255, 255, 0.9) !important;
-                        box-shadow: 0 25px 50px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.2) !important;
-                        border-radius: 20px !important;
-                        padding: 24px !important;
+                        background: rgba(255, 255, 255, 0.15) !important;
+                        backdrop-filter: blur(25px) !important;
+                        -webkit-backdrop-filter: blur(25px) !important;
+                        border: 1px solid rgba(255,255,255,0.8) !important;
+                        border-top: 1px solid rgba(255, 255, 255, 1) !important;
+                        border-left: 1px solid rgba(255, 255, 255, 1) !important;
+                        box-shadow: 0 35px 60px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.3) !important;
+                        border-radius: 28px !important;
+                        padding: 30px !important;
                     }
+                    .premium-drop-input {
+                        background: rgba(255, 255, 255, 0.5) !important;
+                        border: 1px solid rgba(255, 255, 255, 0.7) !important;
+                        color: #0f172a !important;
+                        border-radius: 12px !important;
+                        padding: 12px 16px !important;
+                        font-size: 0.95rem !important;
+                        font-weight: 500;
+                        transition: all 0.3s ease !important;
+                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+                    }
+                    .premium-drop-input:focus {
+                        background: rgba(255, 255, 255, 0.8) !important;
+                        border-color: #f59e0b !important;
+                        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2) !important;
+                        outline: none;
+                    }
+                    .premium-drop-input::placeholder { color: rgba(15, 23, 42, 0.5) !important; font-weight: 400; }
+                    .premium-drop-btn {
+                        background: #0f172a;
+                        border: none; border-radius: 12px; padding: 1rem; width: 100%;
+                        color: #fff; font-size: 1rem; font-weight: 700; letter-spacing: 0.5px;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+                        display: flex; align-items: center; justify-content: center; gap: 8px;
+                    }
+                    .premium-drop-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 15px 25px rgba(15, 23, 42, 0.3);
+                        background: #1e293b;
+                    }
+
+                    /* Mobile Specific Modifications ONLY */
                     @media (max-width: 576px) {
                         .premium-modal {
                             padding: 20px !important;
                             border-radius: 18px !important;
                             margin: 10px;
                         }
-                    }
-                    .premium-drop-input {
-                        background: rgba(255, 255, 255, 0.6) !important;
-                        border: 1px solid rgba(255, 255, 255, 0.8) !important;
-                        color: #0f172a !important;
-                        border-radius: 10px !important;
-                        padding: 10px 14px !important;
-                        font-size: 0.9rem !important;
-                        font-weight: 500;
-                        transition: all 0.3s ease !important;
-                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-                        height: 42px;
-                    }
-                    .premium-drop-input:focus {
-                        background: rgba(255, 255, 255, 0.9) !important;
-                        border-color: #f59e0b !important;
-                        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15) !important;
-                        outline: none;
-                    }
-                    .premium-drop-input::placeholder { color: rgba(15, 23, 42, 0.4) !important; font-weight: 400; }
-                    .premium-drop-btn {
-                        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-                        border: none; border-radius: 10px; padding: 10px; width: 100%;
-                        color: #fff; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.5px;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 8px 15px rgba(15, 23, 42, 0.2);
-                        display: flex; align-items: center; justify-content: center; gap: 6px;
-                        height: 44px;
-                    }
-                    .premium-drop-btn:hover {
-                        transform: translateY(-1px);
-                        box-shadow: 0 12px 20px rgba(15, 23, 42, 0.25);
-                        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+                        .premium-drop-input {
+                            padding: 10px 14px !important;
+                            height: 42px;
+                            font-size: 0.9rem !important;
+                        }
+                        .premium-drop-btn {
+                            padding: 10px;
+                            height: 44px;
+                            font-size: 0.95rem;
+                        }
+                        .mobile-icon-container {
+                            width: 44px !important;
+                            height: 44px !important;
+                            font-size: 1.4rem !important;
+                        }
+                        .mobile-title {
+                            font-size: 1.3rem !important;
+                        }
+                        .mobile-subtitle {
+                            font-size: 0.8rem !important;
+                            margin-bottom: 0.5rem !important;
+                        }
+                        .mobile-margin-adjust {
+                            margin-bottom: 0.5rem !important;
+                        }
                     }
                 </style>
 
-                <button type="button" class="btn-close shadow-none position-absolute" data-bs-dismiss="modal" aria-label="Close" style="top: 15px; right: 15px; z-index: 10; font-size: 0.8rem;"></button>
+                <button type="button" class="btn-close shadow-none position-absolute" data-bs-dismiss="modal" aria-label="Close" style="top: 20px; right: 20px; z-index: 10;"></button>
 
-                <div class="text-center mb-3">
-                    <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: rgba(245, 158, 11, 0.12); border-radius: 12px; color: #d97706; font-size: 1.4rem; border: 1px solid rgba(245, 158, 11, 0.2);">
+                <div class="text-center mb-4 mobile-margin-adjust">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-2 mobile-icon-container" style="width: 54px; height: 54px; background: rgba(245, 158, 11, 0.15); border-radius: 16px; color: #d97706; font-size: 1.8rem; border: 1px solid rgba(245, 158, 11, 0.3);">
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <h4 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.3px;">Welcome Back</h4>
