@@ -615,19 +615,19 @@
                 background: transparent;
             }
             .ts-control {
-                border: 1px solid rgba(212, 175, 55, 0.3) !important;
-                border-radius: 8px !important;
-                padding: 0.7rem 1rem !important;
-                font-size: 0.9rem !important;
-                background-color: #FAFAFA !important;
-                color: #333 !important;
-                box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
-                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+                border: 1px solid #CBD5E1 !important;
+                border-radius: 10px !important;
+                padding: 0.75rem 1.2rem !important;
+                font-size: 1rem !important;
+                background-color: #FFFFFF !important;
+                color: var(--text-main) !important;
+                box-shadow: none !important;
+                transition: all 0.3s ease !important;
                 min-height: auto !important;
             }
             .ts-wrapper:hover .ts-control {
                 border-color: #D4AF37 !important;
-                background-color: #FFFBF0 !important;
+                background-color: #FFFDF8 !important;
                 transform: translateY(-2px) !important;
                 box-shadow: 0 8px 20px rgba(212, 175, 55, 0.12) !important;
                 cursor: pointer;
@@ -635,8 +635,7 @@
             .ts-wrapper.focus .ts-control, .ts-wrapper.input-active .ts-control {
                 border-color: #D4AF37 !important;
                 background-color: #FFFFFF !important;
-                transform: translateY(-2px) scale(1.02) !important;
-                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2) !important;
+                box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1) !important;
                 outline: none !important;
             }
             .ts-wrapper {
@@ -662,7 +661,7 @@
                 color: #0F172A !important;
             }
             .ts-dropdown .active {
-                background-color: #FFFBF0 !important;
+                background-color: #FFFDF8 !important;
                 color: #996515 !important;
                 font-weight: 700 !important;
                 transform: translateX(5px) !important;
@@ -830,7 +829,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Module Code</label>
-                                <input type="text" name="moduleCode" id="moduleCodeInput" class="form-control" placeholder="e.g. ITT 04101" required style="text-transform: uppercase;">
+                                <input type="text" name="moduleCode" id="moduleCodeInput" class="form-control" placeholder="Auto-generated..." required readonly style="background-color: #f8fafc; cursor: not-allowed; font-weight: 700; color: #64748b;">
                             </div>
                         </div>
                     </div>
@@ -1153,8 +1152,8 @@
                         valueField: 'name',
                         labelField: 'name',
                         searchField: 'name',
-                        create: true,
-                        placeholder: 'Select or type new module...',
+                        create: false,
+                        placeholder: 'Select module...',
                         render: {
                             option_create: function(data, escape) {
                                 return '<div class="create">Add new module: <strong>' + escape(data.input) + '</strong>&hellip;</div>';
