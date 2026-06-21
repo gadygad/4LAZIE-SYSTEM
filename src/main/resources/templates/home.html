@@ -439,11 +439,11 @@
             transform: translateX(-50%);
             width: 85%;
             max-width: 360px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 20px rgba(245, 158, 11, 0.15);
             border-radius: 40px;
             z-index: 1030;
             padding: 4px 15px;
@@ -620,7 +620,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.55);
             text-decoration: none;
             font-size: 0.65rem;
             font-weight: 600;
@@ -634,11 +634,18 @@
         .nav-item-bottom i {
             font-size: 1.1rem;
             margin-bottom: 0px;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .nav-item-bottom:hover, .nav-item-bottom:active {
-            color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
+        .nav-item-bottom:hover, .nav-item-bottom.active {
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+        .nav-item-bottom.active i {
+            background: linear-gradient(135deg, #fcd34d 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5));
+            transform: translateY(-2px) scale(1.15);
         }
         .nav-item-bottom:hover i, .nav-item-bottom:active i {
             transform: translateY(-3px) scale(1.1);
