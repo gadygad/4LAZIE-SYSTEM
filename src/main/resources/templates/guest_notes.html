@@ -400,16 +400,25 @@
                     </div>
                 </div>
 
+                <style>
+                    .premium-sem-btn {
+                        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                    }
+                    .premium-sem-btn:active {
+                        transform: scale(0.94) !important;
+                        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3) !important;
+                    }
+                </style>
                 <!-- Mobile Only Semester Switcher (Outside Card, completely independent buttons) -->
                 <div class="semester-switcher d-flex d-md-none w-100 mb-4 mx-auto gap-3" style="max-width: 400px;">
                     <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
-                       class="btn flex-fill m-0 d-flex flex-column justify-content-center align-items-center" 
-                       th:style="${selectedSemester == 1 ? 'background: linear-gradient(135deg, #d4af37 0%, #b48608 100%); color: #ffffff; border-radius: 16px; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.9rem; padding: 14px 0; border: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: all 0.3s ease;' : 'background: #ffffff; color: #d4af37; border-radius: 16px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08); font-weight: 700; font-family: \'Outfit\', sans-serif; font-size: 0.9rem; padding: 14px 0; border: 1px solid rgba(212, 175, 55, 0.3); transition: all 0.3s ease;'}">
+                       class="btn premium-sem-btn flex-fill m-0 d-flex flex-column justify-content-center align-items-center" 
+                       th:style="${selectedSemester == 1 ? 'background: linear-gradient(135deg, #d4af37 0%, #996515 100%); color: #ffffff; border-radius: 16px; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid #d4af37; text-shadow: 0 1px 3px rgba(0,0,0,0.2);' : 'background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(180, 134, 8, 0.12) 100%); color: #b48608; border-radius: 16px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08); font-weight: 700; font-family: \'Outfit\', sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid rgba(212, 175, 55, 0.4); backdrop-filter: blur(10px);'}">
                        <span>Semester 1</span>
                     </a>
                     <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
-                       class="btn flex-fill m-0 d-flex flex-column justify-content-center align-items-center" 
-                       th:style="${selectedSemester == 2 ? 'background: linear-gradient(135deg, #d4af37 0%, #b48608 100%); color: #ffffff; border-radius: 16px; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.9rem; padding: 14px 0; border: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: all 0.3s ease;' : 'background: #ffffff; color: #d4af37; border-radius: 16px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08); font-weight: 700; font-family: \'Outfit\', sans-serif; font-size: 0.9rem; padding: 14px 0; border: 1px solid rgba(212, 175, 55, 0.3); transition: all 0.3s ease;'}">
+                       class="btn premium-sem-btn flex-fill m-0 d-flex flex-column justify-content-center align-items-center" 
+                       th:style="${selectedSemester == 2 ? 'background: linear-gradient(135deg, #d4af37 0%, #996515 100%); color: #ffffff; border-radius: 16px; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid #d4af37; text-shadow: 0 1px 3px rgba(0,0,0,0.2);' : 'background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(180, 134, 8, 0.12) 100%); color: #b48608; border-radius: 16px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08); font-weight: 700; font-family: \'Outfit\', sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid rgba(212, 175, 55, 0.4); backdrop-filter: blur(10px);'}">
                        <span>Semester 2</span>
                     </a>
                 </div>
