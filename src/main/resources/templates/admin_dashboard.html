@@ -639,15 +639,17 @@
                 box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2) !important;
                 outline: none !important;
             }
-            .ts-wrapper.focus, .ts-wrapper.input-active {
-                z-index: 999 !important;
+            .ts-wrapper {
                 position: relative;
+                z-index: 100;
+            }
+            .ts-wrapper.focus, .ts-wrapper.input-active {
+                z-index: 9999 !important;
             }
             .ts-dropdown {
                 border-radius: 12px !important;
                 border: 1px solid rgba(212, 175, 55, 0.3) !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
-                overflow: hidden;
                 margin-top: 5px !important;
                 animation: fadeInDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
                 z-index: 9999 !important;
@@ -1135,8 +1137,7 @@
                     try {
                         new TomSelect(select, {
                             create: false,
-                            maxOptions: null,
-                            dropdownParent: 'body'
+                            maxOptions: null
                         });
                     } catch (e) {
                         console.error('Failed to init TomSelect on', select.name, e);
@@ -1154,7 +1155,6 @@
                         searchField: 'name',
                         create: true,
                         placeholder: 'Select or type new module...',
-                        dropdownParent: 'body',
                         render: {
                             option_create: function(data, escape) {
                                 return '<div class="create">Add new module: <strong>' + escape(data.input) + '</strong>&hellip;</div>';
