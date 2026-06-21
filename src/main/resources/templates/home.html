@@ -439,11 +439,11 @@
             transform: translateX(-50%);
             width: 85%;
             max-width: 360px;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(245, 158, 11, 0.35);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 20px rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 20px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
             border-radius: 40px;
             z-index: 1030;
             padding: 4px 15px;
@@ -1541,14 +1541,16 @@
                 if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
                 
                 if (scrollTop > window.lastScrollTop && scrollTop > 100) {
+                    // Scrolling down - hide immediately
                     bottomNav.classList.add('nav-hidden');
-                } else {
+                } else if (window.lastScrollTop - scrollTop > 25 || scrollTop < 100) {
+                    // Scrolling UP significantly or at top - show it
                     bottomNav.classList.remove('nav-hidden');
-                    // Premium feature: auto-hide after reading (2.5s) unless at the very top
+                    // Premium feature: auto-hide after reading (3s) unless at the very top
                     if (scrollTop > 150) {
                         window.bottomNavTimeout = setTimeout(() => {
                             bottomNav.classList.add('nav-hidden');
-                        }, 2500);
+                        }, 3000);
                     }
                 }
             }
