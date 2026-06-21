@@ -503,6 +503,37 @@
             transform: scale(1.1);
         }
 
+        /* Mobile-Only Enhancements (Transparent Navbar & Fade-in) */
+        @media (max-width: 991.98px) {
+            .navbar-custom {
+                background: transparent !important;
+                border-bottom: 1px solid transparent !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            }
+            .navbar-custom.navbar-scrolled {
+                background: rgba(255, 255, 255, 0.85) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border-bottom: 1px solid rgba(203, 213, 225, 0.5) !important;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05) !important;
+            }
+            
+            .fade-in-up-mobile {
+                animation: fadeInUpMobile 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            @keyframes fadeInUpMobile {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
         /* Premium Gold Button */
         .btn-premium-gold {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
@@ -595,8 +626,8 @@
             
             <!-- Left side: Hamburger + Logo -->
             <div class="d-flex align-items-center gap-2">
-                <!-- Premium Hamburger Menu for Mobile -->
-                <button class="btn d-lg-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#guestMobileSidebar" aria-controls="guestMobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
+                <!-- Premium Hamburger Menu for Mobile (Hidden to clean top bar) -->
+                <button class="btn d-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#guestMobileSidebar" aria-controls="guestMobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
                     <i class="bi bi-list" style="font-size: 1.5rem;"></i>
                 </button>
                 
@@ -804,7 +835,7 @@
         <div class="main-content">
 
     <!-- COMBINED POPULAR NOTES & PREMIUM SECTION -->
-    <section class="py-5 my-2">
+    <section class="py-5 my-2 fade-in-up-mobile">
 
         <div class="container-fluid px-4 px-lg-5">
             <style>
@@ -1360,6 +1391,14 @@
         if (navbar) {
             window.addEventListener('scroll', function() {
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Add scrolled class for Mobile transparent-to-blur effect
+                if (scrollTop > 20) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+
                 if (scrollTop > lastScrollTop && scrollTop > 100) {
                     // Scroll Down
                     navbar.classList.add('navbar-hidden');
