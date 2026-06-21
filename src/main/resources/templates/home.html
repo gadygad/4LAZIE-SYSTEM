@@ -1527,18 +1527,41 @@
                 }
             }
             
-            // Mobile Bottom Nav Hide-on-Scroll
+            // Mobile Bottom Nav Hide-on-Scroll & Auto-hide on Inactivity
             const bottomNav = document.querySelector('.mobile-bottom-nav');
             if (bottomNav) {
+                if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
+                
                 if (scrollTop > window.lastScrollTop && scrollTop > 100) {
                     bottomNav.classList.add('nav-hidden');
                 } else {
                     bottomNav.classList.remove('nav-hidden');
+                    // Premium feature: auto-hide after reading (2.5s) unless at the very top
+                    if (scrollTop > 150) {
+                        window.bottomNavTimeout = setTimeout(() => {
+                            bottomNav.classList.add('nav-hidden');
+                        }, 2500);
+                    }
                 }
             }
             
-            window.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        window.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, true); // useCapture = true ensures we catch ALL scrolling elements
+
+        // Show bottom nav on screen tap to easily retrieve it while reading
+        document.addEventListener('touchstart', function(e) {
+            const bottomNav = document.querySelector('.mobile-bottom-nav');
+            if (bottomNav && bottomNav.classList.contains('nav-hidden')) {
+                // Prevent showing if they are interacting with the sidebar
+                if (!e.target.closest('.offcanvas')) {
+                    bottomNav.classList.remove('nav-hidden');
+                    if (window.bottomNavTimeout) clearTimeout(window.bottomNavTimeout);
+                    window.bottomNavTimeout = setTimeout(() => {
+                        bottomNav.classList.add('nav-hidden');
+                    }, 2500);
+                }
+            }
+        }, { passive: true });
 
         // Premium Auto-scrolling Modules Carousel (Mobile Only)
         const modulesContainer = document.querySelector('.modules-container');
