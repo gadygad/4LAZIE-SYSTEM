@@ -3,551 +3,956 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Dashboard - 4LAZIE</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>4LAZIE | Premium Student Portal</title>
+    
+    <!-- Google Fonts: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Premium Global CSS -->
-    <link rel="stylesheet" th:href="@{/css/premium-theme.css?v=2.4}">
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
     
-
     <style>
-        /* Premium Dropdown Styles */
-        .premium-dropdown {
-            border: 1px solid rgba(255, 255, 255, 0.4) !important;
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(12px) !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
-            padding: 12px !important;
-            min-width: 240px;
+        :root {
+            /* Colors */
+            --primary: #4F46E5; /* Indigo */
+            --primary-light: #EEF2FF;
+            --accent: #F59E0B; /* Premium Gold/Orange */
+            --accent-light: #FEF3C7;
+            
+            --sidebar-bg: #111827;
+            --sidebar-hover: rgba(255, 255, 255, 0.05);
+            --sidebar-text: #9CA3AF;
+            --sidebar-active: #F3F4F6;
+            
+            --bg-body: #F8FAFC;
+            --bg-card: #FFFFFF;
+            
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+            
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .premium-dropdown .dropdown-item {
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-            font-weight: 500;
-            color: #475569;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
-        .premium-dropdown .dropdown-item:hover {
-            background: rgba(16, 185, 129, 0.08);
-            color: #10b981;
-            transform: translateX(4px);
+
+        /* ----- LEFT SIDEBAR ----- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 100;
         }
-        .premium-dropdown .dropdown-header {
-            font-weight: 800;
-            color: #10b981;
+
+        .sidebar-header {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .inst-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), #818CF8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .inst-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: white;
+            font-size: 1.05rem;
+            line-height: 1.2;
+        }
+
+        .sidebar-menu {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+        
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+        .menu-section {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
             letter-spacing: 1px;
-            padding-top: 8px;
+            padding: 0 24px;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background-color: var(--sidebar-hover);
+            color: white;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.15) 0%, transparent 100%);
+            color: white;
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-icon {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .menu-text {
+            flex-grow: 1;
+        }
+        
+        .menu-text-main {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .menu-text-sub {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .menu-arrow {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.2);
+            transition: var(--transition);
+        }
+        
+        .menu-item:hover .menu-arrow {
+            transform: translateX(3px);
+            color: white;
+        }
+
+        /* Colorful icons for specific programs */
+        .ic-it { color: #3B82F6; }
+        .ic-cse { color: #8B5CF6; }
+        .ic-ce { color: #F59E0B; }
+        .ic-me { color: #10B981; }
+        .ic-eee { color: #EAB308; }
+        .ic-mte { color: #64748B; }
+        .ic-ece { color: #EF4444; }
+
+        /* ----- MAIN CONTENT WRAPPER ----- */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: var(--bg-body);
+        }
+
+        /* ----- TOP NAVBAR ----- */
+        .top-navbar {
+            height: 72px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 50;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #1E3A8A; /* Deep blue */
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .badge-smart {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: #D97706;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 350px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            height: 42px;
+            background: #F1F5F9;
+            border: 1px solid transparent;
+            border-radius: 50px;
+            padding: 0 20px 0 45px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .search-bar .bi-search {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-bar .shortcut {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .nav-tools {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            border: none;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .icon-btn:hover {
+            background: #E2E8F0;
+            color: var(--primary);
+        }
+
+        .icon-btn .badge-count {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #EF4444;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .btn-logout {
+            background: #EF4444;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background: #DC2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 16px;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .user-role {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ----- DASHBOARD CONTENT AREA ----- */
+        .content-area {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            padding: 24px 30px;
+            gap: 24px;
+        }
+
+        /* CENTER COLUMN (MODULES) */
+        .center-col {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .center-col::-webkit-scrollbar { width: 6px; }
+        .center-col::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+
+        .module-header-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .module-title-badge {
+            background: #E0F2FE;
+            color: #0284C7;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(2, 132, 199, 0.2);
+        }
+        
+        .module-title-badge i {
+            background: #0284C7;
+            color: white;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .level-badge {
+            background: var(--text-dark);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .semester-text {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .semester-toggles {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 4px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sem-toggle {
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sem-toggle.active {
+            background: var(--accent-light);
+            color: #B45309;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+        }
+
+        /* Module Accordion/Card */
+        .module-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+        }
+
+        .module-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #CBD5E1;
+            transform: translateY(-2px);
+        }
+
+        .module-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .module-number {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-light);
+            color: #B45309;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .module-details h4 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #996515; /* Premium Gold touch for the text */
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .module-code {
+            background: rgba(153, 101, 21, 0.1);
+            color: #996515;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .module-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge {
+            background: #ECFDF5;
+            color: #059669;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .module-chevron {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* RIGHT COLUMN (NAVIGATOR) */
+        .right-col {
+            width: 380px;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .right-col::-webkit-scrollbar { display: none; }
+
+        .navigator-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .nav-header {
+            margin-bottom: 20px;
+        }
+
+        .nav-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-header h3 i {
+            color: var(--primary);
+        }
+
+        .nav-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0 15px;
+        }
+
+        .section-badge {
+            background: var(--text-dark);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .section-line {
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border-color);
+            margin-left: 12px;
+        }
+        
+        .section-line-degree {
+            background: var(--primary-light);
+            border: 1px solid var(--primary-light);
+        }
+        
+        .section-badge-degree {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+
+        .grid-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .grid-btn {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .grid-btn:hover, .grid-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .premium-features-header {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            color: #D97706;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #FDE68A;
             padding-bottom: 8px;
+            display: inline-block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
         }
         
-        /* Premium Quick Switcher Buttons */
-        .premium-quick-btn {
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            border: 1px solid rgba(0,0,0,0.05);
-            background: #fff;
-            color: #64748b;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 8px 18px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        .premium-sub {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
             text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
         }
-        .premium-quick-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(16,185,129,0.15);
-            color: #10b981;
-            border-color: rgba(16,185,129,0.3);
+
+        .feature-card:hover {
+            border-color: #D97706;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.1);
+            color: #D97706;
         }
-        .premium-quick-btn.active {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: #fff !important;
-            border: none;
-            box-shadow: 0 6px 15px rgba(16,185,129,0.3);
+
+        .feature-card i.lock-icon {
+            color: #CBD5E1;
+            font-size: 1.2rem;
         }
-        .premium-quick-btn.active:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16,185,129,0.4);
-        }
-        .premium-quick-btn i {
-            transition: color 0.3s ease;
-        }
-        .premium-quick-btn.active i {
-            color: #fff !important;
-        }
-        .premium-quick-btn:hover:not(.active) i {
-            color: #10b981 !important;
-        }
-        
-        /* Premium Degree Quick Switcher Buttons */
-        .premium-quick-btn-deg {
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            border: 1px solid rgba(0,0,0,0.05);
-            background: #fff;
-            color: #64748b;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 8px 18px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            text-decoration: none;
-        }
-        .premium-quick-btn-deg:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(99,102,241,0.15);
-            color: #6366f1;
-            border-color: rgba(99,102,241,0.3);
-        }
-        .premium-quick-btn-deg.active {
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
-            color: #fff !important;
-            border: none;
-            box-shadow: 0 6px 15px rgba(99,102,241,0.3);
-        }
-        .premium-quick-btn-deg.active:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99,102,241,0.4);
-        }
-        .premium-quick-btn-deg i {
-            transition: color 0.3s ease;
-        }
-        .premium-quick-btn-deg.active i {
-            color: #fff !important;
-        }
-        .premium-quick-btn-deg:hover:not(.active) i {
-            color: #6366f1 !important;
-        }
+
     </style>
 </head>
-
 <body>
 
-    <div class="page-layout">
-        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-        
-        <div class="main-content">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="inst-logo">
+                <i class="bi bi-building"></i>
+            </div>
+            <div class="inst-name">
+                St. Joseph Colle...
+            </div>
+            <i class="bi bi-chevron-down ms-auto" style="color: rgba(255,255,255,0.3); font-size: 0.8rem;"></i>
+        </div>
 
-
-    <!-- Header Navigation -->
-    <nav class="navbar navbar-light navbar-custom sticky-top py-3" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020;">
-        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-            <a class="navbar-brand d-flex align-items-center" href="/" style="text-decoration: none;">
-                <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
-                <span class="fs-3 me-2" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1;">4LAZIE</span>
-                <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 6px 16px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
-                    <!-- Shimmer overlay -->
-                    <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
-                    <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
-                        <i class="bi bi-lightning-charge-fill me-1" style="-webkit-text-fill-color: #f59e0b; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));"></i> SMART IN BRAIN
-                    </span>
-                    <style>
-                        @keyframes shimmer-glow {
-                            0% { left: -100%; }
-                            20% { left: 200%; }
-                            100% { left: 200%; }
-                        }
-                    </style>
+        <div class="sidebar-menu">
+            <div class="menu-section">Diploma Programmes</div>
+            
+            <a th:href="@{/dashboard(program='DIPLOMA', search='IT')}" class="menu-item" th:classappend="${selectedProgram == 'DIPLOMA' && (searchQuery == 'IT' || searchQuery == null)} ? 'active'">
+                <div class="menu-icon ic-it"><i class="bi bi-pc-display"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DIPLOMA IN IT</span>
+                    <span class="menu-text-sub">Information Technology</span>
                 </div>
+                <i class="bi bi-chevron-right menu-arrow"></i>
             </a>
             
-            <!-- Search Bar moved to navbar -->
-            <div class="search-container position-relative mx-3" style="flex-grow: 1; max-width: 450px;">
-                <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
-                <input type="text" id="smartSearchInput" autocomplete="off" class="form-control" placeholder="Search modules, notes, or past papers..." 
-                       style="padding: 12px 20px 12px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
-                       onfocus="this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'; this.style.borderColor='var(--primary)'; this.style.background='#fff';"
-                       onblur="setTimeout(() => { document.getElementById('searchResults').classList.add('d-none'); }, 200); this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
-                
-                <!-- Search Results Dropdown -->
-                <div id="searchResults" class="position-absolute w-100 bg-white shadow-lg d-none" style="top: 100%; left: 0; z-index: 1050; margin-top: 8px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); max-height: 350px; overflow-y: auto;">
-                    <!-- Results will be injected here via JS -->
+            <a th:href="@{/dashboard(program='DIPLOMA', search='CSE')}" class="menu-item" th:classappend="${selectedProgram == 'DIPLOMA' && searchQuery == 'CSE'} ? 'active'">
+                <div class="menu-icon ic-cse"><i class="bi bi-cpu"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DIPLOMA IN CSE</span>
+                    <span class="menu-text-sub">Computer Science & Engineering</span>
                 </div>
-                
-                <!-- Ctrl+K Shortcut Hint -->
-                <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
-            </div>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
 
-            <div th:replace="~{fragments/navbar_actions :: actions}"></div>
-        </div>
-    </nav>
-    <hr style="margin: 0; border: none; height: 3px; background: linear-gradient(90deg, #2563eb, #8b5cf6, #ec4899); opacity: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
-
-    <div class="container my-5">
-        <div class="row animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="col-lg-7">
-                
-                
-    <style>
-        .module-item {
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            background-color: transparent;
-        }
-        .module-item:hover {
-            background-color: #ffffff;
-        }
-        .module-dropdown {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out, margin 0.3s ease-in-out;
-            padding-left: 3.5rem;
-            padding-right: 1.5rem;
-            margin-bottom: 0;
-        }
-        .module-item:hover .module-dropdown {
-            max-height: 300px;
-            opacity: 1;
-            margin-bottom: 15px;
-        }
-        .dropdown-icon {
-            transition: transform 0.3s ease;
-        }
-        .module-item:hover .dropdown-icon {
-            transform: rotate(180deg);
-        }
-        .unit-item {
-            padding: 8px 16px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid transparent;
-            margin-bottom: 4px;
-        }
-        .unit-item:hover {
-            background-color: #ffffff;
-            border-color: var(--border-subtle);
-            color: var(--primary);
-            transform: translateX(4px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-    </style>
-    <!-- Open Notes Section -->
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 mt-0 gap-3">
-                <div class="d-flex align-items-center p-2 px-3 rounded-pill position-relative overflow-hidden mb-3" style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.8)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); backdrop-filter: blur(10px); max-width: max-content;">
-                    <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; min-width: 36px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 50%; font-size: 1rem;">
-                        <i class="bi bi-journal-album"></i>
-                    </div> 
-                    <div class="d-flex align-items-center flex-wrap">
-                        
-                        <!-- Dropdown for Program Switching -->
-                        <div class="dropdown me-3">
-                            <h2 class="fw-bold m-0 d-flex align-items-center dropdown-toggle" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; text-transform: uppercase; font-size: 1.1rem; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#0f172a'" data-bs-toggle="dropdown" aria-expanded="false" title="Click to change course">
-                                <span th:text="${selectedProgram != null ? (selectedProgram.startsWith('DIP_') ? 'DIP IN ' + selectedProgram.substring(4) : (selectedProgram.startsWith('DEG_') ? 'DEG IN ' + selectedProgram.substring(4) : (selectedProgram == 'DEGREE_EDU' ? 'DEGREE EDU' : 'MODULES'))) : 'MODULES'}">MODULES</span>
-                            </h2>
-                            <ul class="dropdown-menu premium-dropdown rounded-4" style="font-family: 'Outfit', sans-serif;">
-                                <li><h6 class="dropdown-header fw-bold text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">DIPLOMA</h6></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_IT&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-laptop me-2 text-muted"></i>DIP IN IT</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_CSE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-terminal me-2 text-muted"></i>DIP IN CSE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_CE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-cone-striped me-2 text-muted"></i>DIP IN CE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_ME&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-gear-wide-connected me-2 text-muted"></i>DIP IN ME</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_EEE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-lightning me-2 text-muted"></i>DIP IN EEE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_MTE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-robot me-2 text-muted"></i>DIP IN MTE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DIP_ECE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-broadcast me-2 text-muted"></i>DIP IN ECE</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header fw-bold text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">DEGREE</h6></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_IT&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-laptop me-2 text-muted"></i>DEG IN IT</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_CSE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-terminal me-2 text-muted"></i>DEG IN CSE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_CE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-cone-striped me-2 text-muted"></i>DEG IN CE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_ME&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-gear-wide-connected me-2 text-muted"></i>DEG IN ME</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_EEE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-lightning me-2 text-muted"></i>DEG IN EEE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_MTE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-robot me-2 text-muted"></i>DEG IN MTE</a></li>
-                                <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=DEG_ECE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}"><i class="bi bi-broadcast me-2 text-muted"></i>DEG IN ECE</a></li>
-                            </ul>
-                        </div>
-                        
-                        <div class="d-flex align-items-center border-start ps-3" style="border-color: rgba(0,0,0,0.08) !important; font-family: 'Outfit', sans-serif;">
-                            <!-- Dropdown for Level Switching -->
-                            <div class="dropdown me-2">
-                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 dropdown-toggle" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.3px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'" data-bs-toggle="dropdown" aria-expanded="false" title="Change Level">
-                                    <i class="bi bi-layers-fill me-1"></i>
-                                    <span>LEVEL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
-                                </span>
-                                <ul class="dropdown-menu border-0 shadow-sm rounded-4" style="font-family: 'Outfit', sans-serif; min-width: 120px; border: 1px solid rgba(0,0,0,0.05) !important;">
-                                    <li><h6 class="dropdown-header fw-bold text-success" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">Level</h6></li>
-                                    <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">Level 4</a></li>
-                                    <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">Level 5</a></li>
-                                    <li><a class="dropdown-item fw-medium py-2" th:href="@{'/dashboard?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">Level 6</a></li>
-                                </ul>
-                            </div>
-                            
-                            <span th:if="${selectedSemester != null}" th:text="'SEM ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 0.85rem;">SEM 1</span>
-                        </div>
-                    </div>
+            <a href="#" class="menu-item">
+                <div class="menu-icon ic-ce"><i class="bi bi-buildings"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DIPLOMA IN CE</span>
+                    <span class="menu-text-sub">Civil Engineering</span>
                 </div>
-                    
-                    <!-- Semester Switcher Pills -->
-                    <div class="semester-switcher" style="background: transparent; padding: 4px; display: inline-flex; gap: 10px;">
-                        <a th:href="@{'/dashboard?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
-                           class="btn btn-sm border-0" 
-                           th:classappend="${selectedSemester == 1 ? 'premium-pill-active' : 'premium-pill-inactive'}"
-                           style="border-radius: 50px; padding: 4px 16px; font-weight: 600; font-size: 0.75rem; transition: all 0.3s ease;">
-                           Semester 1
-                        </a>
-                        <a th:href="@{'/dashboard?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
-                           class="btn btn-sm border-0" 
-                           th:classappend="${selectedSemester == 2 ? 'premium-pill-active' : 'premium-pill-inactive'}"
-                           style="border-radius: 50px; padding: 4px 16px; font-weight: 600; font-size: 0.75rem; transition: all 0.3s ease;">
-                           Semester 2
-                        </a>
-                    </div>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+
+            <a href="#" class="menu-item">
+                <div class="menu-icon ic-me"><i class="bi bi-gear-wide-connected"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DIPLOMA IN ME</span>
+                    <span class="menu-text-sub">Mechanical Engineering</span>
                 </div>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
 
-                <!-- Dynamic Modules Section -->
-                <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
-
-            </div> <!-- Close col-lg-7 -->
-
-            <!-- RIGHT COLUMN: UNLOCKED PREMIUM FEATURES & TRENDING NOTES -->
-            <div class="col-lg-5 mt-5 mt-lg-0 ps-lg-4">
-                <div class="sticky-top" style="top: 100px;">
-                
-                    <!-- QUICK COURSE SWITCHER -->
-                    <div class="mb-4 position-relative p-4 rounded-4" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 10px 40px rgba(0,0,0,0.04);">
-                        <h3 class="m-0 d-flex align-items-center" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase;">
-                            <i class="bi bi-grid-fill me-2" style="background: linear-gradient(135deg, #10b981, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> Course Navigator
-                        </h3>
-                        <p class="m-0 mt-1 mb-4" style="font-size: 0.75rem; font-weight: 500; color: #64748b;">Fast-switch between Diploma and Degree programs</p>
-                        
-                        <!-- DIPLOMA CATEGORY -->
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 me-2 rounded-pill" style="font-weight: 700; letter-spacing: 1px; font-size: 0.65rem;"><i class="bi bi-award me-1"></i> DIPLOMA</span>
-                                <div style="flex-grow: 1; height: 1px; background: linear-gradient(90deg, rgba(16,185,129,0.3), transparent);"></div>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2">
-                                <a th:href="@{'/dashboard?program=DIP_IT&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_IT' ? 'active' : ''}">
-                                   <i class="bi bi-laptop me-2"></i> IT
-                                </a>
-                                <a th:href="@{'/dashboard?program=DIP_CSE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_CSE' ? 'active' : ''}">
-                                   <i class="bi bi-terminal me-2"></i> CSE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DIP_CE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_CE' ? 'active' : ''}">
-                                   <i class="bi bi-cone-striped me-2"></i> CE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DIP_ME&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_ME' ? 'active' : ''}">
-                                   <i class="bi bi-gear-wide-connected me-2"></i> ME
-                                </a>
-                                <a th:href="@{'/dashboard?program=DIP_EEE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_EEE' ? 'active' : ''}">
-                                   <i class="bi bi-lightning me-2"></i> EEE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DIP_MTE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_MTE' ? 'active' : ''}">
-                                   <i class="bi bi-robot me-2"></i> MTE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DIP_ECE&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn"
-                                   th:classappend="${selectedProgram == 'DIP_ECE' ? 'active' : ''}">
-                                   <i class="bi bi-broadcast me-2"></i> ECE
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- DEGREE CATEGORY -->
-                        <div>
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="badge bg-indigo bg-opacity-10 text-indigo border border-indigo border-opacity-25 px-3 py-1 me-2 rounded-pill" style="font-weight: 700; letter-spacing: 1px; font-size: 0.65rem; color: #6366f1; border-color: rgba(99,102,241,0.3) !important;"><i class="bi bi-mortarboard-fill me-1"></i> DEGREE</span>
-                                <div style="flex-grow: 1; height: 1px; background: linear-gradient(90deg, rgba(99,102,241,0.3), transparent);"></div>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2">
-                                <a th:href="@{'/dashboard?program=DEG_IT&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_IT' ? 'active' : ''}">
-                                   <i class="bi bi-laptop me-2"></i> IT
-                                </a>
-                                <a th:href="@{'/dashboard?program=DEG_CSE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_CSE' ? 'active' : ''}">
-                                   <i class="bi bi-terminal me-2"></i> CSE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DEG_CE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_CE' ? 'active' : ''}">
-                                   <i class="bi bi-cone-striped me-2"></i> CE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DEG_ME&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_ME' ? 'active' : ''}">
-                                   <i class="bi bi-gear-wide-connected me-2"></i> ME
-                                </a>
-                                <a th:href="@{'/dashboard?program=DEG_EEE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_EEE' ? 'active' : ''}">
-                                   <i class="bi bi-lightning me-2"></i> EEE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DEG_MTE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_MTE' ? 'active' : ''}">
-                                   <i class="bi bi-robot me-2"></i> MTE
-                                </a>
-                                <a th:href="@{'/dashboard?program=DEG_ECE&level=' + ${selectedLevel != null ? selectedLevel : 1} + '&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" 
-                                   class="d-flex align-items-center justify-content-center premium-quick-btn-deg"
-                                   th:classappend="${selectedProgram == 'DEG_ECE' ? 'active' : ''}">
-                                   <i class="bi bi-broadcast me-2"></i> ECE
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <hr style="border-color: rgba(0,0,0,0.05); margin: 20px 0;">
-
-                    <div th:replace="~{fragments/sjuit_components :: premium_sidebar}"></div>
-
-                    <!-- Trending Notes Component -->
-                    <div th:replace="~{fragments/sjuit_components :: trending_notes(notes=${popularNotes})}"></div>
+            <a href="#" class="menu-item">
+                <div class="menu-icon ic-eee"><i class="bi bi-lightning"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DIPLOMA IN EEE</span>
+                    <span class="menu-text-sub">Electrical and Electronics</span>
                 </div>
-            </div>
-
-        </div> <!-- Close row -->
-    </div> <!-- Close container -->
-    </div> <!-- Close main-content -->
-</div> <!-- Close page-layout -->
-
-<!-- Shared Footer -->
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-
-<!-- Bootstrap 5 JS -->
-<div th:replace="~{fragments/sjuit_components :: preview_modal}"></div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('smartSearchInput');
-    const searchResults = document.getElementById('searchResults');
-    let timeout = null;
-
-    if(searchInput) {
-        searchInput.addEventListener('input', function(e) {
-            clearTimeout(timeout);
-            const query = e.target.value.trim();
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
             
-            if (query.length < 2) {
-                searchResults.classList.add('d-none');
-                return;
-            }
+            <a href="#" class="menu-item">
+                <div class="menu-icon ic-mte"><i class="bi bi-robot"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DIPLOMA IN MTE</span>
+                    <span class="menu-text-sub">Mechatronics Engineering</span>
+                </div>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
 
-            // Loading state
-            searchResults.classList.remove('d-none');
-            searchResults.innerHTML = '<div class="p-3 text-center text-muted"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>Searching...</div>';
+            <div class="menu-section">Degree (Engineering)</div>
+            
+            <a th:href="@{/dashboard(program='DEGREE', search='IT')}" class="menu-item" th:classappend="${selectedProgram == 'DEGREE' && searchQuery == 'IT'} ? 'active'">
+                <div class="menu-icon ic-it"><i class="bi bi-laptop"></i></div>
+                <div class="menu-text">
+                    <span class="menu-text-main">DEGREE IN IT</span>
+                    <span class="menu-text-sub">Information Technology</span>
+                </div>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+        </div>
+    </aside>
 
-            timeout = setTimeout(() => {
-                fetch(`/api/search?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        searchResults.innerHTML = '';
-                        if (data.results && data.results.length > 0) {
-                            const list = document.createElement('div');
-                            list.className = 'list-group list-group-flush rounded-3';
-                            
-                            data.results.forEach(note => {
-                                const a = document.createElement('a');
-                                a.href = `/download/${note.id}`;
-                                a.className = 'list-group-item list-group-item-action d-flex align-items-center p-3 border-bottom-0';
-                                a.style.transition = 'background-color 0.2s';
-                                
-                                let icon = 'bi-file-earmark-text';
-                                let iconColor = 'text-primary';
-                                let bg = 'rgba(59, 130, 246, 0.1)';
-                                
-                                if (note.category === 'Past Paper') {
-                                    icon = 'bi-file-earmark-pdf';
-                                    iconColor = 'text-danger';
-                                    bg = 'rgba(239, 68, 68, 0.1)';
-                                } else if (note.category === 'Assignment') {
-                                    icon = 'bi-journal-check';
-                                    iconColor = 'text-success';
-                                    bg = 'rgba(16, 185, 129, 0.1)';
-                                }
-                                
-                                a.innerHTML = `
-                                    <div class="icon-box me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 36px; height: 36px; background: ${bg};">
-                                        <i class="bi ${icon} ${iconColor} fs-6"></i>
-                                    </div>
-                                    <div class="flex-grow-1 overflow-hidden">
-                                        <h6 class="mb-0 fw-bold text-truncate" style="font-size: 0.85rem; color: #1e293b;">${note.title}</h6>
-                                        <small class="text-muted" style="font-size: 0.7rem; font-weight: 500;">Level ${note.levelNo} • ${note.category || 'Note'}</small>
-                                    </div>
-                                    <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                                `;
-                                list.appendChild(a);
-                            });
-                            
-                            // View all results link
-                            if(data.totalMatches > 5) {
-                                const viewAll = document.createElement('a');
-                                viewAll.href = `/notes?search=${encodeURIComponent(query)}`;
-                                viewAll.className = 'list-group-item text-center text-primary fw-bold p-2';
-                                viewAll.style.fontSize = '0.8rem';
-                                viewAll.style.background = '#f8fafc';
-                                viewAll.innerHTML = `View all ${data.totalMatches} results <i class="bi bi-arrow-right ms-1"></i>`;
-                                list.appendChild(viewAll);
-                            }
-                            
-                            searchResults.appendChild(list);
-                        } else {
-                            searchResults.innerHTML = '<div class="p-4 text-center text-muted"><i class="bi bi-emoji-frown fs-4 d-block mb-2 text-secondary"></i><span style="font-size: 0.85rem;">No results found for "'+query+'"</span></div>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching search results:', error);
-                        searchResults.innerHTML = '<div class="p-3 text-center text-danger" style="font-size: 0.85rem;"><i class="bi bi-exclamation-circle me-1"></i>Error loading results</div>';
-                    });
-            }, 400); // 400ms debounce
-        });
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
         
-        // Ctrl+K Shortcut to focus search
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-        });
-    }
+        <!-- TOP NAVBAR -->
+        <nav class="top-navbar">
+            <div class="nav-brand">
+                <a href="#" class="text-secondary" style="font-size: 1.2rem;"><i class="bi bi-arrow-left"></i></a>
+                <a href="/" class="brand-text">4LAZIE</a>
+                <div class="badge-smart">
+                    <i class="bi bi-lightning-charge-fill"></i> SMART IN BRAIN
+                </div>
+            </div>
 
-    // Smart Hide-on-Scroll Navbar
-    let lastScrollTop = 0;
-    const navbar = document.querySelector('.navbar-custom');
-    
-    if (navbar) {
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // Scroll Down
-                navbar.classList.add('navbar-hidden');
-                navbar.classList.remove('navbar-visible');
-            } else {
-                // Scroll Up
-                navbar.classList.remove('navbar-hidden');
-                navbar.classList.add('navbar-visible');
-            }
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
-        }, { passive: true });
-    }
-});
-</script>
+            <form th:action="@{/dashboard}" method="get" class="search-bar">
+                <i class="bi bi-search"></i>
+                <input type="text" name="search" placeholder="Search notes, past papers" th:value="${searchQuery}">
+                <div class="shortcut">Ctrl + K</div>
+            </form>
+
+            <div class="nav-tools">
+                <a href="#" class="icon-btn"><i class="bi bi-moon-stars"></i></a>
+                <a th:href="@{/}" class="icon-btn"><i class="bi bi-house-door-fill"></i></a>
+                <a href="#" class="icon-btn">
+                    <i class="bi bi-bell-fill"></i>
+                    <span class="badge-count">3</span>
+                </a>
+                
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="btn-logout">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </form>
+
+                <a th:href="@{/profile}" class="user-profile text-decoration-none">
+                    <div class="user-avatar" th:text="${#strings.substring(user.name, 0, 2)}">ST</div>
+                    <div class="user-info">
+                        <span class="user-name" th:text="${user.name}">System Admin</span>
+                        <span class="user-role" th:text="${user.isPremium != null && user.isPremium ? 'PREMIUM' : 'STUDENT'}">STUDENT</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
+
+        <!-- DASHBOARD CONTENT AREA -->
+        <div class="content-area">
+            
+            <!-- CENTER COLUMN (MODULES) -->
+            <div class="center-col">
+                
+                <div class="module-header-container">
+                    <div class="module-title-badge">
+                        <i class="bi bi-journal-text"></i> MODULES <i class="bi bi-caret-down-fill ms-2" style="font-size: 0.7rem; color: #0284C7;"></i>
+                    </div>
+                    
+                    <div class="level-badge">
+                        <i class="bi bi-mortarboard-fill" style="color: #F59E0B;"></i> LEVEL <span th:text="${selectedLevel}">4</span> <i class="bi bi-caret-down-fill ms-1" style="font-size: 0.6rem;"></i>
+                    </div>
+                    
+                    <div class="semester-text">SEM<span th:text="${selectedSemester}">1</span></div>
+                    
+                    <div class="semester-toggles">
+                        <a th:href="@{/dashboard(program=${selectedProgram}, level=${selectedLevel}, semester=1, search=${searchQuery})}" 
+                           class="sem-toggle" th:classappend="${selectedSemester == 1} ? 'active'">Semester 1</a>
+                        <a th:href="@{/dashboard(program=${selectedProgram}, level=${selectedLevel}, semester=2, search=${searchQuery})}" 
+                           class="sem-toggle" th:classappend="${selectedSemester == 2} ? 'active'">Semester 2</a>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${groupedNotes == null || groupedNotes.isEmpty()}" class="text-center py-5">
+                    <i class="bi bi-folder-x" style="font-size: 4rem; color: var(--border-color);"></i>
+                    <h4 class="mt-3 text-muted">No modules found</h4>
+                    <p style="color: var(--text-muted);">Try selecting a different course or level from the navigator.</p>
+                </div>
+
+                <!-- Module Cards -->
+                <a th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, search=${entry.key})}" 
+                   class="module-card" th:each="entry, iterStat : ${groupedNotes}">
+                    <div class="module-info">
+                        <div class="module-number" th:text="${#numbers.formatInteger(iterStat.count, 2)}">01</div>
+                        <div class="module-details">
+                            <h4 th:text="${entry.key}">GENERAL MODULE</h4>
+                            <span class="module-code" th:if="${moduleCodes.get(entry.key) != null && !moduleCodes.get(entry.key).isEmpty()}" 
+                                  th:text="${moduleCodes.get(entry.key)}">SUBJECT CODE</span>
+                            <span class="module-code" th:unless="${moduleCodes.get(entry.key) != null && !moduleCodes.get(entry.key).isEmpty()}">SUBJECT CODE</span>
+                        </div>
+                    </div>
+                    <div class="module-status">
+                        <div class="status-badge">
+                            <i class="bi bi-check-circle-fill"></i> Available
+                        </div>
+                        <i class="bi bi-chevron-down module-chevron"></i>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- RIGHT COLUMN (NAVIGATOR) -->
+            <div class="right-col">
+                
+                <div class="navigator-card">
+                    <div class="nav-header">
+                        <h3><i class="bi bi-grid-fill"></i> COURSE NAVIGATOR</h3>
+                        <p>Fast-switch between Diploma and Degree programs</p>
+                    </div>
+
+                    <div class="section-divider">
+                        <div class="section-badge"><i class="bi bi-award-fill" style="color: #F59E0B; margin-right: 4px;"></i> DIPLOMA</div>
+                        <div class="section-line"></div>
+                    </div>
+
+                    <div class="grid-buttons mb-4">
+                        <a th:href="@{/dashboard(program='DIPLOMA', level=${selectedLevel}, semester=${selectedSemester}, search='IT')}" class="grid-btn" th:classappend="${selectedProgram == 'DIPLOMA' && searchQuery == 'IT'} ? 'active'"><i class="bi bi-pc-display"></i> IT</a>
+                        <a th:href="@{/dashboard(program='DIPLOMA', level=${selectedLevel}, semester=${selectedSemester}, search='CSE')}" class="grid-btn" th:classappend="${selectedProgram == 'DIPLOMA' && searchQuery == 'CSE'} ? 'active'"><i class="bi bi-cpu"></i> CSE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-buildings"></i> CE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-gear-wide-connected"></i> ME</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-lightning"></i> EEE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-robot"></i> MTE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-broadcast"></i> ECE</a>
+                    </div>
+
+                    <div class="section-divider">
+                        <div class="section-badge section-badge-degree"><i class="bi bi-mortarboard-fill" style="margin-right: 4px;"></i> DEGREE</div>
+                        <div class="section-line section-line-degree"></div>
+                    </div>
+
+                    <div class="grid-buttons">
+                        <a th:href="@{/dashboard(program='DEGREE', level=${selectedLevel}, semester=${selectedSemester}, search='IT')}" class="grid-btn" th:classappend="${selectedProgram == 'DEGREE' && searchQuery == 'IT'} ? 'active'"><i class="bi bi-pc-display"></i> IT</a>
+                        <a th:href="@{/dashboard(program='DEGREE', level=${selectedLevel}, semester=${selectedSemester}, search='CSE')}" class="grid-btn" th:classappend="${selectedProgram == 'DEGREE' && searchQuery == 'CSE'} ? 'active'"><i class="bi bi-cpu"></i> CSE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-buildings"></i> CE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-gear-wide-connected"></i> ME</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-lightning"></i> EEE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-robot"></i> MTE</a>
+                        <a href="#" class="grid-btn"><i class="bi bi-broadcast"></i> ECE</a>
+                    </div>
+                </div>
+
+                <div class="premium-features-header">PREMIUM FEATURES</div>
+                <p class="premium-sub">Exclusive tools & resources</p>
+
+                <a href="#" class="feature-card">
+                    CAT 1 PAST PAPERS
+                    <i class="bi bi-lock-fill lock-icon"></i>
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
