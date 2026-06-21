@@ -445,11 +445,11 @@
             box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
             z-index: 9999; /* Ensure it is above everything */
             padding-bottom: env(safe-area-inset-bottom);
-            transform: translateY(100%);
+            transform: translateY(100%) !important;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .mobile-bottom-nav.nav-visible {
-            transform: translateY(0);
+            transform: translateY(0) !important;
         }
         .mobile-bottom-nav-container {
             display: flex;
@@ -504,7 +504,7 @@
             <!-- Left side: Hamburger + Logo -->
             <div class="d-flex align-items-center gap-2">
                 <!-- Premium Hamburger Menu for Mobile -->
-                <button class="btn d-md-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#guestMobileSidebar" aria-controls="guestMobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
+                <button class="btn d-lg-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#guestMobileSidebar" aria-controls="guestMobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
                     <i class="bi bi-list" style="font-size: 1.5rem;"></i>
                 </button>
                 
@@ -620,7 +620,7 @@
 
             <div class="d-flex justify-content-end align-items-center gap-2" style="width: auto;">
                 <!-- Mobile Only: Our Story Pill -->
-                <a th:href="@{/about}" class="d-md-none text-decoration-none d-flex align-items-center" style="font-size: 0.8rem; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 6px 12px; border-radius: 50px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                <a th:href="@{/about}" class="d-lg-none text-decoration-none d-flex align-items-center" style="font-size: 0.8rem; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 6px 12px; border-radius: 50px; border: 1px solid rgba(245, 158, 11, 0.3);">
                     <i class="bi bi-stars me-1"></i> Story
                 </a>
 
@@ -1267,25 +1267,27 @@
                     navbar.classList.remove('navbar-hidden');
                     navbar.classList.add('navbar-visible');
                 }
-                
-                // Show Mobile Bottom Nav when scrolled down
-                const bottomNav = document.querySelector('.mobile-bottom-nav');
-                if (bottomNav) {
-                    if (scrollTop > 80) {
-                        bottomNav.classList.add('nav-visible');
-                    } else {
-                        bottomNav.classList.remove('nav-visible');
-                    }
-                }
-
                 lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
             }, { passive: true });
         }
+
+        // Independent scroll listener for Mobile Bottom Nav
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const bottomNav = document.querySelector('.mobile-bottom-nav');
+            if (bottomNav) {
+                if (scrollTop > 80) {
+                    bottomNav.classList.add('nav-visible');
+                } else {
+                    bottomNav.classList.remove('nav-visible');
+                }
+            }
+        }, { passive: true });
     });
     </script>
 
     <!-- Mobile Bottom Navigation -->
-    <div class="mobile-bottom-nav d-md-none">
+    <div class="mobile-bottom-nav d-lg-none">
         <div class="mobile-bottom-nav-container">
             <a th:href="@{/}" class="nav-item-bottom active">
                 <i class="bi bi-house-door-fill"></i>
