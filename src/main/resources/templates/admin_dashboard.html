@@ -598,8 +598,70 @@
                 border-color: #D4AF37;
                 background-color: #FFFFFF;
                 transform: translateY(-2px) scale(1.02);
-                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25);
+                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
                 outline: none;
+            }
+
+            /* --- Premium Tom Select Styles --- */
+            .ts-wrapper.form-select {
+                padding: 0;
+                border: none;
+                box-shadow: none;
+                background: transparent;
+            }
+            .ts-control {
+                border: 1px solid rgba(212, 175, 55, 0.3) !important;
+                border-radius: 8px !important;
+                padding: 0.7rem 1rem !important;
+                font-size: 0.9rem !important;
+                background-color: #FAFAFA !important;
+                color: #333 !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+                min-height: auto !important;
+            }
+            .ts-wrapper:hover .ts-control {
+                border-color: #D4AF37 !important;
+                background-color: #FFFBF0 !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(212, 175, 55, 0.12) !important;
+                cursor: pointer;
+            }
+            .ts-wrapper.focus .ts-control, .ts-wrapper.input-active .ts-control {
+                border-color: #D4AF37 !important;
+                background-color: #FFFFFF !important;
+                transform: translateY(-2px) scale(1.02) !important;
+                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2) !important;
+                outline: none !important;
+            }
+            .ts-dropdown {
+                border-radius: 12px !important;
+                border: 1px solid rgba(212, 175, 55, 0.3) !important;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
+                overflow: hidden;
+                margin-top: 5px !important;
+                animation: fadeInDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+            .ts-dropdown .option {
+                padding: 10px 15px !important;
+                transition: all 0.2s ease !important;
+                font-size: 0.9rem !important;
+                font-weight: 500 !important;
+                color: #0F172A !important;
+            }
+            .ts-dropdown .active {
+                background-color: #FFFBF0 !important;
+                color: #996515 !important;
+                font-weight: 700 !important;
+                transform: translateX(5px) !important;
+            }
+            .ts-dropdown .create {
+                color: #D4AF37 !important;
+                font-weight: 600 !important;
+            }
+            /* --- End Premium Tom Select Styles --- */
+            
+            .upload-form-section .form-control:focus, .upload-form-section .form-select:focus {
                 z-index: 10;
                 position: relative;
             }
