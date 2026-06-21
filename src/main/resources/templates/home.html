@@ -1530,7 +1530,7 @@
                 
                 <!-- DIPLOMA IN IT -->
                 <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="this.parentElement.classList.toggle('open-mobile')">
+                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-laptop mt-1" style="color: #60a5fa; font-size: 1.2rem;"></i>
                             <div class="d-flex flex-column text-start">
@@ -1552,7 +1552,7 @@
 
                 <!-- DIPLOMA IN CSE -->
                 <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="this.parentElement.classList.toggle('open-mobile')">
+                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-code-slash mt-1" style="color: #34d399; font-size: 1.2rem;"></i>
                             <div class="d-flex flex-column text-start">
@@ -1574,7 +1574,7 @@
 
                 <!-- DIPLOMA IN CE -->
                 <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="this.parentElement.classList.toggle('open-mobile')">
+                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-cone-striped mt-1" style="color: #f59e0b; font-size: 1.2rem;"></i>
                             <div class="d-flex flex-column text-start">
@@ -1596,7 +1596,7 @@
 
                 <!-- DIPLOMA IN ME -->
                 <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="this.parentElement.classList.toggle('open-mobile')">
+                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-gear-fill mt-1" style="color: #a78bfa; font-size: 1.2rem;"></i>
                             <div class="d-flex flex-column text-start">
@@ -1617,6 +1617,23 @@
                 </div>
 
             </div>
+            
+            <script>
+                function toggleMobileSidebarItem(btn) {
+                    let parent = btn.parentElement;
+                    let wasOpen = parent.classList.contains('open-mobile');
+                    
+                    // Close all others
+                    document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
+                        item.classList.remove('open-mobile');
+                    });
+                    
+                    // If the clicked one wasn't open, open it
+                    if (!wasOpen) {
+                        parent.classList.add('open-mobile');
+                    }
+                }
+            </script>
         </div>
     </div>
 
