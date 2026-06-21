@@ -384,8 +384,8 @@
                             </div>
                         </div>
                         
-                        <!-- Semester Switcher Pills (iOS Segmented Control Style) -->
-                        <div class="semester-switcher w-100 mt-2 mt-md-0" style="background: #f1f5f9; padding: 5px; border-radius: 14px; display: flex; align-items: center; max-width: 320px; border: 1px solid rgba(0,0,0,0.02); margin-left: auto;">
+                        <!-- Desktop Only Semester Switcher (Inside Card) -->
+                        <div class="semester-switcher d-none d-md-flex mt-2 mt-md-0" style="background: #f1f5f9; padding: 5px; border-radius: 14px; align-items: center; width: 320px; border: 1px solid rgba(0,0,0,0.02); margin-left: auto;">
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
                                class="btn flex-fill border-0 m-0" 
                                th:style="${selectedSemester == 1 ? 'background: #ffffff; color: #d97706; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.85rem; padding: 8px 0; transition: all 0.3s ease;' : 'background: transparent; color: #64748b; border-radius: 10px; font-weight: 600; font-family: \'Outfit\', sans-serif; font-size: 0.85rem; padding: 8px 0; transition: all 0.3s ease;'}">
@@ -398,6 +398,20 @@
                             </a>
                         </div>
                     </div>
+                </div>
+
+                <!-- Mobile Only Semester Switcher (Outside Card) -->
+                <div class="semester-switcher d-flex d-md-none w-100 mb-4 mx-auto" style="background: #ffffff; padding: 6px; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
+                       class="btn flex-fill border-0 m-0" 
+                       th:style="${selectedSemester == 1 ? 'background: #f8fafc; color: #d97706; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.85rem; padding: 10px 0; border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;' : 'background: transparent; color: #64748b; border-radius: 12px; font-weight: 600; font-family: \'Outfit\', sans-serif; font-size: 0.85rem; padding: 10px 0; transition: all 0.3s ease;'}">
+                       Semester 1
+                    </a>
+                    <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
+                       class="btn flex-fill border-0 m-0" 
+                       th:style="${selectedSemester == 2 ? 'background: #f8fafc; color: #d97706; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-weight: 800; font-family: \'Outfit\', sans-serif; font-size: 0.85rem; padding: 10px 0; border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;' : 'background: transparent; color: #64748b; border-radius: 12px; font-weight: 600; font-family: \'Outfit\', sans-serif; font-size: 0.85rem; padding: 10px 0; transition: all 0.3s ease;'}">
+                       Semester 2
+                    </a>
                 </div>
 
                 <!-- Premium Section Header for Modules -->
