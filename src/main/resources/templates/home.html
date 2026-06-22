@@ -1765,9 +1765,19 @@
                                         </div>
                                         
                                         <!-- Title -->
-                                        <div style="flex-grow: 1; text-transform: uppercase; display: flex; align-items: center; gap: 15px;">
-                                            <span style="color: #f59e0b;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
-                                            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(16,185,129,0.2);" th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
+                                        <div style="flex-grow: 1; text-transform: uppercase; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+                                            <span style="color: #f59e0b; width: 100%; margin-bottom: 4px;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(16,185,129,0.2);">
+                                                    <i class="bi bi-mortarboard-fill me-1"></i><span th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
+                                                </span>
+                                                <span class="badge" th:if="${note.semesterNo != null}" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(59,130,246,0.2);">
+                                                    <i class="bi bi-calendar2-week-fill me-1"></i><span th:text="'SEM ' + ${note.semesterNo}">SEM 1</span>
+                                                </span>
+                                                <span class="badge" th:if="${note.academicYear != null}" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(139,92,246,0.2);">
+                                                    <i class="bi bi-clock-history me-1"></i><span th:text="${note.academicYear}">2023/24</span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </button>
@@ -1775,11 +1785,7 @@
                             <div th:id="'collapse' + ${note.id}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${note.id}" data-bs-parent="#popularNotesAccordion">
                                 <div class="accordion-body premium-accordion-body">
                                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <!-- Description -->
-                                        <div>
-                                            <p class="mb-2 text-dark fw-medium" style="font-size: 1rem;">Verified Notes</p>
-                                            <p class="mb-0 text-secondary" style="font-size: 0.95rem;">Access high-quality study materials tailored for your NTA level. Download or read online.</p>
-                                        </div>
+                                        <!-- Description Removed -->
                                         
                                         <!-- Action Buttons -->
                                         <div class="d-flex gap-2 flex-shrink-0">
