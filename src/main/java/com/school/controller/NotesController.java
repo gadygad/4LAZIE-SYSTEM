@@ -88,7 +88,7 @@ public class NotesController {
     }
 
     @GetMapping("/notes")
-    public String browseNotes(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
+    public String browseNotes(@RequestParam(value = "program", required = false, defaultValue = "DIP_CSE") String program,
                               @RequestParam(value = "level", required = false) Integer level,
                               @RequestParam(value = "semester", required = false) Integer semester,
                               @RequestParam(value = "category", required = false) String category,
@@ -389,9 +389,9 @@ public class NotesController {
     }
 
     @GetMapping("/guest-notes")
-    public String guestNotesList(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
-                                 @RequestParam(value = "level", required = false, defaultValue = "4") Integer level, 
-                                 @RequestParam(value = "semester", required = false, defaultValue = "1") Integer semester,
+    public String guestNotesList(@RequestParam(value = "program", required = false, defaultValue = "DIP_CSE") String program,
+                                 @RequestParam(value = "level", required = false, defaultValue = "5") Integer level, 
+                                 @RequestParam(value = "semester", required = false, defaultValue = "2") Integer semester,
                                  org.springframework.ui.Model model, HttpSession session) {
         if (session.getAttribute("user") != null) {
             return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester;
