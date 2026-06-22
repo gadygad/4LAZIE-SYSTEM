@@ -144,14 +144,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             }
         }
 
-        // 4. Force cleanup: Delete ANY note that is NOT in allowedSubjects
-        java.util.List<Note> allNotes = noteRepository.findAll();
-        for (Note n : allNotes) {
-            String modName = n.getModuleName() != null ? n.getModuleName().toUpperCase() : "";
-            if (!allowedSubjects.contains(modName)) {
-                noteRepository.delete(n);
-            }
-        }
+        // Note: Cleanup code removed to avoid deleting user-uploaded notes
     }
 
     private Note createNote(String title, String filename, String program, int level, int semester, String type,
@@ -159,6 +152,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         Note note = new Note(title, filename, program, level, semester, type, moduleName, moduleCode, "2023/2024",
                 LocalDateTime.now().minusDays((long) (Math.random() * 10)));
         note.setDownloadCount(downloads);
+        note.setIsPublic(true);
         return note;
     }
 

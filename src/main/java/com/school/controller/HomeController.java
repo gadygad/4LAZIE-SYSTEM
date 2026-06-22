@@ -59,9 +59,8 @@ public class HomeController {
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
         // Fetch up to 3 recent public notes for SJCET (institution ID 1)
         List<Note> popularNotes = noteRepository.findAll().stream()
-                .filter(Note::getIsPublic)
                 .filter(n -> "Note".equals(n.getCategory()))
-                .filter(n -> n.getInstitution() != null && n.getInstitution().getId() == 1L)
+                .filter(n -> n.getFilename() != null && !n.getFilename().contains(".pdf") == false) // only real files
                 .sorted((n1, n2) -> n2.getId().compareTo(n1.getId()))
                 .limit(3)
                 .collect(Collectors.toList());
