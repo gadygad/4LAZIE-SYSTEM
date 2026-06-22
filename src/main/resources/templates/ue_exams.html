@@ -95,7 +95,7 @@
             transition: all 0.3s ease;
         }
         .accordion-button:not(.collapsed) {
-            color: #d97706 !important;
+            color: #0f172a !important;
             background-color: transparent !important;
             box-shadow: none;
         }
@@ -103,20 +103,33 @@
             box-shadow: none !important;
             border-color: rgba(0,0,0,.125) !important;
         }
+        /* Hide default accordion arrow to use custom gold icon */
         .accordion-button::after {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2364748b'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-        }
-        .accordion-button:not(.collapsed)::after {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23d97706'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            display: none !important;
         }
         
-        .accordion-item {
+        .premium-accordion-item {
+            border-radius: 20px !important;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+            border: 1px solid rgba(245, 158, 11, 0.05);
+            background: #ffffff;
             transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
         
-        .accordion-item:hover {
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.08) !important;
+        .premium-accordion-item:hover {
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.08) !important;
             transform: translateY(-2px);
+        }
+
+        .custom-chevron {
+            transition: transform 0.3s ease;
+            color: #f59e0b;
+            font-size: 1.1rem;
+        }
+        .accordion-button:not(.collapsed) .custom-chevron {
+            transform: rotate(180deg);
         }
 
         /* Empty State (Borderless, Smooth) */
@@ -164,16 +177,43 @@
 
         <div class="container pb-5 mb-5" style="max-width: 800px;">
             <!-- Smooth Dropdown List (Accordion) -->
-            <div class="accordion" th:if="${pastPapers != null and !pastPapers.isEmpty()}" id="examsAccordion">
-                <div class="accordion-item border-0 mb-3" style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03);" th:each="paper, iterStat : ${pastPapers}">
-                    <h2 class="accordion-header" th:id="'heading' + ${paper.id}">
-                        <button class="accordion-button collapsed py-3 px-4" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${paper.id}" aria-expanded="false" th:aria-controls="'collapse' + ${paper.id}" style="background: white; color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.05rem;">
-                            <div class="d-flex align-items-center w-100 pe-3">
-                                <div class="d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(245, 158, 11, 0.1);">
-                                    <i class="fas fa-file-pdf" style="color: #f59e0b; font-size: 1.1rem;"></i>
+            <div class="accordion" id="examsAccordion">
+                
+                <!-- DEMO ITEM FOR PREVIEW -->
+                <div class="accordion-item premium-accordion-item border-0">
+                    <h2 class="accordion-header" id="headingDemo">
+                        <button class="accordion-button collapsed py-4 px-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDemo" aria-expanded="false" aria-controls="collapseDemo" style="background: transparent; color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase;">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <span class="text-truncate" style="letter-spacing: 0.5px;">MATHEMATICS PAPER 1 - 2023/2024 (SEM 1)</span>
+                                <i class="fas fa-chevron-down custom-chevron"></i>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapseDemo" class="accordion-collapse collapse" aria-labelledby="headingDemo" data-bs-parent="#examsAccordion">
+                        <div class="accordion-body bg-white px-4 pb-4 pt-0">
+                            <p class="mb-4" style="color: #64748b; font-size: 0.95rem; line-height: 1.6;">Basic Engineering Mathematics</p>
+                            
+                            <div class="d-flex align-items-center justify-content-between pt-3" style="border-top: 1px solid #f1f5f9;">
+                                <div class="d-flex flex-wrap gap-3 text-muted" style="font-size: 0.85rem;">
+                                    <span><i class="fas fa-layer-group me-1" style="color: #cbd5e1;"></i> Level 4</span>
+                                    <span><i class="fas fa-clock me-1" style="color: #cbd5e1;"></i> Sem 1</span>
+                                    <span><i class="fas fa-download me-1" style="color: #cbd5e1;"></i> 124 Views</span>
                                 </div>
-                                <span class="text-truncate" style="max-width: 70%;" th:text="${paper.title}">Mathematics Paper 1</span>
-                                <span class="ms-auto badge rounded-pill" style="background: rgba(245, 158, 11, 0.08); color: #d97706; font-size: 0.75rem; font-weight: 700;" th:text="${paper.academicYear != null ? paper.academicYear : 'Recent'}">2023/2024</span>
+                                <a href="#" class="btn btn-sm px-4 rounded-pill" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; font-weight: 600; box-shadow: 0 4px 10px rgba(245,158,11,0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                                    Access Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actual Dynamic Items from Database -->
+                <div th:if="${pastPapers != null and !pastPapers.isEmpty()}" class="accordion-item premium-accordion-item border-0" th:each="paper, iterStat : ${pastPapers}">
+                    <h2 class="accordion-header" th:id="'heading' + ${paper.id}">
+                        <button class="accordion-button collapsed py-4 px-4" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${paper.id}" aria-expanded="false" th:aria-controls="'collapse' + ${paper.id}" style="background: transparent; color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase;">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <span class="text-truncate" style="letter-spacing: 0.5px;" th:text="${paper.title + ' - ' + (paper.academicYear != null ? paper.academicYear : 'RECENT') + ' (SEM ' + paper.semesterNo + ')'}">MATHEMATICS PAPER 1 - 2023/2024 (SEM 1)</span>
+                                <i class="fas fa-chevron-down custom-chevron"></i>
                             </div>
                         </button>
                     </h2>
