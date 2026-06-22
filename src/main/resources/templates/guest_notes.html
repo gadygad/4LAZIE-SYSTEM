@@ -398,13 +398,108 @@
                                 <span th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">MODULES</span>
                             </h2>
                             <div class="dropdown">
-                                <button class="btn btn-sm dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" style="background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.2); color: #d97706; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.5px; border-radius: 50px; padding: 4px 12px; transition: all 0.2s ease; white-space: nowrap;">
-                                    LEVEL <span class="ms-1" th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
+                                <style>
+                                    .premium-level-btn {
+                                        background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(217, 119, 6, 0.15) 100%);
+                                        border: 1px solid rgba(217, 119, 6, 0.3);
+                                        color: #d97706;
+                                        font-weight: 800;
+                                        font-family: 'Outfit', sans-serif;
+                                        font-size: 0.8rem;
+                                        letter-spacing: 0.5px;
+                                        border-radius: 50px;
+                                        padding: 5px 16px;
+                                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                                        box-shadow: 0 4px 10px rgba(217, 119, 6, 0.05);
+                                    }
+                                    .premium-level-btn:hover, .premium-level-btn:focus, .dropdown.show .premium-level-btn {
+                                        background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+                                        color: #ffffff !important;
+                                        border-color: #d97706 !important;
+                                        box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4) !important;
+                                        transform: translateY(-2px);
+                                    }
+                                    .premium-level-btn::after {
+                                        display: none; /* Hide default caret */
+                                    }
+                                    .dropdown.show .premium-level-btn .dropdown-icon {
+                                        transform: rotate(180deg);
+                                    }
+                                    
+                                    .premium-level-menu {
+                                        min-width: 140px;
+                                        border-radius: 16px;
+                                        padding: 8px;
+                                        background: rgba(255, 255, 255, 0.95);
+                                        backdrop-filter: blur(15px);
+                                        border: 1px solid rgba(217, 119, 6, 0.15);
+                                        box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(217, 119, 6, 0.1);
+                                        animation: premiumDropIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                                        transform-origin: top center;
+                                        margin-top: 8px !important;
+                                    }
+                                    @keyframes premiumDropIn {
+                                        0% { opacity: 0; transform: scale(0.9) translateY(-10px); }
+                                        100% { opacity: 1; transform: scale(1) translateY(0); }
+                                    }
+                                
+                                    .premium-level-item {
+                                        font-size: 0.8rem;
+                                        font-weight: 700;
+                                        color: #475569;
+                                        padding: 8px 12px;
+                                        border-radius: 10px;
+                                        transition: all 0.3s ease;
+                                        margin-bottom: 4px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                    }
+                                    .premium-level-item:last-child {
+                                        margin-bottom: 0;
+                                    }
+                                    .premium-level-item:hover {
+                                        background: rgba(217, 119, 6, 0.1);
+                                        color: #d97706;
+                                        transform: translateX(4px);
+                                    }
+                                    .premium-level-item i {
+                                        opacity: 0;
+                                        transform: scale(0.5);
+                                        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                                        color: #d97706;
+                                        font-size: 1rem;
+                                    }
+                                    .premium-level-item:hover i {
+                                        opacity: 1;
+                                        transform: scale(1);
+                                    }
+                                    .dropdown-icon {
+                                        font-size: 0.7rem;
+                                        transition: transform 0.3s ease;
+                                        margin-left: 6px;
+                                    }
+                                </style>
+                                <button class="btn dropdown-toggle d-flex align-items-center premium-level-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-mortarboard-fill me-2" style="font-size: 0.9rem;"></i> LEVEL <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
+                                    <i class="bi bi-chevron-down dropdown-icon"></i>
                                 </button>
-                                <ul class="dropdown-menu shadow-sm border-0" style="min-width: 100px; border-radius: 12px; padding: 8px;">
-                                    <li><a class="dropdown-item rounded-2 mb-1" style="font-size: 0.75rem; font-weight: 600; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">LEVEL 4</a></li>
-                                    <li><a class="dropdown-item rounded-2 mb-1" style="font-size: 0.75rem; font-weight: 600; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">LEVEL 5</a></li>
-                                    <li><a class="dropdown-item rounded-2" style="font-size: 0.75rem; font-weight: 600; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">LEVEL 6</a></li>
+                                <ul class="dropdown-menu premium-level-menu">
+                                    <li>
+                                        <a class="dropdown-item premium-level-item" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">
+                                            <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item premium-level-item" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">
+                                            <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item premium-level-item" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">
+                                            <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <span th:if="${selectedSemester != null}" style="color: #ffffff; font-weight: 700; font-size: 0.75rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 4px 12px; border-radius: 50px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25); white-space: nowrap;">SEM <span th:text="${selectedSemester}">1</span></span>
