@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
-
+import com.school.service.FileStorageService;
 @Controller
 @SuppressWarnings("null")
 public class NotesController {
@@ -50,6 +50,9 @@ public class NotesController {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping("/home")
     public String home(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
@@ -216,12 +219,9 @@ public class NotesController {
         if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
 
         try {
-            Path uploadDir = Paths.get("uploads");
-            if (!Files.exists(uploadDir)) Files.createDirectories(uploadDir);
-
-            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = uploadDir.resolve(filename);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            // Upload to Cloudinary
+            String fileUrl = fileStorageService.uploadFile(file);
+            String filename = file.getOriginalFilename();
 
             Note note = new Note();
             note.setTitle(title);
@@ -233,6 +233,7 @@ public class NotesController {
             note.setCategory(category == null || category.trim().isEmpty() ? "Note" : category);
             note.setUnitNumber(unitNumber);
             note.setFilename(filename);
+            note.setFileUrl(fileUrl);
             note.setUploadDate(LocalDateTime.now());
             note.setIsPublic(true);
             // Link to SJUIT (institution id=1) automatically
