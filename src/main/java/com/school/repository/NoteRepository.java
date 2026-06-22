@@ -45,4 +45,6 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     List<Note> findByInstitutionIdAndProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(Long institutionId, String programType, Integer levelNo, Integer semesterNo);
 
     boolean existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(String title, String programType, Integer levelNo, Integer semesterNo, String moduleName, Integer unitNumber);
+
+    List<Note> findByCategoryOrderByIdDesc(String category);
 }

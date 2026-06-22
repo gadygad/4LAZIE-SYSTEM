@@ -98,4 +98,11 @@ public class HomeController {
     public String premium() {
         return "premium";
     }
+
+    @GetMapping("/ue-exams")
+    public String ueExams(Model model) {
+        List<Note> pastPapers = noteRepository.findByCategoryOrderByIdDesc("Past Paper");
+        model.addAttribute("pastPapers", pastPapers);
+        return "ue_exams";
+    }
 }
