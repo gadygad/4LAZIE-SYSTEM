@@ -260,8 +260,13 @@ public class NotesController {
         noteRepository.save(note);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            String downloadUrl = note.getFileUrl();
+            // Force Cloudinary to download as attachment by inserting fl_attachment
+            if (downloadUrl.contains("/upload/")) {
+                downloadUrl = downloadUrl.replace("/upload/", "/upload/fl_attachment/");
+            }
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .header(HttpHeaders.LOCATION, downloadUrl)
                     .build();
         }
 
@@ -362,9 +367,19 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
-                    .build();
+            try {
+                String url = note.getFileUrl();
+                // Use Google Docs Viewer for Cloudinary files to ensure they render in iframes across all browsers
+                String encodedUrl = java.net.URLEncoder.encode(url, "UTF-8");
+                String viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, viewerUrl)
+                        .build();
+            } catch (Exception e) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, note.getFileUrl())
+                        .build();
+            }
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
