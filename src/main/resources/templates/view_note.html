@@ -17,7 +17,7 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Prevent scrolling on the main window */
+            overflow-x: hidden; /* Allow vertical scrolling to see footer */
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0f172a; /* Dark sleek background */
             color: #f8fafc;
@@ -211,6 +211,11 @@
     <div class="iframe-container">
         <!-- We point the src to the /stream endpoint -->
         <iframe th:src="@{'/stream/' + ${note.id}}" title="PDF Viewer"></iframe>
+    </div>
+
+    <!-- Include Footer -->
+    <div style="border-top: 1px solid #e2e8f0; background: #ffffff;">
+        <div th:replace="~{fragments/footer :: footer}"></div>
     </div>
 
     <!-- Bootstrap 5 JS -->
