@@ -3,7 +3,9 @@ package com.school.controller;
 import com.school.model.Note;
 import com.school.model.User;
 import com.school.repository.NoteRepository;
+import com.school.model.Institution;
 import com.school.repository.CourseRepository;
+import com.school.repository.InstitutionRepository;
 import com.school.repository.SubjectRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,9 @@ public class NotesController {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private InstitutionRepository institutionRepository;
 
     @Autowired
     private SubjectRepository subjectRepository;
@@ -229,6 +234,10 @@ public class NotesController {
             note.setUnitNumber(unitNumber);
             note.setFilename(filename);
             note.setUploadDate(LocalDateTime.now());
+            note.setIsPublic(true);
+            // Link to SJUIT (institution id=1) automatically
+            Institution institution = institutionRepository.findById(1L).orElse(null);
+            note.setInstitution(institution);
             noteRepository.save(note);
         } catch (IOException e) {
             return "redirect:/upload?error=Upload failed: " + e.getMessage();
