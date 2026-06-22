@@ -36,7 +36,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
                     
             if (isAdmin) {
-                response.sendRedirect("/admin");
+                response.sendRedirect("/upload");
                 return;
             }
         }
