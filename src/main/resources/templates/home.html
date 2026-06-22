@@ -1697,6 +1697,60 @@
                     </div>
 
                     <!-- RECOMMENDED NOTES HEADER -->
+                    <style>
+                        /* Compact Mobile View & Smooth Hover */
+                        .premium-accordion-item {
+                            background: transparent; 
+                            border: 1px solid transparent; 
+                            margin-bottom: 0.75rem !important;
+                            border-radius: 16px;
+                            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+                        }
+                        .premium-accordion-item:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+                            border-color: rgba(59, 130, 246, 0.2);
+                        }
+                        .premium-accordion-btn {
+                            background: white; 
+                            border-radius: 16px !important; 
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+                            padding: 1.25rem 1.75rem; 
+                            font-family: 'Outfit', sans-serif; 
+                            font-weight: 700; 
+                            font-size: 1.05rem; 
+                            color: #1e293b; 
+                            transition: all 0.3s ease;
+                            border: none;
+                        }
+                        .premium-accordion-body {
+                            background: white; 
+                            border-bottom-left-radius: 16px; 
+                            border-bottom-right-radius: 16px; 
+                            padding: 1.5rem 1.75rem; 
+                            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); 
+                            position: relative;
+                        }
+                        @media (max-width: 768px) {
+                            .premium-accordion-item {
+                                margin-bottom: 0.5rem !important;
+                            }
+                            .premium-accordion-btn {
+                                padding: 0.8rem 1rem !important;
+                                font-size: 0.85rem !important;
+                            }
+                            .premium-accordion-btn .fs-4 {
+                                font-size: 1.1rem !important;
+                            }
+                            .premium-accordion-btn .badge {
+                                font-size: 0.65rem !important;
+                                padding: 3px 8px !important;
+                            }
+                            .premium-accordion-body {
+                                padding: 1rem 1rem 1.25rem !important;
+                            }
+                        }
+                    </style>
                     <div class="d-flex align-items-center gap-3 mb-4 position-relative">
                         <div>
                             <h3 class="premium-gradient-header warning">RECOMMENDED NOTES</h3>
@@ -1706,10 +1760,9 @@
 
                     <div class="accordion accordion-flush mt-4" id="popularNotesAccordion">
                         <!-- Dynamic List of Notes -->
-                        <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item" style="background: transparent; border: none; margin-bottom: 1.25rem;">
+                        <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item">
                             <h2 class="accordion-header" th:id="'heading' + ${note.id}">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${note.id}" aria-expanded="false" th:aria-controls="'collapse' + ${note.id}"
-                                    style="background: white; border-radius: 16px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.25rem 1.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #1e293b; transition: all 0.3s ease;">
+                                <button class="accordion-button collapsed premium-accordion-btn" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${note.id}" aria-expanded="false" th:aria-controls="'collapse' + ${note.id}">
                                     
                                     <div class="d-flex align-items-center gap-3 w-100 me-3">
                                         <!-- Icon -->
@@ -1726,7 +1779,7 @@
                                 </button>
                             </h2>
                             <div th:id="'collapse' + ${note.id}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${note.id}" data-bs-parent="#popularNotesAccordion">
-                                <div class="accordion-body" style="background: white; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; padding: 2rem 1.75rem 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); position: relative;">
+                                <div class="accordion-body premium-accordion-body">
                                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
                                         <!-- Description -->
                                         <div>
