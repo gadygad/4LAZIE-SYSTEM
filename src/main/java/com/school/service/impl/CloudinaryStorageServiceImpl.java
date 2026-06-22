@@ -19,8 +19,14 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
 
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
-        // Generate a random UUID to avoid file name collisions
-        String publicId = UUID.randomUUID().toString();
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        
+        // Generate a random UUID to avoid file name collisions, and append extension
+        String publicId = UUID.randomUUID().toString() + extension;
 
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
