@@ -1744,6 +1744,34 @@
                                 padding: 1rem 1rem 1.25rem !important;
                             }
                         }
+
+                        /* Premium Scroll Container */
+                        .premium-scroll-container {
+                            max-height: 400px;
+                            overflow-y: auto;
+                            padding-right: 10px;
+                            padding-top: 10px;
+                            padding-bottom: 10px;
+                            margin-top: -10px;
+                            /* Smooth scroll behavior */
+                            scroll-behavior: smooth;
+                        }
+                        
+                        /* Custom Premium Scrollbar */
+                        .premium-scroll-container::-webkit-scrollbar {
+                            width: 5px;
+                        }
+                        .premium-scroll-container::-webkit-scrollbar-track {
+                            background: rgba(0, 0, 0, 0.02);
+                            border-radius: 10px;
+                        }
+                        .premium-scroll-container::-webkit-scrollbar-thumb {
+                            background: rgba(148, 163, 184, 0.4);
+                            border-radius: 10px;
+                        }
+                        .premium-scroll-container::-webkit-scrollbar-thumb:hover {
+                            background: rgba(148, 163, 184, 0.7);
+                        }
                     </style>
                     <div class="d-flex align-items-center gap-3 mb-4 position-relative">
                         <div>
@@ -1752,60 +1780,63 @@
                         </div>
                     </div>
 
-                    <div class="accordion accordion-flush mt-4" id="popularNotesAccordion">
-                        <!-- Dynamic List of Notes -->
-                        <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item">
-                            <h2 class="accordion-header" th:id="'heading' + ${note.id}">
-                                <button class="accordion-button collapsed premium-accordion-btn" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${note.id}" aria-expanded="false" th:aria-controls="'collapse' + ${note.id}">
-                                    
-                                    <div class="d-flex align-items-center gap-3 w-100 me-3">
-                                        <!-- Icon -->
-                                        <div style="color: #2563eb; display: flex; align-items: center; justify-content: center;">
-                                            <i class="bi bi-journal-bookmark-fill fs-4"></i>
-                                        </div>
+                    <div class="premium-scroll-container">
+                        <div class="accordion accordion-flush mt-4" id="popularNotesAccordion">
+                            <!-- Dynamic List of Notes -->
+                            <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item">
+                                <h2 class="accordion-header" th:id="'heading' + ${note.id}">
+                                    <button class="accordion-button collapsed premium-accordion-btn" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${note.id}" aria-expanded="false" th:aria-controls="'collapse' + ${note.id}">
                                         
-                                        <!-- Title -->
-                                        <div style="flex-grow: 1; text-transform: uppercase; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-                                            <span style="color: #f59e0b; width: 100%; margin-bottom: 4px;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(16,185,129,0.2);">
-                                                    <i class="bi bi-mortarboard-fill me-1"></i><span th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
-                                                </span>
-                                                <span class="badge" th:if="${note.semesterNo != null}" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(59,130,246,0.2);">
-                                                    <i class="bi bi-calendar2-week-fill me-1"></i><span th:text="'SEM ' + ${note.semesterNo}">SEM 1</span>
-                                                </span>
-                                                <span class="badge" th:if="${note.academicYear != null}" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(139,92,246,0.2);">
-                                                    <i class="bi bi-clock-history me-1"></i><span th:text="${note.academicYear}">2023/24</span>
-                                                </span>
+                                        <div class="d-flex align-items-center gap-3 w-100 me-3">
+                                            <!-- Icon -->
+                                            <div style="color: #2563eb; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-journal-bookmark-fill fs-4"></i>
+                                            </div>
+                                            
+                                            <!-- Title -->
+                                            <div style="flex-grow: 1; text-transform: uppercase; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+                                                <span style="color: #f59e0b; width: 100%; margin-bottom: 4px;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(16,185,129,0.2);">
+                                                        <i class="bi bi-mortarboard-fill me-1"></i><span th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
+                                                    </span>
+                                                    <span class="badge" th:if="${note.semesterNo != null}" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(59,130,246,0.2);">
+                                                        <i class="bi bi-calendar2-week-fill me-1"></i><span th:text="'SEM ' + ${note.semesterNo}">SEM 1</span>
+                                                    </span>
+                                                    <span class="badge" th:if="${note.academicYear != null}" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(139,92,246,0.2);">
+                                                        <i class="bi bi-clock-history me-1"></i><span th:text="${note.academicYear}">2023/24</span>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div th:id="'collapse' + ${note.id}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${note.id}" data-bs-parent="#popularNotesAccordion">
-                                <div class="accordion-body premium-accordion-body">
-                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-                                        <!-- Description Removed -->
-                                        
-                                        <!-- Action Buttons -->
-                                        <div class="d-flex gap-2 flex-shrink-0">
-                                            <a th:href="@{'/view/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
-                                               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
-                                               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
-                                                <i class="bi bi-eye me-1"></i> Read
-                                            </a>
-                                            <a th:href="@{'/download/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                               style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
-                                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
-                                               onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
-                                                <i class="bi bi-cloud-arrow-down me-1"></i> Download
-                                            </a>
+                                    </button>
+                                </h2>
+                                <div th:id="'collapse' + ${note.id}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${note.id}" data-bs-parent="#popularNotesAccordion">
+                                    <div class="accordion-body premium-accordion-body">
+                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                                            <!-- Description Removed -->
+                                            
+                                            <!-- Action Buttons -->
+                                            <div class="d-flex gap-2 flex-shrink-0">
+                                                <a th:href="@{'/view/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
+                                                   style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                                                   onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
+                                                   onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                                                    <i class="bi bi-eye me-1"></i> Read
+                                                </a>
+                                                <a th:href="@{'/download/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
+                                                   style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
+                                                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
+                                                   onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
+                                                    <i class="bi bi-cloud-arrow-down me-1"></i> Download
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                         <!-- Fallback if no notes (Text Only Premium) -->
                         <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="py-5 text-center position-relative">
