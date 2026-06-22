@@ -248,6 +248,17 @@ public class NotesController {
         return "redirect:/upload?success=Note uploaded successfully!";
     }
 
+    @GetMapping("/admin/wipe-all-notes-999")
+    @ResponseBody
+    public String wipeAllNotes(HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("user");
+        if (loggedInUser == null || !loggedInUser.getRole().equals("ADMIN")) {
+            return "Unauthorized! Only admins can do this.";
+        }
+        noteRepository.deleteAll();
+        return "SUCCESS: All notes have been completely deleted from the database. You can now start uploading freshly.";
+    }
+
     @GetMapping("/download/{id}")
     @ResponseBody
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") Integer id, HttpSession session) {
