@@ -405,6 +405,9 @@
     }
 
     function toggleFlyout(item) {
+        if (window.event && window.event.target.closest('.sidebar-hover-content')) {
+            return; // Allow the link click to happen normally
+        }
         if (activeFlyout && activeFlyout.sourceItem === item) {
             hideFlyoutImmediate();
         } else {
