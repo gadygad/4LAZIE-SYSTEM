@@ -1803,8 +1803,8 @@
                                                     <span class="badge" th:if="${note.semesterNo != null}" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(59,130,246,0.2);">
                                                         <i class="bi bi-calendar2-week-fill me-1"></i><span th:text="'SEM ' + ${note.semesterNo}">SEM 1</span>
                                                     </span>
-                                                    <span class="badge" th:if="${note.academicYear != null}" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(139,92,246,0.2);">
-                                                        <i class="bi bi-clock-history me-1"></i><span th:text="${note.academicYear}">2024</span>
+                                                    <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(139,92,246,0.2);">
+                                                        <i class="bi bi-calendar3 me-1"></i><span th:text="${note.academicYear != null and !note.academicYear.isEmpty()} ? ${note.academicYear} : '2024'">2024</span>
                                                     </span>
                                                 </div>
                                             </div>
