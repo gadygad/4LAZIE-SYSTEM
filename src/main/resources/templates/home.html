@@ -1797,23 +1797,23 @@
                         <div class="marquee-wrapper mb-4">
                             <div class="marquee-track">
                                 <!-- DYNAMIC SET -->
-                                <a href="#" class="premium-mini-card" th:each="moduleName : ${criticalModules}">
+                                <a href="#" class="premium-mini-card" th:each="moduleObj : ${criticalModules}">
                                     <div class="premium-mini-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
                                         <i class="bi bi-journal-bookmark-fill"></i>
                                     </div>
-                                    <h5 class="premium-mini-card-title" th:text="${moduleName}">Module Name</h5>
-                                    <div class="premium-mini-card-subtitle">Important Focus Area</div>
-                                    <p class="premium-mini-card-desc">Click here to explore notes, past papers, and study materials for this module.</p>
+                                    <h5 class="premium-mini-card-title" th:text="${moduleObj.name}">Module Name</h5>
+                                    <div class="premium-mini-card-subtitle" th:text="${moduleObj.subtitle}">Important Focus Area</div>
+                                    <p class="premium-mini-card-desc" th:text="${moduleObj.description}">Click here to explore notes, past papers, and study materials for this module.</p>
                                 </a>
 
                                 <!-- DUPLICATED SET FOR INFINITE SCROLL -->
-                                <a href="#" class="premium-mini-card" th:each="moduleName : ${criticalModules}">
+                                <a href="#" class="premium-mini-card" th:each="moduleObj : ${criticalModules}">
                                     <div class="premium-mini-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
                                         <i class="bi bi-journal-bookmark-fill"></i>
                                     </div>
-                                    <h5 class="premium-mini-card-title" th:text="${moduleName}">Module Name</h5>
-                                    <div class="premium-mini-card-subtitle">Important Focus Area</div>
-                                    <p class="premium-mini-card-desc">Click here to explore notes, past papers, and study materials for this module.</p>
+                                    <h5 class="premium-mini-card-title" th:text="${moduleObj.name}">Module Name</h5>
+                                    <div class="premium-mini-card-subtitle" th:text="${moduleObj.subtitle}">Important Focus Area</div>
+                                    <p class="premium-mini-card-desc" th:text="${moduleObj.description}">Click here to explore notes, past papers, and study materials for this module.</p>
                                 </a>
                             </div>
                         </div>
