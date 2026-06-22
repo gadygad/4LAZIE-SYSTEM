@@ -410,44 +410,62 @@
                             <span th:if="${selectedSemester != null}" style="color: #ffffff; font-weight: 700; font-size: 0.75rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 4px 12px; border-radius: 50px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25); white-space: nowrap;">SEM <span th:text="${selectedSemester}">1</span></span>
                         </div>
                         
-                        <!-- Desktop Only Semester Switcher (Inside Card) -->
-                        <div class="semester-switcher d-none d-md-flex mt-2 mt-md-0" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); padding: 5px; border-radius: 14px; align-items: center; width: 320px; border: 1px solid rgba(217, 119, 6, 0.15); margin-left: auto;">
+                        <!-- Responsive Semester Switcher (Plain Text) -->
+                        <style>
+                            .premium-sem-link {
+                                position: relative;
+                                display: inline-block;
+                                padding: 6px 12px;
+                                font-family: 'Outfit', sans-serif;
+                                font-size: 0.95rem;
+                                font-weight: 600;
+                                color: #64748b;
+                                text-decoration: none;
+                                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                            }
+                            .premium-sem-link::after {
+                                content: '';
+                                position: absolute;
+                                bottom: 0;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                width: 0;
+                                height: 2px;
+                                background: linear-gradient(90deg, transparent, #d97706, transparent);
+                                transition: width 0.3s ease, background 0.3s ease;
+                                opacity: 0;
+                            }
+                            .premium-sem-link:hover {
+                                color: #d97706 !important;
+                                text-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
+                                transform: translateY(-2px);
+                            }
+                            .premium-sem-link:hover::after {
+                                width: 80%;
+                                opacity: 1;
+                            }
+                            .premium-sem-link.active {
+                                color: #d97706 !important;
+                                font-weight: 800;
+                            }
+                            .premium-sem-link.active::after {
+                                width: 100%;
+                                opacity: 1;
+                                background: linear-gradient(90deg, #f59e0b, #d97706);
+                                box-shadow: 0 2px 8px rgba(217, 119, 6, 0.5);
+                            }
+                        </style>
+                        <div class="semester-switcher d-flex gap-2 gap-md-4 mt-3 mt-md-0 mx-auto mx-md-0 w-100 justify-content-center justify-content-md-end" style="align-items: center; margin-left: auto !important;">
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
-                               class="btn flex-fill border-0 m-0" 
-                               th:style="${selectedSemester == 1 ? 'background: #ffffff; color: #d97706; border-radius: 10px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.1); font-weight: 800; font-family: Outfit, sans-serif; font-size: 0.85rem; padding: 8px 0; transition: all 0.3s ease;' : 'background: transparent; color: #64748b; border-radius: 10px; font-weight: 600; font-family: Outfit, sans-serif; font-size: 0.85rem; padding: 8px 0; transition: all 0.3s ease;'}">
+                               class="premium-sem-link" th:classappend="${selectedSemester == 1} ? 'active' : ''">
                                Semester 1
                             </a>
+                            <span style="color: rgba(0,0,0,0.1); font-size: 1.2rem; font-weight: 300;">|</span>
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
-                               class="btn flex-fill border-0 m-0" 
-                               th:style="${selectedSemester == 2 ? 'background: #ffffff; color: #d97706; border-radius: 10px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.1); font-weight: 800; font-family: Outfit, sans-serif; font-size: 0.85rem; padding: 8px 0; transition: all 0.3s ease;' : 'background: transparent; color: #64748b; border-radius: 10px; font-weight: 600; font-family: Outfit, sans-serif; font-size: 0.85rem; padding: 8px 0; transition: all 0.3s ease;'}">
+                               class="premium-sem-link" th:classappend="${selectedSemester == 2} ? 'active' : ''">
                                Semester 2
                             </a>
                         </div>
-                    </div>
-                </div>
-
-                <style>
-                    .premium-sem-btn {
-                        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                    }
-                    .premium-sem-btn:active {
-                        transform: scale(0.94) !important;
-                        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3) !important;
-                    }
-                </style>
-                <!-- Mobile Only Semester Switcher (Outside Card, completely independent buttons) -->
-                <div class="semester-switcher d-flex d-md-none w-100 mb-4 mx-auto gap-3" style="max-width: 400px;">
-                    <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
-                       class="btn premium-sem-btn flex-fill m-0 d-flex flex-column justify-content-center align-items-center" 
-                       th:style="${selectedSemester == 1 ? 'background: linear-gradient(135deg, #d4af37 0%, #996515 100%); color: #ffffff; border-radius: 16px; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3); font-weight: 800; font-family: Outfit, sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid #d4af37; text-shadow: 0 1px 3px rgba(0,0,0,0.2);' : 'background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(180, 134, 8, 0.12) 100%); color: #b48608; border-radius: 16px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08); font-weight: 700; font-family: Outfit, sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid rgba(212, 175, 55, 0.4); backdrop-filter: blur(10px);'}">
-                       <span>Semester 1</span>
-                    </a>
-                    <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_IT'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
-                       class="btn premium-sem-btn flex-fill m-0 d-flex flex-column justify-content-center align-items-center" 
-                       th:style="${selectedSemester == 2 ? 'background: linear-gradient(135deg, #d4af37 0%, #996515 100%); color: #ffffff; border-radius: 16px; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3); font-weight: 800; font-family: Outfit, sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid #d4af37; text-shadow: 0 1px 3px rgba(0,0,0,0.2);' : 'background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(180, 134, 8, 0.12) 100%); color: #b48608; border-radius: 16px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08); font-weight: 700; font-family: Outfit, sans-serif; font-size: 0.95rem; padding: 14px 0; border: 1px solid rgba(212, 175, 55, 0.4); backdrop-filter: blur(10px);'}">
-                       <span>Semester 2</span>
-                    </a>
-                </div>
 
                 <!-- Premium Section Header for Modules -->
                 <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
