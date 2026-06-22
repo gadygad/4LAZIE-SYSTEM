@@ -34,8 +34,18 @@ public class HomeController {
                 .collect(Collectors.toList());
         
         Institution currentInstitution = institutionRepository.findById(1L).orElse(null);
+        
+        // Fetch distinct module names from database to show in Critical Modules
+        List<String> criticalModules = noteRepository.findAll().stream()
+                .map(Note::getModuleName)
+                .filter(name -> name != null && !name.trim().isEmpty())
+                .distinct()
+                .limit(8) // Limit to 8 for the marquee
+                .collect(Collectors.toList());
+
         model.addAttribute("currentInstitution", currentInstitution);
         model.addAttribute("popularNotes", popularNotes);
+        model.addAttribute("criticalModules", criticalModules);
         return "home";
     }
 
