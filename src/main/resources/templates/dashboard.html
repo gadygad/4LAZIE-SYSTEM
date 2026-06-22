@@ -479,88 +479,96 @@
             box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
         }
 
-        /* Module Accordion/Card */
-        .module-card {
+        /* Module Text List Items */
+        .module-list-container {
             background: var(--bg-card);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            padding: 20px 24px;
-            margin-bottom: 16px;
+            padding: 12px 24px;
             box-shadow: var(--shadow-sm);
-            transition: var(--transition);
+        }
+
+        .module-text-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            padding: 16px 8px;
+            border-bottom: 1px solid var(--border-color);
             text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 2px;
         }
 
-        .module-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: #CBD5E1;
-            transform: translateY(-2px);
+        .module-text-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
         }
 
-        .module-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        .module-text-item:hover {
+            background-color: var(--primary-light);
+            transform: translateX(6px);
         }
 
-        .module-number {
-            width: 48px;
-            height: 48px;
-            background: var(--accent-light);
-            color: #B45309;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .module-text-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+
+        .module-text-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .module-text-number {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-right: 20px;
+            opacity: 0.6;
+            transition: var(--transition);
         }
 
-        .module-details h4 {
-            margin: 0;
+        .module-text-item:hover .module-text-number {
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .module-text-title {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 1.1rem;
-            color: #996515; /* Premium Gold touch for the text */
-            margin-bottom: 4px;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            flex-grow: 1;
             text-transform: uppercase;
+            transition: color 0.3s ease;
         }
 
-        .module-code {
-            background: rgba(153, 101, 21, 0.1);
-            color: #996515;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+        .module-text-item:hover .module-text-title {
+            color: var(--primary);
         }
 
-        .module-status {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .status-badge {
-            background: #ECFDF5;
-            color: #059669;
-            padding: 6px 12px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .module-chevron {
+        .module-text-icon {
             color: var(--text-muted);
             font-size: 1.2rem;
+            opacity: 0;
+            transform: translateX(-15px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .module-text-item:hover .module-text-icon {
+            opacity: 1;
+            transform: translateX(0);
+            color: var(--primary);
         }
 
         /* RIGHT COLUMN (NAVIGATOR) */
@@ -978,25 +986,15 @@
                     <p style="color: var(--text-muted);">Try selecting a different course or level from the navigator.</p>
                 </div>
 
-                <!-- Module Cards -->
-                <a th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, search=${entry.key})}" 
-                   class="module-card" th:each="entry, iterStat : ${groupedNotes}">
-                    <div class="module-info">
-                        <div class="module-number" th:text="${#numbers.formatInteger(iterStat.count, 2)}">01</div>
-                        <div class="module-details">
-                            <h4 th:text="${entry.key}">GENERAL MODULE</h4>
-                            <span class="module-code" th:if="${moduleCodes.get(entry.key) != null && !moduleCodes.get(entry.key).isEmpty()}" 
-                                  th:text="${moduleCodes.get(entry.key)}">SUBJECT CODE</span>
-                            <span class="module-code" th:unless="${moduleCodes.get(entry.key) != null && !moduleCodes.get(entry.key).isEmpty()}">SUBJECT CODE</span>
-                        </div>
-                    </div>
-                    <div class="module-status">
-                        <div class="status-badge">
-                            <i class="bi bi-check-circle-fill"></i> Available
-                        </div>
-                        <i class="bi bi-chevron-down module-chevron"></i>
-                    </div>
-                </a>
+                <!-- Module Text List -->
+                <div class="module-list-container" th:if="${groupedNotes != null && !groupedNotes.isEmpty()}">
+                    <a th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, search=${entry.key})}" 
+                       class="module-text-item" th:each="entry, iterStat : ${groupedNotes}">
+                        <div class="module-text-number" th:text="${#numbers.formatInteger(iterStat.count, 2)}">01</div>
+                        <div class="module-text-title" th:text="${entry.key}">GENERAL MODULE</div>
+                        <i class="bi bi-arrow-right-circle-fill module-text-icon"></i>
+                    </a>
+                </div>
 
             </div>
 

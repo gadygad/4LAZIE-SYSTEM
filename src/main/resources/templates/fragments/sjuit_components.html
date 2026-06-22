@@ -613,18 +613,21 @@
                                                      th:data-bs-parent="'#accordionUnits' + ${stat.index}">
                                                     <div class="px-3 pb-3 pt-1 d-flex flex-column gap-2">
                                                         <th:block th:if="${not #lists.isEmpty(unitNotes)}" th:each="note : ${unitNotes}">
-                                                            <div class="d-flex align-items-center bg-white rounded-3 p-2"
-                                                                 style="border: 1px dashed rgba(59,130,246,0.2); gap:8px;">
-                                                                <i class="bi bi-file-earmark-pdf-fill" style="color: #ef4444; font-size: 1rem;"></i>
-                                                                <span class="text-truncate fw-semibold flex-grow-1" style="color: #334155; font-size: 0.75rem;" th:text="${note.title}">Note Title</span>
-                                                                <div class="d-flex gap-2 flex-shrink-0">
-                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))"
-                                                                            class="btn btn-sm fw-bold d-flex align-items-center" style="background:rgba(245,158,11,0.1); color:#d97706; padding:4px 10px; border-radius:8px; font-size: 0.7rem; transition: all 0.2s; border:none;" onmouseover="this.style.background='rgba(245,158,11,0.2)'" onmouseout="this.style.background='rgba(245,158,11,0.1)'">
-                                                                        <i class="bi bi-book-half me-1"></i> Read
+                                                            <div class="premium-note-card p-3 mb-2" style="box-shadow: none; border-style: dashed; border-color: rgba(59,130,246,0.3); background: rgba(255,255,255,0.7);">
+                                                                <div class="note-header-mobile w-100 m-0 flex-grow-1">
+                                                                    <div class="note-icon-box" style="width: 36px; height: 36px; font-size: 1.1rem; margin-right: 0.75rem;">
+                                                                        <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+                                                                    </div>
+                                                                    <div class="note-details pe-3">
+                                                                        <h6 class="note-title text-uppercase m-0 text-truncate" style="font-size: 0.85rem; color: #334155; line-height: 1.2;" th:text="${note.title}">Note Title</h6>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="note-actions flex-shrink-0">
+                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn-action-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                                                                        <i class="bi bi-eye-fill"></i> <span>Read</span>
                                                                     </button>
-                                                                    <a th:href="@{'/download/' + ${note.id}}"
-                                                                       class="btn btn-sm fw-bold d-flex align-items-center" style="background:rgba(16,185,129,0.1); color:#059669; padding:4px 10px; border-radius:8px; font-size: 0.7rem; transition: all 0.2s; border:none; text-decoration: none;" onmouseover="this.style.background='rgba(16,185,129,0.2)'" onmouseout="this.style.background='rgba(16,185,129,0.1)'">
-                                                                        <i class="bi bi-cloud-arrow-down-fill me-1"></i> Download
+                                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn-action-solid" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                                                                        <i class="bi bi-cloud-download-fill"></i> <span>Download</span>
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -850,57 +853,42 @@
     <div class="d-flex flex-column gap-3 mb-4">
         
         <!-- CAT 1 PAST PAPERS -->
-        <a href="/register" class="d-flex align-items-center justify-content-between p-4 rounded-4 text-decoration-none" 
-           style="background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.06)';" 
-           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)';">
-            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.95rem;">CAT 1 PAST PAPERS</span>
-            <i class="bi bi-lock-fill" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
+           style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">CAT 1 PAST PAPERS</span>
+            <i class="bi bi-lock-fill" style="color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));"></i>
         </a>
 
         <!-- CAT 2 PAST PAPERS -->
-        <a href="/register" class="d-flex align-items-center justify-content-between p-4 rounded-4 text-decoration-none" 
-           style="background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.06)';" 
-           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)';">
-            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.95rem;">CAT 2 PAST PAPERS</span>
-            <i class="bi bi-lock-fill" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
+           style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">CAT 2 PAST PAPERS</span>
+            <i class="bi bi-lock-fill" style="color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));"></i>
         </a>
 
         <!-- ASSIGNMENTS & SOLUTIONS -->
-        <a href="/register" class="d-flex align-items-center justify-content-between p-4 rounded-4 text-decoration-none" 
-           style="background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.06)';" 
-           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)';">
-            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.95rem;">ASSIGNMENTS &amp; SOLUTIONS</span>
-            <i class="bi bi-lock-fill" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
+           style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">ASSIGNMENTS &amp; SOLUTIONS</span>
+            <i class="bi bi-lock-fill" style="color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));"></i>
         </a>
 
         <!-- UNIVERSITY EXAMS (UE) -->
-        <a href="/register" class="d-flex align-items-center justify-content-between p-4 rounded-4 text-decoration-none" 
-           style="background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.06)';" 
-           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)';">
-            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.95rem;">UNIVERSITY EXAMS (UE)</span>
-            <i class="bi bi-lock-fill" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#premiumLoginModal" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
+           style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">UNIVERSITY EXAMS (UE)</span>
+            <i class="bi bi-lock-fill" style="color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));"></i>
         </a>
     </div>
 
-    <!-- Bottom Dark Card with Rocket -->
-    <a href="/premium" class="d-block text-decoration-none rounded-4 p-4 position-relative overflow-hidden" 
-       style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: all 0.3s ease;" 
-       onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.2)';" 
-       onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.15)';">
-        <div class="d-flex align-items-center gap-3">
-            <div style="width: 50px; height: 50px; border-radius: 14px; border: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.05); flex-shrink:0;">
-                <i class="bi bi-rocket-takeoff-fill" style="color: #f59e0b; font-size: 1.3rem;"></i>
-            </div>
-            <div>
-                <div class="fw-bold" style="color: #ffffff; font-family: 'Outfit', sans-serif; font-size: 1.05rem;">Upgrade Account</div>
-                <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 500;">Get unlimited access</div>
-            </div>
-        </div>
-    </a>
 </div>
 
 </body>

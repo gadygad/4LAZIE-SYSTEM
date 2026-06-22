@@ -38,20 +38,117 @@ public class DatabaseInitializer implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // 2. Ensure BASIC ENGINEERING MATHEMATICS exists for all Level 4 Sem 1 Diploma courses
-        String[] programs = {"DIP_IT", "DIP_CSE", "DIP_CE", "DIP_ME"};
+        // Allowed subjects list for cleanup
+        java.util.Set<String> allowedSubjects = new java.util.HashSet<>(java.util.Arrays.asList(
+            "BASIC ENGINEERING MATHEMATICS",
+            "COMMUNICATION SKILLS",
+            "BASIC ENGINEERING PHYSICS",
+            "SERVER ADMINISTRATION",
+            "COMPUTER ARCHITECTURE AND ASSEMBLY PROGRAMMING LANGUAGE",
+            "COMPUTER NETWORK",
+            "MICROPROCESSOR AND MICROCONTROLLER",
+            "BASIC DATA COMMUNICATION",
+            "WEB DESIGNING",
+            "ENGINEERING ENTREPRENEURSHIP",
+            "ENGINEERING MATHEMATICS",
+            "APPLIED CHEMISTRY",
+            "OBJECT ORIENTED PROGRAMMING WITH JAVA",
+            "BASIC VISUAL PROGRAMMING",
+            "OPERATING SYSTEM"
+        ));
+
+        // 2. Ensure general subjects exist for all Level 4 Sem 1 Diploma courses
+        String[] programs = {"DIP_IT", "DIP_CSE", "DIP_CE", "DIP_ME", "DIP_EEE", "DIP_MTE"};
         for (String prog : programs) {
-            if (noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(prog, 4, 1).isEmpty()) {
-                noteRepository.save(createNote("Basic Engineering Mathematics", "math_notes.pdf", prog, 4, 1, "Note",
-                        "BASIC ENGINEERING MATHEMATICS", "ITT 04102", 85));
+            java.util.List<Note> existingNotes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(prog, 4, 1);
+            
+            boolean mathExists = existingNotes.stream().anyMatch(n -> 
+                "BASIC ENGINEERING MATHEMATICS".equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!mathExists) {
+                noteRepository.save(createNote("BASIC ENGINEERING MATHEMATICS", "math_notes.pdf", prog, 4, 1, "Note",
+                        "BASIC ENGINEERING MATHEMATICS", "", 85));
+            }
+
+            boolean commExists = existingNotes.stream().anyMatch(n -> 
+                "COMMUNICATION SKILLS".equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!commExists) {
+                noteRepository.save(createNote("COMMUNICATION SKILLS", "comm_skills_notes.pdf", prog, 4, 1, "Note",
+                        "COMMUNICATION SKILLS", "", 60));
+            }
+
+            boolean physicsExists = existingNotes.stream().anyMatch(n -> 
+                "BASIC ENGINEERING PHYSICS".equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!physicsExists) {
+                noteRepository.save(createNote("BASIC ENGINEERING PHYSICS", "physics_notes.pdf", prog, 4, 1, "Note",
+                        "BASIC ENGINEERING PHYSICS", "", 75));
+            }
+
+            // Also ensure general subjects exist for Level 5 Sem 1
+            java.util.List<Note> existingNotesL5S1 = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(prog, 5, 1);
+            
+            boolean entExists = existingNotesL5S1.stream().anyMatch(n -> 
+                "ENGINEERING ENTREPRENEURSHIP".equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!entExists) {
+                noteRepository.save(createNote("ENGINEERING ENTREPRENEURSHIP", "entrepreneurship_notes.pdf", prog, 5, 1, "Note",
+                        "ENGINEERING ENTREPRENEURSHIP", "", 40));
+            }
+
+            boolean math5Exists = existingNotesL5S1.stream().anyMatch(n -> 
+                "ENGINEERING MATHEMATICS".equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!math5Exists) {
+                noteRepository.save(createNote("ENGINEERING MATHEMATICS", "eng_math_notes.pdf", prog, 5, 1, "Note",
+                        "ENGINEERING MATHEMATICS", "", 55));
+            }
+
+            boolean chemExists = existingNotesL5S1.stream().anyMatch(n -> 
+                "APPLIED CHEMISTRY".equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!chemExists) {
+                noteRepository.save(createNote("APPLIED CHEMISTRY", "applied_chemistry.pdf", prog, 5, 1, "Note",
+                        "APPLIED CHEMISTRY", "", 35));
             }
         }
 
-        // 3. Force cleanup: Delete ANY note that is NOT BASIC ENGINEERING MATHEMATICS
+        // 3. Ensure subjects exist for CSE Level 5 Sem 1 (Specifics)
+        java.util.List<Note> existingCseNotesL5S1 = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc("DIP_CSE", 5, 1);
+        String[] cseSpecificsL5S1 = {
+            "OBJECT ORIENTED PROGRAMMING WITH JAVA",
+            "BASIC VISUAL PROGRAMMING",
+            "OPERATING SYSTEM"
+        };
+        for (String subject : cseSpecificsL5S1) {
+            boolean exists = existingCseNotesL5S1.stream().anyMatch(n -> 
+                subject.equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!exists) {
+                noteRepository.save(createNote(subject, subject.toLowerCase().replace(" ", "_") + ".pdf", "DIP_CSE", 5, 1, "Note",
+                        subject, "", 45));
+            }
+        }
+
+        // 4. Ensure subjects exist for CSE Level 5 Sem 2
+        java.util.List<Note> existingCseNotes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc("DIP_CSE", 5, 2);
+        
+        String[] cseSubjects = {
+            "SERVER ADMINISTRATION",
+            "COMPUTER ARCHITECTURE AND ASSEMBLY PROGRAMMING LANGUAGE",
+            "COMPUTER NETWORK",
+            "MICROPROCESSOR AND MICROCONTROLLER",
+            "BASIC DATA COMMUNICATION"
+        };
+        
+        for (String subject : cseSubjects) {
+            boolean exists = existingCseNotes.stream().anyMatch(n -> 
+                subject.equals(n.getModuleName() != null ? n.getModuleName().toUpperCase() : ""));
+            if (!exists) {
+                noteRepository.save(createNote(subject, subject.toLowerCase().replace(" ", "_") + ".pdf", "DIP_CSE", 5, 2, "Note",
+                        subject, "", 50));
+            }
+        }
+
+        // 4. Force cleanup: Delete ANY note that is NOT in allowedSubjects
         java.util.List<Note> allNotes = noteRepository.findAll();
         for (Note n : allNotes) {
             String modName = n.getModuleName() != null ? n.getModuleName().toUpperCase() : "";
-            if (!modName.equals("BASIC ENGINEERING MATHEMATICS")) {
+            if (!allowedSubjects.contains(modName)) {
                 noteRepository.delete(n);
             }
         }
