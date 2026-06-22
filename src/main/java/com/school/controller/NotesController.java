@@ -401,9 +401,20 @@ public class NotesController {
             }
         } catch (Exception e) { }
 
-        String mockHtml = "<html><body style='font-family: Arial, sans-serif; padding: 40px; text-align: center; color: #333;'><h2 style='color: #2563eb;'>" + title + "</h2><div style='border: 1px dashed #ccc; padding: 20px; border-radius: 8px; margin-top: 20px; background: #f9f9f9;'><p>This is a <b>simulated document preview</b> for development purposes.</p></div></body></html>";
+        String mockHtml = "<html><head><style>" +
+            "body{background:#0f172a;color:#f8fafc;font-family:'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}" +
+            ".card{background:rgba(30,41,59,0.7);padding:40px;border-radius:16px;text-align:center;border:1px solid rgba(255,255,255,0.05);box-shadow:0 10px 30px rgba(0,0,0,0.5);max-width:500px;}" +
+            ".icon{font-size:60px;margin-bottom:20px;display:block;}" +
+            "h2{color:#f59e0b;margin-top:0;font-size:1.5rem;}" +
+            "p{color:#94a3b8;font-size:1rem;line-height:1.5;}" +
+            "</style></head><body><div class='card'>" +
+            "<span class='icon'>📄❌</span>" +
+            "<h2>Document Not Found</h2>" +
+            "<p>The document <b>" + title + "</b> could not be located. It may have been permanently deleted from the server or never uploaded properly.</p>" +
+            "<p style='margin-top:20px;font-size:0.85rem;color:#64748b;'>Please contact your administrator or re-upload the document.</p>" +
+            "</div></body></html>";
         ByteArrayResource mockResource = new ByteArrayResource(mockHtml.getBytes());
-        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.html\"").body(mockResource);
+        return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"error.html\"").body(mockResource);
     }
 
     @GetMapping("/guest-notes")
