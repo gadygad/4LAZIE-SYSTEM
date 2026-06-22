@@ -28,7 +28,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR, jakarta.servlet.DispatcherType.INCLUDE).permitAll()
                 // Allow public access to static resources and public pages
-                .requestMatchers("/", "/home", "/index", "/about", "/premium", "/register", "/login", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/**").permitAll()
+                .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/login", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/**").permitAll()
                 .requestMatchers("/guest-notes", "/view/**", "/download/**", "/stream/**").permitAll()
                 // Require ADMIN role for admin pages and upload page
                 .requestMatchers("/upload", "/admin/**").hasRole("ADMIN")
