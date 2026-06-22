@@ -190,6 +190,7 @@ public class NotesController {
         User loggedInUser = (User) session.getAttribute("user");
         if (loggedInUser == null || !"ADMIN".equals(loggedInUser.getRole())) return "redirect:/dashboard";
         model.addAttribute("user", loggedInUser);
+        model.addAttribute("courses", courseRepository.findAll());
         return "upload";
     }
 
