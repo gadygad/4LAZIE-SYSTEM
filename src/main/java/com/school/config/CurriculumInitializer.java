@@ -21,20 +21,28 @@ public class CurriculumInitializer {
             List<Course> coursesCSE = courseRepository.findByProgramType("DIP_CSE");
             Course diplomaCSE;
             if (coursesCSE.isEmpty()) {
-                diplomaCSE = new Course("DIPLOMA IN CSE", "DIP_CSE");
+                diplomaCSE = new Course("DIPLOMA IN COMPUTER SCIENCE ENGINEERING", "DIP_CSE");
                 diplomaCSE = courseRepository.save(diplomaCSE);
             } else {
                 diplomaCSE = coursesCSE.get(0);
+                if (!"DIPLOMA IN COMPUTER SCIENCE ENGINEERING".equals(diplomaCSE.getName())) {
+                    diplomaCSE.setName("DIPLOMA IN COMPUTER SCIENCE ENGINEERING");
+                    courseRepository.save(diplomaCSE);
+                }
             }
 
             // Check if course already exists for IT
             List<Course> coursesIT = courseRepository.findByProgramType("DIP_IT");
             Course diplomaIT;
             if (coursesIT.isEmpty()) {
-                diplomaIT = new Course("DIPLOMA IN IT", "DIP_IT");
+                diplomaIT = new Course("DIPLOMA IN INFORMATION TECHNOLOGY", "DIP_IT");
                 diplomaIT = courseRepository.save(diplomaIT);
             } else {
                 diplomaIT = coursesIT.get(0);
+                if (!"DIPLOMA IN INFORMATION TECHNOLOGY".equals(diplomaIT.getName())) {
+                    diplomaIT.setName("DIPLOMA IN INFORMATION TECHNOLOGY");
+                    courseRepository.save(diplomaIT);
+                }
             }
 
             // Target subjects for CSE Level 5 Sem 2
@@ -173,6 +181,21 @@ public class CurriculumInitializer {
                     subject.setCourse(diplomaCSE);
                     subject.setCode("");
                     subjectRepository.save(subject);
+                }
+            }
+            
+            // Initialize St. Joseph Engineering Diploma Courses
+            java.util.Map<String, String> sjuitCourses = new java.util.LinkedHashMap<>();
+            sjuitCourses.put("DIPLOMA IN CIVIL ENGINEERING", "DIP_CE");
+            sjuitCourses.put("DIPLOMA IN MECHANICAL ENGINEERING", "DIP_ME");
+            sjuitCourses.put("DIPLOMA IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DIP_EEE");
+            sjuitCourses.put("DIPLOMA IN MECHATRONICS ENGINEERING", "DIP_MTE");
+            
+            for (java.util.Map.Entry<String, String> entry : sjuitCourses.entrySet()) {
+                String courseName = entry.getKey();
+                String progType = entry.getValue();
+                if (courseRepository.findByProgramType(progType).isEmpty()) {
+                    courseRepository.save(new Course(courseName, progType));
                 }
             }
         };
