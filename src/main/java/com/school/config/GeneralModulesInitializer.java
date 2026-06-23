@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
+// @Configuration
 public class GeneralModulesInitializer {
 
-    @Bean
+    // @Bean
     CommandLineRunner initGeneralModules(NoteRepository noteRepository, InstitutionRepository institutionRepository) {
         return args -> {
             List<Institution> institutions = institutionRepository.findAll();
