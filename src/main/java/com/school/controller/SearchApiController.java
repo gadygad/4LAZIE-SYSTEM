@@ -33,6 +33,7 @@ public class SearchApiController {
             map.put("title", note.getTitle());
             map.put("category", note.getCategory());
             map.put("levelNo", note.getLevelNo());
+            map.put("fileUrl", note.getFileUrl());
             return map;
         }).collect(Collectors.toList());
 
