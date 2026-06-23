@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import com.school.service.FileStorageService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 @Controller
 @SuppressWarnings("null")
 public class NotesController {
@@ -53,6 +55,9 @@ public class NotesController {
 
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @GetMapping("/home")
     public String home(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
@@ -271,18 +276,21 @@ public class NotesController {
         noteRepository.save(note);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            String downloadUrl = note.getFileUrl();
-            // Fix: Cloudinary raw files must use /raw/upload/ path, not /image/upload/
-            if (downloadUrl.contains("/image/upload/")) {
-                downloadUrl = downloadUrl.replace("/image/upload/", "/raw/upload/");
+            try {
+                // Extract public_id from stored Cloudinary URL and generate fresh signed URL
+                String storedUrl = note.getFileUrl();
+                String publicId = extractCloudinaryPublicId(storedUrl);
+                String fmt = getFormat(note.getFilename());
+                String signedUrl = cloudinary.privateDownload(publicId, fmt,
+                        ObjectUtils.asMap("resource_type", "raw"));
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, signedUrl)
+                        .build();
+            } catch (Exception e) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, note.getFileUrl())
+                        .build();
             }
-            // Force Cloudinary to download as attachment by inserting fl_attachment
-            if (downloadUrl.contains("/upload/") && !downloadUrl.contains("fl_attachment")) {
-                downloadUrl = downloadUrl.replace("/upload/", "/upload/fl_attachment/");
-            }
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, downloadUrl)
-                    .build();
         }
 
         String filename = note.getFilename();
@@ -382,34 +390,39 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            // The fileUrl stored in DB is already a signed Cloudinary URL - redirect directly to it
-            // For images: direct redirect works fine
-            // For PDFs/docs: redirect to Google Docs Viewer using the signed URL
-            String fileUrl = note.getFileUrl();
-            String urlLower = fileUrl.toLowerCase();
-
-            boolean isImage = urlLower.contains(".jpg") || urlLower.contains(".jpeg")
-                || urlLower.contains(".png") || urlLower.contains(".gif")
-                || urlLower.contains(".webp") || urlLower.contains(".svg");
-
-            if (isImage) {
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, fileUrl)
-                        .build();
-            }
-
-            // For PDFs/docs: use Google Docs Viewer with the signed URL
             try {
-                String encodedUrl = java.net.URLEncoder.encode(fileUrl, "UTF-8");
-                String viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, viewerUrl)
-                        .build();
-            } catch (Exception e) {
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, fileUrl)
-                        .build();
-            }
+                // Extract public_id and generate fresh signed URL using Cloudinary API credentials
+                String storedUrl = note.getFileUrl();
+                String publicId = extractCloudinaryPublicId(storedUrl);
+                String fmt = getFormat(note.getFilename());
+                String signedUrl = cloudinary.privateDownload(publicId, fmt,
+                        ObjectUtils.asMap("resource_type", "raw"));
+
+                // Proxy: fetch file bytes from Cloudinary using signed URL and serve inline
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(signedUrl).openConnection();
+                conn.setInstanceFollowRedirects(true);
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(60000);
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+                int code = conn.getResponseCode();
+                if (code == 200) {
+                    byte[] bytes = conn.getInputStream().readAllBytes();
+                    conn.disconnect();
+                    String contentType = getMimeType(note.getFilename());
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_TYPE, contentType)
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
+                            .body(new org.springframework.core.io.ByteArrayResource(bytes));
+                }
+                conn.disconnect();
+            } catch (Exception ignored) {}
+
+            // Fallback: redirect to stored URL directly
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .build();
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
@@ -496,4 +509,36 @@ public class NotesController {
         model.addAttribute("user", loggedInUser);
         return "upgrade";
     }
+
+    // ── Helper: extract Cloudinary public_id from a stored URL ──────────────
+    private String extractCloudinaryPublicId(String fileUrl) {
+        // Remove query string (signed URLs have ?signature=...)
+        String clean = fileUrl.contains("?") ? fileUrl.substring(0, fileUrl.indexOf("?")) : fileUrl;
+        // The public_id is the last path segment after /upload/ or /raw/upload/
+        int idx = clean.lastIndexOf("/");
+        return idx >= 0 ? clean.substring(idx + 1) : clean;
+    }
+
+    // ── Helper: get file format (extension without dot) ─────────────────────
+    private String getFormat(String filename) {
+        if (filename != null && filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        }
+        return "pdf";
+    }
+
+    // ── Helper: get MIME type from filename ──────────────────────────────────
+    private String getMimeType(String filename) {
+        if (filename == null) return "application/pdf";
+        String lower = filename.toLowerCase();
+        if (lower.endsWith(".pdf"))  return "application/pdf";
+        if (lower.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        if (lower.endsWith(".doc"))  return "application/msword";
+        if (lower.endsWith(".pptx")) return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        if (lower.endsWith(".ppt"))  return "application/vnd.ms-powerpoint";
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+        if (lower.endsWith(".png"))  return "image/png";
+        return "application/octet-stream";
+    }
 }
+
