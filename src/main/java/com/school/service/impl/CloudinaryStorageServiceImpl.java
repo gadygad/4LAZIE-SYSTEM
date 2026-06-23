@@ -30,7 +30,9 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
 
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
-                "resource_type", "auto" // auto allows images, pdfs, docs, etc.
+                "resource_type", "raw",  // raw type supports all file types including PDF/DOC
+                "type", "upload",
+                "access_mode", "public"  // Force public access so anyone can read the file
         ));
 
         // Get the secure URL from Cloudinary response
