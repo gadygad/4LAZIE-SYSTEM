@@ -384,30 +384,60 @@ public class NotesController {
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             try {
                 String fileUrl = note.getFileUrl();
-                
-                // Normalize Cloudinary URL: if it's image/upload, convert to raw/upload for non-image files
+
+                // Fix: Cloudinary raw files must use /raw/upload/ path
+                if (fileUrl.contains("/image/upload/")) {
+                    fileUrl = fileUrl.replace("/image/upload/", "/raw/upload/");
+                }
+
                 String urlLower = fileUrl.toLowerCase();
-                boolean isImage = urlLower.endsWith(".jpg") || urlLower.endsWith(".jpeg") 
-                    || urlLower.endsWith(".png") || urlLower.endsWith(".gif") 
+                boolean isImage = urlLower.endsWith(".jpg") || urlLower.endsWith(".jpeg")
+                    || urlLower.endsWith(".png") || urlLower.endsWith(".gif")
                     || urlLower.endsWith(".webp") || urlLower.endsWith(".svg");
-                
+
                 if (isImage) {
                     return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                             .header(HttpHeaders.LOCATION, fileUrl)
                             .build();
-                } else {
-                    // Fix: Cloudinary raw files must use /raw/upload/ path, not /image/upload/
-                    if (fileUrl.contains("/image/upload/")) {
-                        fileUrl = fileUrl.replace("/image/upload/", "/raw/upload/");
-                    }
-                    // Use Google Docs Viewer so the file renders inside the iframe
-                    String encodedUrl = java.net.URLEncoder.encode(fileUrl, "UTF-8");
-                    String viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
-                    return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                            .header(HttpHeaders.LOCATION, viewerUrl)
-                            .build();
                 }
+
+                // PROXY: Fetch the file from Cloudinary on the server side and stream it to browser
+                // This bypasses Cloudinary's 401 block since server-side has credentials
+                java.net.URL url = new java.net.URL(fileUrl);
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(30000);
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == 200) {
+                    byte[] bytes = conn.getInputStream().readAllBytes();
+                    conn.disconnect();
+
+                    String contentType = "application/pdf";
+                    if (urlLower.endsWith(".doc") || urlLower.endsWith(".docx")) {
+                        contentType = "application/msword";
+                    } else if (urlLower.endsWith(".ppt") || urlLower.endsWith(".pptx")) {
+                        contentType = "application/vnd.ms-powerpoint";
+                    }
+
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_TYPE, contentType)
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
+                            .header("X-Frame-Options", "SAMEORIGIN")
+                            .body(new org.springframework.core.io.ByteArrayResource(bytes));
+                }
+                conn.disconnect();
+
+                // Fallback: Google Docs Viewer
+                String encodedUrl = java.net.URLEncoder.encode(fileUrl, "UTF-8");
+                String viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, viewerUrl)
+                        .build();
+
             } catch (Exception e) {
+                // Last resort: redirect directly
                 return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                         .header(HttpHeaders.LOCATION, note.getFileUrl())
                         .build();
