@@ -272,6 +272,10 @@ public class NotesController {
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             String downloadUrl = note.getFileUrl();
+            // Fix: Cloudinary raw files must use /raw/upload/ path, not /image/upload/
+            if (downloadUrl.contains("/image/upload/")) {
+                downloadUrl = downloadUrl.replace("/image/upload/", "/raw/upload/");
+            }
             // Force Cloudinary to download as attachment by inserting fl_attachment
             if (downloadUrl.contains("/upload/") && !downloadUrl.contains("fl_attachment")) {
                 downloadUrl = downloadUrl.replace("/upload/", "/upload/fl_attachment/");
@@ -379,15 +383,25 @@ public class NotesController {
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             try {
-                String url = note.getFileUrl().toLowerCase();
-                if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".png") || url.endsWith(".gif") || url.endsWith(".webp") || url.endsWith(".svg")) {
-                    // Images render natively in iframes without blocking
+                String fileUrl = note.getFileUrl();
+                
+                // Normalize Cloudinary URL: if it's image/upload, convert to raw/upload for non-image files
+                String urlLower = fileUrl.toLowerCase();
+                boolean isImage = urlLower.endsWith(".jpg") || urlLower.endsWith(".jpeg") 
+                    || urlLower.endsWith(".png") || urlLower.endsWith(".gif") 
+                    || urlLower.endsWith(".webp") || urlLower.endsWith(".svg");
+                
+                if (isImage) {
                     return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                            .header(HttpHeaders.LOCATION, note.getFileUrl())
+                            .header(HttpHeaders.LOCATION, fileUrl)
                             .build();
                 } else {
-                    // Use Google Docs Viewer for PDFs, DOCs, PPTs to ensure they render in iframes across all browsers
-                    String encodedUrl = java.net.URLEncoder.encode(note.getFileUrl(), "UTF-8");
+                    // Fix: Cloudinary raw files must use /raw/upload/ path, not /image/upload/
+                    if (fileUrl.contains("/image/upload/")) {
+                        fileUrl = fileUrl.replace("/image/upload/", "/raw/upload/");
+                    }
+                    // Use Google Docs Viewer so the file renders inside the iframe
+                    String encodedUrl = java.net.URLEncoder.encode(fileUrl, "UTF-8");
                     String viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
                     return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                             .header(HttpHeaders.LOCATION, viewerUrl)
