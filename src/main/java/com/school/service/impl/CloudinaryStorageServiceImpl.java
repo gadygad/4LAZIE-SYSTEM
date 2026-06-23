@@ -33,7 +33,7 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
                 "resource_type", "raw",
-                "type", "upload"
+                "type", "authenticated"
         ));
 
         // Store the secure CDN URL - publicId is embedded in this URL for later extraction

@@ -415,9 +415,13 @@ public class NotesController {
                             .header(HttpHeaders.CONTENT_TYPE, contentType)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
                             .body(new org.springframework.core.io.ByteArrayResource(bytes));
+                } else {
+                    System.err.println("PROXY FAILED WITH CODE: " + code + " FOR URL: " + signedUrl);
                 }
                 conn.disconnect();
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             // Fallback: redirect to stored URL directly
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
@@ -516,7 +520,13 @@ public class NotesController {
         String clean = fileUrl.contains("?") ? fileUrl.substring(0, fileUrl.indexOf("?")) : fileUrl;
         // The public_id is the last path segment after /upload/ or /raw/upload/
         int idx = clean.lastIndexOf("/");
-        return idx >= 0 ? clean.substring(idx + 1) : clean;
+        String publicId = idx >= 0 ? clean.substring(idx + 1) : clean;
+        // Strip extension because Cloudinary's signed URL methods append it automatically
+        int extIdx = publicId.lastIndexOf(".");
+        if (extIdx > 0) {
+            publicId = publicId.substring(0, extIdx);
+        }
+        return publicId;
     }
 
     // ── Helper: get file format (extension without dot) ─────────────────────
