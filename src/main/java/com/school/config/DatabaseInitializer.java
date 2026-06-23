@@ -58,6 +58,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         ));
 
         // 2. Ensure general subjects exist for all Level 4 Sem 1 Diploma courses
+        /*
         String[] programs = {"DIP_IT", "DIP_CSE", "DIP_CE", "DIP_ME", "DIP_EEE", "DIP_MTE"};
         for (String prog : programs) {
             java.util.List<Note> existingNotes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(prog, 4, 1);
@@ -143,8 +144,11 @@ public class DatabaseInitializer implements CommandLineRunner {
                         subject, "", 50));
             }
         }
+        */
 
-        // Note: Cleanup code removed to avoid deleting user-uploaded notes
+        // DUMMY NOTES REMOVED FOR PRODUCTION
+        // We only create users, no fake notes.
+        System.out.println("Database Initialization complete (Users only).");
     }
 
     private Note createNote(String title, String filename, String program, int level, int semester, String type,
