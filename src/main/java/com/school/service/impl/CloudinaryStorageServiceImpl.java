@@ -26,29 +26,18 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
 
-        // Generate a unique public_id with the proper extension
+        // Generate a unique public_id that includes the file extension
         String publicId = UUID.randomUUID().toString() + extension;
 
-        // Upload as raw type with public access
+        // Upload as raw type - store public URL; signed URL is generated on-the-fly at read time
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
                 "resource_type", "raw",
                 "type", "upload"
         ));
 
-        // Generate a signed private download URL (never expires) so access is always possible
-        // regardless of Cloudinary account access control settings
-        try {
-            String signedUrl = cloudinary.privateDownload(
-                    publicId,
-                    extension.isEmpty() ? "pdf" : extension.substring(1), // format without dot
-                    ObjectUtils.asMap("resource_type", "raw")
-            );
-            return signedUrl;
-        } catch (Exception e) {
-            // Fallback to the secure_url from upload result
-            return uploadResult.get("secure_url").toString();
-        }
+        // Store the secure CDN URL - publicId is embedded in this URL for later extraction
+        return uploadResult.get("secure_url").toString();
     }
 
     @Override
