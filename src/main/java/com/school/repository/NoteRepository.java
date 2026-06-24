@@ -47,4 +47,17 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     boolean existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(String title, String programType, Integer levelNo, Integer semesterNo, String moduleName, Integer unitNumber);
 
     List<Note> findByCategoryOrderByIdDesc(String category);
+
+    // ── Queries Bora (Badala ya findAll() + stream) ─────────────────────────
+
+    /** Jumla ya downloads zote — haraka zaidi kuliko findAll().stream().sum() */
+    @Query("SELECT COALESCE(SUM(n.downloadCount), 0) FROM Note n")
+    Long getTotalDownloadCount();
+
+    /** Notes 3 za hivi karibuni kwa category — badala ya findAll().filter().limit(3) */
+    List<Note> findTop3ByCategoryOrderByIdDesc(String category);
+
+    /** Majina tofauti ya modules — badala ya findAll().stream().distinct() */
+    @Query("SELECT DISTINCT n.moduleName FROM Note n WHERE n.moduleName IS NOT NULL AND n.moduleName <> '' ORDER BY n.moduleName")
+    List<String> findDistinctModuleNames();
 }

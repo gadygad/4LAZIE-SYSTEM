@@ -38,7 +38,6 @@ import com.school.service.FileStorageService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 @Controller
-@SuppressWarnings("null")
 public class NotesController {
 
     @Autowired
@@ -192,8 +191,7 @@ public class NotesController {
         model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
         model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());
         model.addAttribute("totalNotes", noteRepository.count());
-        model.addAttribute("totalDownloads", noteRepository.findAll().stream()
-                .mapToInt(n -> n.getDownloadCount() != null ? n.getDownloadCount() : 0).sum());
+        model.addAttribute("totalDownloads", noteRepository.getTotalDownloadCount());
 
         return "dashboard";
     }
@@ -253,16 +251,6 @@ public class NotesController {
         return "redirect:/upload?success=Note uploaded successfully!";
     }
 
-    @GetMapping("/admin/wipe-all-notes-999")
-    @ResponseBody
-    public String wipeAllNotes(HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("user");
-        if (loggedInUser == null || !loggedInUser.getRole().equals("ADMIN")) {
-            return "Unauthorized! Only admins can do this.";
-        }
-        noteRepository.deleteAll();
-        return "SUCCESS: All notes have been completely deleted from the database. You can now start uploading freshly.";
-    }
 
     @GetMapping("/download/{id}")
     @ResponseBody

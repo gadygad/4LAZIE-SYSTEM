@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@SuppressWarnings("null")
 public class HomeController {
 
     public static class ModuleAdvice {
@@ -58,20 +57,14 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
         // Fetch up to 3 recent public notes for SJCET (institution ID 1)
-        List<Note> popularNotes = noteRepository.findAll().stream()
-                .filter(n -> "Note".equals(n.getCategory()))
-                .filter(n -> n.getFilename() != null && !n.getFilename().contains(".pdf") == false) // only real files
-                .sorted((n1, n2) -> n2.getId().compareTo(n1.getId()))
-                .limit(3)
-                .collect(Collectors.toList());
+        // Tumia query ya moja kwa moja — haraka zaidi kuliko findAll()
+        List<Note> popularNotes = noteRepository.findTop3ByCategoryOrderByIdDesc("Note");
         
         Institution currentInstitution = institutionRepository.findById(1L).orElse(null);
         
         // Fetch distinct module names from database and map to advice
-        List<ModuleAdvice> criticalModules = noteRepository.findAll().stream()
-                .map(Note::getModuleName)
-                .filter(name -> name != null && !name.trim().isEmpty())
-                .distinct()
+        // Tumia query ya DB kupata module names tofauti — haraka zaidi
+        List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()
                 .limit(8) // Limit to 8 for the marquee
                 .map(HomeController::getAdviceForModule)
                 .collect(Collectors.toList());
