@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 import com.school.model.User;
 import com.school.repository.UserRepository;
+import com.school.service.FileStorageService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +20,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-@SuppressWarnings("null")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping("/profile")
     public String getProfile(@RequestParam(value = "edit", required = false, defaultValue = "false") boolean edit,
@@ -51,19 +54,13 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         sessionUser.setEmail(formUser.getEmail());
         // Handle profile picture upload if present
         if (file != null && !file.isEmpty()) {
-            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             try {
-                Path uploadDir = Path.of("uploads");
-                if (!Files.exists(uploadDir)) {
-                    Files.createDirectories(uploadDir);
-                }
-                Files.copy(file.getInputStream(), uploadDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+                String fileUrl = fileStorageService.uploadFile(file);
+                sessionUser.setProfilePicture(fileUrl);
             } catch (IOException e) {
                 model.addAttribute("error", "Failed to upload profile picture: " + e.getMessage());
                 return "profile";
             }
-            // Update the session user's profile picture
-            sessionUser.setProfilePicture(filename);
         } else {
             // Preserve existing picture if no new file provided
             sessionUser.setProfilePicture(formUser.getProfilePicture());

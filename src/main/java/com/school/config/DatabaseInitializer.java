@@ -5,6 +5,7 @@ import com.school.model.User;
 import com.school.repository.NoteRepository;
 import com.school.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
@@ -22,19 +23,35 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // ── Credentials zinasomwa kutoka properties/env vars (sio hardcoded) ──
+    @Value("${app.admin.email:admin@school.com}")
+    private String adminEmail;
+
+    @Value("${app.admin.password:change_me_please_2024}")
+    private String adminPassword;
+
+    @Value("${app.admin2.email:alex@school.edu}")
+    private String lecturerEmail;
+
+    @Value("${app.student.email:john@student.edu}")
+    private String studentEmail;
+
+    @Value("${app.student.password:student_change_me_2024}")
+    private String studentPassword;
+
     @Override
     public void run(String... args) throws Exception {
         // 1. Initialize Users if empty
-        if (userRepository.findByEmail("alex@school.edu").isEmpty()) {
-            User lecturer = new User("Dr. Alex Carter", "alex@school.edu", passwordEncoder.encode("password123"), "ADMIN");
+        if (userRepository.findByEmail(lecturerEmail).isEmpty()) {
+            User lecturer = new User("Dr. Alex Carter", lecturerEmail, passwordEncoder.encode(adminPassword), "ADMIN");
             userRepository.save(lecturer);
         }
-        if (userRepository.findByEmail("john@student.edu").isEmpty()) {
-            User student = new User("John Doe", "john@student.edu", passwordEncoder.encode("password123"), "STUDENT");
+        if (userRepository.findByEmail(studentEmail).isEmpty()) {
+            User student = new User("John Doe", studentEmail, passwordEncoder.encode(studentPassword), "STUDENT");
             userRepository.save(student);
         }
-        if (userRepository.findByEmail("admin@school.com").isEmpty()) {
-            User admin = new User("System Admin", "admin@school.com", passwordEncoder.encode("admin123"), "ADMIN");
+        if (userRepository.findByEmail(adminEmail).isEmpty()) {
+            User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), "ADMIN");
             userRepository.save(admin);
         }
 

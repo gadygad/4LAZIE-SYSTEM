@@ -17,11 +17,14 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
-@SuppressWarnings("null")
 public class RegistrationController {
 
     @Autowired
@@ -52,6 +55,11 @@ public class RegistrationController {
             // Link user directly to session (auto-login)
             session.setAttribute("user", user);
             
+            // Set Spring Security Context
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (user.getRole() != null ? user.getRole() : "STUDENT")));
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            
         } catch (Exception e) {
             model.addAttribute("error", "Registration failed: " + e.getMessage());
             return "register";
@@ -63,8 +71,12 @@ public class RegistrationController {
     @PostMapping("/register/google")
     public String registerWithGoogle(@RequestParam("credential") String credential, HttpSession session, Model model) {
         try {
+            String clientId = System.getenv("GOOGLE_CLIENT_ID");
+            if (clientId == null || clientId.isEmpty()) {
+                clientId = "PLACEHOLDER_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+            }
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList("PLACEHOLDER_GOOGLE_CLIENT_ID.apps.googleusercontent.com"))
+                .setAudience(Collections.singletonList(clientId))
                 .build();
 
             GoogleIdToken idToken = verifier.verify(credential);
@@ -91,6 +103,12 @@ public class RegistrationController {
                     userService.registerUser(user, null);
                 }
                 session.setAttribute("user", user);
+                
+                // Set Spring Security Context for Google User
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                
                 return "redirect:/dashboard";
             } else {
                 throw new Exception("Invalid Google ID token.");

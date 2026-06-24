@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
-@SuppressWarnings("null")
 public class LoginController {
 
     @Autowired
