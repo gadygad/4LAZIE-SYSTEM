@@ -2,6 +2,14 @@ package com.school.controller;
 
 import com.school.model.Note;
 import com.school.model.User;
+import com.school.service.NoteService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import com.school.repository.UserRepository;
+
 import com.school.repository.NoteRepository;
 import com.school.model.Institution;
 import com.school.repository.CourseRepository;
@@ -39,9 +47,25 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 @Controller
 public class NotesController {
+    private User getLoggedInUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            String email = ((UserDetails) principal).getUsername();
+            return userRepository.findByEmail(email).orElse(null);
+        }
+        return null;
+    }
+
 
     @Autowired
     private NoteRepository noteRepository;
+
+    @Autowired
+    private NoteService noteService;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Autowired
     private CourseRepository courseRepository;
@@ -63,7 +87,7 @@ public class NotesController {
                        @RequestParam(value = "level", required = false) Integer level,
                        @RequestParam(value = "search", required = false) String search,
                        Model model, HttpSession session) {
-        if (session.getAttribute("user") != null) {
+        if (getLoggedInUser() != null) {
             return "redirect:/dashboard";
         }
         if (level == null) level = 4;
@@ -89,7 +113,7 @@ public class NotesController {
 
     @GetMapping("/semesters")
     public String selectSemester(@RequestParam("level") Integer level, HttpSession session, Model model) {
-        if (session.getAttribute("user") == null) return "redirect:/login";
+        if (getLoggedInUser() == null) return "redirect:/login";
         model.addAttribute("selectedLevel", level);
         return "semesters";
     }
@@ -101,7 +125,7 @@ public class NotesController {
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "search", required = false) String search,
                               HttpSession session, Model model) {
-        if (session.getAttribute("user") == null) return "redirect:/login";
+        if (getLoggedInUser() == null) return "redirect:/login";
 
         List<Note> notes;
         if (level != null && semester != null) {
@@ -118,7 +142,7 @@ public class NotesController {
                     notes = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
                     model.addAttribute("searchQuery", search);
                 } else {
-                    notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester);
+                    notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, PageRequest.of(0, 50)).getContent();
                 }
             }
             model.addAttribute("selectedLevel", level);
@@ -128,7 +152,7 @@ public class NotesController {
                 notes = noteRepository.searchNotes(search.trim());
                 model.addAttribute("searchQuery", search);
             } else {
-                notes = noteRepository.findAllByOrderByIdDesc();
+                notes = noteRepository.findAllByOrderByIdDesc(PageRequest.of(0, 50)).getContent();
             }
         }
         model.addAttribute("notes", notes);
@@ -143,7 +167,7 @@ public class NotesController {
                             @RequestParam(value = "semester", required = false) Integer semester,
                             @RequestParam(value = "search", required = false) String search, 
                             HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("user");
+        User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
 
         if (level == null) level = (loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
@@ -154,31 +178,14 @@ public class NotesController {
             notes = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
             model.addAttribute("searchQuery", search);
         } else {
-            notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester);
+            notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, PageRequest.of(0, 50)).getContent();
         }
 
         model.addAttribute("notes", notes);
         
         Map<String, List<Note>> groupedNotes = new LinkedHashMap<>();
         Map<String, String> moduleCodes = new LinkedHashMap<>();
-        for (Note note : notes) {
-            String modName = note.getModuleName() != null ? note.getModuleName() : "GENERAL MODULE";
-            groupedNotes.computeIfAbsent(modName, k -> new ArrayList<>()).add(note);
-            if (!moduleCodes.containsKey(modName) && note.getModuleCode() != null && !note.getModuleCode().isEmpty()) {
-                moduleCodes.put(modName, note.getModuleCode());
-            }
-        }
-        
-        // Fetch subjects for this program, level, and semester to display even if empty
-        List<com.school.model.Course> courses = courseRepository.findByProgramType(program);
-        if (!courses.isEmpty()) {
-            com.school.model.Course course = courses.get(0);
-            List<com.school.model.Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), level, semester);
-            for (com.school.model.Subject sub : subjects) {
-                groupedNotes.putIfAbsent(sub.getName(), new ArrayList<>());
-                moduleCodes.putIfAbsent(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
-            }
-        }
+        noteService.groupNotesByModule(notes, program, level, semester, groupedNotes, moduleCodes);
 
         model.addAttribute("groupedNotes", groupedNotes);
         model.addAttribute("moduleCodes", moduleCodes);
@@ -198,7 +205,7 @@ public class NotesController {
 
     @GetMapping("/upload")
     public String showUploadPage(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("user");
+        User loggedInUser = getLoggedInUser();
         if (loggedInUser == null || !"ADMIN".equals(loggedInUser.getRole())) return "redirect:/dashboard";
         model.addAttribute("user", loggedInUser);
         model.addAttribute("courses", courseRepository.findAll());
@@ -217,7 +224,7 @@ public class NotesController {
                              @RequestParam(value = "academicYear", required = false) String academicYear,
                              @RequestParam("file") MultipartFile file,
                              HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("user");
+        User loggedInUser = getLoggedInUser();
         if (loggedInUser == null || !"ADMIN".equals(loggedInUser.getRole())) return "redirect:/dashboard";
 
         if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
@@ -258,7 +265,7 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) return ResponseEntity.notFound().build();
 
-        User loggedInUser = (User) session.getAttribute("user");
+        User loggedInUser = getLoggedInUser();
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
@@ -284,16 +291,7 @@ public class NotesController {
         String filename = note.getFilename();
         if (filename == null || filename.isEmpty()) filename = "note-" + id + ".txt";
 
-        Path filePath = Paths.get("uploads").resolve(filename);
-        if (Files.exists(filePath)) {
-            try {
-                Resource resource = new UrlResource(filePath.toUri());
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .body(resource);
-            } catch (MalformedURLException e) { }
-        }
+        // Removed local uploads fallback to ensure Cloudinary persistency
 
         String fileContent = "=== STUDENT NOTES HUB ===\n" +
                 "Title: " + note.getTitle() + "\nProgram: " + note.getProgramType() + "\n" +
@@ -321,13 +319,8 @@ public class NotesController {
             for (Note note : notes) {
                 String filename = note.getFilename() != null && !note.getFilename().isEmpty() ? note.getFilename() : "note-" + note.getId() + ".txt";
                 byte[] contentBytes;
-                Path filePath = Paths.get("uploads").resolve(filename);
-                if (Files.exists(filePath)) {
-                    contentBytes = Files.readAllBytes(filePath);
-                } else {
-                    String fileContent = "=== STUDENT NOTES HUB ===\nTitle: " + note.getTitle() + "\nLevel: " + note.getLevelNo() + "\nDownloaded from 4LAZIE.";
-                    contentBytes = fileContent.getBytes();
-                }
+                String fileContent = "=== STUDENT NOTES HUB ===\\nTitle: " + note.getTitle() + "\\nLevel: " + note.getLevelNo() + "\\nDownloaded from 4LAZIE.";
+                contentBytes = fileContent.getBytes();
                 ZipEntry entry = new ZipEntry(filename);
                 zos.putNextEntry(entry);
                 zos.write(contentBytes);
@@ -349,7 +342,7 @@ public class NotesController {
 
     @GetMapping("/view/{id}")
     public String viewNotePage(@PathVariable("id") Integer id, HttpSession session, org.springframework.ui.Model model) {
-        User loggedInUser = (User) session.getAttribute("user");
+        User loggedInUser = getLoggedInUser();
         Note note = noteRepository.findById(id).orElse(null);
         
         if (note == null) {
@@ -420,21 +413,7 @@ public class NotesController {
         String title = note != null ? note.getTitle() : "Document " + id;
         String filename = note != null ? note.getFilename() : "document-" + id + ".txt";
 
-        try {
-            if (note != null && note.getFilename() != null) {
-                Path filePath = Paths.get("uploads").resolve(note.getFilename());
-                if (Files.exists(filePath) && Files.isReadable(filePath)) {
-                    String mimeType = Files.probeContentType(filePath);
-                    if (mimeType == null) mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-                    
-                    Resource resource = new UrlResource(filePath.toUri());
-                    return ResponseEntity.ok()
-                            .contentType(MediaType.parseMediaType(mimeType))
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
-                            .body(resource);
-                }
-            }
-        } catch (Exception e) { }
+        // Removed local uploads fallback to ensure Cloudinary persistency
 
         String mockHtml = "<html><head><style>" +
             "body{background:#0f172a;color:#f8fafc;font-family:'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}" +
@@ -457,32 +436,15 @@ public class NotesController {
                                  @RequestParam(value = "level", required = false, defaultValue = "5") Integer level, 
                                  @RequestParam(value = "semester", required = false, defaultValue = "2") Integer semester,
                                  org.springframework.ui.Model model, HttpSession session) {
-        if (session.getAttribute("user") != null) {
+        if (getLoggedInUser() != null) {
             return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester;
         }
         
-        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester);
+        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, PageRequest.of(0, 50)).getContent();
         
         Map<String, List<Note>> groupedNotes = new LinkedHashMap<>();
         Map<String, String> moduleCodes = new LinkedHashMap<>();
-        for (Note note : notes) {
-            String modName = note.getModuleName() != null ? note.getModuleName() : "GENERAL MODULE";
-            groupedNotes.computeIfAbsent(modName, k -> new ArrayList<>()).add(note);
-            if (!moduleCodes.containsKey(modName) && note.getModuleCode() != null && !note.getModuleCode().isEmpty()) {
-                moduleCodes.put(modName, note.getModuleCode());
-            }
-        }
-        
-        // Fetch subjects for this program, level, and semester to display even if empty
-        List<com.school.model.Course> courses = courseRepository.findByProgramType(program);
-        if (!courses.isEmpty()) {
-            com.school.model.Course course = courses.get(0);
-            List<com.school.model.Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), level, semester);
-            for (com.school.model.Subject sub : subjects) {
-                groupedNotes.putIfAbsent(sub.getName(), new ArrayList<>());
-                moduleCodes.putIfAbsent(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
-            }
-        }
+        noteService.groupNotesByModule(notes, program, level, semester, groupedNotes, moduleCodes);
         
         model.addAttribute("selectedProgram", program);
         model.addAttribute("selectedLevel", level);
@@ -495,7 +457,7 @@ public class NotesController {
 
     @GetMapping("/upgrade")
     public String upgrade(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("user");
+        User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
 
         model.addAttribute("user", loggedInUser);

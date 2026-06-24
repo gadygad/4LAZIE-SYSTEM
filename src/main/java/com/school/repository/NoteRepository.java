@@ -29,6 +29,11 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, String category);
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo);
+    
+    // Pageable versions for performance
+    org.springframework.data.domain.Page<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, org.springframework.data.domain.Pageable pageable);
+    
+    org.springframework.data.domain.Page<Note> findAllByOrderByIdDesc(org.springframework.data.domain.Pageable pageable);
 
     List<Note> findByProgramTypeAndLevelNoOrderByIdDesc(String programType, Integer levelNo);
 

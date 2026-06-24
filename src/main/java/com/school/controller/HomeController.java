@@ -72,7 +72,7 @@ public class HomeController {
         model.addAttribute("currentInstitution", currentInstitution);
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
-        return "home";
+        return "index";
     }
 
     @GetMapping("/init")
