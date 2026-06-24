@@ -3,15 +3,15 @@
 <body>
 
     <!-- INTERNATIONAL PREMIUM MINIMALIST FOOTER -->
-    <footer th:fragment="footer" style="margin-top: auto; width: 100%; border-top: 1px solid rgba(245, 158, 11, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 10;">
+    <footer th:fragment="footer" style="margin-top: auto; width: 100%; border-top: 1px solid rgba(245, 158, 11, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 100vh; z-index: 10;">
         <div class="container-fluid px-4 px-xl-5 py-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
                 <div style="color: #64748b; font-weight: 500; margin-bottom: 10px; margin-md-bottom: 0;">
                     &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> 
-                    <span style="font-weight: 900; color: #0f172a; letter-spacing: 1px;">
+                    <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" style="font-weight: 900; color: #0f172a; letter-spacing: 1px; text-decoration: none;">
                         4LAZIE <i class="bi bi-stars" style="color: #f59e0b; font-size: 0.8rem;"></i>
-                    </span>
+                    </a>
                     <span class="d-block d-md-inline mt-1 mt-md-0 ms-md-2" style="font-size: 0.8rem; opacity: 0.8;">All rights reserved.</span>
                 </div>
                 
