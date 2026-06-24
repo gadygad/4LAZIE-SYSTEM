@@ -2,21 +2,34 @@ package com.school.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+    @Index(name = "idx_email", columnList = "email", unique = true),
+    @Index(name = "idx_role", columnList = "role")
+})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Jina halipaswi kuwa wazi")
+    @Size(min = 2, max = 100)
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
+    @NotBlank(message = "Email inahitajika")
+    @Email(message = "Weka email sahihi")
     @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password inahitajika")
+    @Size(min = 6, message = "Password lazima iwe na angalau herufi 6")
     @Column(name = "password", length = 255, nullable = false)
     private String password;
 

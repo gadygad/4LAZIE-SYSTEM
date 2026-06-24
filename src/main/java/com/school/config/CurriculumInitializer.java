@@ -162,6 +162,40 @@ public class CurriculumInitializer {
                     }
                 }
             }
+
+            // Add general subjects for Level 4 Semester 1 to all courses
+            List<String> generalLevel4Sem1 = Arrays.asList(
+                    "COMMUNICATION SKILLS",
+                    "BASIC ENGINEERING PHYSICS",
+                    "BASIC ENGINEERING MATHEMATICS"
+            );
+            
+            for (Course course : allCourses) {
+                List<Subject> existingLevel4Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 4, 1);
+                
+                // Cleanup unwanted subjects for Level 4 Sem 1
+                for (Subject s : existingLevel4Sem1) {
+                    if (!generalLevel4Sem1.contains(s.getName())) {
+                        subjectRepository.delete(s);
+                    }
+                }
+
+                // Reload after cleanup
+                existingLevel4Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 4, 1);
+
+                for (String name : generalLevel4Sem1) {
+                    boolean exists = existingLevel4Sem1.stream().anyMatch(s -> s.getName().equals(name));
+                    if (!exists) {
+                        Subject subject = new Subject();
+                        subject.setName(name);
+                        subject.setSemesterNo(1);
+                        subject.setLevelNo(4);
+                        subject.setCourse(course);
+                        subject.setCode("");
+                        subjectRepository.save(subject);
+                    }
+                }
+            }
             // Add specific subjects for CSE Level 5 Sem 1
             List<String> cseLevel5Sem1 = Arrays.asList(
                     "OBJECT ORIENTED PROGRAMMING WITH JAVA",
