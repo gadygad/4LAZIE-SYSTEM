@@ -58,6 +58,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         // Allowed subjects list for cleanup
         java.util.Set<String> allowedSubjects = new java.util.HashSet<>(java.util.Arrays.asList(
             "BASIC ENGINEERING MATHEMATICS",
+            "ENGINEERING DRAWING",
             "COMMUNICATION SKILLS",
             "BASIC ENGINEERING PHYSICS",
             "SERVER ADMINISTRATION",
@@ -71,8 +72,16 @@ public class DatabaseInitializer implements CommandLineRunner {
             "APPLIED CHEMISTRY",
             "OBJECT ORIENTED PROGRAMMING WITH JAVA",
             "BASIC VISUAL PROGRAMMING",
-            "OPERATING SYSTEM"
+            "OPERATING SYSTEM",
+            "COMPUTER PROGRAMMING"
         ));
+        
+        // Seed some dummy notes if database is empty so marquee works
+        if (noteRepository.count() == 0) {
+            for (String mod : allowedSubjects) {
+                noteRepository.save(createNote(mod + " Notes", "notes.pdf", "BSc", 4, 1, "Note", mod, mod.substring(0, 3) + "101", 10));
+            }
+        }
 
         // 2. Ensure general subjects exist for all Level 4 Sem 1 Diploma courses
         /*

@@ -65,7 +65,6 @@ public class HomeController {
         // Fetch distinct module names from database and map to advice
         // Tumia query ya DB kupata module names tofauti — haraka zaidi
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()
-                .limit(8) // Limit to 8 for the marquee
                 .map(HomeController::getAdviceForModule)
                 .collect(Collectors.toList());
 
