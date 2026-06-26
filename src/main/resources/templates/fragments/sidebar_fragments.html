@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Dynamic Sidebar Inner Content -->
+<div th:fragment="sidebar_inner_content">
+    <div class="p-3 custom-scrollbar position-relative" id="mobileSidebarBody">
+        <!-- College Name Link (St. Joseph College) -->
+        <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(255, 255, 255, 0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.08)';">
+            <i class="bi bi-building" style="color: #60a5fa; font-size: 1rem; flex-shrink: 0;"></i>
+            <span class="text-white text-truncate" style="font-size: 0.75rem; font-weight: 500; font-family: 'Outfit', sans-serif; letter-spacing: 0.3px;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Eng. & Tech'}">St. Joseph College of Eng. & Tech</span>
+            <i class="bi bi-box-arrow-up-right ms-auto flex-shrink-0" style="color: rgba(255,255,255,0.4); font-size: 0.75rem;"></i>
+        </a>
+
+        <div id="mobileSidebarDynamicContent">
+            <!-- DIPLOMA PROGRAMMES GROUP -->
+            <div class="sidebar-group" id="diplomaGroup">
+                <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
+                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
+                        </div>
+                        <div class="d-flex flex-column text-start">
+                            <span style="font-size: 0.75rem; font-weight: 500; letter-spacing: 0.5px; color: #f8fafc;">DIPLOMA COURSES</span>
+                            <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400;"><span th:text="${diplomaCourses != null ? diplomaCourses.size() : 0}">0</span> Programmes</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.3s ease;"></i>
+                </button>
+                <div class="sidebar-group-content">
+                    <!-- DYNAMIC DIPLOMA COURSES -->
+                    <div class="sidebar-hover-item" th:each="course : ${diplomaCourses}">
+                        <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
+                            <div class="d-flex align-items-start gap-3">
+                                <i th:class="'bi mt-1 ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.2rem;'"></i>
+                                <div class="d-flex flex-column text-start">
+                                    <span style="font-weight: 500; font-size: 0.75rem; letter-spacing: 0.5px;" th:text="${#strings.toUpperCase(course.shortName != null ? course.shortName : course.name)}">DIPLOMA</span>
+                                    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400; text-transform: uppercase; margin-top: 2px;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right chevron mt-2"></i>
+                        </button>
+                        <div class="sidebar-hover-content" th:if="${course.duration > 0}">
+                            <th:block th:each="year : ${#numbers.sequence(1, course.duration)}">
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Level 4 - Sem 1</a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Level 4 - Sem 2</a>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DEGREE PROGRAMMES GROUP -->
+            <div class="sidebar-group mt-3" id="degreeGroup">
+                <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                            <i class="bi bi-award-fill text-white" style="font-size: 1.1rem;"></i>
+                        </div>
+                        <div class="d-flex flex-column text-start">
+                            <span style="font-size: 0.75rem; font-weight: 500; letter-spacing: 0.5px; color: #f8fafc;">DEGREE COURSES</span>
+                            <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400;"><span th:text="${degreeCourses != null ? degreeCourses.size() : 0}">0</span> Programmes</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.3s ease;"></i>
+                </button>
+                <div class="sidebar-group-content">
+                    <!-- DYNAMIC DEGREE COURSES -->
+                    <div class="sidebar-hover-item" th:each="course : ${degreeCourses}">
+                        <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
+                            <div class="d-flex align-items-start gap-3">
+                                <i th:class="'bi mt-1 ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.2rem;'"></i>
+                                <div class="d-flex flex-column text-start">
+                                    <span style="font-weight: 500; font-size: 0.75rem; letter-spacing: 0.5px;" th:text="${#strings.toUpperCase(course.shortName != null ? course.shortName : course.name)}">DEGREE</span>
+                                    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400; text-transform: uppercase; margin-top: 2px;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right chevron mt-2"></i>
+                        </button>
+                        <div class="sidebar-hover-content" th:if="${course.duration > 0}">
+                            <th:block th:each="year : ${#numbers.sequence(1, course.duration)}">
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Year 1 - Sem 1</a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Year 1 - Sem 2</a>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function toggleMobileSidebarItem(btn) {
+                let parent = btn.parentElement;
+                let wasOpen = parent.classList.contains('open-mobile');
+                
+                // Close all others
+                document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
+                    item.classList.remove('open-mobile');
+                });
+                
+                // If the clicked one wasn't open, open it
+                if (!wasOpen) {
+                    parent.classList.add('open-mobile');
+                }
+            }
+
+            // Close flyout when clicking outside
+            document.addEventListener('click', function(event) {
+                let isClickInsideItem = event.target.closest('.sidebar-hover-item');
+                if (!isClickInsideItem) {
+                    document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
+                        item.classList.remove('open-mobile');
+                    });
+                }
+            });
+
+            // Reset sidebar selections when it closes
+            document.addEventListener('DOMContentLoaded', function() {
+                let guestSidebarElement = document.getElementById('guestMobileSidebar');
+                if (guestSidebarElement) {
+                    guestSidebarElement.addEventListener('hidden.bs.offcanvas', function () {
+                        document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item.open-mobile').forEach(function(item) {
+                            item.classList.remove('open-mobile');
+                        });
+                        document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-group.open').forEach(function(group) {
+                            group.classList.remove('open');
+                        });
+                    });
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- Desktop Premium Sidebar -->
+<aside class="hero-sidebar" th:fragment="desktop_sidebar" style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.05); overflow: hidden; height: 100vh;">
+    <!-- Glowing Ambient Orbs for Premium Vibe -->
+    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+    <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+
+    <div class="px-3 pt-4 pb-2 border-bottom border-secondary border-opacity-25" style="background: rgba(255,255,255,0.02);">
+        <h5 class="text-white fw-bold m-0" style="font-family: 'Outfit', sans-serif;">
+            <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="logo-gradient" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.6rem; font-weight: 900; letter-spacing: -1px; line-height: 1;">4LAZIE</span>
+                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(245, 158, 11, 0.3); overflow: hidden; width: fit-content;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                        <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #fcd34d, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
+                            SMART IN BRAIN
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </h5>
+    </div>
+    
+    <div style="height: calc(100vh - 85px); overflow-y: auto;" class="custom-scrollbar">
+        <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
+    </div>
+</aside>
+
+<!-- Mobile Premium Sidebar (Offcanvas) -->
+<div class="offcanvas offcanvas-start border-0" tabindex="-1" id="mobileSidebar" th:fragment="mobile_sidebar" aria-labelledby="mobileSidebarLabel" style="width: 280px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 20px 0 50px rgba(0,0,0,0.5); overflow: hidden;">
+    <!-- Glowing Ambient Orbs for Premium Vibe -->
+    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+    <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+
+    <div class="offcanvas-header border-bottom border-secondary border-opacity-25 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.02);">
+        <h5 class="offcanvas-title text-white fw-bold d-flex flex-column" id="mobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
+            <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="logo-gradient" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; line-height: 1;">4LAZIE</span>
+                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(245, 158, 11, 0.3); overflow: hidden; width: fit-content;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                        <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #fcd34d, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
+                            SMART IN BRAIN
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </h5>
+        <button type="button" class="btn d-flex align-items-center justify-content-center p-0" data-bs-dismiss="offcanvas" aria-label="Close" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(245, 158, 11, 0.8)'; this.style.transform='rotate(90deg)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='rotate(0deg)';">
+            <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
+        </button>
+    </div>
+    <div style="height: calc(100vh - 85px); overflow-y: auto;" class="custom-scrollbar">
+        <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
+    </div>
+</div>
+
+</body>
+</html>

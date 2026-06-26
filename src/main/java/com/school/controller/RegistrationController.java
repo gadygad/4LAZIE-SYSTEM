@@ -99,7 +99,7 @@ public class RegistrationController {
                     user.setSemester(1); // Default
                     user.setYear(1); // Default
                     user.setCourseProgram("General Studies"); // Default
-                    institutionRepository.findById(1L).ifPresent(user::setInstitution); // Default to SJCET
+                    institutionRepository.findById("1").ifPresent(user::setInstitution); // Default to SJCET
                     userService.registerUser(user, null);
                 }
                 session.setAttribute("user", user);

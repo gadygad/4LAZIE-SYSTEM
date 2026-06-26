@@ -1323,13 +1323,19 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     font-size: 1.6rem;
     font-weight: 800;
     letter-spacing: -0.5px;
-    background: linear-gradient(90deg, #1e293b, #3b82f6);
+    background: linear-gradient(90deg, #d97706 0%, #b45309 50%, #d97706 100%);
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
     position: relative;
     padding-bottom: 8px;
     margin-bottom: 0;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.premium-gradient-header:hover {
+    background-position: right center;
+    transform: scale(1.02);
 }
 .premium-gradient-header::after {
     content: '';
@@ -1339,15 +1345,38 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     width: 40px;
     height: 4px;
     border-radius: 4px;
-    background: linear-gradient(90deg, #3b82f6, #6366f1);
+    background: linear-gradient(90deg, #d97706, #b45309);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.premium-gradient-header:hover::after {
+    width: 60px;
+    background: linear-gradient(90deg, #b45309, #d97706);
 }
 .premium-gradient-header.warning {
-    background: linear-gradient(90deg, #1e293b, #f59e0b);
+    background: linear-gradient(90deg, #d97706 0%, #b45309 50%, #d97706 100%);
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: default;
+}
+.premium-gradient-header.warning:hover {
+    background-position: right center;
+    transform: scale(1.02);
 }
 .premium-gradient-header.warning::after {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    background: linear-gradient(90deg, #d97706, #b45309);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.premium-gradient-header.warning:hover::after {
+    width: 60px;
+    background: linear-gradient(90deg, #b45309, #d97706);
+}
+
+@media (max-width: 767.98px) {
+    .premium-gradient-header {
+        font-size: 1.15rem;
+    }
 }
 
 /* 4. Unlock Premium Card V2 (Animated Gradient Border & 3D Float) */

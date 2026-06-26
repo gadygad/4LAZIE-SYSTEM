@@ -249,7 +249,7 @@ public class NotesController {
             note.setUploadDate(LocalDateTime.now());
             note.setIsPublic(true);
             // Link to SJUIT (institution id=1) automatically
-            Institution institution = institutionRepository.findById(1L).orElse(null);
+            Institution institution = institutionRepository.findById("1").orElse(null);
             note.setInstitution(institution);
             noteRepository.save(note);
         } catch (IOException e) {
@@ -261,7 +261,7 @@ public class NotesController {
 
     @GetMapping("/download/{id}")
     @ResponseBody
-    public ResponseEntity<Resource> downloadFile(@PathVariable("id") Integer id, HttpSession session) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable("id") String id, HttpSession session) {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) return ResponseEntity.notFound().build();
 
@@ -341,7 +341,7 @@ public class NotesController {
     }
 
     @GetMapping("/view/{id}")
-    public String viewNotePage(@PathVariable("id") Integer id, HttpSession session, org.springframework.ui.Model model) {
+    public String viewNotePage(@PathVariable("id") String id, HttpSession session, org.springframework.ui.Model model) {
         User loggedInUser = getLoggedInUser();
         Note note = noteRepository.findById(id).orElse(null);
         
@@ -367,7 +367,7 @@ public class NotesController {
     }
 
     @GetMapping("/stream/{id}")
-    public Object streamNote(@PathVariable("id") Integer id, HttpSession session) {
+    public Object streamNote(@PathVariable("id") String id, HttpSession session) {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
