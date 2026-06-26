@@ -438,17 +438,17 @@
         }
         /* Premium Glass Card (Mobile-First iOS Style) */
         .premium-glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 14px 20px;
             border-radius: 16px;
             display: inline-flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
             cursor: pointer;
@@ -457,25 +457,25 @@
         }
         .premium-glass-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(245, 158, 11, 0.15);
-            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.3);
             background: rgba(255, 255, 255, 0.95);
         }
         .premium-glass-card:active {
             transform: scale(0.96);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
         }
         .premium-glass-card-text {
             font-family: 'Outfit', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 800;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: #1e293b;
             letter-spacing: 0.5px;
         }
         .premium-glass-card-icon {
             background: rgba(245, 158, 11, 0.1);
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -486,37 +486,75 @@
             background: rgba(245, 158, 11, 0.2);
             transform: scale(1.1);
         }
+        @media (max-width: 768px) {
+            .premium-glass-card {
+                padding: 12px 16px;
+                border-radius: 14px;
+                max-width: 280px;
+                margin-bottom: 10px;
+            }
+            .premium-glass-card-text {
+                font-size: 0.75rem;
+                letter-spacing: 0.3px;
+            }
+            .premium-glass-card-icon {
+                width: 28px;
+                height: 28px;
+            }
+            .premium-glass-card-icon i {
+                font-size: 0.9rem !important;
+            }
+        }
 
-        /* Premium Glowing Floating Badge */
+        /* Premium Glowing Floating Badge (True 3D Double-Sided) */
+        .badge-3d-container {
+            perspective: 800px;
+            display: inline-block;
+        }
         .floating-gold-badge {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            color: #92400e;
-            padding: 8px 24px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: floatBadge 30s linear infinite;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .badge-face {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.12));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
             border-radius: 50px;
             font-family: 'Outfit', sans-serif;
             font-size: 0.75rem;
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.8);
-            animation: floatBadge 4s ease-in-out infinite;
-            display: inline-flex;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
             align-items: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            justify-content: center;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .badge-face.badge-back {
+            transform: rotateX(180deg);
+        }
+        .floating-gold-badge:hover .badge-face {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.2));
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25), inset 0 2px 5px rgba(255, 255, 255, 0.9);
+            color: #b45309;
+            border-color: rgba(245, 158, 11, 0.4);
         }
         .floating-gold-badge:hover {
-            background: linear-gradient(135deg, #fde68a 0%, #fcd34d 50%, #fbbf24 100%);
-            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.35), inset 0 2px 5px rgba(255, 255, 255, 0.9);
-            color: #78350f;
             animation-play-state: paused;
-            transform: scale(1.03);
         }
         @keyframes floatBadge {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25); }
-            100% { transform: translateY(0px); }
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(360deg); }
         }
         
         @media (max-width: 767.98px) {
@@ -532,21 +570,26 @@
             }
         }
         
-        .btn-purple-glow {
-            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(126, 34, 206, 0.15));
-            color: #7e22ce !important;
-            border: 1px solid rgba(147, 51, 234, 0.4);
-            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.6);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        .btn-gold-glow {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.12));
+            color: #d97706 !important;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 10px 24px;
         }
-        .btn-purple-glow:hover {
-            background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(126, 34, 206, 0.3));
-            box-shadow: 0 8px 25px rgba(147, 51, 234, 0.35), inset 0 2px 5px rgba(255, 255, 255, 0.7);
-            transform: translateY(-2px) scale(1.02);
-            border-color: rgba(147, 51, 234, 0.6);
-            color: #6b21a8 !important;
+        .btn-gold-glow:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.2));
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25), inset 0 2px 5px rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #b45309 !important;
+        }
+        .btn-gold-glow:active {
+            transform: scale(0.96) translateY(0);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
         }
         @keyframes pulseGlow {
             0% { opacity: 0.8; transform: scale(1); }
@@ -623,6 +666,13 @@
         }
         .btn-premium-gold:hover i {
             transform: translateX(4px);
+        }
+        @media (max-width: 767.98px) {
+            .btn-premium-gold {
+                padding: 12px 24px;
+                font-size: 1.05rem;
+                max-width: 320px;
+            }
         }
 
         /* Premium Sidebar Flyout Menu Styles */
@@ -765,33 +815,63 @@
             <!-- Left side: Hamburger + Logo -->
             <div class="d-flex align-items-center gap-2">
                 <!-- Premium Hamburger Menu for Mobile -->
-                <button class="btn d-lg-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#guestMobileSidebar" aria-controls="guestMobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
+                <button class="btn d-lg-none p-0 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
                     <i class="bi bi-list" style="font-size: 1.5rem;"></i>
                 </button>
                 
-                <a href="home.html" th:href="@{/}" class="text-decoration-none d-flex flex-row align-items-center gap-2 ms-1 ms-sm-0" style="margin-right: 2rem !important;">
+                <a href="home.html" th:href="@{/}" class="text-decoration-none d-flex flex-row align-items-center gap-2 ms-1 ms-sm-0 me-auto">
                     <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.6rem; color: #0f172a; letter-spacing: -1px; line-height: 1;">
                         4LAZIE
                     </span>
-                    <div class="d-flex align-items-center position-relative mt-0" style="padding: 3px 10px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); overflow: hidden;">
-                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
-                        <span style="font-size: 0.55rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
-                            SMART IN BRAIN
-                        </span>
-                        <style>
-                            @keyframes shimmer-glow {
-                                0% { left: -100%; }
-                                20% { left: 200%; }
-                                100% { left: 200%; }
-                            }
-                        </style>
+                    <div class="d-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(245, 158, 11, 0.3); overflow: hidden; width: fit-content;">
+                            <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                            <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(to right, #d97706, #b45309); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; white-space: nowrap;">
+                                SMART IN BRAIN
+                            </span>
+                            <style>
+                                @keyframes shimmer-glow {
+                                    0% { left: -100%; }
+                                    20% { left: 200%; }
+                                    100% { left: 200%; }
+                                }
+                            </style>
+                        </div>
+                        <div class="d-flex align-items-center mt-1" style="font-family: 'Inter', sans-serif; font-size: 0.55rem; font-weight: 600; color: #64748b; letter-spacing: 0.3px; white-space: nowrap;">
+                            <i class="bi bi-clock-history me-1" style="color: #3b82f6; font-size: 0.6rem;"></i>
+                            <span id="navLiveTime" style="color: #0f172a; font-weight: 700;">00:00:00</span>
+                            <span class="mx-1" style="color: #cbd5e1;">|</span>
+                            <span id="navLiveDate">Jan 01, 2024</span>
+                        </div>
                     </div>
                 </a>
+                
+                <script>
+                    function updateNavLiveClock() {
+                        const now = new Date();
+                        // 24-hour format
+                        const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        // Date format: 25 Jun 2026
+                        const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        
+                        const timeEl = document.getElementById('navLiveTime');
+                        const dateEl = document.getElementById('navLiveDate');
+                        const sideTimeEl = document.getElementById('sidebarLiveTime');
+                        const sideDateEl = document.getElementById('sidebarLiveDate');
+                        
+                        if (timeEl) timeEl.innerText = timeStr;
+                        if (dateEl) dateEl.innerText = dateStr;
+                        if (sideTimeEl) sideTimeEl.innerText = timeStr;
+                        if (sideDateEl) sideDateEl.innerText = dateStr;
+                    }
+                    setInterval(updateNavLiveClock, 1000);
+                    updateNavLiveClock();
+                </script>
             </div>
 
             <!-- Premium Nav Links -->
             <div class="d-none d-md-flex align-items-center gap-4" style="margin-left: 4rem !important; margin-right: 2rem;">
-                <a th:href="@{/}" class="text-decoration-none d-flex align-items-center position-relative" style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; color: #0f172a; padding: 5px 0;">
+                <a th:href="@{/}" class="text-decoration-none d-flex align-items-center position-relative" style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.75rem; color: #0f172a; padding: 5px 0;">
                     Home
                     <span style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, #3b82f6, #9333ea); border-radius: 2px;"></span>
                 </a>
@@ -904,142 +984,25 @@
                         Diploma <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                     </div>
                     <div class="desktop-dropdown-menu">
-                        <!-- IT -->
-                        <div class="desktop-course-item">
+                        <!-- DYNAMIC DIPLOMA COURSES -->
+                        <div class="desktop-course-item" th:each="course : ${diplomaCourses}">
                             <div class="desktop-course-btn">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(96, 165, 250, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-laptop" style="color: #3b82f6; font-size: 1.1rem;"></i>
+                                    <div th:style="'background: ' + ${course.iconBg != null ? course.iconBg : 'rgba(96, 165, 250, 0.1)'} + '; padding: 8px; border-radius: 8px;'">
+                                        <i th:class="'bi ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.1rem;'"></i>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Diploma in IT</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Information Technology</span>
+                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;" th:text="${course.shortName != null ? course.shortName : course.name}">Diploma</span>
+                                        <span style="font-size: 0.7rem; color: #64748b;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
                                     </div>
                                 </div>
                                 <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
                             </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=2'}">Level 4 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=5&semester=1'}">Level 5 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=5&semester=2'}">Level 5 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=6&semester=1'}">Level 6 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=6&semester=2'}">Level 6 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- CSE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(52, 211, 153, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-code-slash" style="color: #10b981; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Diploma in CSE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Computer Science Eng.</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- CE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-cone-striped" style="color: #d97706; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Diploma in CE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Civil Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- ME -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(167, 139, 250, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-gear-fill" style="color: #7c3aed; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Diploma in ME</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Mechanical Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=1'}">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=2'}">Level 4 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=5&semester=1'}">Level 5 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=5&semester=2'}">Level 5 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=6&semester=1'}">Level 6 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=6&semester=2'}">Level 6 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- MTE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(248, 113, 113, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-cpu" style="color: #dc2626; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Diploma in MTE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Mechatronics Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- EEE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(251, 191, 36, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-lightning-charge-fill" style="color: #d97706; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Diploma in EEE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Electrical & Electronics</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=6&semester=2'}">Level 6 - Sem 2</a>
+                            <div class="desktop-course-submenu" th:if="${course.duration > 0}">
+                                <th:block th:each="year : ${#numbers.sequence(1, course.duration)}">
+                                    <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Level 4 - Sem 1</a>
+                                    <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Level 4 - Sem 2</a>
+                                </th:block>
                             </div>
                         </div>
                     </div>
@@ -1051,154 +1014,25 @@
                         Degree <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                     </div>
                     <div class="desktop-dropdown-menu">
-                        <!-- IT -->
-                        <div class="desktop-course-item">
+                        <!-- DYNAMIC DEGREE COURSES -->
+                        <div class="desktop-course-item" th:each="course : ${degreeCourses}">
                             <div class="desktop-course-btn">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(96, 165, 250, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-laptop" style="color: #3b82f6; font-size: 1.1rem;"></i>
+                                    <div th:style="'background: ' + ${course.iconBg != null ? course.iconBg : 'rgba(96, 165, 250, 0.1)'} + '; padding: 8px; border-radius: 8px;'">
+                                        <i th:class="'bi ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.1rem;'"></i>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Degree in IT</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Information Technology</span>
+                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;" th:text="${course.shortName != null ? course.shortName : course.name}">Degree</span>
+                                        <span style="font-size: 0.7rem; color: #64748b;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
                                     </div>
                                 </div>
                                 <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
                             </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- CSE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(52, 211, 153, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-code-slash" style="color: #10b981; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Degree in CSE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Computer Science Eng.</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- CE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-cone-striped" style="color: #d97706; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Degree in CE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Civil Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- ME -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(167, 139, 250, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-gear-fill" style="color: #7c3aed; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Degree in ME</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Mechanical Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- MTE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(248, 113, 113, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-cpu" style="color: #dc2626; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Degree in MTE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Mechatronics Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-                        <!-- EEE -->
-                        <div class="desktop-course-item">
-                            <div class="desktop-course-btn">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="background: rgba(251, 191, 36, 0.1); padding: 8px; border-radius: 8px;">
-                                        <i class="bi bi-lightning-charge-fill" style="color: #d97706; font-size: 1.1rem;"></i>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">Degree in EEE</span>
-                                        <span style="font-size: 0.7rem; color: #64748b;">Electrical & Electronics</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                            </div>
-                            <div class="desktop-course-submenu">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
+                            <div class="desktop-course-submenu" th:if="${course.duration > 0}">
+                                <th:block th:each="year : ${#numbers.sequence(1, course.duration)}">
+                                    <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Year 1 - Sem 1</a>
+                                    <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Year 1 - Sem 2</a>
+                                </th:block>
                             </div>
                         </div>
                     </div>
@@ -1301,6 +1135,18 @@
             </div>
             </div>
         </div>
+        
+        <!-- Premium Mobile Search Bar -->
+        <div class="d-md-none container mt-2 mb-1 px-3">
+            <div class="search-container position-relative w-100">
+                <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: #d97706 !important;"></i>
+                <input type="text" id="mobileSmartSearchInput" class="form-control" placeholder="Search modules, notes..." 
+                       style="padding: 6px 16px 6px 36px; border-radius: 100px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(255, 255, 255, 0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.03); font-size: 0.8rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;"
+                       onfocus="this.style.boxShadow='0 8px 25px rgba(245,158,11,0.15)'; this.style.borderColor='#d97706'; this.style.background='#ffffff';"
+                       onblur="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)'; this.style.borderColor='rgba(245, 158, 11, 0.3)';"
+                       autocomplete="off">
+            </div>
+        </div>
     </header>
 
     <!-- ══════════════════════════════════════ -->
@@ -1314,6 +1160,7 @@
 
         <!-- ── MAIN CONTENT (RIGHT) ── -->
         <div class="main-content">
+
 
     <!-- COMBINED POPULAR NOTES & PREMIUM SECTION -->
     <section class="py-5 my-2 fade-in-up-mobile">
@@ -1344,7 +1191,7 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 1.25rem 1.75rem;
+                    padding: 1rem 1.2rem;
                     transition: all 0.3s ease;
                     text-decoration: none;
                     box-shadow: 0 4px 15px rgba(0,0,0,0.02);
@@ -1408,14 +1255,14 @@
                 }
 
                 .premium-mini-card {
-                    background: linear-gradient(135deg, rgba(30, 27, 75, 0.95), rgba(88, 28, 135, 0.85));
+                    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(254,243,199,0.85) 100%);
                     backdrop-filter: blur(12px);
                     -webkit-backdrop-filter: blur(12px);
                     border: 1px solid rgba(245, 158, 11, 0.4);
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                    border-radius: 20px;
-                    padding: 20px;
-                    width: 280px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+                    border-radius: 16px;
+                    padding: 14px;
+                    width: 220px;
                     display: flex;
                     flex-direction: column;
                     text-decoration: none;
@@ -1428,7 +1275,7 @@
                     content: '';
                     position: absolute;
                     top: 0; left: 0; width: 100%; height: 100%;
-                    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(255,255,255,0) 100%);
+                    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(255,255,255,0) 100%);
                     z-index: 1;
                     pointer-events: none;
                 }
@@ -1438,22 +1285,22 @@
                 }
                 .premium-mini-card:hover {
                     transform: translateY(-8px);
-                    box-shadow: 0 20px 40px rgba(245, 158, 11, 0.2);
-                    background: linear-gradient(135deg, rgba(30, 27, 75, 0.98), rgba(107, 33, 168, 0.9));
+                    box-shadow: 0 20px 40px rgba(245, 158, 11, 0.15);
+                    background: linear-gradient(135deg, #ffffff, rgba(254,243,199,0.95));
                     border-color: rgba(245, 158, 11, 0.7);
                 }
                 .premium-mini-card-icon {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 14px;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 12px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     margin-bottom: 16px;
                     font-size: 1.5rem;
                     background: rgba(245, 158, 11, 0.15) !important;
-                    color: #fbbf24 !important;
-                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2) !important;
+                    color: #d97706 !important;
+                    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1) !important;
                     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
                 }
                 .premium-mini-card:hover .premium-mini-card-icon {
@@ -1461,27 +1308,27 @@
                 }
                 .premium-mini-card-title {
                     font-family: 'Outfit', sans-serif;
-                    font-weight: 800;
-                    font-size: 1.15rem;
-                    color: #f8fafc;
-                    margin-bottom: 4px;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    color: #b45309;
+                    margin-bottom: 8px;
+                    padding-bottom: 6px;
+                    border-bottom: 1px solid rgba(180, 83, 9, 0.2);
                     letter-spacing: -0.2px;
                 }
                 .premium-mini-card-subtitle {
-                    font-size: 0.75rem;
-                    font-weight: 800;
-                    color: #fcd34d;
+                    font-size: 0.65rem;
+                    font-weight: 500;
+                    color: #b45309;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
                     margin-bottom: 12px;
-                    display: inline-block;
-                    border-bottom: 2px solid rgba(245, 158, 11, 0.3);
-                    padding-bottom: 2px;
+                    display: block;
                 }
                 .premium-mini-card-desc {
-                    font-size: 0.85rem;
-                    color: #cbd5e1;
-                    line-height: 1.6;
+                    font-size: 0.8rem;
+                    color: #78350f;
+                    line-height: 1.5;
                     margin: 0;
                 }
                 
@@ -1496,42 +1343,56 @@
                     }
                     .marquee-wrapper::-webkit-scrollbar { display: none; }
                     .premium-mini-card {
-                        width: 155px;
-                        padding: 10px 12px;
-                        border-radius: 12px;
-                        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-                        border: 1px solid rgba(251, 191, 36, 0.8);
-                        box-shadow: 0 10px 25px rgba(245, 158, 11, 0.25);
-                        backdrop-filter: blur(10px);
-                        -webkit-backdrop-filter: blur(10px);
+                        width: 140px;
+                        padding: 10px;
+                        border-radius: 14px;
+                        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(254,243,199,0.85) 100%);
+                        border: 1px solid rgba(255, 255, 255, 0.9);
+                        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12), 0 2px 8px rgba(0,0,0,0.04);
+                        backdrop-filter: blur(16px);
+                        -webkit-backdrop-filter: blur(16px);
+                        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+                    }
+                    .premium-mini-card:active {
+                        transform: scale(0.96);
+                        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
                     }
                     .premium-mini-card::before {
-                        background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
+                        background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
                     }
                     .premium-mini-card-icon {
                         width: 28px;
                         height: 28px;
-                        font-size: 0.85rem;
-                        margin-bottom: 6px;
+                        font-size: 0.9rem;
+                        margin-bottom: 8px;
                         border-radius: 8px;
-                        background: rgba(255, 255, 255, 0.6) !important;
-                        color: #b45309 !important;
-                        box-shadow: 0 2px 8px rgba(180, 83, 9, 0.15) !important;
+                        background: white !important;
+                        color: #d97706 !important;
+                        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15) !important;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                     .premium-mini-card-title {
-                        font-size: 0.8rem;
-                        line-height: 1.15;
-                        margin-bottom: 2px;
-                        color: #78350f !important;
-                        text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+                        font-size: 0.75rem;
+                        line-height: 1.3;
+                        font-weight: 600;
+                        margin-bottom: 6px;
+                        padding-bottom: 4px;
+                        border-bottom: 1px solid rgba(180, 83, 9, 0.2);
+                        color: #b45309 !important;
+                        text-shadow: none;
                     }
                     .premium-mini-card-subtitle {
                         font-size: 0.55rem;
+                        font-weight: 500;
                         margin-bottom: 0;
                         padding-bottom: 0;
                         border-bottom: none;
-                        color: #92400e !important;
-                        letter-spacing: 0.8px;
+                        color: #b45309 !important;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                        display: block;
                     }
                     .premium-mini-card-desc {
                         display: none;
@@ -1547,8 +1408,19 @@
                     <!-- ══════════════════════════════════════════════════ -->
                     <div class="mb-5 text-center text-md-start hero-content-wrapper">
                         <!-- Premium Glowing Floating Badge -->
-                        <div class="floating-gold-badge mb-3">
-                            <span>No.1 Engineering Platform in Tanzania</span>
+                        <div class="badge-3d-container mb-3">
+                            <div class="floating-gold-badge">
+                                <!-- Invisible spacer to size the container perfectly -->
+                                <div style="visibility: hidden; padding: 8px 24px; font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
+                                    No.1 Engineering Platform in Tanzania
+                                </div>
+                                <div class="badge-face badge-front">
+                                    <span>No.1 Engineering Platform in Tanzania</span>
+                                </div>
+                                <div class="badge-face badge-back">
+                                    <span>No.1 Engineering Platform in Tanzania</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- College Label -->
@@ -1610,7 +1482,7 @@
 
                         <!-- Read More Button (Visible only on mobile) -->
                         <div class="d-md-none text-center mt-3 mb-2">
-                            <button class="btn rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 btn-purple-glow" type="button" data-bs-toggle="collapse" data-bs-target="#heroDetailsContent" aria-expanded="false" aria-controls="heroDetailsContent" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px;" id="readMoreBtn">
+                            <button class="btn rounded-pill d-inline-flex align-items-center gap-2 btn-gold-glow" type="button" data-bs-toggle="collapse" data-bs-target="#heroDetailsContent" aria-expanded="false" aria-controls="heroDetailsContent" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.5px;" id="readMoreBtn">
                                 <span id="readMoreText">READ MORE ABOUT 4LAZIE</span>
                                 <i class="bi bi-chevron-down" id="readMoreIcon" style="transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);"></i>
                             </button>
@@ -1658,7 +1530,7 @@
                                 </div>
                                 <p style="font-size:0.82rem; color:#475569; line-height:1.6; margin-bottom:10px;">"4LAZIE imenisaidia kupata notes zote za semester yangu kwa urahisi sana. Sasa naenda mtihani nikiwa tayari!"</p>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div style="width:28px; height:28px; border-radius:50%; background: linear-gradient(135deg, #3b82f6, #6366f1); display:flex; align-items:center; justify-content:center;">
+                                    <div style="width:28px; height:28px; border-radius:50%; background: linear-gradient(135deg, #fbbf24, #d97706); display:flex; align-items:center; justify-content:center;">
                                         <span style="color:#fff; font-weight:700; font-size:0.65rem;">JM</span>
                                     </div>
                                     <div>
@@ -1731,10 +1603,10 @@
                             background: white; 
                             border-radius: 16px !important; 
                             box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-                            padding: 1.25rem 1.75rem; 
+                            padding: 1rem 1.5rem; 
                             font-family: 'Outfit', sans-serif; 
-                            font-weight: 700; 
-                            font-size: 1.05rem; 
+                            font-weight: 600; 
+                            font-size: 0.85rem; 
                             color: #1e293b; 
                             transition: all 0.3s ease;
                             border: none;
@@ -1743,7 +1615,7 @@
                             background: white; 
                             border-bottom-left-radius: 16px; 
                             border-bottom-right-radius: 16px; 
-                            padding: 1.5rem 1.75rem; 
+                            padding: 1.2rem 1.5rem; 
                             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); 
                             position: relative;
                         }
@@ -1753,14 +1625,16 @@
                             }
                             .premium-accordion-btn {
                                 padding: 0.8rem 1rem !important;
-                                font-size: 0.85rem !important;
+                                font-size: 0.7rem !important;
+                                font-weight: 500 !important;
                             }
                             .premium-accordion-btn .fs-4 {
-                                font-size: 1.1rem !important;
+                                font-size: 0.9rem !important;
                             }
                             .premium-accordion-btn .badge {
-                                font-size: 0.65rem !important;
-                                padding: 3px 8px !important;
+                                font-size: 0.55rem !important;
+                                padding: 2px 6px !important;
+                                border-radius: 12px !important;
                             }
                             .premium-accordion-body {
                                 padding: 1rem 1rem 1.25rem !important;
@@ -1895,7 +1769,7 @@
                     <div class="sticky-top" style="top: 100px;">
                         <div class="d-flex align-items-center gap-3 mb-4 position-relative mt-5 mt-md-0">
                             <div>
-                                <h3 class="premium-gradient-header mobile-gold-header" style="font-size: 1.5rem;">CRITICAL MODULES</h3>
+                                <h3 class="premium-gradient-header warning">CRITICAL MODULES</h3>
                                 <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Focus areas for SJUIT courses</p>
                             </div>
                         </div>
@@ -2140,394 +2014,7 @@
     </div><!-- end .page-layout -->
 
     <!-- Premium Mobile Offcanvas Sidebar for Guests -->
-    <div class="offcanvas offcanvas-start border-0" tabindex="-1" id="guestMobileSidebar" aria-labelledby="guestMobileSidebarLabel" style="width: 280px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 20px 0 50px rgba(0,0,0,0.5); overflow: hidden;">
-        
-        <!-- Glowing Ambient Orbs for Premium Vibe -->
-        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
-        <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
-
-        <div class="offcanvas-header border-bottom border-secondary border-opacity-25 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.02);">
-            <h5 class="offcanvas-title text-white fw-bold d-flex align-items-center" id="guestMobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
-                <a href="home.html" th:href="@{/}" class="text-decoration-none d-flex align-items-center gap-2">
-                    <span class="logo-gradient" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.8rem; font-weight: 900; letter-spacing: -1px;">4LAZIE</span>
-                    <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.6rem; color: #f59e0b; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 6px; border-radius: 4px; background: rgba(245, 158, 11, 0.1);">SMART IN BRAIN</span>
-                </a>
-            </h5>
-            <button type="button" class="btn d-flex align-items-center justify-content-center p-0" data-bs-dismiss="offcanvas" aria-label="Close" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(245, 158, 11, 0.8)'; this.style.transform='rotate(90deg)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='rotate(0deg)';">
-                <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body p-3 custom-scrollbar position-relative" id="mobileSidebarBody">
-            <!-- College Name Link (St. Joseph College) -->
-            <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(255, 255, 255, 0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.08)';">
-                <i class="bi bi-building" style="color: #60a5fa; font-size: 1rem; flex-shrink: 0;"></i>
-                <span class="text-white text-truncate" style="font-size: 0.82rem; font-weight: 600; font-family: 'Outfit', sans-serif; letter-spacing: 0.3px;">St. Joseph College of Eng. & Tech</span>
-                <i class="bi bi-box-arrow-up-right ms-auto flex-shrink-0" style="color: rgba(255,255,255,0.4); font-size: 0.75rem;"></i>
-            </a>
-
-            <!-- Placeholder for future contents -->
-            <div id="mobileSidebarDynamicContent">
-                
-                <!-- DIPLOMA PROGRAMMES GROUP -->
-                <div class="sidebar-group" id="diplomaGroup">
-                    <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
-                                <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
-                            </div>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; color: #f8fafc;">DIPLOMA COURSES</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.5); font-weight: 500;">5 Programmes</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.3s ease;"></i>
-                    </button>
-                    <div class="sidebar-group-content">
-                
-                <!-- DIPLOMA IN IT -->
-                <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-laptop mt-1" style="color: #60a5fa; font-size: 1.2rem;"></i>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DIPLOMA IN IT</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Information Technology</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right chevron mt-2"></i>
-                    </button>
-                    <div class="sidebar-hover-content">
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=1'}">Level 4 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=4&semester=2'}">Level 4 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=5&semester=1'}">Level 5 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=5&semester=2'}">Level 5 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=6&semester=1'}">Level 6 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_IT&level=6&semester=2'}">Level 6 - Sem 2</a>
-                    </div>
-                </div>
-
-                <!-- DIPLOMA IN CSE -->
-                <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-code-slash mt-1" style="color: #34d399; font-size: 1.2rem;"></i>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DIPLOMA IN CSE</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Computer Science Engineering</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right chevron mt-2"></i>
-                    </button>
-                    <div class="sidebar-hover-content">
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CSE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                    </div>
-                </div>
-
-                <!-- DIPLOMA IN CE -->
-                <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-cone-striped mt-1" style="color: #f59e0b; font-size: 1.2rem;"></i>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DIPLOMA IN CE</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Civil Engineering</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right chevron mt-2"></i>
-                    </button>
-                    <div class="sidebar-hover-content">
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_CE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                    </div>
-                </div>
-
-                <!-- DIPLOMA IN ME -->
-                <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-gear-fill mt-1" style="color: #a78bfa; font-size: 1.2rem;"></i>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DIPLOMA IN ME</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Mechanical Engineering</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right chevron mt-2"></i>
-                    </button>
-                    <div class="sidebar-hover-content">
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=1'}">Level 4 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=4&semester=2'}">Level 4 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=5&semester=1'}">Level 5 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=5&semester=2'}">Level 5 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=6&semester=1'}">Level 6 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_ME&level=6&semester=2'}">Level 6 - Sem 2</a>
-                    </div>
-                </div>
-
-                <!-- DIPLOMA IN MTE -->
-                <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-cpu mt-1" style="color: #ef4444; font-size: 1.2rem;"></i>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DIPLOMA IN MTE</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Mechatronics Engineering</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right chevron mt-2"></i>
-                    </button>
-                    <div class="sidebar-hover-content">
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_MTE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                    </div>
-                </div>
-
-                <!-- DIPLOMA IN EEE -->
-                <div class="sidebar-hover-item">
-                    <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-lightning-charge-fill mt-1" style="color: #fbbf24; font-size: 1.2rem;"></i>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DIPLOMA IN EEE</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Electrical & Electronics Engineering</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-right chevron mt-2"></i>
-                    </button>
-                    <div class="sidebar-hover-content">
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=1'}">Level 4 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=4&semester=2'}">Level 4 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=5&semester=1'}">Level 5 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=5&semester=2'}">Level 5 - Sem 2</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=6&semester=1'}">Level 6 - Sem 1</a>
-                        <a href="guest_notes.html" th:href="@{'/guest-notes?program=DIP_EEE&level=6&semester=2'}">Level 6 - Sem 2</a>
-                    </div>
-                </div>
-
-                    </div> <!-- End DIPLOMA GROUP CONTENT -->
-                </div> <!-- End DIPLOMA GROUP -->
-
-                <!-- DEGREE PROGRAMMES GROUP -->
-                <div class="sidebar-group mt-3" id="degreeGroup">
-                    <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
-                                <i class="bi bi-award-fill text-white" style="font-size: 1.1rem;"></i>
-                            </div>
-                            <div class="d-flex flex-column text-start">
-                                <span style="font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; color: #f8fafc;">DEGREE COURSES</span>
-                                <span style="font-size: 0.65rem; color: rgba(255,255,255,0.5); font-weight: 500;">6 Programmes</span>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.3s ease;"></i>
-                    </button>
-                    <div class="sidebar-group-content">
-                        
-                        <!-- DEGREE IN IT -->
-                        <div class="sidebar-hover-item">
-                            <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                                <div class="d-flex align-items-start gap-3">
-                                    <i class="bi bi-laptop mt-1" style="color: #60a5fa; font-size: 1.2rem;"></i>
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DEGREE IN IT</span>
-                                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Information Technology</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right chevron mt-2"></i>
-                            </button>
-                            <div class="sidebar-hover-content">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_IT&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-
-                        <!-- DEGREE IN CSE -->
-                        <div class="sidebar-hover-item">
-                            <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                                <div class="d-flex align-items-start gap-3">
-                                    <i class="bi bi-code-slash mt-1" style="color: #34d399; font-size: 1.2rem;"></i>
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DEGREE IN CSE</span>
-                                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Computer Science Eng.</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right chevron mt-2"></i>
-                            </button>
-                            <div class="sidebar-hover-content">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-
-                        <!-- DEGREE IN CE -->
-                        <div class="sidebar-hover-item">
-                            <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                                <div class="d-flex align-items-start gap-3">
-                                    <i class="bi bi-cone-striped mt-1" style="color: #f59e0b; font-size: 1.2rem;"></i>
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DEGREE IN CE</span>
-                                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Civil Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right chevron mt-2"></i>
-                            </button>
-                            <div class="sidebar-hover-content">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-
-                        <!-- DEGREE IN ME -->
-                        <div class="sidebar-hover-item">
-                            <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                                <div class="d-flex align-items-start gap-3">
-                                    <i class="bi bi-gear-fill mt-1" style="color: #a78bfa; font-size: 1.2rem;"></i>
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DEGREE IN ME</span>
-                                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Mechanical Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right chevron mt-2"></i>
-                            </button>
-                            <div class="sidebar-hover-content">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_ME&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-
-                        <!-- DEGREE IN MTE -->
-                        <div class="sidebar-hover-item">
-                            <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                                <div class="d-flex align-items-start gap-3">
-                                    <i class="bi bi-cpu mt-1" style="color: #ef4444; font-size: 1.2rem;"></i>
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DEGREE IN MTE</span>
-                                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Mechatronics Engineering</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right chevron mt-2"></i>
-                            </button>
-                            <div class="sidebar-hover-content">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_MTE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-
-                        <!-- DEGREE IN EEE -->
-                        <div class="sidebar-hover-item">
-                            <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
-                                <div class="d-flex align-items-start gap-3">
-                                    <i class="bi bi-lightning-charge-fill mt-1" style="color: #fbbf24; font-size: 1.2rem;"></i>
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">DEGREE IN EEE</span>
-                                        <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 500; text-transform: uppercase; margin-top: 2px;">Electrical & Electronics Eng.</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right chevron mt-2"></i>
-                            </button>
-                            <div class="sidebar-hover-content">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y1&semester=1'}">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y1&semester=2'}">Year 1 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y2&semester=1'}">Year 2 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y2&semester=2'}">Year 2 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y3&semester=1'}">Year 3 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y3&semester=2'}">Year 3 - Sem 2</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y4&semester=1'}">Year 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_EEE&level=Y4&semester=2'}">Year 4 - Sem 2</a>
-                            </div>
-                        </div>
-
-                    </div> <!-- End DEGREE GROUP CONTENT -->
-                </div> <!-- End DEGREE GROUP -->
-
-            </div>
-            
-            <script>
-                function toggleMobileSidebarItem(btn) {
-                    let parent = btn.parentElement;
-                    let wasOpen = parent.classList.contains('open-mobile');
-                    
-                    // Close all others
-                    document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
-                        item.classList.remove('open-mobile');
-                    });
-                    
-                    // If the clicked one wasn't open, open it
-                    if (!wasOpen) {
-                        parent.classList.add('open-mobile');
-                    }
-                }
-
-                // Close flyout when clicking outside
-                document.addEventListener('click', function(event) {
-                    let isClickInsideItem = event.target.closest('.sidebar-hover-item');
-                    if (!isClickInsideItem) {
-                        document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
-                            item.classList.remove('open-mobile');
-                        });
-                    }
-                });
-
-                // Reset sidebar selections when it closes
-                document.addEventListener('DOMContentLoaded', function() {
-                    let guestSidebarElement = document.getElementById('guestMobileSidebar');
-                    if (guestSidebarElement) {
-                        guestSidebarElement.addEventListener('hidden.bs.offcanvas', function () {
-                            // Close all open inner items (flyouts)
-                            document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item.open-mobile').forEach(function(item) {
-                                item.classList.remove('open-mobile');
-                            });
-                            // Close main accordion groups (Diploma / Degree)
-                            document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-group.open').forEach(function(group) {
-                                group.classList.remove('open');
-                            });
-                        });
-                    }
-                });
-            </script>
-        </div>
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
     </div>
 
     <script>

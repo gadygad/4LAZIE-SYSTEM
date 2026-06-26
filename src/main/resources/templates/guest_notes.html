@@ -18,82 +18,78 @@
 
 <body>
 
-    <nav class="navbar navbar-light premium-guest-navbar sticky-top py-2 border-0">
-        <div class="container-fluid px-3 px-md-4 d-flex flex-wrap justify-content-between align-items-center gap-2 gap-md-0">
+    <nav class="navbar navbar-light premium-guest-navbar sticky-top py-2 px-1 px-md-3 border-0" style="background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 1020; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-nowrap">
             
-            <!-- Mobile Menu Toggle (Order 0) -->
-            <div class="d-flex d-lg-none align-items-center order-0 me-2">
-                <button class="btn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" style="font-size: 1.8rem; padding: 0; border: none; background: transparent; color: #0f172a;">
-                    <i class="bi bi-list" style="color: #0f172a; -webkit-text-fill-color: #0f172a;"></i>
+            <!-- Left: Mobile Menu Toggle & Brand -->
+            <div class="d-flex align-items-center gap-1 gap-md-2">
+                <button class="btn border-0 d-md-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" style="color: #0f172a; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                    <i class="bi bi-list fs-3"></i>
                 </button>
-            </div>
-
-            <!-- Brand (Order 1) -->
-            <a class="navbar-brand d-flex align-items-center m-0 order-1" href="index.html" th:href="@{/}" style="text-decoration: none;">
-                <div class="d-flex align-items-center justify-content-center me-2 me-md-3" style="width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateX(-3px)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='none';">
-                    <i class="bi bi-arrow-left" style="font-size: 1rem; color: #3b82f6;"></i>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.5rem; color: #0f172a; letter-spacing: -1px; line-height: 1;">4LAZIE</span>
-                    <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
-                        <!-- Shimmer overlay -->
-                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
-                        <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
-                            SMART IN BRAIN
-                        </span>
+                <a class="navbar-brand d-flex align-items-center m-0 p-0" href="/" th:href="@{/}" style="text-decoration: none;">
+                    <div class="d-flex align-items-center justify-content-center me-1 me-md-2" style="width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateX(-3px)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='none';">
+                        <i class="bi bi-arrow-left" style="font-size: 1.1rem; color: #3b82f6;"></i>
                     </div>
-                </div>
-            </a>
-            
-            <!-- Mobile Sign In (Order 2 on Mobile, Hidden on Desktop) -->
-            <div class="d-flex d-md-none justify-content-end align-items-center order-2">
-                <a th:href="@{/login}" class="btn fw-bold rounded-pill px-3 py-1 d-flex align-items-center gap-2 m-0" style="background: linear-gradient(135deg, #d4af37 0%, #b48608 100%); color: #fff; border: none; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); font-size: 0.85rem;">
-                    <i class="bi bi-person-fill" style="font-size: 1rem; color: #fff;"></i> <span>Sign In</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 1.6rem); color: #0f172a; letter-spacing: -0.5px; line-height: 1;">4LAZIE</span>
+                        <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                            <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
+                            <span style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center;">
+                                SMART IN BRAIN
+                            </span>
+                        </div>
+                    </div>
                 </a>
             </div>
 
-            <!-- Search Bar (Order 3 on Mobile, Order 2 on Desktop) -->
-            <div class="search-container position-relative mx-0 mx-md-3 order-3 order-md-2 mt-2 mt-md-0 w-100 mobile-premium-search" style="flex-grow: 1; max-width: 500px;">
-                <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem; z-index: 5;"></i>
+            <!-- Center: Desktop Search Bar -->
+            <div class="d-none d-lg-flex position-relative mx-3 flex-grow-1" style="max-width: 500px;">
+                <i class="bi bi-search position-absolute" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #94a3b8; z-index: 5;"></i>
                 <input type="text" id="smartSearchInput" autocomplete="off" class="form-control" placeholder="Search modules, notes, or past papers..." 
-                       style="padding: 10px 16px 10px 45px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #ffffff; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
-                       onfocus="this.style.boxShadow='0 0 0 4px rgba(59,130,246,0.1)'; this.style.borderColor='var(--primary)'; this.style.background='#fff';"
-                       onblur="setTimeout(() => { document.getElementById('searchResults')?.classList.add('d-none'); }, 200); this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
+                       style="padding: 10px 16px 10px 45px; border-radius: 50px; border: 1px solid rgba(226, 232, 240, 0.8); background: #f8fafc; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease; color: #1e293b; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                       onfocus="this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.15)'; this.style.borderColor='rgba(245, 158, 11, 0.4)'; this.style.background='#ffffff';"
+                       onblur="setTimeout(() => { document.getElementById('searchResults')?.classList.add('d-none'); }, 200); this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(226, 232, 240, 0.8)'; this.style.background='#f8fafc';">
                 
-                <!-- Search Results Dropdown -->
-                <div id="searchResults" class="position-absolute w-100 bg-white shadow-lg d-none" style="top: 100%; left: 0; z-index: 1050; margin-top: 8px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); max-height: 350px; overflow-y: auto;">
-                    <!-- Results will be injected here via JS -->
-                </div>
-                
-                <!-- Ctrl+K Shortcut Hint -->
-                <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
+                <div id="searchResults" class="position-absolute w-100 bg-white shadow-lg d-none" style="top: 100%; left: 0; z-index: 1050; margin-top: 8px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); max-height: 350px; overflow-y: auto;"></div>
+                <div class="shortcut-hint d-none d-md-block" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">Ctrl + K</div>
             </div>
 
-            <!-- Desktop Sign In (Hidden on Mobile, Order 3 on Desktop) -->
-            <div class="d-none d-md-flex justify-content-end align-items-center order-md-3" style="width: auto;">
-                <a th:href="@{/login}" class="btn fw-bold rounded-pill px-3 py-1 d-flex align-items-center gap-2 m-0" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
-                    <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #f59e0b;"></i> <span>Sign In</span>
+            <!-- Right: Actions & Profile -->
+            <div class="d-flex align-items-center gap-1 gap-md-2">
+                <!-- Mobile Search Toggle -->
+                <button class="btn border-0 d-lg-none d-flex align-items-center justify-content-center" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse"
+                        style="width: 36px; height: 36px; border-radius: 50%; background: rgba(245, 158, 11, 0.1); color: #d97706; transition: all 0.2s;">
+                    <i class="bi bi-search"></i>
+                </button>
+
+                <!-- Premium Gold Sign In Button -->
+                <a th:href="@{/login}" class="btn d-flex align-items-center"
+                   style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15)); border: 1px solid rgba(245, 158, 11, 0.5); color: #d97706; padding: 6px 16px; border-radius: 50px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.85rem; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 4px 12px rgba(245, 158, 11, 0.2); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(8px);"
+                   onmouseover="this.style.background='linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'; this.style.color='#ffffff'; this.style.boxShadow='0 6px 15px rgba(245, 158, 11, 0.4)'; this.style.transform='translateY(-2px)';"
+                   onmouseout="this.style.background='linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15))'; this.style.color='#d97706'; this.style.boxShadow='inset 0 2px 4px rgba(255,255,255,0.6), 0 4px 12px rgba(245, 158, 11, 0.2)'; this.style.transform='translateY(0)';">
+                    <i class="bi bi-person-fill me-1"></i> <span class="d-none d-sm-inline">Sign In</span>
                 </a>
+            </div>
+        </div>
+
+        <!-- Mobile Search Collapse (Only visible on small screens when toggled) -->
+        <div class="collapse w-100 d-lg-none mt-2 px-2" id="mobileSearchCollapse">
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; color: #d97706; z-index: 5;"></i>
+                <input type="text" id="smartSearchInputMobile" autocomplete="off" class="form-control w-100" placeholder="Search modules, notes..."
+                       style="padding: 8px 16px 8px 36px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); font-size: 0.9rem; font-family: 'Inter', sans-serif; color: #1e293b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
             </div>
         </div>
     </nav>
 
     <div class="page-layout">
         <!-- Desktop Sidebar -->
-        <div class="d-none d-lg-block h-100">
-            <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
+        <div class="d-none d-lg-block h-100 position-sticky top-0">
+            <aside th:replace="~{fragments/sidebar_fragments :: desktop_sidebar}"></aside>
         </div>
         
         <!-- Mobile Sidebar (Offcanvas) -->
-        <div class="offcanvas offcanvas-start d-lg-none p-0" tabindex="-1" id="mobileSidebar" style="width: 280px; background: #1c1f30; border: none;">
-            <div class="offcanvas-header border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
-                <h5 class="offcanvas-title text-white fw-bold" style="font-family: 'Outfit', sans-serif;">PROGRAMMES</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body p-0 overflow-hidden">
-                <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-            </div>
-        </div>
+        <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
         
         <div class="main-content d-flex flex-column" style="min-height: 100vh; width: 100%;">
 
@@ -104,56 +100,46 @@
                 
                 
     
-                <!-- Open Notes Section (Premium Minimalist Layout) -->
-                <div class="mb-4 mt-2" style="padding: 10px 0;">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                        <div class="d-flex align-items-center flex-wrap gap-2 gap-md-3">
-                            <!-- Plain text with icon -->
-                            <h2 class="fw-bold m-0 d-flex align-items-center gap-2" style="font-family: 'Outfit', sans-serif; color: #d97706; letter-spacing: -0.5px; text-transform: uppercase; font-size: 1.05rem; white-space: nowrap;">
-                                <i class="bi bi-journal-text" style="font-size: 1.1rem;"></i>
-                                <span th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">MODULES</span>
-                            </h2>
+                <!-- Compact Premium Secondary Navbar (Filters) -->
+                <div class="premium-filter-toolbar mb-4 mt-2 p-2 rounded-4" style="background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                    <div class="d-flex flex-wrap flex-md-nowrap justify-content-between align-items-center gap-2">
+                        
+                        <!-- Left: Program & Level Selector -->
+                        <div class="d-flex align-items-center gap-2" style="flex-grow: 1;">
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
+                                <i class="bi bi-journal-text me-2" style="color: #d97706; font-size: 1rem;"></i>
+                                <span class="fw-bold" style="font-family: 'Outfit', sans-serif; color: #d97706; font-size: 0.85rem; letter-spacing: 0.5px;" th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">MODULES</span>
+                            </div>
+                            
                             <div class="dropdown">
-                                
-                                <button class="btn dropdown-toggle d-flex align-items-center premium-level-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-mortarboard-fill me-2" style="font-size: 0.9rem;"></i> LEVEL <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
-                                    <i class="bi bi-chevron-down dropdown-icon"></i>
+                                <button class="btn dropdown-toggle d-flex align-items-center rounded-pill px-3 py-1 m-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: #ffffff; border: 1px solid rgba(226, 232, 240, 0.8); font-size: 0.85rem; font-weight: 600; color: #1e293b; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s;">
+                                    <i class="bi bi-mortarboard-fill me-1" style="color: #64748b;"></i> 
+                                    <span>Lvl <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
                                 </button>
-                                <ul class="dropdown-menu premium-level-menu">
-                                    <li>
-                                        <a class="dropdown-item premium-level-item" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">
-                                            <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item premium-level-item" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">
-                                            <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item premium-level-item" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">
-                                            <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </li>
+                                <ul class="dropdown-menu shadow-sm border-0" style="border-radius: 12px; min-width: 120px;">
+                                    <li><a class="dropdown-item py-2" style="font-size: 0.85rem; font-weight: 500;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">Level 4</a></li>
+                                    <li><a class="dropdown-item py-2" style="font-size: 0.85rem; font-weight: 500;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">Level 5</a></li>
+                                    <li><a class="dropdown-item py-2" style="font-size: 0.85rem; font-weight: 500;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}">Level 6</a></li>
                                 </ul>
                             </div>
-                            <span th:if="${selectedSemester != null}" style="color: #ffffff; font-weight: 700; font-size: 0.75rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 4px 12px; border-radius: 50px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25); white-space: nowrap;">SEM <span th:text="${selectedSemester}">1</span></span>
                         </div>
                         
-                        <!-- Responsive Semester Switcher (Plain Text) -->
-                        
-                        <div class="semester-switcher d-flex gap-2 gap-md-4 mt-3 mt-md-0 mx-auto mx-md-0 w-100 justify-content-center justify-content-md-end" style="align-items: center; margin-left: auto !important;">
+                        <!-- Right: Semester Tabs -->
+                        <div class="d-flex bg-light rounded-pill p-1 border" style="border-color: rgba(226, 232, 240, 0.8) !important; flex-shrink: 0; min-width: 160px; justify-content: center;">
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=1'}" 
-                               class="premium-sem-link" th:classappend="${selectedSemester == 1} ? 'active' : ''">
-                               Semester 1
+                               class="btn btn-sm rounded-pill px-3 m-0" style="font-size: 0.8rem; font-weight: 600; transition: all 0.3s;"
+                               th:styleappend="${selectedSemester == 1} ? 'background: #ffffff; color: #d97706; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid rgba(245, 158, 11, 0.3);' : 'background: transparent; color: #64748b; border: 1px solid transparent;'">
+                               SEM 1
                             </a>
-                            <span style="color: rgba(0,0,0,0.1); font-size: 1.2rem; font-weight: 300;">|</span>
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : 4} + '&semester=2'}" 
-                               class="premium-sem-link" th:classappend="${selectedSemester == 2} ? 'active' : ''">
-                               Semester 2
+                               class="btn btn-sm rounded-pill px-3 m-0" style="font-size: 0.8rem; font-weight: 600; transition: all 0.3s;"
+                               th:styleappend="${selectedSemester == 2} ? 'background: #ffffff; color: #d97706; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid rgba(245, 158, 11, 0.3);' : 'background: transparent; color: #64748b; border: 1px solid transparent;'">
+                               SEM 2
                             </a>
                         </div>
-
+                        
+                    </div>
+                </div>
                 <!-- Premium Section Header for Modules -->
                 <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
                     <div class="d-flex align-items-center" style="background: linear-gradient(to right, rgba(245, 158, 11, 0.08), transparent); padding: 6px 16px; border-radius: 50px; border-left: 3px solid #f59e0b;">

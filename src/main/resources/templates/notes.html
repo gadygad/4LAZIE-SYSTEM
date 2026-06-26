@@ -22,129 +22,101 @@
 
 <body>
     <div class="page-layout">
-        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
+        <!-- Desktop Sidebar -->
+        <div class="d-none d-lg-block h-100 position-sticky top-0">
+            <aside th:replace="~{fragments/sidebar_fragments :: desktop_sidebar}"></aside>
+        </div>
         
         <div class="main-content">
-    <!-- Header Navbar -->
-    <nav class="navbar navbar-light navbar-custom sticky-top py-1" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020; border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);">
-        <div class="container d-flex justify-content-between align-items-center">
-            <!-- Mobile Menu Toggle Button -->
-            <button class="btn border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar" aria-controls="mobileOffcanvasSidebar" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-                <i class="bi bi-list fs-4"></i>
-            </button>
-            <a class="navbar-brand d-flex align-items-center" th:href="@{/}" style="text-decoration: none;">
-                <i class="bi bi-arrow-left fs-4 me-3 text-secondary" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateX(-3px)'" onmouseout="this.style.transform='none'"></i>
-                <div class="d-flex align-items-center" style="transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.03) translateY(-1px)';" onmouseout="this.style.transform='none';">
-                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; color: #1e293b; letter-spacing: -1px; line-height: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.05);">4LAZIE</span>
-                    <div class="ms-2 position-relative d-inline-flex align-items-center">
-                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #e67e22 0%, #f59e0b 50%, #d35400 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 4px 15px rgba(230,126,34,0.4); position: relative; z-index: 2; padding-right: 2px;">NOTES</span>
-                        <div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(230,126,34,0.2) 0%, transparent 70%); z-index: 1; filter: blur(4px);"></div>
-                    </div>
-                </div>
-            </a>
+    <!-- Premium Header Navbar -->
+    <nav class="navbar navbar-light sticky-top py-2 px-1 px-md-3" style="background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 1020; border-bottom: 1px solid rgba(226, 232, 240, 0.6); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-nowrap">
             
-            <!-- SEARCH BAR -->
-            <div class="search-container position-relative mx-3" style="flex-grow: 1; max-width: 450px;">
-                <form th:action="@{${session.user != null ? '/notes' : '/guest-notes'}}" method="get" class="m-0">
+            <!-- Left: Mobile Menu Toggle & Brand -->
+            <div class="d-flex align-items-center gap-1 gap-md-2">
+                <button class="btn border-0 d-md-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" style="color: #3b82f6; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+                <a class="navbar-brand d-flex align-items-center m-0 p-0" th:href="@{/}" style="text-decoration: none;">
+                    <div class="d-flex align-items-center justify-content-center me-1 me-md-2" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); transition: all 0.3s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.2)';" onmouseout="this.style.background='rgba(59, 130, 246, 0.1)';">
+                        <i class="bi bi-arrow-left text-primary" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <div class="d-flex align-items-center" style="transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 1.6rem); color: #0f172a; letter-spacing: -0.5px; line-height: 1;">4LAZIE</span>
+                        <div class="ms-1 position-relative d-inline-flex align-items-center">
+                            <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 1.6rem); letter-spacing: -0.5px; background: linear-gradient(135deg, #e67e22 0%, #f59e0b 50%, #d35400 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 2;">NOTES</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Center: Desktop Search Bar -->
+            <div class="d-none d-lg-flex position-relative mx-3 flex-grow-1" style="max-width: 500px;">
+                <form th:action="@{${session.user != null ? '/notes' : '/guest-notes'}}" method="get" class="w-100 m-0">
                     <input type="hidden" name="level" th:value="${selectedLevel}">
                     <input type="hidden" name="semester" th:value="${selectedSemester}">
                     <input type="hidden" name="category" th:value="${selectedCategory}">
-                    <i class="bi bi-search position-absolute text-muted" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem; z-index: 5;"></i>
-                    <input type="text" name="search" th:value="${searchQuery}" class="form-control position-relative" placeholder="Search notes, past papers..."
-                           style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;"
-                           onfocus="this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'; this.style.background='#ffffff';"
-                           onblur="this.style.boxShadow='none'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
+                    <i class="bi bi-search position-absolute" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #94a3b8; z-index: 5;"></i>
+                    <input type="text" name="search" th:value="${searchQuery}" class="form-control" placeholder="Search modules, notes, or past papers..."
+                           style="padding: 10px 20px 10px 45px; border-radius: 50px; border: 1px solid rgba(226, 232, 240, 0.8); background: #f8fafc; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease; color: #1e293b; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                           onfocus="this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.15)'; this.style.borderColor='rgba(245, 158, 11, 0.4)'; this.style.background='#ffffff';"
+                           onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='rgba(226, 232, 240, 0.8)'; this.style.background='#f8fafc';">
                 </form>
             </div>
             
-            <div class="d-flex align-items-center gap-2">
-                <!-- Premium Home & Notification Buttons -->
-                <div class="d-flex align-items-center">
-                    <!-- Dark Mode Toggle Button -->
-                    <button id="darkModeToggleNotes" class="d-flex align-items-center justify-content-center me-2 text-decoration-none position-relative dark-mode-toggle-btn" 
-                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(100, 116, 139, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none';">
-                        <i class="bi bi-moon-stars-fill darkModeIcon" style="color: #64748b; font-size: 1.1rem; transition: color 0.3s, transform 0.5s;"></i>
-                    </button>
+            <!-- Right: Actions & Profile -->
+            <div class="d-flex align-items-center gap-1 gap-md-2">
+                <!-- Mobile Search Toggle -->
+                <button class="btn border-0 d-lg-none d-flex align-items-center justify-content-center" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse"
+                        style="width: 36px; height: 36px; border-radius: 50%; background: rgba(245, 158, 11, 0.1); color: #d97706; transition: all 0.2s;">
+                    <i class="bi bi-search"></i>
+                </button>
 
-                    <!-- Home Button -->
-                    <a href="/" class="d-flex align-items-center justify-content-center me-2 text-decoration-none position-relative" 
-                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(37, 99, 235, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(37, 99, 235, 0.4)'; this.querySelector('i').style.color='#2563eb';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
-                        <i class="bi bi-house-door-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
-                    </a>
+                <!-- Dark Mode Toggle Button -->
+                <button id="darkModeToggleNotes" class="btn border-0 d-none d-sm-flex align-items-center justify-content-center dark-mode-toggle-btn" 
+                   style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s;">
+                    <i class="bi bi-moon-stars-fill darkModeIcon"></i>
+                </button>
 
-                    <!-- Notification Button -->
-                    <div class="dropdown me-2">
-                        <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                           style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                           onmouseover="this.style.boxShadow='0 8px 25px rgba(245, 158, 11, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(245, 158, 11, 0.4)'; this.querySelector('i').style.color='#f59e0b';" 
-                           onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
-                            <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); animation: pulse-danger 2s infinite;">
-                                3
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 p-0" aria-labelledby="notificationDropdown" style="border-radius: 20px; min-width: 320px; overflow: hidden; animation: fadeIn 0.2s ease-out; border: 1px solid rgba(255,255,255,0.5);">
-                            <li class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
-                                <span class="fw-bold text-dark" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">Notifications</span>
-                                <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #2563eb, #8b5cf6); font-weight: 600; box-shadow: 0 2px 8px rgba(37,99,235,0.3);">3 New</span>
-                            </li>
-                            <li class="text-center py-3 bg-light border-top">
-                                <a href="#" class="text-decoration-none fw-bold" style="font-size: 0.9rem; color: #2563eb; transition: color 0.2s;" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#2563eb'">View All Notifications</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- If user is NOT logged in -->
+                <a th:unless="${session.user != null}" href="/login" class="btn d-flex align-items-center"
+                   style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15)); border: 1px solid rgba(245, 158, 11, 0.5); color: #d97706; padding: 6px 16px; border-radius: 50px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.85rem; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 4px 12px rgba(245, 158, 11, 0.2); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(8px);"
+                   onmouseover="this.style.background='linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'; this.style.color='#ffffff'; this.style.boxShadow='0 6px 15px rgba(245, 158, 11, 0.4)'; this.style.transform='translateY(-2px)';"
+                   onmouseout="this.style.background='linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15))'; this.style.color='#d97706'; this.style.boxShadow='inset 0 2px 4px rgba(255,255,255,0.6), 0 4px 12px rgba(245, 158, 11, 0.2)'; this.style.transform='translateY(0)';">
+                    <i class="bi bi-person-fill me-1"></i> <span class="d-none d-sm-inline">Sign In</span>
+                </a>
 
-                <!-- Standalone Sign Out Button -->
-                <div th:if="${session.user != null}">
-                    <a href="/logout" class="btn btn-danger rounded-pill px-2 px-sm-3 d-flex align-items-center me-1 me-sm-2" style="font-weight: 600; font-family: 'Outfit', sans-serif; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;">
-                        <i class="bi bi-box-arrow-right me-0 me-sm-2"></i> <span class="d-none d-sm-inline">Logout</span>
+                <!-- If user IS logged in -->
+                <div th:if="${session.user != null}" class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle p-1" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
+                       style="background: #ffffff; border: 1px solid rgba(226,232,240,0.8); border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s ease;">
+                        <img th:if="${session.user.profilePicture}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        <img th:unless="${session.user.profilePicture}" src="https://ui-avatars.com/api/?name=Student&background=f59e0b&color=fff" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
                     </a>
-                </div>
-                <!-- If user is logged in, show Profile Dropdown -->
-                <div th:if="${session.user != null}" class="d-flex align-items-center dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
-                       style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: all 0.3s ease;"
-                       onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.08)'; this.style.transform='translateY(-1px)';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.04)'; this.style.transform='none';">
-                        <img th:if="${session.user.profilePicture}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <img th:unless="${session.user.profilePicture}" src="https://ui-avatars.com/api/?name=Student&background=10b981&color=fff" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <!-- Mobile-only avatar without margin -->
-                        <img th:if="${session.user.profilePicture}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-sm-none" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <img th:unless="${session.user.profilePicture}" src="https://ui-avatars.com/api/?name=Student&background=10b981&color=fff" alt="Profile" class="rounded-circle d-sm-none" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        
-                        <div class="d-none d-sm-flex flex-column justify-content-center me-2">
-                            <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: #1e293b;" th:text="${session.user.name}">Student</span>
-                            <span class="text-muted lh-1 mt-1" style="font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;" th:text="${session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">DIP IN IT</span>
-                        </div>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2" aria-labelledby="profileDropdown" style="border-radius: 16px; min-width: 220px; overflow: hidden; animation: fadeIn 0.2s ease-out;">
-                        <li class="px-3 py-2 border-bottom" style="background: rgba(248, 250, 252, 0.5);">
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2" aria-labelledby="profileDropdown" style="border-radius: 12px; min-width: 200px; animation: fadeIn 0.2s ease-out;">
+                        <li class="px-3 py-2 border-bottom bg-light">
                             <p class="mb-0 fw-bold text-dark" style="font-size: 0.85rem;" th:text="${session.user.name}">Student</p>
-                            <p class="mb-0 text-muted" style="font-size: 0.75rem;" th:text="${session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">DIP IN IT</p>
+                            <p class="mb-0 text-muted" style="font-size: 0.75rem;" th:text="${session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">Program</p>
                         </li>
-                        <li><a class="dropdown-item py-2 mt-1 fw-medium" href="/dashboard" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-grid-1x2-fill me-2 text-success"></i>Dashboard</a></li>
-                        <li><a class="dropdown-item py-2 fw-medium" href="/profile" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-person me-2 text-primary"></i>My Profile</a></li>
-                        <li><a class="dropdown-item py-2 fw-medium" href="#" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-gear me-2 text-secondary"></i>Settings</a></li>
+                        <li><a class="dropdown-item py-2 mt-1" href="/dashboard" style="font-size: 0.85rem;"><i class="bi bi-grid-1x2-fill me-2 text-success"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item py-2" href="/profile" style="font-size: 0.85rem;"><i class="bi bi-person me-2 text-primary"></i>My Profile</a></li>
                         <li><hr class="dropdown-divider my-1"></li>
-                        <li><a class="dropdown-item py-2 mb-1 fw-medium text-danger" href="/logout" style="font-size: 0.85rem; transition: background 0.2s;"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="/logout" style="font-size: 0.85rem;"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                     </ul>
                 </div>
-
-                <!-- If user is NOT logged in, show Login Portal -->
-                <a th:unless="${session.user != null}" href="/login" 
-                   class="btn btn-sm rounded-pill px-4 py-2 fw-bold d-flex align-items-center"
-                   style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); transition: all 0.3s ease; font-family: 'Outfit', sans-serif;"
-                   onmouseover="this.style.background='#10b981'; this.style.color='#ffffff';"
-                   onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669';">
-                    <i class="bi bi-person-fill me-2"></i>
-                    <span>Login Portal</span>
-                </a>
             </div>
+        </div>
+
+        <!-- Mobile Search Collapse (Only visible on small screens when toggled) -->
+        <div class="collapse w-100 d-lg-none mt-2 px-2" id="mobileSearchCollapse">
+            <form th:action="@{${session.user != null ? '/notes' : '/guest-notes'}}" method="get" class="w-100 m-0 position-relative">
+                <input type="hidden" name="level" th:value="${selectedLevel}">
+                <input type="hidden" name="semester" th:value="${selectedSemester}">
+                <input type="hidden" name="category" th:value="${selectedCategory}">
+                <i class="bi bi-search position-absolute" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; color: #d97706; z-index: 5;"></i>
+                <input type="text" name="search" th:value="${searchQuery}" class="form-control" placeholder="Search modules, notes..."
+                       style="padding: 8px 16px 8px 36px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); font-size: 0.9rem; font-family: 'Inter', sans-serif; color: #1e293b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
+            </form>
         </div>
     </nav>
 
@@ -377,14 +349,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Offcanvas Sidebar for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
-        <div class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <h5 class="offcanvas-title text-white" id="mobileOffcanvasSidebarLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: -1px;">4LAZIE</h5>
-            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0" style="overflow-x: hidden;">
-            <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-        </div>
-    </div>
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 </body>
 </html>

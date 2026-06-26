@@ -54,21 +54,19 @@ public class HomeController {
     @Autowired
     private InstitutionRepository institutionRepository;
 
+    @Autowired
+    private com.school.repository.CourseRepository courseRepository;
+
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
         // Fetch up to 3 recent public notes for SJCET (institution ID 1)
-        // Tumia query ya moja kwa moja — haraka zaidi kuliko findAll()
         List<Note> popularNotes = noteRepository.findTop3ByCategoryOrderByIdDesc("Note");
         
-        Institution currentInstitution = institutionRepository.findById(1L).orElse(null);
-        
         // Fetch distinct module names from database and map to advice
-        // Tumia query ya DB kupata module names tofauti — haraka zaidi
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()
                 .map(HomeController::getAdviceForModule)
                 .collect(Collectors.toList());
 
-        model.addAttribute("currentInstitution", currentInstitution);
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
         return "home";
