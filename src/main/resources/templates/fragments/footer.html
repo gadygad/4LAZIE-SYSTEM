@@ -4,23 +4,23 @@
 
     <!-- INTERNATIONAL PREMIUM MINIMALIST FOOTER -->
     <footer th:fragment="footer" style="margin-top: auto; width: 100%; border-top: 1px solid rgba(245, 158, 11, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 100vh; z-index: 10;">
-        <div class="container-fluid px-2 px-md-4 px-xl-5 py-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
+        <div class="container-fluid px-2 px-md-4 px-xl-5 py-2 py-md-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start" style="font-family: 'Outfit', sans-serif; font-size: 12px; letter-spacing: 0.5px;">
                 
-                <div style="color: #64748b; font-weight: 500; margin-bottom: 10px; margin-md-bottom: 0;">
+                <div class="mb-2 mb-md-0" style="color: #64748b; font-weight: 500;">
                     &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> 
                     <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" style="font-weight: 900; color: #0f172a; letter-spacing: 1px; text-decoration: none;">
                         4LAZIE
                     </a>
-                    <span class="d-block d-md-inline mt-1 mt-md-0 ms-md-2" style="font-size: 0.8rem; opacity: 0.8;">All rights reserved.</span>
+                    <span class="d-inline ms-1 ms-md-2" style="font-size: 0.75rem; opacity: 0.8;">All rights reserved.</span>
                 </div>
                 
-                <div class="d-flex align-items-center justify-content-center gap-3 mt-2 mt-md-0">
-                    <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-code-slash" style="color: #cbd5e1;"></i>
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 4px; font-size: 0.75rem;">
+                        <i class="bi bi-code-slash d-none d-md-inline" style="color: #cbd5e1;"></i>
                         Developed by 
-                        <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #ffffff; font-weight: 800; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 16px; border-radius: 50px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3), inset 0 1px 1px rgba(255,255,255,0.2); letter-spacing: 0.5px; display: inline-block;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 8px 25px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255,255,255,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.3), inset 0 1px 1px rgba(255,255,255,0.2)';">
-                            <i class="fas fa-gem me-1" style="font-size: 0.8rem; color: #fff;"></i> www.mindenlabs.com
+                        <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #ffffff; font-weight: 800; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(135deg, #f59e0b, #d97706); padding: 4px 12px; border-radius: 50px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); letter-spacing: 0.5px; display: inline-block;">
+                            www.mindenlabs.com
                         </a>
                     </span>
                 </div>
