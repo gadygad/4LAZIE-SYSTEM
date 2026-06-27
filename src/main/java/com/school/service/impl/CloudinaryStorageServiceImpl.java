@@ -29,10 +29,10 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
         // Generate a unique public_id that includes the file extension
         String publicId = UUID.randomUUID().toString() + extension;
 
-        // Upload as raw type - store public URL; signed URL is generated on-the-fly at read time
+        // Upload as auto type so PDFs are served inline instead of attachments
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
-                "resource_type", "raw",
+                "resource_type", "auto",
                 "type", "upload"
         ));
 
@@ -42,7 +42,16 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
 
     @Override
     public void deleteFile(String publicId) throws IOException {
-        cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("resource_type", "raw"));
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("resource_type", "image"));
+        } catch (Exception e) {
+            // fallback
+        }
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("resource_type", "raw"));
+        } catch (Exception e) {
+            // fallback
+        }
     }
 
     @Override
