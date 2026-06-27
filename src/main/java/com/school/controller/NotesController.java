@@ -400,6 +400,39 @@ public class NotesController {
         return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"error.html\"").body(mockResource);
     }
 
+    @GetMapping("/proxy/{id}")
+    public void proxyDocument(@PathVariable("id") String id, jakarta.servlet.http.HttpServletResponse response) {
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            try {
+                java.net.URL url = new java.net.URL(note.getFileUrl());
+                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+                
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    String mimeType = fileStorageService.getMimeType(note.getFilename());
+                    response.setContentType(mimeType);
+                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"");
+                    
+                    try (java.io.InputStream is = connection.getInputStream();
+                         java.io.OutputStream os = response.getOutputStream()) {
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = is.read(buffer)) != -1) {
+                            os.write(buffer, 0, bytesRead);
+                        }
+                    }
+                    return;
+                }
+            } catch (Exception e) {
+                // fall back to 404
+            }
+        }
+        response.setStatus(404);
+    }
+
     @GetMapping("/guest-notes")
     public String guestNotesList(@RequestParam(value = "program", required = false, defaultValue = "DIP_CSE") String program,
                                  @RequestParam(value = "level", required = false, defaultValue = "5") Integer level, 

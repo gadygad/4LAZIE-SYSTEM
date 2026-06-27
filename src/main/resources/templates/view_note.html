@@ -295,11 +295,15 @@
             canvasContainer.innerHTML = `<img src="${url}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" alt="Document Image">`;
             hideLoader();
         } else {
-            // LOAD WORD/PPT USING GOOGLE DOCS VIEWER IFRAME
+            // LOAD WORD/PPT USING MICROSOFT OFFICE VIEWER IFRAME + JAVA PROXY
             controls.style.display = 'none';
             canvasContainer.style.padding = '0';
-            const encodedUrl = encodeURIComponent(url);
-            const viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
+            
+            // We use the proxy endpoint so Java can strip the attachment disposition from Cloudinary
+            const proxyUrl = window.location.origin + "/proxy/" + /*[[${note.id}]]*/ '';
+            const encodedUrl = encodeURIComponent(proxyUrl);
+            
+            const viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodedUrl;
             canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
             hideLoader();
         }
