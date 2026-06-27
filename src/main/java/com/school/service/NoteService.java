@@ -10,14 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class NoteService {
+    private static final Logger log = LoggerFactory.getLogger(NoteService.class);
 
     @Autowired
     private NoteRepository noteRepository;
@@ -27,6 +36,12 @@ public class NoteService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     public void groupNotesByModule(List<Note> notes, String program, Integer level, Integer semester, 
                                    Map<String, List<Note>> groupedNotes, Map<String, String> moduleCodes) {
@@ -50,6 +65,55 @@ public class NoteService {
             if (!moduleCodes.containsKey(modName) && note.getModuleCode() != null && !note.getModuleCode().isEmpty()) {
                 moduleCodes.put(modName, note.getModuleCode());
             }
+        }
+    }
+
+    public byte[] createLevelNotesZip(String program, Integer level) throws IOException {
+        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level);
+        if (notes.isEmpty()) return null;
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zos = new ZipOutputStream(baos)) {
+
+            for (Note note : notes) {
+                String filename = note.getFilename() != null && !note.getFilename().isEmpty() ? note.getFilename() : "note-" + note.getId() + ".pdf";
+                boolean fileAdded = false;
+                
+                if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+                    try {
+                        String publicId = fileStorageService.extractCloudinaryPublicId(note.getFileUrl());
+                        String fmt = fileStorageService.getFormat(filename);
+                        String signedUrl = cloudinary.privateDownload(publicId, fmt, ObjectUtils.asMap("resource_type", "raw"));
+                        
+                        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(signedUrl).openConnection();
+                        conn.setInstanceFollowRedirects(true);
+                        conn.setRequestMethod("GET");
+                        
+                        if (conn.getResponseCode() == 200) {
+                            ZipEntry entry = new ZipEntry(filename);
+                            zos.putNextEntry(entry);
+                            conn.getInputStream().transferTo(zos);
+                            zos.closeEntry();
+                            fileAdded = true;
+                        }
+                        conn.disconnect();
+                    } catch (Exception e) {
+                        log.error("Failed to fetch zip entry from Cloudinary", e);
+                    }
+                }
+                
+                if (!fileAdded) {
+                    byte[] contentBytes;
+                    String fileContent = "=== STUDENT NOTES HUB ===\nTitle: " + note.getTitle() + "\nLevel: " + note.getLevelNo() + "\nFile could not be located on server.";
+                    contentBytes = fileContent.getBytes();
+                    ZipEntry entry = new ZipEntry("error_" + filename + ".txt");
+                    zos.putNextEntry(entry);
+                    zos.write(contentBytes);
+                    zos.closeEntry();
+                }
+            }
+            zos.finish();
+            return baos.toByteArray();
         }
     }
 }

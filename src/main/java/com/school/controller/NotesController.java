@@ -72,22 +72,7 @@ public class NotesController {
         } else {
             return null;
         }
-            
-            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            if (attr != null) {
-                HttpSession session = attr.getRequest().getSession(true);
-                User cachedUser = (User) session.getAttribute("user");
-                if (cachedUser != null && email.equals(cachedUser.getEmail())) {
-                    return cachedUser;
-                }
-                
-                User user = userRepository.findByEmail(email).orElse(null);
-                if (user != null) {
-                    session.setAttribute("user", user);
-                }
-                return user;
-            }
-            return userRepository.findByEmail(email).orElse(null);
+        return userRepository.findByEmail(email).orElse(null);
     }
 
 
@@ -342,52 +327,12 @@ public class NotesController {
     @GetMapping("/download/level/{level}")
     @ResponseBody
     public ResponseEntity<Resource> downloadLevelNotes(@RequestParam(value="program", defaultValue="DIPLOMA") String program, @PathVariable("level") Integer level) {
-        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level);
-        if (notes.isEmpty()) return ResponseEntity.notFound().build();
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ZipOutputStream zos = new ZipOutputStream(baos)) {
-
-            for (Note note : notes) {
-                String filename = note.getFilename() != null && !note.getFilename().isEmpty() ? note.getFilename() : "note-" + note.getId() + ".pdf";
-                boolean fileAdded = false;
-                
-                if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-                    try {
-                        String publicId = fileStorageService.extractCloudinaryPublicId(note.getFileUrl());
-                        String fmt = fileStorageService.getFormat(filename);
-                        String signedUrl = cloudinary.privateDownload(publicId, fmt, ObjectUtils.asMap("resource_type", "raw"));
-                        
-                        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(signedUrl).openConnection();
-                        conn.setInstanceFollowRedirects(true);
-                        conn.setRequestMethod("GET");
-                        
-                        if (conn.getResponseCode() == 200) {
-                            ZipEntry entry = new ZipEntry(filename);
-                            zos.putNextEntry(entry);
-                            conn.getInputStream().transferTo(zos);
-                            zos.closeEntry();
-                            fileAdded = true;
-                        }
-                        conn.disconnect();
-                    } catch (Exception e) {
-                        log.error("Failed to fetch zip entry from Cloudinary", e);
-                    }
-                }
-                
-                if (!fileAdded) {
-                    byte[] contentBytes;
-                    String fileContent = "=== STUDENT NOTES HUB ===\nTitle: " + note.getTitle() + "\nLevel: " + note.getLevelNo() + "\nFile could not be located on server.";
-                    contentBytes = fileContent.getBytes();
-                    ZipEntry entry = new ZipEntry("error_" + filename + ".txt");
-                    zos.putNextEntry(entry);
-                    zos.write(contentBytes);
-                    zos.closeEntry();
-                }
+        try {
+            byte[] zipBytes = noteService.createLevelNotesZip(program, level);
+            if (zipBytes == null) {
+                return ResponseEntity.notFound().build();
             }
-            zos.finish();
 
-            byte[] zipBytes = baos.toByteArray();
             ByteArrayResource resource = new ByteArrayResource(zipBytes);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"level-" + level + "-notes.zip\"")
@@ -395,6 +340,7 @@ public class NotesController {
                     .contentLength(zipBytes.length)
                     .body(resource);
         } catch (IOException e) {
+            log.error("Failed to generate ZIP", e);
             return ResponseEntity.internalServerError().build();
         }
     }
