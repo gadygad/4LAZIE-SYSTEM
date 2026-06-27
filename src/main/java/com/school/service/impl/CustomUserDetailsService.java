@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-@Service
+// @Service (Disabled in favor of CustomAuthenticationProvider)
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        User user = userRepository.findFirstByEmailIgnoreCaseOrNameIgnoreCase(identifier, identifier)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email or name: " + identifier));
 
         String role = user.getRole() != null ? user.getRole().name() : com.school.model.Role.STUDENT.name();
         
