@@ -90,7 +90,7 @@ public class RegistrationController {
         try {
             String clientId = System.getenv("GOOGLE_CLIENT_ID");
             if (clientId == null || clientId.isEmpty()) {
-                clientId = "PLACEHOLDER_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+                throw new Exception("Google Sign-In is not properly configured on the server (Missing GOOGLE_CLIENT_ID). Please contact the administrator.");
             }
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))
