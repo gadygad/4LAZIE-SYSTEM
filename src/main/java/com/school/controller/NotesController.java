@@ -231,7 +231,7 @@ public class NotesController {
         model.addAttribute("totalNotes", noteRepository.count());
         model.addAttribute("totalDownloads", noteRepository.getTotalDownloadCount());
 
-        return "dashboard";
+        return "notes";
     }
 
     @GetMapping("/upload")
