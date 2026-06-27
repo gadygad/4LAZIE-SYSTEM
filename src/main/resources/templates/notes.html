@@ -329,6 +329,30 @@
                     </a>
                 </div>
             </div>
+            
+            <!-- Pagination Controls -->
+            <div th:if="${totalPages > 1}" class="d-flex justify-content-between align-items-center mt-4">
+                <a th:if="${currentPage > 0}" 
+                   th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery}, page=${currentPage - 1})}"
+                   class="btn btn-outline-primary fw-bold px-4 rounded-pill" style="border-width: 2px;">
+                    <i class="bi bi-arrow-left me-2"></i> Previous
+                </a>
+                <span th:if="${currentPage == 0}" class="btn btn-outline-secondary fw-bold px-4 rounded-pill disabled" style="border-width: 2px; opacity: 0.5;">
+                    <i class="bi bi-arrow-left me-2"></i> Previous
+                </span>
+                
+                <span class="text-muted fw-bold" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 5</span>
+                
+                <a th:if="${currentPage < totalPages - 1}" 
+                   th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery}, page=${currentPage + 1})}"
+                   class="btn btn-outline-primary fw-bold px-4 rounded-pill" style="border-width: 2px;">
+                    Next <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+                <span th:if="${currentPage >= totalPages - 1}" class="btn btn-outline-secondary fw-bold px-4 rounded-pill disabled" style="border-width: 2px; opacity: 0.5;">
+                    Next <i class="bi bi-arrow-right ms-2"></i>
+                </span>
+            </div>
+            
         </div>
         </div>
 

@@ -537,6 +537,9 @@
             flex-grow: 1;
             text-transform: uppercase;
             transition: color 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .module-text-item:hover .module-text-title {
@@ -762,8 +765,10 @@
         }
         
         @media (max-width: 991px) {
-            body {
+            body.has-bottom-nav {
                 padding-bottom: 70px !important;
+            }
+            body {
                 height: auto;
                 overflow: auto;
                 display: block;

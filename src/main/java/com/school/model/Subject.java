@@ -3,8 +3,10 @@ package com.school.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 
 @Document(collection = "subjects")
+@CompoundIndex(name = "course_level_semester_idx", def = "{'course': 1, 'levelNo': 1, 'semesterNo': 1}")
 public class Subject {
 
     @Id

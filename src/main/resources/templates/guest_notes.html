@@ -185,6 +185,29 @@
                 <!-- Dynamic Modules Section -->
                 <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
 
+                <!-- Pagination Controls -->
+                <div th:if="${totalPages > 1}" class="d-flex justify-content-between align-items-center mt-4 mb-5">
+                    <a th:if="${currentPage > 0}" 
+                       th:href="@{/guest-notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, page=${currentPage - 1})}"
+                       class="btn fw-bold px-4 rounded-pill" style="border: 2px solid #f59e0b; color: #d97706;">
+                        <i class="bi bi-arrow-left me-2"></i> Previous
+                    </a>
+                    <span th:if="${currentPage == 0}" class="btn fw-bold px-4 rounded-pill disabled" style="border: 2px solid #cbd5e1; color: #94a3b8;">
+                        <i class="bi bi-arrow-left me-2"></i> Previous
+                    </span>
+                    
+                    <span class="text-muted fw-bold" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 5</span>
+                    
+                    <a th:if="${currentPage < totalPages - 1}" 
+                       th:href="@{/guest-notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, page=${currentPage + 1})}"
+                       class="btn fw-bold px-4 rounded-pill" style="border: 2px solid #f59e0b; color: #d97706;">
+                        Next <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    <span th:if="${currentPage >= totalPages - 1}" class="btn fw-bold px-4 rounded-pill disabled" style="border: 2px solid #cbd5e1; color: #94a3b8;">
+                        Next <i class="bi bi-arrow-right ms-2"></i>
+                    </span>
+                </div>
+
             </div> <!-- Close col-md-7 -->
 
             <!-- RIGHT COLUMN: PREMIUM FEATURES & TRENDING NOTES -->
