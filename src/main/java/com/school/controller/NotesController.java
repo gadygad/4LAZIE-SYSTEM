@@ -143,36 +143,44 @@ public class NotesController {
                               @RequestParam(value = "semester", required = false) Integer semester,
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "search", required = false) String search,
+                              @RequestParam(value = "page", defaultValue = "0") int page,
                               HttpSession session, Model model) {
-        List<Note> notes;
+        org.springframework.data.domain.Page<Note> notesPage;
         if (level != null && semester != null) {
             if (category != null && !category.trim().isEmpty()) {
                 if (search != null && !search.trim().isEmpty()) {
-                    notes = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, search.trim());
+                    List<Note> list = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, search.trim());
+                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
                     model.addAttribute("searchQuery", search);
                 } else {
-                    notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(program, level, semester, category);
+                    List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(program, level, semester, category);
+                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
                 }
                 model.addAttribute("selectedCategory", category);
             } else {
                 if (search != null && !search.trim().isEmpty()) {
-                    notes = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
+                    List<Note> list = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
+                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
                     model.addAttribute("searchQuery", search);
                 } else {
-                    notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, PageRequest.of(0, 50)).getContent();
+                    notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
                 }
             }
             model.addAttribute("selectedLevel", level);
             model.addAttribute("selectedSemester", semester);
         } else {
             if (search != null && !search.trim().isEmpty()) {
-                notes = noteRepository.searchNotes(search.trim());
+                List<Note> list = noteRepository.searchNotes(search.trim());
+                notesPage = new org.springframework.data.domain.PageImpl<>(list);
                 model.addAttribute("searchQuery", search);
             } else {
-                notes = noteRepository.findAllByOrderByIdDesc(PageRequest.of(0, 50)).getContent();
+                notesPage = noteRepository.findAllByOrderByIdDesc(org.springframework.data.domain.PageRequest.of(page, 50));
             }
         }
-        model.addAttribute("notes", notes);
+        model.addAttribute("notesPage", notesPage);
+        model.addAttribute("notes", notesPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", notesPage.getTotalPages());
         model.addAttribute("selectedProgram", program);
         model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
         return "notes";
@@ -183,6 +191,7 @@ public class NotesController {
                             @RequestParam(value = "level", required = false) Integer level,
                             @RequestParam(value = "semester", required = false) Integer semester,
                             @RequestParam(value = "search", required = false) String search, 
+                            @RequestParam(value = "page", defaultValue = "0") int page,
                             HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
@@ -190,14 +199,19 @@ public class NotesController {
         if (level == null) level = (loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
         if (semester == null) semester = (loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
 
-        List<Note> notes;
+        org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
-            notes = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
+            List<Note> list = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
+            notesPage = new org.springframework.data.domain.PageImpl<>(list);
             model.addAttribute("searchQuery", search);
         } else {
-            notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, PageRequest.of(0, 50)).getContent();
+            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
         }
 
+        List<Note> notes = notesPage.getContent();
+        model.addAttribute("notesPage", notesPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", notesPage.getTotalPages());
         model.addAttribute("notes", notes);
         
         Map<String, List<Note>> groupedNotes = new LinkedHashMap<>();
@@ -438,12 +452,14 @@ public class NotesController {
     public String guestNotesList(@RequestParam(value = "program", required = false, defaultValue = "DIP_CSE") String program,
                                  @RequestParam(value = "level", required = false, defaultValue = "5") Integer level, 
                                  @RequestParam(value = "semester", required = false, defaultValue = "2") Integer semester,
+                                 @RequestParam(value = "page", defaultValue = "0") int page,
                                  org.springframework.ui.Model model, HttpSession session) {
         if (getLoggedInUser() != null) {
-            return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester;
+            return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester + "&page=" + page;
         }
         
-        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, PageRequest.of(0, 50)).getContent();
+        org.springframework.data.domain.Page<Note> notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
+        List<Note> notes = notesPage.getContent();
         
         Map<String, List<Note>> groupedNotes = new LinkedHashMap<>();
         Map<String, String> moduleCodes = new LinkedHashMap<>();
@@ -455,6 +471,9 @@ public class NotesController {
         model.addAttribute("groupedNotes", groupedNotes);
         model.addAttribute("moduleCodes", moduleCodes);
         model.addAttribute("notes", notes);
+        model.addAttribute("notesPage", notesPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", notesPage.getTotalPages());
         return "guest_notes";
     }
 
