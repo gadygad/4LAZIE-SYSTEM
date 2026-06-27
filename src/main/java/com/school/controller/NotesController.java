@@ -296,33 +296,17 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) return ResponseEntity.notFound().build();
 
-        User loggedInUser = getLoggedInUser();
-
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
 
-        if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            try {
-                // Extract public_id from stored Cloudinary URL and generate fresh signed URL
-                String storedUrl = note.getFileUrl();
-                String publicId = fileStorageService.extractCloudinaryPublicId(storedUrl);
-                String fmt = fileStorageService.getFormat(note.getFilename());
-                String signedUrl = cloudinary.privateDownload(publicId, fmt,
-                        ObjectUtils.asMap("resource_type", "raw"));
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, signedUrl)
-                        .build();
-            } catch (Exception e) {
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                        .header(HttpHeaders.LOCATION, note.getFileUrl())
-                        .build();
-            }
+        if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .build();
         }
 
         String filename = note.getFilename();
         if (filename == null || filename.isEmpty()) filename = "note-" + id + ".txt";
-
-        // Removed local uploads fallback to ensure Cloudinary persistency
 
         String fileContent = "=== STUDENT NOTES HUB ===\n" +
                 "Title: " + note.getTitle() + "\nProgram: " + note.getProgramType() + "\n" +
@@ -390,38 +374,6 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            try {
-                // Extract public_id and generate fresh signed URL using Cloudinary API credentials
-                String storedUrl = note.getFileUrl();
-                String publicId = fileStorageService.extractCloudinaryPublicId(storedUrl);
-                String signedUrl = cloudinary.privateDownload(publicId, null,
-                        ObjectUtils.asMap("resource_type", "raw"));
-
-                // Proxy: fetch file bytes from Cloudinary using signed URL and serve inline
-                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(signedUrl).openConnection();
-                conn.setInstanceFollowRedirects(true);
-                conn.setRequestMethod("GET");
-                conn.setConnectTimeout(15000);
-                conn.setReadTimeout(60000);
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-                int code = conn.getResponseCode();
-                if (code == 200) {
-                    java.io.InputStream in = conn.getInputStream();
-                    String contentType = fileStorageService.getMimeType(note.getFilename());
-                    return ResponseEntity.ok()
-                            .header(HttpHeaders.CONTENT_TYPE, contentType)
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
-                            .body(new InputStreamResource(in));
-                } else {
-                    log.error("PROXY FAILED WITH CODE: {} FOR URL: {}", code, signedUrl);
-                    conn.disconnect();
-                }
-            } catch (Exception e) {
-                log.error("Error streaming note", e);
-            }
-
-            // Fallback: redirect to stored URL directly
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, note.getFileUrl())
                     .build();
