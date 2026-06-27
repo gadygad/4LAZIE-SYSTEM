@@ -159,8 +159,6 @@ public class NotesController {
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "search", required = false) String search,
                               HttpSession session, Model model) {
-        if (getLoggedInUser() == null) return "redirect:/login";
-
         List<Note> notes;
         if (level != null && semester != null) {
             if (category != null && !category.trim().isEmpty()) {

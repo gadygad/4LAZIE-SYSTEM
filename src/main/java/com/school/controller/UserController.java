@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
@@ -49,6 +51,17 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         if (sessionUser == null) {
             return "redirect:/login";
         }
+        
+        if (!sessionUser.getEmail().equalsIgnoreCase(formUser.getEmail())) {
+            Optional<User> existingUser = userRepository.findByEmail(formUser.getEmail());
+            if (existingUser.isPresent()) {
+                model.addAttribute("error", "Email tayari inatumiwa na mtu mwingine.");
+                model.addAttribute("user", sessionUser); // Revert form data
+                model.addAttribute("editMode", true);
+                return "profile";
+            }
+        }
+        
         // Update mutable fields
         sessionUser.setName(formUser.getName());
         sessionUser.setEmail(formUser.getEmail());
@@ -59,6 +72,8 @@ public String updateProfile(@ModelAttribute("user") User formUser,
                 sessionUser.setProfilePicture(fileUrl);
             } catch (IOException e) {
                 model.addAttribute("error", "Failed to upload profile picture: " + e.getMessage());
+                model.addAttribute("user", sessionUser);
+                model.addAttribute("editMode", true);
                 return "profile";
             }
         } else {
@@ -72,8 +87,26 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         userRepository.save(sessionUser);
         // Update session attribute
         session.setAttribute("user", sessionUser);
+        
+        // Update Security Context
+        org.springframework.security.core.Authentication currentAuth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (currentAuth != null) {
+            String role = sessionUser.getRole() != null ? sessionUser.getRole().name() : com.school.model.Role.STUDENT.name();
+            org.springframework.security.core.userdetails.UserDetails newUserDetails = 
+                new org.springframework.security.core.userdetails.User(
+                    sessionUser.getEmail(), 
+                    sessionUser.getPassword(), 
+                    java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                );
+            org.springframework.security.authentication.UsernamePasswordAuthenticationToken newAuth = 
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                    newUserDetails, currentAuth.getCredentials(), newUserDetails.getAuthorities());
+            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(newAuth);
+        }
+        
         model.addAttribute("user", sessionUser);
         model.addAttribute("success", "Profile updated successfully!");
+        model.addAttribute("editMode", false);
         return "profile";
     }
 }
