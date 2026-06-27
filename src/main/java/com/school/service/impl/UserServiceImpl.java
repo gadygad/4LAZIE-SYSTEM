@@ -22,19 +22,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.school.service.FileStorageService fileStorageService;
+
     @Override
     public User registerUser(User user, MultipartFile profilePic) throws Exception {
         // Handle profile picture upload if provided
         if (profilePic != null && !profilePic.isEmpty()) {
-            String filename = System.currentTimeMillis() + "_" + profilePic.getOriginalFilename();
             try {
-                Path uploadDir = Path.of("uploads");
-                if (!Files.exists(uploadDir)) {
-                    Files.createDirectories(uploadDir);
-                }
-                Path filePath = uploadDir.resolve(filename);
-                Files.copy(profilePic.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                user.setProfilePicture(filename);
+                String fileUrl = fileStorageService.uploadFile(profilePic);
+                user.setProfilePicture(fileUrl);
             } catch (IOException e) {
                 throw new Exception("Failed to upload profile picture: " + e.getMessage());
             }
