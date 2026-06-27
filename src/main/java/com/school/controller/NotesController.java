@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import com.school.repository.UserRepository;
 
 import com.school.repository.NoteRepository;
@@ -18,6 +20,9 @@ import com.school.repository.SubjectRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -45,15 +50,44 @@ import java.util.ArrayList;
 import com.school.service.FileStorageService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.school.model.Role;
+
 @Controller
 public class NotesController {
+    private static final Logger log = LoggerFactory.getLogger(NotesController.class);
+
     private User getLoggedInUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            String email = ((UserDetails) principal).getUsername();
-            return userRepository.findByEmail(email).orElse(null);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth instanceof AnonymousAuthenticationToken) {
+            return null;
         }
-        return null;
+        Object principal = auth.getPrincipal();
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        } else {
+            return null;
+        }
+            
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            if (attr != null) {
+                HttpSession session = attr.getRequest().getSession(true);
+                User cachedUser = (User) session.getAttribute("user");
+                if (cachedUser != null && email.equals(cachedUser.getEmail())) {
+                    return cachedUser;
+                }
+                
+                User user = userRepository.findByEmail(email).orElse(null);
+                if (user != null) {
+                    session.setAttribute("user", user);
+                }
+                return user;
+            }
+            return userRepository.findByEmail(email).orElse(null);
     }
 
 
@@ -206,7 +240,7 @@ public class NotesController {
     @GetMapping("/upload")
     public String showUploadPage(HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser == null || !"ADMIN".equals(loggedInUser.getRole())) return "redirect:/dashboard";
+        if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
         model.addAttribute("user", loggedInUser);
         model.addAttribute("courses", courseRepository.findAll());
         return "upload";
@@ -225,7 +259,7 @@ public class NotesController {
                              @RequestParam("file") MultipartFile file,
                              HttpSession session) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser == null || !"ADMIN".equals(loggedInUser.getRole())) return "redirect:/dashboard";
+        if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
 
         if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
 
@@ -274,8 +308,8 @@ public class NotesController {
             try {
                 // Extract public_id from stored Cloudinary URL and generate fresh signed URL
                 String storedUrl = note.getFileUrl();
-                String publicId = extractCloudinaryPublicId(storedUrl);
-                String fmt = getFormat(note.getFilename());
+                String publicId = fileStorageService.extractCloudinaryPublicId(storedUrl);
+                String fmt = fileStorageService.getFormat(note.getFilename());
                 String signedUrl = cloudinary.privateDownload(publicId, fmt,
                         ObjectUtils.asMap("resource_type", "raw"));
                 return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
@@ -317,14 +351,41 @@ public class NotesController {
              ZipOutputStream zos = new ZipOutputStream(baos)) {
 
             for (Note note : notes) {
-                String filename = note.getFilename() != null && !note.getFilename().isEmpty() ? note.getFilename() : "note-" + note.getId() + ".txt";
-                byte[] contentBytes;
-                String fileContent = "=== STUDENT NOTES HUB ===\\nTitle: " + note.getTitle() + "\\nLevel: " + note.getLevelNo() + "\\nDownloaded from 4LAZIE.";
-                contentBytes = fileContent.getBytes();
-                ZipEntry entry = new ZipEntry(filename);
-                zos.putNextEntry(entry);
-                zos.write(contentBytes);
-                zos.closeEntry();
+                String filename = note.getFilename() != null && !note.getFilename().isEmpty() ? note.getFilename() : "note-" + note.getId() + ".pdf";
+                boolean fileAdded = false;
+                
+                if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+                    try {
+                        String publicId = fileStorageService.extractCloudinaryPublicId(note.getFileUrl());
+                        String fmt = fileStorageService.getFormat(filename);
+                        String signedUrl = cloudinary.privateDownload(publicId, fmt, ObjectUtils.asMap("resource_type", "raw"));
+                        
+                        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(signedUrl).openConnection();
+                        conn.setInstanceFollowRedirects(true);
+                        conn.setRequestMethod("GET");
+                        
+                        if (conn.getResponseCode() == 200) {
+                            ZipEntry entry = new ZipEntry(filename);
+                            zos.putNextEntry(entry);
+                            conn.getInputStream().transferTo(zos);
+                            zos.closeEntry();
+                            fileAdded = true;
+                        }
+                        conn.disconnect();
+                    } catch (Exception e) {
+                        log.error("Failed to fetch zip entry from Cloudinary", e);
+                    }
+                }
+                
+                if (!fileAdded) {
+                    byte[] contentBytes;
+                    String fileContent = "=== STUDENT NOTES HUB ===\nTitle: " + note.getTitle() + "\nLevel: " + note.getLevelNo() + "\nFile could not be located on server.";
+                    contentBytes = fileContent.getBytes();
+                    ZipEntry entry = new ZipEntry("error_" + filename + ".txt");
+                    zos.putNextEntry(entry);
+                    zos.write(contentBytes);
+                    zos.closeEntry();
+                }
             }
             zos.finish();
 
@@ -374,9 +435,8 @@ public class NotesController {
             try {
                 // Extract public_id and generate fresh signed URL using Cloudinary API credentials
                 String storedUrl = note.getFileUrl();
-                String publicId = extractCloudinaryPublicId(storedUrl);
-                String fmt = getFormat(note.getFilename());
-                String signedUrl = cloudinary.privateDownload(publicId, fmt,
+                String publicId = fileStorageService.extractCloudinaryPublicId(storedUrl);
+                String signedUrl = cloudinary.privateDownload(publicId, null,
                         ObjectUtils.asMap("resource_type", "raw"));
 
                 // Proxy: fetch file bytes from Cloudinary using signed URL and serve inline
@@ -389,19 +449,18 @@ public class NotesController {
 
                 int code = conn.getResponseCode();
                 if (code == 200) {
-                    byte[] bytes = conn.getInputStream().readAllBytes();
-                    conn.disconnect();
-                    String contentType = getMimeType(note.getFilename());
+                    java.io.InputStream in = conn.getInputStream();
+                    String contentType = fileStorageService.getMimeType(note.getFilename());
                     return ResponseEntity.ok()
                             .header(HttpHeaders.CONTENT_TYPE, contentType)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"")
-                            .body(new org.springframework.core.io.ByteArrayResource(bytes));
+                            .body(new InputStreamResource(in));
                 } else {
-                    System.err.println("PROXY FAILED WITH CODE: " + code + " FOR URL: " + signedUrl);
+                    log.error("PROXY FAILED WITH CODE: {} FOR URL: {}", code, signedUrl);
+                    conn.disconnect();
                 }
-                conn.disconnect();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Error streaming note", e);
             }
 
             // Fallback: redirect to stored URL directly
@@ -464,41 +523,5 @@ public class NotesController {
         return "upgrade";
     }
 
-    // ── Helper: extract Cloudinary public_id from a stored URL ──────────────
-    private String extractCloudinaryPublicId(String fileUrl) {
-        // Remove query string (signed URLs have ?signature=...)
-        String clean = fileUrl.contains("?") ? fileUrl.substring(0, fileUrl.indexOf("?")) : fileUrl;
-        // The public_id is the last path segment after /upload/ or /raw/upload/
-        int idx = clean.lastIndexOf("/");
-        String publicId = idx >= 0 ? clean.substring(idx + 1) : clean;
-        // Strip extension because Cloudinary's signed URL methods append it automatically
-        int extIdx = publicId.lastIndexOf(".");
-        if (extIdx > 0) {
-            publicId = publicId.substring(0, extIdx);
-        }
-        return publicId;
-    }
-
-    // ── Helper: get file format (extension without dot) ─────────────────────
-    private String getFormat(String filename) {
-        if (filename != null && filename.contains(".")) {
-            return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-        }
-        return "pdf";
-    }
-
-    // ── Helper: get MIME type from filename ──────────────────────────────────
-    private String getMimeType(String filename) {
-        if (filename == null) return "application/pdf";
-        String lower = filename.toLowerCase();
-        if (lower.endsWith(".pdf"))  return "application/pdf";
-        if (lower.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-        if (lower.endsWith(".doc"))  return "application/msword";
-        if (lower.endsWith(".pptx")) return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-        if (lower.endsWith(".ppt"))  return "application/vnd.ms-powerpoint";
-        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
-        if (lower.endsWith(".png"))  return "image/png";
-        return "application/octet-stream";
-    }
 }
 

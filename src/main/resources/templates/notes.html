@@ -265,7 +265,15 @@
         </div>
 
         <div id="actualContent" style="display: none;">
-        <div class="mb-5">
+        
+        <!-- Empty State -->
+        <div th:if="${notes == null or #lists.isEmpty(notes)}" class="empty-state-container">
+            <i class="bi bi-folder-x empty-state-icon"></i>
+            <h4 class="empty-state-title">No Resources Found</h4>
+            <p class="empty-state-text">There are no study materials uploaded for this category yet. Please check back later or select a different filter.</p>
+        </div>
+
+        <div class="mb-5" th:if="${notes != null and !#lists.isEmpty(notes)}">
             <div th:each="note : ${notes}" class="premium-note-card">
                 <div class="note-header-mobile">
                     <div class="note-icon-box">

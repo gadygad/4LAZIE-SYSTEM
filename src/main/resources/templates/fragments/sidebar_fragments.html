@@ -42,8 +42,8 @@
                         </button>
                         <div class="sidebar-hover-content" th:if="${course.duration > 0}">
                             <th:block th:each="year : ${#numbers.sequence(1, course.duration)}">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Level 4 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Level 4 - Sem 2</a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.startLevel + year - 1} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Level 4 - Sem 1</a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.startLevel + year - 1} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Level 4 - Sem 2</a>
                             </th:block>
                         </div>
                     </div>
@@ -79,8 +79,8 @@
                         </button>
                         <div class="sidebar-hover-content" th:if="${course.duration > 0}">
                             <th:block th:each="year : ${#numbers.sequence(1, course.duration)}">
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Year 1 - Sem 1</a>
-                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.levelPrefix == 'Year' ? 'Y' + year : (course.startLevel + year - 1)} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Year 1 - Sem 2</a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.startLevel + year - 1} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Year 1 - Sem 1</a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.startLevel + year - 1} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Year 1 - Sem 2</a>
                             </th:block>
                         </div>
                     </div>
@@ -91,16 +91,21 @@
         <script>
             function toggleMobileSidebarItem(btn) {
                 let parent = btn.parentElement;
-                let wasOpen = parent.classList.contains('open-mobile');
+                let wasOpen = parent.classList.contains('open-item');
                 
-                // Close all others
-                document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
-                    item.classList.remove('open-mobile');
-                });
+                // Find the closest sidebar container (so mobile and desktop sidebars don't interfere with each other)
+                let sidebarContainer = btn.closest('.custom-scrollbar');
+                
+                // Close all others within this container
+                if (sidebarContainer) {
+                    sidebarContainer.querySelectorAll('.sidebar-hover-item').forEach(function(item) {
+                        item.classList.remove('open-item');
+                    });
+                }
                 
                 // If the clicked one wasn't open, open it
                 if (!wasOpen) {
-                    parent.classList.add('open-mobile');
+                    parent.classList.add('open-item');
                 }
             }
 
@@ -108,21 +113,21 @@
             document.addEventListener('click', function(event) {
                 let isClickInsideItem = event.target.closest('.sidebar-hover-item');
                 if (!isClickInsideItem) {
-                    document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item').forEach(function(item) {
-                        item.classList.remove('open-mobile');
+                    document.querySelectorAll('.sidebar-hover-item').forEach(function(item) {
+                        item.classList.remove('open-item');
                     });
                 }
             });
 
-            // Reset sidebar selections when it closes
+            // Reset sidebar selections when mobile sidebar closes
             document.addEventListener('DOMContentLoaded', function() {
-                let guestSidebarElement = document.getElementById('guestMobileSidebar');
+                let guestSidebarElement = document.getElementById('mobileSidebar');
                 if (guestSidebarElement) {
                     guestSidebarElement.addEventListener('hidden.bs.offcanvas', function () {
-                        document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-hover-item.open-mobile').forEach(function(item) {
-                            item.classList.remove('open-mobile');
+                        document.querySelectorAll('.sidebar-hover-item.open-item').forEach(function(item) {
+                            item.classList.remove('open-item');
                         });
-                        document.querySelectorAll('#mobileSidebarDynamicContent .sidebar-group.open').forEach(function(group) {
+                        document.querySelectorAll('.sidebar-group.open').forEach(function(group) {
                             group.classList.remove('open');
                         });
                     });

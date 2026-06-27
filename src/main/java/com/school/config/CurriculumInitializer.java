@@ -14,24 +14,55 @@ import java.util.List;
 @Configuration
 public class CurriculumInitializer {
 
-    private void seedCourse(CourseRepository repo, String name, String progType, String shortName, String subtitle, String iconClass, String iconColor, String iconBg, int duration, String levelPrefix, int startLevel) {
-        List<Course> existing = repo.findByProgramType(progType);
-        Course c;
-        if (existing.isEmpty()) {
-            c = new Course(name, progType, shortName, subtitle, iconClass, iconColor, iconBg, duration, levelPrefix, startLevel);
+    private void seedCourse(CourseRepository repo, String name, String type, String shortName, String subtitle, String icon, String color, String bg, int duration, String levelPrefix, int startLevel) {
+        List<Course> existingCourses = repo.findByProgramType(type);
+        if (existingCourses.isEmpty()) {
+            Course course = new Course(name, type, shortName, subtitle, icon, color, bg, duration, levelPrefix, startLevel);
+            repo.save(course);
         } else {
-            c = existing.get(0);
-            c.setName(name);
-            c.setShortName(shortName);
-            c.setSubtitle(subtitle);
-            c.setIconClass(iconClass);
-            c.setIconColor(iconColor);
-            c.setIconBg(iconBg);
-            c.setDuration(duration);
-            c.setLevelPrefix(levelPrefix);
-            c.setStartLevel(startLevel);
+            for (Course course : existingCourses) {
+                boolean updated = false;
+                if (course.getDuration() != duration) {
+                    course.setDuration(duration);
+                    updated = true;
+                }
+                if (!name.equals(course.getName())) {
+                    course.setName(name);
+                    updated = true;
+                }
+                if (!shortName.equals(course.getShortName())) {
+                    course.setShortName(shortName);
+                    updated = true;
+                }
+                if (!subtitle.equals(course.getSubtitle())) {
+                    course.setSubtitle(subtitle);
+                    updated = true;
+                }
+                if (!icon.equals(course.getIconClass())) {
+                    course.setIconClass(icon);
+                    updated = true;
+                }
+                if (!color.equals(course.getIconColor())) {
+                    course.setIconColor(color);
+                    updated = true;
+                }
+                if (!bg.equals(course.getIconBg())) {
+                    course.setIconBg(bg);
+                    updated = true;
+                }
+                if (!levelPrefix.equals(course.getLevelPrefix())) {
+                    course.setLevelPrefix(levelPrefix);
+                    updated = true;
+                }
+                if (course.getStartLevel() != startLevel) {
+                    course.setStartLevel(startLevel);
+                    updated = true;
+                }
+                if (updated) {
+                    repo.save(course);
+                }
+            }
         }
-        repo.save(c);
     }
 
     @Bean
@@ -48,7 +79,7 @@ public class CurriculumInitializer {
             // Seed Degrees
             seedCourse(courseRepository, "DEGREE IN INFORMATION TECHNOLOGY", "DEG_IT", "Degree in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 4, "Year", 1);
             seedCourse(courseRepository, "DEGREE IN COMPUTER SCIENCE", "DEG_CS", "Degree in CS", "Computer Science", "bi-display", "#8b5cf6", "rgba(139, 92, 246, 0.1)", 3, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN COMPUTER SCIENCE ENGINEERING", "DEG_CSE", "Degree in CSE", "Computer Science Eng.", "bi-code-slash", "#10b981", "rgba(52, 211, 153, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, "DEGREE IN COMPUTER SCIENCE ENGINEERING", "DEG_CSE", "Degree in CSE", "Computer Science Eng.", "bi-code-slash", "#10b981", "rgba(52, 211, 153, 0.1)", 3, "Year", 1);
             seedCourse(courseRepository, "DEGREE IN CIVIL ENGINEERING", "DEG_CE", "Degree in CE", "Civil Engineering", "bi-cone-striped", "#f59e0b", "rgba(245, 158, 11, 0.1)", 4, "Year", 1);
             seedCourse(courseRepository, "DEGREE IN MECHANICAL ENGINEERING", "DEG_ME", "Degree in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 4, "Year", 1);
             seedCourse(courseRepository, "DEGREE IN MECHATRONICS ENGINEERING", "DEG_MTE", "Degree in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 4, "Year", 1);
@@ -182,6 +213,73 @@ public class CurriculumInitializer {
                     subject.setSemesterNo(1);
                     subject.setLevelNo(5);
                     subject.setCourse(diplomaCSE);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+            // Seed DEG_CSE Year 4 Sem 2
+            Course degreeCSE = courseRepository.findByProgramType("DEG_CSE").get(0);
+            List<String> degCseYear4Sem2 = Arrays.asList(
+                    "MANAGEMENT INFORMATION SYSTEM",
+                    "DISASTER MANAGEMENT",
+                    "ENTREPRENEURSHIP DEVELOPMENT",
+                    "COURSE FOR DESIGN PROFESSIONAL",
+                    "TECHNICAL SEMINAR",
+                    "PROJECT"
+            );
+            List<Subject> existingDegCseY4S2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(degreeCSE.getId(), 4, 2);
+            for (String name : degCseYear4Sem2) {
+                boolean exists = existingDegCseY4S2.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(2);
+                    subject.setLevelNo(4);
+                    subject.setCourse(degreeCSE);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+            // Seed DIP_CSE Level 6 Sem 2
+            Course diplomaCse6 = courseRepository.findByProgramType("DIP_CSE").get(0);
+            List<String> dipCseLevel6Sem2 = Arrays.asList(
+                    "MOBILE COMPUTING",
+                    "COMPUTER NETWORK SECURITY",
+                    "SOFTWARE DESIGNING AND DEVELOPMENT",
+                    "SUPERVISORY SKILLS",
+                    "EMBEDED SYSTEM"
+            );
+            List<Subject> existingDipCseL6S2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCse6.getId(), 6, 2);
+            for (String name : dipCseLevel6Sem2) {
+                boolean exists = existingDipCseL6S2.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(2);
+                    subject.setLevelNo(6);
+                    subject.setCourse(diplomaCse6);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+            // Seed DEG_CS Year 1 Sem 1
+            Course degreeCS = courseRepository.findByProgramType("DEG_CS").get(0);
+            List<String> degCsYear1Sem1 = Arrays.asList(
+                    "COMPUTATIONAL METHODS",
+                    "BUSSINESS COMMUNICATION",
+                    "PROGRAMMING IN C",
+                    "COMPUTER ARCHITECTURE",
+                    "COMPUTER INSTALLATION AND SERVICING"
+            );
+            List<Subject> existingDegCsY1S1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(degreeCS.getId(), 1, 1);
+            for (String name : degCsYear1Sem1) {
+                boolean exists = existingDegCsY1S1.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(1);
+                    subject.setLevelNo(1);
+                    subject.setCourse(degreeCS);
                     subject.setCode("");
                     subjectRepository.save(subject);
                 }
