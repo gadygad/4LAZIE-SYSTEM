@@ -211,25 +211,54 @@
                             <div class="dropdown me-2">
                                 
                                 <button class="btn dropdown-toggle d-flex align-items-center notes-premium-level-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span th:text="${selectedLevel != null ? 'Level ' + selectedLevel : 'All Levels'}">Level 4</span>
+                                    <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                        <span th:text="${selectedLevel != null ? 'Year ' + selectedLevel : 'All Years'}">Year 1</span>
+                                    </th:block>
+                                    <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                        <span th:text="${selectedLevel != null ? 'Level ' + selectedLevel : 'All Levels'}">Level 4</span>
+                                    </th:block>
                                     <i class="bi bi-chevron-down notes-dropdown-icon"></i>
                                 </button>
                                 <ul class="dropdown-menu notes-premium-level-menu">
-                                    <li>
-                                        <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=4, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                            <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=5, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                            <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=6, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                            <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </li>
+                                    <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                        <li>
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=4, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=5, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=6, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                    </th:block>
+                                    <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                        <li>
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=1, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>YEAR 1</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=2, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>YEAR 2</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=3, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>YEAR 3</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                        <li th:unless="${selectedProgram == 'DEG_CS' or selectedProgram == 'DEG_CSE'}">
+                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=4, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
+                                                <span>YEAR 4</span> <i class="bi bi-check-circle-fill"></i>
+                                            </a>
+                                        </li>
+                                    </th:block>
                                 </ul>
                             </div>
                             <span th:if="${selectedSemester != null}" th:text="' / Sem ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 0.95rem;"> / Sem 1</span>

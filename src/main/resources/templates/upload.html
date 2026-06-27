@@ -148,7 +148,7 @@
                                 <div class="col-12 col-md-4">
                                     <label for="programType" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Course Program</label>
                                     <div class="position-relative">
-                                        <select name="programType" id="programType" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="fetchModules()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                        <select name="programType" id="programType" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="updateLevelDropdown(); fetchModules()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                             <option value="" disabled selected>Select Course</option>
                                             <option th:each="course : ${courses}" th:value="${course.programType}" th:text="${course.name}"></option>
                                         </select>
@@ -287,6 +287,24 @@
             }
         }
         toggleUnit(); // initial call
+
+        function updateLevelDropdown() {
+            var programType = document.getElementById('programType').value;
+            var levelSelect = document.getElementById('levelNo');
+            var levelLabel = document.querySelector('label[for="levelNo"]');
+            
+            if (programType && programType.startsWith('DEG_')) {
+                levelLabel.innerText = "Year";
+                var options = '<option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option>';
+                if (programType !== 'DEG_CS' && programType !== 'DEG_CSE') {
+                    options += '<option value="4">Year 4</option>';
+                }
+                levelSelect.innerHTML = options;
+            } else {
+                levelLabel.innerText = "Level";
+                levelSelect.innerHTML = '<option value="4">Level 4</option><option value="5" selected>Level 5</option><option value="6">Level 6</option>';
+            }
+        }
 
         // AJAX to fetch modules based on Program, Level, and Semester
         function fetchModules() {
