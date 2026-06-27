@@ -81,11 +81,7 @@ public class NoteService {
                 
                 if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
                     try {
-                        String publicId = fileStorageService.extractCloudinaryPublicId(note.getFileUrl());
-                        String fmt = fileStorageService.getFormat(filename);
-                        String signedUrl = cloudinary.privateDownload(publicId, fmt, ObjectUtils.asMap("resource_type", "raw"));
-                        
-                        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(signedUrl).openConnection();
+                        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(note.getFileUrl()).openConnection();
                         conn.setInstanceFollowRedirects(true);
                         conn.setRequestMethod("GET");
                         
