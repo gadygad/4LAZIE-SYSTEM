@@ -374,8 +374,23 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            String fileUrl = note.getFileUrl();
+            String lowerName = note.getFilename() != null ? note.getFilename().toLowerCase() : "";
+            
+            if (lowerName.endsWith(".pdf") || lowerName.endsWith(".doc") || lowerName.endsWith(".docx") || lowerName.endsWith(".ppt") || lowerName.endsWith(".pptx")) {
+                try {
+                    String encodedUrl = java.net.URLEncoder.encode(fileUrl, "UTF-8");
+                    String viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
+                    return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                            .header(HttpHeaders.LOCATION, viewerUrl)
+                            .build();
+                } catch (Exception e) {
+                    // Fallback to direct URL if encoding fails
+                }
+            }
+            
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .header(HttpHeaders.LOCATION, fileUrl)
                     .build();
         }
 
