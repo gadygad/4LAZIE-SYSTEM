@@ -201,25 +201,55 @@
                     <div class="dropdown">
                         
                         <button class="btn dropdown-toggle d-flex align-items-center dash-premium-level-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-mortarboard-fill me-2" style="font-size: 0.9rem;"></i> LEVEL <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
+                            <i class="bi bi-mortarboard-fill me-2" style="font-size: 0.9rem;"></i> 
+                            <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                YEAR <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '1'}">1</span>
+                            </th:block>
+                            <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                LEVEL <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
+                            </th:block>
                             <i class="bi bi-chevron-down dash-dropdown-icon"></i>
                         </button>
                         <ul class="dropdown-menu dash-premium-level-menu">
-                            <li>
-                                <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=4, semester=${selectedSemester}, search=${searchQuery})}">
-                                    <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=5, semester=${selectedSemester}, search=${searchQuery})}">
-                                    <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=6, semester=${selectedSemester}, search=${searchQuery})}">
-                                    <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
-                                </a>
-                            </li>
+                            <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                <li>
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=4, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=5, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=6, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                <li>
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=1, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>YEAR 1</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=2, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>YEAR 2</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=3, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>YEAR 3</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                                <li th:unless="${selectedProgram == 'DEG_CS' or selectedProgram == 'DEG_CSE'}">
+                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=4, semester=${selectedSemester}, search=${searchQuery})}">
+                                        <span>YEAR 4</span> <i class="bi bi-check-circle-fill"></i>
+                                    </a>
+                                </li>
+                            </th:block>
                         </ul>
                     </div>
                     
