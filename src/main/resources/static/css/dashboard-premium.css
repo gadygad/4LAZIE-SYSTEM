@@ -744,6 +744,8 @@
             font-weight: 600;
             font-family: 'Outfit', sans-serif;
             width: 25%;
+            min-height: 48px;
+            min-width: 48px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .nav-item-bottom i {
@@ -944,3 +946,19 @@
                             background: linear-gradient(90deg, #38bdf8, #0ea5e9);
                             box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5);
                         }
+
+/* Mobile Typography & Layout Scaling */
+@media (max-width: 768px) {
+    .nav-header h3 {
+        font-size: 1.05rem !important;
+    }
+    .module-text-title {
+        font-size: 0.95rem !important;
+    }
+    .module-text-number {
+        font-size: 0.85rem !important;
+    }
+    .navigator-card {
+        padding: 16px !important;
+    }
+}
