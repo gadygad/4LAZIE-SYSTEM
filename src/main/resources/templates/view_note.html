@@ -203,104 +203,106 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         const url = /*[[${note.fileUrl}]]*/ '';
+        const filename = /*[[${note.filename != null ? note.filename.toLowerCase() : ''}]]*/ '';
+        
         const loader = document.getElementById('pdf-loader');
         const errorDiv = document.getElementById('pdf-error');
+        const canvasContainer = document.getElementById('canvas-container');
+        const controls = document.querySelector('.pdf-controls');
         
-        let pdfDoc = null,
-            pageNum = 1,
-            pageIsRendering = false,
-            pageNumIsPending = null,
-            scale = 1.0,
-            canvas = document.getElementById('pdf-render'),
-            ctx = canvas.getContext('2d');
+        function hideLoader() {
+            loader.classList.remove('d-flex');
+            loader.style.display = 'none';
+        }
 
         // Check if URL is valid
         if (!url || url.trim() === '') {
-            loader.style.display = 'none';
+            hideLoader();
             errorDiv.style.display = 'block';
-        } else {
-            // Load PDF
+        } else if (filename.endsWith('.pdf')) {
+            // LOAD PDF USING PDF.JS
+            let pdfDoc = null,
+                pageNum = 1,
+                pageIsRendering = false,
+                pageNumIsPending = null,
+                scale = 1.0,
+                canvas = document.getElementById('pdf-render'),
+                ctx = canvas.getContext('2d');
+
             pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
                 pdfDoc = pdfDoc_;
                 document.getElementById('page-count').textContent = pdfDoc.numPages;
                 
-                // Adjust scale based on screen width for mobile optimization
+                // Adjust scale based on screen width
                 if (window.innerWidth < 768) {
-                    scale = 0.6; // Smaller initial scale for mobile
+                    scale = 0.6;
                 } else {
                     scale = 1.2;
                 }
 
                 renderPage(pageNum);
-                loader.style.display = 'none';
+                hideLoader();
             }).catch(err => {
                 console.error("PDF Loading Error:", err);
-                loader.style.display = 'none';
+                hideLoader();
                 errorDiv.style.display = 'block';
             });
-        }
 
-        // Render the page
-        function renderPage(num) {
-            pageIsRendering = true;
-
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderCtx = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-
-                page.render(renderCtx).promise.then(() => {
-                    pageIsRendering = false;
-                    if (pageNumIsPending !== null) {
-                        renderPage(pageNumIsPending);
-                        pageNumIsPending = null;
-                    }
+            function renderPage(num) {
+                pageIsRendering = true;
+                pdfDoc.getPage(num).then(page => {
+                    const viewport = page.getViewport({ scale });
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    const renderCtx = { canvasContext: ctx, viewport: viewport };
+                    page.render(renderCtx).promise.then(() => {
+                        pageIsRendering = false;
+                        if (pageNumIsPending !== null) {
+                            renderPage(pageNumIsPending);
+                            pageNumIsPending = null;
+                        }
+                    });
+                    document.getElementById('page-num').textContent = num;
                 });
-
-                document.getElementById('page-num').textContent = num;
-            });
-        }
-
-        // Check for pending page
-        function queueRenderPage(num) {
-            if (pageIsRendering) {
-                pageNumIsPending = num;
-            } else {
-                renderPage(num);
             }
+
+            function queueRenderPage(num) {
+                if (pageIsRendering) { pageNumIsPending = num; } else { renderPage(num); }
+            }
+
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (pageNum <= 1) return;
+                pageNum--; queueRenderPage(pageNum);
+            });
+
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (pageNum >= pdfDoc.numPages) return;
+                pageNum++; queueRenderPage(pageNum);
+            });
+
+            document.getElementById('zoom-in').addEventListener('click', () => {
+                scale += 0.2; queueRenderPage(pageNum);
+            });
+
+            document.getElementById('zoom-out').addEventListener('click', () => {
+                if (scale <= 0.4) return;
+                scale -= 0.2; queueRenderPage(pageNum);
+            });
+            
+        } else if (filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png')) {
+            // LOAD IMAGE DIRECTLY
+            controls.style.display = 'none';
+            canvasContainer.innerHTML = `<img src="${url}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" alt="Document Image">`;
+            hideLoader();
+        } else {
+            // LOAD WORD/PPT USING GOOGLE DOCS VIEWER IFRAME
+            controls.style.display = 'none';
+            canvasContainer.style.padding = '0';
+            const encodedUrl = encodeURIComponent(url);
+            const viewerUrl = "https://docs.google.com/viewer?url=" + encodedUrl + "&embedded=true";
+            canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+            hideLoader();
         }
-
-        // Previous Page
-        document.getElementById('prev-page').addEventListener('click', () => {
-            if (pageNum <= 1) return;
-            pageNum--;
-            queueRenderPage(pageNum);
-        });
-
-        // Next Page
-        document.getElementById('next-page').addEventListener('click', () => {
-            if (pageNum >= pdfDoc.numPages) return;
-            pageNum++;
-            queueRenderPage(pageNum);
-        });
-
-        // Zoom In
-        document.getElementById('zoom-in').addEventListener('click', () => {
-            scale += 0.2;
-            queueRenderPage(pageNum);
-        });
-
-        // Zoom Out
-        document.getElementById('zoom-out').addEventListener('click', () => {
-            if (scale <= 0.4) return;
-            scale -= 0.2;
-            queueRenderPage(pageNum);
-        });
     </script>
 </body>
 </html>
