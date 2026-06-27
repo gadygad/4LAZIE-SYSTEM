@@ -28,7 +28,7 @@ public class User {
     @Size(min = 6, message = "Password lazima iwe na angalau herufi 6")
     private String password;
 
-    private String role = "STUDENT"; // STUDENT, ADMIN
+    private Role role = Role.STUDENT; // STUDENT, ADMIN
 
     private Boolean isPremium = false;
 
@@ -45,11 +45,11 @@ public class User {
 
     // Constructors
     public User() {
-        this.role = "STUDENT";
+        this.role = Role.STUDENT;
         this.dateJoined = LocalDateTime.now();
     }
 
-    public User(String name, String email, String password, String role) {
+    public User(String name, String email, String password, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -66,8 +66,8 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
     public Boolean getIsPremium() { return isPremium; }
     public void setIsPremium(Boolean isPremium) { this.isPremium = isPremium; }
     public String getProfilePicture() { return profilePicture; }

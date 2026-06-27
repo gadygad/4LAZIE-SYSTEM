@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/login", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/**").permitAll()
                 .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**").permitAll()
                 // Require ADMIN role for admin pages and upload page
-                .requestMatchers("/upload", "/admin/**").hasRole("ADMIN")
+                .requestMatchers("/upload", "/admin/**").hasRole(com.school.model.Role.ADMIN.name())
                 // All other requests require authentication
                 .anyRequest().authenticated()
             )
@@ -49,11 +49,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout=true")
                 .permitAll()
             )
-            // Optional: disable CSRF for H2 console if needed, but keeping it simple for now
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));
-            
-        // Enable frames for H2 console if needed
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }

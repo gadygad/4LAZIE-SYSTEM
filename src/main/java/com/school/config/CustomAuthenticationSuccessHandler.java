@@ -33,7 +33,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             session.setAttribute("user", user);
             
             boolean isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_" + com.school.model.Role.ADMIN.name()));
                     
             if (isAdmin) {
                 response.sendRedirect("/upload");

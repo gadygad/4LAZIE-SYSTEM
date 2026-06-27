@@ -3,6 +3,9 @@ package com.school.controller;
 import com.school.model.User;
 import com.school.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,9 +26,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.school.model.Role;
 
 @Controller
 public class RegistrationController {
+    private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
+
 
     @Autowired
     private UserService userService;
@@ -46,8 +55,10 @@ public class RegistrationController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user,
                                @RequestParam(value = "profilePic", required = false) MultipartFile profilePic,
-                               HttpSession session,
+                               HttpServletRequest request,
+                               HttpServletResponse response,
                                Model model) {
+        HttpSession session = request.getSession(true);
         try {
             // Persist the new user (profile picture handled by service)
             userService.registerUser(user, profilePic);
@@ -56,11 +67,16 @@ public class RegistrationController {
             session.setAttribute("user", user);
             
             // Set Spring Security Context
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (user.getRole() != null ? user.getRole() : "STUDENT")));
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (user.getRole() != null ? user.getRole().name() : Role.STUDENT.name())));
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
             
+            // Save to session explicitly
+            HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+            securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+            
         } catch (Exception e) {
+            log.error("Registration failed", e);
             model.addAttribute("error", "Registration failed: " + e.getMessage());
             return "register";
         }
@@ -69,7 +85,8 @@ public class RegistrationController {
     }
 
     @PostMapping("/register/google")
-    public String registerWithGoogle(@RequestParam("credential") String credential, HttpSession session, Model model) {
+    public String registerWithGoogle(@RequestParam("credential") String credential, HttpServletRequest request, HttpServletResponse response, Model model) {
+        HttpSession session = request.getSession(true);
         try {
             String clientId = System.getenv("GOOGLE_CLIENT_ID");
             if (clientId == null || clientId.isEmpty()) {
@@ -93,8 +110,8 @@ public class RegistrationController {
                     user = new User();
                     user.setEmail(email);
                     user.setName(name);
-                    user.setPassword("GOOGLE_OAUTH_DUMMY");
-                    user.setRole("STUDENT");
+                    user.setPassword(UUID.randomUUID().toString());
+                    user.setRole(Role.STUDENT);
                     user.setLevel(4); // Default
                     user.setSemester(1); // Default
                     user.setYear(1); // Default
@@ -105,15 +122,20 @@ public class RegistrationController {
                 session.setAttribute("user", user);
                 
                 // Set Spring Security Context for Google User
-                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                
+                // Save to session explicitly
+                HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+                securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
                 
                 return "redirect:/dashboard";
             } else {
                 throw new Exception("Invalid Google ID token.");
             }
         } catch (Exception e) {
+            log.error("Google Sign-In failed", e);
             model.addAttribute("error", "Google Sign-In failed: " + e.getMessage());
             return "register";
         }

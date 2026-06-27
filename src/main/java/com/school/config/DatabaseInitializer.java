@@ -11,8 +11,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.school.model.Role;
+
 @Component
 public class DatabaseInitializer implements CommandLineRunner {
+    private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
+
 
     @Autowired
     private UserRepository userRepository;
@@ -43,15 +49,15 @@ public class DatabaseInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // 1. Initialize Users if empty
         if (userRepository.findByEmail(lecturerEmail).isEmpty()) {
-            User lecturer = new User("Dr. Alex Carter", lecturerEmail, passwordEncoder.encode(adminPassword), "ADMIN");
+            User lecturer = new User("Dr. Alex Carter", lecturerEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
             userRepository.save(lecturer);
         }
         if (userRepository.findByEmail(studentEmail).isEmpty()) {
-            User student = new User("John Doe", studentEmail, passwordEncoder.encode(studentPassword), "STUDENT");
+            User student = new User("John Doe", studentEmail, passwordEncoder.encode(studentPassword), Role.STUDENT);
             userRepository.save(student);
         }
         if (userRepository.findByEmail(adminEmail).isEmpty()) {
-            User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), "ADMIN");
+            User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
             userRepository.save(admin);
         }
 
@@ -77,11 +83,13 @@ public class DatabaseInitializer implements CommandLineRunner {
         ));
         
         // Seed some dummy notes if database is empty so marquee works
+        /* 
         if (noteRepository.count() == 0) {
             for (String mod : allowedSubjects) {
                 noteRepository.save(createNote(mod + " Notes", "notes.pdf", "BSc", 4, 1, "Note", mod, mod.substring(0, 3) + "101", 10));
             }
         }
+        */
 
         // 2. Ensure general subjects exist for all Level 4 Sem 1 Diploma courses
         /*
@@ -174,7 +182,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         // DUMMY NOTES REMOVED FOR PRODUCTION
         // We only create users, no fake notes.
-        System.out.println("Database Initialization complete (Users only).");
+        log.info("Database Initialization complete (Users only).");
     }
 
     private Note createNote(String title, String filename, String program, int level, int semester, String type,
