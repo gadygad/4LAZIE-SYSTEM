@@ -121,270 +121,120 @@
     </nav>
 
     <div class="container my-4">
-
-        <!-- Prominent Guest Prompt Banner -->
-        <div class="guest-banner" th:if="${session.user == null}">
-            <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-info-circle-fill fs-3 text-primary"></i>
-                <div>
-                    <h5 class="m-0 fw-bold brand-font text-light">Want to unlock extra features?</h5>
-                    <p class="m-0 text-secondary small">Register and login to upload materials, comment, and save your favorites!</p>
-                </div>
-            </div>
-            <a href="/register" class="btn btn-gradient btn-sm px-4">Register Now</a>
-        </div>
-
-        <!-- Premium Category Filter Tabs -->
-        <div class="mb-4" th:if="${selectedLevel != null and selectedSemester != null}">
-            <div class="d-flex align-items-center pb-2 overflow-auto category-scroll-container" style="scrollbar-width: none; -ms-overflow-style: none;">
-                
-                
-                <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester}}" 
-                   class="premium-filter-btn me-3" 
-                   th:classappend="${selectedCategory == null} ? 'active' : ''">
-                   <i class="bi bi-grid-fill me-2" th:classappend="${selectedCategory == null} ? 'text-white' : 'text-success'"></i> All Resources
-                </a>
-
-                <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Note'}" 
-                   class="premium-filter-btn me-3" 
-                   th:classappend="${selectedCategory == 'Note'} ? 'active' : ''">
-                   <i class="bi bi-journal-text me-2" th:classappend="${selectedCategory == 'Note'} ? 'text-white' : 'text-success'"></i> Notes
-                </a>
-
-                <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Past Paper'}" 
-                   class="premium-filter-btn me-3" 
-                   th:classappend="${selectedCategory == 'Past Paper'} ? 'active' : ''">
-                   <i class="bi bi-file-earmark-pdf-fill me-2" th:classappend="${selectedCategory == 'Past Paper'} ? 'text-white' : 'text-success'"></i> Past Papers
-                </a>
-
-                <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Assignment'}" 
-                   class="premium-filter-btn me-3" 
-                   th:classappend="${selectedCategory == 'Assignment'} ? 'active' : ''">
-                   <i class="bi bi-pencil-square me-2" th:classappend="${selectedCategory == 'Assignment'} ? 'text-white' : 'text-success'"></i> Assignments
-                </a>
-
-                <a th:href="@{'/notes?level=' + ${selectedLevel} + '&semester=' + ${selectedSemester} + '&category=Video Tutorial'}" 
-                   class="premium-filter-btn" 
-                   th:classappend="${selectedCategory == 'Video Tutorial'} ? 'active' : ''">
-                   <i class="bi bi-play-circle-fill me-2" th:classappend="${selectedCategory == 'Video Tutorial'} ? 'text-white' : 'text-success'"></i> Video Tutorials
-                </a>
-            </div>
-        </div>
-        <!-- Trending Notes Carousel -->
-        <div class="trending-carousel-container mb-4" th:if="${popularNotes != null && !#lists.isEmpty(popularNotes)}">
-            <h5 class="fw-bold mb-3 d-flex align-items-center" style="font-family: 'Outfit', sans-serif; color: #1e293b;">
-                <i class="bi bi-graph-up-arrow text-primary me-2"></i> Trending Resources 🔥
-            </h5>
-            <div class="d-flex overflow-auto pb-3 gap-3 trending-scroll px-1" style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
-                
-                <div th:each="note, stat : ${popularNotes}" class="trending-card flex-shrink-0 p-3 rounded-4" style="width: 280px; scroll-snap-align: start; background: linear-gradient(135deg, rgba(255,255,255,1), rgba(248,250,252,1)); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; overflow: hidden; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 25px rgba(37, 99, 235, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.04)';">
-                    <div class="position-absolute" style="top: -10px; right: -10px; width: 60px; height: 60px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), transparent); border-radius: 50%;"></div>
-                    <div class="d-flex justify-content-between align-items-start mb-2 position-relative">
-                        <span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.65rem; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3);">#[[${stat.index + 1}]] Trending</span>
-                        <div class="icon-box d-flex align-items-center justify-content-center rounded-circle" style="width: 28px; height: 28px; background: rgba(37,99,235,0.1); color: #3b82f6;">
-                            <i class="bi bi-file-earmark-text-fill" style="font-size: 0.8rem;"></i>
-                        </div>
-                    </div>
-                    <h6 class="fw-bold mb-1 text-truncate position-relative" style="font-size: 0.9rem; color: #0f172a;" th:text="${note.title}">Note Title</h6>
-                    <p class="text-muted mb-3 position-relative" style="font-size: 0.75rem; font-weight: 500;" th:text="${note.category}">Category</p>
-                    <div class="d-flex justify-content-between align-items-center position-relative pt-2" style="border-top: 1px dashed rgba(0,0,0,0.1);">
-                        <span style="font-size: 0.7rem; color: #64748b; font-weight: 600;"><i class="bi bi-cloud-arrow-down-fill text-success me-1"></i>[[${850 - (stat.index * 120)}]] DLs</span>
-                        <button th:onclick="'openPreviewModal(\'' + ${note.id} + '\', \'' + ${#strings.replace(note.title, '''', '\''')} + '\')'" class="btn btn-sm text-primary p-0 fw-bold d-flex align-items-center" style="font-size: 0.75rem; transition: color 0.2s;" onmouseover="this.style.color='#1d4ed8';" onmouseout="this.style.color='#3b82f6';">
-                            Preview <i class="bi bi-arrow-right-short fs-6"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section Title -->
         <div class="row animate-fade-in" style="animation-delay: 0.1s;">
             <div class="col-lg-7">
-        <div class="row align-items-center mb-4">
-            <div class="col-md-12">
-                <div class="d-flex align-items-center p-2 px-3 rounded-pill position-relative overflow-hidden" style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.8)); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); backdrop-filter: blur(10px); max-width: max-content;">
-                    <div class="premium-icon-box me-3 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; min-width: 36px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 50%; font-size: 1rem;">
-                        <i class="bi bi-journal-richtext"></i>
+
+        <!-- Minimal Text-Only Green Filters -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2" style="border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
+                    <!-- Program Name -->
+                    <div class="d-flex align-items-center gap-2 me-3 mb-2 mb-md-0">
+                        <i class="bi bi-journal-bookmark" style="color: #059669; font-size: 0.8rem;"></i>
+                        <span class="text-uppercase fw-bold" style="color: #059669; font-size: 0.75rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;" th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">DIP CSE</span>
                     </div>
-                    <div class="d-flex align-items-center flex-wrap">
-                        <h3 class="fw-bold m-0 me-3 d-flex align-items-center" style="font-family: 'Outfit', sans-serif; color: #0f172a; letter-spacing: -0.2px; font-size: 1.1rem;">
-                            <div class="dropdown me-2">
-                                
-                                <button class="btn dropdown-toggle d-flex align-items-center notes-premium-level-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                        <span th:text="${selectedLevel != null ? 'Year ' + selectedLevel : 'All Years'}">Year 1</span>
-                                    </th:block>
-                                    <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                        <span th:text="${selectedLevel != null ? 'Level ' + selectedLevel : 'All Levels'}">Level 4</span>
-                                    </th:block>
-                                    <i class="bi bi-chevron-down notes-dropdown-icon"></i>
-                                </button>
-                                <ul class="dropdown-menu notes-premium-level-menu">
-                                    <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                        <li>
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=4, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=5, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=6, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                    </th:block>
-                                    <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                        <li>
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=1, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>YEAR 1</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=2, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>YEAR 2</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=3, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>YEAR 3</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                        <li th:unless="${selectedProgram == 'DEG_CS'}">
-                                            <a class="dropdown-item notes-premium-level-item" th:href="@{/notes(program=${selectedProgram}, level=4, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery})}">
-                                                <span>YEAR 4</span> <i class="bi bi-check-circle-fill"></i>
-                                            </a>
-                                        </li>
-                                    </th:block>
-                                </ul>
-                            </div>
-                            <span th:if="${selectedSemester != null}" th:text="' / Sem ' + ${selectedSemester}" style="color: #64748b; font-weight: 500; font-size: 0.95rem;"> / Sem 1</span>
-                        </h3>
-                        <div class="d-flex align-items-center border-start ps-3" style="border-color: rgba(0,0,0,0.08) !important;">
-                            <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 me-2" style="font-weight: 600; font-size: 0.7rem; letter-spacing: 0.3px;">
-                                <i class="bi bi-tag-fill me-1"></i>
-                                <span th:text="${selectedCategory != null ? selectedCategory + 's' : 'All Materials'}">All Materials</span>
-                            </span>
-                            <span class="text-muted" style="font-size: 0.75rem; font-weight: 500;" th:text="${notes.size() + ' resources'}">0 resources</span>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Level Dropdown (Text only) -->
+                        <div class="dropdown">
+                            <button class="btn p-0 border-0 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='#059669'" onmouseout="this.style.color='#94a3b8'">
+                                <i class="bi bi-mortarboard-fill"></i> 
+                                <span th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">YEAR <span th:text="${selectedLevel != null ? selectedLevel : '1'}">1</span></span>
+                                <span th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">LVL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
+                                <i class="bi bi-chevron-down" style="font-size: 0.6rem;"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow-sm border-0" style="border-radius: 8px; min-width: 100px; padding: 4px; z-index: 1050;">
+                                <!-- Diploma Levels -->
+                                <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 4</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 5</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 6</a></li>
+                                </th:block>
+                                <!-- Degree Levels -->
+                                <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram} + '&level=1&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 1</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram} + '&level=2&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 2</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram} + '&level=3&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 3</a></li>
+                                    <li th:unless="${selectedProgram == 'DEG_CS'}"><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/notes?program=' + ${selectedProgram} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#059669'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 4</a></li>
+                                </th:block>
+                            </ul>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div style="width: 1px; height: 12px; background: rgba(0,0,0,0.1);"></div>
+                        
+                        <!-- Semester Links (Text only) -->
+                        <div class="d-flex align-items-center gap-3">
+                            <a th:href="@{'/notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=1'}" 
+                               class="text-decoration-none"
+                               style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
+                               th:styleappend="${selectedSemester == 1} ? 'color: #059669; border-bottom: 2px solid #10b981; padding-bottom: 2px;' : 'color: #94a3b8;'"
+                               onmouseover="if(!this.style.borderBottom) this.style.color='#059669'" 
+                               onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
+                               SEM 1
+                            </a>
+                            <a th:href="@{'/notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=2'}" 
+                               class="text-decoration-none"
+                               style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
+                               th:styleappend="${selectedSemester == 2} ? 'color: #059669; border-bottom: 2px solid #10b981; padding-bottom: 2px;' : 'color: #94a3b8;'"
+                               onmouseover="if(!this.style.borderBottom) this.style.color='#059669'" 
+                               onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
+                               SEM 2
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        
-
-        <div id="skeletonLoader" class="list-group mb-5" style="border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); background: #ffffff; overflow: hidden;">
-            <div th:each="i : ${#numbers.sequence(1, 3)}" class="list-group-item d-flex justify-content-between align-items-center py-3 px-4" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
-                <div class="d-flex align-items-center pe-3 w-100">
-                    <div class="skeleton skeleton-avatar me-3"></div>
-                    <div class="flex-grow-1">
-                        <div class="skeleton skeleton-text short"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                <!-- Premium Section Header for Modules -->
+                <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
+                    <div class="d-flex align-items-center" style="background: linear-gradient(to right, rgba(16, 185, 129, 0.08), transparent); padding: 6px 16px; border-radius: 50px; border-left: 3px solid #10b981;">
+                        <i class="bi bi-stack me-2" style="color: #059669; font-size: 0.9rem;"></i>
+                        <h4 class="fw-bold mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #064e3b; letter-spacing: 2px; font-size: 0.8rem;">
+                            MODULE NAMES
+                        </h4>
+                    </div>
+                    <div class="flex-grow-1 ms-3" style="height: 1px; background: linear-gradient(to right, rgba(16, 185, 129, 0.2), transparent);"></div>
+                </div>
+ 
+                <!-- Empty State (General) -->
+                <div th:if="${#maps.isEmpty(groupedNotes)}" class="d-flex align-items-center p-3 mb-5" style="background: rgba(16, 185, 129, 0.05); border-radius: 12px; border: 1px dashed rgba(16, 185, 129, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.1);">
+                        <i class="bi bi-folder-x" style="color: #059669; font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;">No Modules Uploaded Yet</h6>
+                        <p class="mb-0" style="color: #475569; font-size: 0.85rem;">Study materials for this level and semester will appear here once uploaded.</p>
                     </div>
                 </div>
-                <div class="d-flex gap-2">
-                    <div class="skeleton skeleton-btn"></div>
-                    <div class="skeleton skeleton-btn"></div>
-                </div>
-            </div>
-        </div>
 
-        <div id="actualContent" style="display: none;">
-        
-        <!-- Empty State -->
-        <div th:if="${notes == null or #lists.isEmpty(notes)}" class="empty-state-container">
-            <i class="bi bi-folder-x empty-state-icon"></i>
-            <h4 class="empty-state-title">No Resources Found</h4>
-            <p class="empty-state-text">There are no study materials uploaded for this category yet. Please check back later or select a different filter.</p>
-        </div>
 
-        <div class="mb-5" th:if="${notes != null and !#lists.isEmpty(notes)}">
-            <div th:each="note : ${notes}" class="premium-note-card">
-                <div class="note-header-mobile">
-                    <div class="note-icon-box">
-                        <i class="bi bi-file-earmark-text-fill"></i>
-                    </div>
-                    <div class="note-details">
-                        <h6 class="note-title text-uppercase" th:text="${note.title}">NOTE TITLE</h6>
-                        <div class="note-meta">
-                            <span class="badge-custom badge-category" th:text="${note.category}">Category</span>
-                            <span class="badge-custom badge-level" th:text="'Level ' + ${note.levelNo}">Level 4</span>
-                            <span class="badge-custom badge-semester" th:text="'Sem ' + ${note.semesterNo}">Sem 1</span>
-                            <span class="text-secondary" style="font-size: 0.7rem; font-weight: 500;">
-                                <i class="bi bi-calendar3 me-1"></i><span th:text="${#temporals.format(note.uploadDate, 'MMM dd, yyyy')}">Jun 12, 2026</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="note-actions">
-                    <button th:onclick="'openPreviewModal(\'' + ${note.id} + '\', \'' + ${#strings.replace(note.title, '''', '\''')} + '\')'" class="btn-action-outline">
-                        <i class="bi bi-eye-fill"></i> <span>Preview</span>
-                    </button>
-                    <a th:href="@{'/download/' + ${note.id}}" class="btn-action-solid">
-                        <i class="bi bi-cloud-download-fill"></i> <span>Download</span>
+
+                <!-- Dynamic Modules Section -->
+                <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
+
+                <!-- Pagination Controls -->
+                <div th:if="${totalPages > 1}" class="d-flex justify-content-between align-items-center mt-4 mb-5">
+                    <a th:if="${currentPage > 0}" 
+                       th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, page=${currentPage - 1})}"
+                       class="btn fw-bold px-4 rounded-pill" style="border: 2px solid #10b981; color: #059669;">
+                        <i class="bi bi-arrow-left me-2"></i> Previous
                     </a>
+                    <span th:if="${currentPage == 0}" class="btn fw-bold px-4 rounded-pill disabled" style="border: 2px solid #cbd5e1; color: #94a3b8;">
+                        <i class="bi bi-arrow-left me-2"></i> Previous
+                    </span>
+                    
+                    <span class="text-muted fw-bold" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 5</span>
+                    
+                    <a th:if="${currentPage < totalPages - 1}" 
+                       th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, page=${currentPage + 1})}"
+                       class="btn fw-bold px-4 rounded-pill" style="border: 2px solid #10b981; color: #059669;">
+                        Next <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    <span th:if="${currentPage >= totalPages - 1}" class="btn fw-bold px-4 rounded-pill disabled" style="border: 2px solid #cbd5e1; color: #94a3b8;">
+                        Next <i class="bi bi-arrow-right ms-2"></i>
+                    </span>
                 </div>
-            </div>
+
             
-            <!-- Pagination Controls -->
-            <div th:if="${totalPages > 1}" class="d-flex justify-content-between align-items-center mt-4">
-                <a th:if="${currentPage > 0}" 
-                   th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery}, page=${currentPage - 1})}"
-                   class="btn btn-outline-primary fw-bold px-4 rounded-pill" style="border-width: 2px;">
-                    <i class="bi bi-arrow-left me-2"></i> Previous
-                </a>
-                <span th:if="${currentPage == 0}" class="btn btn-outline-secondary fw-bold px-4 rounded-pill disabled" style="border-width: 2px; opacity: 0.5;">
-                    <i class="bi bi-arrow-left me-2"></i> Previous
-                </span>
-                
-                <span class="text-muted fw-bold" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 5</span>
-                
-                <a th:if="${currentPage < totalPages - 1}" 
-                   th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, category=${selectedCategory}, search=${searchQuery}, page=${currentPage + 1})}"
-                   class="btn btn-outline-primary fw-bold px-4 rounded-pill" style="border-width: 2px;">
-                    Next <i class="bi bi-arrow-right ms-2"></i>
-                </a>
-                <span th:if="${currentPage >= totalPages - 1}" class="btn btn-outline-secondary fw-bold px-4 rounded-pill disabled" style="border-width: 2px; opacity: 0.5;">
-                    Next <i class="bi bi-arrow-right ms-2"></i>
-                </span>
-            </div>
-            
-        </div>
-        </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        var loader = document.getElementById('skeletonLoader');
-        var content = document.getElementById('actualContent');
-        if(loader && content) {
-            loader.style.display = 'none';
-            content.style.display = 'block';
-        }
-    }, 500);
-});
-</script>
-
-<div th:if="${notes == null || #lists.isEmpty(notes)}" class="text-center p-5 mb-5" style="background: rgba(16, 185, 129, 0.03); border-radius: 20px; border: 1px dashed rgba(16, 185, 129, 0.3);">
-    <div class="d-inline-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1); border-radius: 50%;">
-        <i class="bi bi-folder-x" style="color: #10b981; font-size: 2rem;"></i>
-    </div>
-    <h4 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #0f172a;">No Materials Found</h4>
-    <p class="text-secondary mb-4 mx-auto" style="font-size: 0.95rem; max-width: 400px; line-height: 1.5;">We couldn't find any resources for your current selection. Try changing the category or going back.</p>
-    <a href="/dashboard" 
-       class="btn px-4 py-2 fw-bold" 
-       style="background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); font-size: 0.9rem; letter-spacing: 0.5px; transition: all 0.3s ease;"
-       onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.4)';"
-       onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)';">
-       <i class="bi bi-arrow-left me-2"></i> Go Back to Dashboard
-    </a>
-</div>
-
             </div> <!-- Close col-lg-7 -->
+
 
             <!-- RIGHT COLUMN: UNLOCKED PREMIUM FEATURES & TRENDING NOTES -->
             <div class="col-lg-5 mt-5 mt-lg-0 ps-lg-4">
