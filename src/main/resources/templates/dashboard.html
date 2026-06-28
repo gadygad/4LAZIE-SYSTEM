@@ -250,47 +250,6 @@
             <!-- CENTER COLUMN (DASHBOARD OVERVIEW) -->
             <div class="center-col">
                 
-                <!-- Premium Welcome Banner -->
-                <div class="premium-welcome-banner mb-4 p-4 rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);">
-                    <div class="position-absolute" style="top: -20px; right: -20px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(230,126,34,0.3) 0%, rgba(230,126,34,0) 70%); border-radius: 50%;"></div>
-                    <div class="d-flex justify-content-between align-items-center position-relative z-1">
-                        <div>
-                            <h5 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif;">Welcome back, <span th:text="${user.name}" style="color: #e67e22;">User</span>! 👋</h5>
-                            <p class="mb-0 text-white-50" style="font-size: 0.85rem;" th:text="${user.courseProgram != null ? user.courseProgram : 'Ready to learn today?'}">Ready to learn today?</p>
-                        </div>
-                        <div class="d-none d-sm-block">
-                            <a th:href="@{/notes}" class="btn btn-sm text-white px-3 py-2 rounded-pill fw-medium" style="background: linear-gradient(135deg, #e67e22, #d35400); border: none; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(230,126,34,0.4); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                                <i class="bi bi-journal-text me-1"></i> Browse Materials
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Stats Row -->
-                <div class="row g-3 mb-4">
-                    <div class="col-6">
-                        <div class="stat-card p-3 rounded-4 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-                            <div class="stat-icon-wrapper me-3 d-flex justify-content-center align-items-center rounded-3" style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1);">
-                                <i class="bi bi-file-earmark-text-fill" style="color: #3b82f6; font-size: 1.1rem;"></i>
-                            </div>
-                            <div>
-                                <h4 class="mb-0 fw-bold text-dark" style="font-size: 1.1rem;" th:text="${totalNotes}">0</h4>
-                                <span class="text-muted" style="font-size: 0.75rem; font-weight: 500;">Total Materials</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-card p-3 rounded-4 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-                            <div class="stat-icon-wrapper me-3 d-flex justify-content-center align-items-center rounded-3" style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1);">
-                                <i class="bi bi-cloud-arrow-down-fill" style="color: #10b981; font-size: 1.1rem;"></i>
-                            </div>
-                            <div>
-                                <h4 class="mb-0 fw-bold text-dark" style="font-size: 1.1rem;" th:text="${totalDownloads}">0</h4>
-                                <span class="text-muted" style="font-size: 0.75rem; font-weight: 500;">Downloads</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Recent Notes Section (Horizontal Scroll) -->
                 <div class="mb-4">
