@@ -49,11 +49,13 @@
                 </div>
                 
                 <div class="mb-3">
-                    <input type="text" name="name" th:field="*{name}" class="premium-input shadow-none" placeholder="Username" required autocomplete="off">
+                    <input type="text" name="name" th:field="*{name}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" placeholder="Username" required autocomplete="off">
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
                 
                 <div class="mb-3">
-                    <input type="email" name="email" th:field="*{email}" class="premium-input shadow-none" placeholder="Email Address" required autocomplete="off">
+                    <input type="email" name="email" th:field="*{email}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" placeholder="Email Address" required autocomplete="off">
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
                 
                 <div class="mb-3">
@@ -61,7 +63,8 @@
                 </div>
                 
                 <div class="mb-4">
-                    <input type="password" name="password" th:field="*{password}" class="premium-input shadow-none" placeholder="Password" required>
+                    <input type="password" name="password" th:field="*{password}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" placeholder="Password" required>
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
 
                 <button type="submit" class="premium-btn mb-4">

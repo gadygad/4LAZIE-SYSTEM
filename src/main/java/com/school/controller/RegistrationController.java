@@ -29,12 +29,13 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import com.school.model.Role;
 
 @Controller
 public class RegistrationController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
-
 
     @Autowired
     private UserService userService;
@@ -53,11 +54,16 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") User user,
+    public String registerUser(@Valid @ModelAttribute("user") User user,
+                               BindingResult result,
                                @RequestParam(value = "profilePic", required = false) MultipartFile profilePic,
                                HttpServletRequest request,
                                HttpServletResponse response,
                                Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("institutions", institutionRepository.findAll());
+            return "register";
+        }
         HttpSession session = request.getSession(true);
         try {
             // Persist the new user (profile picture handled by service)

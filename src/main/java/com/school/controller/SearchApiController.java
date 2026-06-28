@@ -21,7 +21,8 @@ public class SearchApiController {
 
     @GetMapping("/api/search")
     public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query) {
-        List<Note> allMatches = noteRepository.searchNotes(query.trim());
+        org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(query.trim(), org.springframework.data.domain.PageRequest.of(0, 50));
+        List<Note> allMatches = matchesPage.getContent();
         List<Note> topResults = allMatches.stream()
                 .filter(Note::getIsPublic)
                 .limit(5)
@@ -39,7 +40,7 @@ public class SearchApiController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("results", results);
-        response.put("totalMatches", allMatches.size());
+        response.put("totalMatches", matchesPage.getTotalElements());
 
         return ResponseEntity.ok(response);
     }

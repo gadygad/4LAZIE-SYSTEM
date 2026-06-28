@@ -113,9 +113,8 @@ public class NotesController {
 
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
-            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim()).stream()
+            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
                     .filter(Note::getIsPublic)
-                    .limit(3)
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
@@ -149,8 +148,7 @@ public class NotesController {
         if (level != null && semester != null) {
             if (category != null && !category.trim().isEmpty()) {
                 if (search != null && !search.trim().isEmpty()) {
-                    List<Note> list = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, search.trim());
-                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
+                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
                     model.addAttribute("searchQuery", search);
                 } else {
                     List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(program, level, semester, category);
@@ -159,8 +157,7 @@ public class NotesController {
                 model.addAttribute("selectedCategory", category);
             } else {
                 if (search != null && !search.trim().isEmpty()) {
-                    List<Note> list = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
-                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
+                    notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
                     model.addAttribute("searchQuery", search);
                 } else {
                     notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
@@ -170,8 +167,7 @@ public class NotesController {
             model.addAttribute("selectedSemester", semester);
         } else {
             if (search != null && !search.trim().isEmpty()) {
-                List<Note> list = noteRepository.searchNotes(search.trim());
-                notesPage = new org.springframework.data.domain.PageImpl<>(list);
+                notesPage = noteRepository.searchNotes(search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
                 model.addAttribute("searchQuery", search);
             } else {
                 notesPage = noteRepository.findAllByOrderByIdDesc(org.springframework.data.domain.PageRequest.of(page, 50));
@@ -201,8 +197,7 @@ public class NotesController {
 
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
-            List<Note> list = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim());
-            notesPage = new org.springframework.data.domain.PageImpl<>(list);
+            notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
             model.addAttribute("searchQuery", search);
         } else {
             notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));

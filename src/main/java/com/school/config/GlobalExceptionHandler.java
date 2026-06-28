@@ -8,7 +8,9 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@ControllerAdvice
+import org.springframework.stereotype.Controller;
+
+@ControllerAdvice(annotations = Controller.class)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
