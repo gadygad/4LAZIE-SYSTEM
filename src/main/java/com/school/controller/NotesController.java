@@ -157,7 +157,7 @@ public class NotesController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", notesPage.getTotalPages());
         model.addAttribute("selectedProgram", program);
-        model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
+        model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
         return "notes";
     }
 
@@ -200,7 +200,7 @@ public class NotesController {
         model.addAttribute("selectedProgram", program);
         model.addAttribute("user", loggedInUser);
 
-        model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
+        model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
         model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());
         model.addAttribute("totalNotes", noteRepository.count());
         model.addAttribute("totalDownloads", noteRepository.getTotalDownloadCount());

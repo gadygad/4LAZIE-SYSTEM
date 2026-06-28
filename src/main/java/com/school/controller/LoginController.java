@@ -1,6 +1,5 @@
 package com.school.controller;
 
-import com.school.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
