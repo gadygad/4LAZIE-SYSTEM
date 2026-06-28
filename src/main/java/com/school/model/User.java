@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
+import java.util.Set;
+import java.util.HashSet;
 @Document(collection = "users")
 public class User {
 
@@ -45,6 +46,9 @@ public class User {
 
     @DBRef
     private Institution institution;
+
+    private Set<String> savedNotes = new HashSet<>();
+    private Set<String> downloadedNotes = new HashSet<>();
 
     // Constructors
     public User() {
@@ -89,4 +93,8 @@ public class User {
     public void setDateJoined(LocalDateTime dateJoined) { this.dateJoined = dateJoined; }
     public Institution getInstitution() { return institution; }
     public void setInstitution(Institution institution) { this.institution = institution; }
+    public Set<String> getSavedNotes() { return savedNotes; }
+    public void setSavedNotes(Set<String> savedNotes) { this.savedNotes = savedNotes; }
+    public Set<String> getDownloadedNotes() { return downloadedNotes; }
+    public void setDownloadedNotes(Set<String> downloadedNotes) { this.downloadedNotes = downloadedNotes; }
 }

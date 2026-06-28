@@ -125,9 +125,9 @@
                 <div class="d-flex align-items-center" style="gap: 1.2rem;">
                     
     
-                    <!-- Notification Button (Triggers Offcanvas) -->
-                    <div>
-                        <a href="#notificationOffcanvas" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" data-bs-toggle="offcanvas" role="button" aria-controls="notificationOffcanvas"
+                    <!-- Notification Button (Triggers Dropdown) -->
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" data-bs-toggle="dropdown" aria-expanded="false" role="button" id="notificationDropdown"
                            style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
                            onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
                            onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#10b981';">
@@ -137,31 +137,27 @@
                             </span>
                         </a>
                         
-                        <!-- Notification Offcanvas (Sliding Drawer from Right) -->
-                        <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationOffcanvas" aria-labelledby="notificationOffcanvasLabel" style="border-radius: 20px 0 0 20px; box-shadow: -10px 0 40px rgba(0,0,0,0.15); width: 340px; max-width: 90vw;">
-                            <div class="offcanvas-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="offcanvas-title fw-bold mb-0" id="notificationOffcanvasLabel" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; color: #1e293b !important;">Notifications</h5>
-                                    <span class="badge rounded-pill ms-3 px-3 py-1" style="background: linear-gradient(135deg, #e67e22, #d35400); color: white !important; font-size: 0.8rem; font-weight: 600; box-shadow: 0 2px 8px rgba(230,126,34,0.3);">3 New</span>
-                                </div>
-                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="font-size: 0.9rem; padding: 0.5rem;"></button>
-                            </div>
-                            <div class="offcanvas-body p-0" style="background-color: #ffffff;">
-                                <div class="list-group list-group-flush">
+                        <!-- Notification Dropdown Menu -->
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg notification-dropdown border-0" aria-labelledby="notificationDropdown" style="border-radius: 16px; min-width: 280px; width: 300px; max-width: 85vw; padding: 0; margin-top: 12px; overflow: hidden; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="background: rgba(248, 250, 252, 0.95);">
+                                <h6 class="mb-0 fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b !important;">Notifications</h6>
+                                <span class="badge rounded-pill px-2 py-1" style="background: linear-gradient(135deg, #10b981, #059669); color: white !important; font-size: 0.75rem; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">3 New</span>
+                            </li>
+                            
+                            <li class="p-0">
+                                <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
                                     <!-- Notification Item -->
-                                    <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" style="transition: all 0.3s ease; background-color: #ffffff; position: relative; overflow: hidden;" onmouseover="this.style.backgroundColor='rgba(230, 126, 34, 0.05)'; this.style.paddingLeft='2rem';" onmouseout="this.style.backgroundColor='#ffffff'; this.style.paddingLeft='1.5rem';">
-                                        <!-- Animated accent bar on hover -->
-                                        <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #e67e22; transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
-                                        
+                                    <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" style="transition: all 0.3s ease; background-color: transparent; position: relative; overflow: hidden;" onmouseover="this.style.backgroundColor='rgba(16, 185, 129, 0.05)'; this.style.paddingLeft='1.8rem';" onmouseout="this.style.backgroundColor='transparent'; this.style.paddingLeft='1.5rem';">
+                                        <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #10b981; transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                                         <div class="d-flex w-100 justify-content-between align-items-start">
                                             <div class="d-flex align-items-start">
-                                                <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, rgba(230,126,34,0.1), rgba(211,84,0,0.15)); box-shadow: 0 4px 15px rgba(230,126,34,0.1); flex-shrink: 0;">
-                                                    <i class="bi bi-file-earmark-text-fill" style="font-size: 1.3rem; color: #e67e22;"></i>
+                                                <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.15)); box-shadow: 0 4px 10px rgba(16,185,129,0.1); flex-shrink: 0;">
+                                                    <i class="bi bi-file-earmark-text-fill" style="font-size: 1.1rem; color: #10b981;"></i>
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-1 fw-bold" style="font-size: 0.95rem; color: #0f172a !important;">New Notes Added</h6>
-                                                    <p class="mb-1" style="font-size: 0.85rem; line-height: 1.5; color: #475569 !important;">New materials have been added to the portal.</p>
-                                                    <small class="fw-bold" style="font-size: 0.75rem; color: #e67e22 !important;">Just now</small>
+                                                    <h6 class="mb-1 fw-bold" style="font-size: 0.9rem; color: #0f172a !important;">New Notes Added</h6>
+                                                    <p class="mb-1" style="font-size: 0.8rem; line-height: 1.4; color: #475569 !important;">New materials have been added to the portal.</p>
+                                                    <small class="fw-bold" style="font-size: 0.7rem; color: #10b981 !important;">Just now</small>
                                                 </div>
                                             </div>
                                         </div>
@@ -169,26 +165,47 @@
                                     <!-- End Notification Item -->
                                     
                                     <!-- Notification Item 2 -->
-                                    <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" style="transition: all 0.3s ease; background-color: #ffffff; position: relative; overflow: hidden;" onmouseover="this.style.backgroundColor='rgba(230, 126, 34, 0.05)'; this.style.paddingLeft='2rem';" onmouseout="this.style.backgroundColor='#ffffff'; this.style.paddingLeft='1.5rem';">
-                                        <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #e67e22; transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
+                                    <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" style="transition: all 0.3s ease; background-color: transparent; position: relative; overflow: hidden;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.05)'; this.style.paddingLeft='1.8rem';" onmouseout="this.style.backgroundColor='transparent'; this.style.paddingLeft='1.5rem';">
+                                        <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #3b82f6; transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                                         <div class="d-flex w-100 justify-content-between align-items-start">
                                             <div class="d-flex align-items-start">
-                                                <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.15)); box-shadow: 0 4px 15px rgba(59,130,246,0.1); flex-shrink: 0;">
-                                                    <i class="bi bi-info-circle-fill" style="font-size: 1.3rem; color: #3b82f6;"></i>
+                                                <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.15)); box-shadow: 0 4px 10px rgba(59,130,246,0.1); flex-shrink: 0;">
+                                                    <i class="bi bi-info-circle-fill" style="font-size: 1.1rem; color: #3b82f6;"></i>
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-1 fw-bold" style="font-size: 0.95rem; color: #0f172a !important;">System Update</h6>
-                                                    <p class="mb-1" style="font-size: 0.85rem; line-height: 1.5; color: #475569 !important;">We have updated our terms and conditions.</p>
-                                                    <small class="fw-bold text-muted" style="font-size: 0.75rem;">2 hours ago</small>
+                                                    <h6 class="mb-1 fw-bold" style="font-size: 0.9rem; color: #0f172a !important;">System Update</h6>
+                                                    <p class="mb-1" style="font-size: 0.8rem; line-height: 1.4; color: #475569 !important;">We have updated our terms and conditions.</p>
+                                                    <small class="fw-bold text-muted" style="font-size: 0.7rem;">2 hours ago</small>
                                                 </div>
                                             </div>
                                         </div>
                                     </a>
                                 </div>
-                            </div>
-                        </div>
+                            </li>
+                            <li class="text-center border-top">
+                                <a href="#" class="dropdown-item py-2 fw-bold" style="font-size: 0.85rem; color: #10b981; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(16, 185, 129, 0.05)'" onmouseout="this.style.backgroundColor='transparent'">
+                                    View All Activity
+                                </a>
+                            </li>
+                        </ul>
                         
                         <style>
+                            /* Smooth Dropdown Animation */
+                            @keyframes customDropdownFadeIn {
+                                from {
+                                    opacity: 0;
+                                    transform: translateY(15px);
+                                }
+                                to {
+                                    opacity: 1;
+                                    transform: translateY(0);
+                                }
+                            }
+                            
+                            .dropdown-menu.notification-dropdown.show {
+                                animation: customDropdownFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                            }
+
                             .notification-item:hover .accent-bar {
                                 transform: scaleY(1) !important;
                             }
@@ -197,7 +214,7 @@
                             @keyframes fallDownFade {
                                 0% {
                                     opacity: 0;
-                                    transform: translateY(-30px);
+                                    transform: translateY(-20px);
                                 }
                                 100% {
                                     opacity: 1;
@@ -205,17 +222,15 @@
                                 }
                             }
                             
-                            /* Apply animation when offcanvas is shown */
-                            .offcanvas.show .notification-item {
-                                animation: fallDownFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                            /* Apply animation when dropdown is shown */
+                            .dropdown-menu.show .notification-item {
+                                animation: fallDownFade 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
                                 opacity: 0; /* start hidden */
                             }
                             
-                            .offcanvas.show .notification-item:nth-child(1) { animation-delay: 0.1s; }
-                            .offcanvas.show .notification-item:nth-child(2) { animation-delay: 0.2s; }
-                            .offcanvas.show .notification-item:nth-child(3) { animation-delay: 0.3s; }
-                            .offcanvas.show .notification-item:nth-child(4) { animation-delay: 0.4s; }
-                            .offcanvas.show .notification-item:nth-child(5) { animation-delay: 0.5s; }
+                            .dropdown-menu.show .notification-item:nth-child(1) { animation-delay: 0.05s; }
+                            .dropdown-menu.show .notification-item:nth-child(2) { animation-delay: 0.1s; }
+                            .dropdown-menu.show .notification-item:nth-child(3) { animation-delay: 0.15s; }
                         </style>
                     </div>
     
@@ -411,7 +426,7 @@
                     <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;" th:text="${user.name}">User</p>
                     <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #10b981 !important;" th:text="${user.role}">ROLE</p>
                 </li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16,185,129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16,185,129,0.1);"><i class="bi bi-house-door-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Home</a></li>
+                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile?edit=true" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16,185,129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16,185,129,0.1);"><i class="bi bi-gear-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Settings</a></li>
                 <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16,185,129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16,185,129,0.1);"><i class="bi bi-person-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>My Profile</a></li>
                 <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
                 <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>

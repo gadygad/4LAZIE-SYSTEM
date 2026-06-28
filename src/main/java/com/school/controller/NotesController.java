@@ -290,6 +290,11 @@ public class NotesController {
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
 
+        if (loggedInUser != null) {
+            loggedInUser.getDownloadedNotes().add(note.getId());
+            userRepository.save(loggedInUser);
+        }
+
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, note.getFileUrl())
@@ -429,6 +434,31 @@ public class NotesController {
             }
         }
         response.setStatus(404);
+    }
+
+    @PostMapping("/save-note/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveNoteToggle(@PathVariable("id") String id, HttpSession session) {
+        User loggedInUser = getLoggedInUser();
+        Map<String, Object> response = new LinkedHashMap<>();
+        if (loggedInUser == null) {
+            response.put("success", false);
+            response.put("message", "Not logged in");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        boolean saved = false;
+        if (loggedInUser.getSavedNotes().contains(id)) {
+            loggedInUser.getSavedNotes().remove(id);
+        } else {
+            loggedInUser.getSavedNotes().add(id);
+            saved = true;
+        }
+        userRepository.save(loggedInUser);
+
+        response.put("success", true);
+        response.put("saved", saved);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/guest-notes")
