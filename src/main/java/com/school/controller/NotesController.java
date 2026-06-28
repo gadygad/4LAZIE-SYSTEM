@@ -292,9 +292,17 @@ public class NotesController {
 
     @GetMapping("/download/{id}")
     @ResponseBody
-    public ResponseEntity<Resource> downloadFile(@PathVariable("id") String id, HttpSession session) {
+    public Object downloadFile(@PathVariable("id") String id, HttpSession session) {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) return ResponseEntity.notFound().build();
+
+        User loggedInUser = getLoggedInUser();
+        if (!note.getIsPublic() && loggedInUser == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+        }
+        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+        }
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
@@ -372,6 +380,14 @@ public class NotesController {
     @GetMapping("/stream/{id}")
     public Object streamNote(@PathVariable("id") String id, HttpSession session) {
         Note note = noteRepository.findById(id).orElse(null);
+
+        User loggedInUser = getLoggedInUser();
+        if (note != null && !note.getIsPublic() && loggedInUser == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+        }
+        if (note != null && note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+        }
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
