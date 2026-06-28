@@ -4,7 +4,7 @@
 
 <!-- Dynamic Sidebar Inner Content -->
 <div th:fragment="sidebar_inner_content">
-    <div class="p-3 custom-scrollbar position-relative" id="mobileSidebarBody">
+    <div class="p-3 pb-5 custom-scrollbar position-relative" id="mobileSidebarBody">
         <!-- College Name Link (St. Joseph College) -->
         <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(255, 255, 255, 0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.08)';">
             <i class="bi bi-building" style="color: #60a5fa; font-size: 1rem; flex-shrink: 0;"></i>
@@ -159,7 +159,7 @@
         </h5>
     </div>
     
-    <div style="height: calc(100vh - 85px); overflow-y: auto;" class="custom-scrollbar">
+    <div class="offcanvas-body custom-scrollbar">
         <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
     </div>
 </aside>
@@ -188,7 +188,7 @@
             <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
         </button>
     </div>
-    <div style="height: calc(100vh - 85px); overflow-y: auto;" class="custom-scrollbar">
+    <div class="offcanvas-body custom-scrollbar">
         <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
     </div>
 </div>
