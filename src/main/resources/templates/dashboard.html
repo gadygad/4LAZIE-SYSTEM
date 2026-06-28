@@ -192,6 +192,30 @@
                             .notification-item:hover .accent-bar {
                                 transform: scaleY(1) !important;
                             }
+                            
+                            /* Staggered falling down animation */
+                            @keyframes fallDownFade {
+                                0% {
+                                    opacity: 0;
+                                    transform: translateY(-30px);
+                                }
+                                100% {
+                                    opacity: 1;
+                                    transform: translateY(0);
+                                }
+                            }
+                            
+                            /* Apply animation when offcanvas is shown */
+                            .offcanvas.show .notification-item {
+                                animation: fallDownFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                                opacity: 0; /* start hidden */
+                            }
+                            
+                            .offcanvas.show .notification-item:nth-child(1) { animation-delay: 0.1s; }
+                            .offcanvas.show .notification-item:nth-child(2) { animation-delay: 0.2s; }
+                            .offcanvas.show .notification-item:nth-child(3) { animation-delay: 0.3s; }
+                            .offcanvas.show .notification-item:nth-child(4) { animation-delay: 0.4s; }
+                            .offcanvas.show .notification-item:nth-child(5) { animation-delay: 0.5s; }
                         </style>
                     </div>
     
@@ -223,97 +247,125 @@
         <!-- DASHBOARD CONTENT AREA -->
         <div class="content-area">
             
-            <!-- CENTER COLUMN (MODULES) -->
+            <!-- CENTER COLUMN (DASHBOARD OVERVIEW) -->
             <div class="center-col">
                 
-                <div class="module-header-container">
-                    <div class="module-title-badge">
-                        <i class="bi bi-journal-text"></i> MODULES <i class="bi bi-caret-down-fill ms-2" style="font-size: 0.7rem; color: #0284C7;"></i>
+                <!-- Premium Welcome Banner -->
+                <div class="premium-welcome-banner mb-4 p-4 rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);">
+                    <div class="position-absolute" style="top: -20px; right: -20px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(230,126,34,0.3) 0%, rgba(230,126,34,0) 70%); border-radius: 50%;"></div>
+                    <div class="d-flex justify-content-between align-items-center position-relative z-1">
+                        <div>
+                            <h5 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif;">Welcome back, <span th:text="${user.name}" style="color: #e67e22;">User</span>! 👋</h5>
+                            <p class="mb-0 text-white-50" style="font-size: 0.85rem;" th:text="${user.courseProgram != null ? user.courseProgram : 'Ready to learn today?'}">Ready to learn today?</p>
+                        </div>
+                        <div class="d-none d-sm-block">
+                            <a th:href="@{/notes}" class="btn btn-sm text-white px-3 py-2 rounded-pill fw-medium" style="background: linear-gradient(135deg, #e67e22, #d35400); border: none; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(230,126,34,0.4); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                                <i class="bi bi-journal-text me-1"></i> Browse Materials
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="stat-card p-3 rounded-4 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+                            <div class="stat-icon-wrapper me-3 d-flex justify-content-center align-items-center rounded-3" style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1);">
+                                <i class="bi bi-file-earmark-text-fill" style="color: #3b82f6; font-size: 1.1rem;"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-bold text-dark" style="font-size: 1.1rem;" th:text="${totalNotes}">0</h4>
+                                <span class="text-muted" style="font-size: 0.75rem; font-weight: 500;">Total Materials</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card p-3 rounded-4 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+                            <div class="stat-icon-wrapper me-3 d-flex justify-content-center align-items-center rounded-3" style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1);">
+                                <i class="bi bi-cloud-arrow-down-fill" style="color: #10b981; font-size: 1.1rem;"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-bold text-dark" style="font-size: 1.1rem;" th:text="${totalDownloads}">0</h4>
+                                <span class="text-muted" style="font-size: 0.75rem; font-weight: 500;">Downloads</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Notes Section (Horizontal Scroll) -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-end mb-3 px-1">
+                        <h6 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">Recently Added</h6>
+                        <a th:href="@{/notes}" class="text-decoration-none" style="font-size: 0.8rem; color: #e67e22; font-weight: 600;">View All <i class="bi bi-arrow-right ms-1"></i></a>
                     </div>
                     
-                    <div class="dropdown">
+                    <div class="horizontal-scroll-container pb-2" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none;">
+                        <a th:each="note : ${recentNotes}" th:href="@{/view/{id}(id=${note.id})}" class="note-card-h text-decoration-none rounded-4 p-3" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); min-width: 240px; max-width: 260px; scroll-snap-align: start; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; display: flex; flex-direction: column;">
+                            <div class="d-flex align-items-start justify-content-between mb-2">
+                                <div class="icon-box rounded-3 d-flex justify-content-center align-items-center" style="width: 35px; height: 35px; background: linear-gradient(135deg, rgba(230,126,34,0.1), rgba(211,84,0,0.15));">
+                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #e67e22; font-size: 1rem;"></i>
+                                </div>
+                                <span class="badge rounded-pill" style="background: rgba(15, 23, 42, 0.05); color: #475569; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.9rem;" th:text="${note.title}">Note Title</h6>
+                            <p class="text-muted mb-3 text-truncate" style="font-size: 0.75rem;" th:text="${note.moduleName}">Module Name</p>
+                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(0,0,0,0.05) !important;">
+                                <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd, yyyy')}">Date</span></span>
+                                <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-download me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></span>
+                            </div>
+                        </a>
                         
-                        <button class="btn dropdown-toggle d-flex align-items-center dash-premium-level-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-mortarboard-fill me-2" style="font-size: 0.9rem;"></i> 
-                            <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                YEAR <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '1'}">1</span>
-                            </th:block>
-                            <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                LEVEL <span class="ms-1 me-1" th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span>
-                            </th:block>
-                            <i class="bi bi-chevron-down dash-dropdown-icon"></i>
-                        </button>
-                        <ul class="dropdown-menu dash-premium-level-menu">
-                            <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                <li>
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=4, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>LEVEL 4</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=5, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>LEVEL 5</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=6, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>LEVEL 6</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                            </th:block>
-                            <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                <li>
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=1, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>YEAR 1</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=2, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>YEAR 2</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=3, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>YEAR 3</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                                <li th:unless="${selectedProgram == 'DEG_CS'}">
-                                    <a class="dropdown-item dash-premium-level-item" th:href="@{/dashboard(program=${selectedProgram}, level=4, semester=${selectedSemester}, search=${searchQuery})}">
-                                        <span>YEAR 4</span> <i class="bi bi-check-circle-fill"></i>
-                                    </a>
-                                </li>
-                            </th:block>
-                        </ul>
-                    </div>
-                    
-                    <div class="semester-text">SEM<span th:text="${selectedSemester}">1</span></div>
-                    
-                    
-                    <div class="semester-toggles d-flex gap-2 align-items-center" style="background: transparent; border: none; padding: 0;">
-                        <a th:href="@{/dashboard(program=${selectedProgram}, level=${selectedLevel}, semester=1, search=${searchQuery})}" 
-                           class="dash-sem-link" th:classappend="${selectedSemester == 1} ? 'active'">Semester 1</a>
-                        <span style="color: rgba(0,0,0,0.1); font-size: 1.2rem; font-weight: 300;">|</span>
-                        <a th:href="@{/dashboard(program=${selectedProgram}, level=${selectedLevel}, semester=2, search=${searchQuery})}" 
-                           class="dash-sem-link" th:classappend="${selectedSemester == 2} ? 'active'">Semester 2</a>
+                        <div th:if="${recentNotes == null || recentNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(0,0,0,0.1);">
+                            <p class="text-muted mb-0" style="font-size: 0.85rem;">No recent materials found.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Empty State -->
-                <div th:if="${groupedNotes == null || groupedNotes.isEmpty()}" class="text-center py-5">
-                    <i class="bi bi-folder-x" style="font-size: 4rem; color: var(--border-color);"></i>
-                    <h4 class="mt-3 text-muted">No modules found</h4>
-                    <p style="color: var(--text-muted);">Try selecting a different course or level from the navigator.</p>
+                <!-- Popular Notes Section (Horizontal Scroll) -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-end mb-3 px-1">
+                        <h6 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">Most Popular <i class="bi bi-fire ms-1 text-danger"></i></h6>
+                    </div>
+                    
+                    <div class="horizontal-scroll-container pb-2" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none;">
+                        <a th:each="note : ${popularNotes}" th:href="@{/view/{id}(id=${note.id})}" class="note-card-h text-decoration-none rounded-4 p-3" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); min-width: 240px; max-width: 260px; scroll-snap-align: start; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; display: flex; flex-direction: column;">
+                            <div class="d-flex align-items-start justify-content-between mb-2">
+                                <div class="icon-box rounded-3 d-flex justify-content-center align-items-center" style="width: 35px; height: 35px; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(185, 28, 28, 0.15));">
+                                    <i class="bi bi-star-fill" style="color: #ef4444; font-size: 1rem;"></i>
+                                </div>
+                                <span class="badge rounded-pill" style="background: rgba(15, 23, 42, 0.05); color: #475569; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.9rem;" th:text="${note.title}">Note Title</h6>
+                            <p class="text-muted mb-3 text-truncate" style="font-size: 0.75rem;" th:text="${note.moduleName}">Module Name</p>
+                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(0,0,0,0.05) !important;">
+                                <span class="text-muted text-truncate w-50" style="font-size: 0.7rem;"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
+                                <span class="text-muted fw-bold" style="font-size: 0.7rem; color: #ef4444 !important;"><i class="bi bi-cloud-arrow-down-fill me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></span>
+                            </div>
+                        </a>
+                        
+                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(0,0,0,0.1);">
+                            <p class="text-muted mb-0" style="font-size: 0.85rem;">No popular materials found.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Module Text List -->
-                <div class="module-list-container" th:if="${groupedNotes != null && !groupedNotes.isEmpty()}">
-                    <a th:href="@{/notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, search=${entry.key})}" 
-                       class="module-text-item" th:each="entry, iterStat : ${groupedNotes}">
-                        <div class="module-text-number" th:text="${#numbers.formatInteger(iterStat.count, 2)}">01</div>
-                        <div class="module-text-title" th:text="${entry.key}">GENERAL MODULE</div>
-                        <i class="bi bi-arrow-right-circle-fill module-text-icon"></i>
-                    </a>
-                </div>
+                <style>
+                    /* Custom Scrollbar hide for webkit */
+                    .horizontal-scroll-container::-webkit-scrollbar {
+                        display: none;
+                    }
+                    
+                    /* Hover Effects */
+                    .stat-card:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 8px 25px rgba(0,0,0,0.06) !important;
+                    }
+                    .note-card-h:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 10px 30px rgba(230,126,34,0.12) !important;
+                        border-color: rgba(230,126,34,0.3) !important;
+                    }
+                </style>
 
             </div>
 
