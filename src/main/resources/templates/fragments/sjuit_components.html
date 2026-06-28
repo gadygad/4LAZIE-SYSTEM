@@ -766,7 +766,15 @@
 
     <!-- Features List -->
     <div class="d-flex flex-column gap-3 mb-4">
-        
+        <!-- NOTES -->
+        <a href="#" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
+           style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">NOTES</span>
+            <i th:class="${session.user != null} ? 'bi bi-unlock-fill' : 'bi bi-lock-fill'" th:style="${session.user != null} ? 'color: #10b981; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.2));' : 'color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));'"></i>
+        </a>
+
         <!-- CAT 1 PAST PAPERS -->
         <a href="#" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
            style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
@@ -800,6 +808,15 @@
            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
            onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
             <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">UNIVERSITY EXAMS (UE)</span>
+            <i th:class="${session.user != null} ? 'bi bi-unlock-fill' : 'bi bi-lock-fill'" th:style="${session.user != null} ? 'color: #10b981; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.2));' : 'color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));'"></i>
+        </a>
+
+        <!-- PROJECTS -->
+        <a href="#" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" class="d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" 
+           style="background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.3s ease;" 
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.06)';" 
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+            <span class="fw-bold" style="color: #1e293b; font-family: 'Outfit', sans-serif; font-size: 0.9rem;">PROJECTS</span>
             <i th:class="${session.user != null} ? 'bi bi-unlock-fill' : 'bi bi-lock-fill'" th:style="${session.user != null} ? 'color: #10b981; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.2));' : 'color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));'"></i>
         </a>
     </div>
