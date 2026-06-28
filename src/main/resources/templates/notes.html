@@ -91,7 +91,9 @@
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle p-1" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
                        style="background: #ffffff; border: 1px solid rgba(226,232,240,0.8); border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s ease;">
                         <img th:if="${session.user.profilePicture}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
-                        <img th:unless="${session.user.profilePicture}" src="https://ui-avatars.com/api/?name=Student&background=f59e0b&color=fff" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        <div th:unless="${session.user.profilePicture}" class="d-flex align-items-center justify-content-center rounded-circle" style="width: 30px; height: 30px; background: #e2e8f0; border: 1px solid #cbd5e1; overflow: hidden;">
+                            <i class="bi bi-person-fill" style="font-size: 1.5rem; color: #64748b; margin-top: 4px;"></i>
+                        </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2" aria-labelledby="profileDropdown" style="border-radius: 12px; min-width: 200px; animation: fadeIn 0.2s ease-out;">
                         <li class="px-3 py-2 border-bottom bg-light">
