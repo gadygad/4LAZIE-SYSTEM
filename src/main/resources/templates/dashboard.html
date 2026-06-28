@@ -251,78 +251,87 @@
             <div class="center-col">
                 
 
-                <!-- Recent Notes Section (Horizontal Scroll) -->
+                <!-- Recent Notes Section (Premium Vertical List) -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-end mb-3 px-1">
                         <h6 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">Recently Added</h6>
-                        <a th:href="@{/notes}" class="text-decoration-none" style="font-size: 0.8rem; color: #e67e22; font-weight: 600;">View All <i class="bi bi-arrow-right ms-1"></i></a>
+                        <a th:href="@{/notes}" class="text-decoration-none" style="font-size: 0.8rem; color: #D4AF37; font-weight: 600;">View All <i class="bi bi-arrow-right ms-1"></i></a>
                     </div>
                     
-                    <div class="horizontal-scroll-container pb-2" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none;">
-                        <a th:each="note : ${recentNotes}" th:href="@{/view/{id}(id=${note.id})}" class="note-card-h text-decoration-none rounded-4 p-3" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); min-width: 240px; max-width: 260px; scroll-snap-align: start; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; display: flex; flex-direction: column;">
-                            <div class="d-flex align-items-start justify-content-between mb-2">
-                                <div class="icon-box rounded-3 d-flex justify-content-center align-items-center" style="width: 35px; height: 35px; background: linear-gradient(135deg, rgba(230,126,34,0.1), rgba(211,84,0,0.15));">
-                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #e67e22; font-size: 1rem;"></i>
-                                </div>
-                                <span class="badge rounded-pill" style="background: rgba(15, 23, 42, 0.05); color: #475569; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                    <div class="d-flex flex-column gap-3">
+                        <a th:each="note : ${recentNotes}" th:href="@{/view/{id}(id=${note.id})}" class="premium-list-item text-decoration-none rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
+                            <div class="gold-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #FFDF00 0%, #D4AF37 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
+                            
+                            <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 223, 0, 0.15)); flex-shrink: 0;">
+                                <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #D4AF37; font-size: 1.2rem;"></i>
                             </div>
-                            <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.9rem;" th:text="${note.title}">Note Title</h6>
-                            <p class="text-muted mb-3 text-truncate" style="font-size: 0.75rem;" th:text="${note.moduleName}">Module Name</p>
-                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(0,0,0,0.05) !important;">
-                                <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd, yyyy')}">Date</span></span>
-                                <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-download me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></span>
+                            
+                            <div class="flex-grow-1 min-w-0">
+                                <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.95rem;" th:text="${note.title}">Note Title</h6>
+                                <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
+                                    <span class="text-truncate me-2" style="max-width: 120px;" th:text="${note.moduleName}">Module Name</span>
+                                    <span style="color: #D4AF37;">•</span>
+                                    <span class="ms-2"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd')}">Date</span></span>
+                                </div>
+                            </div>
+                            
+                            <div class="ms-2 text-end flex-shrink-0 d-flex flex-column align-items-end">
+                                <span class="badge rounded-pill" style="background: rgba(212, 175, 55, 0.1); color: #B8860B; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                                <div class="mt-2 fw-bold" style="font-size: 0.7rem; color: #D4AF37;"><i class="bi bi-download me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></div>
                             </div>
                         </a>
                         
-                        <div th:if="${recentNotes == null || recentNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(0,0,0,0.1);">
+                        <div th:if="${recentNotes == null || recentNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(212, 175, 55, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No recent materials found.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Popular Notes Section (Horizontal Scroll) -->
+                <!-- Popular Notes Section (Premium Vertical List) -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-end mb-3 px-1">
                         <h6 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">Most Popular <i class="bi bi-fire ms-1 text-danger"></i></h6>
                     </div>
                     
-                    <div class="horizontal-scroll-container pb-2" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none;">
-                        <a th:each="note : ${popularNotes}" th:href="@{/view/{id}(id=${note.id})}" class="note-card-h text-decoration-none rounded-4 p-3" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.05); min-width: 240px; max-width: 260px; scroll-snap-align: start; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; display: flex; flex-direction: column;">
-                            <div class="d-flex align-items-start justify-content-between mb-2">
-                                <div class="icon-box rounded-3 d-flex justify-content-center align-items-center" style="width: 35px; height: 35px; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(185, 28, 28, 0.15));">
-                                    <i class="bi bi-star-fill" style="color: #ef4444; font-size: 1rem;"></i>
-                                </div>
-                                <span class="badge rounded-pill" style="background: rgba(15, 23, 42, 0.05); color: #475569; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                    <div class="d-flex flex-column gap-3">
+                        <a th:each="note : ${popularNotes}" th:href="@{/view/{id}(id=${note.id})}" class="premium-list-item text-decoration-none rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
+                            <div class="gold-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #FFDF00 0%, #D4AF37 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
+                            
+                            <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(255, 223, 0, 0.2)); flex-shrink: 0;">
+                                <i class="bi bi-star-fill" style="color: #D4AF37; font-size: 1.2rem;"></i>
                             </div>
-                            <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.9rem;" th:text="${note.title}">Note Title</h6>
-                            <p class="text-muted mb-3 text-truncate" style="font-size: 0.75rem;" th:text="${note.moduleName}">Module Name</p>
-                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(0,0,0,0.05) !important;">
-                                <span class="text-muted text-truncate w-50" style="font-size: 0.7rem;"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
-                                <span class="text-muted fw-bold" style="font-size: 0.7rem; color: #ef4444 !important;"><i class="bi bi-cloud-arrow-down-fill me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></span>
+                            
+                            <div class="flex-grow-1 min-w-0">
+                                <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.95rem;" th:text="${note.title}">Note Title</h6>
+                                <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
+                                    <span class="text-truncate me-2" style="max-width: 120px;" th:text="${note.moduleName}">Module Name</span>
+                                    <span style="color: #D4AF37;">•</span>
+                                    <span class="ms-2"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
+                                </div>
+                            </div>
+                            
+                            <div class="ms-2 text-end flex-shrink-0 d-flex flex-column align-items-end">
+                                <span class="badge rounded-pill" style="background: rgba(212, 175, 55, 0.1); color: #B8860B; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                                <div class="mt-2 fw-bold" style="font-size: 0.75rem; color: #ef4444;"><i class="bi bi-cloud-arrow-down-fill me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></div>
                             </div>
                         </a>
                         
-                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(0,0,0,0.1);">
+                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(212, 175, 55, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No popular materials found.</p>
                         </div>
                     </div>
                 </div>
 
                 <style>
-                    /* Custom Scrollbar hide for webkit */
-                    .horizontal-scroll-container::-webkit-scrollbar {
-                        display: none;
-                    }
-                    
                     /* Hover Effects */
-                    .stat-card:hover {
+                    .premium-list-item:hover {
                         transform: translateY(-3px);
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.06) !important;
+                        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15) !important;
+                        border-color: rgba(212, 175, 55, 0.5) !important;
+                        background: linear-gradient(90deg, #ffffff 0%, rgba(255, 250, 240, 0.4) 100%) !important;
                     }
-                    .note-card-h:hover {
-                        transform: translateY(-4px);
-                        box-shadow: 0 10px 30px rgba(230,126,34,0.12) !important;
-                        border-color: rgba(230,126,34,0.3) !important;
+                    .premium-list-item:hover .gold-accent {
+                        transform: scaleY(1) !important;
                     }
                 </style>
 
