@@ -5,8 +5,6 @@ import com.school.repository.NoteRepository;
 import com.school.model.Institution;
 import com.school.repository.InstitutionRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

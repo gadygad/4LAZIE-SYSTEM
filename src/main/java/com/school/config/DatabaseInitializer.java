@@ -23,8 +23,6 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private NoteRepository noteRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -61,26 +59,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // Allowed subjects list for cleanup
-        java.util.Set<String> allowedSubjects = new java.util.HashSet<>(java.util.Arrays.asList(
-            "BASIC ENGINEERING MATHEMATICS",
-            "ENGINEERING DRAWING",
-            "COMMUNICATION SKILLS",
-            "BASIC ENGINEERING PHYSICS",
-            "SERVER ADMINISTRATION",
-            "COMPUTER ARCHITECTURE AND ASSEMBLY PROGRAMMING LANGUAGE",
-            "COMPUTER NETWORK",
-            "MICROPROCESSOR AND MICROCONTROLLER",
-            "BASIC DATA COMMUNICATION",
-            "WEB DESIGNING",
-            "ENGINEERING ENTREPRENEURSHIP",
-            "ENGINEERING MATHEMATICS",
-            "APPLIED CHEMISTRY",
-            "OBJECT ORIENTED PROGRAMMING WITH JAVA",
-            "BASIC VISUAL PROGRAMMING",
-            "OPERATING SYSTEM",
-            "COMPUTER PROGRAMMING"
-        ));
+
         
         // Seed some dummy notes if database is empty so marquee works
         /* 

@@ -18,7 +18,7 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
     private Cloudinary cloudinary;
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     public String uploadFile(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String extension = "";
@@ -30,7 +30,7 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
         String publicId = UUID.randomUUID().toString() + extension;
 
         // Upload as auto type so PDFs are served inline instead of attachments
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
                 "resource_type", "auto",
                 "type", "upload"

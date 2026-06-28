@@ -18,7 +18,7 @@ public class TestCloudinary {
             "api_secret", props.getProperty("cloudinary.api_secret", "")
         ));
         
-        Map uploadResult = cloudinary.uploader().upload("Hello Cloudinary".getBytes(), ObjectUtils.asMap(
+        Map<?, ?> uploadResult = cloudinary.uploader().upload("Hello Cloudinary".getBytes(), ObjectUtils.asMap(
                 "public_id", "test-auth-file.txt",
                 "resource_type", "raw",
                 "type", "authenticated"

@@ -2,7 +2,6 @@ package com.school.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 @Document(collection = "institutions")
 public class Institution {

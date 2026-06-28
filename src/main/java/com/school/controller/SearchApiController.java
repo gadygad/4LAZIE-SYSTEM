@@ -24,7 +24,7 @@ public class SearchApiController {
         org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(query.trim(), org.springframework.data.domain.PageRequest.of(0, 50));
         List<Note> allMatches = matchesPage.getContent();
         List<Note> topResults = allMatches.stream()
-                .filter(Note::getIsPublic)
+                .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                 .limit(5)
                 .collect(Collectors.toList());
 

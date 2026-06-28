@@ -8,17 +8,13 @@ import com.school.repository.CourseRepository;
 import com.school.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -37,11 +33,7 @@ public class NoteService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    @Autowired
-    private FileStorageService fileStorageService;
 
-    @Autowired
-    private Cloudinary cloudinary;
 
     public void groupNotesByModule(List<Note> notes, String program, Integer level, Integer semester, 
                                    Map<String, List<Note>> groupedNotes, Map<String, String> moduleCodes) {
