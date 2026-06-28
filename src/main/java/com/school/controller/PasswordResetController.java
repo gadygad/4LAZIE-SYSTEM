@@ -43,21 +43,14 @@ public class PasswordResetController {
     }
 
     @PostMapping("/forgot-password")
-    public String processForgotPassword(@RequestParam("contactMethod") String contactMethod,
-                                        @RequestParam("contactValue") String contactValue,
+    public String processForgotPassword(@RequestParam("email") String email,
                                         HttpServletRequest request,
                                         RedirectAttributes redirectAttributes) {
         
-        Optional<User> userOpt = Optional.empty();
-        
-        if ("email".equals(contactMethod)) {
-            userOpt = userRepository.findByEmail(contactValue);
-        } else if ("phone".equals(contactMethod)) {
-            userOpt = userRepository.findByPhoneNumber(contactValue);
-        }
+        Optional<User> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "No account found with those details.");
+            redirectAttributes.addFlashAttribute("error", "No account found with that email address.");
             return "redirect:/forgot-password";
         }
 
@@ -74,13 +67,8 @@ public class PasswordResetController {
         String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String resetLink = appUrl + "/reset-password?token=" + token;
 
-        if ("email".equals(contactMethod)) {
-            emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-            redirectAttributes.addFlashAttribute("success", "A password reset link has been sent to your email. It will expire in 2 minutes.");
-        } else {
-            smsService.sendPasswordResetSms(user.getPhoneNumber(), resetLink);
-            redirectAttributes.addFlashAttribute("success", "An SMS has been sent to your number. It will expire in 2 minutes.");
-        }
+        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+        redirectAttributes.addFlashAttribute("success", "A password reset link has been sent to your email. It will expire in 2 minutes.");
 
         return "redirect:/login";
     }

@@ -46,6 +46,9 @@ public class RegistrationController {
     @Autowired
     private InstitutionRepository institutionRepository;
 
+    @Autowired
+    private com.school.service.GoogleAuthService googleAuthService;
+
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
@@ -94,19 +97,9 @@ public class RegistrationController {
     public String registerWithGoogle(@RequestParam("credential") String credential, HttpServletRequest request, HttpServletResponse response, Model model) {
         HttpSession session = request.getSession(true);
         try {
-            String clientId = System.getenv("GOOGLE_CLIENT_ID");
-            if (clientId == null || clientId.isEmpty()) {
-                throw new Exception("Google Sign-In is not properly configured on the server (Missing GOOGLE_CLIENT_ID). Please contact the administrator.");
-            }
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList(clientId))
-                .build();
-
-            GoogleIdToken idToken = verifier.verify(credential);
-            if (idToken != null) {
-                GoogleIdToken.Payload payload = idToken.getPayload();
-                String email = payload.getEmail();
-                String name = (String) payload.get("name");
+            GoogleIdToken.Payload payload = googleAuthService.verifyToken(credential);
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
 
                 Optional<User> existingUser = userRepository.findByEmail(email);
                 User user;
@@ -136,10 +129,9 @@ public class RegistrationController {
                 HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
                 securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
                 
+                
                 return "redirect:/dashboard";
-            } else {
-                throw new Exception("Invalid Google ID token.");
-            }
+            
         } catch (Exception e) {
             log.error("Google Sign-In failed", e);
             model.addAttribute("error", "Google Sign-In failed: " + e.getMessage());
