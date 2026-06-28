@@ -11,16 +11,16 @@ import java.util.List;
 public interface NoteRepository extends MongoRepository<Note, String> {
 
     @Query("{ '$or': [ { 'title': { $regex: ?0, $options: 'i' } }, { 'category': { $regex: ?0, $options: 'i' } } ] }")
-    List<Note> searchNotes(String query);
+    org.springframework.data.domain.Page<Note> searchNotes(String query, org.springframework.data.domain.Pageable pageable);
 
     @Query("{ 'programType': ?0, 'levelNo': ?1, '$or': [ { 'title': { $regex: ?2, $options: 'i' } }, { 'category': { $regex: ?2, $options: 'i' } } ] }")
-    List<Note> searchNotesByProgramAndLevel(String programType, Integer levelNo, String query);
+    org.springframework.data.domain.Page<Note> searchNotesByProgramAndLevel(String programType, Integer levelNo, String query, org.springframework.data.domain.Pageable pageable);
 
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] }")
-    List<Note> searchNotesByProgramLevelAndSemester(String programType, Integer levelNo, Integer semesterNo, String query);
+    org.springframework.data.domain.Page<Note> searchNotesByProgramLevelAndSemester(String programType, Integer levelNo, Integer semesterNo, String query, org.springframework.data.domain.Pageable pageable);
 
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, 'title': { $regex: ?4, $options: 'i' } }")
-    List<Note> searchNotesByProgramLevelSemesterAndCategory(String programType, Integer levelNo, Integer semesterNo, String category, String query);
+    org.springframework.data.domain.Page<Note> searchNotesByProgramLevelSemesterAndCategory(String programType, Integer levelNo, Integer semesterNo, String category, String query, org.springframework.data.domain.Pageable pageable);
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, String category);
 

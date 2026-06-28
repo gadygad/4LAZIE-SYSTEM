@@ -40,7 +40,7 @@ public class LoginController {
 
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
-            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim()).stream()
+            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 10)).getContent().stream()
                     .filter(Note::getIsPublic)
                     .limit(3)
                     .collect(Collectors.toList());
