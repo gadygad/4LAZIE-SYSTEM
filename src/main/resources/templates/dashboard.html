@@ -14,6 +14,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" th:href="@{/css/global-premium.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard-premium.css}">
 </head>
 <body class="has-bottom-nav">
@@ -108,7 +109,7 @@
             <div class="container-fluid px-2 px-md-4 d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <!-- Mobile Menu Toggle Button -->
-                    <button class="btn border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar" aria-controls="mobileOffcanvasSidebar" aria-label="Open mobile menu" style="background: rgba(230, 126, 34, 0.1); color: #e67e22; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                    <button class="btn border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Open mobile menu" style="background: rgba(230, 126, 34, 0.1); color: #e67e22; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
                         <i class="bi bi-list fs-4"></i>
                     </button>
                     <!-- Brand -->
@@ -318,28 +319,7 @@
 
             <!-- RIGHT COLUMN (NAVIGATOR) -->
             <div class="right-col">
-                
-
-
-                <div class="premium-features-header">PREMIUM FEATURES</div>
-                <p class="premium-sub">Exclusive tools & resources</p>
-
-                <a href="#" class="feature-card mb-3">
-                    CAT 1 PAST PAPERS
-                    <i class="bi bi-unlock-fill lock-icon" style="color: #10b981; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.3));"></i>
-                </a>
-                <a href="#" class="feature-card mb-3">
-                    CAT 2 PAST PAPERS
-                    <i class="bi bi-unlock-fill lock-icon" style="color: #10b981; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.3));"></i>
-                </a>
-                <a href="#" class="feature-card mb-3">
-                    ASSIGNMENTS AND SOLUTION
-                    <i class="bi bi-unlock-fill lock-icon" style="color: #10b981; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.3));"></i>
-                </a>
-                <a href="#" class="feature-card mb-3">
-                    UNIVERSITY EXAMS (UE)
-                    <i class="bi bi-unlock-fill lock-icon" style="color: #10b981; filter: drop-shadow(0 2px 4px rgba(16,185,129,0.3));"></i>
-                </a>
+                <div th:replace="~{fragments/sjuit_components :: premium_sidebar}"></div>
 
             </div>
 
@@ -373,14 +353,6 @@
     </div>
     
     <!-- Offcanvas Sidebar for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
-        <div class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <h5 class="offcanvas-title text-white" id="mobileOffcanvasSidebarLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: -1px;">4LAZIE</h5>
-            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0" style="overflow-x: hidden;">
-            <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-        </div>
-    </div>
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 </body>
 </html>
