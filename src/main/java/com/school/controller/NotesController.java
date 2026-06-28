@@ -3,9 +3,6 @@ package com.school.controller;
 import com.school.model.Note;
 import com.school.model.User;
 import com.school.service.NoteService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.Authentication;
@@ -20,11 +17,7 @@ import com.school.repository.SubjectRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,23 +26,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.ArrayList;
 import com.school.service.FileStorageService;
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.school.model.Role;
@@ -92,14 +75,10 @@ public class NotesController {
     @Autowired
     private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
 
     @Autowired
     private FileStorageService fileStorageService;
 
-    @Autowired
-    private Cloudinary cloudinary;
 
     @GetMapping("/home")
     public String home(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
@@ -114,12 +93,12 @@ public class NotesController {
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
             notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
-                    .filter(Note::getIsPublic)
+                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
             notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
-                    .filter(Note::getIsPublic)
+                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                     .limit(3)
                     .collect(Collectors.toList());
         }
@@ -391,7 +370,6 @@ public class NotesController {
         }
 
         String title = note != null ? note.getTitle() : "Document " + id;
-        String filename = note != null ? note.getFilename() : "document-" + id + ".txt";
 
         // Removed local uploads fallback to ensure Cloudinary persistency
 

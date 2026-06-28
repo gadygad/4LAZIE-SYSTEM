@@ -1,7 +1,6 @@
 package com.school.controller;
 
 import com.school.model.Note;
-import com.school.model.Institution;
 import com.school.repository.NoteRepository;
 import com.school.repository.InstitutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +50,7 @@ public class HomeController {
     @Autowired
     private NoteRepository noteRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private com.school.repository.CourseRepository courseRepository;
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
