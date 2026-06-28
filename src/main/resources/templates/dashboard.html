@@ -255,34 +255,39 @@
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-end mb-3 px-1">
                         <h6 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">Recently Added</h6>
-                        <a th:href="@{/notes}" class="text-decoration-none" style="font-size: 0.8rem; color: #D4AF37; font-weight: 600;">View All <i class="bi bi-arrow-right ms-1"></i></a>
                     </div>
                     
                     <div class="d-flex flex-column gap-3">
-                        <a th:each="note : ${recentNotes}" th:href="@{/view/{id}(id=${note.id})}" class="premium-list-item text-decoration-none rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
-                            <div class="gold-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #FFDF00 0%, #D4AF37 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
+                        <a th:each="note : ${recentNotes}" th:href="@{/view/{id}(id=${note.id})}" class="premium-list-item text-decoration-none rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
+                            <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                             
-                            <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 223, 0, 0.15)); flex-shrink: 0;">
-                                <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #D4AF37; font-size: 1.2rem;"></i>
+                            <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.15)); flex-shrink: 0;">
+                                <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.2rem;"></i>
                             </div>
                             
                             <div class="flex-grow-1 min-w-0">
                                 <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.95rem;" th:text="${note.title}">Note Title</h6>
                                 <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
                                     <span class="text-truncate me-2" style="max-width: 120px;" th:text="${note.moduleName}">Module Name</span>
-                                    <span style="color: #D4AF37;">•</span>
+                                    <span style="color: #10b981;">•</span>
                                     <span class="ms-2"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd')}">Date</span></span>
                                 </div>
                             </div>
                             
                             <div class="ms-2 text-end flex-shrink-0 d-flex flex-column align-items-end">
-                                <span class="badge rounded-pill" style="background: rgba(212, 175, 55, 0.1); color: #B8860B; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
-                                <div class="mt-2 fw-bold" style="font-size: 0.7rem; color: #D4AF37;"><i class="bi bi-download me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></div>
+                                <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                                <div class="mt-2 fw-bold" style="font-size: 0.7rem; color: #10b981;"><i class="bi bi-download me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></div>
                             </div>
                         </a>
                         
-                        <div th:if="${recentNotes == null || recentNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(212, 175, 55, 0.3);">
+                        <div th:if="${recentNotes == null || recentNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No recent materials found.</p>
+                        </div>
+                        
+                        <div class="text-center mt-2">
+                            <a th:href="@{/notes}" class="text-decoration-none d-inline-block px-4 py-2 rounded-pill fw-medium" style="font-size: 0.85rem; color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); transition: all 0.3s ease;">
+                                View All Materials <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -294,29 +299,29 @@
                     </div>
                     
                     <div class="d-flex flex-column gap-3">
-                        <a th:each="note : ${popularNotes}" th:href="@{/view/{id}(id=${note.id})}" class="premium-list-item text-decoration-none rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
-                            <div class="gold-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #FFDF00 0%, #D4AF37 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
+                        <a th:each="note : ${popularNotes}" th:href="@{/view/{id}(id=${note.id})}" class="premium-list-item text-decoration-none rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
+                            <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                             
-                            <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(255, 223, 0, 0.2)); flex-shrink: 0;">
-                                <i class="bi bi-star-fill" style="color: #D4AF37; font-size: 1.2rem;"></i>
+                            <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0;">
+                                <i class="bi bi-star-fill" style="color: #10b981; font-size: 1.2rem;"></i>
                             </div>
                             
                             <div class="flex-grow-1 min-w-0">
                                 <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.95rem;" th:text="${note.title}">Note Title</h6>
                                 <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
                                     <span class="text-truncate me-2" style="max-width: 120px;" th:text="${note.moduleName}">Module Name</span>
-                                    <span style="color: #D4AF37;">•</span>
+                                    <span style="color: #10b981;">•</span>
                                     <span class="ms-2"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
                                 </div>
                             </div>
                             
                             <div class="ms-2 text-end flex-shrink-0 d-flex flex-column align-items-end">
-                                <span class="badge rounded-pill" style="background: rgba(212, 175, 55, 0.1); color: #B8860B; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
+                                <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 0.65rem; font-weight: 600;" th:text="${note.category}">Note</span>
                                 <div class="mt-2 fw-bold" style="font-size: 0.75rem; color: #ef4444;"><i class="bi bi-cloud-arrow-down-fill me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></div>
                             </div>
                         </a>
                         
-                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(212, 175, 55, 0.3);">
+                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No popular materials found.</p>
                         </div>
                     </div>
@@ -326,11 +331,11 @@
                     /* Hover Effects */
                     .premium-list-item:hover {
                         transform: translateY(-3px);
-                        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15) !important;
-                        border-color: rgba(212, 175, 55, 0.5) !important;
+                        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15) !important;
+                        border-color: rgba(16, 185, 129, 0.5) !important;
                         background: linear-gradient(90deg, #ffffff 0%, rgba(255, 250, 240, 0.4) 100%) !important;
                     }
-                    .premium-list-item:hover .gold-accent {
+                    .premium-list-item:hover .green-accent {
                         transform: scaleY(1) !important;
                     }
                 </style>
