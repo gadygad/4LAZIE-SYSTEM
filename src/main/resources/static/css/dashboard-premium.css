@@ -108,17 +108,21 @@
             text-decoration: none;
             transition: var(--transition);
             position: relative;
+            border-left: 3px solid transparent;
         }
 
         .menu-item:hover {
-            background-color: var(--sidebar-hover);
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, transparent 100%);
             color: white;
+            border-left: 3px solid rgba(245, 158, 11, 0.5);
+            transform: translateX(4px);
         }
 
         .menu-item.active {
-            background: linear-gradient(90deg, rgba(79, 70, 229, 0.15) 0%, transparent 100%);
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, transparent 100%);
             color: white;
-            border-left: 3px solid var(--primary);
+            border-left: 3px solid var(--accent);
+            font-weight: 600;
         }
 
         .menu-icon {

@@ -215,12 +215,11 @@
             loader.style.display = 'none';
         }
 
-        // Check if URL is valid
         if (!url || url.trim() === '') {
             hideLoader();
             errorDiv.style.display = 'block';
         } else if (filename.endsWith('.pdf')) {
-            // LOAD PDF USING PDF.JS
+            // LOAD PDF USING PDF.JS VIA PROXY TO AVOID CORS ISSUES
             let pdfDoc = null,
                 pageNum = 1,
                 pageIsRendering = false,
@@ -229,7 +228,9 @@
                 canvas = document.getElementById('pdf-render'),
                 ctx = canvas.getContext('2d');
 
-            pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+            const proxyUrl = window.location.origin + "/proxy/" + /*[[${note.id}]]*/ '';
+
+            pdfjsLib.getDocument(proxyUrl).promise.then(pdfDoc_ => {
                 pdfDoc = pdfDoc_;
                 document.getElementById('page-count').textContent = pdfDoc.numPages;
                 
@@ -243,9 +244,19 @@
                 renderPage(pageNum);
                 hideLoader();
             }).catch(err => {
-                console.error("PDF Loading Error:", err);
-                hideLoader();
-                errorDiv.style.display = 'block';
+                console.error("PDF Loading Error via Proxy:", err);
+                
+                // Fallback to direct URL if Proxy fails
+                pdfjsLib.getDocument(url).promise.then(fallbackDoc => {
+                    pdfDoc = fallbackDoc;
+                    document.getElementById('page-count').textContent = pdfDoc.numPages;
+                    renderPage(pageNum);
+                    hideLoader();
+                }).catch(fallbackErr => {
+                    console.error("PDF Fallback Error:", fallbackErr);
+                    hideLoader();
+                    errorDiv.style.display = 'block';
+                });
             });
 
             function renderPage(num) {

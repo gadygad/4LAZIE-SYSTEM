@@ -24,6 +24,9 @@ public class User {
     @Indexed(unique = true)
     private String email;
 
+    @Indexed(unique = true, sparse = true)
+    private String phoneNumber;
+
     @NotBlank(message = "Password inahitajika")
     @Size(min = 6, message = "Password lazima iwe na angalau herufi 6")
     private String password;
@@ -64,6 +67,8 @@ public class User {
     public void setName(String name) { this.name = name; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public Role getRole() { return role; }

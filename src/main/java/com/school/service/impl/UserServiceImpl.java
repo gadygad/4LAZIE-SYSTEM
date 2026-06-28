@@ -27,6 +27,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user, MultipartFile profilePic) throws Exception {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new Exception("Hii barua pepe (email) imeshatumika. Tafadhali tumia nyingine.");
+        }
+
         // Handle profile picture upload if provided
         if (profilePic != null && !profilePic.isEmpty()) {
             try {

@@ -10,4 +10,5 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByEmail(String email);
     Optional<User> findFirstByEmailIgnoreCaseOrNameIgnoreCase(String email, String name);
     java.util.List<User> findByEmailIgnoreCaseOrNameIgnoreCase(String email, String name);
+    Optional<User> findByPhoneNumber(String phoneNumber);
 }

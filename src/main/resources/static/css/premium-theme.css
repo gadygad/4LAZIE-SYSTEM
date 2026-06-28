@@ -998,26 +998,45 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 /* ===== SIDEBAR NAVIGATION (Consolidated) ===== */
 .sidebar-hover-item { position: relative; margin-bottom: 4px; }
 .sidebar-hover-btn {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.02);
     color: rgba(255,255,255,0.85);
-    border: 1px solid transparent;
-    border-radius: 10px;
-    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 12px 16px;
     width: 100%;
     text-align: left;
     font-family: 'Outfit', sans-serif;
     font-weight: 500;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
+
+.sidebar-hover-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0; width: 4px;
+    background: linear-gradient(180deg, #e67e22, #f59e0b);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+    border-radius: 4px 0 0 4px;
+}
+
 .sidebar-hover-btn:hover {
-    background: rgba(255,255,255,0.06);
+    background: linear-gradient(90deg, rgba(230, 126, 34, 0.1), rgba(255, 255, 255, 0.04));
     color: #fff;
-    border-color: rgba(255,255,255,0.08);
+    border-color: rgba(230, 126, 34, 0.2);
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.sidebar-hover-btn:hover::before {
+    transform: scaleY(1);
 }
 
 /* Flyout Dropdown Panel -> Accordion Panel */
@@ -1306,15 +1325,21 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 /* 2. Sidebar Active Item Indicator */
 .sidebar-hover-item.active .sidebar-hover-btn {
-    background: rgba(59, 130, 246, 0.12) !important;
-    border-color: rgba(59, 130, 246, 0.25) !important;
+    background: linear-gradient(90deg, rgba(230, 126, 34, 0.15), rgba(255, 255, 255, 0.05)) !important;
+    border-color: rgba(230, 126, 34, 0.3) !important;
     color: #ffffff !important;
-    font-weight: 600 !important;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.08), inset 0 0 0 1px rgba(59, 130, 246, 0.15);
+    font-weight: 700 !important;
+    box-shadow: 0 4px 20px rgba(230, 126, 34, 0.12), inset 0 0 0 1px rgba(230, 126, 34, 0.2);
 }
+
+.sidebar-hover-item.active .sidebar-hover-btn::before {
+    transform: scaleY(1);
+    background: #e67e22;
+}
+
 .sidebar-hover-item.active .sidebar-hover-btn i:not(.chevron) {
-    color: #60a5fa !important;
-    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+    color: #f59e0b !important;
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
 }
 
 /* 3. Sleek Gradient Headers */
