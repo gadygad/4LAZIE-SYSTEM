@@ -34,7 +34,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         List<User> users = userRepository.findByEmailIgnoreCaseOrNameIgnoreCase(identifier, identifier);
         
         for (User user : users) {
-            if (passwordEncoder.matches(password, user.getPassword())) {
+            // Fallback for plain text passwords in the live database before hashing was implemented
+            if (passwordEncoder.matches(password, user.getPassword()) || password.equals(user.getPassword())) {
                 String role = user.getRole() != null ? user.getRole().name() : Role.STUDENT.name();
                 UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                         user.getEmail(), // Use the actual email of the matched user as the principal name

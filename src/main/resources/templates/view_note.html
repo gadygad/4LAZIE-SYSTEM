@@ -90,6 +90,29 @@
             box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
         }
 
+        .save-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .save-btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+        .save-btn.saved {
+            background: #ecfdf5;
+            border-color: #10b981;
+            color: #10b981;
+        }
+
         .iframe-container {
             flex-grow: 1;
             position: relative;
@@ -118,13 +141,16 @@
             .download-btn span {
                 display: none; /* Hide 'Download' text, keep icon */
             }
+            .save-btn span {
+                display: none;
+            }
             .note-title {
                 font-size: 0.9rem !important;
             }
             .title-container div {
                 font-size: 0.65rem !important;
             }
-            .download-btn, .back-btn {
+            .download-btn, .back-btn, .save-btn {
                 padding: 8px;
             }
         }
@@ -148,10 +174,19 @@
             <div style="color: #94a3b8; font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif;" th:text="${note.title}">Specific Note Title</div>
         </div>
 
-        <!-- Download Button -->
-        <a th:href="@{'/download/' + ${note.id}}" class="download-btn">
-            <i class="bi bi-cloud-arrow-down-fill"></i> <span>Download File</span>
-        </a>
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 align-items-center">
+            <!-- Save/Bookmark Button -->
+            <button th:if="${user != null}" class="save-btn" th:data-id="${note.id}" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'saved' : ''}" onclick="toggleSaveNote(this, this.getAttribute('data-id'))" title="Save for later">
+                <i class="bi" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'bi-bookmark-fill text-success' : 'bi-bookmark'}"></i> 
+                <span class="d-none d-md-inline" th:text="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'Saved' : 'Save'}">Save</span>
+            </button>
+            
+            <!-- Download Button -->
+            <a th:href="@{'/download/' + ${note.id}}" class="download-btn">
+                <i class="bi bi-cloud-arrow-down-fill"></i> <span>Download File</span>
+            </a>
+        </div>
     </div>
 
     <!-- PDF Viewer Container -->
@@ -317,6 +352,30 @@
             const viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodedUrl;
             canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
             hideLoader();
+        }
+
+        function toggleSaveNote(btn, noteId) {
+            fetch('/save-note/' + noteId, { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    const icon = btn.querySelector('i');
+                    const span = btn.querySelector('span');
+                    if(data.saved) {
+                        icon.classList.remove('bi-bookmark');
+                        icon.classList.add('bi-bookmark-fill', 'text-success');
+                        span.innerText = 'Saved';
+                        btn.classList.add('saved');
+                    } else {
+                        icon.classList.remove('bi-bookmark-fill', 'text-success');
+                        icon.classList.add('bi-bookmark');
+                        span.innerText = 'Save';
+                        btn.classList.remove('saved');
+                    }
+                } else {
+                    alert(data.message || 'Error saving note.');
+                }
+            });
         }
     </script>
 </body>

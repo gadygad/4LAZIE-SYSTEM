@@ -24,6 +24,9 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
+    private com.school.repository.NoteRepository noteRepository;
+
+    @Autowired
     private FileStorageService fileStorageService;
 
     @GetMapping("/profile")
@@ -73,8 +76,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
                 return "profile";
             }
         } else {
-            // Preserve existing picture if no new file provided
-            sessionUser.setProfilePicture(formUser.getProfilePicture());
+            // Preserve existing picture if no new file provided (Do not overwrite)
         }
         sessionUser.setCourseProgram(formUser.getCourseProgram());
         sessionUser.setLevel(formUser.getLevel());
@@ -104,5 +106,45 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         model.addAttribute("success", "Profile updated successfully!");
         model.addAttribute("editMode", false);
         return "profile";
+    }
+
+    @GetMapping("/profile/saved")
+    public String getSavedNotes(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        
+        // Refresh user from DB to get latest saved items
+        user = userRepository.findById(user.getId()).orElse(user);
+        java.util.List<com.school.model.Note> notes = new java.util.ArrayList<>();
+        if (user.getSavedNotes() != null && !user.getSavedNotes().isEmpty()) {
+            noteRepository.findAllById(user.getSavedNotes()).forEach(notes::add);
+        }
+        
+        model.addAttribute("notes", notes);
+        model.addAttribute("pageTitle", "Saved Items");
+        model.addAttribute("pageIcon", "bi-bookmark-fill");
+        return "my_notes";
+    }
+
+    @GetMapping("/profile/downloads")
+    public String getDownloadedNotes(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Refresh user from DB
+        user = userRepository.findById(user.getId()).orElse(user);
+        java.util.List<com.school.model.Note> notes = new java.util.ArrayList<>();
+        if (user.getDownloadedNotes() != null && !user.getDownloadedNotes().isEmpty()) {
+            noteRepository.findAllById(user.getDownloadedNotes()).forEach(notes::add);
+        }
+
+        model.addAttribute("notes", notes);
+        model.addAttribute("pageTitle", "Download History");
+        model.addAttribute("pageIcon", "bi-cloud-arrow-down-fill");
+        return "my_notes";
     }
 }
