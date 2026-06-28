@@ -58,9 +58,7 @@
                     <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
                 
-                <div class="mb-3">
-                    <input type="text" name="phoneNumber" th:field="*{phoneNumber}" class="premium-input shadow-none" placeholder="Phone Number (e.g. 07XXXXXXXX)" autocomplete="off">
-                </div>
+
                 
                 <div class="mb-4">
                     <input type="password" name="password" th:field="*{password}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" placeholder="Password" required>
