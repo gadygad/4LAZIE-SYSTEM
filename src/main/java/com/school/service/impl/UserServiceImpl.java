@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user, MultipartFile profilePic) throws Exception {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new Exception("Hii barua pepe (email) imeshatumika. Tafadhali tumia nyingine.");
+            throw new Exception("This email is already in use. Please use another one.");
         }
 
         // Handle profile picture upload if provided

@@ -20,12 +20,12 @@ public class EmailService {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
             message.setSubject("Password Reset Request - 4LAZIE");
-            message.setText("Umeomba kubadilisha password yako.\n\nBofya link hii hapa chini ili kuweka password mpya. Link hii ita-expire ndani ya dakika 2.\n\n" + resetLink + "\n\nKama sio wewe, tafadhali puuza ujumbe huu.");
+            message.setText("You requested a password reset.\n\nClick the link below to set a new password. This link will expire in 2 minutes.\n\n" + resetLink + "\n\nIf you did not request this, please ignore this email.");
             mailSender.send(message);
         } catch (Exception e) {
             // Log the error but don't crash, especially if credentials aren't set
-            System.err.println("Imeshindwa kutuma barua pepe: " + e.getMessage());
-            System.out.println("Tafadhali kamilisha 'spring.mail.*' properties kwenye application.properties");
+            System.err.println("Failed to send email: " + e.getMessage());
+            System.out.println("Please complete 'spring.mail.*' properties in application.properties");
         }
     }
 }

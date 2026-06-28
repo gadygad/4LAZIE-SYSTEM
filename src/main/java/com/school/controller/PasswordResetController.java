@@ -57,7 +57,7 @@ public class PasswordResetController {
         }
 
         if (userOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Hatujaona akaunti yenye taarifa hizo.");
+            redirectAttributes.addFlashAttribute("error", "No account found with those details.");
             return "redirect:/forgot-password";
         }
 
@@ -76,10 +76,10 @@ public class PasswordResetController {
 
         if ("email".equals(contactMethod)) {
             emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-            redirectAttributes.addFlashAttribute("success", "Link ya kubadili password imetumwa kwenye email yako. Itadumu kwa dakika 2 tu.");
+            redirectAttributes.addFlashAttribute("success", "A password reset link has been sent to your email. It will expire in 2 minutes.");
         } else {
             smsService.sendPasswordResetSms(user.getPhoneNumber(), resetLink);
-            redirectAttributes.addFlashAttribute("success", "Ujumbe mfupi (SMS) umetumwa kwenye namba yako. Itadumu kwa dakika 2 tu.");
+            redirectAttributes.addFlashAttribute("success", "An SMS has been sent to your number. It will expire in 2 minutes.");
         }
 
         return "redirect:/login";
@@ -90,7 +90,7 @@ public class PasswordResetController {
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(token);
         
         if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
-            model.addAttribute("error", "Link ya kubadili password ni batili au imekwisha muda wake (ilidumu dakika 2). Tafadhali omba nyingine.");
+            model.addAttribute("error", "The password reset link is invalid or has expired (lasts for 2 minutes). Please request a new one.");
             return "forgot_password";
         }
         
@@ -106,7 +106,7 @@ public class PasswordResetController {
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(token);
         
         if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
-            redirectAttributes.addFlashAttribute("error", "Muda wa kubadili password umekwisha (dakika 2). Omba upya.");
+            redirectAttributes.addFlashAttribute("error", "The password reset time has expired (2 minutes). Please request again.");
             return "redirect:/forgot-password";
         }
 
@@ -117,7 +117,7 @@ public class PasswordResetController {
         // Futa token baada ya kutumika
         tokenRepository.delete(tokenOpt.get());
 
-        redirectAttributes.addFlashAttribute("success", "Password yako imebadilishwa kikamilifu! Sasa unaweza ku-login.");
+        redirectAttributes.addFlashAttribute("success", "Your password has been changed successfully! You can now log in.");
         return "redirect:/login";
     }
 }

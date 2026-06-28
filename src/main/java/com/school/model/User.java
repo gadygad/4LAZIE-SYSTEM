@@ -15,20 +15,20 @@ public class User {
     @Id
     private String id;
 
-    @NotBlank(message = "Jina halipaswi kuwa wazi")
+    @NotBlank(message = "Name cannot be empty")
     @Size(min = 2, max = 100)
     private String name;
 
-    @NotBlank(message = "Email inahitajika")
-    @Email(message = "Weka email sahihi")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email")
     @Indexed(unique = true)
     private String email;
 
     @Indexed(unique = true, sparse = true)
     private String phoneNumber;
 
-    @NotBlank(message = "Password inahitajika")
-    @Size(min = 6, message = "Password lazima iwe na angalau herufi 6")
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
     private Role role = Role.STUDENT; // STUDENT, ADMIN
