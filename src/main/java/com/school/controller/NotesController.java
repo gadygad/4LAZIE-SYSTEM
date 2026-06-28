@@ -154,6 +154,15 @@ public class NotesController {
         }
         model.addAttribute("notesPage", notesPage);
         model.addAttribute("notes", notesPage.getContent());
+        
+        Map<String, List<Note>> groupedNotes = new LinkedHashMap<>();
+        Map<String, String> moduleCodes = new LinkedHashMap<>();
+        if (level != null && semester != null) {
+            noteService.groupNotesByModule(notesPage.getContent(), program, level, semester, groupedNotes, moduleCodes);
+        }
+        model.addAttribute("groupedNotes", groupedNotes);
+        model.addAttribute("moduleCodes", moduleCodes);
+
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", notesPage.getTotalPages());
         model.addAttribute("selectedProgram", program);
