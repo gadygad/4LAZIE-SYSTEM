@@ -95,15 +95,15 @@
                             <i class="bi bi-person-fill" style="font-size: 1.5rem; color: #64748b; margin-top: 4px;"></i>
                         </div>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2" aria-labelledby="profileDropdown" style="border-radius: 12px; min-width: 200px; animation: fadeIn 0.2s ease-out;">
-                        <li class="px-3 py-2 border-bottom bg-light">
-                            <p class="mb-0 fw-bold text-dark" style="font-size: 0.85rem;" th:text="${session.user.name}">Student</p>
-                            <p class="mb-0 text-muted" style="font-size: 0.75rem;" th:text="${session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">Program</p>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdown" style="border-radius: 20px; min-width: 240px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
+                        <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.15)); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #064e3b !important;" th:text="${session.user.name}">Student</p>
+                            <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #059669 !important;" th:text="${session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">Program</p>
                         </li>
-                        <li><a class="dropdown-item py-2 mt-1" href="/dashboard" style="font-size: 0.85rem;"><i class="bi bi-grid-1x2-fill me-2 text-success"></i>Dashboard</a></li>
-                        <li><a class="dropdown-item py-2" href="/profile" style="font-size: 0.85rem;"><i class="bi bi-person me-2 text-primary"></i>My Profile</a></li>
-                        <li><hr class="dropdown-divider my-1"></li>
-                        <li><a class="dropdown-item py-2 text-danger" href="/logout" style="font-size: 0.85rem;"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.15);"><i class="bi bi-grid-1x2-fill" style="color: #059669; font-size: 1.1rem;"></i></div>Dashboard</a></li>
+                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.15);"><i class="bi bi-person-fill" style="color: #059669; font-size: 1.1rem;"></i></div>My Profile</a></li>
+                        <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
+                        <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
                     </ul>
                 </div>
             </div>
