@@ -8,10 +8,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender mailSender;
 
     public void sendPasswordResetEmail(String to, String resetLink) {
+        if (mailSender == null) {
+            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            return;
+        }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
