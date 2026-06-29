@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import com.school.service.FileStorageService;
+import com.school.service.PushNotificationService;
 import com.cloudinary.Cloudinary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,9 @@ public class NotesController {
 
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired(required = false)
+    private PushNotificationService pushNotificationService;
 
 
     @GetMapping("/home")
@@ -327,6 +331,20 @@ public class NotesController {
             Institution institution = institutionRepository.findById("1").orElse(null);
             note.setInstitution(institution);
             noteRepository.save(note);
+            
+            // Send Push Notification
+            if (pushNotificationService != null) {
+                String pushTitle = "🔥 Fresh Material Dropped! 🚀";
+                String categoryLabel = (category == null || category.trim().isEmpty()) ? "Note" : category;
+                String pushBody = "New " + categoryLabel + ": " + title + " is now available. Tap to view and stay ahead! ✨";
+                String pushUrl = "/view/" + note.getSlug();
+                
+                // Send async to not block the upload response
+                new Thread(() -> {
+                    pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
+                }).start();
+            }
+            
         } catch (IOException e) {
             return "redirect:/upload?error=Upload failed: " + e.getMessage();
         }
