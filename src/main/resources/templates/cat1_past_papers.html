@@ -36,24 +36,30 @@
 
         .premium-heading {
             font-family: 'Outfit', sans-serif;
-            font-weight: 900;
+            font-weight: 800;
             color: #064e3b;
-            font-size: 2rem;
-            letter-spacing: -0.5px;
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            letter-spacing: -0.2px;
             position: relative;
             display: inline-block;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
         }
 
         .premium-heading::after {
             content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: -6px;
             left: 0;
-            width: 100%;
+            width: 70%;
             height: 4px;
-            background: linear-gradient(90deg, #10b981, transparent);
-            border-radius: 2px;
+            background: linear-gradient(90deg, #10b981, #34d399, transparent);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .premium-heading:hover::after {
+            width: 100%;
         }
 
         .plain-text-form {
@@ -232,7 +238,7 @@
     </nav>
 
     <div class="cat1-container">
-        <h1 class="premium-heading">CAT 1 PAST PAPERS</h1>
+        <h1 class="premium-heading">CAT 1 PASTPAPER</h1>
 
         <div class="plain-text-form mt-4">
             <div class="row">
