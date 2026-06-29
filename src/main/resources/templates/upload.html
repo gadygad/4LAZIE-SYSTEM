@@ -22,18 +22,18 @@
 <body>
 
     <!-- Premium Header Navbar -->
-    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(230,126,34,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
+    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16, 185, 129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
         <div class="container d-flex justify-content-between align-items-center">
             <!-- Brand -->
             <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
-                <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #e67e22, #d35400); border-radius: 10px; box-shadow: 0 4px 10px rgba(230,126,34,0.3);">
+                <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129,0.3);">
                     <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
                 </div>
                 <div class="d-flex align-items-center" style="transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.03) translateY(-1px)';" onmouseout="this.style.transform='none';">
                     <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; color: #1e293b; letter-spacing: -1px; line-height: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.05);">4LAZIE</span>
                     <div class="ms-2 position-relative d-inline-flex align-items-center">
-                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #e67e22 0%, #f59e0b 50%, #d35400 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 4px 15px rgba(230,126,34,0.4); position: relative; z-index: 2; padding-right: 2px;">UPLOAD</span>
-                        <div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(230,126,34,0.2) 0%, transparent 70%); z-index: 1; filter: blur(4px);"></div>
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 4px 15px rgba(16, 185, 129,0.4); position: relative; z-index: 2; padding-right: 2px;">UPLOAD</span>
+                        <div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(16, 185, 129,0.2) 0%, transparent 70%); z-index: 1; filter: blur(4px);"></div>
                     </div>
                 </div>
             </a>
@@ -45,11 +45,11 @@
                 <!-- Notification Button -->
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(230, 126, 34, 0.2); box-shadow: 0 4px 15px rgba(230,126,34,0.08);"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(230, 126, 34, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#e67e22';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(230,126,34,0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#64748b';">
+                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129,0.08);"
+                       onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
+                       onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#64748b';">
                         <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #e67e22; color: white !important; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #10b981; color: white !important; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
                             3
                         </span>
                     </a>
@@ -57,20 +57,20 @@
                     <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-0" aria-labelledby="notificationDropdown" style="border-radius: 20px; min-width: 320px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
                         <li class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
                             <span class="fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b !important;">Notifications</span>
-                            <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #e67e22, #d35400); color: white !important; font-weight: 600; box-shadow: 0 2px 8px rgba(230,126,34,0.3);">3 New</span>
+                            <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #10b981, #059669); color: white !important; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129,0.3);">3 New</span>
                         </li>
                         <li>
                             <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none" style="transition: background 0.2s; background: rgba(230, 126, 34, 0.03); background-color: #ffffff;">
+                                <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none" style="transition: background 0.2s; background: rgba(16, 185, 129, 0.03); background-color: #ffffff;">
                                     <div class="d-flex w-100 justify-content-between align-items-start">
                                         <div class="d-flex align-items-start">
-                                            <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, rgba(230,126,34,0.15), rgba(211,84,0,0.25)); box-shadow: 0 2px 10px rgba(230,126,34,0.1);">
-                                                <i class="bi bi-file-earmark-text-fill" style="font-size: 1.2rem; color: #e67e22;"></i>
+                                            <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129,0.15), rgba(5, 150, 105,0.25)); box-shadow: 0 2px 10px rgba(16, 185, 129,0.1);">
+                                                <i class="bi bi-file-earmark-text-fill" style="font-size: 1.2rem; color: #10b981;"></i>
                                             </div>
                                             <div>
                                                 <h6 class="mb-1 fw-bold" style="font-size: 0.95rem; color: #0f172a !important;">New Notes Added</h6>
                                                 <p class="mb-1" style="font-size: 0.85rem; line-height: 1.4; color: #475569 !important;">New materials have been added to the portal.</p>
-                                                <small class="fw-bold" style="font-size: 0.75rem; color: #e67e22 !important;">Just now</small>
+                                                <small class="fw-bold" style="font-size: 0.75rem; color: #10b981 !important;">Just now</small>
                                             </div>
                                         </div>
                                     </div>
@@ -83,18 +83,18 @@
                 <!-- Profile Dropdown -->
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
-                       style="background: #ffffff; border: 1px solid rgba(230,126,34,0.2); padding: 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(230,126,34,0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(230,126,34,0.2)'; this.style.transform='translateY(-2px)';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(230,126,34,0.05)'; this.style.transform='none';">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=e67e22&color=fff" alt="Profile" class="rounded-circle" style="width: 38px; height: 38px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(230,126,34,0.2);">
+                       style="background: #ffffff; border: 1px solid rgba(16, 185, 129,0.2); padding: 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(16, 185, 129,0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                       onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129,0.2)'; this.style.transform='translateY(-2px)';" 
+                       onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.05)'; this.style.transform='none';">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=e67e22&color=fff" alt="Profile" class="rounded-circle" style="width: 38px; height: 38px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129,0.2);">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdown" style="border-radius: 20px; min-width: 240px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
-                        <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(230,126,34,0.1);">
+                        <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(16, 185, 129,0.1);">
                             <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;">System Admin</p>
-                            <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #e67e22 !important;">ADMINISTRATOR</p>
+                            <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #10b981 !important;">ADMINISTRATOR</p>
                         </li>
-                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-grid-1x2-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>Dashboard</a></li>
-                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-person-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>My Profile</a></li>
+                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129,0.1);"><i class="bi bi-grid-1x2-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Dashboard</a></li>
+                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129,0.1);"><i class="bi bi-person-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>My Profile</a></li>
                         <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
                         <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
                     </ul>
@@ -102,7 +102,7 @@
             </div>
         </div>
         <!-- Premium Horizontal Separator Line -->
-        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(230,126,34,0) 0%, rgba(230,126,34,0.8) 50%, rgba(230,126,34,0) 100%); box-shadow: 0 2px 10px rgba(230,126,34,0.5);"></div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(16, 185, 129,0) 0%, rgba(16, 185, 129,0.8) 50%, rgba(16, 185, 129,0) 100%); box-shadow: 0 2px 10px rgba(16, 185, 129,0.5);"></div>
     </nav>
 
     <!-- Main Content -->
@@ -123,70 +123,70 @@
         <div class="row g-4">
             <!-- Left Column: Upload Form -->
             <div class="col-lg-8">
-                <div style="padding: 10px 20px; position: relative;">
+                <div style="padding: 20px; position: relative; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1); border-radius: 24px;">
                     <!-- Decorative glow removed for cleaner international look -->
                     
-                    <div class="text-center mb-5 position-relative z-1">
-                        <div class="mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(230,126,34,0.15), rgba(211,84,0,0.05)); border-radius: 20px; box-shadow: 0 10px 25px rgba(230,126,34,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(230,126,34,0.2);">
-                            <i class="bi bi-cloud-arrow-up-fill" style="font-size: 2.2rem; color: #e67e22; filter: drop-shadow(0 4px 8px rgba(230,126,34,0.4));"></i>
+                    <div class="text-center mb-3 position-relative z-1">
+                        <div class="mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(16, 185, 129,0.15), rgba(5, 150, 105,0.05)); border-radius: 20px; box-shadow: 0 10px 25px rgba(16, 185, 129,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129,0.2);">
+                            <i class="bi bi-cloud-arrow-up-fill" style="font-size: 2.2rem; color: #10b981; filter: drop-shadow(0 4px 8px rgba(16, 185, 129,0.4));"></i>
                         </div>
-                        <h1 class="fw-bolder mb-3" style="font-family: 'Outfit', sans-serif; font-size: 2.8rem; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; filter: drop-shadow(0 2px 4px rgba(230,126,34,0.2));">Publish Material</h1>
-                        <p style="color: #475569; font-size: 1.05rem; font-weight: 500; max-width: 500px; margin: 0 auto; line-height: 1.6;">Select course parameters to automatically fetch subjects. Eliminate typing errors and streamline the uploading process.</p>
+                        <h1 class="fw-bolder mb-3" style="font-family: 'Outfit', sans-serif; font-size: 2.8rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; filter: drop-shadow(0 2px 4px rgba(16, 185, 129,0.2));">Publish Material</h1>
+                        
                     </div>
 
-                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-4 position-relative z-1">
+                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3 position-relative z-1">
                         
                         <!-- Title Field -->
                         <div class="form-group">
-                            <label for="title" class="form-label fw-bold small mb-2 d-flex align-items-center" style="color: #475569; letter-spacing: 1px; text-transform: uppercase;"><i class="bi bi-fonts text-muted me-2" style="color: #e67e22 !important;"></i>Document Title</label>
-                            <input type="text" name="title" id="title" class="form-control" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none;" placeholder="e.g. Introduction to Programming Notes..." required onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                            <label for="title" class="form-label fw-bold small mb-2 d-flex align-items-center" style="color: #475569; letter-spacing: 1px; text-transform: uppercase;"><i class="bi bi-fonts text-muted me-2" style="color: #10b981 !important;"></i>Document Title</label>
+                            <input type="text" name="title" id="title" class="form-control" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none;" placeholder="e.g. Introduction to Programming Notes..." required onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                         </div>
 
                         <!-- Course Parameters Grid -->
                         <div class="py-2 px-1" style="position: relative;">
                             <div class="row g-3">
                                 <div class="col-12 col-md-4">
-                                    <label for="programType" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Course Program</label>
+                                    <label for="programType" class="form-label fw-bold small mb-2 d-inline-block" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Course Program</label>
                                     <div class="position-relative">
-                                        <select name="programType" id="programType" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="updateLevelDropdown(); fetchModules()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                        <select name="programType" id="programType" class="form-select" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="updateLevelDropdown(); fetchModules()" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                             <option value="" disabled selected>Select Course</option>
                                             <option th:each="course : ${courses}" th:value="${course.programType}" th:text="${course.name}"></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-4">
-                                    <label for="levelNo" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Level</label>
-                                    <select name="levelNo" id="levelNo" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="fetchModules()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                    <label for="levelNo" class="form-label fw-bold small mb-2 d-inline-block" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Level</label>
+                                    <select name="levelNo" id="levelNo" class="form-select" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="fetchModules()" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                         <option value="4">Level 4</option>
                                         <option value="5" selected>Level 5</option>
                                         <option value="6">Level 6</option>
                                     </select>
                                 </div>
                                 <div class="col-6 col-md-4">
-                                    <label for="semesterNo" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Semester</label>
-                                    <select name="semesterNo" id="semesterNo" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="fetchModules()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                    <label for="semesterNo" class="form-label fw-bold small mb-2 d-inline-block" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';">Semester</label>
+                                    <select name="semesterNo" id="semesterNo" class="form-select" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="fetchModules()" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                         <option value="1">Semester 1</option>
                                         <option value="2">Semester 2</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="mt-3 pt-3" style="border-top: 1px solid rgba(230,126,34,0.15);">
-                                <label for="moduleSelect" class="form-label fw-bold small mb-2 d-inline-flex align-items-center" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-book me-2"></i>Subject / Module</label>
-                                <select id="moduleSelect" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="updateHiddenModuleFields()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                            <div class="mt-3 pt-3" style="border-top: 1px solid rgba(16, 185, 129,0.15);">
+                                <label for="moduleSelect" class="form-label fw-bold small mb-2 d-inline-flex align-items-center" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-book me-2"></i>Subject / Module</label>
+                                <select id="moduleSelect" class="form-select" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="updateHiddenModuleFields()" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                     <option value="" disabled selected>Waiting for course selection...</option>
                                 </select>
                                 <input type="hidden" name="moduleName" id="moduleName">
                                 <input type="hidden" name="moduleCode" id="moduleCode">
-                                <div id="moduleLoading" class="form-text mt-2" style="display: none; color: #e67e22; font-weight: 600;"><i class="spinner-border spinner-border-sm me-2"></i> Fetching matching modules...</div>
+                                <div id="moduleLoading" class="form-text mt-2" style="display: none; color: #10b981; font-weight: 600;"><i class="spinner-border spinner-border-sm me-2"></i> Fetching matching modules...</div>
                             </div>
                         </div>
 
                         <!-- Category & Unit -->
                         <div class="row g-4 mt-2">
                             <div class="col-6">
-                                <label for="category" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-tags me-2"></i>Content Category</label>
-                                <select name="category" id="category" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="toggleUnit()" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                <label for="category" class="form-label fw-bold small mb-2 d-inline-block" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-tags me-2"></i>Content Category</label>
+                                <select name="category" id="category" class="form-select" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" required onchange="toggleUnit()" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                     <option value="Note">Lecture Notes / Course Material</option>
                                     <option value="Past Paper">Past Examination Paper</option>
                                     <option value="Assignment">Assignment / Coursework</option>
@@ -194,8 +194,8 @@
                                 </select>
                             </div>
                             <div class="col-6" id="unitNumberDiv">
-                                <label for="unitNumber" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-list-ol me-2"></i>Module Unit</label>
-                                <select name="unitNumber" id="unitNumber" class="form-select" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                <label for="unitNumber" class="form-label fw-bold small mb-2 d-inline-block" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-list-ol me-2"></i>Module Unit</label>
+                                <select name="unitNumber" id="unitNumber" class="form-select" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                                     <option value="">-- General / No Unit --</option>
                                     <option value="1">Unit 1: Introduction</option>
                                     <option value="2">Unit 2</option>
@@ -208,24 +208,24 @@
                                 </select>
                             </div>
                             <div class="col-12 mt-3">
-                                <label for="academicYear" class="form-label fw-bold small mb-2 d-inline-block" style="color: #e67e22; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(230,126,34,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-calendar-check me-2"></i>Academic Year</label>
-                                <input type="text" name="academicYear" id="academicYear" class="form-control" style="border-radius: 14px; padding: 14px 20px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none;" placeholder="e.g. 2024" pattern="[0-9]{4}" title="Please enter a valid 4-digit year (e.g. 2024)" onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                <label for="academicYear" class="form-label fw-bold small mb-2 d-inline-block" style="color: #10b981; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateX(4px)'; this.style.textShadow='0 2px 8px rgba(16, 185, 129,0.4)';" onmouseout="this.style.transform='none'; this.style.textShadow='none';"><i class="bi bi-calendar-check me-2"></i>Academic Year</label>
+                                <input type="text" name="academicYear" id="academicYear" class="form-control" style="border-radius: 14px; padding: 10px 15px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none;" placeholder="e.g. 2024" pattern="[0-9]{4}" title="Please enter a valid 4-digit year (e.g. 2024)" onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                             </div>
                         </div>
 
                         <!-- File Upload Area -->
-                        <div class="mt-4 mb-2 text-center" style="transition: all 0.4s ease; cursor: default;" onmouseover="this.style.transform='translateY(-3px)'; this.querySelector('i').style.transform='scale(1.1)'; this.querySelector('i').style.textShadow='0 4px 12px rgba(230,126,34,0.4)'; this.querySelector('h6').style.color='#e67e22';" onmouseout="this.style.transform='none'; this.querySelector('i').style.transform='none'; this.querySelector('i').style.textShadow='none'; this.querySelector('h6').style.color='#1e293b';">
-                            <i class="bi bi-cloud-arrow-up-fill" style="font-size: 2.0rem; color: #e67e22; margin-bottom: 6px; display: inline-block; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
+                        <div class="mt-4 mb-2 text-center" style="transition: all 0.4s ease; cursor: default;" onmouseover="this.style.transform='translateY(-3px)'; this.querySelector('i').style.transform='scale(1.1)'; this.querySelector('i').style.textShadow='0 4px 12px rgba(16, 185, 129,0.4)'; this.querySelector('h6').style.color='#10b981';" onmouseout="this.style.transform='none'; this.querySelector('i').style.transform='none'; this.querySelector('i').style.textShadow='none'; this.querySelector('h6').style.color='#1e293b';">
+                            <i class="bi bi-cloud-arrow-up-fill" style="font-size: 2.0rem; color: #10b981; margin-bottom: 6px; display: inline-block; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
                             <h6 class="fw-bold mb-1" style="color: #1e293b; font-size: 1.05rem; transition: all 0.3s ease; letter-spacing: 0.5px;">Upload Document File</h6>
                             <p class="small text-muted mb-2" style="font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px;">Accepts PDF, DOCX, PPTX (Max 20MB)</p>
                             <div class="position-relative mx-auto" style="max-width: 350px;">
-                                <input type="file" name="file" id="file" class="form-control" style="border-radius: 12px; border: 2px solid #f1f5f9; font-size: 0.9rem; padding: 10px 15px; background: #f8fafc; color: #475569; transition: all 0.3s ease; box-shadow: none; cursor: pointer;" accept=".pdf,.doc,.docx,.ppt,.pptx" required onfocus="this.style.borderColor='#e67e22'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(230,126,34,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
+                                <input type="file" name="file" id="file" class="form-control" style="border-radius: 12px; border: 2px solid #f1f5f9; font-size: 0.9rem; padding: 10px 15px; background: #f8fafc; color: #475569; transition: all 0.3s ease; box-shadow: none; cursor: pointer;" accept=".pdf,.doc,.docx,.ppt,.pptx" required onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.15)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                             </div>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn text-white fw-bold py-3" style="border-radius: 16px; font-size: 1.15rem; font-family: 'Outfit', sans-serif; letter-spacing: 1px; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); border: none; box-shadow: 0 10px 25px rgba(230, 126, 34, 0.4); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);" onmouseover="this.style.transform='translateY(-4px) scale(1.02)'; this.style.boxShadow='0 15px 35px rgba(230, 126, 34, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 25px rgba(230, 126, 34, 0.4)';">
+                            <button type="submit" class="btn text-white fw-bold py-3" style="border-radius: 16px; font-size: 1.15rem; font-family: 'Outfit', sans-serif; letter-spacing: 1px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);" onmouseover="this.style.transform='translateY(-4px) scale(1.02)'; this.style.boxShadow='0 15px 35px rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 10px 25px rgba(16, 185, 129, 0.4)';">
                                 <i class="bi bi-cloud-arrow-up-fill me-2"></i> UPLOAD
                             </button>
                         </div>
@@ -236,23 +236,26 @@
             <!-- Right Column: Sidebar Navigation -->
             <div class="col-lg-4">
                 <div class="sidebar-card">
-                    <h4 class="brand-font fw-bold mb-4" style="font-size: 1.25rem;">
-                        <i class="bi bi-folder-fill text-warning me-2"></i>Sidebar
+                    <h4 class="brand-font fw-bold mb-2" style="font-size: 1.25rem;">
+                        <i class="bi bi-folder-fill text-success me-2"></i>Sidebar
                     </h4>
                     <div class="d-flex flex-column gap-1">
                         <a href="/dashboard" class="sidebar-nav-item">
                             <i class="bi bi-grid-fill"></i>Dashboard
                         </a>
-                        <a href="/upload" class="sidebar-nav-item active" th:if="${user.role == 'ADMIN'}">
+                        <a href="/admin/users" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                            <i class="bi bi-people-fill text-primary"></i>Users Management
+                        </a>
+                        <a href="/upload" class="sidebar-nav-item active" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-cloud-arrow-up-fill text-primary"></i>UPLOAD NOTES
                         </a>
-                        <a href="#" class="sidebar-nav-item" onclick="comingSoon(event, 'MY NOTES')">
+                        <a href="/profile/downloads" class="sidebar-nav-item">
                             <i class="bi bi-journal-bookmark-fill"></i>MY NOTES
                         </a>
-                        <a href="#" class="sidebar-nav-item" onclick="comingSoon(event, 'Favorites')">
+                        <a href="/profile/saved" class="sidebar-nav-item">
                             <i class="bi bi-star-fill"></i>Favorites
                         </a>
-                        <a href="#" class="sidebar-nav-item" onclick="comingSoon(event, 'Profile')">
+                        <a href="/profile" class="sidebar-nav-item">
                             <i class="bi bi-person-fill"></i>Profile
                         </a>
                     </div>
