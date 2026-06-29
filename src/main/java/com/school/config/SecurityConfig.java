@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR, jakarta.servlet.DispatcherType.INCLUDE).permitAll()
                 // Allow public access to static resources and public pages
                 .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/register/google", "/login", "/forgot-password", "/reset-password", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/**").permitAll()
-                .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**").permitAll()
+                .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**").permitAll()
                 // Require ADMIN role for admin pages and upload page
                 .requestMatchers("/upload", "/admin/**").hasRole(com.school.model.Role.ADMIN.name())
                 // All other requests require authentication
