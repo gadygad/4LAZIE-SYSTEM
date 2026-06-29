@@ -53,8 +53,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     })
     Long getTotalDownloadCount();
 
+    @org.springframework.cache.annotation.Cacheable("popularNotes")
     List<Note> findTop3ByCategoryOrderByIdDesc(String category);
     
+    @org.springframework.cache.annotation.Cacheable("popularNotes")
     List<Note> findTop10ByCategoryOrderByIdDesc(String category);
 
     @Aggregation(pipeline = {

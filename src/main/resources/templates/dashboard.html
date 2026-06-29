@@ -146,7 +146,7 @@
                         <div th:each="note : ${recentNotes}" class="premium-list-item rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
                             <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                             
-                            <a th:href="@{/view/{id}(id=${note.id})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
+                            <a th:href="@{/view/{id}(id=${note.slug})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
                                 <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.15)); flex-shrink: 0; transition: all 0.3s ease;">
                                     <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.2rem;"></i>
                                 </div>
@@ -194,7 +194,7 @@
                         <div th:each="note : ${popularNotes}" class="premium-list-item rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
                             <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                             
-                            <a th:href="@{/view/{id}(id=${note.id})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
+                            <a th:href="@{/view/{id}(id=${note.slug})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
                                 <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0; transition: all 0.3s ease;">
                                     <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.2rem;"></i>
                                 </div>
