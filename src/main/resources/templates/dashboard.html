@@ -417,35 +417,8 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Mobile Bottom Navigation (Dashboard Version) -->
-    <div class="mobile-bottom-nav d-lg-none">
-        <div class="mobile-bottom-nav-container">
-            <a th:href="@{/dashboard}" class="nav-item-bottom active" style="color: #10b981 !important;">
-                <i class="bi bi-house-door-fill" style="color: #10b981 !important;"></i>
-                <span>Home</span>
-            </a>
-            <a th:href="@{/notes}" class="nav-item-bottom" style="color: #10b981 !important;">
-                <i class="bi bi-journal-text" style="color: #10b981 !important;"></i>
-                <span>Materials</span>
-            </a>
-            
-            <div class="dropup nav-item-bottom" style="cursor: pointer; width: 25%; color: #10b981 !important;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="true">
-                <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" class="rounded-circle mb-1" style="width: 24px; height: 24px; object-fit: cover; border: 1px solid #10b981;">
-                <i th:unless="${user.profilePicture}" class="bi bi-person-circle" style="color: #10b981 !important;"></i>
-                <span>Profile</span>
-            </div>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mb-3 p-2" style="border-radius: 20px; min-width: 240px; animation: popupAnim 0.3s forwards; background-color: #ffffff;">
-                <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(16,185,129,0.1);">
-                    <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;" th:text="${user.name}">User</p>
-                    <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #10b981 !important;" th:text="${user.role}">ROLE</p>
-                </li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile?edit=true" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16,185,129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16,185,129,0.1);"><i class="bi bi-gear-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Settings</a></li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16,185,129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16,185,129,0.1);"><i class="bi bi-person-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>My Profile</a></li>
-                <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
-                <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
-            </ul>
-        </div>
-    </div>
+    <!-- Mobile Bottom Navigation -->
+    <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
     
     <!-- Offcanvas Sidebar for Mobile -->
     <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
