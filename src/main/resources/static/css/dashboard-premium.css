@@ -222,7 +222,8 @@
 
         .search-bar {
             position: relative;
-            width: 350px;
+            width: 100%;
+            max-width: 350px;
         }
 
         .search-bar input {
@@ -566,7 +567,7 @@
 
         /* RIGHT COLUMN (NAVIGATOR) */
         .right-col {
-            width: 380px;
+            width: 320px;
             flex-shrink: 0;
             overflow-y: auto;
         }
@@ -786,6 +787,22 @@
         }
         .nav-item-bottom.active i {
             color: #F59E0B;
+        }
+        @media (max-width: 1250px) {
+            .content-area {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            .center-col {
+                overflow-y: visible;
+                padding-right: 0;
+            }
+            .right-col {
+                width: 100%;
+                overflow-y: visible;
+                order: 2;
+                margin-top: 20px;
+            }
         }
         
         @media (max-width: 991px) {

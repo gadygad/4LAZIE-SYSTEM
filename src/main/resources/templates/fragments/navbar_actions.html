@@ -71,7 +71,7 @@
                        onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
                         <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.1rem; transition: color 0.3s;"></i>
                     <!-- Notification Badge with Pulse -->
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #e67e22; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
+                    <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #e67e22; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
                         3
                     </span>
                 </a>
@@ -80,23 +80,28 @@
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 p-0" aria-labelledby="notificationDropdown" style="border-radius: 20px; min-width: 320px; overflow: hidden; animation: popupAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; border: 1px solid rgba(255,255,255,0.5);">
                     <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
                         <span class="fw-bold text-dark" style="font-family: 'Outfit', sans-serif; font-size: 1rem;">Notifications</span>
-                        <span class="badge rounded-pill px-2 py-1 text-white" style="background: linear-gradient(135deg, #e67e22, #d35400); font-weight: 600; box-shadow: 0 2px 8px rgba(230,126,34,0.3); font-size: 0.7rem;">3 New</span>
+                        <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1 text-white" style="background: linear-gradient(135deg, #e67e22, #d35400); font-weight: 600; box-shadow: 0 2px 8px rgba(230,126,34,0.3); font-size: 0.7rem;">3 New</span>
                     </li>
                     <li>
                         <div class="list-group list-group-flush">
-                            <a href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom" style="transition: background 0.2s; background: rgba(230, 126, 34, 0.04);">
+                            <div th:if="${notifications == null or #lists.isEmpty(notifications)}" class="text-center py-4">
+                                <i class="bi bi-bell-slash text-muted" style="font-size: 2rem;"></i>
+                                <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">No notifications yet</p>
+                            </div>
+                            
+                            <a th:each="notification : ${notifications}" href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom notification-item" th:style="'transition: background 0.2s; background: ' + (${notification.read} ? 'transparent' : 'rgba(230, 126, 34, 0.04)') + ';'" th:attr="data-read=${notification.read}">
                                 <div class="d-flex w-100 justify-content-between align-items-start">
                                     <div class="d-flex align-items-start">
                                         <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, rgba(230,126,34,0.15), rgba(211,84,0,0.25)); box-shadow: 0 2px 10px rgba(230,126,34,0.1);">
-                                            <i class="bi bi-file-earmark-text-fill" style="font-size: 1.2rem; color: #e67e22;"></i>
+                                            <i class="bi bi-info-circle-fill" style="font-size: 1.2rem; color: #e67e22;"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">New Notes Added</h6>
-                                            <p class="mb-1 text-muted" style="font-size: 0.85rem; line-height: 1.4;">IT Level 5 Semester 1 Networking notes are now available.</p>
-                                            <small class="fw-bold" style="font-size: 0.75rem; color: #e67e22;">Just now</small>
+                                            <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;" th:text="${notification.title}">Title</h6>
+                                            <p class="mb-1 text-muted" style="font-size: 0.85rem; line-height: 1.4;" th:text="${notification.message}">Message</p>
+                                            <small class="fw-bold" style="font-size: 0.75rem; color: #e67e22;" th:text="${#temporals.format(notification.createdAt, 'dd MMM, HH:mm')}">Just now</small>
                                         </div>
                                     </div>
-                                    <div style="width: 10px; height: 10px; background: linear-gradient(135deg, #e67e22, #d35400); border-radius: 50%; margin-top: 6px; box-shadow: 0 0 8px rgba(230,126,34,0.5);"></div>
+                                    <div th:unless="${notification.read}" style="width: 10px; height: 10px; background: linear-gradient(135deg, #e67e22, #d35400); border-radius: 50%; margin-top: 6px; box-shadow: 0 0 8px rgba(230,126,34,0.5);"></div>
                                 </div>
                             </a>
                         </div>
@@ -144,9 +149,6 @@
             <a href="/login" class="btn text-white rounded-pill px-4 py-2" style="font-weight: 600; font-family: 'Outfit', sans-serif; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); border: none; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(230, 126, 34, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(230, 126, 34, 0.3)';">Login</a>
         </div>
     </div>
-</body>
-</html>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleBtns = document.querySelectorAll('.dark-mode-toggle-btn');

@@ -11,10 +11,12 @@ import java.util.Collections;
 @Service
 public class GoogleAuthService {
 
+    @org.springframework.beans.factory.annotation.Value("${google.client.id}")
+    private String clientId;
+
     public GoogleIdToken.Payload verifyToken(String credential) throws Exception {
-        String clientId = System.getenv("GOOGLE_CLIENT_ID");
         if (clientId == null || clientId.isEmpty()) {
-            throw new Exception("Google Sign-In is not properly configured on the server (Missing GOOGLE_CLIENT_ID). Please contact the administrator.");
+            throw new Exception("Google Sign-In is not properly configured on the server (Missing google.client.id). Please contact the administrator.");
         }
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))

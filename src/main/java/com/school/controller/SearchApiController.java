@@ -44,4 +44,31 @@ public class SearchApiController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/api/notes/filter")
+    public ResponseEntity<List<Map<String, Object>>> filterNotes(
+            @RequestParam("category") String category,
+            @RequestParam("program") String program,
+            @RequestParam("semester") Integer semester) {
+            
+        // Query the database for the matching notes
+        List<Note> notes = noteRepository.findByCategoryOrderByIdDesc(category);
+        
+        List<Map<String, Object>> results = notes.stream()
+                .filter(n -> program.equalsIgnoreCase(n.getProgramType()) || 
+                             (n.getProgramType() != null && n.getProgramType().toLowerCase().contains(program.toLowerCase())))
+                .filter(n -> semester.equals(n.getSemesterNo()))
+                .filter(n -> Boolean.TRUE.equals(n.getIsPublic()))
+                .map(note -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", note.getId());
+                    map.put("title", note.getTitle());
+                    map.put("moduleName", note.getModuleName());
+                    map.put("year", note.getAcademicYear());
+                    map.put("fileUrl", note.getFileUrl());
+                    return map;
+                }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(results);
+    }
 }

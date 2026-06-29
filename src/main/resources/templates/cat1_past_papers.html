@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAT 1 Past Papers - 4LAZIE</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" th:href="@{/css/global-premium.css}">
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 50%), 
+                              radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+        }
+        
+        .cat1-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 15px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .premium-heading {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            color: #064e3b;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .premium-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, transparent);
+            border-radius: 2px;
+        }
+
+        .plain-text-form {
+            background: transparent;
+        }
+
+        .premium-input-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .premium-label {
+            display: block;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.3px;
+        }
+
+        .premium-select {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #334155;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(16, 185, 129, 0.15);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2310b981' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.5rem center;
+        }
+
+        .premium-select:focus {
+            outline: none;
+            border-color: #10b981;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-premium-search {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-premium-search:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
+        /* Results Drop List Accordion */
+        #cat1Results {
+            margin-top: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        #cat1Results.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .accordion-item {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 20px !important;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .accordion-button {
+            background: transparent !important;
+            padding: 1.2rem 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #0f172a;
+            box-shadow: none !important;
+        }
+        
+        .accordion-button::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2310b981' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        }
+
+        .accordion-body {
+            background: rgba(255, 255, 255, 0.5);
+            border-top: 1px dashed rgba(16, 185, 129, 0.2);
+            padding: 1.5rem;
+        }
+
+        .paper-action-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-read {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .btn-read:hover {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-download {
+            background: white;
+            color: #334155;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .btn-download:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .year-badge {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.05));
+            color: #059669;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-light navbar-custom sticky-top py-2" style="background: rgba(255,255,255,0.98); backdrop-filter: blur(12px); z-index: 1020; border-bottom: 1px solid rgba(15, 23, 42, 0.06); box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/dashboard}" style="text-decoration: none;">
+                <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
+                <span class="fs-3 me-2 fw-bold text-dark" style="font-family: 'Outfit', sans-serif; font-weight: 900 !important; letter-spacing: -1px; color: #000 !important;">4LAZIE</span>
+            </a>
+            
+            <div th:replace="~{fragments/navbar_actions :: actions}"></div>
+        </div>
+    </nav>
+
+    <div class="cat1-container">
+        <h1 class="premium-heading">CAT 1 PAST PAPERS</h1>
+
+        <div class="plain-text-form mt-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Are you in Degree or Diploma?</label>
+                        <select id="cat1Program" class="premium-select">
+                            <option value="DIPLOMA">Diploma</option>
+                            <option value="DEGREE">Degree</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Select your Course</label>
+                        <select id="cat1Course" class="premium-select">
+                            <!-- Populated dynamically or by Thymeleaf -->
+                            <option th:each="course : ${courses}" th:value="${course.programType}" th:text="${course.programType}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Which Semester?</label>
+                        <select id="cat1Semester" class="premium-select">
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <button id="cat1SearchBtn" class="btn-premium-search">
+                    <i class="bi bi-magic me-2"></i> Fetch Past Papers
+                </button>
+            </div>
+        </div>
+
+        <div id="cat1Results">
+            <!-- Results Accordion will be injected here -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchBtn = document.getElementById('cat1SearchBtn');
+        const resultsContainer = document.getElementById('cat1Results');
+        const programSelect = document.getElementById('cat1Program');
+        const courseSelect = document.getElementById('cat1Course');
+        const semesterSelect = document.getElementById('cat1Semester');
+
+        // Simple filter for courses based on Degree/Diploma
+        function updateCourses() {
+            const isDegree = programSelect.value === 'DEGREE';
+            Array.from(courseSelect.options).forEach(opt => {
+                const isOptDegree = opt.value.toLowerCase().includes('degree') || opt.value.toLowerCase().includes('bachelor');
+                if (isDegree) {
+                    opt.style.display = isOptDegree ? 'block' : 'none';
+                } else {
+                    opt.style.display = isOptDegree ? 'none' : 'block';
+                }
+            });
+            // Select first visible option
+            const firstVisible = Array.from(courseSelect.options).find(opt => opt.style.display !== 'none');
+            if (firstVisible) courseSelect.value = firstVisible.value;
+        }
+
+        programSelect.addEventListener('change', updateCourses);
+        updateCourses(); // Initial call
+
+        if(searchBtn) {
+            searchBtn.addEventListener('click', function() {
+                const program = courseSelect.value; // Send the actual course e.g. DIPLOMA IN CSE
+                const semester = semesterSelect.value;
+                
+                resultsContainer.classList.remove('show');
+                
+                // Show loading state
+                searchBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Searching...';
+                searchBtn.disabled = true;
+
+                fetch(`/api/notes/filter?category=CAT 1&program=${program}&semester=${semester}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        searchBtn.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Past Papers';
+                        searchBtn.disabled = false;
+                        
+                        if(data.length === 0) {
+                            resultsContainer.innerHTML = `
+                                <div class="text-center py-5" style="animation: popupAnim 0.4s ease forwards;">
+                                    <i class="bi bi-inboxes" style="font-size: 4rem; color: #cbd5e1;"></i>
+                                    <h4 class="fw-bold mt-3 text-muted" style="font-family: 'Outfit', sans-serif;">No Past Papers Found</h4>
+                                    <p class="text-muted">We couldn't find any CAT 1 papers for the selected criteria.</p>
+                                </div>
+                            `;
+                            resultsContainer.classList.add('show');
+                            return;
+                        }
+
+                        let html = '<div class="accordion" id="resultsAccordion">';
+                        data.forEach((note, index) => {
+                            const yearStr = note.year ? note.year : new Date().getFullYear();
+                            html += `
+                                <div class="accordion-item border-0">
+                                    <h2 class="accordion-header" id="heading${index}">
+                                        <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${index}">
+                                            <div class="d-flex align-items-center w-100 me-3">
+                                                <div class="me-3 d-flex justify-content-center align-items-center rounded-circle" style="width: 44px; height: 44px; background: rgba(16,185,129,0.1);">
+                                                    <i class="bi bi-file-earmark-text-fill" style="color: #10b981; font-size: 1.2rem;"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="mb-1">${note.title || 'CAT 1 Past Paper'}</div>
+                                                    <div style="font-size: 0.85rem; font-weight: 500; color: #64748b;">${note.moduleName || 'General Module'}</div>
+                                                </div>
+                                                <span class="year-badge ms-auto">${yearStr}</span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse${index}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading${index}" data-bs-parent="#resultsAccordion">
+                                        <div class="accordion-body d-flex gap-3 align-items-center">
+                                            <div class="text-muted small flex-grow-1">
+                                                <i class="bi bi-info-circle me-1"></i> Document is ready to view or download.
+                                            </div>
+                                            <a href="/notes/download/${note.id}" target="_blank" class="paper-action-btn btn-read">
+                                                <i class="bi bi-eye"></i> Read
+                                            </a>
+                                            <a href="/notes/download/${note.id}?force=true" class="paper-action-btn btn-download">
+                                                <i class="bi bi-download"></i> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        
+                        resultsContainer.innerHTML = html;
+                        resultsContainer.classList.add('show');
+                    })
+                    .catch(error => {
+                        searchBtn.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Past Papers';
+                        searchBtn.disabled = false;
+                        resultsContainer.innerHTML = '<div class="text-center py-5 text-danger"><i class="bi bi-exclamation-triangle-fill mb-3" style="font-size: 3rem;"></i><h5 class="fw-bold font-family-outfit">Failed to load results</h5><p>Please check your connection and try again.</p></div>';
+                        resultsContainer.classList.add('show');
+                        console.error('Error fetching CAT 1 papers:', error);
+                    });
+            });
+        }
+    });
+    </script>
+</body>
+</html>

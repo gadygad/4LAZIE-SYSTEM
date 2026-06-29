@@ -32,10 +32,24 @@ public class UserController {
     @GetMapping("/profile")
     public String getProfile(@RequestParam(value = "edit", required = false, defaultValue = "false") boolean edit,
                              HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
             return "redirect:/login";
         }
+        
+        // Fetch fresh user from DB to ensure we have the latest institution and stats
+        User user = userRepository.findById(sessionUser.getId()).orElse(sessionUser);
+        
+        // Self-heal: If user has no institution, assign default SJUIT
+        if (user.getInstitution() == null) {
+            com.school.model.Institution sjuit = new com.school.model.Institution();
+            sjuit.setId("1");
+            sjuit.setName("St. Joseph University in Tanzania");
+            sjuit.setShortName("SJUIT");
+            user.setInstitution(sjuit);
+            userRepository.save(user); // Save back to database!
+        }
+        
         model.addAttribute("user", user);
         model.addAttribute("editMode", edit);
         return "profile";
