@@ -334,11 +334,12 @@ public class NotesController {
     }
 
 
-    @GetMapping("/download/{id}")
+    @GetMapping("/download/{slug}")
     @ResponseBody
-    public Object downloadFile(@PathVariable("id") String id, 
+    public Object downloadFile(@PathVariable("slug") String slug, 
                                @RequestParam(value = "force", required = false) String force,
                                HttpSession session) {
+        String id = slug.split("-")[0];
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) return ResponseEntity.notFound().build();
 
@@ -418,8 +419,9 @@ public class NotesController {
         }
     }
 
-    @GetMapping("/view/{id}")
-    public String viewNotePage(@PathVariable("id") String id, HttpSession session, org.springframework.ui.Model model) {
+    @GetMapping("/view/{slug}")
+    public String viewNotePage(@PathVariable("slug") String slug, HttpSession session, org.springframework.ui.Model model) {
+        String id = slug.split("-")[0];
         User loggedInUser = getLoggedInUser();
         Note note = noteRepository.findById(id).orElse(null);
         
@@ -444,8 +446,9 @@ public class NotesController {
         return "view_note";
     }
 
-    @GetMapping("/stream/{id}")
-    public Object streamNote(@PathVariable("id") String id, HttpSession session) {
+    @GetMapping("/stream/{slug}")
+    public Object streamNote(@PathVariable("slug") String slug, HttpSession session) {
+        String id = slug.split("-")[0];
         Note note = noteRepository.findById(id).orElse(null);
 
         User loggedInUser = getLoggedInUser();

@@ -108,4 +108,10 @@ public class Note {
     public void setUnitNumber(Integer unitNumber) { this.unitNumber = unitNumber; }
     public Institution getInstitution() { return institution; }
     public void setInstitution(Institution institution) { this.institution = institution; }
+
+    public String getSlug() {
+        if (title == null) return id;
+        String cleanTitle = title.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("-$", "").replaceAll("^-", "");
+        return id + "-" + cleanTitle;
+    }
 }
