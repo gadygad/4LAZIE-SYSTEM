@@ -49,7 +49,8 @@ public class SearchApiController {
     public ResponseEntity<List<Map<String, Object>>> filterNotes(
             @RequestParam("category") String category,
             @RequestParam("program") String program,
-            @RequestParam("semester") Integer semester) {
+            @RequestParam("semester") Integer semester,
+            @RequestParam(value = "level", required = false) Integer level) {
             
         // Query the database for the matching notes
         List<Note> notes = noteRepository.findByCategoryOrderByIdDesc(category);
@@ -58,6 +59,7 @@ public class SearchApiController {
                 .filter(n -> program.equalsIgnoreCase(n.getProgramType()) || 
                              (n.getProgramType() != null && n.getProgramType().toLowerCase().contains(program.toLowerCase())))
                 .filter(n -> semester.equals(n.getSemesterNo()))
+                .filter(n -> level == null || level.equals(n.getLevelNo()))
                 .filter(n -> Boolean.TRUE.equals(n.getIsPublic()))
                 .map(note -> {
                     Map<String, Object> map = new HashMap<>();
