@@ -335,20 +335,22 @@ public class NotesController {
 
 
     @GetMapping("/download/{slug}")
-    @ResponseBody
-    public Object downloadFile(@PathVariable("slug") String slug, 
+    public void downloadFile(@PathVariable("slug") String slug, 
                                @RequestParam(value = "force", required = false) String force,
-                               HttpSession session) {
+                               HttpSession session,
+                               jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
         String id = slug.split("-")[0];
         Note note = noteRepository.findById(id).orElse(null);
-        if (note == null) return ResponseEntity.notFound().build();
+        if (note == null) {
+            response.sendError(404, "Note not found");
+            return;
+        }
 
         User loggedInUser = getLoggedInUser();
-        if (!note.getIsPublic() && loggedInUser == null) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
-        }
+        // Only "Note" category is free for guests. Everything else requires login.
         if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+            response.sendRedirect("/login");
+            return;
         }
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
@@ -360,25 +362,35 @@ public class NotesController {
         }
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            String redirectUrl = note.getFileUrl();
-            if (redirectUrl.contains("/upload/")) {
-                String filename = note.getFilename();
-                if (filename != null && !filename.isEmpty()) {
-                    // Extract extension
-                    String ext = "";
-                    int dotIdx = filename.lastIndexOf('.');
-                    if (dotIdx > 0) ext = filename.substring(dotIdx);
+            try {
+                String safeUrl = note.getFileUrl().replaceFirst("^http://", "https://");
+                java.net.URL url = java.net.URI.create(safeUrl).toURL();
+                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+                connection.setInstanceFollowRedirects(true);
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                connection.setRequestProperty("Accept", "*/*");
+                connection.connect();
+                
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    String mimeType = fileStorageService.getMimeType(note.getFilename());
+                    response.setContentType(mimeType);
+                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + note.getFilename() + "\"");
                     
-                    // Add fl_attachment with original filename to force download instead of inline viewing
-                    // Format: fl_attachment:filename
-                    redirectUrl = redirectUrl.replaceFirst("/upload/", "/upload/fl_attachment:" + java.net.URLEncoder.encode(filename.replace(ext, ""), java.nio.charset.StandardCharsets.UTF_8).replace("+", "%20") + "/");
-                } else {
-                    redirectUrl = redirectUrl.replaceFirst("/upload/", "/upload/fl_attachment/");
+                    try (java.io.InputStream is = connection.getInputStream();
+                         java.io.OutputStream os = response.getOutputStream()) {
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = is.read(buffer)) != -1) {
+                            os.write(buffer, 0, bytesRead);
+                        }
+                    }
+                    return;
                 }
+            } catch (Exception e) {
+                // fall through to text fallback
             }
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, redirectUrl)
-                    .build();
         }
 
         String filename = note.getFilename();
@@ -390,12 +402,9 @@ public class NotesController {
                 "Category: " + note.getCategory() + "\nUploaded: " + note.getUploadDate() + "\n" +
                 "=========================\nDownloaded from 4LAZIE Student Notes Hub.";
 
-        ByteArrayResource resource = new ByteArrayResource(fileContent.getBytes());
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .contentLength(fileContent.length())
-                .body(resource);
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+        response.getOutputStream().write(fileContent.getBytes());
     }
 
     @GetMapping("/download/level/{level}")
@@ -429,15 +438,9 @@ public class NotesController {
             return "redirect:/dashboard";
         }
         
-        if (!note.getIsPublic() && loggedInUser == null) {
+        // Only "Note" category is free for guests. Everything else requires login.
+        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
             return "redirect:/login";
-        }
-        
-        // Exclusive Resource Check Logic
-        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note")) {
-            if (loggedInUser == null) {
-                return "redirect:/login";
-            }
         }
         
         model.addAttribute("note", note);
@@ -490,9 +493,13 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             try {
-                java.net.URL url = java.net.URI.create(note.getFileUrl()).toURL();
+                String safeUrl = note.getFileUrl().replaceFirst("^http://", "https://");
+                java.net.URL url = java.net.URI.create(safeUrl).toURL();
                 java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+                connection.setInstanceFollowRedirects(true);
                 connection.setRequestMethod("GET");
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                connection.setRequestProperty("Accept", "*/*");
                 connection.connect();
                 
                 int responseCode = connection.getResponseCode();
