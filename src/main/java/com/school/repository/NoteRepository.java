@@ -54,6 +54,8 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     Long getTotalDownloadCount();
 
     List<Note> findTop3ByCategoryOrderByIdDesc(String category);
+    
+    List<Note> findTop10ByCategoryOrderByIdDesc(String category);
 
     @Aggregation(pipeline = {
         "{ '$group': { '_id': '$moduleName' } }"
