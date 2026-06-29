@@ -3,33 +3,33 @@
     <!-- Mobile Bottom Navigation Fragment -->
     <div th:fragment="nav(activePage)" class="mobile-bottom-nav d-lg-none" th:if="${session.user != null}">
         <div class="mobile-bottom-nav-container">
-            <a th:href="@{/dashboard}" class="nav-item-bottom" th:classappend="${activePage == 'home'} ? 'active'" th:style="${activePage == 'home'} ? 'color: #10b981 !important;' : ''">
-                <i class="bi bi-house-door-fill" th:style="${activePage == 'home'} ? 'color: #10b981 !important;' : ''"></i>
+            <a th:href="@{/dashboard}" class="nav-item-bottom" th:classappend="${activePage == 'home'} ? 'active'">
+                <i class="bi bi-house-door-fill"></i>
                 <span>Home</span>
             </a>
             <!-- Dynamic Middle Item -->
             <th:block th:if="${activePage == 'cat1'}">
-                <a th:href="@{/cat1}" class="nav-item-bottom active" style="color: #10b981 !important;">
-                    <i class="bi bi-journal-text" style="color: #10b981 !important;"></i>
+                <a th:href="@{/cat1}" class="nav-item-bottom active">
+                    <i class="bi bi-card-list"></i>
                     <span>CAT 1</span>
                 </a>
             </th:block>
             <th:block th:if="${activePage == 'ue'}">
-                <a th:href="@{/ue_exams}" class="nav-item-bottom active" style="color: #10b981 !important;">
-                    <i class="bi bi-journal-check" style="color: #10b981 !important;"></i>
+                <a th:href="@{/ue_exams}" class="nav-item-bottom active">
+                    <i class="bi bi-journal-check"></i>
                     <span>UE Exams</span>
                 </a>
             </th:block>
             <th:block th:if="${activePage != 'cat1' and activePage != 'ue'}">
-                <a th:href="@{/notes}" class="nav-item-bottom" th:classappend="${activePage == 'materials'} ? 'active'" th:style="${activePage == 'materials'} ? 'color: #10b981 !important;' : ''">
-                    <i class="bi bi-journal-text" th:style="${activePage == 'materials'} ? 'color: #10b981 !important;' : ''"></i>
+                <a th:href="@{/notes}" class="nav-item-bottom" th:classappend="${activePage == 'materials'} ? 'active'">
+                    <i class="bi bi-folder2-open"></i>
                     <span>Materials</span>
                 </a>
             </th:block>
             
-            <div class="dropup nav-item-bottom" th:classappend="${activePage == 'profile'} ? 'active'" style="cursor: pointer; width: 25%;" th:styleappend="${activePage == 'profile'} ? 'color: #10b981 !important;' : ''" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="true">
+            <div class="dropup nav-item-bottom" th:classappend="${activePage == 'profile'} ? 'active'" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="true">
                 <img th:if="${user != null and user.profilePicture != null}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" class="rounded-circle mb-1" style="width: 24px; height: 24px; object-fit: cover; border: 1px solid currentColor;">
-                <i th:unless="${user != null and user.profilePicture != null}" class="bi bi-person-circle" th:style="${activePage == 'profile'} ? 'color: #10b981 !important;' : ''"></i>
+                <i th:unless="${user != null and user.profilePicture != null}" class="bi bi-person-circle"></i>
                 <span>Profile</span>
             </div>
             <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mb-3 p-2" style="border-radius: 20px; min-width: 240px; animation: popupAnim 0.3s forwards; background-color: #ffffff;">
