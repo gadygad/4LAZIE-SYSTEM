@@ -300,7 +300,9 @@ public class NotesController {
 
     @GetMapping("/download/{id}")
     @ResponseBody
-    public Object downloadFile(@PathVariable("id") String id, HttpSession session) {
+    public Object downloadFile(@PathVariable("id") String id, 
+                               @RequestParam(value = "force", required = false) String force,
+                               HttpSession session) {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) return ResponseEntity.notFound().build();
 
@@ -321,8 +323,24 @@ public class NotesController {
         }
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            String redirectUrl = note.getFileUrl();
+            if (redirectUrl.contains("/upload/")) {
+                String filename = note.getFilename();
+                if (filename != null && !filename.isEmpty()) {
+                    // Extract extension
+                    String ext = "";
+                    int dotIdx = filename.lastIndexOf('.');
+                    if (dotIdx > 0) ext = filename.substring(dotIdx);
+                    
+                    // Add fl_attachment with original filename to force download instead of inline viewing
+                    // Format: fl_attachment:filename
+                    redirectUrl = redirectUrl.replaceFirst("/upload/", "/upload/fl_attachment:" + java.net.URLEncoder.encode(filename.replace(ext, ""), java.nio.charset.StandardCharsets.UTF_8).replace("+", "%20") + "/");
+                } else {
+                    redirectUrl = redirectUrl.replaceFirst("/upload/", "/upload/fl_attachment/");
+                }
+            }
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, note.getFileUrl())
+                    .header(HttpHeaders.LOCATION, redirectUrl)
                     .build();
         }
 
