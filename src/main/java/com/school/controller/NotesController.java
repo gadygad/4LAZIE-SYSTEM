@@ -490,7 +490,7 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             try {
-                java.net.URL url = new java.net.URL(note.getFileUrl());
+                java.net.URL url = java.net.URI.create(note.getFileUrl()).toURL();
                 java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.connect();
