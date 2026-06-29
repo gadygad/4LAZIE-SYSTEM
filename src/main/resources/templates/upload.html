@@ -236,27 +236,30 @@
             <!-- Right Column: Sidebar Navigation -->
             <div class="col-lg-4">
                 <div class="sidebar-card">
-                    <h4 class="brand-font fw-bold mb-2" style="font-size: 1.25rem;">
-                        <i class="bi bi-folder-fill text-success me-2"></i>Sidebar
+                    <h4 class="brand-font fw-bold mb-2 sidebar-title" style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1.5px; padding-bottom: 0.6rem; border-bottom: 2px solid rgba(16, 185, 129, 0.3); cursor: default; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;">
+                        <i class="bi bi-folder-fill text-success me-2" style="transition: transform 0.3s ease;"></i>SIDEBAR
                     </h4>
                     <div class="d-flex flex-column gap-1">
                         <a href="/dashboard" class="sidebar-nav-item">
-                            <i class="bi bi-grid-fill"></i>Dashboard
+                            <i class="bi bi-grid-fill"></i>DASHBOARD
                         </a>
                         <a href="/admin/users" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
-                            <i class="bi bi-people-fill text-primary"></i>Users Management
+                            <i class="bi bi-people-fill text-primary"></i>USERS MANAGEMENT
                         </a>
                         <a href="/upload" class="sidebar-nav-item active" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-cloud-arrow-up-fill text-primary"></i>UPLOAD NOTES
+                        </a>
+                        <a href="/admin/notes" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                            <i class="bi bi-journal-text"></i>MANAGE NOTES
                         </a>
                         <a href="/profile/downloads" class="sidebar-nav-item">
                             <i class="bi bi-journal-bookmark-fill"></i>MY NOTES
                         </a>
                         <a href="/profile/saved" class="sidebar-nav-item">
-                            <i class="bi bi-star-fill"></i>Favorites
+                            <i class="bi bi-star-fill"></i>FAVORITES
                         </a>
                         <a href="/profile" class="sidebar-nav-item">
-                            <i class="bi bi-person-fill"></i>Profile
+                            <i class="bi bi-person-fill"></i>PROFILE
                         </a>
                     </div>
                 </div>
