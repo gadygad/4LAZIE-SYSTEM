@@ -272,8 +272,21 @@
         }
 
         .mobile-bottom-nav .nav-item.active i {
-            transform: translateY(-3px);
+            transform: translateY(-4px) scale(1.1);
             color: #10b981;
+            text-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .mobile-bottom-nav .nav-item:hover,
+        .mobile-bottom-nav .nav-item:active {
+            color: #10b981;
+        }
+
+        .mobile-bottom-nav .nav-item:hover i,
+        .mobile-bottom-nav .nav-item:active i {
+            transform: translateY(-4px) scale(1.1);
+            color: #10b981;
+            text-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -374,7 +387,7 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
         const searchBtn = document.getElementById('cat1SearchBtn');
         const resultsContainer = document.getElementById('cat1Results');
@@ -382,29 +395,25 @@
         const courseSelect = document.getElementById('cat1Course');
         const semesterSelect = document.getElementById('cat1Semester');
 
-        // SJUIT Curated Courses for Premium Display
-        const sjuitDegreeCourses = [
-            { value: 'DEGREE_MD', text: 'Doctor of Medicine (MD)' },
-            { value: 'DEGREE_PHARMACY', text: 'Bachelor of Pharmacy' },
-            { value: 'DEGREE_NURSING', text: 'BSc in Nursing' },
-            { value: 'DEGREE_CSE', text: 'BSc in Computer Science Eng. (CSE)' },
-            { value: 'DEGREE_IT', text: 'BSc in Information Technology (IT)' },
-            { value: 'DEGREE_CE', text: 'BSc in Computer Engineering (CE)' },
-            { value: 'DEGREE_EE', text: 'BSc in Electrical Engineering (EE)' },
-            { value: 'DEGREE_ME', text: 'BSc in Mechanical Engineering (ME)' },
-            { value: 'DEGREE_CIVIL', text: 'BSc in Civil Engineering' },
-            { value: 'DEGREE_EDUCATION', text: 'BSc with Education' }
-        ];
+        // Dynamically fetched courses from the database via Thymeleaf
+        const dbCourses = /*[[${courses}]]*/ [];
 
-        const sjuitDiplomaCourses = [
-            { value: 'DIP_CLINICAL_MEDICINE', text: 'Diploma in Clinical Medicine' },
-            { value: 'DIP_PHARMACY', text: 'Diploma in Pharmaceutical Sci.' },
-            { value: 'DIP_NURSING', text: 'Diploma in Nursing & Midwifery' },
-            { value: 'DIP_LAB', text: 'Diploma in Medical Lab Sciences' },
-            { value: 'DIP_CSE', text: 'Diploma in Computer Science' },
-            { value: 'DIP_IT', text: 'Diploma in Information Technology' },
-            { value: 'DIP_MECHATRONICS', text: 'Diploma in Mechatronics Eng.' }
-        ];
+        const sjuitDegreeCourses = dbCourses
+            .filter(c => {
+                const pt = (c.programType || '').toUpperCase();
+                const n = (c.name || '').toUpperCase();
+                return pt.includes('DEGREE') || pt.includes('BSC') || pt.includes('MD') || pt.includes('BACHELOR') || 
+                       n.includes('BACHELOR') || n.includes('BSC ') || n.includes('DEGREE');
+            })
+            .map(c => ({ value: c.programType, text: c.name || c.programType }));
+
+        const sjuitDiplomaCourses = dbCourses
+            .filter(c => {
+                const pt = (c.programType || '').toUpperCase();
+                const n = (c.name || '').toUpperCase();
+                return pt.includes('DIP') || n.includes('DIPLOMA');
+            })
+            .map(c => ({ value: c.programType, text: c.name || c.programType }));
 
         function updateCourses() {
             const isDegree = programSelect.value === 'DEGREE';
