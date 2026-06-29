@@ -380,7 +380,8 @@
             <span>CAT 1</span>
         </a>
         <a href="/profile" class="nav-item">
-            <i class="bi bi-person-circle"></i>
+            <img th:if="${user != null and user.profilePicture != null}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" class="rounded-circle mb-1" style="width: 24px; height: 24px; object-fit: cover; border: 2px solid transparent; transition: all 0.2s;">
+            <i th:unless="${user != null and user.profilePicture != null}" class="bi bi-person-circle"></i>
             <span>Profile</span>
         </a>
     </nav>
