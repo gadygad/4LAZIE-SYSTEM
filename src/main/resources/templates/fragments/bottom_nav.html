@@ -33,70 +33,7 @@
                 </a>
             </th:block>
             
-            <!-- Notifications Dropup (Replaced Profile) -->
-            <div class="dropup nav-item-bottom" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" id="bottomNotificationDropdown">
-                <div class="position-relative">
-                    <i class="bi bi-bell-fill"></i>
-                    <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #10b981; color: white !important; font-size: 0.55rem; padding: 0.25em 0.4em; border: 2px solid #fff; transform: translate(-30%, 10%) !important; animation: pulse-orange 2s infinite;">
-                        3
-                    </span>
-                </div>
-                <span>Notifs</span>
-            </div>
-            
-            <!-- Notification Dropdown Menu (Bottom Nav) -->
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg notification-dropdown border-0 mb-3 p-0" aria-labelledby="bottomNotificationDropdown" style="border-radius: 16px; min-width: 280px; width: 300px; max-width: 85vw; overflow: hidden; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); animation: popupAnim 0.3s forwards;">
-                <li class="dropdown-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="background: rgba(248, 250, 252, 0.95);">
-                    <h6 class="mb-0 fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b !important;">Notifications</h6>
-                    <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1" style="background: linear-gradient(135deg, #10b981, #059669); color: white !important; font-size: 0.75rem; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">3 New</span>
-                </li>
-                
-                <li class="p-0">
-                    <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
-                        <div th:if="${notifications == null or #lists.isEmpty(notifications)}" class="text-center py-4">
-                            <i class="bi bi-bell-slash text-muted" style="font-size: 2rem;"></i>
-                            <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">No notifications yet</p>
-                        </div>
-                        
-                        <!-- Notification Item -->
-                        <a th:each="notification : ${notifications}" href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" th:style="'transition: all 0.3s ease; background-color: ' + (${notification.read} ? 'transparent' : 'rgba(16, 185, 129, 0.05)') + '; position: relative; overflow: hidden;'" th:attr="data-read=${notification.read}">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.15)); flex-shrink: 0;">
-                                        <i class="bi bi-info-circle-fill" style="font-size: 1rem; color: #10b981;"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-1 fw-bold" style="font-size: 0.85rem; color: #0f172a !important;" th:text="${notification.title}">System Update</h6>
-                                        <p class="mb-1" style="font-size: 0.75rem; line-height: 1.4; color: #475569 !important;" th:text="${notification.message}">Message</p>
-                                        <small class="fw-bold text-muted" style="font-size: 0.65rem;" th:text="${#temporals.format(notification.createdAt, 'dd MMM, HH:mm')}">Time</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </li>
-            </ul>
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    const bottomNotifDropdown = document.getElementById('bottomNotificationDropdown');
-                    if(bottomNotifDropdown) {
-                        bottomNotifDropdown.addEventListener('show.bs.dropdown', function () {
-                            fetch('/api/notifications/mark-read', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
-                                }
-                            }).then(() => {
-                                const badges = document.querySelectorAll('#bottomNotificationDropdown .badge, .notification-dropdown .badge');
-                                badges.forEach(b => b.style.display = 'none');
-                                const items = document.querySelectorAll('.notification-item');
-                                items.forEach(i => i.style.backgroundColor = 'transparent');
-                            }).catch(e => console.error(e));
-                        });
-                    }
-                });
-            </script>
+
         </div>
     </div>
 </body>
