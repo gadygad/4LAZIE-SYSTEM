@@ -189,6 +189,42 @@ public class NotesController {
         return "cat1_past_papers";
     }
 
+    @GetMapping("/cat2")
+    public String cat2PastPapers(Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("user", loggedInUser);
+        return "cat2_past_papers";
+    }
+
+    @GetMapping("/assignments")
+    public String assignmentsPastPapers(Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("user", loggedInUser);
+        return "assignments_past_papers";
+    }
+
+    @GetMapping("/ue_exams")
+    public String ueExamsPastPapers(Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("user", loggedInUser);
+        return "ue_past_papers";
+    }
+
+    @GetMapping("/projects")
+    public String projectsPastPapers(Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("user", loggedInUser);
+        return "projects_past_papers";
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
                             @RequestParam(value = "level", required = false) Integer level,

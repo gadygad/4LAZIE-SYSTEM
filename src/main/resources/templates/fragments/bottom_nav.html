@@ -14,15 +14,21 @@
                     <span>CAT 1</span>
                 </a>
             </th:block>
+            <th:block th:if="${activePage == 'cat2'}">
+                <a th:href="@{/cat2}" class="nav-item-bottom active">
+                    <i class="bi bi-card-checklist"></i>
+                    <span>CAT 2</span>
+                </a>
+            </th:block>
             <th:block th:if="${activePage == 'ue'}">
                 <a th:href="@{/ue_exams}" class="nav-item-bottom active">
                     <i class="bi bi-journal-check"></i>
                     <span>UE Exams</span>
                 </a>
             </th:block>
-            <th:block th:if="${activePage != 'cat1' and activePage != 'ue'}">
+            <th:block th:if="${activePage != 'cat1' and activePage != 'cat2' and activePage != 'ue'}">
                 <a th:href="@{/notes}" class="nav-item-bottom" th:classappend="${activePage == 'materials'} ? 'active'">
-                    <i class="bi bi-folder2-open"></i>
+                    <i class="bi bi-book-fill"></i>
                     <span>Materials</span>
                 </a>
             </th:block>
