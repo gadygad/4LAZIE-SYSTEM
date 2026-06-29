@@ -121,73 +121,12 @@
                             <span class="fs-4 fw-bold" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.5px;">4LAZIE <span class="d-none d-sm-inline" style="color: #e67e22;">NOTES</span></span>
                         </a>
 
-                        <!-- Premium Live Clock (Mobile - Fixed Top) -->
-                        <style>
-                            @media (max-width: 991px) {
-                                .navbar.sticky-top {
-                                    position: relative !important;
-                                }
-                                .mobile-floating-clock {
-                                    position: fixed !important;
-                                    top: 14px !important;
-                                    right: 130px !important;
-                                    z-index: 9999 !important;
-                                    background: rgba(15, 23, 42, 0.85) !important;
-                                    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
-                                    max-width: 170px;
-                                }
-                                .mobile-floating-clock span {
-                                    color: #ffffff !important;
-                                    white-space: nowrap;
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
-                                }
-                            }
-                        </style>
-                        <div class="d-flex d-md-none align-items-center justify-content-center position-relative overflow-hidden mobile-floating-clock" 
-                             style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; box-shadow: inset 0 1px 3px rgba(255,255,255,0.6);">
-                            <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transform: skewX(-20deg); animation: shimmer-glow 4s infinite;"></div>
-                            <i class="bi bi-clock-history me-1" style="color: #10b981; font-size: 0.75rem; z-index: 1;"></i>
-                            <span class="liveClockTextMobile" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #0f172a; font-size: 0.65rem; letter-spacing: 0.2px; z-index: 1;">--:--</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Premium Live Clock (Desktop) -->
-                    <div class="d-none d-md-flex align-items-center justify-content-center px-3 py-1 mx-auto position-relative overflow-hidden" 
-                         style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 15px rgba(16,185,129,0.1), inset 0 2px 4px rgba(255,255,255,0.6); backdrop-filter: blur(8px);">
-                        <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transform: skewX(-20deg); animation: shimmer-glow 4s infinite;"></div>
-                        <i class="bi bi-clock-history me-2" style="color: #10b981; font-size: 1.1rem; filter: drop-shadow(0 2px 3px rgba(16,185,129,0.3)); z-index: 1;"></i>
-                        <span class="liveClockText" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #0f172a; font-size: 0.95rem; letter-spacing: 0.5px; z-index: 1;">--:--:--</span>
                     </div>
 
                 <!-- Actions (Notifications, Profile) -->
-                <div class="d-flex align-items-center" style="gap: 1.2rem;">
+                <div class="d-flex align-items-center" style="gap: 0.6rem;">
                     
-    
-                    <!-- Profile Dropdown -->
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownDash" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open profile menu" 
-                           style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); padding: 5px; border-radius: 12px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                           onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.25)'; this.style.transform='translateY(-3px)';" 
-                           onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.05)'; this.style.transform='none';">
-                            <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile" style="width: 38px; height: 38px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);">
-                            <div th:unless="${user.profilePicture}" class="d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2); overflow: hidden; transition: all 0.3s ease;">
-                                <i class="bi bi-person-fill" style="font-size: 1.8rem; color: #ffffff; margin-top: 5px;"></i>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdownDash" style="border-radius: 20px; min-width: 240px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
-                            <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(230,126,34,0.1);">
-                                <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;" th:text="${user.name}">System Admin</p>
-                                <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #e67e22 !important;" th:text="${user.role}">ADMINISTRATOR</p>
-                            </li>
-                            <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-grid-1x2-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>Dashboard</a></li>
-                            <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-person-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>My Profile</a></li>
-                            <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
-                            <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
-                        </ul>
-                    </div>
-                    </div>
-                <!-- Notification Button (Triggers Dropdown) -->
+<!-- Notification Button (Triggers Dropdown) -->
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" data-bs-toggle="dropdown" aria-expanded="false" role="button" id="notificationDropdown"
                            style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
@@ -307,8 +246,32 @@
                             });
                         </script>
                     </div>
-    
+
+<!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownDash" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open profile menu" 
+                           style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); padding: 5px; border-radius: 12px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                           onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.25)'; this.style.transform='translateY(-3px)';" 
+                           onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.05)'; this.style.transform='none';">
+                            <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile" style="width: 38px; height: 38px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);">
+                            <div th:unless="${user.profilePicture}" class="d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2); overflow: hidden; transition: all 0.3s ease;">
+                                <i class="bi bi-person-fill" style="font-size: 1.8rem; color: #ffffff; margin-top: 5px;"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdownDash" style="border-radius: 20px; min-width: 240px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
+                            <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(230,126,34,0.1);">
+                                <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;" th:text="${user.name}">System Admin</p>
+                                <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #e67e22 !important;" th:text="${user.role}">ADMINISTRATOR</p>
+                            </li>
+                            <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-grid-1x2-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>Dashboard</a></li>
+                            <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-person-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>My Profile</a></li>
+                            <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
+                            <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
+                        </ul>
                     </div>
+
+                
+                </div>
             </div>
             <!-- Premium Horizontal Separator Line -->
             <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(230,126,34,0) 0%, rgba(230,126,34,0.8) 50%, rgba(230,126,34,0) 100%); box-shadow: 0 2px 10px rgba(230,126,34,0.5);"></div>
@@ -480,42 +443,5 @@
     <!-- Offcanvas Sidebar for Mobile -->
     <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
-    <!-- Live Clock Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const desktopClocks = document.querySelectorAll('.liveClockText');
-            const mobileClocks = document.querySelectorAll('.liveClockTextMobile');
-            
-            if(desktopClocks.length > 0 || mobileClocks.length > 0) {
-                function updateClock() {
-                    const now = new Date();
-                    const optionsDesktop = { 
-                        weekday: 'short', 
-                        day: 'numeric', 
-                        month: 'short', 
-                        year: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        second: '2-digit' 
-                    };
-                    const optionsMobile = { 
-                        day: '2-digit', 
-                        month: 'short', 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    };
-                    
-                    const formattedDesktop = now.toLocaleDateString('en-US', optionsDesktop).replace(',', ' |');
-                    // Mobile format: 29 Jun, 10:37 PM (no seconds, no year, no weekday to save space)
-                    const formattedMobile = now.toLocaleDateString('en-US', optionsMobile);
-                    
-                    desktopClocks.forEach(clock => clock.textContent = formattedDesktop);
-                    mobileClocks.forEach(clock => clock.textContent = formattedMobile);
-                }
-                updateClock();
-                setInterval(updateClock, 1000);
-            }
-        });
-    </script>
 </body>
 </html>
