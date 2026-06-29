@@ -27,7 +27,6 @@
     <nav class="navbar navbar-light navbar-custom sticky-top py-2" style="background: rgba(255,255,255,0.98); backdrop-filter: blur(12px); z-index: 1020; border-bottom: 1px solid rgba(15, 23, 42, 0.06); box-shadow: 0 10px 30px rgba(0,0,0,0.02); transition: all 0.3s ease;">
         <div class="container d-flex justify-content-between align-items-center flex-nowrap">
             <a class="navbar-brand d-flex align-items-center" th:href="${session.user != null ? '/dashboard' : '/'}" style="text-decoration: none;">
-                <i class="bi bi-arrow-left fs-4 me-2 text-secondary"></i>
                 <span class="fs-3 me-2 fw-bold text-dark" style="font-family: 'Outfit', sans-serif; font-weight: 900 !important; letter-spacing: -1px; color: #000000 !important;">4LAZIE</span>
                 <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 6px 16px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
                     <!-- Shimmer overlay -->
@@ -688,6 +687,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 400); // 400ms debounce
         });
     }
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+        alerts.forEach(alert => {
+            if(window.bootstrap && bootstrap.Alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            } else {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }
+        });
+    }, 5000);
 });
     </script>
 </body>

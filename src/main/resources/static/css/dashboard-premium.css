@@ -754,7 +754,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 65px;
+            height: 55px;
             width: 100%;
         }
         .nav-item-bottom {
@@ -762,35 +762,40 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: rgba(16, 185, 129, 0.55);
+            color: #10b981; /* Solid green instead of pale */
             text-decoration: none;
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 700; /* Bolder text */
             font-family: 'Outfit', sans-serif;
             flex: 1;
-            min-height: 48px;
+            min-height: 44px;
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         .nav-item-bottom i {
-            font-size: 1.4rem;
+            font-size: 1.3rem; /* Slightly larger icon */
             margin-bottom: 2px;
             transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), color 0.3s;
-            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.1));
+            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.2));
+            /* Make icon stroke thicker if it's a font icon */
+            -webkit-text-stroke: 0.5px #10b981;
         }
         .nav-item-bottom:hover {
-            color: rgba(16, 185, 129, 0.8);
+            color: #059669;
         }
         .nav-item-bottom:hover i {
             transform: translateY(-4px) scale(1.1);
+            -webkit-text-stroke: 0.8px #059669;
         }
         .nav-item-bottom.active {
-            color: #10b981;
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+            color: #047857; /* Darker green for active */
+            font-weight: 900;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
         }
         .nav-item-bottom.active i {
-            color: #10b981;
-            filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.3));
+            color: #047857;
+            filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.4));
             transform: translateY(-2px);
+            -webkit-text-stroke: 1px #047857;
         }
         @media (max-width: 1250px) {
             .content-area {
@@ -817,6 +822,9 @@
                 height: auto;
                 overflow: auto;
                 display: block;
+            }
+            .main-wrapper {
+                overflow: visible;
             }
             .sidebar {
                 display: none; /* Ficha sidebar kwenye simu sababu kuna menu ya chini */
