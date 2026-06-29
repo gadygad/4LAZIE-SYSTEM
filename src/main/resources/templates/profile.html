@@ -201,9 +201,11 @@
                     <div class="d-inline-flex align-items-center py-1 px-3 rounded-pill mt-2 shadow-sm" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.03)); border: 1px solid rgba(16, 185, 129, 0.2); backdrop-filter: blur(5px);">
                         <i class="bi bi-mortarboard-fill me-2" style="color: #10b981; font-size: 1rem; filter: drop-shadow(0 2px 3px rgba(16,185,129,0.3));"></i> 
                         <span style="color: #1e293b !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;" th:text="${user.courseProgram != null ? user.courseProgram : 'Student'}"></span> 
-                        <span style="color: #94a3b8; font-size: 0.8rem;" class="mx-2">&bull;</span> 
-                        <span style="color: #475569 !important; font-size: 0.8rem; font-weight: 500;">Level</span> 
-                        <span class="badge rounded-pill ms-1" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 0.3em 0.6em; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 5px rgba(16,185,129,0.3);" th:text="${user.level != null ? user.level : 'Not Set'}"></span> 
+                        <th:block th:if="${user.courseProgram == null or !(#strings.containsIgnoreCase(user.courseProgram, 'degree') or #strings.containsIgnoreCase(user.courseProgram, 'bsc') or #strings.containsIgnoreCase(user.courseProgram, 'beng') or #strings.containsIgnoreCase(user.courseProgram, 'bachelor') or #strings.containsIgnoreCase(user.courseProgram, 'md '))} ">
+                            <span style="color: #94a3b8; font-size: 0.8rem;" class="mx-2">&bull;</span> 
+                            <span style="color: #475569 !important; font-size: 0.8rem; font-weight: 500;">Level</span> 
+                            <span class="badge rounded-pill ms-1" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 0.3em 0.6em; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 5px rgba(16,185,129,0.3);" th:text="${user.level != null ? user.level : 'Not Set'}"></span> 
+                        </th:block>
                         <span style="color: #94a3b8; font-size: 0.8rem;" class="mx-2">&bull;</span> 
                         <span style="color: #475569 !important; font-size: 0.8rem; font-weight: 500;">Semester</span> 
                         <span class="badge rounded-pill ms-1" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 0.3em 0.6em; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 5px rgba(16,185,129,0.3);" th:text="${user.semester != null ? user.semester : 'Not Set'}"></span>
