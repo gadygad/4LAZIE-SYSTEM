@@ -41,15 +41,19 @@
     </nav>
 
     <div class="container py-4">
-        <!-- Alert Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="border: none; border-radius: 16px; background: rgba(16, 185, 129, 0.1); color: #065f46; font-weight: 600;">
-            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Glassmorphism Toast Notification -->
+        <div th:if="${success}" class="toast-notification" id="toastSuccess" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 280px; max-width: 360px; padding: 12px 20px; border-radius: 14px; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.18); color: #065f46; font-weight: 600; font-size: 0.85rem; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 10px; animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1), fadeOut 0.5s ease 2.5s forwards;">
+            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem;"></i>
+            <span th:text="${success}"></span>
         </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="border: none; border-radius: 16px; background: rgba(220, 38, 38, 0.1); color: #991b1b; font-weight: 600;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div th:if="${error}" class="toast-notification" id="toastError" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 280px; max-width: 360px; padding: 12px 20px; border-radius: 14px; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(220, 38, 38, 0.25); box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15); color: #991b1b; font-weight: 600; font-size: 0.85rem; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 10px; animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1), fadeOut 0.5s ease 2.5s forwards;">
+            <i class="bi bi-exclamation-triangle-fill" style="color: #dc2626; font-size: 1.1rem;"></i>
+            <span th:text="${error}"></span>
         </div>
+        <style>
+            @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateY(-20px); } }
+        </style>
 
         <div class="row g-4">
             <!-- Left Column: Notes Table -->
@@ -164,6 +168,13 @@
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(query) ? '' : 'none';
             });
+        });
+
+        // Auto-remove toast notifications after 3 seconds
+        document.querySelectorAll('.toast-notification').forEach(function(toast) {
+            setTimeout(function() {
+                toast.remove();
+            }, 3000);
         });
     </script>
 
