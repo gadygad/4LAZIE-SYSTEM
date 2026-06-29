@@ -1515,26 +1515,35 @@
                         </div>
                     </div>
 
-                    <!-- RECOMMENDED NOTES HEADER -->
+                    <!-- LATEST NOTES HEADER -->
                     <style>
-                        /* Compact Mobile View & Smooth Hover */
+                        /* Smooth Drop List View */
+                        .premium-list-container {
+                            background: white;
+                            border-radius: 16px;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+                            border: 1px solid rgba(0,0,0,0.05);
+                            overflow: hidden;
+                        }
                         .premium-accordion-item {
                             background: transparent; 
-                            border: 1px solid transparent; 
-                            margin-bottom: 0.75rem !important;
-                            border-radius: 16px;
-                            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+                            border: none;
+                            border-bottom: 1px solid rgba(0,0,0,0.05);
+                            margin-bottom: 0 !important;
+                            border-radius: 0;
+                            transition: background-color 0.3s ease;
+                        }
+                        .premium-accordion-item:last-child {
+                            border-bottom: none;
                         }
                         .premium-accordion-item:hover {
-                            transform: translateY(-3px);
-                            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-                            border-color: rgba(59, 130, 246, 0.2);
+                            background-color: #f8fafc;
                         }
                         .premium-accordion-btn {
-                            background: white; 
-                            border-radius: 16px !important; 
-                            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-                            padding: 1rem 1.5rem; 
+                            background: transparent; 
+                            border-radius: 0 !important; 
+                            box-shadow: none; 
+                            padding: 1.2rem 1.5rem; 
                             font-family: 'Outfit', sans-serif; 
                             font-weight: 600; 
                             font-size: 0.85rem; 
@@ -1542,29 +1551,29 @@
                             transition: all 0.3s ease;
                             border: none;
                         }
+                        .premium-accordion-btn:not(.collapsed) {
+                            background-color: #f1f5f9;
+                            color: #0f172a;
+                            box-shadow: none;
+                        }
                         .premium-accordion-body {
-                            background: white; 
-                            border-bottom-left-radius: 16px; 
-                            border-bottom-right-radius: 16px; 
+                            background: #f8fafc; 
                             padding: 1.2rem 1.5rem; 
-                            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); 
+                            border-top: 1px dashed rgba(0,0,0,0.05);
                             position: relative;
                         }
                         @media (max-width: 768px) {
-                            .premium-accordion-item {
-                                margin-bottom: 0.5rem !important;
-                            }
                             .premium-accordion-btn {
-                                padding: 0.8rem 1rem !important;
-                                font-size: 0.7rem !important;
+                                padding: 1rem 1rem !important;
+                                font-size: 0.75rem !important;
                                 font-weight: 500 !important;
                             }
                             .premium-accordion-btn .fs-4 {
-                                font-size: 0.9rem !important;
+                                font-size: 0.95rem !important;
                             }
                             .premium-accordion-btn .badge {
-                                font-size: 0.55rem !important;
-                                padding: 2px 6px !important;
+                                font-size: 0.6rem !important;
+                                padding: 3px 8px !important;
                                 border-radius: 12px !important;
                             }
                             .premium-accordion-body {
@@ -1574,12 +1583,8 @@
 
                         /* Premium Scroll Container */
                         .premium-scroll-container {
-                            max-height: 400px;
+                            max-height: 450px;
                             overflow-y: auto;
-                            padding-right: 10px;
-                            padding-top: 10px;
-                            padding-bottom: 10px;
-                            margin-top: -10px;
                             /* Smooth scroll behavior */
                             scroll-behavior: smooth;
                         }
@@ -1590,7 +1595,6 @@
                         }
                         .premium-scroll-container::-webkit-scrollbar-track {
                             background: rgba(0, 0, 0, 0.02);
-                            border-radius: 10px;
                         }
                         .premium-scroll-container::-webkit-scrollbar-thumb {
                             background: rgba(148, 163, 184, 0.4);
@@ -1602,13 +1606,13 @@
                     </style>
                     <div class="d-flex align-items-center gap-3 mb-4 position-relative" th:if="${!popularNotes.isEmpty()}">
                         <div>
-                            <h3 class="premium-gradient-header warning">RECOMMENDED NOTES</h3>
-                            <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Handpicked study materials just for you</p>
+                            <h3 class="premium-gradient-header warning">LATEST NOTES</h3>
+                            <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Recently added study materials</p>
                         </div>
                     </div>
 
-                    <div class="premium-scroll-container">
-                        <div class="accordion accordion-flush mt-4" id="popularNotesAccordion">
+                    <div class="premium-scroll-container premium-list-container">
+                        <div class="accordion accordion-flush" id="popularNotesAccordion">
                             <!-- Dynamic List of Notes -->
                             <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item">
                                 <h2 class="accordion-header" th:id="'heading' + ${note.id}">
@@ -1622,7 +1626,7 @@
                                             
                                             <!-- Title -->
                                             <div style="flex-grow: 1; text-transform: uppercase; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-                                                <span style="color: #f59e0b; width: 100%; margin-bottom: 4px;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
+                                                <span style="color: #f59e0b; width: 100%; margin-bottom: 4px; font-weight: 700; font-family: 'Outfit', sans-serif;" th:text="${iterStat.count} + '. ' + ${note.title}">1. JAVA NOTES</span>
                                                 <div class="d-flex flex-wrap gap-2">
                                                     <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; padding: 4px 10px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.5px; border: 1px solid rgba(16,185,129,0.2);">
                                                         <i class="bi bi-mortarboard-fill me-1"></i><span th:text="'NTA ' + ${note.levelNo}">NTA 4</span>
@@ -1646,13 +1650,13 @@
                                             <!-- Action Buttons -->
                                             <div class="d-flex gap-2 flex-shrink-0">
                                                 <a th:href="@{'/view/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                                   style="background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
-                                                   onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(-2px)';" 
-                                                   onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                                                   style="background: #ffffff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 8px; padding: 6px 14px; font-size: 0.75rem; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                                                   onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#93c5fd'; this.style.transform='translateY(-2px)';" 
+                                                   onmouseout="this.style.background='#ffffff'; this.style.borderColor='#bfdbfe'; this.style.transform='none';">
                                                     <i class="bi bi-eye me-1"></i> Read
                                                 </a>
                                                 <a th:href="@{'/download/' + ${note.id}}" class="btn fw-bold d-flex align-items-center justify-content-center" 
-                                                   style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 8px; padding: 4px 12px; font-size: 0.65rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
+                                                   style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 8px; padding: 6px 14px; font-size: 0.75rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(37,99,235,0.25);"
                                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(37,99,235,0.35)';" 
                                                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(37,99,235,0.25)';">
                                                     <i class="bi bi-cloud-arrow-down me-1"></i> Download
