@@ -20,8 +20,11 @@ public class GlobalSidebarAdvice {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private com.school.repository.NotificationRepository notificationRepository;
+
     @ModelAttribute
-    public void addSidebarDataToModel(Model model) {
+    public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {
         Institution currentInstitution = institutionRepository.findById("1").orElse(null);
         
         List<com.school.model.Course> allCourses = courseRepository.findAll();
@@ -35,5 +38,16 @@ public class GlobalSidebarAdvice {
         model.addAttribute("currentInstitution", currentInstitution);
         model.addAttribute("diplomaCourses", diplomaCourses);
         model.addAttribute("degreeCourses", degreeCourses);
+
+        com.school.model.User user = (com.school.model.User) session.getAttribute("user");
+        if (user != null) {
+            List<com.school.model.Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+            int unreadCount = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
+            model.addAttribute("notifications", notifications);
+            model.addAttribute("unreadNotificationCount", unreadCount);
+        } else {
+            model.addAttribute("notifications", java.util.Collections.emptyList());
+            model.addAttribute("unreadNotificationCount", 0);
+        }
     }
 }
