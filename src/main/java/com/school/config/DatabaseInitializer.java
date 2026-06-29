@@ -4,6 +4,7 @@ import com.school.model.Note;
 import com.school.model.User;
 import com.school.repository.NoteRepository;
 import com.school.repository.UserRepository;
+import com.school.repository.InstitutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -22,6 +23,9 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private InstitutionRepository institutionRepository;
 
 
     @Autowired
@@ -58,6 +62,27 @@ public class DatabaseInitializer implements CommandLineRunner {
             User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
             userRepository.save(admin);
         }
+
+        // Seed Default Institution
+        if (institutionRepository.count() == 0) {
+            com.school.model.Institution sjuit = new com.school.model.Institution();
+            sjuit.setId("1");
+            sjuit.setName("St. Joseph University in Tanzania");
+            sjuit.setShortName("SJUIT");
+            sjuit.setLogoUrl("/images/sjuit-logo.png");
+            institutionRepository.save(sjuit);
+            log.info("Default institution seeded: SJUIT");
+        }
+
+        // Fix users with no institution
+        userRepository.findAll().forEach(u -> {
+            if (u.getInstitution() == null) {
+                institutionRepository.findById("1").ifPresent(inst -> {
+                    u.setInstitution(inst);
+                    userRepository.save(u);
+                });
+            }
+        });
 
 
         

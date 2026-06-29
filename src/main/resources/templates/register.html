@@ -74,10 +74,26 @@
                 <hr class="flex-grow-1" style="border-color: rgba(15,23,42,0.1); margin: 0;">
             </div>
 
-            <a href="#" class="social-btn mb-4">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="22" height="22" alt="Google"> 
-                Google Account
-            </a>
+            <div class="d-flex justify-content-center mb-4">
+                <div id="g_id_onload"
+                     data-client_id="226739305071-2b7frq975mp822vaua8404aci2cej5ds.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="sign_up_with"
+                     data-shape="rectangular"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+
+            <!-- Hidden form to submit the token with CSRF protection -->
+            <form id="google-login-form" th:action="@{/register/google}" method="post" style="display: none;">
+                <input type="hidden" name="credential" id="google-credential">
+            </form>
 
             <div class="text-center pt-2" style="border-top: 1px solid rgba(15,23,42,0.05);">
                 <span class="text-muted-custom" style="font-size: 0.95rem;">Already registered?</span> 
@@ -88,5 +104,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function handleCredentialResponse(response) {
+            document.getElementById('google-credential').value = response.credential;
+            document.getElementById('google-login-form').submit();
+        }
+    </script>
 </body>
 </html>

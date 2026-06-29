@@ -123,6 +123,16 @@ public class NotesController {
                               @RequestParam(value = "search", required = false) String search,
                               @RequestParam(value = "page", defaultValue = "0") int page,
                               HttpSession session, Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser != null) {
+            if (level == null && loggedInUser.getLevel() != null) level = loggedInUser.getLevel();
+            if (semester == null && loggedInUser.getSemester() != null) semester = loggedInUser.getSemester();
+            if ("DIP_CSE".equals(program) || "DIPLOMA".equals(program)) {
+                if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
+                    program = loggedInUser.getCourseProgram();
+                }
+            }
+        }
         org.springframework.data.domain.Page<Note> notesPage;
         if (level != null && semester != null) {
             if (category != null && !category.trim().isEmpty()) {
@@ -170,6 +180,15 @@ public class NotesController {
         return "notes";
     }
 
+    @GetMapping("/cat1")
+    public String cat1PastPapers(Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("user", loggedInUser);
+        return "cat1_past_papers";
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
                             @RequestParam(value = "level", required = false) Integer level,
@@ -182,6 +201,12 @@ public class NotesController {
 
         if (level == null) level = (loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
         if (semester == null) semester = (loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
+        
+        if ("DIPLOMA".equals(program) || "DIP_CSE".equals(program)) {
+            if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
+                program = loggedInUser.getCourseProgram();
+            }
+        }
 
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
