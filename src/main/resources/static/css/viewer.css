@@ -6,7 +6,7 @@
             font-family: 'Outfit', sans-serif;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Prevent body scroll, iframe handles it */
+            overflow: hidden; /* Default to hidden for desktop apps */
         }
         
         .viewer-navbar {
@@ -133,5 +133,21 @@
             }
             .download-btn, .back-btn, .save-btn {
                 padding: 8px;
+            }
+            
+            /* Enable native pinch-to-zoom and scrolling on mobile */
+            body, html {
+                height: auto !important;
+                min-height: 100vh;
+                overflow: visible !important;
+                touch-action: pan-x pan-y pinch-zoom;
+            }
+            .pdf-container {
+                overflow: visible !important;
+                height: auto !important;
+            }
+            #canvas-container {
+                overflow: visible !important;
+                height: auto !important;
             }
         }
