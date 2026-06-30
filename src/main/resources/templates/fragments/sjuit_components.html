@@ -529,8 +529,8 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="d-flex gap-2 flex-shrink-0">
-                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center gap-1" style="background: rgba(245, 158, 11, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #b45309; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02);" onmouseover="this.style.background='rgba(245, 158, 11, 0.25)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(245, 158, 11, 0.15)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.15)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)';">
-                                                                        <i class="bi bi-eye-fill"></i> Read
+                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(245, 158, 11, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #b45309; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 80px;" onmouseover="if(!this.classList.contains('loading')){ this.style.background='rgba(245, 158, 11, 0.25)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(245, 158, 11, 0.15)'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='rgba(245, 158, 11, 0.15)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'; }">
+                                                                        <i class="bi bi-eye-fill"></i> <span>Read</span>
                                                                     </button>
                                                                     <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm d-flex align-items-center gap-1" style="background: rgba(217, 119, 6, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; border: 1px solid rgba(217, 119, 6, 0.4); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='rgba(217, 119, 6, 1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(217, 119, 6, 0.3)';" onmouseout="this.style.background='rgba(217, 119, 6, 0.85)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
                                                                         <i class="bi bi-cloud-download-fill"></i> Download
@@ -768,7 +768,18 @@
         </div>
     </div>
     <script>
-    function openPreviewModal(noteId, title) {
+    function openPreviewModal(btn, noteId, title) {
+        // Apply Premium Glassmorphism Loading State
+        btn.classList.add('loading');
+        btn.style.pointerEvents = 'none';
+        btn.style.background = 'rgba(245, 158, 11, 0.4)';
+        btn.style.color = '#92400e';
+        btn.style.boxShadow = 'inset 0 0 10px rgba(245, 158, 11, 0.2), 0 2px 4px rgba(245, 158, 11, 0.1)';
+        btn.style.transform = 'scale(0.95)';
+        btn.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+        
+        btn.innerHTML = '<div class="spinner-border spinner-border-sm" role="status" style="width: 1rem; height: 1rem; border-width: 0.15em;"></div>';
+        
         // Redirect directly to the beautifully redesigned full-screen reading page
         window.location.href = '/view/' + noteId;
     }
