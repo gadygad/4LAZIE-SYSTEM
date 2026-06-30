@@ -26,6 +26,31 @@
         <div class="d-flex align-items-center me-2 me-md-4">
             <!-- Premium Home & Notification Buttons -->
             <div class="d-flex align-items-center">
+                
+                <style>
+                    /* Theme Variables for Notifications */
+                    :root {
+                        --noti-color: var(--noti-color);
+                        --noti-color-dark: #d35400;
+                        --noti-bg-light: rgba(230, 126, 34, 0.04);
+                        --noti-bg-medium: rgba(230, 126, 34, 0.15);
+                        --noti-bg-dark: rgba(211, 84, 0, 0.25);
+                        --noti-shadow: rgba(230, 126, 34, 0.3);
+                        --noti-border: rgba(230, 126, 34, 0.4);
+                    }
+                </style>
+                <style th:if="${session.user != null}">
+                    /* Green Theme for Logged-In Users */
+                    :root {
+                        --noti-color: #10b981;
+                        --noti-color-dark: #059669;
+                        --noti-bg-light: rgba(16, 185, 129, 0.04);
+                        --noti-bg-medium: rgba(16, 185, 129, 0.15);
+                        --noti-bg-dark: rgba(5, 150, 105, 0.25);
+                        --noti-shadow: rgba(16, 185, 129, 0.3);
+                        --noti-border: rgba(16, 185, 129, 0.4);
+                    }
+                </style>
                 <style>
                     @keyframes popupAnim {
                         0% { opacity: 0; transform: scale(0.9) translateY(-10px); }
@@ -58,7 +83,7 @@
                 <!-- Home Button -->
                 <a href="/" class="d-none d-sm-flex align-items-center justify-content-center me-2 me-md-3 text-decoration-none position-relative" 
                    style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                   onmouseover="this.style.boxShadow='0 8px 25px rgba(230, 126, 34, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(230, 126, 34, 0.4)'; this.querySelector('i').style.color='#e67e22';" 
+                   onmouseover="this.style.boxShadow='0 8px 25px var(--noti-shadow), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='var(--noti-border)'; this.querySelector('i').style.color='var(--noti-color)';" 
                    onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
                     <i class="bi bi-house-door-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
                 </a>
@@ -67,11 +92,11 @@
                 <div class="dropdown me-2 me-md-3">
                     <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
                        style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(230, 126, 34, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(230, 126, 34, 0.4)'; this.querySelector('i').style.color='#e67e22';" 
+                       onmouseover="this.style.boxShadow='0 8px 25px var(--noti-shadow), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='var(--noti-border)'; this.querySelector('i').style.color='var(--noti-color)';" 
                        onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
                         <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.1rem; transition: color 0.3s;"></i>
                     <!-- Notification Badge with Pulse -->
-                    <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #e67e22; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
+                    <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: var(--noti-color); font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
                         0
                     </span>
                 </a>
@@ -80,7 +105,7 @@
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 p-0" aria-labelledby="notificationDropdown" style="border-radius: 20px; min-width: 320px; overflow: hidden; animation: popupAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; border: 1px solid rgba(255,255,255,0.5);">
                     <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
                         <span class="fw-bold text-dark" style="font-family: 'Outfit', sans-serif; font-size: 1rem;">Notifications</span>
-                        <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1 text-white" style="background: linear-gradient(135deg, #e67e22, #d35400); font-weight: 600; box-shadow: 0 2px 8px rgba(230,126,34,0.3); font-size: 0.7rem;">0 New</span>
+                        <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1 text-white" style="background: linear-gradient(135deg, var(--noti-color), var(--noti-color-dark)); font-weight: 600; box-shadow: 0 2px 8px var(--noti-shadow); font-size: 0.7rem;">0 New</span>
                     </li>
                     <li>
                         <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
@@ -94,16 +119,16 @@
                             
                             <!-- Dynamic Notifications -->
                             <th:block th:unless="${notifications == null or #lists.isEmpty(notifications)}">
-                                <a th:each="notification : ${notifications}" href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom notification-item" th:style="'transition: background 0.2s; background: ' + (${notification.read} ? 'transparent' : 'rgba(230, 126, 34, 0.04)') + ';'" th:attr="data-read=${notification.read}">
+                                <a th:each="notification : ${notifications}" href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom notification-item" th:style="'transition: background 0.2s; background: ' + (${notification.read} ? 'transparent' : 'var(--noti-bg-light)') + ';'" th:attr="data-read=${notification.read}">
                                     <div class="d-flex w-100 justify-content-between align-items-start">
                                         <div class="d-flex align-items-start">
-                                            <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, rgba(230,126,34,0.15), rgba(211,84,0,0.25)); box-shadow: 0 2px 10px rgba(230,126,34,0.1);">
-                                                <i class="bi bi-info-circle-fill" style="font-size: 1.2rem; color: #e67e22;"></i>
+                                            <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--noti-bg-medium), var(--noti-bg-dark)); box-shadow: 0 2px 10px var(--noti-shadow);">
+                                                <i class="bi bi-info-circle-fill" style="font-size: 1.2rem; color: var(--noti-color);"></i>
                                             </div>
                                             <div>
                                                 <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;" th:text="${notification.title}">Title</h6>
                                                 <p class="mb-1 text-muted" style="font-size: 0.85rem; line-height: 1.4;" th:text="${notification.message}">Message</p>
-                                                <small class="fw-bold" style="font-size: 0.75rem; color: #e67e22;" th:text="${#temporals.format(notification.createdAt, 'dd MMM, HH:mm')}">Time</small>
+                                                <small class="fw-bold" style="font-size: 0.75rem; color: var(--noti-color);" th:text="${#temporals.format(notification.createdAt, 'dd MMM, HH:mm')}">Time</small>
                                             </div>
                                         </div>
                                         <div th:unless="${notification.read}" style="width: 10px; height: 10px; background: linear-gradient(135deg, #e67e22, #d35400); border-radius: 50%; margin-top: 6px; box-shadow: 0 0 8px rgba(230,126,34,0.5);"></div>
@@ -113,7 +138,7 @@
                         </div>
                     </li>
                     <li class="text-center py-3 bg-light border-top">
-                        <a href="#" class="text-decoration-none fw-bold" style="font-size: 0.9rem; color: #e67e22; transition: color 0.2s;" onmouseover="this.style.color='#d35400'" onmouseout="this.style.color='#e67e22'">View All Notifications</a>
+                        <a href="#" class="text-decoration-none fw-bold" style="font-size: 0.9rem; color: var(--noti-color); transition: color 0.2s;" onmouseover="this.style.color='#d35400'" onmouseout="this.style.color='#e67e22'">View All Notifications</a>
                     </li>
                 </ul>
                 </div>
@@ -134,17 +159,17 @@
                 
                 <div class="d-none d-sm-flex flex-column justify-content-center me-2">
                     <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</span>
-                    <span class="lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #e67e22;">Premium</span>
+                    <span class="lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--noti-color);">Premium</span>
                 </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3" aria-labelledby="profileDropdown" style="border-radius: 20px; min-width: 240px; overflow: hidden; animation: popupAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; border: 1px solid rgba(255,255,255,0.5);">
                 <li class="px-3 py-2 border-bottom" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(230, 126, 34, 0.05)); border-bottom: 2px solid #e67e22 !important;">
                     <p class="mb-0 fw-bold text-dark" style="font-size: 0.95rem; font-family: 'Outfit', sans-serif;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</p>
-                    <p class="mb-0 fw-medium" style="font-size: 0.75rem; color: #e67e22;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">DIP IN IT</p>
+                    <p class="mb-0 fw-medium" style="font-size: 0.75rem; color: var(--noti-color);" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'Student'}">DIP IN IT</p>
                 </li>
-                <li th:if="${session.user != null and session.user.role == 'ADMIN'}"><a class="dropdown-item py-2 mt-2 fw-bold" href="/upload" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-speedometer2 me-3" style="color: #e67e22;"></i>Admin Dashboard</a></li>
-                <li th:unless="${session.user != null and session.user.role == 'ADMIN'}"><a class="dropdown-item py-2 mt-2 fw-medium" href="/dashboard" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-grid-1x2-fill me-3" style="color: #e67e22;"></i>Dashboard</a></li>
-                <li><a class="dropdown-item py-2 fw-medium" href="/profile" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-person-fill me-3" style="color: #e67e22;"></i>My Profile</a></li>
+                <li th:if="${session.user != null and session.user.role == 'ADMIN'}"><a class="dropdown-item py-2 mt-2 fw-bold" href="/upload" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-speedometer2 me-3" style="color: var(--noti-color);"></i>Admin Dashboard</a></li>
+                <li th:unless="${session.user != null and session.user.role == 'ADMIN'}"><a class="dropdown-item py-2 mt-2 fw-medium" href="/dashboard" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-grid-1x2-fill me-3" style="color: var(--noti-color);"></i>Dashboard</a></li>
+                <li><a class="dropdown-item py-2 fw-medium" href="/profile" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-person-fill me-3" style="color: var(--noti-color);"></i>My Profile</a></li>
                 <li><a class="dropdown-item py-2 fw-medium" href="#" style="font-size: 0.9rem; transition: background 0.2s; color: #334155;" onmouseover="this.style.background='rgba(230,126,34,0.05)'; this.style.color='#e67e22';" onmouseout="this.style.background='transparent'; this.style.color='#334155';"><i class="bi bi-gear-fill me-3 text-secondary"></i>Settings</a></li>
                 <li><hr class="dropdown-divider my-2 opacity-50"></li>
                 <li><a class="dropdown-item py-2 mb-2 fw-bold" href="/logout" style="font-size: 0.9rem; transition: background 0.2s; color: #dc2626;" onmouseover="this.style.background='rgba(220, 38, 38, 0.05)';" onmouseout="this.style.background='transparent';"><i class="bi bi-box-arrow-right me-3"></i>Logout</a></li>

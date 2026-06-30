@@ -100,5 +100,9 @@
         window.documentFilename = /*[[${note.filename != null ? note.filename.toLowerCase() : ''}]]*/ '';
     </script>
     <script th:src="@{/js/viewer.js}"></script>
+
+    <!-- Mobile Bottom Navigation -->
+    <div th:replace="~{fragments/bottom_nav :: nav('notes')}"></div>
+
 </body>
 </html>
