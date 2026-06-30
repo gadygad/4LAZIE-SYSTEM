@@ -26,79 +26,94 @@ document.addEventListener('DOMContentLoaded', function() {
         // LOAD PDF USING PDF.JS FOR BEAUTIFUL CUSTOM UI
         const safeUrl = url.replace('http://', 'https://');
         
-        let pdfDoc = null,
-            pageNum = 1,
-            pageIsRendering = false,
-            pageNumIsPending = null,
-            scale = 1.2,
-            canvas = document.getElementById('pdf-render'),
-            ctx = canvas.getContext('2d');
+        let observer = null;
 
-        const renderPage = num => {
-            pageIsRendering = true;
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale });
+        const renderAllPagesLazy = () => {
+            canvasContainer.innerHTML = '';
+            canvasContainer.style.flexDirection = 'column';
+            canvasContainer.style.alignItems = 'center';
+            canvasContainer.style.gap = '20px';
+            canvasContainer.style.padding = '20px 0';
+
+            if (observer) observer.disconnect();
+
+            pdfDoc.getPage(1).then(firstPage => {
+                let currentScale = scale;
+                if (window.innerWidth < 768) {
+                    const tempViewport = firstPage.getViewport({ scale: 1.0 });
+                    const containerWidth = window.innerWidth - 32; 
+                    currentScale = containerWidth / tempViewport.width;
+                    scale = currentScale;
+                }
+                
+                const firstViewport = firstPage.getViewport({ scale: currentScale });
+                const pageW = Math.floor(firstViewport.width);
+                const pageH = Math.floor(firstViewport.height);
                 const outputScale = window.devicePixelRatio || 1;
                 
-                canvas.width = Math.floor(viewport.width * outputScale);
-                canvas.height = Math.floor(viewport.height * outputScale);
-                canvas.style.width = Math.floor(viewport.width) + "px";
-                canvas.style.height =  Math.floor(viewport.height) + "px";
+                observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const canvas = entry.target;
+                            const num = parseInt(canvas.dataset.pageNum);
+                            document.getElementById('page-num').textContent = num;
 
-                const transform = outputScale !== 1 
-                  ? [outputScale, 0, 0, outputScale, 0, 0] 
-                  : null;
+                            if (!canvas.dataset.rendered) {
+                                canvas.dataset.rendered = "true";
+                                
+                                pdfDoc.getPage(num).then(page => {
+                                    const viewport = page.getViewport({ scale: currentScale });
+                                    canvas.width = Math.floor(viewport.width * outputScale);
+                                    canvas.height = Math.floor(viewport.height * outputScale);
+                                    canvas.style.width = Math.floor(viewport.width) + "px";
+                                    canvas.style.height = Math.floor(viewport.height) + "px";
 
-                const renderCtx = {
-                    canvasContext: ctx,
-                    transform: transform,
-                    viewport: viewport
-                };
+                                    const renderCtx = {
+                                        canvasContext: canvas.getContext('2d'),
+                                        transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null,
+                                        viewport: viewport
+                                    };
+                                    page.render(renderCtx);
+                                });
+                            }
+                        }
+                    });
+                }, { rootMargin: "800px 0px" });
 
-                page.render(renderCtx).promise.then(() => {
-                    pageIsRendering = false;
-                    if (pageNumIsPending !== null) {
-                        renderPage(pageNumIsPending);
-                        pageNumIsPending = null;
-                    }
-                });
-                document.getElementById('page-num').textContent = num;
+                for (let num = 1; num <= pdfDoc.numPages; num++) {
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdf-page-canvas';
+                    canvas.dataset.pageNum = num;
+                    canvas.style.boxShadow = '0 10px 40px rgba(0,0,0,0.1)';
+                    canvas.style.borderRadius = '8px';
+                    canvas.style.backgroundColor = '#fff';
+                    // Pre-allocate space to avoid scroll jumping
+                    canvas.style.width = pageW + "px";
+                    canvas.style.height = pageH + "px";
+                    
+                    canvasContainer.appendChild(canvas);
+                    observer.observe(canvas);
+                }
             });
         };
 
-        const queueRenderPage = num => {
-            if (pageIsRendering) {
-                pageNumIsPending = num;
-            } else {
-                renderPage(num);
-            }
-        };
-
-        const showPrevPage = () => {
-            if (pageNum <= 1) return;
-            pageNum--;
-            queueRenderPage(pageNum);
-        };
-
-        const showNextPage = () => {
-            if (pageNum >= pdfDoc.numPages) return;
-            pageNum++;
-            queueRenderPage(pageNum);
-        };
-
-        document.getElementById('prev-page').addEventListener('click', showPrevPage);
-        document.getElementById('next-page').addEventListener('click', showNextPage);
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
         
-        document.getElementById('zoom-in').addEventListener('click', () => {
-            scale += 0.2;
-            queueRenderPage(pageNum);
-        });
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => {
+                scale += 0.2;
+                renderAllPagesLazy();
+            });
+        }
         
-        document.getElementById('zoom-out').addEventListener('click', () => {
-            if (scale <= 0.6) return;
-            scale -= 0.2;
-            queueRenderPage(pageNum);
-        });
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => {
+                if (scale <= 0.6) return;
+                scale -= 0.2;
+                renderAllPagesLazy();
+            });
+        }
 
         // Fetch PDF Document
         pdfjsLib.getDocument(safeUrl).promise.then(pdfDoc_ => {
@@ -106,17 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('page-count').textContent = pdfDoc.numPages;
             hideLoader();
             
-            // Calculate best initial scale for mobile
-            if (window.innerWidth < 768) {
-                pdfDoc.getPage(1).then(page => {
-                    const tempViewport = page.getViewport({ scale: 1.0 });
-                    const containerWidth = canvasContainer.clientWidth > 0 ? canvasContainer.clientWidth - 40 : window.innerWidth - 40;
-                    scale = containerWidth / tempViewport.width;
-                    renderPage(pageNum);
-                });
-            } else {
-                renderPage(pageNum);
-            }
+            renderAllPagesLazy();
         }).catch(err => {
             console.error('Error fetching PDF: ', err);
             hideLoader();
