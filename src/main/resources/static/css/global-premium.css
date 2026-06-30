@@ -416,3 +416,86 @@ p, span, div, input, button { font-family: 'Inter', sans-serif; }
         padding-top: 0.5rem !important;
     }
 }
+
+/* ==========================================================================
+   PROFILE ICON / AVATAR - GLOBAL PREMIUM HOVER EFFECTS
+   ========================================================================== */
+
+/* All rounded-circle profile images (avatars) */
+img.rounded-circle,
+div.rounded-circle {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    cursor: pointer;
+}
+
+img.rounded-circle:hover,
+div.rounded-circle:hover {
+    transform: scale(1.12) translateY(-3px) !important;
+    box-shadow: 0 12px 28px rgba(16, 185, 129, 0.3), 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    border-color: #10b981 !important;
+}
+
+/* Profile icon containers (green box with person icon, no picture) */
+.nav-item-bottom[data-bs-toggle="dropdown"],
+.dropup.nav-item-bottom {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.nav-item-bottom[data-bs-toggle="dropdown"]:hover > div,
+.dropup.nav-item-bottom:hover > div:first-child {
+    transform: scale(1.15) translateY(-3px) !important;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35), 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+    border-color: #34d399 !important;
+}
+
+.nav-item-bottom[data-bs-toggle="dropdown"]:hover > div .bi-person-fill,
+.dropup.nav-item-bottom:hover > div .bi-person-fill {
+    animation: profileIconPulse 0.6s ease forwards !important;
+}
+
+/* Any container with person icon inside that acts as profile trigger */
+[data-bs-toggle="dropdown"] .bi-person-fill,
+.dropdown-toggle .bi-person-fill {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+[data-bs-toggle="dropdown"]:hover .bi-person-fill,
+.dropdown-toggle:hover .bi-person-fill {
+    transform: scale(1.2) rotate(-8deg) !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+}
+
+/* Dropdown profile button hover (navbar) */
+.dropdown-toggle:hover img.rounded-circle,
+[data-bs-toggle="dropdown"]:hover img {
+    transform: scale(1.1) translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25), 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+    border-color: #10b981 !important;
+}
+
+/* Profile page large avatar */
+img[alt="Profile Avatar"] {
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+img[alt="Profile Avatar"]:hover {
+    transform: scale(1.08) translateY(-5px) !important;
+    box-shadow: 0 16px 40px rgba(16, 185, 129, 0.3), 0 0 0 4px rgba(16, 185, 129, 0.15), 0 0 60px rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+}
+
+/* Sidebar profile link hover */
+.sidebar-nav-item[href="/profile"]:hover .bi-person-fill,
+.sidebar-nav-item[href*="profile"]:hover .bi-person-fill {
+    transform: scale(1.2) rotate(-10deg) !important;
+}
+
+/* Profile icon pulse animation */
+@keyframes profileIconPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25) rotate(-10deg); }
+    70% { transform: scale(0.95) rotate(3deg); }
+    100% { transform: scale(1.1) rotate(-5deg); }
+}
+
