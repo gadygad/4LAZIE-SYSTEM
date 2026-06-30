@@ -134,17 +134,108 @@
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
         }
 
-        .btn-premium-search {
+        
+        .custom-glass-dropdown {
+            position: relative;
             width: 100%;
+            font-family: 'Outfit', sans-serif;
+            user-select: none;
+        }
+
+        .glass-dropdown-header {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .glass-dropdown-header:hover {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08);
+        }
+
+        .glass-dropdown-header.open {
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .glass-dropdown-header .dropdown-icon {
+            color: #10b981;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-dropdown-header.open .dropdown-icon {
+            transform: rotate(-180deg);
+        }
+
+        .glass-dropdown-list {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+            z-index: 1000;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .custom-glass-dropdown.open .glass-dropdown-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .glass-dropdown-item {
+            padding: 12px 18px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .glass-dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding-left: 24px;
+        }
+
+        .glass-dropdown-item.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.05));
+            color: #059669;
+            font-weight: 700;
+            border-left: 3px solid #10b981;
+        }
+
+        .btn-premium-search {
+            width: 50%;
+            margin: 0 auto;
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 1.1rem;
-            padding: 1rem 1.8rem;
-            border-radius: 16px;
+            font-size: 0.85rem !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
             border: none;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             letter-spacing: 0.5px;
             display: flex;
@@ -344,43 +435,72 @@
 
         <div class="plain-text-form mt-4">
             <div class="row g-3">
-                <div class="col-md-6 col-lg-3">
-                    <div class="premium-input-group">
+                <div class="col-md-6 col-lg-3" style="z-index: 50;">
+                    <div class="premium-input-group" style="z-index: 50;">
                         <label class="premium-label">Are you in Degree or Diploma?</label>
-                        <select id="projectProgram" class="premium-select">
-                            <option value="DIPLOMA">Diploma</option>
-                            <option value="DEGREE">Degree</option>
-                        </select>
+                        <div class="custom-glass-dropdown" id="programDropdownWrapper">
+                            <div class="glass-dropdown-header" id="programDropdownHeader">
+                                <span id="programDropdownText">Diploma</span>
+                                <i class="bi bi-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="glass-dropdown-list" id="programDropdownList">
+                                <div class="glass-dropdown-item active" data-value="DIPLOMA">Diploma</div>
+                                <div class="glass-dropdown-item" data-value="DEGREE">Degree</div>
+                            </div>
+                            <!-- Hidden inputs to keep JS logic intact -->
+                            <input type="radio" id="progDiploma" name="projectProgram" value="DIPLOMA" checked class="d-none">
+                            <input type="radio" id="progDegree" name="projectProgram" value="DEGREE" class="d-none">
+                        </div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-3">
-                    <div class="premium-input-group">
+                <div class="col-md-6 col-lg-3" style="z-index: 40;">
+                    <div class="premium-input-group" style="z-index: 40;">
                         <label class="premium-label">Select your Course</label>
-                        <select id="projectCourse" class="premium-select">
-                            <!-- Populated dynamically via JS -->
-                        </select>
+                        <div class="custom-glass-dropdown" id="courseDropdownWrapper">
+                            <div class="glass-dropdown-header" id="courseDropdownHeader">
+                                <span id="courseDropdownText">Select Course</span>
+                                <i class="bi bi-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="glass-dropdown-list" id="courseDropdownList">
+                            </div>
+                            <input type="hidden" id="projectCourse" value="">
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-lg-3" id="levelContainer" style="display: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(-10px);">
-                    <div class="premium-input-group">
+                <div class="col-md-6 col-lg-3" id="levelContainer" style="display: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(-10px); z-index: 30;">
+                    <div class="premium-input-group" style="z-index: 30;">
                         <label class="premium-label">Which NTA Level?</label>
-                        <select id="projectLevel" class="premium-select">
-                            <option value="4">NTA Level 4</option>
-                            <option value="5">NTA Level 5</option>
-                            <option value="6">NTA Level 6</option>
-                        </select>
+                        <div class="custom-glass-dropdown" id="levelDropdownWrapper">
+                            <div class="glass-dropdown-header" id="levelDropdownHeader">
+                                <span id="levelDropdownText">NTA Level 4</span>
+                                <i class="bi bi-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="glass-dropdown-list" id="levelDropdownList">
+                                <div class="glass-dropdown-item active" data-value="4">NTA Level 4</div>
+                                <div class="glass-dropdown-item" data-value="5">NTA Level 5</div>
+                                <div class="glass-dropdown-item" data-value="6">NTA Level 6</div>
+                            </div>
+                            <input type="hidden" id="projectLevel" value="4">
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="premium-input-group">
+                <div class="col-md-6 col-lg-3" style="z-index: 20;">
+                    <div class="premium-input-group" style="z-index: 20;">
                         <label class="premium-label">Which Semester?</label>
-                        <select id="projectSemester" class="premium-select">
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                        </select>
+                        <div class="custom-glass-dropdown" id="semesterDropdownWrapper">
+                            <div class="glass-dropdown-header" id="semesterDropdownHeader">
+                                <span id="semesterDropdownText">Semester 1</span>
+                                <i class="bi bi-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="glass-dropdown-list" id="semesterDropdownList">
+                                <div class="glass-dropdown-item active" data-value="1">Semester 1</div>
+                                <div class="glass-dropdown-item" data-value="2">Semester 2</div>
+                            </div>
+                            <input type="hidden" id="projectSemester" value="1">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -406,12 +526,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         const searchBtn = document.getElementById('projectSearchBtn');
         const resultsContainer = document.getElementById('projectResults');
-        const programSelect = document.getElementById('projectProgram');
+        
         const courseSelect = document.getElementById('projectCourse');
         const semesterSelect = document.getElementById('projectSemester');
 
         // Dynamically fetched courses from the database via Thymeleaf
-        const dbCourses = /*[[${courses}]]*/ [];
+        let dbCourses = /*[[${courses}]]*/ [];
+        if (!dbCourses) dbCourses = [];
 
         const sjuitDegreeCourses = dbCourses
             .filter(c => {
@@ -430,42 +551,159 @@
             })
             .map(c => ({ value: c.programType, text: c.name || c.programType }));
 
+        
+        function bindGenericDropdown(wrapperId, headerId, textId, inputId) {
+            const wrapper = document.getElementById(wrapperId);
+            const header = document.getElementById(headerId);
+            const textEl = document.getElementById(textId);
+            const hiddenInput = document.getElementById(inputId);
+            const items = wrapper ? wrapper.querySelectorAll('.glass-dropdown-item') : [];
+            if(!wrapper) return;
+            
+            header.addEventListener('click', function(e) {
+                wrapper.classList.toggle('open');
+                header.classList.toggle('open');
+                e.stopPropagation();
+            });
+            
+            items.forEach(item => {
+                item.addEventListener('click', function() {
+                    textEl.textContent = this.textContent;
+                    items.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    hiddenInput.value = this.dataset.value;
+                    wrapper.classList.remove('open');
+                    header.classList.remove('open');
+                });
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!wrapper.contains(e.target)) {
+                    wrapper.classList.remove('open');
+                    header.classList.remove('open');
+                }
+            });
+        }
+        
+        bindGenericDropdown('levelDropdownWrapper', 'levelDropdownHeader', 'levelDropdownText', 'projectLevel');
+        bindGenericDropdown('semesterDropdownWrapper', 'semesterDropdownHeader', 'semesterDropdownText', 'projectSemester');
+        
+        const courseWrapper = document.getElementById('courseDropdownWrapper');
+        const courseHeader = document.getElementById('courseDropdownHeader');
+        if(courseHeader) {
+            courseHeader.addEventListener('click', function(e) {
+                courseWrapper.classList.toggle('open');
+                courseHeader.classList.toggle('open');
+                e.stopPropagation();
+            });
+            document.addEventListener('click', function(e) {
+                if (!courseWrapper.contains(e.target)) {
+                    courseWrapper.classList.remove('open');
+                    courseHeader.classList.remove('open');
+                }
+            });
+        }
+        
+        // Program Dropdown specific logic
+        const programDropdownWrapper = document.getElementById('programDropdownWrapper');
+        const programDropdownHeader = document.getElementById('programDropdownHeader');
+        const programDropdownText = document.getElementById('programDropdownText');
+        const programDropdownItems = document.querySelectorAll('#programDropdownList .glass-dropdown-item');
+        const progDiplomaRadio = document.getElementById('progDiploma');
+        const progDegreeRadio = document.getElementById('progDegree');
+
+        if(programDropdownHeader) {
+            programDropdownHeader.addEventListener('click', function(e) {
+                programDropdownWrapper.classList.toggle('open');
+                programDropdownHeader.classList.toggle('open');
+                e.stopPropagation();
+            });
+
+            programDropdownItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    programDropdownText.textContent = this.textContent;
+                    programDropdownItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (this.dataset.value === 'DIPLOMA') {
+                        progDiplomaRadio.checked = true;
+                        progDegreeRadio.checked = false;
+                    } else {
+                        progDegreeRadio.checked = true;
+                        progDiplomaRadio.checked = false;
+                    }
+                    
+                    programDropdownWrapper.classList.remove('open');
+                    programDropdownHeader.classList.remove('open');
+                    updateCourses();
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!programDropdownWrapper.contains(e.target)) {
+                    programDropdownWrapper.classList.remove('open');
+                    programDropdownHeader.classList.remove('open');
+                }
+            });
+        }
+    
         function updateCourses() {
-            const isDegree = programSelect.value === 'DEGREE';
+            
+            const programVal = document.querySelector('input[name="projectProgram"]:checked').value;
+            const isDegree = programVal === 'DEGREE';
             
             // Handle NTA Level Dropdown Animation
             const levelContainer = document.getElementById('levelContainer');
-            if (!isDegree) {
-                levelContainer.style.display = 'block';
-                // Trigger reflow for animation
-                void levelContainer.offsetWidth;
-                levelContainer.style.opacity = '1';
-                levelContainer.style.transform = 'translateY(0)';
-            } else {
-                levelContainer.style.opacity = '0';
-                levelContainer.style.transform = 'translateY(-10px)';
-                setTimeout(() => {
-                    if (programSelect.value === 'DEGREE') {
-                        levelContainer.style.display = 'none';
-                    }
-                }, 400);
+            if (levelContainer) {
+                if (!isDegree) {
+                    levelContainer.style.display = 'block';
+                    // Trigger reflow for animation
+                    void levelContainer.offsetWidth;
+                    levelContainer.style.opacity = '1';
+                    levelContainer.style.transform = 'translateY(0)';
+                } else {
+                    levelContainer.style.opacity = '0';
+                    levelContainer.style.transform = 'translateY(-10px)';
+                    levelContainer.style.display = 'none';
+                }
             }
             
-            // Clear current options
-            courseSelect.innerHTML = '';
-            
-            // Re-populate valid options smoothly
             const targetCourses = isDegree ? sjuitDegreeCourses : sjuitDiplomaCourses;
+            const courseList = document.getElementById('courseDropdownList');
+            const courseText = document.getElementById('courseDropdownText');
             
-            targetCourses.forEach(course => {
-                const opt = document.createElement('option');
-                opt.value = course.value;
-                opt.textContent = course.text;
-                courseSelect.appendChild(opt);
+            courseList.innerHTML = '';
+            
+            if (targetCourses.length === 0) {
+                courseText.textContent = "No courses available";
+                courseSelect.value = "";
+                return;
+            }
+            
+            targetCourses.forEach((c, index) => {
+                const item = document.createElement('div');
+                item.className = 'glass-dropdown-item' + (index === 0 ? ' active' : '');
+                item.dataset.value = c.value;
+                item.textContent = c.text;
+                
+                if (index === 0) {
+                    courseText.textContent = c.text;
+                    courseSelect.value = c.value;
+                }
+                
+                item.addEventListener('click', function() {
+                    courseText.textContent = this.textContent;
+                    courseList.querySelectorAll('.glass-dropdown-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    courseSelect.value = this.dataset.value;
+                    document.getElementById('courseDropdownWrapper').classList.remove('open');
+                    document.getElementById('courseDropdownHeader').classList.remove('open');
+                });
+                
+                courseList.appendChild(item);
             });
         }
 
-        programSelect.addEventListener('change', updateCourses);
         updateCourses(); // Initial call
 
         if(searchBtn) {
@@ -476,11 +714,14 @@
                 resultsContainer.classList.remove('show');
                 
                 // Show loading state
-                searchBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Searching...';
+                searchBtn.innerHTML = '<i class="bi bi-arrow-repeat spin-icon me-2"></i> Searching...';
+                searchBtn.classList.add('btn-loading');
                 searchBtn.disabled = true;
 
                 let url = `/api/notes/filter?category=PROJECT&program=${program}&semester=${semester}`;
-                if (programSelect.value === 'DIPLOMA') {
+                
+                const progValue = document.querySelector('input[name="projectProgram"]:checked').value;
+                if (progValue === 'DIPLOMA') {
                     const level = document.getElementById('projectLevel').value;
                     url += `&level=${level}`;
                 }
@@ -489,14 +730,15 @@
                     .then(response => response.json())
                     .then(data => {
                         searchBtn.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Past Papers';
+                        searchBtn.classList.remove('btn-loading');
                         searchBtn.disabled = false;
                         
                         if(data.length === 0) {
                             resultsContainer.innerHTML = `
-                                <div class="text-center py-5" style="animation: popupAnim 0.4s ease forwards;">
-                                    <i class="bi bi-inboxes" style="font-size: 4rem; color: #cbd5e1;"></i>
-                                    <h4 class="fw-bold mt-3 text-muted" style="font-family: 'Outfit', sans-serif;">No Past Papers Found</h4>
-                                    <p class="text-muted">We couldn't find any PROJECT papers for the selected criteria.</p>
+                                <div class="text-center empty-state-glass">
+                                    <i class="bi bi-inboxes-fill empty-state-icon mb-2"></i>
+                                    <h4 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #064e3b; font-size: 1.25rem; letter-spacing: -0.5px;">No Results Found</h4>
+                                    <p style="color: #059669; font-weight: 500; font-size: 0.9rem; opacity: 0.8; margin: 0 auto; max-width: 220px; line-height: 1.4;">Looks like it's empty here! Try tweaking your filters.</p>
                                 </div>
                             `;
                             resultsContainer.classList.add('show');
@@ -507,7 +749,7 @@
                         data.forEach((note, index) => {
                             const yearStr = note.year ? note.year : new Date().getFullYear();
                             html += `
-                                <div class="accordion-item border-0">
+                                <div class="accordion-item border-0 stagger-item">
                                     <h2 class="accordion-header" id="heading${index}">
                                         <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${index}">
                                             <div class="d-flex align-items-center w-100 me-3">
@@ -527,10 +769,10 @@
                                             <div class="text-muted small flex-grow-1">
                                                 <i class="bi bi-info-circle me-1"></i> Document is ready to view or download.
                                             </div>
-                                            <a href="/notes/download/${note.id}" target="_blank" class="paper-action-btn btn-read">
+                                            <a href="/download/${note.id}" target="_blank" class="paper-action-btn btn-read">
                                                 <i class="bi bi-eye"></i> Read
                                             </a>
-                                            <a href="/notes/download/${note.id}?force=true" class="paper-action-btn btn-download">
+                                            <a href="/download/${note.id}?force=true" class="paper-action-btn btn-download">
                                                 <i class="bi bi-download"></i> Download
                                             </a>
                                         </div>
@@ -545,6 +787,7 @@
                     })
                     .catch(error => {
                         searchBtn.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Past Papers';
+                        searchBtn.classList.remove('btn-loading');
                         searchBtn.disabled = false;
                         resultsContainer.innerHTML = '<div class="text-center py-5 text-danger"><i class="bi bi-exclamation-triangle-fill mb-3" style="font-size: 3rem;"></i><h5 class="fw-bold font-family-outfit">Failed to load results</h5><p>Please check your connection and try again.</p></div>';
                         resultsContainer.classList.add('show');

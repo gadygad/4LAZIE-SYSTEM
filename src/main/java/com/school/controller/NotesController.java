@@ -198,14 +198,25 @@ public class NotesController {
         model.addAttribute("totalPages", notesPage.getTotalPages());
         model.addAttribute("selectedProgram", program);
         model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
+        model.addAttribute("courses", getSimpleCourses());
         return "notes";
+    }
+
+    private List<Map<String, String>> getSimpleCourses() {
+        return courseRepository.findAll().stream()
+            .map(c -> {
+                Map<String, String> map = new LinkedHashMap<>();
+                map.put("programType", c.getProgramType());
+                map.put("name", c.getName());
+                return map;
+            }).collect(Collectors.toList());
     }
 
     @GetMapping("/cat1")
     public String cat1PastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
-        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "cat1_past_papers";
     }
@@ -214,7 +225,7 @@ public class NotesController {
     public String cat2PastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
-        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "cat2_past_papers";
     }
@@ -223,7 +234,7 @@ public class NotesController {
     public String assignmentsPastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
-        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "assignments_past_papers";
     }
@@ -232,7 +243,7 @@ public class NotesController {
     public String ueExamsPastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
-        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "ue_past_papers";
     }
@@ -241,7 +252,7 @@ public class NotesController {
     public String projectsPastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
-        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "projects_past_papers";
     }

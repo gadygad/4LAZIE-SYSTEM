@@ -26,10 +26,22 @@
                     <span>UE Exams</span>
                 </a>
             </th:block>
-            <th:block th:if="${activePage != 'cat1' and activePage != 'cat2' and activePage != 'ue'}">
-                <a th:href="@{/notes}" class="nav-item-bottom" th:classappend="${activePage == 'materials'} ? 'active'">
-                    <i class="bi bi-book-fill"></i>
-                    <span>Materials</span>
+            <th:block th:if="${activePage == 'assignment'}">
+                <a th:href="@{/assignments}" class="nav-item-bottom active">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Assignments</span>
+                </a>
+            </th:block>
+            <th:block th:if="${activePage == 'project'}">
+                <a th:href="@{/projects}" class="nav-item-bottom active">
+                    <i class="bi bi-kanban"></i>
+                    <span>Projects</span>
+                </a>
+            </th:block>
+            <th:block th:if="${activePage == 'notes' or (activePage != 'cat1' and activePage != 'cat2' and activePage != 'ue' and activePage != 'assignment' and activePage != 'project')}">
+                <a th:href="@{/notes}" class="nav-item-bottom active">
+                    <i class="bi bi-journal-richtext"></i>
+                    <span>Notes</span>
                 </a>
             </th:block>
             
@@ -42,15 +54,15 @@
                 </div>
                 <span>Profile</span>
             </div>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mb-3 p-2" style="border-radius: 20px; min-width: 240px; animation: popupAnim 0.3s forwards; background-color: #ffffff;">
-                <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(230,126,34,0.1);">
-                    <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;" th:text="${user != null ? user.name : 'User'}">User</p>
-                    <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #e67e22 !important;" th:text="${user != null ? user.role : 'STUDENT'}">ROLE</p>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mb-3 p-2" style="border-radius: 20px; min-width: 240px; animation: popupAnim 0.3s forwards; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8) !important; box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15) !important;">
+                <li class="px-3 py-3 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(16, 185, 129, 0.15); box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);">
+                    <p class="mb-1 fw-bold" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; color: #0f172a !important; letter-spacing: 0.2px;" th:text="${user != null ? user.name : 'User'}">User</p>
+                    <p class="mb-0 fw-medium" style="font-size: 0.75rem; color: #10b981 !important; letter-spacing: 1px;" th:text="${user != null ? user.role : 'STUDENT'}">ROLE</p>
                 </li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-grid-1x2-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>Dashboard</a></li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(230,126,34,0.08)'; this.style.color='#e67e22 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(230,126,34,0.1);"><i class="bi bi-person-fill" style="color: #e67e22; font-size: 1.1rem;"></i></div>My Profile</a></li>
-                <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
-                <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
+                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-grid-1x2-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Dashboard</a></li>
+                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-person-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>My Profile</a></li>
+                <li><hr class="dropdown-divider my-2 opacity-25 mx-3" style="border-color: #10b981;"></li>
+                <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #ef4444 !important;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.15)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-box-arrow-right" style="color: #ef4444; font-size: 1.1rem;"></i></div>Logout</a></li>
             </ul>
 
         </div>

@@ -14,6 +14,185 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" th:href="@{/css/global-premium.css}">
+    <style>
+        .plain-text-form {
+            background: transparent;
+        }
+
+        .premium-input-group {
+            margin-bottom: 0;
+            position: relative;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.04);
+            backdrop-filter: blur(15px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .premium-input-group:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.08);
+        }
+
+        .premium-label {
+            display: flex;
+            align-items: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            color: #334155;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .premium-select {
+            width: 100%;
+            padding: 1.1rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(245, 158, 11, 0.1);
+            border-radius: 14px;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23f59e0b' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            cursor: pointer;
+        }
+
+        .premium-select:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            background: #ffffff;
+        }
+
+        .premium-select:focus {
+            outline: none;
+            border-color: #f59e0b;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        }
+
+        .btn-premium-search {
+            width: auto;
+            min-width: 200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem !important;
+            padding: 0.8rem 2rem !important;
+            border-radius: 50px !important;
+            border: none;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-premium-search:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+        
+        .btn-premium-search:active {
+            transform: translateY(1px);
+        }
+
+        /* Results Drop List Accordion */
+        #notesResults {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        #notesResults.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .accordion-item {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+            border-radius: 20px !important;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 12px 35px rgba(245, 158, 11, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .accordion-button {
+            background: transparent !important;
+            padding: 1.2rem 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #0f172a;
+            box-shadow: none !important;
+        }
+        
+        .accordion-button::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23f59e0b' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        }
+
+        .accordion-body {
+            background: rgba(255, 255, 255, 0.5);
+            border-top: 1px dashed rgba(245, 158, 11, 0.2);
+            padding: 1.5rem;
+        }
+
+        .paper-action-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-read {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .btn-read:hover {
+            background: #f59e0b;
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-download {
+            background: white;
+            color: #334155;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .btn-download:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 
 <body>
@@ -27,9 +206,7 @@
                     <i class="bi bi-list fs-3"></i>
                 </button>
                 <a class="navbar-brand d-flex align-items-center m-0 p-0" th:href="${session.user != null ? '/dashboard' : '/'}" style="text-decoration: none;">
-                    <div class="d-flex align-items-center justify-content-center me-1 me-md-2" style="width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s;" onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#bfdbfe'; this.style.transform='translateX(-3px)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='none';">
-                        <i class="bi bi-arrow-left" style="font-size: 1.1rem; color: #3b82f6;"></i>
-                    </div>
+
                     <div class="d-flex align-items-center gap-2">
                         <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 1.6rem); color: #0f172a; letter-spacing: -0.5px; line-height: 1;">4LAZIE</span>
                         <div class="d-none d-sm-flex align-items-center position-relative" style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
@@ -100,113 +277,60 @@
                 
                 
     
-                <!-- Minimal Text-Only Gold Filters -->
-                <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2" style="border-bottom: 1px solid rgba(245, 158, 11, 0.15);">
-                    <!-- Program Name -->
-                    <div class="d-flex align-items-center gap-2 me-3 mb-2 mb-md-0">
-                        <i class="bi bi-journal-bookmark" style="color: #d97706; font-size: 0.8rem;"></i>
-                        <span class="text-uppercase fw-bold" style="color: #d97706; font-size: 0.75rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;" th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">DIP CSE</span>
-                    </div>
-                    
-                    <div class="d-flex align-items-center gap-3">
-                        <!-- Level Dropdown (Text only) -->
-                        <div class="dropdown">
-                            <button class="btn p-0 border-0 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='#d97706'" onmouseout="this.style.color='#94a3b8'">
-                                <i class="bi bi-mortarboard-fill"></i> 
-                                <span th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">YEAR <span th:text="${selectedLevel != null ? selectedLevel : '1'}">1</span></span>
-                                <span th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">LVL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
-                                <i class="bi bi-chevron-down" style="font-size: 0.6rem;"></i>
-                            </button>
-                            <ul class="dropdown-menu shadow-sm border-0" style="border-radius: 8px; min-width: 100px; padding: 4px; z-index: 1050;">
-                                <!-- Diploma Levels -->
-                                <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 4</a></li>
-                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 5</a></li>
-                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 6</a></li>
-                                </th:block>
-                                <!-- Degree Levels -->
-                                <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
-                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=1&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 1</a></li>
-                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=2&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 2</a></li>
-                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=3&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 3</a></li>
-                                    <li th:unless="${selectedProgram == 'DEG_CS'}"><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 4</a></li>
-                                </th:block>
-                            </ul>
-                        </div>
-                        
-                        <!-- Divider -->
-                        <div style="width: 1px; height: 12px; background: rgba(0,0,0,0.1);"></div>
-                        
-                        <!-- Semester Links (Text only) -->
-                        <div class="d-flex align-items-center gap-3">
-                            <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=1'}" 
-                               class="text-decoration-none"
-                               style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
-                               th:styleappend="${selectedSemester == 1} ? 'color: #d97706; border-bottom: 2px solid #f59e0b; padding-bottom: 2px;' : 'color: #94a3b8;'"
-                               onmouseover="if(!this.style.borderBottom) this.style.color='#d97706'" 
-                               onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
-                               SEM 1
-                            </a>
-                            <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=2'}" 
-                               class="text-decoration-none"
-                               style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
-                               th:styleappend="${selectedSemester == 2} ? 'color: #d97706; border-bottom: 2px solid #f59e0b; padding-bottom: 2px;' : 'color: #94a3b8;'"
-                               onmouseover="if(!this.style.borderBottom) this.style.color='#d97706'" 
-                               onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
-                               SEM 2
-                            </a>
-                        </div>
+        <!-- Notes Fetch Form (Guest Theme) -->
+        <div class="plain-text-form mb-4 mt-2">
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-6">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Are you in Degree or Diploma?</label>
+                        <select id="notesProgram" class="premium-select">
+                            <option value="DIPLOMA">Diploma</option>
+                            <option value="DEGREE">Degree</option>
+                        </select>
                     </div>
                 </div>
-                <!-- Premium Section Header for Modules -->
-                <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
-                    <div class="d-flex align-items-center" style="background: linear-gradient(to right, rgba(245, 158, 11, 0.08), transparent); padding: 6px 16px; border-radius: 50px; border-left: 3px solid #f59e0b;">
-                        <i class="bi bi-stack me-2" style="color: #d97706; font-size: 0.9rem;"></i>
-                        <h4 class="fw-bold mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #92400e; letter-spacing: 2px; font-size: 0.8rem;">
-                            MODULE NAMES
-                        </h4>
-                    </div>
-                    <div class="flex-grow-1 ms-3" style="height: 1px; background: linear-gradient(to right, rgba(245, 158, 11, 0.2), transparent);"></div>
-                </div>
- 
-                <!-- Empty State (General) -->
-                <div th:if="${#maps.isEmpty(groupedNotes)}" class="d-flex align-items-center p-3 mb-5" style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; border: 1px dashed rgba(245, 158, 11, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; background: rgba(245, 158, 11, 0.1);">
-                        <i class="bi bi-folder-x" style="color: #d97706; font-size: 1.25rem;"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-1 fw-bold" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;">No Modules Uploaded Yet</h6>
-                        <p class="mb-0" style="color: #475569; font-size: 0.85rem;">Study materials for this level and semester will appear here once uploaded.</p>
+                
+                <div class="col-md-6 col-lg-6">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Select your Course</label>
+                        <select id="notesCourse" class="premium-select">
+                            <!-- Populated dynamically via JS -->
+                        </select>
                     </div>
                 </div>
 
-
-
-                <!-- Dynamic Modules Section -->
-                <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
-
-                <!-- Pagination Controls -->
-                <div th:if="${totalPages > 1}" class="d-flex justify-content-between align-items-center mt-4 mb-5">
-                    <a th:if="${currentPage > 0}" 
-                       th:href="@{/guest-notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, page=${currentPage - 1})}"
-                       class="btn fw-bold px-4 rounded-pill" style="border: 2px solid #f59e0b; color: #d97706;">
-                        <i class="bi bi-arrow-left me-2"></i> Previous
-                    </a>
-                    <span th:if="${currentPage == 0}" class="btn fw-bold px-4 rounded-pill disabled" style="border: 2px solid #cbd5e1; color: #94a3b8;">
-                        <i class="bi bi-arrow-left me-2"></i> Previous
-                    </span>
-                    
-                    <span class="text-muted fw-bold" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 5</span>
-                    
-                    <a th:if="${currentPage < totalPages - 1}" 
-                       th:href="@{/guest-notes(program=${selectedProgram}, level=${selectedLevel}, semester=${selectedSemester}, page=${currentPage + 1})}"
-                       class="btn fw-bold px-4 rounded-pill" style="border: 2px solid #f59e0b; color: #d97706;">
-                        Next <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                    <span th:if="${currentPage >= totalPages - 1}" class="btn fw-bold px-4 rounded-pill disabled" style="border: 2px solid #cbd5e1; color: #94a3b8;">
-                        Next <i class="bi bi-arrow-right ms-2"></i>
-                    </span>
+                <div class="col-md-6 col-lg-6" id="notesLevelContainer" style="display: block; opacity: 1; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(0);">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Which NTA Level?</label>
+                        <select id="notesLevel" class="premium-select">
+                            <option value="4">NTA Level 4</option>
+                            <option value="5">NTA Level 5</option>
+                            <option value="6">NTA Level 6</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="col-md-6 col-lg-6">
+                    <div class="premium-input-group">
+                        <label class="premium-label">Which Semester?</label>
+                        <select id="notesSemester" class="premium-select">
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button id="notesSearchBtn" class="btn-premium-search">
+                    <i class="bi bi-magic me-2"></i> Fetch Notes
+                </button>
+            </div>
+        </div>
+
+        <div id="notesResults" class="mb-5">
+            <!-- Results Accordion will be injected here -->
+        </div>
 
             </div> <!-- Close col-md-7 -->
 
@@ -346,6 +470,223 @@ document.addEventListener('DOMContentLoaded', function() {
         }, { passive: true });
     }
 });
+</script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchBtn = document.getElementById('notesSearchBtn');
+        const resultsContainer = document.getElementById('notesResults');
+        const programSelect = document.getElementById('notesProgram');
+        const courseSelect = document.getElementById('notesCourse');
+        const semesterSelect = document.getElementById('notesSemester');
+        const levelSelect = document.getElementById('notesLevel');
+
+        // Dynamically fetched courses from the database via Thymeleaf
+        const dbCourses = /*[[${courses}]]*/ [];
+
+        const sjuitDegreeCourses = dbCourses
+            .filter(c => {
+                const pt = (c.programType || '').toUpperCase();
+                const n = (c.name || '').toUpperCase();
+                return pt.includes('DEGREE') || pt.includes('BSC') || pt.includes('MD') || pt.includes('BACHELOR') || 
+                       n.includes('BACHELOR') || n.includes('BSC ') || n.includes('DEGREE');
+            })
+            .map(c => ({ value: c.programType, text: c.name || c.programType }));
+
+        const sjuitDiplomaCourses = dbCourses
+            .filter(c => {
+                const pt = (c.programType || '').toUpperCase();
+                const n = (c.name || '').toUpperCase();
+                return pt.includes('DIP') || n.includes('DIPLOMA');
+            })
+            .map(c => ({ value: c.programType, text: c.name || c.programType }));
+
+        function updateCourses() {
+            const isDegree = programSelect.value === 'DEGREE';
+            
+            // Handle NTA Level Dropdown Animation
+            const levelContainer = document.getElementById('notesLevelContainer');
+            if (!isDegree) {
+                levelContainer.style.display = 'block';
+                // Trigger reflow for animation
+                void levelContainer.offsetWidth;
+                levelContainer.style.opacity = '1';
+                levelContainer.style.transform = 'translateY(0)';
+            } else {
+                levelContainer.style.opacity = '0';
+                levelContainer.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    if (programSelect.value === 'DEGREE') {
+                        levelContainer.style.display = 'none';
+                    }
+                }, 400);
+            }
+
+            const courses = isDegree ? sjuitDegreeCourses : sjuitDiplomaCourses;
+            courseSelect.innerHTML = '';
+            
+            if (courses.length === 0) {
+                courseSelect.innerHTML = `<option value="">No courses available</option>`;
+                return;
+            }
+            
+            courses.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.value;
+                option.textContent = c.text;
+                courseSelect.appendChild(option);
+            });
+        }
+
+        programSelect.addEventListener('change', updateCourses);
+        // Initialize on load
+        if(dbCourses && dbCourses.length > 0) {
+            updateCourses();
+        } else {
+            // Fallback hardcoded if no courses from DB
+            sjuitDiplomaCourses.push({value: 'DIP_CSE', text: 'Diploma in Computer Science Engineering'});
+            sjuitDegreeCourses.push({value: 'DEG_CS', text: 'Bachelor of Computer Science'});
+            updateCourses();
+        }
+
+        searchBtn.addEventListener('click', function() {
+            // Pulse animation on button
+            this.style.animation = 'none';
+            void this.offsetWidth; 
+            this.style.animation = 'pulse-glow 1s cubic-bezier(0.4, 0, 0.6, 1)';
+            this.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Fetching...';
+
+            const category = 'NOTE';
+            const program = courseSelect.value;
+            const semester = semesterSelect.value;
+            const level = programSelect.value === 'DIPLOMA' ? levelSelect.value : null;
+
+            let url = `/api/notes/filter?category=${category}&program=${program}&semester=${semester}`;
+            if (level) {
+                url += `&level=${level}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Reset button
+                    this.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Notes';
+                    
+                    resultsContainer.classList.remove('show');
+                    
+                    setTimeout(() => {
+                        if(data.length === 0) {
+                            resultsContainer.innerHTML = `
+                                <div class="text-center empty-state-glass">
+                                    <i class="bi bi-inboxes-fill empty-state-icon mb-2" style="color: #f59e0b;"></i>
+                                    <h4 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #92400e; font-size: 1.25rem; letter-spacing: -0.5px;">No Results Found</h4>
+                                    <p style="color: #d97706; font-weight: 500; font-size: 0.9rem; opacity: 0.8; margin: 0 auto; max-width: 220px; line-height: 1.4;">Looks like it's empty here! Try tweaking your filters.</p>
+                                </div>
+                            `;
+                            resultsContainer.classList.add('show');
+                            return;
+                        }
+
+                        // Group by Module Name
+                        const grouped = data.reduce((acc, curr) => {
+                            if (!acc[curr.moduleName]) {
+                                acc[curr.moduleName] = [];
+                            }
+                            acc[curr.moduleName].push(curr);
+                            return acc;
+                        }, {});
+
+                        let html = '<div class="accordion" id="notesAccordion">';
+                        let index = 0;
+                        for (const [moduleName, items] of Object.entries(grouped)) {
+                            const delay = index * 0.1;
+                            html += `
+                                <div class="accordion-item stagger-item" style="animation-delay: ${delay}s">
+                                    <h2 class="accordion-header" id="heading${index}">
+                                        <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${index}">
+                                            <i class="bi bi-journal-text me-3" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                                            ${moduleName}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse${index}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading${index}" data-bs-parent="#notesAccordion">
+                                        <div class="accordion-body">
+                                            <div class="row g-3">
+                            `;
+                            
+                            items.forEach(item => {
+                                html += `
+                                    <div class="col-12 col-md-6">
+                                        <div class="p-3 rounded-4" style="background: white; border: 1px solid rgba(245, 158, 11, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 44px; height: 44px; background: rgba(245, 158, 11, 0.1); flex-shrink: 0;">
+                                                    <i class="bi bi-file-earmark-pdf-fill" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                                                </div>
+                                                <div style="flex-grow: 1; overflow: hidden;">
+                                                    <h6 class="mb-0 text-truncate fw-bold" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;">${item.title}</h6>
+                                                    <small class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i> Year: ${item.year || 'N/A'}</small>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                                <button data-bs-toggle="modal" data-bs-target="#premiumModal" class="paper-action-btn btn-read border-0">
+                                                    <i class="bi bi-eye"></i> View
+                                                </button>
+                                                <button data-bs-toggle="modal" data-bs-target="#premiumModal" class="paper-action-btn btn-download border-1">
+                                                    <i class="bi bi-download"></i> DL
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+
+                            html += `
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            index++;
+                        }
+                        html += '</div>';
+                        
+                        resultsContainer.innerHTML = html;
+                        resultsContainer.classList.add('show');
+                        
+                        // Trigger stagger animation
+                        const itemsList = resultsContainer.querySelectorAll('.stagger-item');
+                        itemsList.forEach((el, i) => {
+                            el.style.animation = 'none';
+                            void el.offsetWidth; // trigger reflow
+                            el.style.animation = `fadeInUp 0.5s ease forwards ${i * 0.1}s`;
+                        });
+
+                    }, 300);
+                })
+                .catch(err => {
+                    console.error('Error fetching notes:', err);
+                    this.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Notes';
+                    resultsContainer.innerHTML = '<div class="alert alert-danger">Failed to fetch notes. Please try again.</div>';
+                    resultsContainer.classList.add('show');
+                });
+        });
+        
+        // Add required CSS for animations dynamically if not present
+        if (!document.getElementById('fetch-animations')) {
+            const style = document.createElement('style');
+            style.id = 'fetch-animations';
+            style.innerHTML = `
+                @keyframes pulse-glow {
+                    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
+                    50% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); transform: scale(1.02); }
+                    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
+                }
+                .spin { animation: spin 1s linear infinite; }
+                @keyframes spin { 100% { transform: rotate(360deg); } }
+                .stagger-item { opacity: 0; transform: translateY(20px); }
+                @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+            `;
+            document.head.appendChild(style);
+        }
+    });
 </script>
 </body>
 </html>

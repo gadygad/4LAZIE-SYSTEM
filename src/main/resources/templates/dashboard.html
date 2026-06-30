@@ -105,20 +105,20 @@
     <div class="main-wrapper">
         
         <!-- Premium Header Navbar -->
-        <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(230,126,34,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040; width: 100%;">
+        <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16,185,129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040; width: 100%;">
             <div class="container-fluid px-2 px-md-4">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <div class="d-flex align-items-center">
                         <!-- Mobile Menu Toggle Button -->
-                        <button class="btn border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Open mobile menu" style="background: rgba(230, 126, 34, 0.1); color: #e67e22; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                        <button class="btn border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Open mobile menu" style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <!-- Brand -->
                         <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
-                            <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #e67e22, #d35400); border-radius: 10px; box-shadow: 0 4px 10px rgba(230,126,34,0.3);">
+                            <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
                                 <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
                             </div>
-                            <span class="fs-4 fw-bold" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.5px;">4LAZIE <span class="d-none d-sm-inline" style="color: #e67e22;">NOTES</span></span>
+                            <span class="fs-4 fw-bold" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.5px;">4LAZIE <span class="d-none d-sm-inline" style="color: #10b981;">NOTES</span></span>
                         </a>
 
                     </div>
@@ -126,7 +126,7 @@
                                 <div th:replace="~{fragments/top_actions :: actions}"></div>
             </div>
             <!-- Premium Horizontal Separator Line -->
-            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(230,126,34,0) 0%, rgba(230,126,34,0.8) 50%, rgba(230,126,34,0) 100%); box-shadow: 0 2px 10px rgba(230,126,34,0.5);"></div>
+            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0) 100%); box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);"></div>
         </nav>
 
         <!-- DASHBOARD CONTENT AREA -->
@@ -142,21 +142,40 @@
                         <h6 class="fw-bold mb-0 text-dark text-uppercase section-header-premium" style="font-family: 'Outfit', sans-serif; border-bottom: 2px solid #10b981;">RECENTLY ADDED</h6>
                     </div>
                     
-                    <div class="d-flex flex-column gap-3">
-                        <div th:each="note : ${recentNotes}" class="premium-list-item rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
+                    <style>
+                        .glass-card-recent {
+                            background: rgba(255, 255, 255, 0.65);
+                            backdrop-filter: blur(12px);
+                            -webkit-backdrop-filter: blur(12px);
+                            border: 1px solid rgba(255, 255, 255, 0.8);
+                            border-left: 4px solid transparent;
+                            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+                            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                            position: relative;
+                            overflow: hidden;
+                        }
+                        .glass-card-recent:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.12);
+                            background: rgba(255, 255, 255, 0.9);
+                            border-left: 4px solid #10b981;
+                        }
+                    </style>
+                    <div class="d-flex flex-column gap-2">
+                        <div th:each="note : ${recentNotes}" class="glass-card-recent rounded-3 p-2 px-3 d-flex align-items-center">
                             <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                             
                             <a th:href="@{/view/{id}(id=${note.slug})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
-                                <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.15)); flex-shrink: 0; transition: all 0.3s ease;">
-                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.2rem;"></i>
+                                <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.6);">
+                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.1rem;"></i>
                                 </div>
                                 
                                 <div class="flex-grow-1 overflow-hidden">
-                                    <h6 class="fw-bold text-dark mb-1 text-truncate premium-text-hover" style="font-size: 0.95rem; transition: color 0.3s ease;" th:text="${note.title}">Note Title</h6>
-                                    <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
-                                        <span class="text-truncate me-2" style="max-width: 120px;" th:text="${note.moduleName}">Module Name</span>
-                                        <span style="color: #10b981;">•</span>
-                                        <span class="ms-2"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd')}">Date</span></span>
+                                    <h6 class="fw-bold text-dark mb-0 text-truncate" style="font-size: 0.9rem; font-family: 'Outfit', sans-serif; letter-spacing: 0.2px;" th:text="${note.title}">Note Title</h6>
+                                    <div class="d-flex align-items-center text-muted mt-1" style="font-size: 0.72rem; font-weight: 500;">
+                                        <span class="text-truncate me-2" style="max-width: 120px; color: #475569;" th:text="${note.moduleName}">Module Name</span>
+                                        <span style="color: #10b981; font-size: 0.5rem;">●</span>
+                                        <span class="ms-2" style="color: #64748b;"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd')}">Date</span></span>
                                     </div>
                                 </div>
                             </a>
@@ -196,21 +215,21 @@
                         <h6 class="fw-bold mb-0 text-dark text-uppercase section-header-premium" style="font-family: 'Outfit', sans-serif; border-bottom: 2px solid #10b981;">MOST POPULAR <i class="bi bi-fire ms-1 text-danger"></i></h6>
                     </div>
                     
-                    <div class="d-flex flex-column gap-3">
-                        <div th:each="note : ${popularNotes}" class="premium-list-item rounded-4 p-3 d-flex align-items-center" style="background: #ffffff; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;">
+                    <div class="d-flex flex-column gap-2">
+                        <div th:each="note : ${popularNotes}" class="glass-card-recent rounded-3 p-2 px-3 d-flex align-items-center">
                             <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
                             
                             <a th:href="@{/view/{id}(id=${note.slug})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
-                                <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0; transition: all 0.3s ease;">
-                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.2rem;"></i>
+                                <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.6);">
+                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.1rem;"></i>
                                 </div>
                                 
                                 <div class="flex-grow-1 overflow-hidden">
-                                    <h6 class="fw-bold text-dark mb-1 text-truncate premium-text-hover" style="font-size: 0.95rem; transition: color 0.3s ease;" th:text="${note.title}">Note Title</h6>
-                                    <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
-                                        <span class="text-truncate me-2" style="max-width: 120px;" th:text="${note.moduleName}">Module Name</span>
-                                        <span style="color: #10b981;">•</span>
-                                        <span class="ms-2"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
+                                    <h6 class="fw-bold text-dark mb-0 text-truncate" style="font-size: 0.9rem; font-family: 'Outfit', sans-serif; letter-spacing: 0.2px;" th:text="${note.title}">Note Title</h6>
+                                    <div class="d-flex align-items-center text-muted mt-1" style="font-size: 0.72rem; font-weight: 500;">
+                                        <span class="text-truncate me-2" style="max-width: 120px; color: #475569;" th:text="${note.moduleName}">Module Name</span>
+                                        <span style="color: #10b981; font-size: 0.5rem;">●</span>
+                                        <span class="ms-2" style="color: #64748b;"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
                                     </div>
                                 </div>
                             </a>
