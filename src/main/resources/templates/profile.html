@@ -168,9 +168,109 @@
     <!-- Main Profile -->
     <div class="container profile-container animate-fade-in">
         
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Floating Glassmorphism Toast -->
+        <div th:if="${success}" class="custom-toast-container">
+            <div class="custom-toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center">
+                    <div class="toast-icon-bg">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="toast-body fw-medium" th:text="${success}">Profile updated successfully!</div>
+                    <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
+                </div>
+            </div>
+            <style>
+                .custom-toast-container {
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 9999;
+                    animation: popDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+                }
+                .custom-toast {
+                    background: rgba(16, 185, 129, 0.85) !important; /* Beautiful Green Glass */
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3) !important;
+                    border-radius: 50px;
+                    padding: 8px 16px 8px 8px;
+                    color: white;
+                    display: inline-flex;
+                    align-items: center;
+                    min-width: 280px;
+                    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                }
+                .custom-toast:hover {
+                    background: rgba(16, 185, 129, 0.95) !important;
+                    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4) !important;
+                    transform: translateY(-2px);
+                }
+                .toast-icon-bg {
+                    background: rgba(255, 255, 255, 0.25);
+                    border-radius: 50%;
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 12px;
+                    font-size: 1.1rem;
+                    box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+                }
+                .toast-body {
+                    padding: 0;
+                    font-size: 0.95rem;
+                    letter-spacing: 0.3px;
+                    flex-grow: 1;
+                }
+                .toast-close-btn {
+                    filter: brightness(0) invert(1);
+                    opacity: 0.8;
+                    font-size: 0.65rem;
+                    margin-left: 15px !important;
+                    cursor: pointer;
+                    transition: opacity 0.2s;
+                }
+                .toast-close-btn:hover {
+                    opacity: 1;
+                }
+                @keyframes popDown {
+                    0% { top: -50px; opacity: 0; }
+                    100% { top: 30px; opacity: 1; }
+                }
+                @keyframes popUpOut {
+                    0% { top: 30px; opacity: 1; }
+                    100% { top: -50px; opacity: 0; }
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const toast = document.querySelector('.custom-toast-container');
+                    if (toast) {
+                        let hideTimeout = setTimeout(hideToast, 3000);
+                        
+                        function hideToast() {
+                            toast.style.animation = 'popUpOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
+                            setTimeout(() => toast.remove(), 500);
+                        }
+                        
+                        // Pause timer on hover
+                        toast.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+                        toast.addEventListener('mouseleave', () => hideTimeout = setTimeout(hideToast, 2000));
+                        
+                        const closeBtn = toast.querySelector('.btn-close');
+                        if(closeBtn) {
+                            closeBtn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                clearTimeout(hideTimeout);
+                                hideToast();
+                            });
+                        }
+                    }
+                });
+            </script>
         </div>
         
         <!-- View Mode -->
