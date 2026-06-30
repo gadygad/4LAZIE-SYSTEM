@@ -90,7 +90,7 @@
                     <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_ME' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_4">
                             <div class="d-flex flex-column">
-                                <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DIPLOMA IN ME</span>
+                                <span><i class="bi bi-gear-wide-connected me-2" th:style="${session.user != null} ? 'color: #34d399;' : 'color: #f59e0b;'"></i> DIPLOMA IN ME</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechanical Engineering</span>
                             </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
@@ -213,7 +213,7 @@
                     <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_ME' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_11">
                             <div class="d-flex flex-column">
-                                <span><i class="bi bi-gear-wide-connected me-2" style="color: #34d399;"></i> DEGREE IN ME</span>
+                                <span><i class="bi bi-gear-wide-connected me-2" th:style="${session.user != null} ? 'color: #34d399;' : 'color: #f59e0b;'"></i> DEGREE IN ME</span>
                                 <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Mechanical Engineering</span>
                             </div>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
@@ -312,7 +312,7 @@
 
                     <div class="sidebar-hover-item mt-2">
                         <a href="#" onclick="alert('IFM Notes coming soon to 4LAZIE! Stay tuned.'); return false;" class="sidebar-hover-btn text-decoration-none d-flex justify-content-between align-items-center w-100" style="color: inherit; background: rgba(255,255,255,0.03);">
-                            <span class="text-truncate" style="max-width: 140px;"><i class="bi bi-bank me-2" style="color: #34d399;"></i> IFM</span>
+                            <span class="text-truncate" style="max-width: 140px;"><i class="bi bi-bank me-2" th:style="${session.user != null} ? 'color: #34d399;' : 'color: #f59e0b;'"></i> IFM</span>
                             <span class="badge" style="font-size: 0.6rem; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d;">Soon</span>
                         </a>
                     </div>
@@ -413,7 +413,7 @@
                                     <div class="mt-1 d-flex align-items-center gap-2" style="font-size: 0.7rem; color: #64748b; font-weight: 600;">
                                         <span th:if="${session.user == null}" style="color: #f59e0b;"><i class="bi bi-star-fill"></i> PRO</span> 
                                         <span th:if="${session.user == null}" style="opacity: 0.4;">•</span>
-                                        <span th:if="${session.user == null}"><i class="bi bi-cloud-arrow-down-fill me-1" style="color: #10b981;"></i><span th:text="${(850 - (stat.index * 230))}">850</span> DLs</span>
+                                        <span th:if="${session.user == null}"><i class="bi bi-cloud-arrow-down-fill me-1" style="color: #f59e0b;"></i><span th:text="${(850 - (stat.index * 230))}">850</span> DLs</span>
                                         <span th:if="${session.user != null}"><i class="bi bi-cloud-arrow-down-fill me-1" style="color: #10b981;"></i><span th:text="${note.downloadCount}">42</span> Downloads</span>
                                     </div>
                                 </div>
@@ -792,14 +792,83 @@
 <div th:fragment="premium_sidebar" class="mb-4">
     <!-- Header -->
     <div class="mb-4">
-        <h5 class="fw-bold mb-2 pb-1 d-inline-block section-header-premium" style="background: linear-gradient(135deg, #10b981, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Outfit', sans-serif; letter-spacing: 1px; border-bottom: 3px solid rgba(16, 185, 129, 0.5); filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));">
+        <h5 class="fw-bold mb-2 pb-1 d-inline-block section-header-premium" 
+    th:style="${session.user != null} ? 
+    'background: linear-gradient(135deg, #10b981, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: Outfit, sans-serif; letter-spacing: 1px; border-bottom: 3px solid rgba(16, 185, 129, 0.5); filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));' : 
+    'background: linear-gradient(135deg, #f59e0b, #fbbf24, #d97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: Outfit, sans-serif; letter-spacing: 1px; border-bottom: 3px solid rgba(245, 158, 11, 0.5); filter: drop-shadow(0 4px 6px rgba(245, 158, 11, 0.3));'">
             PREMIUM FEATURES
         </h5>
         <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;">Exclusive tools &amp; resources</div>
     </div>
 
     <!-- Features List CSS -->
-    <style>
+    <style th:if="${session.user == null}">
+        .premium-feature-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.05), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            border-radius: 20px !important;
+            height: 100%;
+        }
+        .premium-feature-card .accent-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+            transform: scaleY(0);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center;
+        }
+        .premium-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.12), inset 0 2px 4px rgba(255, 255, 255, 1);
+            border-color: rgba(245, 158, 11, 0.2);
+            background: rgba(255, 255, 255, 1);
+        }
+        .premium-feature-card:hover .accent-line {
+            transform: scaleY(1);
+        }
+        .premium-feature-card .feature-title {
+            color: #1e293b; 
+            font-family: 'Outfit', sans-serif; 
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+        .premium-feature-card:hover .feature-title {
+            background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 0.6rem;
+            }
+            .premium-feature-card {
+                padding: 12px 16px !important;
+            }
+            .premium-feature-card .feature-title {
+                font-size: 0.95rem;
+            }
+            .premium-feature-card:hover {
+                transform: translateY(-3px);
+            }
+        }
+    </style>
+    <style th:if="${session.user != null}">
         .premium-feature-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
