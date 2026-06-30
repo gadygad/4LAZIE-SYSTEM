@@ -193,6 +193,33 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
     </style>
+
+    <!-- Green Theme Override for Logged-In Users -->
+    <style th:if="${session.user != null}">
+        /* Override Gold Theme to Green for Logged-In Users */
+        .premium-input-group { box-shadow: 0 10px 30px rgba(16, 185, 129, 0.04) !important; }
+        .premium-input-group:hover { box-shadow: 0 15px 35px rgba(16, 185, 129, 0.08) !important; }
+        .premium-select { border: 2px solid rgba(16, 185, 129, 0.1) !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2310b981' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important; }
+        .premium-select:hover { border-color: rgba(16, 185, 129, 0.3) !important; }
+        .premium-select:focus { border-color: #10b981 !important; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15) !important; }
+        .btn-premium-search { background: linear-gradient(135deg, #10b981, #059669) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; }
+        .btn-premium-search:hover { box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4) !important; color: white !important; }
+        .accordion-item { border: 1px solid rgba(16, 185, 129, 0.15) !important; }
+        .accordion-item:hover { border-color: rgba(16, 185, 129, 0.4) !important; box-shadow: 0 12px 35px rgba(16, 185, 129, 0.12) !important; }
+        .accordion-button::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2310b981' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important; }
+        .accordion-body { border-top: 1px dashed rgba(16, 185, 129, 0.2) !important; }
+        .btn-read { background: rgba(16, 185, 129, 0.1) !important; color: #059669 !important; }
+        .btn-read:hover { background: #10b981 !important; color: white !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important; }
+        
+        /* Overrides for JS-injected elements using higher specificity */
+        #notesResults .empty-state-icon { color: #10b981 !important; }
+        #notesResults h4 { color: #064e3b !important; }
+        #notesResults p { color: #059669 !important; }
+        #notesResults .bi-journal-text { color: #10b981 !important; }
+        #notesResults .rounded-circle { background: rgba(16, 185, 129, 0.1) !important; }
+        #notesResults .bi-file-earmark-pdf-fill { color: #10b981 !important; }
+        #notesResults .accordion-item .p-3.rounded-4 { border-color: rgba(16, 185, 129, 0.15) !important; }
+    </style>
 </head>
 
 <body>
@@ -284,60 +311,8 @@
                 
                 
     
-        <!-- Notes Fetch Form (Guest Theme) -->
-        <div class="plain-text-form mb-4 mt-2">
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-6">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Are you in Degree or Diploma?</label>
-                        <select id="notesProgram" class="premium-select">
-                            <option value="DIPLOMA">Diploma</option>
-                            <option value="DEGREE">Degree</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-lg-6">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Select your Course</label>
-                        <select id="notesCourse" class="premium-select">
-                            <!-- Populated dynamically via JS -->
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-6" id="notesLevelContainer" style="display: block; opacity: 1; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(0);">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Which NTA Level?</label>
-                        <select id="notesLevel" class="premium-select">
-                            <option value="4">NTA Level 4</option>
-                            <option value="5">NTA Level 5</option>
-                            <option value="6">NTA Level 6</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-6">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Which Semester?</label>
-                        <select id="notesSemester" class="premium-select">
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button id="notesSearchBtn" class="btn-premium-search">
-                    <i class="bi bi-magic me-2"></i> Fetch Notes
-                </button>
-            </div>
-        </div>
-
-        <div id="notesResults" class="mb-5">
-            <!-- Results Accordion will be injected here -->
-        </div>
+        <!-- Server Rendered Notes Accordion -->
+        <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
 
             </div> <!-- Close col-md-7 -->
 
@@ -478,223 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchBtn = document.getElementById('notesSearchBtn');
-        const resultsContainer = document.getElementById('notesResults');
-        const programSelect = document.getElementById('notesProgram');
-        const courseSelect = document.getElementById('notesCourse');
-        const semesterSelect = document.getElementById('notesSemester');
-        const levelSelect = document.getElementById('notesLevel');
 
-        // Dynamically fetched courses from the database via Thymeleaf
-        const dbCourses = /*[[${courses}]]*/ [];
-
-        const sjuitDegreeCourses = dbCourses
-            .filter(c => {
-                const pt = (c.programType || '').toUpperCase();
-                const n = (c.name || '').toUpperCase();
-                return pt.includes('DEGREE') || pt.includes('BSC') || pt.includes('MD') || pt.includes('BACHELOR') || 
-                       n.includes('BACHELOR') || n.includes('BSC ') || n.includes('DEGREE');
-            })
-            .map(c => ({ value: c.programType, text: c.name || c.programType }));
-
-        const sjuitDiplomaCourses = dbCourses
-            .filter(c => {
-                const pt = (c.programType || '').toUpperCase();
-                const n = (c.name || '').toUpperCase();
-                return pt.includes('DIP') || n.includes('DIPLOMA');
-            })
-            .map(c => ({ value: c.programType, text: c.name || c.programType }));
-
-        function updateCourses() {
-            const isDegree = programSelect.value === 'DEGREE';
-            
-            // Handle NTA Level Dropdown Animation
-            const levelContainer = document.getElementById('notesLevelContainer');
-            if (!isDegree) {
-                levelContainer.style.display = 'block';
-                // Trigger reflow for animation
-                void levelContainer.offsetWidth;
-                levelContainer.style.opacity = '1';
-                levelContainer.style.transform = 'translateY(0)';
-            } else {
-                levelContainer.style.opacity = '0';
-                levelContainer.style.transform = 'translateY(-10px)';
-                setTimeout(() => {
-                    if (programSelect.value === 'DEGREE') {
-                        levelContainer.style.display = 'none';
-                    }
-                }, 400);
-            }
-
-            const courses = isDegree ? sjuitDegreeCourses : sjuitDiplomaCourses;
-            courseSelect.innerHTML = '';
-            
-            if (courses.length === 0) {
-                courseSelect.innerHTML = `<option value="">No courses available</option>`;
-                return;
-            }
-            
-            courses.forEach(c => {
-                const option = document.createElement('option');
-                option.value = c.value;
-                option.textContent = c.text;
-                courseSelect.appendChild(option);
-            });
-        }
-
-        programSelect.addEventListener('change', updateCourses);
-        // Initialize on load
-        if(dbCourses && dbCourses.length > 0) {
-            updateCourses();
-        } else {
-            // Fallback hardcoded if no courses from DB
-            sjuitDiplomaCourses.push({value: 'DIP_CSE', text: 'Diploma in Computer Science Engineering'});
-            sjuitDegreeCourses.push({value: 'DEG_CS', text: 'Bachelor of Computer Science'});
-            updateCourses();
-        }
-
-        searchBtn.addEventListener('click', function() {
-            // Pulse animation on button
-            this.style.animation = 'none';
-            void this.offsetWidth; 
-            this.style.animation = 'pulse-glow 1s cubic-bezier(0.4, 0, 0.6, 1)';
-            this.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Fetching...';
-
-            const category = 'NOTE';
-            const program = courseSelect.value;
-            const semester = semesterSelect.value;
-            const level = programSelect.value === 'DIPLOMA' ? levelSelect.value : null;
-
-            let url = `/api/notes/filter?category=${category}&program=${program}&semester=${semester}`;
-            if (level) {
-                url += `&level=${level}`;
-            }
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    // Reset button
-                    this.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Notes';
-                    
-                    resultsContainer.classList.remove('show');
-                    
-                    setTimeout(() => {
-                        if(data.length === 0) {
-                            resultsContainer.innerHTML = `
-                                <div class="text-center empty-state-glass">
-                                    <i class="bi bi-inboxes-fill empty-state-icon mb-2" style="color: #f59e0b;"></i>
-                                    <h4 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #92400e; font-size: 1.25rem; letter-spacing: -0.5px;">No Results Found</h4>
-                                    <p style="color: #d97706; font-weight: 500; font-size: 0.9rem; opacity: 0.8; margin: 0 auto; max-width: 220px; line-height: 1.4;">Looks like it's empty here! Try tweaking your filters.</p>
-                                </div>
-                            `;
-                            resultsContainer.classList.add('show');
-                            return;
-                        }
-
-                        // Group by Module Name
-                        const grouped = data.reduce((acc, curr) => {
-                            if (!acc[curr.moduleName]) {
-                                acc[curr.moduleName] = [];
-                            }
-                            acc[curr.moduleName].push(curr);
-                            return acc;
-                        }, {});
-
-                        let html = '<div class="accordion" id="notesAccordion">';
-                        let index = 0;
-                        for (const [moduleName, items] of Object.entries(grouped)) {
-                            const delay = index * 0.1;
-                            html += `
-                                <div class="accordion-item stagger-item" style="animation-delay: ${delay}s">
-                                    <h2 class="accordion-header" id="heading${index}">
-                                        <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${index}">
-                                            <i class="bi bi-journal-text me-3" style="color: #f59e0b; font-size: 1.2rem;"></i>
-                                            ${moduleName}
-                                        </button>
-                                    </h2>
-                                    <div id="collapse${index}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading${index}" data-bs-parent="#notesAccordion">
-                                        <div class="accordion-body">
-                                            <div class="row g-3">
-                            `;
-                            
-                            items.forEach(item => {
-                                html += `
-                                    <div class="col-12 col-md-6">
-                                        <div class="p-3 rounded-4" style="background: white; border: 1px solid rgba(245, 158, 11, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 44px; height: 44px; background: rgba(245, 158, 11, 0.1); flex-shrink: 0;">
-                                                    <i class="bi bi-file-earmark-pdf-fill" style="color: #f59e0b; font-size: 1.2rem;"></i>
-                                                </div>
-                                                <div style="flex-grow: 1; overflow: hidden;">
-                                                    <h6 class="mb-0 text-truncate fw-bold" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;">${item.title}</h6>
-                                                    <small class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i> Year: ${item.year || 'N/A'}</small>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex flex-wrap gap-2 mt-3">
-                                                <button data-bs-toggle="modal" data-bs-target="#premiumModal" class="paper-action-btn btn-read border-0">
-                                                    <i class="bi bi-eye"></i> View
-                                                </button>
-                                                <button data-bs-toggle="modal" data-bs-target="#premiumModal" class="paper-action-btn btn-download border-1">
-                                                    <i class="bi bi-download"></i> DL
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            });
-
-                            html += `
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            index++;
-                        }
-                        html += '</div>';
-                        
-                        resultsContainer.innerHTML = html;
-                        resultsContainer.classList.add('show');
-                        
-                        // Trigger stagger animation
-                        const itemsList = resultsContainer.querySelectorAll('.stagger-item');
-                        itemsList.forEach((el, i) => {
-                            el.style.animation = 'none';
-                            void el.offsetWidth; // trigger reflow
-                            el.style.animation = `fadeInUp 0.5s ease forwards ${i * 0.1}s`;
-                        });
-
-                    }, 300);
-                })
-                .catch(err => {
-                    console.error('Error fetching notes:', err);
-                    this.innerHTML = '<i class="bi bi-magic me-2"></i> Fetch Notes';
-                    resultsContainer.innerHTML = '<div class="alert alert-danger">Failed to fetch notes. Please try again.</div>';
-                    resultsContainer.classList.add('show');
-                });
-        });
-        
-        // Add required CSS for animations dynamically if not present
-        if (!document.getElementById('fetch-animations')) {
-            const style = document.createElement('style');
-            style.id = 'fetch-animations';
-            style.innerHTML = `
-                @keyframes pulse-glow {
-                    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
-                    50% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); transform: scale(1.02); }
-                    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
-                }
-                .spin { animation: spin 1s linear infinite; }
-                @keyframes spin { 100% { transform: rotate(360deg); } }
-                .stagger-item { opacity: 0; transform: translateY(20px); }
-                @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-            `;
-            document.head.appendChild(style);
-        }
-    });
-</script>
 </body>
 </html>
 
