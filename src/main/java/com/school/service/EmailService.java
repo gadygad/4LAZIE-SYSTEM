@@ -28,4 +28,23 @@ public class EmailService {
             System.out.println("Please complete 'spring.mail.*' properties in application.properties");
         }
     }
+
+    public void sendVerificationEmail(String to, String verificationLink) {
+        if (mailSender == null) {
+            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            return;
+        }
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setSubject("Verify your email address - 4LAZIE");
+            message.setText("Welcome to 4LAZIE!\n\n" +
+                            "Please click the link below to verify your email address. This link will expire in 5 minutes.\n\n" +
+                            verificationLink + "\n\n" +
+                            "If you did not register for an account, please ignore this email.");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send verification email: " + e.getMessage());
+        }
+    }
 }
