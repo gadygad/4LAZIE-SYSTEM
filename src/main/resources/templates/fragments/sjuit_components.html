@@ -868,8 +868,8 @@
 
     <!-- Features List -->
     <div class="features-grid mb-4">
-        <!-- NOTES -->
-        <a th:href="${session.user != null} ? @{/notes(category='Note')} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
+        <!-- NOTES (Hidden for Logged-In Users since they use the left sidebar) -->
+        <a th:if="${session.user == null}" th:href="${session.user != null} ? @{/notes(category='Note')} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
             <div class="accent-line"></div>
             <span class="fw-bold feature-title">NOTES</span>
