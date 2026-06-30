@@ -197,16 +197,24 @@
     <!-- Green Theme Override for Logged-In Users -->
     <style th:if="${session.user != null}">
         /* Override Gold Theme to Green for Logged-In Users */
+        
         /* Green variables for Minimal Filters */
         :root {
             --premium-hover: #10b981;
             --premium-border: #10b981;
             --premium-bg-light: rgba(16, 185, 129, 0.08);
             --premium-border-light: rgba(16, 185, 129, 0.2);
-            --premium-text-dark: #065f46;
+            --premium-text-dark: #10b981;
         }
-        .premium-filter-border { border-bottom-color: rgba(16, 185, 129, 0.15) !important; }
+        .premium-filter-border { border-bottom-color: rgba(16, 185, 129, 0.2) !important; }
         .premium-text-gold { color: #10b981 !important; }
+        
+        /* Premium Hover Effects */
+        .premium-hover-text { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important; }
+        .premium-hover-text:hover { color: #10b981 !important; transform: translateY(-1px); }
+        .sem-tab { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important; position: relative; }
+        .sem-tab:hover { color: #10b981 !important; transform: translateY(-1px); }
+
 
         .premium-input-group { box-shadow: 0 10px 30px rgba(16, 185, 129, 0.04) !important; }
         .premium-input-group:hover { box-shadow: 0 15px 35px rgba(16, 185, 129, 0.08) !important; }
@@ -352,17 +360,17 @@
                         <!-- Semester Links (Text only) -->
                         <div class="d-flex align-items-center gap-3">
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=1'}" 
-                               class="text-decoration-none"
+                               class="text-decoration-none sem-tab"
                                style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
-                               th:styleappend="${selectedSemester == 1} ? 'color: #d97706; border-bottom: 2px solid var(--premium-border, #f59e0b); padding-bottom: 2px;' : 'color: #94a3b8;'"
+                               th:styleappend="${selectedSemester == 1} ? 'color: var(--premium-hover, #d97706); border-bottom: 2px solid var(--premium-border, #f59e0b); padding-bottom: 2px;' : 'color: #94a3b8;'"
                                onmouseover="if(!this.style.borderBottom) this.style.color='var(--premium-hover, #d97706)'" 
                                onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
                                SEM 1
                             </a>
                             <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=2'}" 
-                               class="text-decoration-none"
+                               class="text-decoration-none sem-tab"
                                style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
-                               th:styleappend="${selectedSemester == 2} ? 'color: #d97706; border-bottom: 2px solid var(--premium-border, #f59e0b); padding-bottom: 2px;' : 'color: #94a3b8;'"
+                               th:styleappend="${selectedSemester == 2} ? 'color: var(--premium-hover, #d97706); border-bottom: 2px solid var(--premium-border, #f59e0b); padding-bottom: 2px;' : 'color: #94a3b8;'"
                                onmouseover="if(!this.style.borderBottom) this.style.color='var(--premium-hover, #d97706)'" 
                                onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
                                SEM 2
