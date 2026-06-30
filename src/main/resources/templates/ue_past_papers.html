@@ -718,7 +718,7 @@
                 searchBtn.classList.add('btn-loading');
                 searchBtn.disabled = true;
 
-                let url = `/api/notes/filter?category=UE&program=${program}&semester=${semester}`;
+                let url = `/api/notes/filter?category=UE&program=${encodeURIComponent(program)}&semester=${semester}`;
                 
                 const progValue = document.querySelector('input[name="ueProgram"]:checked').value;
                 if (progValue === 'DIPLOMA') {

@@ -720,7 +720,7 @@
             const programVal = document.querySelector('input[name="notesProgram"]:checked').value;
             const level = programVal === 'DIPLOMA' ? levelSelect.value : null;
 
-            let url = `/api/notes/filter?category=${category}&program=${program}&semester=${semester}`;
+            let url = `/api/notes/filter?category=${category}&program=${encodeURIComponent(program)}&semester=${semester}`;
             if (level) {
                 url += `&level=${level}`;
             }
