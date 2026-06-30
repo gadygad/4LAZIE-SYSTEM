@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('pdf-loader');
     const errorDiv = document.getElementById('pdf-error');
     const canvasContainer = document.getElementById('canvas-container');
-    const controls = document.querySelector('.pdf-controls');
+    const controls = document.querySelector('.floating-controls');
     
     function hideLoader() {
         if (loader) {
