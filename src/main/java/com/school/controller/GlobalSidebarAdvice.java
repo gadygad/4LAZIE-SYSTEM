@@ -25,26 +25,37 @@ public class GlobalSidebarAdvice {
 
     @ModelAttribute
     public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {
-        Institution currentInstitution = institutionRepository.findById("1").orElse(null);
-        
-        List<com.school.model.Course> allCourses = courseRepository.findAll();
-        List<com.school.model.Course> diplomaCourses = allCourses.stream()
-                .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
-                .collect(Collectors.toList());
-        List<com.school.model.Course> degreeCourses = allCourses.stream()
-                .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
-                .collect(Collectors.toList());
+        try {
+            Institution currentInstitution = institutionRepository.findById("1").orElse(null);
+            
+            List<com.school.model.Course> allCourses = courseRepository.findAll();
+            List<com.school.model.Course> diplomaCourses = allCourses.stream()
+                    .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
+                    .collect(Collectors.toList());
+            List<com.school.model.Course> degreeCourses = allCourses.stream()
+                    .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
+                    .collect(Collectors.toList());
 
-        model.addAttribute("currentInstitution", currentInstitution);
-        model.addAttribute("diplomaCourses", diplomaCourses);
-        model.addAttribute("degreeCourses", degreeCourses);
+            model.addAttribute("currentInstitution", currentInstitution);
+            model.addAttribute("diplomaCourses", diplomaCourses);
+            model.addAttribute("degreeCourses", degreeCourses);
+        } catch (Exception e) {
+            model.addAttribute("currentInstitution", null);
+            model.addAttribute("diplomaCourses", java.util.Collections.emptyList());
+            model.addAttribute("degreeCourses", java.util.Collections.emptyList());
+        }
 
         com.school.model.User user = (com.school.model.User) session.getAttribute("user");
         if (user != null) {
-            List<com.school.model.Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
-            int unreadCount = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
-            model.addAttribute("notifications", notifications);
-            model.addAttribute("unreadNotificationCount", unreadCount);
+            try {
+                List<com.school.model.Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+                int unreadCount = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
+                model.addAttribute("notifications", notifications);
+                model.addAttribute("unreadNotificationCount", unreadCount);
+            } catch (Exception e) {
+                model.addAttribute("notifications", java.util.Collections.emptyList());
+                model.addAttribute("unreadNotificationCount", 0);
+            }
         } else {
             model.addAttribute("notifications", java.util.Collections.emptyList());
             model.addAttribute("unreadNotificationCount", 0);
