@@ -127,7 +127,7 @@ public class NotesController {
     }
 
     @GetMapping("/notes")
-    public String browseNotes(@RequestParam(value = "program", required = false, defaultValue = "DIP_CSE") String program,
+    public String browseNotes(@RequestParam(value = "program", required = false) String program,
                               @RequestParam(value = "level", required = false) Integer level,
                               @RequestParam(value = "semester", required = false) Integer semester,
                               @RequestParam(value = "category", required = false) String category,
@@ -135,14 +135,17 @@ public class NotesController {
                               @RequestParam(value = "page", defaultValue = "0") int page,
                               HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser != null) {
-            if (level == null && loggedInUser.getLevel() != null) level = loggedInUser.getLevel();
-            if (semester == null && loggedInUser.getSemester() != null) semester = loggedInUser.getSemester();
-            if ("DIP_CSE".equals(program) || "DIPLOMA".equals(program)) {
-                if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
-                    program = loggedInUser.getCourseProgram();
-                }
-            }
+        
+        // If parameters are missing, fallback to logged-in user profile, otherwise default to DIP_CSE/4/1
+        if (program == null || program.isEmpty()) {
+            program = (loggedInUser != null && loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) 
+                      ? loggedInUser.getCourseProgram() : "DIP_CSE";
+        }
+        if (level == null) {
+            level = (loggedInUser != null && loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
+        }
+        if (semester == null) {
+            semester = (loggedInUser != null && loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
         }
         org.springframework.data.domain.Page<Note> notesPage;
         if (level != null && semester != null) {
@@ -542,11 +545,17 @@ public class NotesController {
     }
 
     @GetMapping("/guest-notes")
-    public String guestNotesList(@RequestParam(value = "program", required = false, defaultValue = "DIP_CSE") String program,
-                                 @RequestParam(value = "level", required = false, defaultValue = "5") Integer level, 
-                                 @RequestParam(value = "semester", required = false, defaultValue = "2") Integer semester,
+    public String guestNotesList(@RequestParam(value = "program", required = false) String program,
+                                 @RequestParam(value = "level", required = false) Integer level, 
+                                 @RequestParam(value = "semester", required = false) Integer semester,
                                  @RequestParam(value = "page", defaultValue = "0") int page,
                                  org.springframework.ui.Model model, HttpSession session) {
+                                     
+        // Set defaults if not provided in URL
+        if (program == null || program.isEmpty()) program = "DIP_CSE";
+        if (level == null) level = 4;
+        if (semester == null) semester = 1;
+
         if (getLoggedInUser() != null) {
             return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester + "&page=" + page;
         }
