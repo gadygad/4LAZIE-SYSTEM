@@ -313,17 +313,17 @@
                 
     
         <!-- Minimal Text-Only Gold Filters -->
-                <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2" class="premium-filter-border" style="border-bottom: 1px solid rgba(245, 158, 11, 0.15);">
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2 premium-filter-border" style="border-bottom: 1px solid rgba(245, 158, 11, 0.15);">
                     <!-- Program Name -->
                     <div class="d-flex align-items-center gap-2 me-3 mb-2 mb-md-0">
-                        <i class="bi bi-journal-bookmark" class="premium-text-gold" style="color: #d97706; font-size: 0.8rem;"></i>
-                        <span class="text-uppercase fw-bold" class="premium-text-gold" style="color: #d97706; font-size: 0.75rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;" th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">DIP CSE</span>
+                        <i class="bi bi-journal-bookmark premium-text-gold" style="color: #d97706; font-size: 0.8rem;"></i>
+                        <span class="text-uppercase fw-bold premium-text-gold" style="color: #d97706; font-size: 0.75rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;" th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">DIP CSE</span>
                     </div>
                     
                     <div class="d-flex align-items-center gap-3">
                         <!-- Level Dropdown (Text only) -->
                         <div class="dropdown">
-                            <button class="btn p-0 border-0 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: color 0.3s;" class="premium-hover-text" onmouseover="this.style.color='var(--premium-hover, #d97706)'" onmouseout="this.style.color='#94a3b8'">
+                            <button class="btn p-0 border-0 d-flex align-items-center gap-1 premium-hover-text" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: color 0.3s;" onmouseover="this.style.color='var(--premium-hover, #d97706)'" onmouseout="this.style.color='#94a3b8'">
                                 <i class="bi bi-mortarboard-fill"></i> 
                                 <span th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">YEAR <span th:text="${selectedLevel != null ? selectedLevel : '1'}">1</span></span>
                                 <span th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">LVL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
@@ -373,7 +373,7 @@
                 <!-- Premium Section Header for Modules -->
                 <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
                     <div class="d-flex align-items-center" style="background: linear-gradient(to right, var(--premium-bg-light, rgba(245, 158, 11, 0.08)), transparent); padding: 6px 16px; border-radius: 50px; border-left: 3px solid var(--premium-border, #f59e0b);">
-                        <i class="bi bi-stack me-2" class="premium-text-gold" style="color: #d97706; font-size: 0.9rem;"></i>
+                        <i class="bi bi-stack me-2 premium-text-gold" style="color: #d97706; font-size: 0.9rem;"></i>
                         <h4 class="fw-bold mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: var(--premium-text-dark, #92400e); letter-spacing: 2px; font-size: 0.8rem;">
                             MODULE NAMES
                         </h4>
