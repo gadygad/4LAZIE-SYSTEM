@@ -27,6 +27,9 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Autowired
     private InstitutionRepository institutionRepository;
 
+    @Autowired
+    private NoteRepository noteRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -49,20 +52,23 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. Initialize Users if empty
+        // 1. Initialize or Update Users
         try {
-            if (userRepository.findByEmail(lecturerEmail).isEmpty()) {
-                User lecturer = new User("Dr. Alex Carter", lecturerEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
-                userRepository.save(lecturer);
-            }
-            if (userRepository.findByEmail(studentEmail).isEmpty()) {
-                User student = new User("John Doe", studentEmail, passwordEncoder.encode(studentPassword), Role.STUDENT);
-                userRepository.save(student);
-            }
-            if (userRepository.findByEmail(adminEmail).isEmpty()) {
-                User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
-                userRepository.save(admin);
-            }
+            // Lecturer
+            User lecturer = userRepository.findByEmail(lecturerEmail).orElse(new User("Dr. Alex Carter", lecturerEmail, "", Role.ADMIN));
+            lecturer.setPassword(passwordEncoder.encode(adminPassword));
+            userRepository.save(lecturer);
+
+            // Student
+            User student = userRepository.findByEmail(studentEmail).orElse(new User("John Doe", studentEmail, "", Role.STUDENT));
+            student.setPassword(passwordEncoder.encode(studentPassword));
+            userRepository.save(student);
+
+            // Admin
+            User admin = userRepository.findByEmail(adminEmail).orElse(new User("System Admin", adminEmail, "", Role.ADMIN));
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            userRepository.save(admin);
+            
         } catch (Exception e) {
             log.warn("Could not seed users: " + e.getMessage());
         }
