@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 import jakarta.annotation.PostConstruct;
 import java.security.Security;
@@ -47,6 +48,7 @@ public class PushNotificationService {
         }
     }
 
+    @Async
     public void sendToAllSubscribers(String title, String body, String url) {
         if (pushService == null) return;
 

@@ -339,10 +339,8 @@ public class NotesController {
                 String pushBody = "New " + categoryLabel + ": " + title + " is now available. Tap to view and stay ahead!";
                 String pushUrl = "/view/" + note.getSlug();
                 
-                // Send async to not block the upload response
-                new Thread(() -> {
-                    pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
-                }).start();
+                // Send async to not block the upload response (Now uses @Async in service)
+                pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
             }
             
         } catch (IOException e) {
@@ -380,32 +378,13 @@ public class NotesController {
         }
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            String cloudinaryUrl = note.getFileUrl().replaceFirst("^http://", "https://");
+            if (cloudinaryUrl.contains("/upload/")) {
+                cloudinaryUrl = cloudinaryUrl.replace("/upload/", "/upload/fl_attachment/");
+            }
             try {
-                String safeUrl = note.getFileUrl().replaceFirst("^http://", "https://");
-                java.net.URL url = java.net.URI.create(safeUrl).toURL();
-                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
-                connection.setInstanceFollowRedirects(true);
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-                connection.setRequestProperty("Accept", "*/*");
-                connection.connect();
-                
-                int responseCode = connection.getResponseCode();
-                if (responseCode == 200) {
-                    String mimeType = fileStorageService.getMimeType(note.getFilename());
-                    response.setContentType(mimeType);
-                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + note.getFilename() + "\"");
-                    
-                    try (java.io.InputStream is = connection.getInputStream();
-                         java.io.OutputStream os = response.getOutputStream()) {
-                        byte[] buffer = new byte[8192];
-                        int bytesRead;
-                        while ((bytesRead = is.read(buffer)) != -1) {
-                            os.write(buffer, 0, bytesRead);
-                        }
-                    }
-                    return;
-                }
+                response.sendRedirect(cloudinaryUrl);
+                return;
             } catch (Exception e) {
                 // fall through to text fallback
             }
@@ -506,42 +485,7 @@ public class NotesController {
         return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"error.html\"").body(mockResource);
     }
 
-    @GetMapping("/proxy/{id}")
-    public void proxyDocument(@PathVariable("id") String id, jakarta.servlet.http.HttpServletResponse response) {
-        Note note = noteRepository.findById(id).orElse(null);
-        if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            try {
-                String safeUrl = note.getFileUrl().replaceFirst("^http://", "https://");
-                java.net.URL url = java.net.URI.create(safeUrl).toURL();
-                java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
-                connection.setInstanceFollowRedirects(true);
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-                connection.setRequestProperty("Accept", "*/*");
-                connection.connect();
-                
-                int responseCode = connection.getResponseCode();
-                if (responseCode == 200) {
-                    String mimeType = fileStorageService.getMimeType(note.getFilename());
-                    response.setContentType(mimeType);
-                    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + note.getFilename() + "\"");
-                    
-                    try (java.io.InputStream is = connection.getInputStream();
-                         java.io.OutputStream os = response.getOutputStream()) {
-                        byte[] buffer = new byte[8192];
-                        int bytesRead;
-                        while ((bytesRead = is.read(buffer)) != -1) {
-                            os.write(buffer, 0, bytesRead);
-                        }
-                    }
-                    return;
-                }
-            } catch (Exception e) {
-                // fall back to 404
-            }
-        }
-        response.setStatus(404);
-    }
+    // proxyDocument has been removed for better scalability.
 
     @PostMapping("/save-note/{id}")
     @ResponseBody
