@@ -13,11 +13,67 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 20px;
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        /* Floating Controls */
+        .floating-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.05);
+            padding: 8px 16px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .floating-controls:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), 0 3px 10px rgba(0,0,0,0.05);
+            transform: translateX(-50%) translateY(-2px);
+        }
+        
+        .control-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        .control-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
+        .page-indicator {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 0.9rem;
+            padding: 0 8px;
+            font-variant-numeric: tabular-nums;
         }
 
         .back-btn {
@@ -113,8 +169,18 @@
 
         /* Mobile Adjustments */
         @media (max-width: 768px) {
+            .floating-controls {
+                bottom: 20px;
+                padding: 6px 12px;
+                gap: 8px;
+            }
+            .control-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
             .viewer-navbar {
-                padding: 10px;
+                padding: 10px 12px;
             }
             .back-btn span {
                 display: none; /* Hide 'Go Back' text, keep icon */

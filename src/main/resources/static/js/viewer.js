@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const safeUrl = url.replace('http://', 'https://');
         
         let observer = null;
+        let pdfDoc = null;
+        let scale = 1.2;
 
         const renderAllPagesLazy = () => {
             canvasContainer.innerHTML = '';
