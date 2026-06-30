@@ -106,6 +106,37 @@
                 });
             }
         </script>
+
+        <!-- GLOBAL PREMIUM BUTTON LOADING SCRIPT -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Find all action buttons/links that are for reading notes
+                const actionBtns = document.querySelectorAll('a.btn, button.btn, a.btn-action-outline');
+                actionBtns.forEach(btn => {
+                    const text = btn.innerText.trim().toLowerCase();
+                    if (text === 'read' || (btn.tagName === 'A' && btn.href && btn.href.indexOf('/view/') !== -1)) {
+                        btn.addEventListener('click', function(e) {
+                            if(this.classList.contains('loading')) {
+                                e.preventDefault();
+                                return;
+                            }
+                            // Apply Premium Glassmorphism Loading State (Gold Theme)
+                            this.classList.add('loading');
+                            this.style.pointerEvents = 'none';
+                            this.style.background = 'rgba(245, 158, 11, 0.4)';
+                            this.style.color = '#92400e';
+                            this.style.boxShadow = 'inset 0 0 10px rgba(245, 158, 11, 0.2), 0 2px 4px rgba(245, 158, 11, 0.1)';
+                            this.style.transform = 'scale(0.95)';
+                            this.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+                            this.style.transition = 'all 0.3s ease';
+                            
+                            // Change content to a spinner
+                            this.innerHTML = '<div class="spinner-border spinner-border-sm" role="status" style="width: 1rem; height: 1rem; border-width: 0.15em;"></div>';
+                        });
+                    }
+                });
+            });
+        </script>
     </footer>
 
 </body>
