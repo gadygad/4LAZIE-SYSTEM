@@ -38,6 +38,7 @@ public class Note {
 
     private Boolean isPublic = true;
     private Integer downloadCount = 0;
+    private Integer viewCount = 0;
     private Integer unitNumber;
 
     @DBRef
@@ -104,6 +105,8 @@ public class Note {
     public void setIsPublic(Boolean isPublic) { this.isPublic = isPublic; }
     public Integer getDownloadCount() { return downloadCount; }
     public void setDownloadCount(Integer downloadCount) { this.downloadCount = downloadCount; }
+    public Integer getViewCount() { return viewCount; }
+    public void setViewCount(Integer viewCount) { this.viewCount = viewCount; }
     public Integer getUnitNumber() { return unitNumber; }
     public void setUnitNumber(Integer unitNumber) { this.unitNumber = unitNumber; }
     public Institution getInstitution() { return institution; }

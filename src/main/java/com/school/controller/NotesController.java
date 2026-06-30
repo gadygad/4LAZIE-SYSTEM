@@ -466,6 +466,9 @@ public class NotesController {
             return "redirect:/login";
         }
         
+        note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
+        noteRepository.save(note);
+        
         model.addAttribute("note", note);
         model.addAttribute("user", loggedInUser);
         
