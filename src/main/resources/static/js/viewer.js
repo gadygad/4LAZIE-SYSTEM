@@ -38,11 +38,20 @@ document.addEventListener('DOMContentLoaded', function() {
             pageIsRendering = true;
             pdfDoc.getPage(num).then(page => {
                 const viewport = page.getViewport({ scale });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                const outputScale = window.devicePixelRatio || 1;
+                
+                canvas.width = Math.floor(viewport.width * outputScale);
+                canvas.height = Math.floor(viewport.height * outputScale);
+                canvas.style.width = Math.floor(viewport.width) + "px";
+                canvas.style.height =  Math.floor(viewport.height) + "px";
+
+                const transform = outputScale !== 1 
+                  ? [outputScale, 0, 0, outputScale, 0, 0] 
+                  : null;
 
                 const renderCtx = {
                     canvasContext: ctx,
+                    transform: transform,
                     viewport: viewport
                 };
 
@@ -96,7 +105,18 @@ document.addEventListener('DOMContentLoaded', function() {
             pdfDoc = pdfDoc_;
             document.getElementById('page-count').textContent = pdfDoc.numPages;
             hideLoader();
-            renderPage(pageNum);
+            
+            // Calculate best initial scale for mobile
+            if (window.innerWidth < 768) {
+                pdfDoc.getPage(1).then(page => {
+                    const tempViewport = page.getViewport({ scale: 1.0 });
+                    const containerWidth = canvasContainer.clientWidth > 0 ? canvasContainer.clientWidth - 40 : window.innerWidth - 40;
+                    scale = containerWidth / tempViewport.width;
+                    renderPage(pageNum);
+                });
+            } else {
+                renderPage(pageNum);
+            }
         }).catch(err => {
             console.error('Error fetching PDF: ', err);
             hideLoader();
