@@ -582,9 +582,9 @@ public class NotesController {
         if (level == null) level = 4;
         if (semester == null) semester = 1;
 
-        if (getLoggedInUser() != null) {
-            return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester + "&page=" + page;
-        }
+        // if (getLoggedInUser() != null) {
+        //     return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester + "&page=" + page;
+        // }
         
         org.springframework.data.domain.Page<Note> notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
         List<Note> notes = notesPage.getContent();
