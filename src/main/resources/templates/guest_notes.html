@@ -197,6 +197,17 @@
     <!-- Green Theme Override for Logged-In Users -->
     <style th:if="${session.user != null}">
         /* Override Gold Theme to Green for Logged-In Users */
+        /* Green variables for Minimal Filters */
+        :root {
+            --premium-hover: #10b981;
+            --premium-border: #10b981;
+            --premium-bg-light: rgba(16, 185, 129, 0.08);
+            --premium-border-light: rgba(16, 185, 129, 0.2);
+            --premium-text-dark: #065f46;
+        }
+        .premium-filter-border { border-bottom-color: rgba(16, 185, 129, 0.15) !important; }
+        .premium-text-gold { color: #10b981 !important; }
+
         .premium-input-group { box-shadow: 0 10px 30px rgba(16, 185, 129, 0.04) !important; }
         .premium-input-group:hover { box-shadow: 0 15px 35px rgba(16, 185, 129, 0.08) !important; }
         .premium-select { border: 2px solid rgba(16, 185, 129, 0.1) !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2310b981' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important; }
@@ -301,58 +312,76 @@
                 
                 
     
-        <!-- Notes Fetch Form (Guest Theme) -->
-        <div class="plain-text-form mb-4 mt-2">
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-6">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Are you in Degree or Diploma?</label>
-                        <select id="notesProgram" class="premium-select">
-                            <option value="DIPLOMA">Diploma</option>
-                            <option value="DEGREE">Degree</option>
-                        </select>
+        <!-- Minimal Text-Only Gold Filters -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2" class="premium-filter-border" style="border-bottom: 1px solid rgba(245, 158, 11, 0.15);">
+                    <!-- Program Name -->
+                    <div class="d-flex align-items-center gap-2 me-3 mb-2 mb-md-0">
+                        <i class="bi bi-journal-bookmark" class="premium-text-gold" style="color: #d97706; font-size: 0.8rem;"></i>
+                        <span class="text-uppercase fw-bold" class="premium-text-gold" style="color: #d97706; font-size: 0.75rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;" th:text="${selectedProgram != null ? #strings.replace(selectedProgram, '_', ' ') : 'MODULES'}">DIP CSE</span>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Level Dropdown (Text only) -->
+                        <div class="dropdown">
+                            <button class="btn p-0 border-0 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: color 0.3s;" class="premium-hover-text" onmouseover="this.style.color='var(--premium-hover, #d97706)'" onmouseout="this.style.color='#94a3b8'">
+                                <i class="bi bi-mortarboard-fill"></i> 
+                                <span th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">YEAR <span th:text="${selectedLevel != null ? selectedLevel : '1'}">1</span></span>
+                                <span th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">LVL <span th:text="${selectedLevel != null ? selectedLevel : '4'}">4</span></span>
+                                <i class="bi bi-chevron-down" style="font-size: 0.6rem;"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow-sm border-0" style="border-radius: 8px; min-width: 100px; padding: 4px; z-index: 1050;">
+                                <!-- Diploma Levels -->
+                                <th:block th:unless="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 4</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=5&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 5</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=6&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Level 6</a></li>
+                                </th:block>
+                                <!-- Degree Levels -->
+                                <th:block th:if="${selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_')}">
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=1&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 1</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=2&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 2</a></li>
+                                    <li><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=3&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 3</a></li>
+                                    <li th:unless="${selectedProgram == 'DEG_CS'}"><a class="dropdown-item rounded py-2" style="font-size: 0.75rem; font-weight: 500; color: #475569;" th:href="@{'/guest-notes?program=' + ${selectedProgram} + '&level=4&semester=' + ${selectedSemester != null ? selectedSemester : 1}}" onmouseover="this.style.color='#d97706'; this.style.background='transparent';" onmouseout="this.style.color='#475569'">Year 4</a></li>
+                                </th:block>
+                            </ul>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div style="width: 1px; height: 12px; background: rgba(0,0,0,0.1);"></div>
+                        
+                        <!-- Semester Links (Text only) -->
+                        <div class="d-flex align-items-center gap-3">
+                            <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=1'}" 
+                               class="text-decoration-none"
+                               style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
+                               th:styleappend="${selectedSemester == 1} ? 'color: #d97706; border-bottom: 2px solid var(--premium-border, #f59e0b); padding-bottom: 2px;' : 'color: #94a3b8;'"
+                               onmouseover="if(!this.style.borderBottom) this.style.color='var(--premium-hover, #d97706)'" 
+                               onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
+                               SEM 1
+                            </a>
+                            <a th:href="@{'/guest-notes?program=' + ${selectedProgram != null ? selectedProgram : 'DIP_CSE'} + '&level=' + ${selectedLevel != null ? selectedLevel : (selectedProgram != null and #strings.startsWith(selectedProgram, 'DEG_') ? 1 : 4)} + '&semester=2'}" 
+                               class="text-decoration-none"
+                               style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s;"
+                               th:styleappend="${selectedSemester == 2} ? 'color: #d97706; border-bottom: 2px solid var(--premium-border, #f59e0b); padding-bottom: 2px;' : 'color: #94a3b8;'"
+                               onmouseover="if(!this.style.borderBottom) this.style.color='var(--premium-hover, #d97706)'" 
+                               onmouseout="if(!this.style.borderBottom) this.style.color='#94a3b8'">
+                               SEM 2
+                            </a>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-lg-6">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Select your Course</label>
-                        <select id="notesCourse" class="premium-select">
-                            <!-- Populated dynamically via JS -->
-                        </select>
+                <!-- Premium Section Header for Modules -->
+                <div class="mb-4 mt-3 d-flex align-items-center" style="animation: fadeIn 0.8s ease forwards;">
+                    <div class="d-flex align-items-center" style="background: linear-gradient(to right, var(--premium-bg-light, rgba(245, 158, 11, 0.08)), transparent); padding: 6px 16px; border-radius: 50px; border-left: 3px solid var(--premium-border, #f59e0b);">
+                        <i class="bi bi-stack me-2" class="premium-text-gold" style="color: #d97706; font-size: 0.9rem;"></i>
+                        <h4 class="fw-bold mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: var(--premium-text-dark, #92400e); letter-spacing: 2px; font-size: 0.8rem;">
+                            MODULE NAMES
+                        </h4>
                     </div>
+                    <div class="flex-grow-1 ms-3" style="height: 1px; background: linear-gradient(to right, var(--premium-border-light, rgba(245, 158, 11, 0.2)), transparent);"></div>
                 </div>
-
-                <div class="col-md-6 col-lg-6" id="notesLevelContainer" style="display: block; opacity: 1; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(0);">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Which NTA Level?</label>
-                        <select id="notesLevel" class="premium-select">
-                            <option value="4">NTA Level 4</option>
-                            <option value="5">NTA Level 5</option>
-                            <option value="6">NTA Level 6</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-6">
-                    <div class="premium-input-group">
-                        <label class="premium-label">Which Semester?</label>
-                        <select id="notesSemester" class="premium-select">
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button id="notesSearchBtn" class="btn-premium-search">
-                    <i class="bi bi-magic me-2"></i> Fetch Notes
-                </button>
-            </div>
-        </div>
-
-        <!-- Server Rendered Notes Accordion -->
+ 
+                <!-- Empty State (General) --><!-- Server Rendered Notes Accordion -->
         <div th:replace="~{fragments/sjuit_components :: notes_accordion}"></div>
 
             </div> <!-- Close col-md-7 -->
@@ -494,123 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchBtn = document.getElementById('notesSearchBtn');
-        const resultsContainer = document.getElementById('notesResults');
-        const programSelect = document.getElementById('notesProgram');
-        const courseSelect = document.getElementById('notesCourse');
-        const semesterSelect = document.getElementById('notesSemester');
-        const levelSelect = document.getElementById('notesLevel');
 
-        // Dynamically fetched courses from the database via Thymeleaf
-        const dbCourses = /*[[${courses}]]*/ [];
-
-        const sjuitDegreeCourses = dbCourses
-            .filter(c => {
-                const pt = (c.programType || '').toUpperCase();
-                const n = (c.name || '').toUpperCase();
-                return pt.includes('DEGREE') || pt.includes('BSC') || pt.includes('MD') || pt.includes('BACHELOR') || 
-                       n.includes('BACHELOR') || n.includes('BSC ') || n.includes('DEGREE');
-            })
-            .map(c => ({ value: c.programType, text: c.name || c.programType }));
-
-        const sjuitDiplomaCourses = dbCourses
-            .filter(c => {
-                const pt = (c.programType || '').toUpperCase();
-                const n = (c.name || '').toUpperCase();
-                return pt.includes('DIP') || n.includes('DIPLOMA');
-            })
-            .map(c => ({ value: c.programType, text: c.name || c.programType }));
-
-        function updateCourses() {
-            const isDegree = programSelect.value === 'DEGREE';
-            
-            // Handle NTA Level Dropdown Animation
-            const levelContainer = document.getElementById('notesLevelContainer');
-            if (!isDegree) {
-                levelContainer.style.display = 'block';
-                // Trigger reflow for animation
-                void levelContainer.offsetWidth;
-                levelContainer.style.opacity = '1';
-                levelContainer.style.transform = 'translateY(0)';
-            } else {
-                levelContainer.style.opacity = '0';
-                levelContainer.style.transform = 'translateY(-10px)';
-                setTimeout(() => {
-                    if (programSelect.value === 'DEGREE') {
-                        levelContainer.style.display = 'none';
-                    }
-                }, 400);
-            }
-
-            const courses = isDegree ? sjuitDegreeCourses : sjuitDiplomaCourses;
-            courseSelect.innerHTML = '';
-            
-            if (courses.length === 0) {
-                courseSelect.innerHTML = `<option value="">No courses available</option>`;
-                return;
-            }
-            
-            courses.forEach(c => {
-                const option = document.createElement('option');
-                option.value = c.value;
-                option.textContent = c.text;
-                courseSelect.appendChild(option);
-            });
-        }
-
-        programSelect.addEventListener('change', updateCourses);
-        // Initialize on load
-        if(dbCourses && dbCourses.length > 0) {
-            updateCourses();
-        } else {
-            // Fallback hardcoded if no courses from DB
-            sjuitDiplomaCourses.push({value: 'DIP_CSE', text: 'Diploma in Computer Science Engineering'});
-            sjuitDegreeCourses.push({value: 'DEG_CS', text: 'Bachelor of Computer Science'});
-            updateCourses();
-        }
-
-        searchBtn.addEventListener('click', function() {
-            // Pulse animation on button
-            this.style.animation = 'none';
-            void this.offsetWidth; 
-            this.style.animation = 'pulse-glow 1s cubic-bezier(0.4, 0, 0.6, 1)';
-            this.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Fetching...';
-
-            const category = 'NOTE';
-            const program = courseSelect.value;
-            const semester = semesterSelect.value;
-            const level = programSelect.value === 'DIPLOMA' ? levelSelect.value : null;
-
-            let url = `/guest-notes?program=${program}&semester=${semester}`;
-            if (level) {
-                url += `&level=${level}`;
-            }
-            
-            searchBtn.innerHTML = '<i class="bi bi-arrow-repeat spin-icon me-2"></i> Loading...';
-            window.location.href = url;
-        });
-        
-        // Add required CSS for animations dynamically if not present
-        if (!document.getElementById('fetch-animations')) {
-            const style = document.createElement('style');
-            style.id = 'fetch-animations';
-            style.innerHTML = `
-                @keyframes pulse-glow {
-                    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
-                    50% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); transform: scale(1.02); }
-                    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
-                }
-                .spin { animation: spin 1s linear infinite; }
-                @keyframes spin { 100% { transform: rotate(360deg); } }
-                .stagger-item { opacity: 0; transform: translateY(20px); }
-                @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-            `;
-            document.head.appendChild(style);
-        }
-    });
-</script>
 </body>
 </html>
 
