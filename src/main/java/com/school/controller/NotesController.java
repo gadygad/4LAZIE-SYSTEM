@@ -400,8 +400,13 @@ public class NotesController {
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             String cloudinaryUrl = note.getFileUrl().replaceFirst("^http://", "https://");
+            
+            // Format a nice, branded filename for the download
+            String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9]", "_") : "Document";
+            String brandedName = "4LAZIE_" + cleanTitle;
+            
             if (cloudinaryUrl.contains("/upload/")) {
-                cloudinaryUrl = cloudinaryUrl.replace("/upload/", "/upload/fl_attachment/");
+                cloudinaryUrl = cloudinaryUrl.replace("/upload/", "/upload/fl_attachment:" + brandedName + "/");
             }
             try {
                 response.sendRedirect(cloudinaryUrl);
