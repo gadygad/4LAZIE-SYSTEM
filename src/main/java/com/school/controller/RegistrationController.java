@@ -55,7 +55,11 @@ public class RegistrationController {
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("institutions", institutionRepository.findAll());
+        try {
+            model.addAttribute("institutions", institutionRepository.findAll());
+        } catch (Exception e) {
+            model.addAttribute("institutions", java.util.Collections.emptyList());
+        }
         return "register";
     }
 
