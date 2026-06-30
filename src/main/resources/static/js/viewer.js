@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const firstViewport = firstPage.getViewport({ scale: currentScale });
                 const pageW = Math.floor(firstViewport.width);
                 const pageH = Math.floor(firstViewport.height);
-                const outputScale = window.devicePixelRatio || 1;
+                const outputScale = (window.devicePixelRatio || 1) * 2; // Increased for extra crispness
                 
                 observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
@@ -147,6 +147,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (controls) controls.style.display = 'none';
         if (canvasContainer) {
             canvasContainer.style.padding = '0';
+            canvasContainer.style.display = 'block';
+            canvasContainer.style.height = '100%';
             
             const safeUrl = url.replace('http://', 'https://');
             const encodedUrl = encodeURIComponent(safeUrl);
