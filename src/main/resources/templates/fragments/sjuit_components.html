@@ -503,36 +503,36 @@
                                                         th:data-bs-target="'#unitCollapse' + ${stat.index} + '_' + ${unitNum}"
                                                         style="background: transparent; border: none; font-family: 'Outfit', sans-serif; box-shadow: none;">
                                                     <div class="d-flex align-items-center gap-3 w-100">
-                                                        <div style="color: #d97706; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                                        <div style="color: var(--acc-icon-color, #d97706); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                                                             <i class="bi bi-bookmark-star-fill" style="font-size: 1.15rem;"></i>
                                                         </div>
                                                         <div class="d-flex flex-column text-start">
                                                             <span class="fw-bold text-uppercase" style="color: #1e293b; font-size: 0.9rem; letter-spacing: 0.5px;">UNIT [[${unitNum}]]</span>
                                                             <span th:if="${#lists.isEmpty(unitNotes)}" style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">Pending</span>
-                                                            <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.65rem; color: #d97706; font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
+                                                            <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.65rem; color: var(--acc-text-light, #d97706); font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
                                                         </div>
                                                     </div>
                                                 </button>
                                                 <div th:id="'unitCollapse' + ${stat.index} + '_' + ${unitNum}"
                                                      class="accordion-collapse collapse"
                                                      th:data-bs-parent="'#accordionUnits' + ${stat.index}">
-                                                    <div class="px-2 pb-3 pt-0 d-flex flex-column gap-1" style="border-left: 2px solid rgba(245,158,11,0.2); margin-left: 10px; padding-left: 15px !important;">
+                                                    <div class="px-2 pb-3 pt-0 d-flex flex-column gap-1" style="border-left: 2px solid var(--acc-border, rgba(245,158,11,0.2)); margin-left: 10px; padding-left: 15px !important;">
                                                         <th:block th:if="${not #lists.isEmpty(unitNotes)}" th:each="note : ${unitNotes}">
-                                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-2 rounded-3" style="transition: all 0.3s ease; border-bottom: 1px solid rgba(245,158,11,0.05);" onmouseover="this.style.backgroundColor='rgba(245,158,11,0.03)'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none'">
+                                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-2 rounded-3" style="transition: all 0.3s ease; border-bottom: 1px solid var(--acc-border-light, rgba(245,158,11,0.05));" onmouseover="this.style.backgroundColor='var(--acc-bg-hover, rgba(245,158,11,0.03))'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none'">
                                                                 <div class="d-flex align-items-center mb-3 mb-sm-0 pe-2">
-                                                                    <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(245,158,11,0.1); color: #d97706;">
+                                                                    <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: var(--acc-icon-bg, rgba(245,158,11,0.1)); color: var(--acc-icon-color, #d97706);">
                                                                         <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.1rem;"></i>
                                                                     </div>
                                                                     <div class="d-flex flex-column">
-                                                                        <span class="fw-bold text-uppercase" style="color: #b45309; font-size: 0.9rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
-                                                                        <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}" style="font-size: 0.65rem; color: #d97706; font-weight: 600; opacity: 0.8;" th:text="${note.academicYear}">2024</span>
+                                                                        <span class="fw-bold text-uppercase" style="color: var(--acc-text-bold, #b45309); font-size: 0.9rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
+                                                                        <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}" style="font-size: 0.65rem; color: var(--acc-text-light, #d97706); font-weight: 600; opacity: 0.8;" th:text="${note.academicYear}">2024</span>
                                                                     </div>
                                                                 </div>
                                                                 <div class="d-flex gap-2 flex-shrink-0">
-                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(245, 158, 11, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #b45309; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 80px;" onmouseover="if(!this.classList.contains('loading')){ this.style.background='rgba(245, 158, 11, 0.25)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(245, 158, 11, 0.15)'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='rgba(245, 158, 11, 0.15)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'; }">
+                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: var(--acc-btn-read-bg, rgba(245, 158, 11, 0.15)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--acc-text-bold, #b45309); border: 1px solid var(--acc-btn-read-border, rgba(245, 158, 11, 0.3)); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 80px;" onmouseover="if(!this.classList.contains('loading')){ this.style.background='var(--acc-btn-read-bg-hover, rgba(245, 158, 11, 0.25))'; this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--acc-btn-read-shadow-hover, 0 6px 12px rgba(245, 158, 11, 0.15))'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='var(--acc-btn-read-bg, rgba(245, 158, 11, 0.15))'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'; }">
                                                                         <i class="bi bi-eye-fill"></i> <span>Read</span>
                                                                     </button>
-                                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm d-flex align-items-center gap-1" style="background: rgba(217, 119, 6, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; border: 1px solid rgba(217, 119, 6, 0.4); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='rgba(217, 119, 6, 1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(217, 119, 6, 0.3)';" onmouseout="this.style.background='rgba(217, 119, 6, 0.85)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
+                                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm d-flex align-items-center gap-1" style="background: var(--acc-btn-down-bg, rgba(217, 119, 6, 0.85)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; border: 1px solid var(--acc-btn-down-border, rgba(217, 119, 6, 0.4)); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='var(--acc-btn-down-bg-hover, rgba(217, 119, 6, 1))'; this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--acc-btn-down-shadow-hover, 0 6px 15px rgba(217, 119, 6, 0.3))';" onmouseout="this.style.background='var(--acc-btn-down-bg, rgba(217, 119, 6, 0.85))'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
                                                                         <i class="bi bi-cloud-download-fill"></i> Download
                                                                     </a>
                                                                 </div>
@@ -559,7 +559,7 @@
                                             <i class="bi bi-clipboard2-check-fill" style="font-size:0.9rem;"></i>
                                         </div>
                                         <span class="fw-bold" style="color: #0f172a; font-size: 0.85rem; letter-spacing: 0.5px;">2. ASSIGNMENTS</span>
-                                        <span class="ms-auto" style="background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-size: 0.55rem; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-family:'Outfit',sans-serif;">EXCLUSIVE</span>
+                                        <span th:if="${session.user == null}" class="ms-auto" style="background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-size: 0.55rem; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-family:'Outfit',sans-serif;">EXCLUSIVE</span>
                                     </div>
                                 </button>
                             </h2>
@@ -574,7 +574,7 @@
                                                     <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">Assignments & Solutions</span>
                                                 </div>
                                             </div>
-                                            <span style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
+                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
                                         </a>
                                         <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
                                             <div class="d-flex flex-column align-items-start">
@@ -584,7 +584,7 @@
                                                     <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">CAT 1</span>
                                                 </div>
                                             </div>
-                                            <span style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
+                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
                                         </a>
                                         <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
                                             <div class="d-flex flex-column align-items-start">
@@ -594,7 +594,7 @@
                                                     <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">CAT 2</span>
                                                 </div>
                                             </div>
-                                            <span style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
+                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
                                         </a>
                                         <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
                                             <div class="d-flex flex-column align-items-start">
@@ -604,7 +604,7 @@
                                                     <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">University Exams (UE)</span>
                                                 </div>
                                             </div>
-                                            <span style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
+                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
                                         </a>
                                     </div>
                                 </div>
@@ -620,7 +620,7 @@
                                             <i class="bi bi-archive-fill" style="font-size:0.85rem;"></i>
                                         </div>
                                         <span class="fw-bold" style="color: #0f172a; font-size: 0.85rem; letter-spacing: 0.5px;">3. PAST PAPERS <span style="font-size:0.7rem; font-weight:600; color:#b45309;">(ARCHIVES)</span></span>
-                                        <span class="ms-auto" style="background: linear-gradient(90deg, #f59e0b, #d97706); color: #fff; border: none; font-size: 0.55rem; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-family:'Outfit',sans-serif; letter-spacing:0.5px; box-shadow: 0 2px 4px rgba(217,119,6,0.3);">PREMIUM</span>
+                                        <span th:if="${session.user == null}" class="ms-auto" style="background: linear-gradient(90deg, #f59e0b, #d97706); color: #fff; border: none; font-size: 0.55rem; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-family:'Outfit',sans-serif; letter-spacing:0.5px; box-shadow: 0 2px 4px rgba(217,119,6,0.3);">PREMIUM</span>
                                     </div>
                                 </button>
                             </h2>
