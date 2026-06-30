@@ -32,18 +32,22 @@ public class LoginController {
             level = 4;
         }
 
-        List<Note> notes;
-        if (search != null && !search.trim().isEmpty()) {
-            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 10)).getContent().stream()
-                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
-                    .limit(3)
-                    .collect(Collectors.toList());
-            model.addAttribute("searchQuery", search);
-        } else {
-            notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
-                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
-                    .limit(3)
-                    .collect(Collectors.toList());
+        List<Note> notes = new java.util.ArrayList<>();
+        try {
+            if (search != null && !search.trim().isEmpty()) {
+                notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 10)).getContent().stream()
+                        .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+                        .limit(3)
+                        .collect(Collectors.toList());
+                model.addAttribute("searchQuery", search);
+            } else {
+                notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
+                        .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+                        .limit(3)
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            // Ignore database connection error to allow the login page to load
         }
         
         model.addAttribute("notes", notes);
