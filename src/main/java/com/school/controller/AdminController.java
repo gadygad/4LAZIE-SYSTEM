@@ -43,7 +43,7 @@ public class AdminController {
         }
         
         if (user.getId().equals(id)) {
-            redirectAttributes.addFlashAttribute("error", "Hauwezi kujifuta mwenyewe.");
+            redirectAttributes.addFlashAttribute("error", "You cannot delete yourself.");
             return "redirect:/admin/users";
         }
         
@@ -60,7 +60,7 @@ public class AdminController {
         }
         
         if (user.getId().equals(id)) {
-            redirectAttributes.addFlashAttribute("error", "Hauwezi kubadili cheo chako mwenyewe hapa.");
+            redirectAttributes.addFlashAttribute("error", "You cannot change your own role here.");
             return "redirect:/admin/users";
         }
         
