@@ -18,7 +18,6 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
     private Cloudinary cloudinary;
 
     @Override
-    
     public String uploadFile(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String extension = "";
@@ -28,11 +27,18 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
 
         // Generate a unique public_id that includes the file extension
         String publicId = UUID.randomUUID().toString() + extension;
+        
+        // Default to auto, but force 'raw' for PDFs and docs to prevent Cloudinary free-tier delivery restrictions
+        String resourceType = "auto";
+        String lowerExt = extension.toLowerCase();
+        if (lowerExt.equals(".pdf") || lowerExt.equals(".doc") || lowerExt.equals(".docx") || lowerExt.equals(".ppt") || lowerExt.equals(".pptx")) {
+            resourceType = "raw";
+        }
 
-        // Upload as auto type so PDFs are served inline instead of attachments
+        // Upload as raw type so PDFs are served without Cloudinary security blocks
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
-                "resource_type", "auto",
+                "resource_type", resourceType,
                 "type", "upload"
         ));
 
