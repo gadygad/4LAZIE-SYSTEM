@@ -23,16 +23,91 @@ document.addEventListener('DOMContentLoaded', function() {
         hideLoader();
         if (errorDiv) errorDiv.style.display = 'block';
     } else if (filename.endsWith('.pdf')) {
-        // LOAD PDF USING BROWSER NATIVE VIEWER (FASTEST & SCALABLE)
-        if (controls) controls.style.display = 'none';
-        if (canvasContainer) {
-            canvasContainer.style.padding = '0';
-            // Convert http to https just in case
-            const safeUrl = url.replace('http://', 'https://');
-            canvasContainer.innerHTML = `<iframe src="${safeUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
-        }
-        hideLoader();
+        // LOAD PDF USING PDF.JS FOR BEAUTIFUL CUSTOM UI
+        const safeUrl = url.replace('http://', 'https://');
         
+        let pdfDoc = null,
+            pageNum = 1,
+            pageIsRendering = false,
+            pageNumIsPending = null,
+            scale = 1.2,
+            canvas = document.getElementById('pdf-render'),
+            ctx = canvas.getContext('2d');
+
+        const renderPage = num => {
+            pageIsRendering = true;
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderCtx = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+
+                page.render(renderCtx).promise.then(() => {
+                    pageIsRendering = false;
+                    if (pageNumIsPending !== null) {
+                        renderPage(pageNumIsPending);
+                        pageNumIsPending = null;
+                    }
+                });
+                document.getElementById('page-num').textContent = num;
+            });
+        };
+
+        const queueRenderPage = num => {
+            if (pageIsRendering) {
+                pageNumIsPending = num;
+            } else {
+                renderPage(num);
+            }
+        };
+
+        const showPrevPage = () => {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        };
+
+        const showNextPage = () => {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        };
+
+        document.getElementById('prev-page').addEventListener('click', showPrevPage);
+        document.getElementById('next-page').addEventListener('click', showNextPage);
+        
+        document.getElementById('zoom-in').addEventListener('click', () => {
+            scale += 0.2;
+            queueRenderPage(pageNum);
+        });
+        
+        document.getElementById('zoom-out').addEventListener('click', () => {
+            if (scale <= 0.6) return;
+            scale -= 0.2;
+            queueRenderPage(pageNum);
+        });
+
+        // Fetch PDF Document
+        pdfjsLib.getDocument(safeUrl).promise.then(pdfDoc_ => {
+            pdfDoc = pdfDoc_;
+            document.getElementById('page-count').textContent = pdfDoc.numPages;
+            hideLoader();
+            renderPage(pageNum);
+        }).catch(err => {
+            console.error('Error fetching PDF: ', err);
+            hideLoader();
+            // Fallback to iframe if pdf.js fails (e.g. CORS)
+            if (controls) controls.style.display = 'none';
+            if (canvasContainer) {
+                canvasContainer.style.padding = '0';
+                canvasContainer.innerHTML = `<iframe src="${safeUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+            }
+        });
+
     } else if (filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png')) {
         // LOAD IMAGE DIRECTLY
         if (controls) controls.style.display = 'none';
