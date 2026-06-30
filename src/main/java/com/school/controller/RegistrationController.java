@@ -49,6 +49,9 @@ public class RegistrationController {
     @Autowired
     private com.school.service.GoogleAuthService googleAuthService;
 
+    @Autowired
+    private com.school.service.EmailService emailService;
+
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
@@ -69,28 +72,30 @@ public class RegistrationController {
         }
         HttpSession session = request.getSession(true);
         try {
+            // Force safe defaults to prevent mass assignment (Privilege Escalation)
+            user.setRole(Role.STUDENT);
+            
+            // Set verification logic
+            user.setIsVerified(false);
+            user.setVerificationToken(UUID.randomUUID().toString());
+            user.setTokenExpiryDate(java.time.LocalDateTime.now().plusMinutes(5));
+
             // Persist the new user (profile picture handled by service)
             userService.registerUser(user, profilePic);
             
-            // Link user directly to session (auto-login)
-            session.setAttribute("user", user);
+            // Send verification email
+            String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String verifyLink = appUrl + "/verify-email?token=" + user.getVerificationToken();
+            emailService.sendVerificationEmail(user.getEmail(), verifyLink);
             
-            // Set Spring Security Context
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (user.getRole() != null ? user.getRole().name() : Role.STUDENT.name())));
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            
-            // Save to session explicitly
-            HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
-            securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+            // Redirect to login asking them to verify
+            return "redirect:/login?verify_notice=true";
             
         } catch (Exception e) {
             log.error("Registration failed", e);
             model.addAttribute("error", "Registration failed: " + e.getMessage());
             return "register";
         }
-        // After successful registration, redirect to dashboard
-        return "redirect:/dashboard";
     }
 
     @PostMapping("/register/google")
@@ -116,6 +121,7 @@ public class RegistrationController {
                     user.setYear(1); // Default
                     user.setCourseProgram("General Studies"); // Default
                     institutionRepository.findById("1").ifPresent(user::setInstitution); // Default to SJCET
+                    user.setIsVerified(true); // Google accounts are auto-verified
                     userService.registerUser(user, null);
                 }
                 session.setAttribute("user", user);
@@ -137,5 +143,24 @@ public class RegistrationController {
             model.addAttribute("error", "Google Sign-In failed: " + e.getMessage());
             return "register";
         }
+    }
+
+    @GetMapping("/verify-email")
+    public String verifyEmail(@RequestParam("token") String token, Model model) {
+        Optional<User> userOpt = userRepository.findByVerificationToken(token);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (user.getTokenExpiryDate() != null && user.getTokenExpiryDate().isBefore(java.time.LocalDateTime.now())) {
+                model.addAttribute("error", "Verification link has expired. Please register again or request a new link.");
+                return "login";
+            }
+            user.setIsVerified(true);
+            user.setVerificationToken(null);
+            user.setTokenExpiryDate(null);
+            userRepository.save(user);
+            return "redirect:/login?verified=true";
+        }
+        model.addAttribute("error", "Invalid verification token.");
+        return "login";
     }
 }

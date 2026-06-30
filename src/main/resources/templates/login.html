@@ -33,18 +33,145 @@
                 <p class="text-muted-custom" style="font-size: 0.85rem; font-weight: 500;">Enter your credentials to continue</p>
             </div>
 
-            <!-- Alerts -->
-            <div th:if="${param.registered}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #065f46; font-size: 0.85rem; backdrop-filter: blur(5px);">
-                <i class="bi bi-check-circle-fill fs-5 me-3"></i> <span>Registration successful! Please log in.</span>
-            </div>
-            <div th:if="${param.error}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(225, 29, 72, 0.15); border: 1px solid rgba(225, 29, 72, 0.3); color: #9f1239; font-size: 0.85rem; backdrop-filter: blur(5px);">
-                <i class="bi bi-exclamation-triangle-fill fs-5 me-3"></i> <span>Invalid email or password.</span>
-            </div>
-            <div th:if="${param.logout}" class="d-flex align-items-center p-2 px-3 mb-4 mx-auto rounded-pill" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15)); border: 1px solid rgba(245, 158, 11, 0.3); color: #b45309; font-size: 0.85rem; font-weight: 600; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1); width: fit-content; text-shadow: 0 1px 1px rgba(255,255,255,0.5);">
-                <div class="d-flex align-items-center justify-content-center rounded-circle me-2" style="width: 26px; height: 26px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3)); box-shadow: 0 2px 5px rgba(245, 158, 11, 0.2);">
-                    <i class="bi bi-shield-lock-fill" style="color: #d97706; font-size: 0.95rem;"></i>
+            <!-- Floating Premium Alerts -->
+            <div th:if="${param.registered or param.verify_notice or param.verified or param.error or param.logout}" class="custom-toast-container">
+                <div th:if="${param.registered}" class="custom-toast bg-green align-items-center border-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="toast-icon-bg"><i class="bi bi-check-circle-fill"></i></div>
+                        <div class="toast-body fw-medium">Registration successful! Please log in.</div>
+                        <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
+                    </div>
                 </div>
-                <span>You have securely logged out.</span>
+                
+                <div th:if="${param.verify_notice}" class="custom-toast bg-green align-items-center border-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="toast-icon-bg"><i class="bi bi-envelope-check-fill"></i></div>
+                        <div class="toast-body fw-medium">Please check your email to verify your account.</div>
+                        <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
+                    </div>
+                </div>
+
+                <div th:if="${param.verified}" class="custom-toast bg-green align-items-center border-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="toast-icon-bg"><i class="bi bi-patch-check-fill"></i></div>
+                        <div class="toast-body fw-medium">Email verified successfully. You can now log in.</div>
+                        <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
+                    </div>
+                </div>
+
+                <div th:if="${param.error}" class="custom-toast bg-green align-items-center border-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="toast-icon-bg"><i class="bi bi-exclamation-circle-fill"></i></div>
+                        <div class="toast-body fw-medium" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION != null ? session.SPRING_SECURITY_LAST_EXCEPTION.message : 'Invalid email or password.'}"></div>
+                        <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
+                    </div>
+                </div>
+
+                <div th:if="${param.logout}" class="custom-toast bg-green align-items-center border-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="toast-icon-bg"><i class="bi bi-shield-lock-fill"></i></div>
+                        <div class="toast-body fw-medium">You have securely logged out.</div>
+                        <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
+                    </div>
+                </div>
+
+                <style>
+                    .custom-toast-container {
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 9999;
+                        animation: popDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+                    }
+                    .custom-toast {
+                        backdrop-filter: blur(16px);
+                        -webkit-backdrop-filter: blur(16px);
+                        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                        border-radius: 50px;
+                        padding: 8px 16px 8px 8px;
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        min-width: 320px;
+                        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                        margin-bottom: 10px;
+                    }
+                    .custom-toast.bg-green {
+                        background: rgba(16, 185, 129, 0.85) !important; /* Beautiful Green Glass */
+                        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3) !important;
+                    }
+                    .custom-toast:hover {
+                        transform: translateY(-2px);
+                        background: rgba(16, 185, 129, 0.95) !important;
+                        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4) !important;
+                    }
+                    .toast-icon-bg {
+                        background: rgba(255, 255, 255, 0.25);
+                        border-radius: 50%;
+                        width: 34px;
+                        height: 34px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-right: 12px;
+                        font-size: 1.15rem;
+                        box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+                        flex-shrink: 0;
+                    }
+                    .toast-body {
+                        padding: 0;
+                        font-size: 0.95rem;
+                        letter-spacing: 0.3px;
+                        flex-grow: 1;
+                        line-height: 1.3;
+                    }
+                    .toast-close-btn {
+                        filter: brightness(0) invert(1);
+                        opacity: 0.8;
+                        font-size: 0.65rem;
+                        margin-left: 15px !important;
+                        cursor: pointer;
+                        transition: opacity 0.2s;
+                    }
+                    .toast-close-btn:hover {
+                        opacity: 1;
+                    }
+                    @keyframes popDown {
+                        0% { top: -50px; opacity: 0; }
+                        100% { top: 30px; opacity: 1; }
+                    }
+                    @keyframes popUpOut {
+                        0% { top: 30px; opacity: 1; }
+                        100% { top: -50px; opacity: 0; }
+                    }
+                </style>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const toastContainer = document.querySelector('.custom-toast-container');
+                        if (toastContainer) {
+                            let hideTimeout = setTimeout(hideToast, 5000); // Disappears after 5 seconds
+                            
+                            function hideToast() {
+                                toastContainer.style.animation = 'popUpOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
+                                setTimeout(() => toastContainer.remove(), 500);
+                            }
+                            
+                            // Pause timer on hover
+                            toastContainer.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+                            toastContainer.addEventListener('mouseleave', () => hideTimeout = setTimeout(hideToast, 3000));
+                            
+                            const closeBtns = toastContainer.querySelectorAll('.btn-close');
+                            closeBtns.forEach(btn => {
+                                btn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    clearTimeout(hideTimeout);
+                                    hideToast();
+                                });
+                            });
+                        }
+                    });
+                </script>
             </div>
 
             <form th:action="@{/login}" method="post">

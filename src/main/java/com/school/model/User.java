@@ -50,6 +50,10 @@ public class User {
     private Set<String> savedNotes = new HashSet<>();
     private Set<String> downloadedNotes = new HashSet<>();
 
+    private Boolean isVerified = true;
+    private String verificationToken;
+    private LocalDateTime tokenExpiryDate;
+
     // Constructors
     public User() {
         this.role = Role.STUDENT;
@@ -97,4 +101,10 @@ public class User {
     public void setSavedNotes(Set<String> savedNotes) { this.savedNotes = savedNotes; }
     public Set<String> getDownloadedNotes() { return downloadedNotes; }
     public void setDownloadedNotes(Set<String> downloadedNotes) { this.downloadedNotes = downloadedNotes; }
+    public Boolean getIsVerified() { return isVerified; }
+    public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
+    public String getVerificationToken() { return verificationToken; }
+    public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
+    public LocalDateTime getTokenExpiryDate() { return tokenExpiryDate; }
+    public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) { this.tokenExpiryDate = tokenExpiryDate; }
 }

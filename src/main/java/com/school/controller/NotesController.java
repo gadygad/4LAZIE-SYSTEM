@@ -59,6 +59,12 @@ public class NotesController {
         return userRepository.findByEmail(email).orElse(null);
     }
 
+    // Utility to prevent ReDoS by escaping Regex special characters
+    private String escapeRegex(String input) {
+        if (input == null) return null;
+        return input.replaceAll("([\\\\\\.\\[\\{\\(\\*\\+\\?\\^\\$\\|])", "\\\\$1");
+    }
+
 
     @Autowired
     private NoteRepository noteRepository;
@@ -96,7 +102,8 @@ public class NotesController {
 
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
-            notes = noteRepository.searchNotesByProgramAndLevel(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
+            String safeSearch = escapeRegex(search.trim());
+            notes = noteRepository.searchNotesByProgramAndLevel(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
                     .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
@@ -141,7 +148,8 @@ public class NotesController {
         if (level != null && semester != null) {
             if (category != null && !category.trim().isEmpty()) {
                 if (search != null && !search.trim().isEmpty()) {
-                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
+                    String safeSearch = escapeRegex(search.trim());
+                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
                     model.addAttribute("searchQuery", search);
                 } else {
                     List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(program, level, semester, category);
@@ -150,7 +158,8 @@ public class NotesController {
                 model.addAttribute("selectedCategory", category);
             } else {
                 if (search != null && !search.trim().isEmpty()) {
-                    notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
+                    String safeSearch = escapeRegex(search.trim());
+                    notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
                     model.addAttribute("searchQuery", search);
                 } else {
                     notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
@@ -160,7 +169,8 @@ public class NotesController {
             model.addAttribute("selectedSemester", semester);
         } else {
             if (search != null && !search.trim().isEmpty()) {
-                notesPage = noteRepository.searchNotes(search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
+                String safeSearch = escapeRegex(search.trim());
+                notesPage = noteRepository.searchNotes(safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
                 model.addAttribute("searchQuery", search);
             } else {
                 notesPage = noteRepository.findAllByOrderByIdDesc(org.springframework.data.domain.PageRequest.of(page, 50));
@@ -250,7 +260,8 @@ public class NotesController {
 
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
-            notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, search.trim(), org.springframework.data.domain.PageRequest.of(page, 50));
+            String safeSearch = escapeRegex(search.trim());
+            notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
             model.addAttribute("searchQuery", search);
         } else {
             notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
@@ -307,6 +318,16 @@ public class NotesController {
         if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
 
         if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
+
+        // Validate File Extension to prevent uploading malicious scripts/executables
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null) {
+            String ext = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toLowerCase();
+            List<String> allowedExtensions = List.of("pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "jpg", "jpeg", "png", "txt");
+            if (!allowedExtensions.contains(ext)) {
+                return "redirect:/upload?error=Security Alert: Invalid file type. Only standard documents and images are allowed.";
+            }
+        }
 
         try {
             // Upload to Cloudinary
