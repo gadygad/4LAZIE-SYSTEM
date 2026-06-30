@@ -109,16 +109,82 @@
     <div class="container my-4">
         
         <!-- Alerts -->
-        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <span th:text="${param.success}">Note uploaded successfully!</span>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        <style>
+            @keyframes slideInDownAlert {
+                0% { opacity: 0; transform: translateY(-20px) translateX(20px); }
+                100% { opacity: 1; transform: translateY(0) translateX(0); }
+            }
+            .glass-toast {
+                position: fixed; 
+                top: 85px; 
+                right: 20px; 
+                z-index: 9999; 
+                min-width: 300px; 
+                max-width: 90vw; 
+                padding: 14px 20px; 
+                border-radius: 16px; 
+                background: rgba(255, 255, 255, 0.85); 
+                backdrop-filter: blur(25px); 
+                -webkit-backdrop-filter: blur(25px); 
+                border: 1px solid rgba(16, 185, 129, 0.3); 
+                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15); 
+                color: #065f46; 
+                font-weight: 600; 
+                font-size: 0.95rem; 
+                font-family: 'Outfit', sans-serif; 
+                display: flex; 
+                align-items: center; 
+                justify-content: space-between; 
+                transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); 
+                animation: slideInDownAlert 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            }
+            .glass-toast:hover {
+                transform: translateY(-4px) scale(1.02);
+                box-shadow: 0 15px 45px rgba(16, 185, 129, 0.25);
+            }
+            @media (max-width: 576px) {
+                .glass-toast {
+                    top: 20px;
+                    right: 5vw;
+                    width: 90vw;
+                    min-width: 90vw;
+                    margin: 0 auto;
+                }
+            }
+        </style>
+
+        <div th:if="${param.success}" id="successToast" class="glass-toast">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.25)); color: #10b981; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);">
+                    <i class="bi bi-check-lg" style="font-size: 1.3rem; font-weight: 900; text-shadow: 0 2px 4px rgba(16,185,129,0.3);"></i>
+                </div>
+                <span th:text="${param.success}" style="letter-spacing: 0.3px;">Note uploaded successfully!</span>
+            </div>
+            <button type="button" class="btn-close" style="font-size: 0.8rem; opacity: 0.4; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" onclick="dismissToast('successToast')"></button>
         </div>
-        <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span th:text="${param.error}">Error during upload!</span>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        
+        <div th:if="${param.error}" id="errorToast" class="glass-toast" style="border-color: rgba(220, 38, 38, 0.3); box-shadow: 0 10px 40px rgba(220, 38, 38, 0.15); color: #7f1d1d;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(220, 38, 38, 0.25)); color: #dc2626; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.1);">
+                    <i class="bi bi-exclamation-lg" style="font-size: 1.3rem; font-weight: 900; text-shadow: 0 2px 4px rgba(220,38,38,0.3);"></i>
+                </div>
+                <span th:text="${param.error}" style="letter-spacing: 0.3px;">Error during upload!</span>
+            </div>
+            <button type="button" class="btn-close" style="font-size: 0.8rem; opacity: 0.4; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" onclick="dismissToast('errorToast')"></button>
         </div>
+
+        <script>
+            function dismissToast(id) {
+                var toast = document.getElementById(id);
+                if (toast) {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px) translateX(20px)';
+                    setTimeout(function() { toast.style.display = 'none'; }, 400);
+                }
+            }
+            setTimeout(function() { dismissToast('successToast'); }, 3000);
+            setTimeout(function() { dismissToast('errorToast'); }, 3000);
+        </script>
 
         <div class="row g-4">
             <!-- Left Column: Upload Form -->
