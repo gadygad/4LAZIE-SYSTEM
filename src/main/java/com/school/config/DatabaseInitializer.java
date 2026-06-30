@@ -50,39 +50,47 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // 1. Initialize Users if empty
-        if (userRepository.findByEmail(lecturerEmail).isEmpty()) {
-            User lecturer = new User("Dr. Alex Carter", lecturerEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
-            userRepository.save(lecturer);
-        }
-        if (userRepository.findByEmail(studentEmail).isEmpty()) {
-            User student = new User("John Doe", studentEmail, passwordEncoder.encode(studentPassword), Role.STUDENT);
-            userRepository.save(student);
-        }
-        if (userRepository.findByEmail(adminEmail).isEmpty()) {
-            User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
-            userRepository.save(admin);
-        }
-
-        // Seed Default Institution
-        if (institutionRepository.count() == 0) {
-            com.school.model.Institution sjuit = new com.school.model.Institution();
-            sjuit.setId("1");
-            sjuit.setName("St. Joseph University in Tanzania");
-            sjuit.setShortName("SJUIT");
-            sjuit.setLogoUrl("/images/sjuit-logo.png");
-            institutionRepository.save(sjuit);
-            log.info("Default institution seeded: SJUIT");
-        }
-
-        // Fix users with no institution
-        userRepository.findAll().forEach(u -> {
-            if (u.getInstitution() == null) {
-                institutionRepository.findById("1").ifPresent(inst -> {
-                    u.setInstitution(inst);
-                    userRepository.save(u);
-                });
+        try {
+            if (userRepository.findByEmail(lecturerEmail).isEmpty()) {
+                User lecturer = new User("Dr. Alex Carter", lecturerEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
+                userRepository.save(lecturer);
             }
-        });
+            if (userRepository.findByEmail(studentEmail).isEmpty()) {
+                User student = new User("John Doe", studentEmail, passwordEncoder.encode(studentPassword), Role.STUDENT);
+                userRepository.save(student);
+            }
+            if (userRepository.findByEmail(adminEmail).isEmpty()) {
+                User admin = new User("System Admin", adminEmail, passwordEncoder.encode(adminPassword), Role.ADMIN);
+                userRepository.save(admin);
+            }
+        } catch (Exception e) {
+            log.warn("Could not seed users: " + e.getMessage());
+        }
+
+        try {
+            // Seed Default Institution
+            if (institutionRepository.count() == 0) {
+                com.school.model.Institution sjuit = new com.school.model.Institution();
+                sjuit.setId("1");
+                sjuit.setName("St. Joseph University in Tanzania");
+                sjuit.setShortName("SJUIT");
+                sjuit.setLogoUrl("/images/sjuit-logo.png");
+                institutionRepository.save(sjuit);
+                log.info("Default institution seeded: SJUIT");
+            }
+
+            // Fix users with no institution
+            userRepository.findAll().forEach(u -> {
+                if (u.getInstitution() == null) {
+                    institutionRepository.findById("1").ifPresent(inst -> {
+                        u.setInstitution(inst);
+                        userRepository.save(u);
+                    });
+                }
+            });
+        } catch (Exception e) {
+            log.warn("Could not seed institutions: " + e.getMessage());
+        }
 
 
         

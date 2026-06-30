@@ -34,7 +34,7 @@
             </div>
 
             <!-- Floating Premium Alerts -->
-            <div th:if="${param.registered or param.verify_notice or param.verified or param.error or param.logout}" class="custom-toast-container">
+            <div th:if="${param.registered != null or param.verify_notice != null or param.verified != null or param.error != null or param.logout != null}" class="custom-toast-container">
                 <div th:if="${param.registered}" class="custom-toast bg-green align-items-center border-0" role="alert">
                     <div class="d-flex align-items-center">
                         <div class="toast-icon-bg"><i class="bi bi-check-circle-fill"></i></div>
