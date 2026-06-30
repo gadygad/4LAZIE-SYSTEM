@@ -26,15 +26,19 @@ public class GlobalModelAttributes {
         
         // We only want to add these attributes if the user is authenticated and not anonymous
         if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            String email = auth.getName();
-            userRepository.findByEmail(email).ifPresent(user -> {
-                // Ensure the user object is globally available, overriding session attributes if needed
-                model.addAttribute("user", user);
-                
-                // Add notification details
-                model.addAttribute("notifications", notificationService.getUserNotifications(user.getId()));
-                model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
-            });
+            try {
+                String email = auth.getName();
+                userRepository.findByEmail(email).ifPresent(user -> {
+                    // Ensure the user object is globally available, overriding session attributes if needed
+                    model.addAttribute("user", user);
+                    
+                    // Add notification details
+                    model.addAttribute("notifications", notificationService.getUserNotifications(user.getId()));
+                    model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
+                });
+            } catch (Exception e) {
+                // Ignore database connection error to allow pages to load for authenticated users
+            }
         }
     }
 }
