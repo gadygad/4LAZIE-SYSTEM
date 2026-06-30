@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import com.school.service.FileStorageService;
 import com.school.service.PushNotificationService;
+import com.school.service.NotificationService;
 import com.cloudinary.Cloudinary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,9 @@ public class NotesController {
 
     @Autowired(required = false)
     private PushNotificationService pushNotificationService;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     @GetMapping("/home")
@@ -365,6 +369,17 @@ public class NotesController {
                 
                 // Send async to not block the upload response (Now uses @Async in service)
                 pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
+                
+                // Also create in-app notification for all users
+                if (notificationService != null && userRepository != null) {
+                    List<User> allUsers = userRepository.findAll();
+                    for (User u : allUsers) {
+                        // Notify everyone except the uploader (Admin)
+                        if (!u.getId().equals(loggedInUser.getId())) {
+                            notificationService.createNotification(u.getId(), pushTitle, pushBody);
+                        }
+                    }
+                }
             }
             
         } catch (IOException e) {

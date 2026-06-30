@@ -53,8 +53,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
-        // Fetch up to 10 recent public notes for SJCET (institution ID 1)
-        List<Note> popularNotes = noteRepository.findTop10ByCategoryOrderByIdDesc("Note");
+        // Fetch the absolute 10 most recent uploads across all programs and categories
+        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc();
         
         // Fetch distinct module names from database and map to advice
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()

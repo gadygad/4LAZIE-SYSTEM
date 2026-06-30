@@ -58,6 +58,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     
     @org.springframework.cache.annotation.Cacheable("popularNotes")
     List<Note> findTop10ByCategoryOrderByIdDesc(String category);
+    
+    // Fetch latest 10 notes across all categories
+    List<Note> findTop10ByOrderByIdDesc();
 
     @Aggregation(pipeline = {
         "{ '$group': { '_id': '$moduleName' } }"
