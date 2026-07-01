@@ -2030,22 +2030,74 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
     </script>
 
     <!-- TIMETABLE SELECTION MODAL -->
+    <style>
+        .premium-glass-modal {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.4) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(245, 158, 11, 0.1) !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .premium-glass-modal:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 10px 25px rgba(245, 158, 11, 0.2) !important;
+            border-color: rgba(245, 158, 11, 0.6) !important;
+        }
+        .premium-glass-modal .modal-header {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95)) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 24px;
+        }
+        .premium-glass-modal .modal-title {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.25rem;
+        }
+        .premium-glass-modal label {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem !important;
+        }
+        .premium-glass-modal .modal-body {
+            background: transparent !important;
+        }
+        .premium-glass-modal .btn-submit-premium {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 12px;
+            padding: 14px;
+            border: none;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 800;
+        }
+        .premium-glass-modal .btn-submit-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.4);
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+    </style>
     <div class="modal fade" id="timetableModal" tabindex="-1" aria-labelledby="timetableModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(245, 158, 11, 0.2);">
-                <div class="modal-header" style="background: linear-gradient(135deg, #f59e0b, #d97706); border-bottom: none; padding: 20px 25px;">
+            <div class="modal-content premium-glass-modal">
+                <div class="modal-header">
                     <h5 class="modal-title text-white fw-bold" id="timetableModalLabel" style="font-family: 'Outfit', sans-serif;">
                         <i class="bi bi-clock-history me-2"></i> Select Your Class
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4 bg-white">
+                <div class="modal-body p-4">
                     <form action="/timetable/view" method="GET" id="timetableForm">
                         
                         <!-- Program Type -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold text-secondary" style="font-size: 0.9rem;">Program Type</label>
-                            <select class="form-select custom-select-premium" name="program" id="programSelect" required style="border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <label class="form-label fw-bold text-secondary">Program Type</label>
+                            <select class="form-select custom-select-premium" name="program" id="programSelect" required style="border-radius: 12px; padding: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.7); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                                 <option value="" disabled selected>Choose your program...</option>
                                 <option value="DIPLOMA">Diploma</option>
                                 <option value="DEGREE">Bachelor's Degree</option>
@@ -2054,8 +2106,8 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
                         <!-- Level -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold text-secondary" style="font-size: 0.9rem;">Level / Year</label>
-                            <select class="form-select custom-select-premium" name="level" id="levelSelect" required style="border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <label class="form-label fw-bold text-secondary">Level / Year</label>
+                            <select class="form-select custom-select-premium" name="level" id="levelSelect" required style="border-radius: 12px; padding: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.7); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                                 <option value="" disabled selected>Choose your level...</option>
                                 <option value="4" class="diploma-level">Level 4 (NTA 4)</option>
                                 <option value="5" class="diploma-level">Level 5 (NTA 5)</option>
@@ -2069,7 +2121,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                         
                         <!-- Semester -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold text-secondary" style="font-size: 0.9rem;">Semester</label>
+                            <label class="form-label fw-bold text-secondary">Semester</label>
                             <div class="d-flex gap-3">
                                 <div class="form-check custom-radio-premium">
                                     <input class="form-check-input" type="radio" name="semester" id="sem1" value="1" checked>
@@ -2082,7 +2134,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                             </div>
                         </div>
 
-                        <button type="submit" class="btn w-100 fw-bold text-white mt-2" style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; padding: 12px; border: none; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;">
+                        <button type="submit" class="btn w-100 text-white mt-2 btn-submit-premium">
                             <i class="bi bi-search me-2"></i> View Timetable
                         </button>
                     </form>
