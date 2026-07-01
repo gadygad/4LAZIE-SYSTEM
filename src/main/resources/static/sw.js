@@ -1,32 +1,32 @@
-self.addEventListener('push', function(event) {
-    if (event.data) {
-        const data = event.data.json();
-        const options = {
-            body: data.body,
-            icon: '/images/icon-192x192.png',
-            badge: '/images/badge-72x72.png',
-            vibrate: [100, 50, 100],
-            data: {
-                dateOfArrival: Date.now(),
-                primaryKey: '2',
-                url: data.url || '/'
-            },
-            actions: [
-                {action: 'explore', title: 'Open Now', icon: '/images/checkmark.png'},
-                {action: 'close', title: 'Close', icon: '/images/xmark.png'},
-            ]
-        };
-        event.waitUntil(
-            self.registration.showNotification(data.title, options)
-        );
-    }
+const CACHE_NAME = '4lazie-cache-v1';
+const urlsToCache = [
+  '/',
+  '/css/global-premium.css',
+  '/css/dashboard-premium.css',
+  '/css/premium-theme.css',
+  '/images/logo.png',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll(urlsToCache);
+      })
+  );
 });
 
-self.addEventListener('notificationclick', function(event) {
-    event.notification.close();
-    if (event.action !== 'close') {
-        event.waitUntil(
-            clients.openWindow(event.notification.data.url)
-        );
-    }
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
 });

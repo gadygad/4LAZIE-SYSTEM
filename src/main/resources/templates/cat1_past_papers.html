@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAT 1 Past Papers - 4LAZIE</title>
@@ -825,6 +831,22 @@
         myModal.show();
     }
 </script>
+
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('PWA ServiceWorker registered with scope:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.error('PWA ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    </script>
 
 </body>
 </html>
