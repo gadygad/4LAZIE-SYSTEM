@@ -149,6 +149,29 @@
     <div class="main-container">
         <div id="timetable-wrapper">
             
+            <!-- ACADEMIC YEAR DROPDOWN -->
+            <div style="text-align: center; margin-bottom: 20px;" th:if="${availableYears != null && !availableYears.isEmpty()}">
+                <form action="/timetable/view" method="get">
+                    <input type="hidden" name="program" th:value="${program}">
+                    <input type="hidden" name="level" th:value="${level}">
+                    <input type="hidden" name="semester" th:value="${semester}">
+                    <label for="academicYear" style="font-weight: bold; font-size: 16px;">Select Academic Year: </label>
+                    <select name="academicYear" id="academicYear" onchange="this.form.submit()" style="padding: 5px 10px; font-size: 16px; border-radius: 5px;">
+                        <option th:each="year : ${availableYears}" 
+                                th:value="${year}" 
+                                th:text="${year}"
+                                th:selected="${year == selectedYear}">
+                        </option>
+                    </select>
+                </form>
+            </div>
+            
+            <!-- IF DB HAS HTML CONTENT, RENDER IT -->
+            <div th:if="${timetable != null && timetable.htmlContent != null}" th:utext="${timetable.htmlContent}"></div>
+            
+            <!-- ELSE (FALLBACK) RENDER HARDCODED HTML -->
+            <div th:if="${timetable == null || timetable.htmlContent == null}">
+
             <!-- HEADER -->
             <div class="doc-header">
                 <h1>St. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</h1>
@@ -268,6 +291,8 @@
                 </tr>
             </tbody>
         </table>
+
+        </div> <!-- END FALLBACK DIV -->
 
         <button class="print-btn" onclick="window.print()">
             <i class="bi bi-printer-fill" style="margin-right: 8px;"></i> Save as PDF / Print

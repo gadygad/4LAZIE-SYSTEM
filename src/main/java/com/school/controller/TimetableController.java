@@ -23,6 +23,7 @@ public class TimetableController {
             @RequestParam(name = "program", required = false) String program,
             @RequestParam(name = "level", required = false) Integer level,
             @RequestParam(name = "semester", required = false) Integer semester,
+            @RequestParam(name = "academicYear", required = false) String academicYear,
             HttpSession session, 
             Model model) {
         
@@ -47,17 +48,40 @@ public class TimetableController {
             semester = 1;
         }
 
-        Optional<Timetable> timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(program.toUpperCase(), level, semester);
+        // Fetch distinct years for this program/level/semester
+        java.util.List<Timetable> timetables = timetableRepository.findDistinctAcademicYears(program.toUpperCase(), level, semester);
+        java.util.List<String> availableYears = timetables.stream()
+                .map(Timetable::getAcademicYear)
+                .filter(year -> year != null && !year.isEmpty())
+                .distinct()
+                .sorted(java.util.Collections.reverseOrder())
+                .collect(java.util.stream.Collectors.toList());
+
+        model.addAttribute("availableYears", availableYears);
+
+        // Determine which academicYear to load
+        String selectedYear = academicYear;
+        if ((selectedYear == null || selectedYear.isEmpty()) && !availableYears.isEmpty()) {
+            selectedYear = availableYears.get(0); // default to the latest year
+        }
+
+        Optional<Timetable> timetableOpt;
+        if (selectedYear != null && !selectedYear.isEmpty()) {
+            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(program.toUpperCase(), level, semester, selectedYear);
+        } else {
+            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(program.toUpperCase(), level, semester);
+        }
         
         if (timetableOpt.isPresent()) {
             model.addAttribute("timetable", timetableOpt.get());
         } else {
-            model.addAttribute("errorMsg", "No timetable found for " + program + " Level " + level + " Semester " + semester + ". Please check back later.");
+            model.addAttribute("errorMsg", "No timetable found for " + program + " Level " + level + " Semester " + semester + (selectedYear != null ? " (" + selectedYear + ")" : "") + ". Please check back later.");
         }
 
         model.addAttribute("program", program);
         model.addAttribute("level", level);
         model.addAttribute("semester", semester);
+        model.addAttribute("selectedYear", selectedYear);
 
         return "view_timetable";
     }
