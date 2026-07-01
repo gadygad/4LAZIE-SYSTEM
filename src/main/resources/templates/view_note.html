@@ -30,30 +30,30 @@
     <!-- Top Navigation -->
     <div class="viewer-navbar">
         <!-- Back Button -->
-        <a href="javascript:history.back()" class="back-btn">
-            <span>Go Back</span>
+        <a href="javascript:history.back()" class="back-btn d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(245, 158, 11, 0.1); color: #f59e0b; text-decoration: none; flex-shrink: 0;">
+            <i class="bi bi-arrow-left fs-5"></i>
+            <span class="d-none d-md-inline ms-2 fw-bold">Back</span>
         </a>
 
         <!-- Document Title -->
-        <div class="title-container" style="flex-direction: column; gap: 2px;">
-            <h1 class="note-title m-0 d-flex align-items-center gap-1 gap-md-2" style="font-size: 1.05rem;">
-                <span th:if="${note.unitNumber != null}" style="color: #f59e0b; font-weight: 800; letter-spacing: 1px;">UNIT [[${note.unitNumber}]]:</span>
-                <span class="text-uppercase text-truncate" style="border-bottom: 2px solid rgba(245,158,11,0.4); padding-bottom: 2px; letter-spacing: 1px; max-width: 150px; display: inline-block;" th:text="${note.moduleName != null ? note.moduleName : note.title}">MODULE</span>
+        <div class="title-container d-flex flex-column align-items-center justify-content-center flex-grow-1 px-2 px-md-3" style="min-width: 0;">
+            <h1 class="note-title m-0 d-flex align-items-center justify-content-center gap-1 w-100" style="font-size: 1rem; font-weight: 700;">
+                <span th:if="${note.unitNumber != null}" style="color: #f59e0b; flex-shrink: 0;">UNIT [[${note.unitNumber}]]:</span>
+                <span class="text-uppercase text-truncate" style="color: #1e293b; border-bottom: 2px solid rgba(245,158,11,0.4); padding-bottom: 2px; letter-spacing: 0.5px;" th:text="${note.moduleName != null ? note.moduleName : note.title}">MODULE</span>
             </h1>
-            <div class="d-none d-md-block" style="color: #94a3b8; font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif;" th:text="${note.title}">Specific Note Title</div>
+            <div class="d-none d-md-block text-truncate w-100 text-center mt-1" style="color: #64748b; font-size: 0.75rem; font-weight: 500;" th:text="${note.title}">Specific Note Title</div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="d-flex gap-2 align-items-center">
+        <div class="d-flex gap-2 align-items-center flex-shrink-0">
             <!-- Save/Bookmark Button -->
-            <button th:if="${user != null}" class="save-btn" th:data-id="${note.id}" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'saved' : ''}" onclick="toggleSaveNote(this, this.getAttribute('data-id'))" title="Save for later">
-                <i class="bi" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'bi-bookmark-fill text-success' : 'bi-bookmark'}"></i> 
-                <span class="d-none d-md-inline" th:text="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'Saved' : 'Save'}">Save</span>
+            <button th:if="${user != null}" class="save-btn d-flex align-items-center justify-content-center" th:data-id="${note.id}" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'saved' : ''}" onclick="toggleSaveNote(this, this.getAttribute('data-id'))" title="Save for later" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #f1f5f9; color: #64748b; transition: all 0.3s;">
+                <i class="bi fs-5" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'bi-bookmark-fill text-success' : 'bi-bookmark'}"></i> 
             </button>
             
             <!-- Download Button -->
-            <a th:href="@{'/download/' + ${note.id}}" class="download-btn d-flex align-items-center gap-1" style="padding: 6px 12px; font-size: 0.85rem; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; font-weight: 600; text-decoration: none;">
-                <i class="bi bi-cloud-arrow-down-fill"></i> <span>Download</span>
+            <a th:href="@{'/download/' + ${note.id}}" class="d-flex align-items-center gap-1" style="padding: 6px 14px; font-size: 0.8rem; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 30px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;">
+                <i class="bi bi-download"></i> <span style="letter-spacing: 0.5px;">Download</span>
             </a>
         </div>
     </div>
