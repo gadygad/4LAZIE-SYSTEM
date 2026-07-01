@@ -84,7 +84,7 @@ public class HomeController {
 
     @GetMapping("/ue-exams")
     public String ueExams(Model model) {
-        List<Note> pastPapers = noteRepository.findByCategoryOrderByIdDesc("Past Paper");
+        List<Note> pastPapers = noteRepository.findByCategoryIgnoreCaseOrderByIdDesc("Past Paper");
         model.addAttribute("pastPapers", pastPapers);
         return "ue_exams";
     }
