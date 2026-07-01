@@ -48,6 +48,8 @@ public class EmailService {
         } catch (Exception e) {
             System.err.println("Failed to send verification email: " + e.getMessage());
         }
+    }
+    
     public void sendNewNoteNotification(String to, String noteTitle, String category, String url) {
         if (mailSender == null) return;
         try {
