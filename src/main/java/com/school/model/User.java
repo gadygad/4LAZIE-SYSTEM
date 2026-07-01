@@ -19,7 +19,7 @@ public class User {
 
     @NotBlank(message = "Name cannot be empty")
     @Size(min = 2, max = 100)
-    @Pattern(regexp = "^[a-zA-Z\\-']+(?:\\s+[a-zA-Z\\-']+)+$", message = "Tafadhali andika majina kuanzia mawili (Mfano: John Doe)")
+    @Pattern(regexp = "^[a-zA-Z\\-']+(?:\\s+[a-zA-Z\\-']+)+$", message = "Please enter at least two names (e.g., Careen Godfrey)")
     private String name;
 
     @NotBlank(message = "Email is required")
