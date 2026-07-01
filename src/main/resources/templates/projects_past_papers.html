@@ -816,5 +816,15 @@
   </div>
 </div>
 
+
+<script>
+    function openDocumentViewer(url) {
+        document.getElementById('documentViewerLoading').style.display = 'flex';
+        document.getElementById('documentViewerIframe').src = url;
+        var myModal = new bootstrap.Modal(document.getElementById('documentViewerModal'));
+        myModal.show();
+    }
+</script>
+
 </body>
 </html>
