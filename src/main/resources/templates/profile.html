@@ -503,7 +503,7 @@
                         <th:block th:with="isDegree=${user.courseProgram != null and (#strings.containsIgnoreCase(user.courseProgram, 'degree') or #strings.containsIgnoreCase(user.courseProgram, 'bsc') or #strings.containsIgnoreCase(user.courseProgram, 'beng') or #strings.containsIgnoreCase(user.courseProgram, 'bachelor') or #strings.containsIgnoreCase(user.courseProgram, 'md '))} ">
                             <input type="hidden" id="programTypeInput" th:value="${isDegree ? 'DEGREE' : 'DIPLOMA'}">
                             <div class="dropdown">
-                                <button class="btn form-select premium-input text-start d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="programTypeBtn" style="cursor: pointer;">
+                                <button class="btn form-select premium-input text-start d-flex justify-content-between align-items-center w-100" type="button" aria-expanded="false" id="programTypeBtn" style="cursor: not-allowed; background: rgba(0,0,0,0.02) !important; color: #64748b;" disabled>
                                     <span th:text="${isDegree ? 'Bachelor Degree' : 'Diploma'}">Diploma</span>
                                 </button>
                                 <ul class="dropdown-menu w-100 border-0 shadow-lg rounded-4 p-2 custom-select-dropdown">
@@ -518,7 +518,7 @@
                         <label class="form-label fw-bold small mb-1 premium-label">COURSE / PROGRAMME</label>
                         <input type="hidden" name="courseProgram" id="courseInput" th:value="${user.courseProgram}">
                         <div class="dropdown">
-                            <button class="btn form-select premium-input text-start d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="courseBtn" style="cursor: pointer;">
+                            <button class="btn form-select premium-input text-start d-flex justify-content-between align-items-center w-100" type="button" aria-expanded="false" id="courseBtn" style="cursor: not-allowed; background: rgba(0,0,0,0.02) !important; color: #64748b;" disabled>
                                 <span th:text="${user.courseProgram != null ? user.courseProgram : 'Select Course'}">Select Course</span>
                             </button>
                             <ul class="dropdown-menu w-100 border-0 shadow-lg rounded-4 p-2 custom-select-dropdown" id="courseDropdownList" style="max-height: 250px; overflow-y: auto;">

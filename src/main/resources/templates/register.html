@@ -53,6 +53,13 @@
                 </div>
                 
                 <div class="mb-3">
+                    <select name="courseProgram" id="courseProgram" class="premium-input form-select shadow-none" style="cursor: pointer;" required>
+                        <option value="" disabled selected>Select Your Course / Program</option>
+                        <option th:each="course : ${courses}" th:value="${course.name}" th:text="${course.name}"></option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
                     <input type="text" name="name" th:field="*{name}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" placeholder="Full Name (e.g., Careen Godfrey)" required pattern="^[a-zA-Z\-']+(?:\s+[a-zA-Z\-']+)+$" title="Please enter at least two names (e.g., Careen Godfrey)" autocomplete="off">
                     <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
@@ -99,6 +106,7 @@
             <!-- Hidden form to submit the token with CSRF protection -->
             <form id="google-login-form" th:action="@{/register/google}" method="post" style="display: none;">
                 <input type="hidden" name="credential" id="google-credential">
+                <input type="hidden" name="courseProgram" id="google-course">
             </form>
 
             <div class="text-center pt-2" style="border-top: 1px solid rgba(15,23,42,0.05);">
@@ -113,7 +121,13 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         function handleCredentialResponse(response) {
+            const courseDropdown = document.getElementById('courseProgram');
+            if (courseDropdown && (!courseDropdown.value || courseDropdown.value === "")) {
+                alert("Please select your course first before signing in with Google.");
+                return;
+            }
             document.getElementById('google-credential').value = response.credential;
+            document.getElementById('google-course').value = courseDropdown ? courseDropdown.value : "";
             document.getElementById('google-login-form').submit();
         }
     </script>
