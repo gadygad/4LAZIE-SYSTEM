@@ -74,6 +74,13 @@ public class RegistrationController {
             model.addAttribute("institutions", institutionRepository.findAll());
             return "register";
         }
+        
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            model.addAttribute("error", "Samahani, Email hii (" + user.getEmail() + ") tayari imesajiliwa. Tafadhali Log in au tumia email nyingine.");
+            model.addAttribute("institutions", institutionRepository.findAll());
+            return "register";
+        }
+        
         HttpSession session = request.getSession(true);
         try {
             // Force safe defaults to prevent mass assignment (Privilege Escalation)
