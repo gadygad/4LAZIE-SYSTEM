@@ -255,20 +255,29 @@
                 <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CALENDAR</span>
             </a>
 
-            <!-- CAT 1 - hidden once both semester dates have passed -->
-            <a th:if="${!cat1Passed}" href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal" th:onclick="'populateExamModal(\'CAT 1\', \'' + (${currentCalendar != null ? currentCalendar.sem1Cat1Date : ''}) + '\', \'' + (${currentCalendar != null ? currentCalendar.sem2Cat1Date : ''}) + '\')'">
+            <!-- CAT 1 -->
+            <a th:if="${cat1Passed == null || !cat1Passed}" href="#" class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal"
+               data-exam-title="CAT 1"
+               th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat1Date != null ? currentCalendar.sem1Cat1Date : ''}"
+               th:data-sem2="${currentCalendar != null and currentCalendar.sem2Cat1Date != null ? currentCalendar.sem2Cat1Date : ''}">
                 <i class="bi bi-ui-checks mb-1" style="font-size: 1.2rem;"></i>
                 <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 1</span>
             </a>
             
-            <!-- CAT 2 - hidden once both semester dates have passed -->
-            <a th:if="${!cat2Passed}" href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal" th:onclick="'populateExamModal(\'CAT 2\', \'' + (${currentCalendar != null ? currentCalendar.sem1Cat2Date : ''}) + '\', \'' + (${currentCalendar != null ? currentCalendar.sem2Cat2Date : ''}) + '\')'">
+            <!-- CAT 2 -->
+            <a th:if="${cat2Passed == null || !cat2Passed}" href="#" class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal"
+               data-exam-title="CAT 2"
+               th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat2Date != null ? currentCalendar.sem1Cat2Date : ''}"
+               th:data-sem2="${currentCalendar != null and currentCalendar.sem2Cat2Date != null ? currentCalendar.sem2Cat2Date : ''}">
                 <i class="bi bi-ui-checks-grid mb-1" style="font-size: 1.2rem;"></i>
                 <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 2</span>
             </a>
             
-            <!-- UE - hidden once both semester dates have passed -->
-            <a th:if="${!uePassed}" href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal" th:onclick="'populateExamModal(\'UE\', \'' + (${currentCalendar != null ? currentCalendar.sem1UeDate : ''}) + '\', \'' + (${currentCalendar != null ? currentCalendar.sem2UeDate : ''}) + '\')'">
+            <!-- UE -->
+            <a th:if="${uePassed == null || !uePassed}" href="#" class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal"
+               data-exam-title="UE"
+               th:data-sem1="${currentCalendar != null and currentCalendar.sem1UeDate != null ? currentCalendar.sem1UeDate : ''}"
+               th:data-sem2="${currentCalendar != null and currentCalendar.sem2UeDate != null ? currentCalendar.sem2UeDate : ''}">
                 <i class="bi bi-mortarboard-fill mb-1" style="font-size: 1.2rem;"></i>
                 <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">UE</span>
             </a>
@@ -287,6 +296,20 @@
             filter: drop-shadow(0 2px 4px rgba(245,158,11,0.3));
         }
     </style>
+
+    <script>
+        document.querySelectorAll('.exam-nav-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var title = this.getAttribute('data-exam-title');
+                var sem1 = this.getAttribute('data-sem1');
+                var sem2 = this.getAttribute('data-sem2');
+                var fullTitle = title === 'UE' ? 'University Examinations (UE)' : title;
+                document.getElementById('examModalTitle').innerText = fullTitle;
+                document.getElementById('examSem1Date').innerText = sem1 ? sem1 : 'Not announced yet';
+                document.getElementById('examSem2Date').innerText = sem2 ? sem2 : 'Not announced yet';
+            });
+        });
+    </script>
 
     <!-- Modals (Calendar & Exams) -->
     <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
