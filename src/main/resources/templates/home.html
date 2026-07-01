@@ -1714,83 +1714,40 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                     <div class="sticky-top" style="top: 100px;">
                         <div class="d-flex align-items-center gap-3 mb-4 position-relative mt-5 mt-md-0">
                             <div>
-                                <h3 class="premium-gradient-header warning">CRITICAL MODULES</h3>
-                                <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Focus areas for SJUIT courses</p>
-                            </div>
-                        </div>
-                        
-                        <div class="marquee-wrapper mb-4">
-                            <div class="marquee-track">
-                                <!-- DYNAMIC SET -->
-                                <a href="#" class="premium-mini-card" th:each="moduleObj : ${criticalModules}">
-                                    <div class="premium-mini-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
-                                        <i class="bi bi-journal-bookmark-fill"></i>
-                                    </div>
-                                    <h5 class="premium-mini-card-title" th:text="${moduleObj.name}">Module Name</h5>
-                                    <div class="premium-mini-card-subtitle" th:text="${moduleObj.subtitle}">Important Focus Area</div>
-                                    <p class="premium-mini-card-desc" th:text="${moduleObj.description}">Click here to explore notes, past papers, and study materials for this module.</p>
-                                </a>
-
-                                <!-- DUPLICATED SET FOR INFINITE SCROLL -->
-                                <a href="#" class="premium-mini-card" th:each="moduleObj : ${criticalModules}">
-                                    <div class="premium-mini-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
-                                        <i class="bi bi-journal-bookmark-fill"></i>
-                                    </div>
-                                    <h5 class="premium-mini-card-title" th:text="${moduleObj.name}">Module Name</h5>
-                                    <div class="premium-mini-card-subtitle" th:text="${moduleObj.subtitle}">Important Focus Area</div>
-                                    <p class="premium-mini-card-desc" th:text="${moduleObj.description}">Click here to explore notes, past papers, and study materials for this module.</p>
-                                </a>
+                                <h3 class="premium-gradient-header warning">QUICK ACCESS</h3>
+                                <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">Essential academic resources</p>
                             </div>
                         </div>
 
-                        <!-- Mobile swipe-scroll script for marquee -->
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const wrapper = document.querySelector('.marquee-wrapper');
-                                const track = document.querySelector('.marquee-track');
-                                if (window.innerWidth <= 767.98 && wrapper && track) {
-                                    // Disable CSS animation on mobile
-                                    track.style.animation = 'none';
-                                    track.style.webkitAnimation = 'none';
-                                    
-                                    // Enable native horizontal scrolling
-                                    wrapper.style.overflowX = 'auto';
-                                    wrapper.style.overflowY = 'hidden';
-                                    wrapper.style.scrollBehavior = 'auto';
-                                    wrapper.style.webkitOverflowScrolling = 'touch';
-                                    
-                                    // Hide scrollbar natively
-                                    wrapper.style.scrollbarWidth = 'none'; 
-                                    const style = document.createElement('style');
-                                    style.innerHTML = '.marquee-wrapper::-webkit-scrollbar { display: none; }';
-                                    document.head.appendChild(style);
-                                    
-                                    let scrollInterval;
-                                    let isTouching = false;
-                                    
-                                    const startScroll = () => {
-                                        if(scrollInterval) clearInterval(scrollInterval);
-                                        scrollInterval = setInterval(() => {
-                                            if(!isTouching) {
-                                                wrapper.scrollLeft += 1;
-                                                // If we've scrolled past half (the first set), reset to 0 seamlessly
-                                                if (wrapper.scrollLeft >= (track.scrollWidth / 2)) {
-                                                    wrapper.scrollLeft = 0;
-                                                }
-                                            }
-                                        }, 25);
-                                    };
-                                    
-                                    // Pause on touch to allow normal scroll, resume on release
-                                    wrapper.addEventListener('touchstart', () => { isTouching = true; }, {passive: true});
-                                    wrapper.addEventListener('touchend', () => { 
-                                        setTimeout(() => { isTouching = false; }, 800); // allow momentum to settle
-                                    });
-                                    
-                                    startScroll();
-                                }
-                            });
-                        </script>
+                        <div class="d-flex flex-column gap-3 mb-4">
+                            <!-- Academic Calendar Card -->
+                            <a href="#" class="premium-glass-card" style="max-width: 100%; border: 1px solid rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15);">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="premium-glass-card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); width: 45px; height: 45px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                                        <i class="bi bi-calendar-event text-white" style="font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="premium-glass-card-text" style="font-size: 1.1rem; color: #b45309;">Academic Calendar</div>
+                                        <div style="font-size: 0.8rem; color: #64748b; font-family: 'Inter', sans-serif;">2024/2025 Schedule</div>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-right-short" style="font-size: 1.5rem; color: #f59e0b;"></i>
+                            </a>
+
+                            <!-- Class Timetable Card -->
+                            <a href="#" class="premium-glass-card" style="max-width: 100%; border: 1px solid rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15);">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="premium-glass-card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); width: 45px; height: 45px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                                        <i class="bi bi-clock-history text-white" style="font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="premium-glass-card-text" style="font-size: 1.1rem; color: #b45309;">Class Timetables</div>
+                                        <div style="font-size: 0.8rem; color: #64748b; font-family: 'Inter', sans-serif;">View your weekly schedule</div>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-right-short" style="font-size: 1.5rem; color: #f59e0b;"></i>
+                            </a>
+                        </div>
 
                         <!-- Access Restricted Banner (PREMIUM DESIGN V2 - Plain Text) -->
                         <div class="mb-5 mt-5 text-center position-relative">
