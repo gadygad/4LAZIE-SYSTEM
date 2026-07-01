@@ -76,7 +76,7 @@ public class RegistrationController {
         }
         
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            model.addAttribute("error", "Samahani, Email hii (" + user.getEmail() + ") tayari imesajiliwa. Tafadhali Log in au tumia email nyingine.");
+            model.addAttribute("error", "Sorry, this email (" + user.getEmail() + ") is already registered. Please log in or use another email.");
             model.addAttribute("institutions", institutionRepository.findAll());
             return "register";
         }
