@@ -19,22 +19,30 @@
                 radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.1) 0px, transparent 50%);
             background-attachment: fixed;
-            min-width: 1024px; /* Ensure body never shrinks below grid width */
+            overflow-x: hidden;
         }
 
-        /* Glassmorphism Card for Timetable */
+        /* Wrapper to handle the JS scaling */
+        .scale-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism Card for Timetable - Desktop Original Beauty */
         .timetable-container {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
             border-radius: 30px;
             padding: 40px;
-            overflow: hidden;
             position: relative;
             margin: 0 auto;
-            max-width: 1200px;
+            width: 1100px; /* Fixed width for perfect scaling */
+            max-width: none !important;
         }
 
         /* Page Header */
@@ -233,322 +241,202 @@
             box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
             color: white;
         }
-
-        /* =========================================
-           MOBILE RESPONSIVENESS (FIT EXACTLY TO SCREEN USING VW UNITS)
-           ========================================= */
-        @media (max-width: 991px) {
-            body {
-                overflow-x: hidden;
-            }
-            .container-fluid {
-                padding: 5px !important;
-                margin: 0 !important;
-            }
-            .timetable-container {
-                padding: 10px 5px;
-                border-radius: 12px;
-                width: 100vw;
-                max-width: 100vw;
-                box-sizing: border-box;
-            }
-
-            .time-headers-row {
-                display: flex;
-                width: 100%;
-                gap: 1vw;
-                margin-bottom: 1vw;
-            }
-
-            .day-row {
-                display: flex;
-                width: 100%;
-                gap: 1vw;
-                margin-bottom: 1vw;
-            }
-
-            /* Day Label Column is ~10% width */
-            .time-headers-row > div:first-child,
-            .day-label {
-                flex: 0 0 8vw;
-                width: 8vw;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 2vw 0;
-            }
-
-            /* Other 4 columns share the remaining width evenly */
-            .time-header, .class-cell, .break-cell {
-                flex: 1;
-                width: 22vw;
-                box-sizing: border-box;
-                padding: 1.5vw;
-                min-height: 15vw;
-                border-radius: 6px;
-            }
-
-            .day-label {
-                font-size: 2.8vw;
-                border-left: 2px solid #10b981;
-                border-radius: 4px;
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                transform: rotate(180deg);
-                box-shadow: none;
-            }
-
-            .time-header {
-                font-size: 2.2vw;
-                padding: 1vw;
-            }
-            .time-header i { display: none; }
-
-            .cell-border {
-                width: 2px;
-            }
-
-            .subject-name {
-                font-size: 2.5vw;
-                line-height: 1.2;
-                margin-bottom: 1vw;
-            }
-
-            .lecturer-name {
-                font-size: 2vw;
-            }
-
-            .venue-badge {
-                font-size: 1.8vw;
-                padding: 0.5vw 1vw;
-                margin-top: 1vw;
-                border-radius: 3px;
-            }
-            .lecturer-name i, .venue-badge i { display: none; }
-
-            .break-cell {
-                font-size: 2.5vw;
-                border-width: 1px;
-                letter-spacing: 1px;
-            }
-            .break-cell i { display: none; }
-
-            .page-title {
-                font-size: 4.5vw;
-                margin-bottom: 2vw;
-            }
-            
-            .page-subtitle {
-                font-size: 2.5vw;
-            }
-            
-            .actions-bar {
-                margin-bottom: 3vw;
-                padding-bottom: 2vw;
-                flex-direction: column;
-                gap: 2vw;
-                text-align: center;
-            }
-            
-            .btn-download {
-                font-size: 3vw;
-                padding: 1.5vw 3vw;
-            }
-        }
     </style>
 </head>
 <body>
 
     <!-- Navbar removed due to empty fragment -->
 
-    <div class="container-fluid my-5 px-4" style="max-width: 1200px;">
+    <div class="container-fluid my-2 my-md-5 px-1 px-md-4">
         
-        <div class="timetable-container">
-            <div class="actions-bar">
-                <div>
-                    <div class="page-subtitle">DIPLOMA NTA LEVEL 5 - SEMESTER 2</div>
-                    <h2 class="page-title">COMPUTER ENGINEERING</h2>
+        <div class="scale-wrapper" id="scaleWrapper">
+            <div class="timetable-container" id="pdfTimetable">
+                <div class="actions-bar">
+                    <div>
+                        <div class="page-subtitle">DIPLOMA NTA LEVEL 5 - SEMESTER 2</div>
+                        <h2 class="page-title">COMPUTER ENGINEERING</h2>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-light fw-bold px-4" style="border-radius: 12px; color: #475569; border: 2px solid #e2e8f0; font-size: 1.1rem;" onclick="window.history.back()">
+                            <i class="bi bi-arrow-left me-2"></i> Back
+                        </button>
+                        <button class="btn-download" onclick="window.print()">
+                            <i class="bi bi-printer-fill me-2"></i> Save PDF
+                        </button>
+                    </div>
                 </div>
-                <div class="d-flex gap-3">
-                    <button class="btn btn-light fw-bold px-4" style="border-radius: 12px; color: #475569; border: 2px solid #e2e8f0; font-size: 1.1rem;" onclick="window.history.back()">
-                        <i class="bi bi-arrow-left me-2"></i> Back
-                    </button>
-                    <button class="btn-download" onclick="window.print()">
-                        <i class="bi bi-printer-fill me-2"></i> Save PDF
-                    </button>
-                </div>
-            </div>
 
-            <!-- Desktop Time Headers -->
-            <div class="time-headers-row">
-                <div></div>
-                <div class="time-header"><i class="bi bi-clock me-2"></i>08:00 AM - 10:00 AM</div>
-                <div class="time-header"><i class="bi bi-clock me-2"></i>10:00 AM - 12:00 PM</div>
-                <div class="time-header"><i class="bi bi-clock me-2"></i>01:00 PM - 03:00 PM</div>
-                <div class="time-header"><i class="bi bi-clock me-2"></i>03:00 PM - 05:00 PM</div>
-            </div>
+                <!-- Desktop Time Headers -->
+                <div class="time-headers-row">
+                    <div></div>
+                    <div class="time-header"><i class="bi bi-clock me-2"></i>08:00 AM - 10:00 AM</div>
+                    <div class="time-header"><i class="bi bi-clock me-2"></i>10:00 AM - 12:00 PM</div>
+                    <div class="time-header"><i class="bi bi-clock me-2"></i>01:00 PM - 03:00 PM</div>
+                    <div class="time-header"><i class="bi bi-clock me-2"></i>03:00 PM - 05:00 PM</div>
+                </div>
 
-            <!-- MONDAY -->
-            <div class="day-row">
-                <div class="day-label">MON</div>
-                <div class="class-cell cell-blue">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Microprocessor & Assembly Language</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
+                <!-- MONDAY -->
+                <div class="day-row">
+                    <div class="day-label">MON</div>
+                    <div class="class-cell cell-blue">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Microprocessor & Assembly Language</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 2</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 2</div>
-                </div>
-                <div class="class-cell cell-purple">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Object Oriented Programming (Java)</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
+                    <div class="class-cell cell-purple">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Object Oriented Programming (Java)</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
-                </div>
-                <div class="class-cell cell-yellow">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Data Communications & Networking</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
+                    <div class="class-cell cell-yellow">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Data Communications & Networking</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 105</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 105</div>
+                    <div class="break-cell">
+                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
+                        FREE
+                    </div>
                 </div>
-                <div class="break-cell">
-                    <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                    FREE
-                </div>
-            </div>
 
-            <!-- TUESDAY -->
-            <div class="day-row">
-                <div class="day-label">TUE</div>
-                <div class="class-cell cell-yellow">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Data Communications & Networking</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
+                <!-- TUESDAY -->
+                <div class="day-row">
+                    <div class="day-label">TUE</div>
+                    <div class="class-cell cell-yellow">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Data Communications & Networking</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 3</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 3</div>
-                </div>
-                <div class="class-cell cell-rose">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Computer Architecture</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Dr. Mboya</div>
+                    <div class="class-cell cell-rose">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Computer Architecture</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Dr. Mboya</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 102</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 102</div>
-                </div>
-                <div class="break-cell">
-                    <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                    FREE
-                </div>
-                <div class="class-cell cell-blue">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Microprocessor & Assembly Language</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
+                    <div class="break-cell">
+                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
+                        FREE
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 104</div>
+                    <div class="class-cell cell-blue">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Microprocessor & Assembly Language</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 104</div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- WEDNESDAY -->
-            <div class="day-row">
-                <div class="day-label">WED</div>
-                <div class="class-cell cell-purple">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Object Oriented Programming (Java)</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
+                <!-- WEDNESDAY -->
+                <div class="day-row">
+                    <div class="day-label">WED</div>
+                    <div class="class-cell cell-purple">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Object Oriented Programming (Java)</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 1</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 1</div>
-                </div>
-                <div class="break-cell">
-                    <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                    FREE
-                </div>
-                <div class="class-cell">
-                    <div class="cell-border" style="background: #10b981;"></div>
-                    <div>
-                        <div class="subject-name">Database Management Systems</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
+                    <div class="break-cell">
+                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
+                        FREE
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
-                </div>
-                <div class="class-cell">
-                    <div class="cell-border" style="background: #10b981;"></div>
-                    <div>
-                        <div class="subject-name">Database Management Systems (Practical)</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
+                    <div class="class-cell">
+                        <div class="cell-border" style="background: #10b981;"></div>
+                        <div>
+                            <div class="subject-name">Database Management Systems</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 4</div>
+                    <div class="class-cell">
+                        <div class="cell-border" style="background: #10b981;"></div>
+                        <div>
+                            <div class="subject-name">Database Management Systems (Practical)</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 4</div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- THURSDAY -->
-            <div class="day-row">
-                <div class="day-label">THU</div>
-                <div class="class-cell cell-rose">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Computer Architecture</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Dr. Mboya</div>
+                <!-- THURSDAY -->
+                <div class="day-row">
+                    <div class="day-label">THU</div>
+                    <div class="class-cell cell-rose">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Computer Architecture</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Dr. Mboya</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 102</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 102</div>
-                </div>
-                <div class="class-cell cell-yellow">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Data Communications (Practical)</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
+                    <div class="class-cell cell-yellow">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Data Communications (Practical)</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Net Lab</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Net Lab</div>
+                    <div class="break-cell">
+                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
+                        FREE
+                    </div>
+                    <div class="break-cell">
+                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
+                        FREE
+                    </div>
                 </div>
-                <div class="break-cell">
-                    <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                    FREE
-                </div>
-                <div class="break-cell">
-                    <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                    FREE
-                </div>
-            </div>
 
-            <!-- FRIDAY -->
-            <div class="day-row">
-                <div class="day-label">FRI</div>
-                <div class="class-cell cell-blue">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">Microprocessor (Practical)</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
+                <!-- FRIDAY -->
+                <div class="day-row">
+                    <div class="day-label">FRI</div>
+                    <div class="class-cell cell-blue">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">Microprocessor (Practical)</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 2</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 2</div>
-                </div>
-                <div class="class-cell">
-                    <div class="cell-border" style="background: #10b981;"></div>
-                    <div>
-                        <div class="subject-name">Database Management Systems</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
+                    <div class="class-cell">
+                        <div class="cell-border" style="background: #10b981;"></div>
+                        <div>
+                            <div class="subject-name">Database Management Systems</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
-                </div>
-                <div class="class-cell cell-purple">
-                    <div class="cell-border"></div>
-                    <div>
-                        <div class="subject-name">OOP Java (Practical)</div>
-                        <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
+                    <div class="class-cell cell-purple">
+                        <div class="cell-border"></div>
+                        <div>
+                            <div class="subject-name">OOP Java (Practical)</div>
+                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
+                        </div>
+                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 1</div>
                     </div>
-                    <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 1</div>
+                    <div class="break-cell">
+                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
+                        FREE
+                    </div>
                 </div>
-                <div class="break-cell">
-                    <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                    FREE
-                </div>
-            </div>
 
+            </div>
         </div>
 
     </div>
@@ -560,5 +448,40 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS TO ENSURE PERFECT 100% SCALE FIT ON ANY MOBILE DEVICE LIKE A PDF -->
+    <script>
+        function fitTimetableToScreen() {
+            const container = document.getElementById('pdfTimetable');
+            const wrapper = document.getElementById('scaleWrapper');
+            
+            // The desktop grid is fixed at 1100px width for max beauty.
+            const targetWidth = 1100; 
+            
+            if (window.innerWidth < targetWidth) {
+                // Calculate scale ratio to fit the screen width exactly
+                // We subtract a tiny margin (10px) so it doesn't touch the very edges of the screen
+                const scaleRatio = (window.innerWidth - 10) / targetWidth;
+                
+                // Apply the CSS Transform Scale to shrink it
+                container.style.transform = 'scale(' + scaleRatio + ')';
+                container.style.transformOrigin = 'top center';
+                
+                // Since scale() doesn't change the DOM height, we must manually adjust the wrapper's height
+                const scaledHeight = container.offsetHeight * scaleRatio;
+                wrapper.style.height = scaledHeight + 'px';
+            } else {
+                // Reset for large screens (Laptops/Desktops)
+                container.style.transform = 'none';
+                wrapper.style.height = 'auto';
+            }
+        }
+
+        // Run scaling when page loads and if screen is rotated
+        window.addEventListener('DOMContentLoaded', fitTimetableToScreen);
+        window.addEventListener('resize', fitTimetableToScreen);
+        // Fallback for when fonts finish loading
+        window.onload = fitTimetableToScreen;
+    </script>
 </body>
 </html>
