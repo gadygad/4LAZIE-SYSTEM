@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Timetables</title>
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            width: 250px;
+        }
+
+        .sidebar a {
+            color: #d1d5db;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: #f59e0b;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .card-custom {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: none;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+            border-color: #f59e0b;
+        }
+
+        .btn-warning {
+            background-color: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+            border-color: #d97706;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h3 class="text-center mb-4 text-warning fw-bold">4LAZIE ADMIN</h3>
+    <a href="/admin/dashboard"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+    <a href="/admin/users"><i class="bi bi-people-fill me-2"></i> Users</a>
+    <a href="/admin/notes"><i class="bi bi-journal-text me-2"></i> Notes</a>
+    <a href="/admin/timetables" class="active"><i class="bi bi-calendar3 me-2"></i> Timetables</a>
+    <a href="/logout" class="mt-5 text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+</div>
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Manage Timetables</h2>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="card-custom">
+        <h4 class="mb-4"><i class="bi bi-plus-circle-fill text-warning me-2"></i> Add New Timetable HTML</h4>
+        <form action="/admin/timetables/upload" method="POST">
+            
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Program Type</label>
+                    <select name="programType" class="form-select" required>
+                        <option value="DIPLOMA">DIPLOMA</option>
+                        <option value="DEGREE">DEGREE</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Level / Year</label>
+                    <input type="number" name="levelNo" class="form-control" placeholder="E.g. 4, 5, 6 for Diploma" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Semester</label>
+                    <select name="semesterNo" class="form-select" required>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Academic Year</label>
+                    <input type="text" name="academicYear" class="form-control" placeholder="E.g. 2025/2026" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Timetable HTML Code</label>
+                <textarea name="htmlContent" class="form-control" rows="10" placeholder="Paste the HTML table code here..." required></textarea>
+                <small class="text-muted">Paste the HTML code representing the timetable table structure. Do not include outer layout elements.</small>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100">
+                <i class="bi bi-save-fill me-2"></i> Save Timetable HTML
+            </button>
+        </form>
+    </div>
+
+    <!-- Existing Timetables -->
+    <div class="card-custom">
+        <h4 class="mb-4"><i class="bi bi-table text-warning me-2"></i> Existing Timetables</h4>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Program</th>
+                        <th>Level</th>
+                        <th>Semester</th>
+                        <th>Academic Year</th>
+                        <th>Upload Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="timetable : ${timetables}">
+                        <td th:text="${timetable.programType}" class="fw-bold">DIPLOMA</td>
+                        <td th:text="'Level ' + ${timetable.levelNo}">Level 5</td>
+                        <td th:text="'Sem ' + ${timetable.semesterNo}">Sem 2</td>
+                        <td th:text="${timetable.academicYear}">2025/2026</td>
+                        <td th:text="${#temporals.format(timetable.uploadDate, 'dd MMM yyyy, HH:mm')}">12 Oct 2023</td>
+                        <td>
+                            <a th:href="@{/timetable/view(program=${timetable.programType}, level=${timetable.levelNo}, semester=${timetable.semesterNo}, academicYear=${timetable.academicYear})}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                            <!-- We can add delete logic later if needed -->
+                        </td>
+                    </tr>
+                    <tr th:if="${timetables == null || timetables.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted py-4">No timetables available in the database.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

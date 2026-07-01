@@ -147,7 +147,7 @@ public class AdminController {
 
     @PostMapping("/timetables/upload")
     public String uploadTimetable(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("htmlContent") String htmlContent,
             @RequestParam("programType") String programType,
             @RequestParam("levelNo") Integer levelNo,
             @RequestParam("semesterNo") Integer semesterNo,
@@ -159,31 +159,28 @@ public class AdminController {
             return "redirect:/login";
         }
 
-        if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Please select a file to upload.");
+        if (htmlContent == null || htmlContent.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Please paste the HTML code for the timetable.");
             return "redirect:/admin/timetables";
         }
 
         try {
-            // First check if one already exists and delete the old one
-            timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(programType, levelNo, semesterNo)
-                .ifPresent(existing -> {
-                    try {
-                        String publicId = fileStorageService.extractCloudinaryPublicId(existing.getImageUrl());
-                        fileStorageService.deleteFile(publicId);
-                    } catch(Exception ignored) {}
-                    timetableRepository.delete(existing);
-                });
+            // Check if timetable already exists for this semester and year to overwrite or create new
+            Timetable timetable = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(programType, levelNo, semesterNo, academicYear)
+                    .orElse(new Timetable());
 
-            // Upload the new file (Image or PDF) to Cloudinary
-            String fileUrl = fileStorageService.uploadFile(file);
-            
-            Timetable timetable = new Timetable(programType, levelNo, semesterNo, academicYear, fileUrl);
+            timetable.setProgramType(programType);
+            timetable.setLevelNo(levelNo);
+            timetable.setSemesterNo(semesterNo);
+            timetable.setAcademicYear(academicYear);
+            timetable.setHtmlContent(htmlContent.trim());
+            timetable.setUploadDate(LocalDateTime.now());
+
             timetableRepository.save(timetable);
-            
-            redirectAttributes.addFlashAttribute("success", "Timetable uploaded successfully.");
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to upload timetable: " + e.getMessage());
+
+            redirectAttributes.addFlashAttribute("success", "Timetable saved successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to save timetable: " + e.getMessage());
         }
 
         return "redirect:/admin/timetables";
