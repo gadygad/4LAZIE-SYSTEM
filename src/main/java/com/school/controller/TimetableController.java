@@ -109,12 +109,12 @@ public class TimetableController {
                 .orElse("0000/0000");
                 
         // Group past timetables by academic year
-        java.util.Map<String, List<Timetable>> pastTimetablesMap = allTimetables.stream()
+        java.util.Map<String, java.util.List<Timetable>> pastTimetablesMap = allTimetables.stream()
                 .filter(t -> t.getAcademicYear() != null && !t.getAcademicYear().equals(currentYear))
                 .collect(java.util.stream.Collectors.groupingBy(Timetable::getAcademicYear));
                 
         // Sort years descending
-        java.util.Map<String, List<Timetable>> sortedPastTimetables = new java.util.TreeMap<>(java.util.Collections.reverseOrder());
+        java.util.Map<String, java.util.List<Timetable>> sortedPastTimetables = new java.util.TreeMap<>(java.util.Collections.reverseOrder());
         sortedPastTimetables.putAll(pastTimetablesMap);
 
         model.addAttribute("pastTimetables", sortedPastTimetables);

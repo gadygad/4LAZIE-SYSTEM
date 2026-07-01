@@ -172,9 +172,9 @@ public class AdminController {
             timetable.setProgramType(programType);
             timetable.setLevelNo(levelNo);
             timetable.setSemesterNo(semesterNo);
-            timetable.setAcademicYear(academicYear);
             timetable.setHtmlContent(htmlContent.trim());
-            timetable.setUploadDate(LocalDateTime.now());
+            timetable.setUploadDate(java.time.LocalDateTime.now());
+            timetable.setAcademicYear(academicYear);
 
             timetableRepository.save(timetable);
 
