@@ -53,14 +53,22 @@ public class SearchApiController {
             @RequestParam(value = "level", required = false) Integer level) {
             
         // Query the database for the matching notes
-        List<Note> notes = noteRepository.findByCategoryOrderByIdDesc(category);
+                System.out.println("API Called with: category=" + category + ", program=" + program + ", semester=" + semester + ", level=" + level);
+        List<Note> notes = noteRepository.findByCategoryIgnoreCaseOrderByIdDesc(category);
+        System.out.println("Found " + notes.size() + " notes with category " + category);
         
-        List<Map<String, Object>> results = notes.stream()
-                .filter(n -> program.equalsIgnoreCase(n.getProgramType()) || 
+        for (Note n : notes) {
+            System.out.println("Checking Note: " + n.getTitle() + " | DB Program: " + n.getProgramType() + " | DB Semester: " + n.getSemesterNo() + " | DB Level: " + n.getLevelNo() + " | isPublic: " + n.getIsPublic());
+        }
+
+        
+                List<Map<String, Object>> results = notes.stream()
+                .filter(n -> program == null || program.isEmpty() || program.equalsIgnoreCase(n.getProgramType()) ||
                              (n.getProgramType() != null && n.getProgramType().toLowerCase().contains(program.toLowerCase())))
-                .filter(n -> semester.equals(n.getSemesterNo()))
+                .filter(n -> semester == null || semester.equals(n.getSemesterNo()))
                 .filter(n -> level == null || level.equals(n.getLevelNo()))
-                .filter(n -> Boolean.TRUE.equals(n.getIsPublic()))
+                .filter(n -> n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic()))
+
                 .map(note -> {
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", note.getId());

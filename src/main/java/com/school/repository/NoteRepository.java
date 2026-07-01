@@ -46,7 +46,7 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     boolean existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(String title, String programType, Integer levelNo, Integer semesterNo, String moduleName, Integer unitNumber);
 
-    List<Note> findByCategoryOrderByIdDesc(String category);
+    List<Note> findByCategoryIgnoreCaseOrderByIdDesc(String category);
 
     @Aggregation(pipeline = {
         "{ '$group': { '_id': null, 'total': { '$sum': '$downloadCount' } } }"
