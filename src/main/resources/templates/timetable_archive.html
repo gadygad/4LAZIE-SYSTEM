@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Archive - 4LAZIE</title>
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #1f2937, #111827); /* Dark premium background */
+            font-family: 'Outfit', sans-serif;
+            color: #e5e7eb;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* Gold Glassmorphism Header */
+        .header-glass {
+            background: rgba(245, 158, 11, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .header-glass:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(245, 158, 11, 0.15);
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f59e0b; /* Gold */
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .back-btn {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: #f59e0b;
+        }
+
+        /* Year Group Container */
+        .year-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .year-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* Timetable Cards (Glassmorphism) */
+        .timetable-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: #e5e7eb;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .timetable-card:hover {
+            background: rgba(245, 158, 11, 0.15); /* Gold tint on hover */
+            border-color: rgba(245, 158, 11, 0.5);
+            transform: translateX(8px); /* Smooth slide right */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        .card-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-icon {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .timetable-card:hover .card-icon {
+            background: #f59e0b;
+            color: #111827;
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .card-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .timetable-card:hover .card-subtitle {
+            color: #d1d5db;
+        }
+
+        .view-btn {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .timetable-card:hover .view-btn {
+            color: #f59e0b;
+            transform: translateX(4px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9ca3af;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: rgba(245, 158, 11, 0.4);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header-glass">
+        <h1 class="header-title">TIMETABLE ARCHIVE</h1>
+        <a href="/home" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <!-- Check if past timetables exist -->
+    <div th:if="${pastTimetables == null || pastTimetables.isEmpty()}" class="empty-state">
+        <i class="bi bi-folder-x empty-icon"></i>
+        <h4>No Archives Found</h4>
+        <p>There are no past timetables available in the archive yet.</p>
+    </div>
+
+    <!-- Iterate over grouped timetables -->
+    <div th:each="entry : ${pastTimetables}" class="year-group">
+        <div class="year-title">
+            <i class="bi bi-calendar3 me-2" style="color: #f59e0b;"></i>
+            <span th:text="${entry.key}">2024/2025</span>
+        </div>
+
+        <!-- Timetable Items -->
+        <a th:each="timetable : ${entry.value}" 
+           th:href="@{/timetable/view(program=${timetable.programType}, level=${timetable.levelNo}, semester=${timetable.semesterNo}, academicYear=${timetable.academicYear})}" 
+           class="timetable-card">
+            
+            <div class="card-info">
+                <div class="card-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <div class="card-details">
+                    <h3 class="card-title" th:text="${timetable.programType} + ' - Level ' + ${timetable.levelNo} + ' (Semester ' + ${timetable.semesterNo} + ')'">DIPLOMA - Level 5 (Semester 2)</h3>
+                    <span class="card-subtitle">Click to view or download as PDF</span>
+                </div>
+            </div>
+
+            <div class="view-btn">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

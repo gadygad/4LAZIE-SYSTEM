@@ -65,6 +65,14 @@ public class TimetableController {
             selectedYear = availableYears.get(0); // default to the latest year
         }
 
+        // Determine the "Current" Academic Year (the one with the largest string value)
+        List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        String currentYear = allTimetables.stream()
+                .map(Timetable::getAcademicYear)
+                .filter(y -> y != null && !y.isEmpty())
+                .max(String::compareTo)
+                .orElse("0000/0000");
+
         Optional<Timetable> timetableOpt;
         if (selectedYear != null && !selectedYear.isEmpty()) {
             timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(program.toUpperCase(), level, semester, selectedYear);
@@ -74,6 +82,9 @@ public class TimetableController {
         
         if (timetableOpt.isPresent()) {
             model.addAttribute("timetable", timetableOpt.get());
+            boolean isCurrentYear = (selectedYear != null && selectedYear.equals(currentYear)) ||
+                                    (timetableOpt.get().getAcademicYear() != null && timetableOpt.get().getAcademicYear().equals(currentYear));
+            model.addAttribute("isCurrentYear", isCurrentYear);
         } else {
             model.addAttribute("errorMsg", "No timetable found for " + program + " Level " + level + " Semester " + semester + (selectedYear != null ? " (" + selectedYear + ")" : "") + ". Please check back later.");
         }
@@ -84,6 +95,31 @@ public class TimetableController {
         model.addAttribute("selectedYear", selectedYear);
 
         return "view_timetable";
+    }
+
+    @GetMapping("/timetable/archive")
+    public String viewArchive(Model model) {
+        List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        
+        // Determine the "Current" Academic Year
+        String currentYear = allTimetables.stream()
+                .map(Timetable::getAcademicYear)
+                .filter(y -> y != null && !y.isEmpty())
+                .max(String::compareTo)
+                .orElse("0000/0000");
+                
+        // Group past timetables by academic year
+        java.util.Map<String, List<Timetable>> pastTimetablesMap = allTimetables.stream()
+                .filter(t -> t.getAcademicYear() != null && !t.getAcademicYear().equals(currentYear))
+                .collect(java.util.stream.Collectors.groupingBy(Timetable::getAcademicYear));
+                
+        // Sort years descending
+        java.util.Map<String, List<Timetable>> sortedPastTimetables = new java.util.TreeMap<>(java.util.Collections.reverseOrder());
+        sortedPastTimetables.putAll(pastTimetablesMap);
+
+        model.addAttribute("pastTimetables", sortedPastTimetables);
+        model.addAttribute("currentYear", currentYear);
+        return "timetable_archive";
     }
 
     @GetMapping("/timetable/seed")
