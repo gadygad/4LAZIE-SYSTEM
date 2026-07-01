@@ -1,0 +1,393 @@
+/* ==========================================================================
+   MOBILE SPACING STANDARDS (International Best Practices)
+   --------------------------------------------------------------------------
+   Based on:
+   • Material Design 3 (Google) — 8dp grid, 4dp baseline
+   • Apple Human Interface Guidelines — safe areas, touch targets
+   • WCAG 2.1 — minimum 44×44px touch targets
+   • W3C Mobile Web Best Practices — readable text, accessible layouts
+   
+   These standards apply ONLY to mobile screens (≤768px).
+   ========================================================================== */
+
+/* ======================
+   1. SPACING DESIGN TOKENS (8px Grid System)
+   ====================== */
+:root {
+    /* 4px baseline grid — all spacing is a multiple of 4px */
+    --space-1:  4px;   /* 0.25rem — Micro gaps (icon to text inline) */
+    --space-2:  8px;   /* 0.5rem  — Tight spacing (between inline elements) */
+    --space-3:  12px;  /* 0.75rem — Compact spacing (list items) */
+    --space-4:  16px;  /* 1rem    — Standard spacing (page gutters, card padding) */
+    --space-5:  20px;  /* 1.25rem — Comfortable spacing */
+    --space-6:  24px;  /* 1.5rem  — Section spacing */
+    --space-7:  32px;  /* 2rem    — Large section gaps */
+    --space-8:  40px;  /* 2.5rem  — Major section dividers */
+    --space-9:  48px;  /* 3rem    — Page-level spacing */
+    --space-10: 64px;  /* 4rem    — Hero/feature sections */
+
+    /* Touch target minimums (WCAG 2.1 / Material Design / Apple HIG) */
+    --touch-target-min: 48px;    /* Material Design 3 minimum */
+    --touch-target-apple: 44px;  /* Apple HIG minimum */
+    
+    /* Page gutters — horizontal padding for the page edge */
+    --gutter-mobile: 16px;       /* Standard: 16px (Material Design) */
+    --gutter-mobile-compact: 12px; /* Compact screens <360px */
+}
+
+/* ======================
+   2. MOBILE LAYOUT STANDARDS (max-width: 768px)
+   ====================== */
+@media (max-width: 768px) {
+    
+    /* --- 2a. PAGE-LEVEL SPACING ---
+       Material Design: 16px horizontal gutters
+       Apple HIG: 16px leading/trailing margins */
+    
+    body {
+        -webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape */
+    }
+
+    .container,
+    .container-fluid,
+    .main-content,
+    .content-area {
+        padding-left: var(--gutter-mobile) !important;   /* 16px */
+        padding-right: var(--gutter-mobile) !important;  /* 16px */
+    }
+
+    /* --- 2b. CARD & PANEL SPACING ---
+       Material Design 3: Cards use 16px padding
+       Border radius: 12-16px on mobile for thumb-friendly feel */
+    
+    .card,
+    .glass-panel,
+    .premium-card,
+    .navigator-card,
+    .module-list-container,
+    .premium-note-card,
+    .benefit-card,
+    .feature-card {
+        padding: var(--space-4) !important;       /* 16px all sides */
+        margin-bottom: var(--space-4) !important;  /* 16px gap between cards */
+        border-radius: 16px !important;
+    }
+
+    /* --- 2c. SECTION SPACING ---
+       Material Design: 24-32px between major sections
+       Apple HIG: 20-35pt between grouped content */
+    
+    section,
+    .section,
+    .content-section {
+        margin-bottom: var(--space-6) !important;  /* 24px between sections */
+        padding-top: var(--space-5) !important;     /* 20px top padding */
+        padding-bottom: var(--space-5) !important;  /* 20px bottom padding */
+    }
+
+    /* --- 2d. HEADING SPACING ---
+       Material Design 3 typographic scale for mobile:
+       - H1: 28px font, 24px margin-bottom
+       - H2: 22px font, 16px margin-bottom
+       - H3: 18px font, 12px margin-bottom */
+    
+    h1, .h1 {
+        font-size: 1.75rem !important;              /* 28px */
+        margin-bottom: var(--space-6) !important;    /* 24px */
+        line-height: 1.2 !important;
+    }
+
+    h2, .h2 {
+        font-size: 1.375rem !important;              /* 22px */
+        margin-bottom: var(--space-4) !important;    /* 16px */
+        line-height: 1.25 !important;
+    }
+
+    h3, .h3 {
+        font-size: 1.125rem !important;              /* 18px */
+        margin-bottom: var(--space-3) !important;    /* 12px */
+        line-height: 1.3 !important;
+    }
+
+    h4, .h4, h5, .h5, h6, .h6 {
+        font-size: 1rem !important;                  /* 16px */
+        margin-bottom: var(--space-2) !important;    /* 8px */
+        line-height: 1.35 !important;
+    }
+
+    /* --- 2e. PARAGRAPH & TEXT SPACING ---
+       WCAG: 1.5× line-height for body text (minimum 1.4)
+       Material Design: Body text at 16px with 24px line-height */
+    
+    p, .text-body, .body-text {
+        font-size: 1rem !important;                  /* 16px — minimum readable */
+        line-height: 1.5 !important;                 /* 24px — WCAG compliant */
+        margin-bottom: var(--space-4) !important;    /* 16px */
+    }
+
+    /* Small/muted text — never below 12px per WCAG */
+    small, .text-small, .text-muted, .meta-text {
+        font-size: 0.8125rem !important;             /* 13px minimum */
+        line-height: 1.4 !important;
+    }
+
+    /* --- 2f. BUTTON SPACING ---
+       WCAG 2.1 SC 2.5.5: Touch target minimum 44×44px
+       Material Design 3: 48×48dp recommended
+       Apple HIG: 44pt minimum */
+    
+    button,
+    .btn,
+    .premium-btn,
+    .btn-premium,
+    .btn-premium-outline,
+    .btn-premium-gold,
+    .social-btn,
+    .btn-action-outline,
+    .btn-action-solid,
+    a.btn {
+        min-height: var(--touch-target-min) !important; /* 48px */
+        padding: var(--space-3) var(--space-6) !important; /* 12px 24px */
+        font-size: 1rem !important;                     /* 16px */
+        border-radius: 12px !important;
+    }
+
+    /* Button groups — 8px gap between buttons */
+    .btn-group,
+    .button-group,
+    .banner-actions,
+    .note-actions {
+        gap: var(--space-2) !important;  /* 8px */
+    }
+
+    /* Full-width CTA buttons on mobile */
+    .btn-block-mobile,
+    .premium-btn,
+    .btn-premium {
+        width: 100% !important;
+    }
+
+    /* --- 2g. FORM INPUT SPACING ---
+       Material Design 3: Text fields 56dp height
+       Apple HIG: 44pt minimum touch area
+       WCAG: Labels 8px above inputs */
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    textarea,
+    select,
+    .form-control,
+    .premium-input,
+    .custom-select {
+        min-height: var(--touch-target-min) !important; /* 48px */
+        padding: var(--space-3) var(--space-4) !important; /* 12px 16px */
+        font-size: 1rem !important;                     /* 16px — prevents iOS zoom */
+        border-radius: 12px !important;
+    }
+
+    /* Form groups — consistent spacing between fields */
+    .form-group,
+    .mb-3,
+    .input-group {
+        margin-bottom: var(--space-4) !important;  /* 16px */
+    }
+
+    /* Labels above inputs */
+    label,
+    .form-label,
+    .premium-label {
+        margin-bottom: var(--space-2) !important;  /* 8px */
+        font-size: 0.875rem !important;             /* 14px */
+    }
+
+    /* --- 2h. LIST & ITEM SPACING ---
+       Material Design 3: List items 48-56dp height
+       8dp padding between list items */
+    
+    .list-group-item,
+    .module-text-item,
+    .note-item,
+    .note-row {
+        padding: var(--space-3) var(--space-4) !important; /* 12px 16px */
+        margin-bottom: var(--space-2) !important;           /* 8px */
+        min-height: var(--touch-target-min) !important;     /* 48px */
+    }
+
+    /* --- 2i. GRID & FLEX GAP SPACING --- */
+    .row,
+    .grid,
+    .premium-grid {
+        gap: var(--space-4) !important;      /* 16px */
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .row > [class*="col-"] {
+        padding-left: var(--space-2) !important;   /* 8px */
+        padding-right: var(--space-2) !important;  /* 8px */
+    }
+
+    /* --- 2j. NAVIGATION SPACING ---
+       Material Design 3: Bottom nav 80dp height
+       Apple HIG: Tab bar 49pt + safe area */
+    
+    .mobile-bottom-nav {
+        padding: var(--space-2) 0 !important;  /* 8px top/bottom */
+    }
+
+    .mobile-bottom-nav-container {
+        height: 56px !important;               /* Material Design standard */
+    }
+
+    .nav-item-bottom {
+        min-height: 56px !important;
+        padding: var(--space-2) var(--space-3) !important; /* 8px 12px */
+    }
+
+    /* Top navbar */
+    .top-navbar,
+    .navbar-custom {
+        padding: var(--space-3) var(--gutter-mobile) !important; /* 12px 16px */
+        min-height: 56px !important;                              /* Material Design */
+    }
+
+    /* --- 2k. BADGE & CHIP SPACING ---
+       Material Design 3: Chips 32dp height, 8dp padding */
+    
+    .badge,
+    .nta-badge,
+    .pill-filter,
+    .badge-custom,
+    .level-badge,
+    .badge-smart {
+        padding: var(--space-1) var(--space-3) !important; /* 4px 12px */
+        min-height: 32px !important;
+        font-size: 0.75rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+
+    /* --- 2l. MODAL & POPUP SPACING --- */
+    .modal-body,
+    .modal-content {
+        padding: var(--space-5) !important;    /* 20px */
+    }
+
+    .modal-header,
+    .modal-footer {
+        padding: var(--space-4) var(--space-5) !important; /* 16px 20px */
+    }
+
+    /* --- 2m. TABLE SPACING --- */
+    .table td,
+    .table th {
+        padding: var(--space-3) var(--space-2) !important; /* 12px 8px */
+        font-size: 0.875rem !important;                     /* 14px */
+    }
+
+    /* --- 2n. IMAGE & MEDIA SPACING --- */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* --- 2o. SAFE AREAS (Notched Phones) ---
+       Apple HIG: Respect safe areas for notched devices */
+    
+    .main-content,
+    .content-area {
+        padding-bottom: calc(var(--space-9) + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Body padding when bottom nav is present */
+    body.has-bottom-nav {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* ======================
+   3. EXTRA SMALL SCREENS (<360px — Compact phones)
+   ====================== */
+@media (max-width: 360px) {
+    
+    .container,
+    .container-fluid,
+    .main-content,
+    .content-area {
+        padding-left: var(--gutter-mobile-compact) !important;   /* 12px */
+        padding-right: var(--gutter-mobile-compact) !important;  /* 12px */
+    }
+
+    .card,
+    .glass-panel,
+    .premium-card,
+    .navigator-card {
+        padding: var(--space-3) !important;       /* 12px */
+        margin-bottom: var(--space-3) !important;  /* 12px */
+    }
+
+    h1, .h1 {
+        font-size: 1.5rem !important;   /* 24px */
+    }
+
+    h2, .h2 {
+        font-size: 1.25rem !important;  /* 20px */
+    }
+
+    button,
+    .btn,
+    a.btn {
+        padding: var(--space-3) var(--space-4) !important; /* 12px 16px */
+        font-size: 0.9375rem !important;                    /* 15px */
+    }
+}
+
+/* ======================
+   4. LANDSCAPE MOBILE ADJUSTMENTS
+   ====================== */
+@media (max-width: 768px) and (orientation: landscape) {
+    
+    .main-content,
+    .content-area {
+        padding-top: var(--space-3) !important;     /* 12px — less vertical space */
+        padding-bottom: var(--space-3) !important;
+    }
+
+    h1, .h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: var(--space-4) !important;
+    }
+}
+
+/* ======================
+   5. ACCESSIBILITY ENHANCEMENTS
+   ====================== */
+@media (max-width: 768px) {
+    
+    /* Focus indicators — visible on mobile for keyboard/assistive tech */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+        outline: 3px solid rgba(59, 130, 246, 0.5) !important;
+        outline-offset: 2px !important;
+    }
+
+    /* Prevent content from touching screen edges */
+    * {
+        scroll-margin-top: var(--space-4);
+    }
+
+    /* Ensure spacing between interactive elements (WCAG 2.5.8) */
+    a + a,
+    button + button,
+    .btn + .btn {
+        margin-left: var(--space-2) !important; /* 8px minimum gap */
+    }
+}
