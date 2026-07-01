@@ -236,55 +236,88 @@
         }
 
         /* =========================================
-           MOBILE RESPONSIVENESS
+           MOBILE RESPONSIVENESS (FIT TO SCREEN LIKE PDF)
            ========================================= */
         @media (max-width: 991px) {
             .timetable-container {
-                padding: 15px;
-                border-radius: 16px;
+                padding: 10px;
+                border-radius: 12px;
             }
 
             .time-headers-row {
-                display: none; /* Hide top time headers */
+                grid-template-columns: 40px repeat(4, 1fr);
+                gap: 5px;
+                margin-bottom: 5px;
             }
 
             .day-row {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                margin-bottom: 30px;
-                background: rgba(255, 255, 255, 0.5);
-                padding: 15px;
-                border-radius: 16px;
-                border: 1px solid rgba(16, 185, 129, 0.1);
+                grid-template-columns: 40px repeat(4, 1fr);
+                gap: 5px;
+                margin-bottom: 5px;
             }
 
+            .time-header {
+                font-size: 0.55rem;
+                padding: 4px;
+                border-radius: 6px;
+            }
+            .time-header i { display: none; } /* Hide icons to save space */
+
             .day-label {
-                border-left: none;
-                border-bottom: 4px solid #10b981;
-                border-radius: 8px;
-                padding: 10px;
-                margin-bottom: 10px;
-                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
-                font-size: 1.2rem;
+                font-size: 0.65rem;
+                padding: 5px 0;
+                border-left: 2px solid #10b981;
+                border-radius: 6px;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                transform: rotate(180deg);
+                height: 100%;
             }
 
             .class-cell {
-                min-height: auto;
-                padding: 15px;
+                min-height: 70px;
+                padding: 5px;
+                border-radius: 8px;
             }
 
-            .mobile-time-label {
-                display: inline-block; /* Show time labels inside cards */
+            .cell-border {
+                width: 2px;
+            }
+
+            .subject-name {
+                font-size: 0.55rem;
+                line-height: 1.1;
+                margin-bottom: 2px;
+            }
+
+            .lecturer-name {
+                font-size: 0.45rem;
+            }
+
+            .venue-badge {
+                font-size: 0.45rem;
+                padding: 2px 4px;
+                margin-top: auto;
+                border-radius: 4px;
             }
 
             .break-cell {
-                min-height: 80px;
-                margin: 5px 0;
+                min-height: 70px;
+                font-size: 0.6rem;
+                border-radius: 8px;
+                border-width: 1px;
             }
 
             .page-title {
-                font-size: 1.5rem;
+                font-size: 1.1rem;
+            }
+            
+            .page-subtitle {
+                font-size: 0.7rem;
+            }
+
+            .mobile-time-label {
+                display: none; /* We don't need this if we keep the grid */
             }
         }
     </style>
