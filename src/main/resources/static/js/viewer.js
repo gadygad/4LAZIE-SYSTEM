@@ -51,7 +51,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const firstViewport = firstPage.getViewport({ scale: currentScale });
                 const pageW = Math.floor(firstViewport.width);
                 const pageH = Math.floor(firstViewport.height);
-                const outputScale = (window.devicePixelRatio || 1) * 2; // Increased for extra crispness
+                
+                // ULTRA HIGH QUALITY RENDERING FOR MOBILE
+                // We use devicePixelRatio * 3 to ensure text is crystal clear even when zoomed
+                const outputScale = (window.devicePixelRatio || 1) * 3;
                 
                 observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
@@ -148,13 +151,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (canvasContainer) {
             canvasContainer.style.padding = '0';
             canvasContainer.style.display = 'block';
-            canvasContainer.style.height = '100vh'; // Force full height
+            canvasContainer.style.height = 'calc(100vh - 60px)'; // Full screen minus navbar height
+            canvasContainer.style.overflow = 'hidden';
             
             const safeUrl = url.replace('http://', 'https://');
             const encodedUrl = encodeURIComponent(safeUrl);
             const viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodedUrl;
             
-            canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100vh; border: none; background: #fff;"></iframe>`;
+            canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none; background: #fff; overflow: hidden;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>`;
         }
         hideLoader();
     } else {
