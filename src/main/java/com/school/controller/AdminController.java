@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class AdminController {
 
     @Autowired
     private NoteRepository noteRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/users")
     public String listUsers(HttpSession session, Model model) {
@@ -49,6 +53,24 @@ public class AdminController {
         
         userRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("success", "User deleted successfully.");
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/reset-password")
+    public String resetUserPassword(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null) {
+            targetUser.setPassword(passwordEncoder.encode("SJUIT@123"));
+            userRepository.save(targetUser);
+            redirectAttributes.addFlashAttribute("success", "Password for " + targetUser.getName() + " has been reset to 'SJUIT@123'.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+        }
         return "redirect:/admin/users";
     }
 
