@@ -142,19 +142,34 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.innerHTML = `<img src="${url}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" alt="Document Image">`;
         }
         hideLoader();
-    } else {
-        // LOAD WORD/PPT/EXCEL USING GOOGLE DOCS VIEWER
+    } else if (filename.endsWith('.doc') || filename.endsWith('.docx') || filename.endsWith('.ppt') || filename.endsWith('.pptx') || filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
+        // LOAD WORD/PPT/EXCEL USING MICROSOFT OFFICE ONLINE VIEWER (HIGHEST QUALITY)
         if (controls) controls.style.display = 'none';
         if (canvasContainer) {
             canvasContainer.style.padding = '0';
             canvasContainer.style.display = 'block';
-            canvasContainer.style.height = '100%';
+            canvasContainer.style.height = '100vh'; // Force full height
+            
+            const safeUrl = url.replace('http://', 'https://');
+            const encodedUrl = encodeURIComponent(safeUrl);
+            const viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodedUrl;
+            
+            canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100vh; border: none; background: #fff;"></iframe>`;
+        }
+        hideLoader();
+    } else {
+        // LOAD OTHER FILES USING GOOGLE DOCS VIEWER
+        if (controls) controls.style.display = 'none';
+        if (canvasContainer) {
+            canvasContainer.style.padding = '0';
+            canvasContainer.style.display = 'block';
+            canvasContainer.style.height = '100vh';
             
             const safeUrl = url.replace('http://', 'https://');
             const encodedUrl = encodeURIComponent(safeUrl);
             const viewerUrl = "https://docs.google.com/gview?url=" + encodedUrl + "&embedded=true";
             
-            canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+            canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100vh; border: none; background: #fff;"></iframe>`;
         }
         hideLoader();
     }
