@@ -917,6 +917,14 @@
     <!-- Features List -->
     <div class="features-grid mb-4">
 
+        <!-- ACADEMIC CALENDAR -->
+        <a href="#" data-bs-toggle="modal" data-bs-target="#calendarModal"
+           class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(255, 255, 255, 0.9)); border-color: rgba(245, 158, 11, 0.2);">
+            <div class="accent-line" style="background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);"></div>
+            <span class="fw-bold feature-title" style="color: #d97706;">ACADEMIC CALENDAR</span>
+            <i class="bi bi-calendar-event-fill" style="color: #f59e0b; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.2));"></i>
+        </a>
+
         <!-- CAT 1 PAST PAPERS -->
         <a th:href="${session.user != null} ? @{/cat1} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
@@ -975,6 +983,92 @@
             });
         }
     </script>
+
+<!-- ============================================================
+     CALENDAR AND EXAM MODALS
+     ============================================================ -->
+<div th:fragment="calendar_modals">
+    <!-- Calendar Modal -->
+    <div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);">
+                <div class="modal-header border-0 pb-0">
+                    <h4 class="fw-bold text-dark mb-0" style="font-family: 'Outfit', sans-serif;"><i class="bi bi-calendar-event text-warning me-2"></i>Academic Calendar</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-3">
+                    <div th:if="${currentCalendar == null}" class="text-center py-5">
+                        <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3 fw-bold">No academic calendar available at the moment.</p>
+                    </div>
+                    <div th:if="${currentCalendar != null}" class="text-center">
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <span class="badge px-3 py-2 rounded-pill fw-bold" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2);">
+                                <i class="bi bi-calendar-check me-1"></i> Academic Year: <span th:text="${currentCalendar.academicYear}"></span>
+                            </span>
+                            <a th:if="${currentCalendar.fileUrl != null}" th:href="${#strings.startsWith(currentCalendar.fileUrl, 'http')} ? ${currentCalendar.fileUrl} : @{'/uploads/' + ${currentCalendar.fileUrl}}" target="_blank" class="btn btn-sm btn-outline-warning fw-bold rounded-pill">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> Open PDF
+                            </a>
+                        </div>
+                        <div style="height: 60vh; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; background: #f8fafc; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);">
+                            <iframe th:if="${currentCalendar.fileUrl != null}" th:src="${#strings.startsWith(currentCalendar.fileUrl, 'http')} ? ${currentCalendar.fileUrl} : @{'/uploads/' + ${currentCalendar.fileUrl}}" width="100%" height="100%" style="border: none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Modal -->
+    <div class="modal fade" id="examModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-content border-0 rounded-4 shadow-lg" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);">
+                <div class="modal-header border-0 pb-0 position-relative">
+                    <div style="position:absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(90deg, #f59e0b, #d97706); border-top-left-radius: 16px; border-top-right-radius: 16px;"></div>
+                    <h4 class="fw-bold text-dark mb-0 mt-3 ms-2" style="font-family: 'Outfit', sans-serif;" id="examModalTitle">Exam Schedule</h4>
+                    <button type="button" class="btn-close mt-3 me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-4 mt-2">
+                        <div class="d-inline-flex align-items-center justify-content-center mb-2 rounded-circle" style="width: 70px; height: 70px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 2px solid rgba(245, 158, 11, 0.2);">
+                            <i class="bi bi-clock-history" style="font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.3));"></i>
+                        </div>
+                        <p class="text-muted mt-2" style="font-size: 0.9rem;" id="examModalSubtitle">Here are the dates you need to know.</p>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-3 text-start">
+                        <div class="bg-light p-3 rounded-3" style="border-left: 4px solid #f59e0b; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <h6 class="fw-bold mb-1" style="color: #d97706; font-size: 0.9rem;"><i class="bi bi-1-circle-fill me-1"></i> Semester 1</h6>
+                            <div class="text-dark d-flex align-items-center" style="font-size: 0.95rem; font-weight: 500;">
+                                <span class="me-2 text-muted">Starts on:</span> 
+                                <span id="examSem1Date" class="fw-bold" style="color: #1e293b;">Not announced yet</span>
+                            </div>
+                        </div>
+                        <div class="bg-light p-3 rounded-3" style="border-left: 4px solid #10b981; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <h6 class="fw-bold mb-1" style="color: #059669; font-size: 0.9rem;"><i class="bi bi-2-circle-fill me-1"></i> Semester 2</h6>
+                            <div class="text-dark d-flex align-items-center" style="font-size: 0.95rem; font-weight: 500;">
+                                <span class="me-2 text-muted">Starts on:</span> 
+                                <span id="examSem2Date" class="fw-bold" style="color: #1e293b;">Not announced yet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function populateExamModal(title, sem1Date, sem2Date) {
+            let fullTitle = title;
+            if(title === 'UE') {
+                fullTitle = 'University Examinations (UE)';
+            }
+            document.getElementById('examModalTitle').innerText = fullTitle;
+            document.getElementById('examSem1Date').innerText = sem1Date ? sem1Date : 'Not announced yet';
+            document.getElementById('examSem2Date').innerText = sem2Date ? sem2Date : 'Not announced yet';
+        }
+    </script>
+</div>
 
 </body>
 </html>
