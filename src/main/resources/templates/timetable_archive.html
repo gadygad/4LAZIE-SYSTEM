@@ -294,20 +294,46 @@
         }
         /* Mobile Adjustments */
         @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
             .header-glass {
-                padding: 1rem 1.2rem;
-                margin-bottom: 2rem;
+                padding: 0.8rem 1rem;
+                margin-bottom: 1.5rem;
+                flex-wrap: nowrap;
+                gap: 5px;
             }
             .header-title {
-                font-size: 1.15rem; /* Smaller font to fit on one line */
+                font-size: 0.95rem; /* Smaller font to fit on one line */
+                white-space: nowrap;
             }
             .back-btn {
-                font-size: 0.85rem;
-                padding: 6px 12px;
+                font-size: 0.8rem;
+                padding: 6px 10px;
+                white-space: nowrap;
             }
             .accordion-button {
-                font-size: 1.1rem;
-                padding: 1rem 1.2rem;
+                font-size: 1rem;
+                padding: 0.8rem 1rem;
+            }
+            .timetable-card {
+                padding: 0.8rem;
+                margin-bottom: 0.8rem;
+            }
+            .card-info {
+                gap: 12px;
+            }
+            .card-icon {
+                width: 40px; height: 40px; font-size: 1.1rem;
+            }
+            .card-title {
+                font-size: 0.95rem;
+            }
+            .card-subtitle {
+                font-size: 0.75rem;
+            }
+            .view-btn {
+                width: 32px; height: 32px; font-size: 1.1rem;
             }
         }
     </style>
@@ -318,7 +344,7 @@
     <!-- Header -->
     <div class="header-glass">
         <a href="#" style="text-decoration: none;"><h1 class="header-title">TIMETABLE ARCHIVE</h1></a>
-        <a href="/" class="back-btn">
+        <a href="/guest-notes" class="back-btn">
             <i class="bi bi-arrow-left"></i> <span>Back to Home</span>
         </a>
     </div>
