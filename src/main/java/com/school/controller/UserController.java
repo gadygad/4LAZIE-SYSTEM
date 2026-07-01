@@ -92,7 +92,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         } else {
             // Preserve existing picture if no new file provided (Do not overwrite)
         }
-        sessionUser.setCourseProgram(formUser.getCourseProgram());
+        // sessionUser.setCourseProgram(formUser.getCourseProgram()); // Course modification disabled
         sessionUser.setLevel(formUser.getLevel());
         sessionUser.setSemester(formUser.getSemester());
         // Save changes

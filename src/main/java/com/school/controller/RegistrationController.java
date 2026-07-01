@@ -20,6 +20,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
+import com.school.repository.CourseRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,6 +48,9 @@ public class RegistrationController {
     private InstitutionRepository institutionRepository;
 
     @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
     private com.school.service.GoogleAuthService googleAuthService;
 
     @Autowired
@@ -57,8 +61,10 @@ public class RegistrationController {
         model.addAttribute("user", new User());
         try {
             model.addAttribute("institutions", institutionRepository.findAll());
+            model.addAttribute("courses", courseRepository.findAll());
         } catch (Exception e) {
             model.addAttribute("institutions", java.util.Collections.emptyList());
+            model.addAttribute("courses", java.util.Collections.emptyList());
         }
         return "register";
     }
@@ -72,12 +78,14 @@ public class RegistrationController {
                                Model model) {
         if (result.hasErrors()) {
             model.addAttribute("institutions", institutionRepository.findAll());
+            model.addAttribute("courses", courseRepository.findAll());
             return "register";
         }
         
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             model.addAttribute("error", "Sorry, this email (" + user.getEmail() + ") is already registered. Please log in or use another email.");
             model.addAttribute("institutions", institutionRepository.findAll());
+            model.addAttribute("courses", courseRepository.findAll());
             return "register";
         }
         
@@ -110,7 +118,9 @@ public class RegistrationController {
     }
 
     @PostMapping("/register/google")
-    public String registerWithGoogle(@RequestParam("credential") String credential, HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String registerWithGoogle(@RequestParam("credential") String credential, 
+                                     @RequestParam(value = "courseProgram", required = false) String courseProgram,
+                                     HttpServletRequest request, HttpServletResponse response, Model model) {
         HttpSession session = request.getSession(true);
         try {
             GoogleIdToken.Payload payload = googleAuthService.verifyToken(credential);
@@ -122,6 +132,15 @@ public class RegistrationController {
                 if (existingUser.isPresent()) {
                     user = existingUser.get();
                 } else {
+                    if (courseProgram == null || courseProgram.trim().isEmpty()) {
+                        model.addAttribute("error", "Please select a course before signing in with Google.");
+                        model.addAttribute("user", new User());
+                        try {
+                            model.addAttribute("institutions", institutionRepository.findAll());
+                            model.addAttribute("courses", courseRepository.findAll());
+                        } catch (Exception e) {}
+                        return "register";
+                    }
                     user = new User();
                     user.setEmail(email);
                     user.setName(name);
@@ -130,7 +149,7 @@ public class RegistrationController {
                     user.setLevel(4); // Default
                     user.setSemester(1); // Default
                     user.setYear(1); // Default
-                    user.setCourseProgram("General Studies"); // Default
+                    user.setCourseProgram(courseProgram); // Default
                     institutionRepository.findById("1").ifPresent(user::setInstitution); // Default to SJCET
                     user.setIsVerified(true); // Google accounts are auto-verified
                     userService.registerUser(user, null);
