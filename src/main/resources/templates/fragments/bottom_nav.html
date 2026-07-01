@@ -2,7 +2,7 @@
 <body>
     <div th:fragment="nav(activePage)">
         <!-- FLOATING BOTTOM NAV BAR -->
-        <div class="fixed-bottom custom-mobile-nav-wrapper d-flex justify-content-center d-lg-none"
+        <div class="fixed-bottom custom-mobile-nav-wrapper d-flex justify-content-center"
             style="z-index: 1040; pointer-events: none;">
             <div class="custom-mobile-nav-inner d-flex align-items-center justify-content-around rounded-pill shadow-lg px-3 py-1"
                 style="pointer-events: auto; border: 1px solid rgba(245, 158, 11, 0.2); gap: 5px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
@@ -52,9 +52,15 @@
         </div>
 
         <style>
+            /* === BOTTOM NAV: DESKTOP === */
             .custom-mobile-nav-wrapper {
-                margin-bottom: 1rem;
+                margin-bottom: 1.5rem;
             }
+            .custom-mobile-nav-inner {
+                min-width: 280px;
+            }
+
+            /* === BOTTOM NAV: MOBILE === */
             @media (max-width: 768px) {
                 .custom-mobile-nav-wrapper {
                     margin-bottom: 0 !important;
@@ -67,11 +73,17 @@
                     border-right: none !important;
                     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
                     justify-content: space-evenly !important;
+                    min-width: unset !important;
                 }
                 .bottom-nav-btn {
                     width: auto !important;
                     flex: 1;
                 }
+            }
+
+            /* Prevent page content from being hidden behind fixed bottom nav */
+            body {
+                padding-bottom: 80px !important;
             }
             .bottom-nav-btn {
                 position: relative;
