@@ -90,8 +90,8 @@ public class TimetableController {
     @org.springframework.web.bind.annotation.ResponseBody
     public String seedTimetable() {
         try {
-            java.nio.file.Path path = java.nio.file.Paths.get("src/main/resources/templates/view_timetable.html");
-            String html = new String(java.nio.file.Files.readAllBytes(path));
+            org.springframework.core.io.Resource resource = new org.springframework.core.io.ClassPathResource("templates/view_timetable.html");
+            String html = new String(resource.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
             java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("<div id=\"timetable-wrapper\">(.*?)<button class=\"print-btn\"", java.util.regex.Pattern.DOTALL).matcher(html);
             if (matcher.find()) {
                 String tableHtml = matcher.group(1).trim();
