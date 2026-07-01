@@ -86,7 +86,7 @@ public class TimetableController {
         return "view_timetable";
     }
 
-    @GetMapping("/seed-timetable")
+    @GetMapping("/timetable/seed")
     @org.springframework.web.bind.annotation.ResponseBody
     public String seedTimetable() {
         try {
