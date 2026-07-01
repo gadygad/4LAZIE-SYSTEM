@@ -2039,7 +2039,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             border-radius: 24px !important;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(245, 158, 11, 0.1) !important;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
+            overflow: visible; /* Changed to visible for dropdowns */
         }
         .premium-glass-modal:hover {
             transform: translateY(-5px);
@@ -2081,6 +2081,99 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             box-shadow: 0 12px 25px rgba(245, 158, 11, 0.4);
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
         }
+
+        /* Java Magic Dropdown Styles */
+        .js-dropdown-container {
+            position: relative;
+            width: 100%;
+        }
+        .js-dropdown-header {
+            border-radius: 12px;
+            padding: 14px 18px;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .js-dropdown-header:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(245, 158, 11, 0.8);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.15);
+        }
+        .js-dropdown-header.active {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+            background: #fff;
+        }
+        .js-dropdown-header i {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .js-dropdown-header.active i {
+            transform: rotate(180deg);
+            color: #f59e0b;
+        }
+        .js-dropdown-list {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(245, 158, 11, 0.15);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            max-height: 250px;
+            overflow-y: auto;
+            transform-origin: top center;
+        }
+        .js-dropdown-list.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .js-dropdown-item {
+            padding: 12px 18px;
+            color: #334155;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+        }
+        .js-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .js-dropdown-item:hover {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1), transparent);
+            color: #d97706;
+            padding-left: 24px;
+        }
+        .js-dropdown-item.selected {
+            background: rgba(245, 158, 11, 0.15);
+            color: #b45309;
+            font-weight: 700;
+            border-left: 3px solid #f59e0b;
+        }
+        /* Custom Scrollbar for dropdown */
+        .js-dropdown-list::-webkit-scrollbar { width: 6px; }
+        .js-dropdown-list::-webkit-scrollbar-track { background: transparent; }
+        .js-dropdown-list::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.3); border-radius: 10px; }
+        .js-dropdown-list:hover::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.5); }
     </style>
     <div class="modal fade" id="timetableModal" tabindex="-1" aria-labelledby="timetableModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -2097,7 +2190,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                         <!-- Program Type -->
                         <div class="mb-4">
                             <label class="form-label fw-bold text-secondary">Program Type</label>
-                            <select class="form-select custom-select-premium" name="program" id="programSelect" required style="border-radius: 12px; padding: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.7); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <select class="form-select custom-select-premium" name="program" id="programSelect" required style="display: none;">
                                 <option value="" disabled selected>Choose your program...</option>
                                 <option value="DIPLOMA">Diploma</option>
                                 <option value="DEGREE">Bachelor's Degree</option>
@@ -2107,7 +2200,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                         <!-- Level -->
                         <div class="mb-4">
                             <label class="form-label fw-bold text-secondary">Level / Year</label>
-                            <select class="form-select custom-select-premium" name="level" id="levelSelect" required style="border-radius: 12px; padding: 12px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.7); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <select class="form-select custom-select-premium" name="level" id="levelSelect" required style="display: none;">
                                 <option value="" disabled selected>Choose your level...</option>
                                 <option value="4" class="diploma-level">Level 4 (NTA 4)</option>
                                 <option value="5" class="diploma-level">Level 5 (NTA 5)</option>
@@ -2149,18 +2242,117 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             const diplomaLevels = document.querySelectorAll('.diploma-level');
             const degreeLevels = document.querySelectorAll('.degree-level');
 
+            // Original logic + Dropdown update
             if (programSelect) {
                 programSelect.addEventListener('change', function() {
-                    document.getElementById('levelSelect').value = '';
+                    const levelSelect = document.getElementById('levelSelect');
+                    levelSelect.value = '';
+                    
                     if (this.value === 'DIPLOMA') {
                         diplomaLevels.forEach(el => el.style.display = 'block');
                         degreeLevels.forEach(el => el.style.display = 'none');
-                    } else {
+                    } else if (this.value === 'DEGREE') {
                         diplomaLevels.forEach(el => el.style.display = 'none');
                         degreeLevels.forEach(el => el.style.display = 'block');
+                    } else {
+                        diplomaLevels.forEach(el => el.style.display = 'none');
+                        degreeLevels.forEach(el => el.style.display = 'none');
                     }
+                    // Re-render level dropdown to reflect displayed options
+                    updateCustomDropdown('levelSelect');
                 });
             }
+
+            // --- Java Magic Dropdown Implementation ---
+            function createCustomDropdown(selectId) {
+                const selectEl = document.getElementById(selectId);
+                if (!selectEl) return;
+                
+                // Hide original select
+                selectEl.style.display = 'none';
+                
+                // Check if container already exists and remove it
+                let container = selectEl.nextElementSibling;
+                if (container && container.classList.contains('js-dropdown-container')) {
+                    container.remove();
+                }
+
+                container = document.createElement('div');
+                container.className = 'js-dropdown-container';
+                
+                const header = document.createElement('div');
+                header.className = 'js-dropdown-header';
+                
+                const selectedOption = selectEl.options[selectEl.selectedIndex] || selectEl.options[0];
+                // Using bootstrap icon for arrow
+                header.innerHTML = `<span>${selectedOption.text}</span> <i class="bi bi-chevron-down"></i>`;
+                
+                const list = document.createElement('div');
+                list.className = 'js-dropdown-list';
+                
+                Array.from(selectEl.options).forEach((option, index) => {
+                    // Skip hidden options natively
+                    if (option.style.display === 'none') return;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'js-dropdown-item' + (option.selected ? ' selected' : '');
+                    item.textContent = option.text;
+                    
+                    if (option.disabled) {
+                        item.style.opacity = '0.5';
+                        item.style.cursor = 'not-allowed';
+                    } else {
+                        item.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            selectEl.selectedIndex = index;
+                            header.querySelector('span').textContent = option.text;
+                            list.classList.remove('open');
+                            header.classList.remove('active');
+                            
+                            // Update selected class
+                            list.querySelectorAll('.js-dropdown-item').forEach(i => i.classList.remove('selected'));
+                            item.classList.add('selected');
+                            
+                            // Trigger change event to update linked selects
+                            const event = new Event('change');
+                            selectEl.dispatchEvent(event);
+                        });
+                    }
+                    list.appendChild(item);
+                });
+                
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Close all other dropdowns
+                    document.querySelectorAll('.js-dropdown-list').forEach(l => {
+                        if (l !== list) l.classList.remove('open');
+                    });
+                    document.querySelectorAll('.js-dropdown-header').forEach(h => {
+                        if (h !== header) h.classList.remove('active');
+                    });
+                    
+                    list.classList.toggle('open');
+                    header.classList.toggle('active');
+                });
+                
+                container.appendChild(header);
+                container.appendChild(list);
+                selectEl.parentNode.insertBefore(container, selectEl.nextSibling);
+            }
+            
+            function updateCustomDropdown(selectId) {
+                createCustomDropdown(selectId);
+            }
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.js-dropdown-list').forEach(l => l.classList.remove('open'));
+                document.querySelectorAll('.js-dropdown-header').forEach(h => h.classList.remove('active'));
+            });
+
+            // Initialize custom dropdowns
+            createCustomDropdown('programSelect');
+            createCustomDropdown('levelSelect');
         });
     </script>
     <!-- END TIMETABLE SELECTION MODAL -->
