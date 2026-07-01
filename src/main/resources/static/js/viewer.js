@@ -43,9 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 let currentScale = scale;
                 if (window.innerWidth < 768) {
                     const tempViewport = firstPage.getViewport({ scale: 1.0 });
-                    const containerWidth = window.innerWidth - 32; 
+                    const containerWidth = window.innerWidth; // Full width, no padding
                     currentScale = containerWidth / tempViewport.width;
                     scale = currentScale;
+                    
+                    canvasContainer.style.padding = '0';
+                    canvasContainer.style.gap = '5px';
+                } else {
+                    canvasContainer.style.padding = '20px 0';
+                    canvasContainer.style.gap = '20px';
                 }
                 
                 const firstViewport = firstPage.getViewport({ scale: currentScale });
@@ -67,16 +73,23 @@ document.addEventListener('DOMContentLoaded', function() {
                                 canvas.dataset.rendered = "true";
                                 
                                 pdfDoc.getPage(num).then(page => {
-                                    const viewport = page.getViewport({ scale: currentScale });
-                                    canvas.width = Math.floor(viewport.width * outputScale);
-                                    canvas.height = Math.floor(viewport.height * outputScale);
-                                    canvas.style.width = Math.floor(viewport.width) + "px";
-                                    canvas.style.height = Math.floor(viewport.height) + "px";
+                                    const scaledViewport = page.getViewport({ scale: currentScale * outputScale });
+                                    const displayViewport = page.getViewport({ scale: currentScale });
+                                    
+                                    canvas.width = Math.floor(scaledViewport.width);
+                                    canvas.height = Math.floor(scaledViewport.height);
+                                    canvas.style.width = Math.floor(displayViewport.width) + "px";
+                                    canvas.style.height = Math.floor(displayViewport.height) + "px";
+                                    
+                                    if (window.innerWidth < 768) {
+                                        canvas.style.borderRadius = '0';
+                                        canvas.style.boxShadow = 'none';
+                                        canvas.style.borderBottom = '1px solid #ccc';
+                                    }
 
                                     const renderCtx = {
                                         canvasContext: canvas.getContext('2d'),
-                                        transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null,
-                                        viewport: viewport
+                                        viewport: scaledViewport
                                     };
                                     page.render(renderCtx);
                                 });
