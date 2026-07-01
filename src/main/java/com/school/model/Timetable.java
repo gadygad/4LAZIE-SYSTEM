@@ -24,6 +24,8 @@ public class Timetable {
 
     private String imageUrl; // URL to the uploaded timetable image (Cloudinary)
 
+    private String htmlContent; // Raw HTML code for the timetable layout
+
     private LocalDateTime uploadDate;
 
     public Timetable() {
@@ -52,6 +54,8 @@ public class Timetable {
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getHtmlContent() { return htmlContent; }
+    public void setHtmlContent(String htmlContent) { this.htmlContent = htmlContent; }
     public LocalDateTime getUploadDate() { return uploadDate; }
     public void setUploadDate(LocalDateTime uploadDate) { this.uploadDate = uploadDate; }
 }
