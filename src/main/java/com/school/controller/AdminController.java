@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.school.model.Timetable;
+import com.school.repository.TimetableRepository;
+import com.school.service.FileStorageService;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -24,6 +29,12 @@ public class AdminController {
 
     @Autowired
     private NoteRepository noteRepository;
+    
+    @Autowired
+    private TimetableRepository timetableRepository;
+    
+    @Autowired
+    private FileStorageService fileStorageService;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -119,5 +130,81 @@ public class AdminController {
         noteRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("success", "Note deleted successfully.");
         return "redirect:/admin/notes";
+    }
+
+    // ============ ADMIN TIMETABLES MANAGEMENT ============
+
+    @GetMapping("/timetables")
+    public String listTimetables(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        List<Timetable> timetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        model.addAttribute("timetables", timetables);
+        return "admin_timetables";
+    }
+
+    @PostMapping("/timetables/upload")
+    public String uploadTimetable(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("programType") String programType,
+            @RequestParam("levelNo") Integer levelNo,
+            @RequestParam("semesterNo") Integer semesterNo,
+            @RequestParam("academicYear") String academicYear,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+        
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Please select a file to upload.");
+            return "redirect:/admin/timetables";
+        }
+
+        try {
+            // First check if one already exists and delete the old one
+            timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(programType, levelNo, semesterNo)
+                .ifPresent(existing -> {
+                    try {
+                        String publicId = fileStorageService.extractCloudinaryPublicId(existing.getImageUrl());
+                        fileStorageService.deleteFile(publicId);
+                    } catch(Exception ignored) {}
+                    timetableRepository.delete(existing);
+                });
+
+            // Upload the new file (Image or PDF) to Cloudinary
+            String fileUrl = fileStorageService.uploadFile(file);
+            
+            Timetable timetable = new Timetable(programType, levelNo, semesterNo, academicYear, fileUrl);
+            timetableRepository.save(timetable);
+            
+            redirectAttributes.addFlashAttribute("success", "Timetable uploaded successfully.");
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload timetable: " + e.getMessage());
+        }
+
+        return "redirect:/admin/timetables";
+    }
+
+    @PostMapping("/timetables/{id}/delete")
+    public String deleteTimetable(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        timetableRepository.findById(id).ifPresent(timetable -> {
+            try {
+                String publicId = fileStorageService.extractCloudinaryPublicId(timetable.getImageUrl());
+                fileStorageService.deleteFile(publicId);
+            } catch(Exception ignored) {}
+            timetableRepository.delete(timetable);
+        });
+        
+        redirectAttributes.addFlashAttribute("success", "Timetable deleted successfully.");
+        return "redirect:/admin/timetables";
     }
 }
