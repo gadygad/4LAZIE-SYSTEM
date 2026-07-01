@@ -38,13 +38,21 @@ public class PushNotificationService {
 
     @PostConstruct
     private void init() {
+        // Skip gracefully if VAPID keys are not configured (e.g. dev/staging environment)
+        if (publicKey == null || publicKey.isBlank() ||
+            privateKey == null || privateKey.isBlank()) {
+            logger.warn("VAPID keys not configured — Web Push notifications are DISABLED. " +
+                        "Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables to enable.");
+            return;
+        }
         try {
             if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
                 Security.addProvider(new BouncyCastleProvider());
             }
             pushService = new PushService(publicKey, privateKey, subject);
+            logger.info("PushService initialized successfully.");
         } catch (Exception e) {
-            logger.error("Failed to initialize PushService", e);
+            logger.error("Failed to initialize PushService — Push notifications disabled.", e);
         }
     }
 

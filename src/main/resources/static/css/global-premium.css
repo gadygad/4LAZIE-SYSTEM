@@ -37,12 +37,18 @@
 }
 
 /* Base Reset */
-body, html {
+html {
+    margin: 0; padding: 0; min-height: 100%;
+    /* IMPORTANT: overflow must NOT be hidden on <html> — breaks position:fixed */
+    overflow: visible;
+}
+
+body {
     margin: 0; padding: 0; min-height: 100%;
     font-family: 'Outfit', sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
-    overflow-x: hidden;
+    overflow-x: hidden; /* safe on body only */
     display: flex;
     flex-direction: column;
 }
