@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.index.Indexed;
+import com.school.util.EncryptionUtil;
 import java.time.LocalDateTime;
 
 @Document(collection = "notes")
@@ -113,8 +114,11 @@ public class Note {
     public void setInstitution(Institution institution) { this.institution = institution; }
 
     public String getSlug() {
-        if (title == null) return id;
-        String cleanTitle = title.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("-$", "").replaceAll("^-", "");
+        String cleanTitle = (title != null) ? title.toLowerCase().replaceAll("[^a-z0-9]+", "-") : "document";
         return id + "-" + cleanTitle;
+    }
+
+    public String getEncryptedSlug() {
+        return EncryptionUtil.encrypt(id);
     }
 }
