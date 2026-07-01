@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.domain.Sort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +25,11 @@ public class SearchApiController {
 
     @Autowired
     private NoteRepository noteRepository;
+    
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(SearchApiController.class);
 
     @GetMapping("/api/search")
     public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query) {
@@ -48,29 +60,34 @@ public class SearchApiController {
     @GetMapping("/api/notes/filter")
     public ResponseEntity<List<Map<String, Object>>> filterNotes(
             @RequestParam("category") String category,
-            @RequestParam("program") String program,
-            @RequestParam("semester") Integer semester,
+            @RequestParam(value = "program", required = false) String program,
+            @RequestParam(value = "semester", required = false) Integer semester,
             @RequestParam(value = "level", required = false) Integer level) {
             
-        // Query the database for the matching notes
-                System.out.println("API Called with: category=" + category + ", program=" + program + ", semester=" + semester + ", level=" + level);
-        List<Note> notes = noteRepository.findByCategoryIgnoreCaseOrderByIdDesc(category);
-        System.out.println("Found " + notes.size() + " notes with category " + category);
+        logger.info("API Called with: category={}, program={}, semester={}, level={}", category, program, semester, level);
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("category").regex("^" + category + "$", "i"));
+        // Assuming we only want public notes for API filtering
+        query.addCriteria(Criteria.where("isPublic").is(true));
         
-        for (Note n : notes) {
-            System.out.println("Checking Note: " + n.getTitle() + " | DB Program: " + n.getProgramType() + " | DB Semester: " + n.getSemesterNo() + " | DB Level: " + n.getLevelNo() + " | isPublic: " + n.getIsPublic());
+        if (program != null && !program.isEmpty()) {
+            query.addCriteria(Criteria.where("programType").regex(program, "i"));
         }
+        if (semester != null) {
+            query.addCriteria(Criteria.where("semesterNo").is(semester));
+        }
+        if (level != null) {
+            query.addCriteria(Criteria.where("levelNo").is(level));
+        }
+        query.with(Sort.by(Sort.Direction.DESC, "id"));
 
+        List<Note> notes = mongoTemplate.find(query, Note.class);
+        logger.info("Found {} notes after database filtering", notes.size());
         
-                List<Map<String, Object>> results = notes.stream()
-                .filter(n -> program == null || program.isEmpty() || program.equalsIgnoreCase(n.getProgramType()) ||
-                             (n.getProgramType() != null && n.getProgramType().toLowerCase().contains(program.toLowerCase())))
-                .filter(n -> semester == null || semester.equals(n.getSemesterNo()))
-                .filter(n -> level == null || level.equals(n.getLevelNo()))
-                .filter(n -> n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic()))
-
+        List<Map<String, Object>> results = notes.stream()
                 .map(note -> {
-                                        Map<String, Object> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("id", note.getId());
                     map.put("title", note.getTitle());
                     map.put("moduleName", note.getModuleName());

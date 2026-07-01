@@ -1,72 +1,156 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-    <!-- Mobile Bottom Navigation Fragment -->
-    <div th:fragment="nav(activePage)" class="mobile-bottom-nav d-lg-none" th:if="${session.user != null}">
-        <div class="mobile-bottom-nav-container">
-            <a th:href="@{/dashboard}" class="nav-item-bottom" th:classappend="${activePage == 'home'} ? 'active'">
-                <i class="bi bi-house-door-fill"></i>
-                <span>Home</span>
-            </a>
-            <!-- Dynamic Middle Item -->
-            <th:block th:if="${activePage == 'cat1'}">
-                <a th:href="@{/cat1}" class="nav-item-bottom active">
-                    <i class="bi bi-card-list"></i>
-                    <span>CAT 1</span>
-                </a>
-            </th:block>
-            <th:block th:if="${activePage == 'cat2'}">
-                <a th:href="@{/cat2}" class="nav-item-bottom active">
-                    <i class="bi bi-card-checklist"></i>
-                    <span>CAT 2</span>
-                </a>
-            </th:block>
-            <th:block th:if="${activePage == 'ue'}">
-                <a th:href="@{/ue_exams}" class="nav-item-bottom active">
-                    <i class="bi bi-journal-check"></i>
-                    <span>UE Exams</span>
-                </a>
-            </th:block>
-            <th:block th:if="${activePage == 'assignment'}">
-                <a th:href="@{/assignments}" class="nav-item-bottom active">
-                    <i class="bi bi-journal-text"></i>
-                    <span>Assignments</span>
-                </a>
-            </th:block>
-            <th:block th:if="${activePage == 'project'}">
-                <a th:href="@{/projects}" class="nav-item-bottom active">
-                    <i class="bi bi-kanban"></i>
-                    <span>Projects</span>
-                </a>
-            </th:block>
-            <th:block th:if="${activePage == 'notes' or (activePage != 'cat1' and activePage != 'cat2' and activePage != 'ue' and activePage != 'assignment' and activePage != 'project')}">
-                <a th:href="@{/notes}" class="nav-item-bottom active">
-                    <i class="bi bi-journal-richtext"></i>
-                    <span>Notes</span>
-                </a>
-            </th:block>
-            
+    <div th:fragment="nav(activePage)">
+        <!-- FLOATING BOTTOM NAV BAR -->
+        <div class="fixed-bottom custom-mobile-nav-wrapper d-flex justify-content-center d-lg-none"
+            style="z-index: 1040; pointer-events: none;">
+            <div class="custom-mobile-nav-inner d-flex align-items-center justify-content-around rounded-pill shadow-lg px-3 py-1"
+                style="pointer-events: auto; border: 1px solid rgba(245, 158, 11, 0.2); gap: 5px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
 
-        
-            <div class="dropup nav-item-bottom" th:classappend="${activePage == 'profile'} ? 'active'" style="cursor: pointer; width: 25%;" th:styleappend="${activePage == 'profile'} ? 'color: #10b981 !important;' : ''" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="true">
-                <img th:if="${user != null and user.profilePicture != null}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile" style="width: 28px; height: 28px; object-fit: cover; border-radius: 8px; border: 1px solid currentColor; margin-bottom: 2px;">
-                <div th:unless="${user != null and user.profilePicture != null}" class="d-flex align-items-center justify-content-center mb-1" style="width: 28px; height: 28px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 8px; border: 1px solid #fff; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2); overflow: hidden; transition: all 0.3s ease;">
-                    <i class="bi bi-person-fill" style="font-size: 1.3rem; color: #ffffff; margin-top: 3px;"></i>
-                </div>
-                <span>Profile</span>
+                <!-- Calendar - always visible -->
+                <a href="#"
+                    class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    style="color: #64748b; width: 70px;" data-bs-toggle="modal" data-bs-target="#calendarModal">
+                    <i class="bi bi-calendar-event-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CALENDAR</span>
+                </a>
+
+                <!-- CAT 1 -->
+                <a th:if="${cat1Passed == null || !cat1Passed}" href="#"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
+                    data-exam-title="CAT 1"
+                    th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat1Date != null ? currentCalendar.sem1Cat1Date : ''}"
+                    th:data-sem2="${currentCalendar != null and currentCalendar.sem2Cat1Date != null ? currentCalendar.sem2Cat1Date : ''}">
+                    <i class="bi bi-ui-checks" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 1</span>
+                </a>
+
+                <!-- CAT 2 -->
+                <a th:if="${cat2Passed == null || !cat2Passed}" href="#"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
+                    data-exam-title="CAT 2"
+                    th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat2Date != null ? currentCalendar.sem1Cat2Date : ''}"
+                    th:data-sem2="${currentCalendar != null and currentCalendar.sem2Cat2Date != null ? currentCalendar.sem2Cat2Date : ''}">
+                    <i class="bi bi-ui-checks-grid" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 2</span>
+                </a>
+
+                <!-- UE -->
+                <a th:if="${uePassed == null || !uePassed}" href="#"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
+                    data-exam-title="UE"
+                    th:data-sem1="${currentCalendar != null and currentCalendar.sem1UeDate != null ? currentCalendar.sem1UeDate : ''}"
+                    th:data-sem2="${currentCalendar != null and currentCalendar.sem2UeDate != null ? currentCalendar.sem2UeDate : ''}">
+                    <i class="bi bi-mortarboard-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">UE</span>
+                </a>
+
             </div>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mb-3 p-2" style="border-radius: 20px; min-width: 240px; animation: popupAnim 0.3s forwards; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8) !important; box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15) !important;">
-                <li class="px-3 py-3 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(16, 185, 129, 0.15); box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);">
-                    <p class="mb-1 fw-bold" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; color: #0f172a !important; letter-spacing: 0.2px;" th:text="${user != null ? user.name : 'User'}">User</p>
-                    <p class="mb-0 fw-medium" style="font-size: 0.75rem; color: #10b981 !important; letter-spacing: 1px;" th:text="${user != null ? user.role : 'STUDENT'}">ROLE</p>
-                </li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-grid-1x2-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Dashboard</a></li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-person-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>My Profile</a></li>
-                <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#059669 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-gear-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Settings</a></li>
-
-                <li><hr class="dropdown-divider my-2 opacity-25 mx-3" style="border-color: #10b981;"></li>
-                <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: #ef4444 !important;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.15)); border: 1px solid rgba(255,255,255,0.6);"><i class="bi bi-box-arrow-right" style="color: #ef4444; font-size: 1.1rem;"></i></div>Logout</a></li>
-            </ul>
-
         </div>
-    </div>
 
+        <style>
+            .custom-mobile-nav-wrapper {
+                margin-bottom: 1rem;
+            }
+            @media (max-width: 768px) {
+                .custom-mobile-nav-wrapper {
+                    margin-bottom: 0 !important;
+                }
+                .custom-mobile-nav-inner {
+                    width: 100% !important;
+                    border-radius: 20px 20px 0 0 !important;
+                    border-bottom: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+                    justify-content: space-evenly !important;
+                }
+                .bottom-nav-btn {
+                    width: auto !important;
+                    flex: 1;
+                }
+            }
+            .bottom-nav-btn {
+                position: relative;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                border: 1px solid transparent !important;
+                z-index: 1;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .bottom-nav-btn::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                width: 120%;
+                padding-bottom: 120%;
+                background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0) 70%);
+                border-radius: 50%;
+                transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+                opacity: 0;
+                z-index: -1;
+            }
+            .bottom-nav-btn:hover::before {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            .bottom-nav-btn:hover {
+                background: rgba(245, 158, 11, 0.1) !important;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                color: #d97706 !important;
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
+                border: 1px solid rgba(245, 158, 11, 0.2) !important;
+            }
+            .bottom-nav-btn i {
+                transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s, filter 0.3s;
+            }
+            .bottom-nav-btn:hover i {
+                color: #d97706 !important;
+                transform: translateY(-2px) scale(1.15);
+                filter: drop-shadow(0 6px 8px rgba(245, 158, 11, 0.4));
+            }
+            .bottom-nav-btn:active {
+                transform: scale(0.92) translateY(2px) !important;
+                box-shadow: inset 0 2px 10px rgba(245, 158, 11, 0.2) !important;
+                background: rgba(245, 158, 11, 0.2) !important;
+                transition: all 0.1s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
+            }
+            .bottom-nav-btn:active i {
+                transform: scale(0.85) !important;
+                filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.8)) !important;
+                transition: all 0.1s ease !important;
+            }
+        </style>
+
+        <script>
+            document.querySelectorAll('.exam-nav-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var title = this.getAttribute('data-exam-title');
+                    var sem1 = this.getAttribute('data-sem1');
+                    var sem2 = this.getAttribute('data-sem2');
+                    var fullTitle = title === 'UE' ? 'University Examinations (UE)' : title;
+                    
+                    var titleEl = document.getElementById('examModalTitle');
+                    if(titleEl) titleEl.innerText = fullTitle;
+                    
+                    var sem1El = document.getElementById('examSem1Date');
+                    if(sem1El) sem1El.innerText = sem1 ? sem1 : 'Not announced yet';
+                    
+                    var sem2El = document.getElementById('examSem2Date');
+                    if(sem2El) sem2El.innerText = sem2 ? sem2 : 'Not announced yet';
+                });
+            });
+        </script>
+
+        <!-- Modals (Calendar & Exams) -->
+        <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
+    </div>
+</body>
+</html>

@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 @Service
 public class EmailService {
@@ -13,6 +14,7 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
+    @Async
     public void sendPasswordResetEmail(String to, String resetLink) {
         if (mailSender == null) {
             System.err.println("MailSender is not configured. Cannot send email to: " + to);
@@ -31,6 +33,7 @@ public class EmailService {
         }
     }
 
+    @Async
     public void sendVerificationEmail(String to, String verificationLink) {
         if (mailSender == null) {
             System.err.println("MailSender is not configured. Cannot send email to: " + to);
@@ -50,6 +53,7 @@ public class EmailService {
         }
     }
     
+    @Async
     public void sendNewNoteNotification(String to, String noteTitle, String category, String url) {
         if (mailSender == null) return;
         try {

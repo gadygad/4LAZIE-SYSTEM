@@ -2,8 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
+    <style>
+        /* Force body to take full height and push footer down */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Push the footer wrapper (or footer itself) to the bottom */
+        body > *:not(script):not(style):last-of-type {
+            margin-top: auto !important;
+        }
+    </style>
     <!-- INTERNATIONAL PREMIUM MINIMALIST FOOTER -->
-    <footer th:fragment="footer" style="margin-top: auto; width: 100%; border-top: 1px solid rgba(245, 158, 11, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 100vh; z-index: 10;">
+    <footer th:fragment="footer" style="width: 100%; border-top: 1px solid rgba(245, 158, 11, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10;">
         <div class="container-fluid px-2 px-md-4 px-xl-5 py-2 py-md-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start" style="font-family: 'Outfit', sans-serif; font-size: 12px; letter-spacing: 0.5px;">
                 
@@ -27,6 +39,9 @@
                 
             </div>
         </div>
+        
+        <!-- Mobile Bottom Nav Spacer -->
+        <div class="d-lg-none" style="height: 55px; width: 100%; pointer-events: none;"></div>
         
         <!-- COMING SOON MODAL (PREMIUM GOLD) -->
         <div class="modal fade" id="comingSoonModal" tabindex="-1" aria-hidden="true" style="backdrop-filter: blur(8px);">
