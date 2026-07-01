@@ -1939,6 +1939,52 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
         </div><!-- end .main-content -->
     </div><!-- end .page-layout -->
 
+    <!-- FLOATING BOTTOM NAV BAR -->
+    <div class="fixed-bottom mb-3 d-flex justify-content-center" style="z-index: 1040; pointer-events: none;">
+        <div class="d-flex align-items-center justify-content-around bg-white rounded-pill shadow-lg px-3 py-2" style="pointer-events: auto; border: 1px solid rgba(245, 158, 11, 0.2); gap: 10px;">
+            
+            <!-- Calendar - always visible -->
+            <a href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 75px;" data-bs-toggle="modal" data-bs-target="#calendarModal">
+                <i class="bi bi-calendar-event-fill mb-1" style="font-size: 1.2rem;"></i>
+                <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CALENDAR</span>
+            </a>
+
+            <!-- CAT 1 - hidden once both semester dates have passed -->
+            <a th:if="${!cat1Passed}" href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal" th:onclick="'populateExamModal(\'CAT 1\', \'' + (${currentCalendar != null ? currentCalendar.sem1Cat1Date : ''}) + '\', \'' + (${currentCalendar != null ? currentCalendar.sem2Cat1Date : ''}) + '\')'">
+                <i class="bi bi-ui-checks mb-1" style="font-size: 1.2rem;"></i>
+                <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 1</span>
+            </a>
+            
+            <!-- CAT 2 - hidden once both semester dates have passed -->
+            <a th:if="${!cat2Passed}" href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal" th:onclick="'populateExamModal(\'CAT 2\', \'' + (${currentCalendar != null ? currentCalendar.sem1Cat2Date : ''}) + '\', \'' + (${currentCalendar != null ? currentCalendar.sem2Cat2Date : ''}) + '\')'">
+                <i class="bi bi-ui-checks-grid mb-1" style="font-size: 1.2rem;"></i>
+                <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 2</span>
+            </a>
+            
+            <!-- UE - hidden once both semester dates have passed -->
+            <a th:if="${!uePassed}" href="#" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center p-2 rounded-4" style="color: #64748b; transition: all 0.3s ease; width: 65px;" data-bs-toggle="modal" data-bs-target="#examModal" th:onclick="'populateExamModal(\'UE\', \'' + (${currentCalendar != null ? currentCalendar.sem1UeDate : ''}) + '\', \'' + (${currentCalendar != null ? currentCalendar.sem2UeDate : ''}) + '\')'">
+                <i class="bi bi-mortarboard-fill mb-1" style="font-size: 1.2rem;"></i>
+                <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Outfit', sans-serif;">UE</span>
+            </a>
+
+        </div>
+    </div>
+
+    <style>
+        .bottom-nav-btn:hover {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b !important;
+            transform: translateY(-3px);
+        }
+        .bottom-nav-btn:hover i {
+            color: #f59e0b !important;
+            filter: drop-shadow(0 2px 4px rgba(245,158,11,0.3));
+        }
+    </style>
+
+    <!-- Modals (Calendar & Exams) -->
+    <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
+
     <!-- Premium Mobile Offcanvas Sidebar for Guests -->
     <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
     </div>
