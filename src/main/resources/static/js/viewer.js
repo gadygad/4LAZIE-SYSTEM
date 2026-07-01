@@ -142,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.innerHTML = `<img src="${url}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" alt="Document Image">`;
         }
         hideLoader();
-    } else if (filename.endsWith('.doc') || filename.endsWith('.docx') || filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
-        // LOAD WORD/EXCEL USING MICROSOFT OFFICE ONLINE VIEWER (HIGHEST QUALITY)
+    } else if (filename.endsWith('.doc') || filename.endsWith('.docx') || filename.endsWith('.ppt') || filename.endsWith('.pptx') || filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
+        // LOAD WORD/PPT/EXCEL USING MICROSOFT OFFICE ONLINE VIEWER (HIGHEST QUALITY)
         if (controls) controls.style.display = 'none';
         if (canvasContainer) {
             canvasContainer.style.padding = '0';
