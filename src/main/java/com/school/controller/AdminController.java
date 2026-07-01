@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.school.model.Timetable;
 import com.school.repository.TimetableRepository;
+import com.school.model.AcademicCalendar;
+import com.school.repository.AcademicCalendarRepository;
 import com.school.service.FileStorageService;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -32,6 +34,9 @@ public class AdminController {
     
     @Autowired
     private TimetableRepository timetableRepository;
+
+    @Autowired
+    private AcademicCalendarRepository academicCalendarRepository;
     
     @Autowired
     private FileStorageService fileStorageService;
@@ -204,4 +209,91 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("success", "Timetable deleted successfully.");
         return "redirect:/admin/timetables";
     }
+
+    // ============ ADMIN ACADEMIC CALENDAR MANAGEMENT ============
+
+    @GetMapping("/calendar")
+    public String viewCalendarAdmin(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        List<AcademicCalendar> calendars = academicCalendarRepository.findAll();
+        model.addAttribute("calendars", calendars);
+        return "admin_calendar";
+    }
+
+    @PostMapping("/calendar/upload")
+    public String uploadCalendar(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("academicYear") String academicYear,
+            @RequestParam("sem1Cat1Date") String sem1Cat1Date,
+            @RequestParam("sem1Cat2Date") String sem1Cat2Date,
+            @RequestParam("sem1UeDate") String sem1UeDate,
+            @RequestParam("sem2Cat1Date") String sem2Cat1Date,
+            @RequestParam("sem2Cat2Date") String sem2Cat2Date,
+            @RequestParam("sem2UeDate") String sem2UeDate,
+            @RequestParam(value = "isCurrent", required = false) boolean isCurrent,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+
+        try {
+            AcademicCalendar calendar = new AcademicCalendar();
+            calendar.setAcademicYear(academicYear);
+            calendar.setSem1Cat1Date(sem1Cat1Date);
+            calendar.setSem1Cat2Date(sem1Cat2Date);
+            calendar.setSem1UeDate(sem1UeDate);
+            calendar.setSem2Cat1Date(sem2Cat1Date);
+            calendar.setSem2Cat2Date(sem2Cat2Date);
+            calendar.setSem2UeDate(sem2UeDate);
+            
+            if (isCurrent) {
+                // unset others
+                academicCalendarRepository.findByIsCurrentTrue().ifPresent(old -> {
+                    old.setIsCurrent(false);
+                    academicCalendarRepository.save(old);
+                });
+            }
+            calendar.setIsCurrent(isCurrent || academicCalendarRepository.count() == 0);
+
+            if (!file.isEmpty()) {
+                String fileUrl = fileStorageService.storeFile(file);
+                calendar.setFileUrl(fileUrl);
+            }
+
+            academicCalendarRepository.save(calendar);
+            redirectAttributes.addFlashAttribute("success", "Academic Calendar uploaded successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload Academic Calendar: " + e.getMessage());
+        }
+
+        return "redirect:/admin/calendar";
+    }
+
+    @PostMapping("/calendar/{id}/delete")
+    public String deleteCalendar(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        academicCalendarRepository.findById(id).ifPresent(calendar -> {
+            try {
+                if (calendar.getFileUrl() != null) {
+                    String publicId = fileStorageService.extractCloudinaryPublicId(calendar.getFileUrl());
+                    fileStorageService.deleteFile(publicId);
+                }
+            } catch (Exception ignored) {}
+            academicCalendarRepository.delete(calendar);
+        });
+        
+        redirectAttributes.addFlashAttribute("success", "Academic Calendar deleted successfully.");
+        return "redirect:/admin/calendar";
+    }
+
 }

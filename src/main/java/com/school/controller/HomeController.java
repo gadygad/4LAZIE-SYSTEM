@@ -1,14 +1,20 @@
 package com.school.controller;
 
 import com.school.model.Note;
+import com.school.model.AcademicCalendar;
 import com.school.repository.NoteRepository;
+import com.school.repository.AcademicCalendarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Controller
 public class HomeController {
@@ -49,7 +55,8 @@ public class HomeController {
     @Autowired
     private NoteRepository noteRepository;
 
-
+    @Autowired
+    private AcademicCalendarRepository academicCalendarRepository;
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
@@ -61,9 +68,50 @@ public class HomeController {
                 .map(HomeController::getAdviceForModule)
                 .collect(Collectors.toList());
 
+        // Fetch current academic calendar and compute exam-passed flags
+        AcademicCalendar[] calHolder = new AcademicCalendar[1];
+        academicCalendarRepository.findByIsCurrentTrue().ifPresent(calendar -> {
+            model.addAttribute("currentCalendar", calendar);
+            calHolder[0] = calendar;
+        });
+
+        // Determine if each exam type's dates have ALL passed
+        if (calHolder[0] != null) {
+            AcademicCalendar cal = calHolder[0];
+            model.addAttribute("cat1Passed", hasDatePassed(cal.getSem1Cat1Date()) && hasDatePassed(cal.getSem2Cat1Date()));
+            model.addAttribute("cat2Passed", hasDatePassed(cal.getSem1Cat2Date()) && hasDatePassed(cal.getSem2Cat2Date()));
+            model.addAttribute("uePassed", hasDatePassed(cal.getSem1UeDate()) && hasDatePassed(cal.getSem2UeDate()));
+        } else {
+            model.addAttribute("cat1Passed", false);
+            model.addAttribute("cat2Passed", false);
+            model.addAttribute("uePassed", false);
+        }
+
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
         return "home";
+    }
+
+    /**
+     * Parses a date string like "13 Jan 2026" or a range like "23 Mar 2026 - 02 Apr 2026"
+     * and returns true if the date (or the END date of a range) is in the past.
+     */
+    private boolean hasDatePassed(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) return false;
+        try {
+            // If it's a range like "23 Mar 2026 - 02 Apr 2026", take the last part
+            String cleaned = dateStr.trim();
+            if (cleaned.contains("-")) {
+                String[] parts = cleaned.split("-");
+                cleaned = parts[parts.length - 1].trim();
+            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH);
+            LocalDate examDate = LocalDate.parse(cleaned, formatter);
+            return LocalDate.now().isAfter(examDate);
+        } catch (DateTimeParseException e) {
+            // If parsing fails, don't hide the button
+            return false;
+        }
     }
 
     @GetMapping("/init")
