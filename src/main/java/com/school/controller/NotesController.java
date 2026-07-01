@@ -439,8 +439,8 @@ public class NotesController {
         
         // Ensure only Assignments, Past Papers, CAT, UE, Projects require login.
         if (note.getCategory() != null && loggedInUser == null) {
-            String cat = note.getCategory().toUpperCase();
-            if (cat.contains("ASSIGNMENT") || cat.contains("PROJECT") || cat.contains("UE") || cat.contains("CAT") || cat.contains("PAST")) {
+            String cat = note.getCategory().toUpperCase().trim();
+            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
                 response.sendRedirect("/login");
                 return;
             }
@@ -524,8 +524,8 @@ public class NotesController {
         
         // Ensure only Assignments, Past Papers, CAT, UE, Projects require login.
         if (note.getCategory() != null && loggedInUser == null) {
-            String cat = note.getCategory().toUpperCase();
-            if (cat.contains("ASSIGNMENT") || cat.contains("PROJECT") || cat.contains("UE") || cat.contains("CAT") || cat.contains("PAST")) {
+            String cat = note.getCategory().toUpperCase().trim();
+            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
                 return "redirect:/login";
             }
         }
