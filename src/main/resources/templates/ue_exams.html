@@ -128,6 +128,14 @@
     <!-- Mobile Bottom Navigation -->
     <div th:replace="~{fragments/bottom_nav :: nav('ue')}"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    function openDocumentViewer(url) {
+        document.getElementById('documentViewerLoading').style.display = 'flex';
+        document.getElementById('documentViewerIframe').src = url;
+        var myModal = new bootstrap.Modal(document.getElementById('documentViewerModal'));
+        myModal.show();
+    }
+    
+</script>
 </body>
 </html>
