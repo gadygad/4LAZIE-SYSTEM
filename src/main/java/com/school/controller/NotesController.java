@@ -436,7 +436,12 @@ public class NotesController {
         }
 
         User loggedInUser = getLoggedInUser();
-        // Removed login requirement to make downloading free for everyone
+        
+        // Ensure only "Note" category is free. Assignments, Past Papers, CAT, UE, Projects require login.
+        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
+            response.sendRedirect("/login");
+            return;
+        }
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
@@ -514,7 +519,10 @@ public class NotesController {
             return "redirect:/dashboard";
         }
         
-        // Removed login requirement to make viewing free for everyone
+        // Ensure only "Note" category is free. Assignments, Past Papers, CAT, UE, Projects require login.
+        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
+            return "redirect:/login";
+        }
         
         note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
         noteRepository.save(note);
