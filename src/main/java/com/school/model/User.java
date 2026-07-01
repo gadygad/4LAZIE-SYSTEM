@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import java.util.Set;
 import java.util.HashSet;
 @Document(collection = "users")
@@ -18,6 +19,7 @@ public class User {
 
     @NotBlank(message = "Name cannot be empty")
     @Size(min = 2, max = 100)
+    @Pattern(regexp = "^[a-zA-Z\\-']+(?:\\s+[a-zA-Z\\-']+)+$", message = "Tafadhali andika majina kuanzia mawili (Mfano: John Doe)")
     private String name;
 
     @NotBlank(message = "Email is required")

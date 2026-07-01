@@ -47,7 +47,7 @@
                 </div>
                 
                 <div class="mb-3">
-                    <input type="text" name="name" th:field="*{name}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" placeholder="Username" required autocomplete="off">
+                    <input type="text" name="name" th:field="*{name}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" placeholder="Majina Yako Kamili (Mfano: John Doe)" required pattern="^[a-zA-Z\-']+(?:\s+[a-zA-Z\-']+)+$" title="Tafadhali andika majina kuanzia mawili (Mfano: John Doe)" autocomplete="off">
                     <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
                 
