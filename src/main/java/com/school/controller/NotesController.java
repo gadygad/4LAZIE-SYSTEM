@@ -553,8 +553,11 @@ public class NotesController {
         if (note != null && !note.getIsPublic() && loggedInUser == null) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
         }
-        if (note != null && note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+        if (note != null && note.getCategory() != null && loggedInUser == null) {
+            String cat = note.getCategory().toUpperCase().trim();
+            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
+            }
         }
 
         if (note != null && note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
