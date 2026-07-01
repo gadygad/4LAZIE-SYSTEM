@@ -219,6 +219,7 @@ public class NotesController {
     @GetMapping("/cat1")
     public String cat1PastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "cat1_past_papers";
@@ -227,6 +228,7 @@ public class NotesController {
     @GetMapping("/cat2")
     public String cat2PastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "cat2_past_papers";
@@ -235,6 +237,7 @@ public class NotesController {
     @GetMapping("/assignments")
     public String assignmentsPastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "assignments_past_papers";
@@ -243,6 +246,7 @@ public class NotesController {
     @GetMapping("/ue_exams")
     public String ueExamsPastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "ue_past_papers";
@@ -251,6 +255,7 @@ public class NotesController {
     @GetMapping("/projects")
     public String projectsPastPapers(Model model) {
         User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
         return "projects_past_papers";
@@ -432,7 +437,14 @@ public class NotesController {
 
         User loggedInUser = getLoggedInUser();
         
-        // Removed login restriction as requested by user to make all notes free
+        // Ensure only Assignments, Past Papers, CAT, UE, Projects require login.
+        if (note.getCategory() != null && loggedInUser == null) {
+            String cat = note.getCategory().toUpperCase().trim();
+            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
+                response.sendRedirect("/login");
+                return;
+            }
+        }
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
@@ -510,7 +522,13 @@ public class NotesController {
             return "redirect:/dashboard";
         }
         
-        // Removed login restriction as requested by user to make all notes free
+        // Ensure only Assignments, Past Papers, CAT, UE, Projects require login.
+        if (note.getCategory() != null && loggedInUser == null) {
+            String cat = note.getCategory().toUpperCase().trim();
+            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
+                return "redirect:/login";
+            }
+        }
         
         note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
         noteRepository.save(note);
