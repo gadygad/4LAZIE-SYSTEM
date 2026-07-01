@@ -370,8 +370,8 @@ public class NotesController {
             note.setFileUrl(fileUrl);
             note.setUploadDate(LocalDateTime.now());
             note.setIsPublic(true);
-            // Link to SJUIT (institution id=1) automatically
-            Institution institution = institutionRepository.findById("1").orElse(null);
+            // Link to the uploader's institution automatically
+            Institution institution = loggedInUser.getInstitution();
             note.setInstitution(institution);
             noteRepository.save(note);
             
