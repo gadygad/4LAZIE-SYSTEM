@@ -66,7 +66,7 @@ public class TimetableController {
         }
 
         // Determine the "Current" Academic Year (the one with the largest string value)
-        List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        java.util.List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
         String currentYear = allTimetables.stream()
                 .map(Timetable::getAcademicYear)
                 .filter(y -> y != null && !y.isEmpty())
@@ -99,7 +99,7 @@ public class TimetableController {
 
     @GetMapping("/timetable/archive")
     public String viewArchive(Model model) {
-        List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        java.util.List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
         
         // Determine the "Current" Academic Year
         String currentYear = allTimetables.stream()
