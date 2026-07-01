@@ -436,11 +436,7 @@ public class NotesController {
         }
 
         User loggedInUser = getLoggedInUser();
-        // Only "Note" category is free for guests. Everything else requires login.
-        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
-            response.sendRedirect("/login");
-            return;
-        }
+        // Removed login requirement to make downloading free for everyone
 
         note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
         noteRepository.save(note);
@@ -518,10 +514,7 @@ public class NotesController {
             return "redirect:/dashboard";
         }
         
-        // Only "Note" category is free for guests. Everything else requires login.
-        if (note.getCategory() != null && !note.getCategory().equalsIgnoreCase("Note") && loggedInUser == null) {
-            return "redirect:/login";
-        }
+        // Removed login requirement to make viewing free for everyone
         
         note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
         noteRepository.save(note);
