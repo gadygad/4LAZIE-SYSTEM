@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Hii inahakikisha table nzima inaonekana kwenye kioo cha simu (One Page Fit) na inaruhusu Pinch to Zoom -->
+    <meta name="viewport" content="width=1000, user-scalable=yes">
     <title>Class Timetable - 4LAZIE</title>
     <!-- Google Fonts for a modern but formal look -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
@@ -20,12 +21,10 @@
 
         .timetable-document {
             background: #ffffff;
-            width: 100%;
-            max-width: 1000px; 
+            width: 960px; /* Fixed width for perfect native mobile scaling */
             padding: 20px 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             border-top: 8px solid #004080;
-            box-sizing: border-box;
         }
 
         /* --- HEADER SECTION --- */
@@ -62,17 +61,10 @@
         }
 
         /* --- TABLE STYLES --- */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin-top: 10px;
-        }
-
         table {
             width: 100%;
-            min-width: 800px; /* Prevent table from squishing too much */
             border-collapse: collapse;
+            margin-top: 10px;
             text-align: center;
         }
 
@@ -100,8 +92,8 @@
 
         /* Legend Table */
         .legend-table {
-            margin-top: 20px;
-            min-width: 100%; /* No minimum width required for legend as it handles text wrapping better */
+            margin-top: 0;
+            border-top: none;
         }
         .legend-table th {
             background-color: #7f99b2;
@@ -134,41 +126,11 @@
             background: #003366;
         }
         
-        /* --- MOBILE RESPONSIVENESS --- */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .timetable-document {
-                padding: 15px;
-            }
-            .doc-header h1 { font-size: 16px; }
-            .doc-header h2 { font-size: 12px; }
-            .doc-header h3 { font-size: 14px; }
-            .info-row { flex-direction: column; text-align: center; font-size: 14px; gap: 5px; }
-            
-            /* Sticky first column for better UX when scrolling horizontally */
-            table th:first-child, table td:first-child {
-                position: sticky;
-                left: 0;
-                background-color: #ffffff;
-                z-index: 2;
-                border-right: 3px solid #004080;
-            }
-            table thead tr:first-child th:first-child, 
-            table thead tr:nth-child(2) th:first-child {
-                background-color: #e6f0ff;
-                z-index: 3;
-            }
-        }
-
         /* Hide print button when printing */
         @media print {
             body { background: white; padding: 0; }
-            .timetable-document { box-shadow: none; border: none; padding: 0; width: 100%; max-width: none; }
+            .timetable-document { box-shadow: none; border: none; padding: 0; width: 100%; }
             .print-btn { display: none; }
-            .table-responsive { overflow: visible; }
-            table th:first-child, table td:first-child { position: static; border-right: 2px solid #333; }
         }
     </style>
 </head>
@@ -193,7 +155,6 @@
         </div>
 
         <!-- TIMETABLE GRID -->
-        <div class="table-responsive">
         <table>
             <thead>
                 <tr class="bg-header">
@@ -252,7 +213,6 @@
                 </tr>
             </tbody>
         </table>
-        </div>
 
         <!-- LEGEND TABLE -->
         <table class="legend-table">
