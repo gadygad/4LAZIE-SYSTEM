@@ -2,453 +2,271 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=850, user-scalable=yes">
+    <!-- Hii inahakikisha table nzima inaonekana kwenye kioo cha simu (One Page Fit) na inaruhusu Pinch to Zoom -->
+    <meta name="viewport" content="width=1000, user-scalable=yes">
     <title>Class Timetable - 4LAZIE</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit & Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts for a modern but formal look -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <style>
         body {
-            background-color: #f8fafc;
-            font-family: 'Inter', sans-serif;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.1) 0px, transparent 50%);
-            background-attachment: fixed;
-            overflow-x: hidden;
-        }
-
-        /* Wrapper to handle the JS scaling */
-        .scale-wrapper {
-            width: 100%;
+            background-color: #f0f2f5;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            overflow: hidden;
         }
 
-        /* Glassmorphism Card for Timetable - Desktop Original Beauty */
-        .timetable-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
-            border-radius: 20px;
-            padding: 25px;
-            position: relative;
-            margin: 0 auto;
-            width: 850px; /* PDF A4 Portrait Width */
-            max-width: none !important;
+        .timetable-document {
+            background: #ffffff;
+            width: 960px; /* Fixed width for perfect native mobile scaling */
+            padding: 20px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-top: 8px solid #004080;
         }
 
-        /* Page Header */
-        .page-title {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 900;
-            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
-            font-size: 1.8rem;
-        }
-
-        .page-subtitle {
-            font-family: 'Outfit', sans-serif;
-            color: #10b981;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-
-        /* Time Headers */
-        .time-headers-row {
-            display: grid;
-            grid-template-columns: 60px repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .time-header {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            color: #475569;
-            font-weight: 800;
-            font-family: 'Outfit', sans-serif;
+        /* --- HEADER SECTION --- */
+        .doc-header {
             text-align: center;
-            padding: 10px 5px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-
-        /* Day Row */
-        .day-row {
-            display: grid;
-            grid-template-columns: 60px repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .day-label {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 900;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-            border-radius: 12px;
-            border-left: 5px solid #10b981;
-            padding: 10px 0;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
-        }
-
-        /* Class Cells */
-        .class-cell {
-            background: white;
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 110px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
-        .class-cell:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-        }
-
-        .cell-border {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: #10b981;
-        }
-
-        .subject-name {
-            font-weight: 800;
-            color: #0f172a;
-            font-size: 0.95rem;
-            margin-bottom: 6px;
-            line-height: 1.25;
-        }
-
-        .lecturer-name {
-            color: #475569;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-        }
-
-        .venue-badge {
-            background: rgba(16, 185, 129, 0.15);
-            color: #059669;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 10px;
-            width: fit-content;
-        }
-
-        /* Different Colors for Different Subjects */
-        .cell-yellow { border-color: rgba(245, 158, 11, 0.3); }
-        .cell-yellow .cell-border { background: #f59e0b; }
-        .cell-yellow:hover { border-color: #f59e0b; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.2); }
-        .cell-yellow .venue-badge { background: rgba(245, 158, 11, 0.15); color: #b45309; }
-
-        .cell-blue { border-color: rgba(59, 130, 246, 0.3); }
-        .cell-blue .cell-border { background: #3b82f6; }
-        .cell-blue:hover { border-color: #3b82f6; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2); }
-        .cell-blue .venue-badge { background: rgba(59, 130, 246, 0.15); color: #1d4ed8; }
-
-        .cell-purple { border-color: rgba(139, 92, 246, 0.3); }
-        .cell-purple .cell-border { background: #8b5cf6; }
-        .cell-purple:hover { border-color: #8b5cf6; box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2); }
-        .cell-purple .venue-badge { background: rgba(139, 92, 246, 0.15); color: #6d28d9; }
-
-        .cell-rose { border-color: rgba(244, 63, 94, 0.3); }
-        .cell-rose .cell-border { background: #f43f5e; }
-        .cell-rose:hover { border-color: #f43f5e; box-shadow: 0 10px 25px rgba(244, 63, 94, 0.2); }
-        .cell-rose .venue-badge { background: rgba(244, 63, 94, 0.15); color: #be123c; }
-
-        .break-cell {
-            background: transparent;
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-weight: 800;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            min-height: 110px;
-            transition: all 0.3s;
-        }
-        .break-cell:hover {
-            border-color: #94a3b8;
-            color: #475569;
-            transform: translateY(-2px);
-        }
-
-        .actions-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid rgba(16, 185, 129, 0.1);
-            padding-bottom: 15px;
+        }
+        .doc-header h1 {
+            font-size: 22px;
+            font-weight: 900;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .doc-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 5px 0;
+            text-transform: uppercase;
+        }
+        .doc-header h3 {
+            font-size: 18px;
+            font-weight: 900;
+            margin: 5px 0;
+            text-transform: uppercase;
         }
 
-        .btn-download {
-            background: linear-gradient(135deg, #10b981, #059669);
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        /* --- TABLE STYLES --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        th, td {
+            border: 2px solid #333;
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Soft background colors for headers to add beauty */
+        .bg-header {
+            background-color: #e6f0ff;
+        }
+        
+        /* Break columns formatting */
+        .break-col {
+            background-color: #a6a6a6;
+            color: black;
+            width: 40px;
+            font-size: 15px;
+            font-weight: 900;
+            letter-spacing: 5px;
+        }
+
+        /* Legend Table */
+        .legend-table {
+            margin-top: 0;
+            border-top: none;
+        }
+        .legend-table th {
+            background-color: #7f99b2;
+            color: white;
+            font-size: 15px;
+            padding: 10px;
+        }
+        .legend-table td {
+            font-size: 14px;
+            padding: 8px;
+            border: 2px solid #333;
+        }
+
+        /* Actions */
+        .print-btn {
+            display: block;
+            margin: 30px auto 10px auto;
+            background: #004080;
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 700;
-            font-size: 1rem;
-            font-family: 'Outfit', sans-serif;
-            transition: all 0.3s;
-            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
-            color: white;
+        .print-btn:hover {
+            background: #003366;
+        }
+        
+        /* Hide print button when printing */
+        @media print {
+            body { background: white; padding: 0; }
+            .timetable-document { box-shadow: none; border: none; padding: 0; width: 100%; }
+            .print-btn { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbar removed due to empty fragment -->
-
-    <div class="container-fluid my-2 my-md-5 px-1 px-md-4">
+    <div class="timetable-document">
         
-        <div class="scale-wrapper" id="scaleWrapper">
-            <div class="timetable-container" id="pdfTimetable">
-                <div class="actions-bar">
-                    <div>
-                        <div class="page-subtitle">DIPLOMA NTA LEVEL 5 - SEMESTER 2</div>
-                        <h2 class="page-title">COMPUTER ENGINEERING</h2>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <button class="btn btn-light fw-bold px-4" style="border-radius: 12px; color: #475569; border: 2px solid #e2e8f0; font-size: 1.1rem;" onclick="window.history.back()">
-                            <i class="bi bi-arrow-left me-2"></i> Back
-                        </button>
-                        <button class="btn-download" onclick="window.print()">
-                            <i class="bi bi-printer-fill me-2"></i> Save PDF
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Desktop Time Headers -->
-                <div class="time-headers-row">
-                    <div></div>
-                    <div class="time-header"><i class="bi bi-clock me-2"></i>08:00 AM - 10:00 AM</div>
-                    <div class="time-header"><i class="bi bi-clock me-2"></i>10:00 AM - 12:00 PM</div>
-                    <div class="time-header"><i class="bi bi-clock me-2"></i>01:00 PM - 03:00 PM</div>
-                    <div class="time-header"><i class="bi bi-clock me-2"></i>03:00 PM - 05:00 PM</div>
-                </div>
-
-                <!-- MONDAY -->
-                <div class="day-row">
-                    <div class="day-label">MON</div>
-                    <div class="class-cell cell-blue">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Microprocessor & Assembly Language</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 2</div>
-                    </div>
-                    <div class="class-cell cell-purple">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Object Oriented Programming (Java)</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
-                    </div>
-                    <div class="class-cell cell-yellow">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Data Communications & Networking</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 105</div>
-                    </div>
-                    <div class="break-cell">
-                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                        FREE
-                    </div>
-                </div>
-
-                <!-- TUESDAY -->
-                <div class="day-row">
-                    <div class="day-label">TUE</div>
-                    <div class="class-cell cell-yellow">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Data Communications & Networking</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 3</div>
-                    </div>
-                    <div class="class-cell cell-rose">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Computer Architecture</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Dr. Mboya</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 102</div>
-                    </div>
-                    <div class="break-cell">
-                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                        FREE
-                    </div>
-                    <div class="class-cell cell-blue">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Microprocessor & Assembly Language</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 104</div>
-                    </div>
-                </div>
-
-                <!-- WEDNESDAY -->
-                <div class="day-row">
-                    <div class="day-label">WED</div>
-                    <div class="class-cell cell-purple">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Object Oriented Programming (Java)</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 1</div>
-                    </div>
-                    <div class="break-cell">
-                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                        FREE
-                    </div>
-                    <div class="class-cell">
-                        <div class="cell-border" style="background: #10b981;"></div>
-                        <div>
-                            <div class="subject-name">Database Management Systems</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
-                    </div>
-                    <div class="class-cell">
-                        <div class="cell-border" style="background: #10b981;"></div>
-                        <div>
-                            <div class="subject-name">Database Management Systems (Practical)</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 4</div>
-                    </div>
-                </div>
-
-                <!-- THURSDAY -->
-                <div class="day-row">
-                    <div class="day-label">THU</div>
-                    <div class="class-cell cell-rose">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Computer Architecture</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Dr. Mboya</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 102</div>
-                    </div>
-                    <div class="class-cell cell-yellow">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Data Communications (Practical)</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Kijazi</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Net Lab</div>
-                    </div>
-                    <div class="break-cell">
-                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                        FREE
-                    </div>
-                    <div class="break-cell">
-                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                        FREE
-                    </div>
-                </div>
-
-                <!-- FRIDAY -->
-                <div class="day-row">
-                    <div class="day-label">FRI</div>
-                    <div class="class-cell cell-blue">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">Microprocessor (Practical)</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Eng. Mushi</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 2</div>
-                    </div>
-                    <div class="class-cell">
-                        <div class="cell-border" style="background: #10b981;"></div>
-                        <div>
-                            <div class="subject-name">Database Management Systems</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Ms. Anna</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Room 101</div>
-                    </div>
-                    <div class="class-cell cell-purple">
-                        <div class="cell-border"></div>
-                        <div>
-                            <div class="subject-name">OOP Java (Practical)</div>
-                            <div class="lecturer-name"><i class="bi bi-person-fill me-2"></i> Mr. Juma</div>
-                        </div>
-                        <div class="venue-badge"><i class="bi bi-geo-alt-fill me-2"></i> Lab 1</div>
-                    </div>
-                    <div class="break-cell">
-                        <i class="bi bi-cup-hot mb-2" style="font-size: 1.5rem;"></i>
-                        FREE
-                    </div>
-                </div>
-
+        <!-- HEADER -->
+        <div class="doc-header">
+            <h1>St. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</h1>
+            <h2>DEPARTMENT OF COMPUTER SCIENCE INFORMATION SYSTEMS AND NETWORK ENGINEERING</h2>
+            <h3>NTA 5 SEMESTER IV - DIPLOMA TIMETABLE APRIL 2026</h3>
+            
+            <div class="info-row">
+                <div>CLASS TEACHER: MR STEVEN</div>
+                <div>TOTAL STRENGTH: 18</div>
+            </div>
+            <div class="info-row" style="margin-top: 5px;">
+                <div>COMPUTER SCIENCE & ENG.</div>
+                <div>HALL NO: 77</div>
             </div>
         </div>
 
+        <!-- TIMETABLE GRID -->
+        <table>
+            <thead>
+                <tr class="bg-header">
+                    <th>HOUR</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th rowspan="7" class="break-col">B<br>R<br>E<br>A<br>K</th>
+                    <th>4</th>
+                    <th>5</th>
+                    <th rowspan="7" class="break-col" style="background-color: #cccccc;">L<br>U<br>N<br>C<br>H<br><br>B<br>R<br>E<br>A<br>K</th>
+                    <th>6</th>
+                    <th>7</th>
+                </tr>
+                <tr class="bg-header">
+                    <th>DAY/TIME</th>
+                    <th>8.00AM<br>TO<br>8.55AM</th>
+                    <th>8.55AM<br>TO<br>9.50AM</th>
+                    <th>9.50AM<br>TO<br>10.45AM</th>
+                    <th>11.00AM<br>TO<br>11.55AM</th>
+                    <th>11.55AM<br>TO<br>12.45PM</th>
+                    <th>1.45PM<br>TO<br>2.40PM</th>
+                    <th>2.40PM<br>TO<br>3.35PM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>MONDAY</td>
+                    <td colspan="3">CET 05202</td>
+                    <td colspan="2">CST 05202 (P)</td>
+                    <td colspan="2">SEMINAR</td>
+                </tr>
+                <tr>
+                    <td>TUESDAY</td>
+                    <td colspan="3">CET 05203</td>
+                    <td colspan="2">CET 05204</td>
+                    <td colspan="2">CET 05201</td>
+                </tr>
+                <tr>
+                    <td>WEDNESDAY</td>
+                    <td colspan="3">ECT 05202</td>
+                    <td colspan="2">CET 05202</td>
+                    <td colspan="2">CET 05201 (P)</td>
+                </tr>
+                <tr>
+                    <td>THURSDAY</td>
+                    <td colspan="3">CST 05202</td>
+                    <td colspan="2">ECT 05202 (P)</td>
+                    <td colspan="2">SEMINAR</td>
+                </tr>
+                <tr>
+                    <td>FRIDAY</td>
+                    <td colspan="3">CET 05204</td>
+                    <td colspan="2">CET 05203 (P)</td>
+                    <td colspan="2">SEMINAR</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- LEGEND TABLE -->
+        <table class="legend-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">MODULE CODE</th>
+                    <th style="width: 55%;">MODULE NAME</th>
+                    <th style="width: 30%;">MODULE TEACHER</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CET 05201</td>
+                    <td style="text-align: left;">Computer Networks (T+P)</td>
+                    <td>MS ESTHER</td>
+                </tr>
+                <tr>
+                    <td>CST 05202</td>
+                    <td style="text-align: left;">Basics of Data Communication Networks (T+P)</td>
+                    <td>MR EDSON</td>
+                </tr>
+                <tr>
+                    <td>CET 05202</td>
+                    <td style="text-align: left;">Server Administration (T)</td>
+                    <td>MR DAVID CSISE</td>
+                </tr>
+                <tr>
+                    <td>ECT 05202</td>
+                    <td style="text-align: left;">Microprocessor and Microcontroller Systems (T+P)</td>
+                    <td>MR CLINTON</td>
+                </tr>
+                <tr>
+                    <td>CET 05203</td>
+                    <td style="text-align: left;">Internet concept and web designing (T+P)</td>
+                    <td>MR JAMES</td>
+                </tr>
+                <tr>
+                    <td>CET 05204</td>
+                    <td style="text-align: left;">Computer architecture and Assembly Language Programming (T)</td>
+                    <td>MR MODEST</td>
+                </tr>
+                <tr>
+                    <td>CET 05205</td>
+                    <td style="text-align: left;">Industrial Practical Training II</td>
+                    <td>MR JAMES</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="print-btn" onclick="window.print()">
+            <i class="bi bi-printer-fill" style="margin-right: 8px;"></i> Save as PDF / Print
+        </button>
+
     </div>
 
-    <!-- Include Footer -->
-    <div style="border-top: 1px solid #e2e8f0; background: #ffffff; margin-top: 50px;">
-        <div th:replace="~{fragments/footer :: footer}"></div>
-    </div>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- The scaling is now handled natively by the browser using the meta viewport width=850 -->
 </body>
 </html>
