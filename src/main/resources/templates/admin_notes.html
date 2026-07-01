@@ -92,7 +92,7 @@
                             <tbody>
                                 <tr th:each="note : ${notes}" class="note-row" style="transition: all 0.3s ease;">
                                     <td class="py-3 px-3" style="font-weight: 600; color: #1e293b; font-size: 0.85rem;">
-                                        <a th:href="@{'/view/' + ${note.slug}}" class="text-decoration-none" style="color: #1e293b; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#1e293b'" th:text="${note.title}">Note Title</a>
+                                        <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="text-decoration-none" style="color: #1e293b; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#1e293b'" th:text="${note.title}">Note Title</a>
                                     </td>
                                     <td class="py-3 px-3 d-none d-md-table-cell" style="color: #64748b; font-size: 0.8rem;" th:text="${note.moduleName}">Module</td>
                                     <td class="py-3 px-3">

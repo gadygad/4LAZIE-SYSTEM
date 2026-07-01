@@ -380,7 +380,7 @@ public class NotesController {
                 String pushTitle = "Fresh Material Dropped!";
                 String categoryLabel = (category == null || category.trim().isEmpty()) ? "Note" : category;
                 String pushBody = "New " + categoryLabel + ": " + title + " is now available. Tap to view and stay ahead!";
-                String pushUrl = "/view/" + note.getSlug();
+                String pushUrl = "/view/" + note.getEncryptedSlug();
                 
                 // Send async to not block the upload response (Now uses @Async in service)
                 pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
@@ -422,7 +422,13 @@ public class NotesController {
                                @RequestParam(value = "force", required = false) String force,
                                HttpSession session,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
-        String id = slug.split("-")[0];
+        // Support both old {id}-{title} slugs and new AES encrypted slugs
+        String id;
+        if (slug.contains("-")) {
+            id = slug.split("-")[0];
+        } else {
+            id = com.school.util.EncryptionUtil.decrypt(slug);
+        }
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null) {
             response.sendError(404, "Note not found");
@@ -499,7 +505,12 @@ public class NotesController {
 
     @GetMapping("/view/{slug}")
     public String viewNotePage(@PathVariable("slug") String slug, HttpSession session, org.springframework.ui.Model model) {
-        String id = slug.split("-")[0];
+        String id;
+        if (slug.contains("-")) {
+            id = slug.split("-")[0];
+        } else {
+            id = com.school.util.EncryptionUtil.decrypt(slug);
+        }
         User loggedInUser = getLoggedInUser();
         Note note = noteRepository.findById(id).orElse(null);
         
@@ -523,7 +534,12 @@ public class NotesController {
 
     @GetMapping("/stream/{slug}")
     public Object streamNote(@PathVariable("slug") String slug, HttpSession session) {
-        String id = slug.split("-")[0];
+        String id;
+        if (slug.contains("-")) {
+            id = slug.split("-")[0];
+        } else {
+            id = com.school.util.EncryptionUtil.decrypt(slug);
+        }
         Note note = noteRepository.findById(id).orElse(null);
 
         User loggedInUser = getLoggedInUser();
