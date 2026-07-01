@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import com.school.service.FileStorageService;
 import com.school.service.PushNotificationService;
 import com.school.service.NotificationService;
+import com.school.service.EmailService;
 import com.cloudinary.Cloudinary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +93,9 @@ public class NotesController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @GetMapping("/home")
@@ -331,7 +335,7 @@ public class NotesController {
                              @RequestParam(value = "unitNumber", required = false) Integer unitNumber,
                              @RequestParam(value = "academicYear", required = false) String academicYear,
                              @RequestParam("file") MultipartFile file,
-                             HttpSession session) {
+                             HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
 
@@ -381,13 +385,26 @@ public class NotesController {
                 // Send async to not block the upload response (Now uses @Async in service)
                 pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
                 
-                // Also create in-app notification for all users
+                // Also create in-app notification and send EMAIL to matched students
                 if (notificationService != null && userRepository != null) {
-                    List<User> allUsers = userRepository.findAll();
-                    for (User u : allUsers) {
+                    List<User> matchedUsers = userRepository.findAll().stream()
+                        .filter(u -> programType.equals(u.getCourseProgram()) &&
+                                     levelNo.equals(u.getLevel()) &&
+                                     semesterNo.equals(u.getSemester()))
+                        .collect(Collectors.toList());
+                        
+                    for (User u : matchedUsers) {
                         // Notify everyone except the uploader (Admin)
                         if (!u.getId().equals(loggedInUser.getId())) {
                             notificationService.createNotification(u.getId(), pushTitle, pushBody);
+                            
+                            // Send HTML Email using the base URL
+                            String appUrl = "https://" + request.getServerName();
+                            if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+                                appUrl += ":" + request.getServerPort();
+                            }
+                            String emailLink = appUrl + pushUrl;
+                            emailService.sendNewNoteNotification(u.getEmail(), title, categoryLabel, emailLink);
                         }
                     }
                 }
