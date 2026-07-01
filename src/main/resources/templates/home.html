@@ -2197,6 +2197,20 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                             </select>
                         </div>
 
+                        <!-- Course -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">Course</label>
+                            <select class="form-select custom-select-premium" name="course" id="courseSelect" required style="display: none;">
+                                <option value="" disabled selected>Choose your course...</option>
+                                <option value="IT">Information Technology</option>
+                                <option value="CSE">Computer Science Engineering</option>
+                                <option value="CE">Civil Engineering</option>
+                                <option value="ME">Mechanical Engineering</option>
+                                <option value="MTE">Mechatronics Engineering</option>
+                                <option value="EEE">Electrical & Electronics</option>
+                            </select>
+                        </div>
+
                         <!-- Level -->
                         <div class="mb-4">
                             <label class="form-label fw-bold text-secondary">Level / Year</label>
@@ -2352,6 +2366,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
             // Initialize custom dropdowns
             createCustomDropdown('programSelect');
+            createCustomDropdown('courseSelect');
             createCustomDropdown('levelSelect');
         });
     </script>
