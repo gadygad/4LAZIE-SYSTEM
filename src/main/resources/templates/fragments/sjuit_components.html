@@ -496,7 +496,7 @@
                                     <div class="accordion border-0" th:id="'accordionUnits' + ${stat.index}" style="display:flex; flex-direction:column;">
                                         <div th:each="unitNum, uStat : ${#numbers.sequence(1, 5)}"
                                              style="border-bottom: 1px solid rgba(245,158,11,0.1); background: transparent;">
-                                            <th:block th:with="unitNotes=${entry.value.?[unitNumber == __${unitNum}__]}">
+                                            <th:block th:with="unitNotes=${entry.value.?[unitNumber == __${unitNum}__ and category != 'Assignment' and category != 'CAT 1' and category != 'CAT 2' and category != 'UE' and category != 'Project' and category != 'Past Paper']}">
                                                 <button class="accordion-button collapsed px-1 py-3 w-100"
                                                         type="button"
                                                         data-bs-toggle="collapse"
@@ -558,7 +558,7 @@
                                         <div style="width:28px; height:28px; border-radius:8px; background: rgba(217, 119, 6, 0.1); color: #d97706; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right: 10px;">
                                             <i class="bi bi-clipboard2-check-fill" style="font-size:0.9rem;"></i>
                                         </div>
-                                        <span class="fw-bold" style="color: #0f172a; font-size: 0.85rem; letter-spacing: 0.5px;">2. ASSIGNMENTS</span>
+                                        <span class="fw-bold" style="color: #0f172a; font-size: 0.85rem; letter-spacing: 0.5px;">2. PREMIUM CONTENT & ASSIGNMENTS</span>
                                         <span th:if="${session.user == null}" class="ms-auto" style="background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-size: 0.55rem; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-family:'Outfit',sans-serif;">EXCLUSIVE</span>
                                     </div>
                                 </button>
@@ -566,46 +566,25 @@
                             <div th:id="'categoryCollapse2_' + ${stat.index}" class="accordion-collapse collapse" th:data-bs-parent="'#accordionCategory' + ${stat.index}">
                                 <div class="accordion-body p-3 pt-0">
                                     <div class="d-flex flex-column gap-2">
-                                        <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
-                                            <div class="d-flex flex-column align-items-start">
-                                                <span class="badge badge-custom badge-category mb-1" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;">2024</span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="bi bi-journal-text me-2" style="color: #d97706; font-size: 1.1rem;"></i>
-                                                    <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">Assignments & Solutions</span>
-                                                </div>
+                                        <th:block th:with="restrictedNotes=${entry.value.?[category == 'Assignment' or category == 'CAT 1' or category == 'CAT 2' or category == 'UE' or category == 'Project' or category == 'Past Paper']}">
+                                            <th:block th:if="${not #lists.isEmpty(restrictedNotes)}" th:each="note : ${restrictedNotes}">
+                                                <a th:href="${session.user == null ? '#' : '/view/' + note.id}" 
+                                                   th:onclick="${session.user == null ? 'new bootstrap.Modal(document.getElementById(''restrictedModal'')).show(); return false;' : ''}"
+                                                   class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
+                                                    <div class="d-flex flex-column align-items-start">
+                                                        <span class="badge badge-custom badge-category mb-1" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;" th:text="${note.academicYear != null ? note.academicYear : '2024'}">2024</span>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-file-earmark-lock-fill me-2" style="color: #d97706; font-size: 1.1rem;"></i>
+                                                            <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;" th:text="${note.category + ' - ' + note.title}">CAT 1</span>
+                                                        </div>
+                                                    </div>
+                                                    <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
+                                                </a>
+                                            </th:block>
+                                            <div th:if="${#lists.isEmpty(restrictedNotes)}" class="text-start py-2" style="color:#94a3b8; font-size:0.75rem; font-style: italic;">
+                                                No premium content available yet.
                                             </div>
-                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
-                                        </a>
-                                        <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
-                                            <div class="d-flex flex-column align-items-start">
-                                                <span class="badge badge-custom badge-category mb-1" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;">2024</span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="bi bi-ui-checks me-2" style="color: #d97706; font-size: 1.1rem;"></i>
-                                                    <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">CAT 1</span>
-                                                </div>
-                                            </div>
-                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
-                                        </a>
-                                        <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
-                                            <div class="d-flex flex-column align-items-start">
-                                                <span class="badge badge-custom badge-category mb-1" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;">2024</span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="bi bi-ui-checks-grid me-2" style="color: #d97706; font-size: 1.1rem;"></i>
-                                                    <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">CAT 2</span>
-                                                </div>
-                                            </div>
-                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
-                                        </a>
-                                        <a href="/register" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
-                                            <div class="d-flex flex-column align-items-start">
-                                                <span class="badge badge-custom badge-category mb-1" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;">2024</span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="bi bi-mortarboard-fill me-2" style="color: #d97706; font-size: 1.1rem;"></i>
-                                                    <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;">University Exams (UE)</span>
-                                                </div>
-                                            </div>
-                                            <span th:if="${session.user == null}" style="font-size:0.65rem; color:#b45309; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
-                                        </a>
+                                        </th:block>
                                     </div>
                                 </div>
                             </div>
