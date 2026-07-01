@@ -262,7 +262,7 @@ public class AdminController {
             calendar.setIsCurrent(isCurrent || academicCalendarRepository.count() == 0);
 
             if (!file.isEmpty()) {
-                String fileUrl = fileStorageService.storeFile(file);
+                String fileUrl = fileStorageService.uploadFile(file);
                 calendar.setFileUrl(fileUrl);
             }
 
