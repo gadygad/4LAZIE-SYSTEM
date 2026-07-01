@@ -61,4 +61,34 @@ public class TimetableController {
 
         return "view_timetable";
     }
+
+    @GetMapping("/seed-timetable")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String seedTimetable() {
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get("src/main/resources/templates/view_timetable.html");
+            String html = new String(java.nio.file.Files.readAllBytes(path));
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("<div id=\"timetable-wrapper\">(.*?)<button class=\"print-btn\"", java.util.regex.Pattern.DOTALL).matcher(html);
+            if (matcher.find()) {
+                String tableHtml = matcher.group(1).trim();
+                tableHtml += "\n        <button class=\"print-btn\" onclick=\"window.print()\">\n            <i class=\"bi bi-printer-fill\" style=\"margin-right: 8px;\"></i> Save as PDF / Print\n        </button>";
+                
+                Timetable t = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("COMPUTER SCIENCE AND ENGINEERING", 5, 2)
+                        .orElse(new Timetable());
+                
+                t.setProgramType("COMPUTER SCIENCE AND ENGINEERING");
+                t.setLevelNo(5);
+                t.setSemesterNo(2);
+                t.setAcademicYear("2025/2026");
+                t.setHtmlContent(tableHtml);
+                t.setUploadDate(java.time.LocalDateTime.now());
+                
+                timetableRepository.save(t);
+                return "Successfully seeded timetable for COMPUTER SCIENCE AND ENGINEERING Level 5 Semester 2 (2025/2026)";
+            }
+            return "Failed to find timetable wrapper in HTML";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
 }
