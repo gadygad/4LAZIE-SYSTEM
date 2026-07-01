@@ -70,12 +70,15 @@ public class SearchApiController {
                 .filter(n -> n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic()))
 
                 .map(note -> {
-                    Map<String, Object> map = new HashMap<>();
+                                        Map<String, Object> map = new HashMap<>();
                     map.put("id", note.getId());
                     map.put("title", note.getTitle());
                     map.put("moduleName", note.getModuleName());
                     map.put("year", note.getAcademicYear());
                     map.put("fileUrl", note.getFileUrl());
+                    map.put("viewCount", note.getViewCount() != null ? note.getViewCount() : 0);
+                    map.put("downloadCount", note.getDownloadCount() != null ? note.getDownloadCount() : 0);
+                    map.put("semester", note.getSemesterNo() != null ? note.getSemesterNo() : 1);
                     return map;
                 }).collect(Collectors.toList());
 
