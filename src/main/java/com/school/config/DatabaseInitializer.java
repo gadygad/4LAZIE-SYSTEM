@@ -5,6 +5,7 @@ import com.school.model.User;
 import com.school.repository.NoteRepository;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
+import com.school.repository.AcademicCalendarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -49,6 +50,9 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Value("${app.student.password:student_change_me_2024}")
     private String studentPassword;
+
+    @Autowired
+    private AcademicCalendarRepository academicCalendarRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -98,7 +102,24 @@ public class DatabaseInitializer implements CommandLineRunner {
             log.warn("Could not seed institutions: " + e.getMessage());
         }
 
-
+        try {
+            if (academicCalendarRepository.count() == 0) {
+                com.school.model.AcademicCalendar cal = new com.school.model.AcademicCalendar();
+                cal.setAcademicYear("2025/2026");
+                cal.setFileUrl("academic_calendar_2025.pdf");
+                cal.setSem1Cat1Date("2026-01-13");
+                cal.setSem1Cat2Date("2026-03-02");
+                cal.setSem1UeDate("2026-03-23");
+                cal.setSem2Cat1Date("2026-06-01");
+                cal.setSem2Cat2Date("2026-07-20");
+                cal.setSem2UeDate("2026-08-10");
+                cal.setIsCurrent(true);
+                academicCalendarRepository.save(cal);
+                log.info("Default Academic Calendar seeded.");
+            }
+        } catch (Exception e) {
+            log.warn("Could not seed academic calendar: " + e.getMessage());
+        }
         
         // Seed some dummy notes if database is empty so marquee works
         /* 
