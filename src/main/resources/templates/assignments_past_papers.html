@@ -438,6 +438,39 @@
 
     <div class="assignment-container">
         <h1 class="premium-heading">ASSIGNMENTS & SOLUTIONS</h1>
+        
+        <!-- EXAM COUNTDOWN WIDGET -->
+        <div th:if="${currentCalendar != null}" class="mb-4" id="countdownWidget" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02)); border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); padding: 20px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.05); text-align: center; display: none;">
+            <h5 class="fw-bold mb-3" style="color: #059669; font-family: 'Outfit', sans-serif;"><i class="bi bi-stopwatch me-2"></i>Upcoming Exam: <span id="upcomingExamName" class="text-dark"></span></h5>
+            <div class="d-flex justify-content-center gap-2 gap-md-3">
+                <div class="timer-box" style="background: #fff; padding: 10px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-width: 60px;">
+                    <h3 id="cdDays" class="mb-0 fw-bold" style="color: #10b981; font-family: 'Outfit', sans-serif;">00</h3>
+                    <small class="text-muted fw-bold" style="font-size: 0.65rem; text-transform: uppercase;">Days</small>
+                </div>
+                <div class="timer-box" style="background: #fff; padding: 10px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-width: 60px;">
+                    <h3 id="cdHours" class="mb-0 fw-bold" style="color: #10b981; font-family: 'Outfit', sans-serif;">00</h3>
+                    <small class="text-muted fw-bold" style="font-size: 0.65rem; text-transform: uppercase;">Hours</small>
+                </div>
+                <div class="timer-box" style="background: #fff; padding: 10px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-width: 60px;">
+                    <h3 id="cdMins" class="mb-0 fw-bold" style="color: #10b981; font-family: 'Outfit', sans-serif;">00</h3>
+                    <small class="text-muted fw-bold" style="font-size: 0.65rem; text-transform: uppercase;">Mins</small>
+                </div>
+                <div class="timer-box" style="background: #fff; padding: 10px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-width: 60px;">
+                    <h3 id="cdSecs" class="mb-0 fw-bold" style="color: #10b981; font-family: 'Outfit', sans-serif;">00</h3>
+                    <small class="text-muted fw-bold" style="font-size: 0.65rem; text-transform: uppercase;">Secs</small>
+                </div>
+            </div>
+        </div>
+        <script th:if="${currentCalendar != null}">
+            window.examDates = {
+                "Semester 1 - CAT 1": "[[${currentCalendar.sem1Cat1Date}]]",
+                "Semester 1 - CAT 2": "[[${currentCalendar.sem1Cat2Date}]]",
+                "Semester 1 - UE": "[[${currentCalendar.sem1UeDate}]]",
+                "Semester 2 - CAT 1": "[[${currentCalendar.sem2Cat1Date}]]",
+                "Semester 2 - CAT 2": "[[${currentCalendar.sem2Cat2Date}]]",
+                "Semester 2 - UE": "[[${currentCalendar.sem2UeDate}]]"
+            };
+        </script>
 
         <div class="plain-text-form mt-4">
             <div class="row g-3">
@@ -594,6 +627,54 @@
         bindGenericDropdown('levelDropdownWrapper', 'levelDropdownHeader', 'levelDropdownText', 'assignmentLevel');
         bindGenericDropdown('semesterDropdownWrapper', 'semesterDropdownHeader', 'semesterDropdownText', 'assignmentSemester');
         
+        // COUNTDOWN TIMER LOGIC
+        if (window.examDates) {
+            let nextExamName = null;
+            let nextExamDate = null;
+            let minDiff = Infinity;
+            const now = new Date().getTime();
+
+            for (const [name, dateStr] of Object.entries(window.examDates)) {
+                if (dateStr && dateStr.trim() !== '') {
+                    // Assume dateStr might be yyyy-MM-dd
+                    const examTime = new Date(dateStr).getTime();
+                    if (!isNaN(examTime) && examTime > now) {
+                        const diff = examTime - now;
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            nextExamName = name;
+                            nextExamDate = examTime;
+                        }
+                    }
+                }
+            }
+
+            if (nextExamDate) {
+                document.getElementById('countdownWidget').style.display = 'block';
+                document.getElementById('upcomingExamName').textContent = nextExamName;
+
+                setInterval(function() {
+                    const currentTime = new Date().getTime();
+                    const distance = nextExamDate - currentTime;
+
+                    if (distance < 0) {
+                        document.getElementById('countdownWidget').style.display = 'none';
+                        return;
+                    }
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById('cdDays').textContent = days.toString().padStart(2, '0');
+                    document.getElementById('cdHours').textContent = hours.toString().padStart(2, '0');
+                    document.getElementById('cdMins').textContent = minutes.toString().padStart(2, '0');
+                    document.getElementById('cdSecs').textContent = seconds.toString().padStart(2, '0');
+                }, 1000);
+            }
+        }
+
         const courseWrapper = document.getElementById('courseDropdownWrapper');
         const courseHeader = document.getElementById('courseDropdownHeader');
         if(courseHeader) {

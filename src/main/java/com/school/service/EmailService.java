@@ -15,7 +15,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     @Async
-    public void sendPasswordResetEmail(String to, String resetLink) {
+    public void sendPasswordResetEmail(String to, String otp) {
         if (mailSender == null) {
             System.err.println("MailSender is not configured. Cannot send email to: " + to);
             return;
@@ -23,8 +23,8 @@ public class EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
-            message.setSubject("Password Reset Request - 4LAZIE");
-            message.setText("You requested a password reset.\n\nClick the link below to set a new password. This link will expire in 2 minutes.\n\n" + resetLink + "\n\nIf you did not request this, please ignore this email.");
+            message.setSubject("Password Reset OTP - 4LAZIE");
+            message.setText("You requested a password reset.\n\nYour secret OTP is: " + otp + "\n\nIt will expire in 5 minutes.\n\nIf you did not request this, please ignore this email.");
             mailSender.send(message);
         } catch (Exception e) {
             // Log the error but don't crash, especially if credentials aren't set

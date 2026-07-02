@@ -48,19 +48,7 @@ public class NoteService {
             }
         }
 
-        // Fallback for DIP_CSE if database subjects are missing
-        if (groupedNotes.isEmpty() && "DIP_CSE".equals(program)) {
-            if (level == 4 && semester == 1) {
-                String[] subs = {"BASIC ENGINEERING MATHEMATICS", "COMMUNICATION SKILLS", "BASIC ENGINEERING PHYSICS"};
-                for (String s : subs) groupedNotes.put(s, new ArrayList<>());
-            } else if (level == 5 && semester == 1) {
-                String[] subs = {"ENGINEERING ENTREPRENEURSHIP", "ENGINEERING MATHEMATICS", "APPLIED CHEMISTRY", "OBJECT ORIENTED PROGRAMMING WITH JAVA", "BASIC VISUAL PROGRAMMING", "OPERATING SYSTEM"};
-                for (String s : subs) groupedNotes.put(s, new ArrayList<>());
-            } else if (level == 5 && semester == 2) {
-                String[] subs = {"SERVER ADMINISTRATION", "COMPUTER ARCHITECTURE AND ASSEMBLY PROGRAMMING LANGUAGE", "COMPUTER NETWORK", "MICROPROCESSOR AND MICROCONTROLLER", "BASIC DATA COMMUNICATION"};
-                for (String s : subs) groupedNotes.put(s, new ArrayList<>());
-            }
-        }
+        // The subjects have been fetched from the database above. No hardcoded fallbacks here.
 
         // 2. Now add notes to the established buckets
         for (Note note : notes) {

@@ -377,9 +377,9 @@ public class NotesController {
             
             // Send Push Notification
             if (pushNotificationService != null) {
-                String pushTitle = "Fresh Material Dropped!";
+                String pushTitle = "New Notes Added! 🎉";
                 String categoryLabel = (category == null || category.trim().isEmpty()) ? "Note" : category;
-                String pushBody = "New " + categoryLabel + ": " + title + " is now available. Tap to view and stay ahead!";
+                String pushBody = "Hey there! We just added a new " + categoryLabel + " titled '" + title + "'. Tap here to check it out!";
                 String pushUrl = "/view/" + note.getEncryptedSlug();
                 
                 // Send async to not block the upload response (Now uses @Async in service)

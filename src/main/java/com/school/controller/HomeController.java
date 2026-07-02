@@ -60,6 +60,9 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
+        if (session.getAttribute("user") != null) {
+            return "redirect:/dashboard";
+        }
         // Fetch the absolute 10 most recent uploads for Note category (Public Quick Access)
         List<Note> popularNotes = noteRepository.findTop10ByCategoryOrderByIdDesc("Note");
         

@@ -77,23 +77,28 @@
                 <a href="/" class="text-decoration-none d-inline-block mb-1">
                     <span class="text-gradient fw-bold" style="font-size: 2.5rem; letter-spacing: -1.8px;">4LAZIE</span>
                 </a>
-                <h4 class="fw-bold mb-1 mt-2 text-dark-custom" style="letter-spacing: -0.5px;">Reset Password</h4>
-                <p class="text-muted-custom" style="font-size: 0.85rem; font-weight: 500;">Enter your email to receive a 6-digit OTP</p>
+                <h4 class="fw-bold mb-1 mt-2 text-dark-custom" style="letter-spacing: -0.5px;">Verify OTP</h4>
+                <p class="text-muted-custom" style="font-size: 0.85rem; font-weight: 500;">Enter the 6-digit OTP sent to <strong th:text="${email}"></strong></p>
             </div>
 
             <!-- Alerts -->
             <div th:if="${error}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #065f46; font-size: 0.85rem; backdrop-filter: blur(5px); transition: all 0.3s ease;">
                 <i class="bi bi-exclamation-triangle-fill fs-5 me-3"></i> <span th:text="${error}"></span>
             </div>
+            
+            <div th:if="${success}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #065f46; font-size: 0.85rem; backdrop-filter: blur(5px); transition: all 0.3s ease;">
+                <i class="bi bi-check-circle-fill fs-5 me-3"></i> <span th:text="${success}"></span>
+            </div>
 
-            <form th:action="@{/forgot-password}" method="post">
+            <form th:action="@{/verify-otp}" method="post">
+                <input type="hidden" name="email" th:value="${email}" />
                 <div class="mb-4">
-                    <label class="form-label text-muted-custom fw-semibold mb-2" style="font-size: 0.85rem;">Email Address</label>
-                    <input type="email" name="email" id="email" class="premium-input shadow-none" placeholder="Enter your Email" required autocomplete="off">
+                    <label class="form-label text-muted-custom fw-semibold mb-2" style="font-size: 0.85rem;">6-Digit OTP</label>
+                    <input type="text" name="otp" id="otp" class="premium-input shadow-none" placeholder="e.g. 123456" required autocomplete="off" maxlength="6" pattern="\d{6}" style="letter-spacing: 5px; text-align: center; font-size: 1.5rem; font-weight: bold;">
                 </div>
 
                 <button type="submit" class="premium-btn mb-4">
-                    Send OTP <i class="bi bi-send-fill ms-2"></i>
+                    Verify OTP <i class="bi bi-check-circle-fill ms-2"></i>
                 </button>
             </form>
 

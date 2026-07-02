@@ -59,18 +59,33 @@ public class PasswordResetController {
         // Futa token za zamani
         tokenRepository.deleteByUser(user);
 
-        // Tengeneza token mpya (expire in 2 minutes)
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken(token, user, 2);
+        // Tengeneza token mpya (expire in 5 minutes)
+        String otp = String.format("%06d", new java.util.Random().nextInt(999999));
+        PasswordResetToken resetToken = new PasswordResetToken(otp, user, 5);
         tokenRepository.save(resetToken);
 
-        String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String resetLink = appUrl + "/reset-password?token=" + token;
+        emailService.sendPasswordResetEmail(user.getEmail(), otp);
+        redirectAttributes.addFlashAttribute("success", "A 6-digit OTP has been sent to your email. It will expire in 5 minutes.");
 
-        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-        redirectAttributes.addFlashAttribute("success", "A password reset link has been sent to your email. It will expire in 2 minutes.");
+        return "redirect:/verify-otp?email=" + email;
+    }
 
-        return "redirect:/login";
+    @GetMapping("/verify-otp")
+    public String showVerifyOtpForm(@RequestParam("email") String email, Model model) {
+        model.addAttribute("email", email);
+        return "verify_otp";
+    }
+    
+    @PostMapping("/verify-otp")
+    public String processVerifyOtp(@RequestParam("email") String email,
+                                   @RequestParam("otp") String otp,
+                                   RedirectAttributes redirectAttributes) {
+        Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(otp);
+        if (tokenOpt.isEmpty() || tokenOpt.get().isExpired() || !tokenOpt.get().getUser().getEmail().equals(email)) {
+            redirectAttributes.addFlashAttribute("error", "The OTP is invalid or has expired. Please request a new one.");
+            return "redirect:/verify-otp?email=" + email;
+        }
+        return "redirect:/reset-password?token=" + otp;
     }
 
     @GetMapping("/reset-password")
@@ -78,7 +93,7 @@ public class PasswordResetController {
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(token);
         
         if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
-            model.addAttribute("error", "The password reset link is invalid or has expired (lasts for 2 minutes). Please request a new one.");
+            model.addAttribute("error", "The OTP session is invalid or has expired. Please request a new one.");
             return "forgot_password";
         }
         
@@ -94,7 +109,7 @@ public class PasswordResetController {
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(token);
         
         if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
-            redirectAttributes.addFlashAttribute("error", "The password reset time has expired (2 minutes). Please request again.");
+            redirectAttributes.addFlashAttribute("error", "The OTP time has expired (5 minutes). Please request again.");
             return "redirect:/forgot-password";
         }
 

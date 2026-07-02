@@ -35,6 +35,31 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const requestUrl = new URL(event.request.url);
+
+  // For Cloudinary files, PDFs, or /download endpoint, use Cache-First, fallback to Network
+  if (requestUrl.pathname.includes('/download/') || requestUrl.hostname.includes('res.cloudinary.com') || requestUrl.pathname.endsWith('.pdf')) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).then(networkResponse => {
+          // Clone the response because it can only be consumed once
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+          return networkResponse;
+        }).catch(() => {
+          // If offline and not in cache, let it fail silently or return a default offline document if suitable
+          return new Response('Offline: Resource not cached.', { status: 503, statusText: 'Service Unavailable' });
+        });
+      })
+    );
+    return;
+  }
+
   if (event.request.mode === 'navigate') {
     // Page navigations -> Network First, fallback to offline.html
     event.respondWith(
@@ -44,14 +69,24 @@ self.addEventListener('fetch', event => {
         })
     );
   } else {
-    // Static assets -> Cache First, fallback to Network (Stale-while-revalidate pattern can also be used, but this is simpler and safer)
+    // Static assets -> Cache First, fallback to Network with dynamic caching
     event.respondWith(
       caches.match(event.request)
         .then(cachedResponse => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          return fetch(event.request);
+          return fetch(event.request).then(networkResponse => {
+            // Do not cache non-GET requests or partial responses
+            if (!networkResponse || networkResponse.status !== 200 || event.request.method !== 'GET') {
+              return networkResponse;
+            }
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+            return networkResponse;
+          });
         })
     );
   }

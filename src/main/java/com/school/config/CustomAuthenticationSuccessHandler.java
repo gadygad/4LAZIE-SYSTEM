@@ -29,6 +29,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+            user.setLastLoginTime(java.time.LocalDateTime.now());
+            userRepository.save(user);
+
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             

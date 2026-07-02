@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 
@@ -147,6 +147,9 @@
                         </a>
                         <a href="/admin/users" class="sidebar-nav-item active" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-people-fill text-primary"></i>USERS MANAGEMENT
+                        </a>
+                        <a href="/admin/subjects" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                            <i class="bi bi-book-half text-primary"></i>MANAGE SUBJECTS
                         </a>
                         <a href="/upload" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-cloud-arrow-up-fill"></i>UPLOAD NOTES

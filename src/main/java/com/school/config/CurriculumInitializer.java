@@ -203,6 +203,22 @@ public class CurriculumInitializer {
                 }
             }
 
+            // Seed DIP_CSE Level 4 Sem 2 (Specifics)
+            List<String> cseLevel4Sem2 = Arrays.asList("DATA STRUCTURE");
+            List<Subject> existingCseLevel4Sem2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 4, 2);
+            for (String name : cseLevel4Sem2) {
+                boolean exists = existingCseLevel4Sem2.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(2);
+                    subject.setLevelNo(4);
+                    subject.setCourse(diplomaCSE);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+
             List<String> cseLevel5Sem1 = Arrays.asList("OBJECT ORIENTED PROGRAMMING WITH JAVA", "BASIC VISUAL PROGRAMMING", "OPERATING SYSTEM");
             List<Subject> existingCseLevel5Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 5, 1);
             for (String name : cseLevel5Sem1) {
@@ -235,6 +251,24 @@ public class CurriculumInitializer {
                     subject.setName(name);
                     subject.setSemesterNo(2);
                     subject.setLevelNo(4);
+                    subject.setCourse(degreeCSE);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+            
+            // Seed DEG_CSE Year 2 Sem 2
+            List<String> degCseYear2Sem2 = Arrays.asList(
+                    "OPERATING SYSTEM"
+            );
+            List<Subject> existingDegCseY2S2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(degreeCSE.getId(), 2, 2);
+            for (String name : degCseYear2Sem2) {
+                boolean exists = existingDegCseY2S2.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(2);
+                    subject.setLevelNo(2);
                     subject.setCourse(degreeCSE);
                     subject.setCode("");
                     subjectRepository.save(subject);

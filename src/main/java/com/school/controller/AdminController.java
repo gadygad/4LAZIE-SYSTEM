@@ -19,6 +19,10 @@ import com.school.model.Timetable;
 import com.school.repository.TimetableRepository;
 import com.school.model.AcademicCalendar;
 import com.school.repository.AcademicCalendarRepository;
+import com.school.model.Subject;
+import com.school.model.Course;
+import com.school.repository.SubjectRepository;
+import com.school.repository.CourseRepository;
 import com.school.service.FileStorageService;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -39,6 +43,12 @@ public class AdminController {
 
     @Autowired
     private AcademicCalendarRepository academicCalendarRepository;
+    
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
     
     @Autowired
     private FileStorageService fileStorageService;
@@ -145,6 +155,59 @@ public class AdminController {
         noteRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("success", "Note deleted successfully.");
         return "redirect:/admin/notes";
+    }
+
+    // ============ ADMIN SUBJECTS MANAGEMENT ============
+
+    @GetMapping("/subjects")
+    public String listSubjects(HttpSession session, Model model) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        List<Subject> subjects = subjectRepository.findAll();
+        List<Course> courses = courseRepository.findAll();
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("courses", courses);
+        return "admin_subjects";
+    }
+
+    @PostMapping("/subjects/add")
+    public String addSubject(@RequestParam("name") String name,
+                             @RequestParam("levelNo") Integer levelNo,
+                             @RequestParam("semesterNo") Integer semesterNo,
+                             @RequestParam("courseId") String courseId,
+                             RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course != null) {
+            Subject subject = new Subject();
+            subject.setName(name);
+            subject.setLevelNo(levelNo);
+            subject.setSemesterNo(semesterNo);
+            subject.setCourse(course);
+            subject.setCode("");
+            subjectRepository.save(subject);
+            redirectAttributes.addFlashAttribute("success", "Subject added successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Course not found.");
+        }
+        return "redirect:/admin/subjects";
+    }
+
+    @PostMapping("/subjects/{id}/delete")
+    public String deleteSubject(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        subjectRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("success", "Subject deleted successfully.");
+        return "redirect:/admin/subjects";
     }
 
     // ============ ADMIN TIMETABLES MANAGEMENT ============
