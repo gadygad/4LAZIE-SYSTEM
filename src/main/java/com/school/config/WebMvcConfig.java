@@ -15,8 +15,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Serve files from the "uploads" folder located at the project root.
-        // The "file:" prefix denotes a filesystem location.
+        // Fallback to classpath:/static/uploads/ if not found externally.
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations("file:uploads/", "classpath:/static/uploads/");
     }
 }
