@@ -1,18 +1,17 @@
-<html xmlns:th="http://www.thymeleaf.org">
+﻿<html xmlns:th="http://www.thymeleaf.org">
 <body>
     <div th:fragment="nav(activePage)">
         <!-- FLOATING BOTTOM NAV BAR -->
         <div class="fixed-bottom custom-mobile-nav-wrapper d-flex justify-content-center"
             style="z-index: 1040; pointer-events: none;">
             <div class="custom-mobile-nav-inner d-flex align-items-center justify-content-around rounded-pill shadow-lg px-3 py-1"
-                style="pointer-events: auto; border: 1px solid rgba(245, 158, 11, 0.2); gap: 5px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
+                style="pointer-events: auto; border: 1px solid rgba(16, 185, 129, 0.2); gap: 5px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
 
-                <!-- Calendar - always visible -->
-                <a href="#"
-                    class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
-                    style="color: #64748b; width: 70px;" data-bs-toggle="modal" data-bs-target="#calendarModal">
-                    <i class="bi bi-calendar-event-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
-                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CALENDAR</span>
+                <!-- HOME Button -->
+                <a th:href="@{/}" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent" 
+                    style="color: #64748b; width: 60px;">
+                    <i class="bi bi-house-door-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">HOME</span>
                 </a>
 
                 <!-- CAT 1 -->
@@ -32,7 +31,7 @@
                     style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
                     data-exam-title="CAT 2"
                     th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat2Date != null ? currentCalendar.sem1Cat2Date : ''}"
-                    th:data-sem2="${currentCalendar != null and currentCalendar.sem2Cat2Date != null ? currentCalendar.sem2Cat2Date : ''}">
+                    data-sem2="Monday, July 20, 2026 <span class='d-inline-block rounded-pill fw-medium ms-1' style='background: rgba(241, 245, 249, 0.4); color: #94a3b8; font-size: 10px; padding: 0.2em 0.6em; letter-spacing: 0.3px; border: 1px dashed #cbd5e1; text-transform: uppercase;'>DEGREE ONLY</span>">
                     <i class="bi bi-ui-checks-grid" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 2</span>
                 </a>
@@ -43,7 +42,7 @@
                     style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
                     data-exam-title="UE"
                     th:data-sem1="${currentCalendar != null and currentCalendar.sem1UeDate != null ? currentCalendar.sem1UeDate : ''}"
-                    th:data-sem2="${currentCalendar != null and currentCalendar.sem2UeDate != null ? currentCalendar.sem2UeDate : ''}">
+                    data-sem2="Friday, July 10, 2026 <span class='d-inline-block rounded-pill fw-medium ms-1' style='background: rgba(241, 245, 249, 0.4); color: #94a3b8; font-size: 10px; padding: 0.2em 0.6em; letter-spacing: 0.3px; border: 1px dashed #cbd5e1; text-transform: uppercase;'>DIPLOMA ONLY</span>">
                     <i class="bi bi-mortarboard-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">UE</span>
                 </a>
@@ -63,17 +62,17 @@
             /* === BOTTOM NAV: MOBILE === */
             @media (max-width: 768px) {
                 .custom-mobile-nav-wrapper {
-                    margin-bottom: 0 !important;
+                    margin-bottom: calc(env(safe-area-inset-bottom, 12px) + 16px) !important;
+                    padding-left: calc(env(safe-area-inset-left, 0px) + 20px) !important;
+                    padding-right: calc(env(safe-area-inset-right, 0px) + 20px) !important;
                 }
                 .custom-mobile-nav-inner {
                     width: 100% !important;
-                    border-radius: 20px 20px 0 0 !important;
-                    border-bottom: none !important;
-                    border-left: none !important;
-                    border-right: none !important;
-                    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+                    border-radius: 24px !important;
+                    padding: 8px 12px !important;
                     justify-content: space-evenly !important;
                     min-width: unset !important;
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(16, 185, 129, 0.05) !important;
                 }
                 .bottom-nav-btn {
                     width: auto !important;
@@ -83,7 +82,8 @@
 
             /* Prevent page content from being hidden behind fixed bottom nav */
             body {
-                padding-bottom: 80px !important;
+                /* Increased padding-bottom to account for the floating mobile nav margin-bottom */
+                padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 95px) !important;
             }
             .bottom-nav-btn {
                 position: relative;
@@ -101,7 +101,7 @@
                 transform: translate(-50%, -50%) scale(0);
                 width: 120%;
                 padding-bottom: 120%;
-                background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0) 70%);
+                background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0) 70%);
                 border-radius: 50%;
                 transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
                 opacity: 0;
@@ -112,31 +112,31 @@
                 opacity: 1;
             }
             .bottom-nav-btn:hover {
-                background: rgba(245, 158, 11, 0.1) !important;
+                background: rgba(16, 185, 129, 0.1) !important;
                 backdrop-filter: blur(8px);
                 -webkit-backdrop-filter: blur(8px);
-                color: #d97706 !important;
+                color: #059669 !important;
                 transform: translateY(-5px);
-                box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
-                border: 1px solid rgba(245, 158, 11, 0.2) !important;
+                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+                border: 1px solid rgba(16, 185, 129, 0.2) !important;
             }
             .bottom-nav-btn i {
                 transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s, filter 0.3s;
             }
             .bottom-nav-btn:hover i {
-                color: #d97706 !important;
+                color: #059669 !important;
                 transform: translateY(-2px) scale(1.15);
-                filter: drop-shadow(0 6px 8px rgba(245, 158, 11, 0.4));
+                filter: drop-shadow(0 6px 8px rgba(16, 185, 129, 0.4));
             }
             .bottom-nav-btn:active {
                 transform: scale(0.92) translateY(2px) !important;
-                box-shadow: inset 0 2px 10px rgba(245, 158, 11, 0.2) !important;
-                background: rgba(245, 158, 11, 0.2) !important;
+                box-shadow: inset 0 2px 10px rgba(16, 185, 129, 0.2) !important;
+                background: rgba(16, 185, 129, 0.2) !important;
                 transition: all 0.1s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
             }
             .bottom-nav-btn:active i {
                 transform: scale(0.85) !important;
-                filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.8)) !important;
+                filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8)) !important;
                 transition: all 0.1s ease !important;
             }
         </style>
@@ -147,16 +147,16 @@
                     var title = this.getAttribute('data-exam-title');
                     var sem1 = this.getAttribute('data-sem1');
                     var sem2 = this.getAttribute('data-sem2');
-                    var fullTitle = title === 'UE' ? 'University Examinations (UE)' : title;
+                    var fullTitle = title === 'UE' ? 'UNIVERSITY EXAMINATIONS (UE)' : title.toUpperCase();
                     
                     var titleEl = document.getElementById('examModalTitle');
-                    if(titleEl) titleEl.innerText = fullTitle;
+                    if(titleEl) titleEl.innerHTML = fullTitle;
                     
                     var sem1El = document.getElementById('examSem1Date');
-                    if(sem1El) sem1El.innerText = sem1 ? sem1 : 'Not announced yet';
+                    if(sem1El) sem1El.innerHTML = sem1 ? sem1 : 'Not announced yet';
                     
                     var sem2El = document.getElementById('examSem2Date');
-                    if(sem2El) sem2El.innerText = sem2 ? sem2 : 'Not announced yet';
+                    if(sem2El) sem2El.innerHTML = sem2 ? sem2 : 'Not announced yet';
                 });
             });
         </script>
@@ -166,3 +166,4 @@
     </div>
 </body>
 </html>
+

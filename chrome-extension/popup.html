@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4LAZIE Quick Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">4L</div>
+            <span class="logo-text">4LAZIE</span>
+        </div>
+        <a href="#" id="openPortal" class="btn-primary">Open Portal</a>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search notes, past papers, courses..." autocomplete="off" autofocus>
+        <div id="loading" class="loading" style="display: none;">Searching...</div>
+    </div>
+    
+    <div id="results" class="results-container">
+        <!-- Results will be injected here -->
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <p>Type to search 4LAZIE materials...</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <span>API URL:</span>
+        <select id="apiTarget">
+            <option value="http://localhost:8080">Localhost</option>
+            <option value="https://your-app.up.railway.app">Railway (Live)</option>
+        </select>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

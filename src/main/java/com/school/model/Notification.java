@@ -20,6 +20,8 @@ public class Notification {
     
     private boolean isRead = false;
     
+    private String link = "/dashboard";
+    
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public Notification() {}
@@ -28,6 +30,14 @@ public class Notification {
         this.userId = userId;
         this.title = title;
         this.message = message;
+        this.createdAt = LocalDateTime.now();
+    }
+    
+    public Notification(String userId, String title, String message, String link) {
+        this.userId = userId;
+        this.title = title;
+        this.message = message;
+        this.link = link;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -45,6 +55,9 @@ public class Notification {
     
     public boolean isRead() { return isRead; }
     public void setRead(boolean isRead) { this.isRead = isRead; }
+    
+    public String getLink() { return link; }
+    public void setLink(String link) { this.link = link; }
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.school.model.Timetable;
 import com.school.repository.TimetableRepository;
@@ -44,9 +46,17 @@ public class AdminController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private User getLoggedInUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            return userRepository.findByEmail(auth.getName()).orElse(null);
+        }
+        return null;
+    }
+
     @GetMapping("/users")
     public String listUsers(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -57,7 +67,7 @@ public class AdminController {
 
     @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -74,7 +84,7 @@ public class AdminController {
 
     @PostMapping("/users/{id}/reset-password")
     public String resetUserPassword(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -92,7 +102,7 @@ public class AdminController {
 
     @PostMapping("/users/{id}/role")
     public String changeUserRole(@PathVariable String id, @RequestParam("role") Role role, HttpSession session, RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -117,7 +127,7 @@ public class AdminController {
 
     @GetMapping("/notes")
     public String listNotes(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -128,7 +138,7 @@ public class AdminController {
 
     @PostMapping("/notes/{id}/delete")
     public String deleteNote(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -141,7 +151,7 @@ public class AdminController {
 
     @GetMapping("/timetables")
     public String listTimetables(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -159,7 +169,7 @@ public class AdminController {
             @RequestParam("academicYear") String academicYear,
             HttpSession session, RedirectAttributes redirectAttributes) {
         
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -193,7 +203,7 @@ public class AdminController {
 
     @PostMapping("/timetables/{id}/delete")
     public String deleteTimetable(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -214,7 +224,7 @@ public class AdminController {
 
     @GetMapping("/calendar")
     public String viewCalendarAdmin(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -237,7 +247,7 @@ public class AdminController {
             @RequestParam(value = "isCurrent", required = false) boolean isCurrent,
             HttpSession session, RedirectAttributes redirectAttributes) {
 
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }
@@ -277,7 +287,7 @@ public class AdminController {
 
     @PostMapping("/calendar/{id}/delete")
     public String deleteCalendar(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("user");
+        User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.ADMIN) {
             return "redirect:/login";
         }

@@ -1,6 +1,9 @@
-const CACHE_NAME = '4lazie-cache-v1';
+const CACHE_NAME = '4lazie-cache-v2';
+const OFFLINE_URL = '/offline.html';
+
 const urlsToCache = [
   '/',
+  OFFLINE_URL,
   '/css/global-premium.css',
   '/css/dashboard-premium.css',
   '/css/premium-theme.css',
@@ -12,21 +15,44 @@ const urlsToCache = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
+  if (event.request.mode === 'navigate') {
+    // Page navigations -> Network First, fallback to offline.html
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(OFFLINE_URL);
+        })
+    );
+  } else {
+    // Static assets -> Cache First, fallback to Network (Stale-while-revalidate pattern can also be used, but this is simpler and safer)
+    event.respondWith(
+      caches.match(event.request)
+        .then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request);
+        })
+    );
+  }
 });

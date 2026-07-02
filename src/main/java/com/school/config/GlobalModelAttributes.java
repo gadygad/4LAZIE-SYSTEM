@@ -33,7 +33,7 @@ public class GlobalModelAttributes {
                     model.addAttribute("user", user);
                     
                     // Add notification details
-                    model.addAttribute("notifications", notificationService.getUserNotifications(user.getId()));
+                    model.addAttribute("notifications", notificationService.getUnreadNotifications(user.getId()));
                     model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
                 });
             } catch (Exception e) {

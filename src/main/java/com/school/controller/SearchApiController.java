@@ -4,17 +4,16 @@ import com.school.model.Note;
 import com.school.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.domain.Sort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ public class SearchApiController {
     private static final Logger logger = LoggerFactory.getLogger(SearchApiController.class);
 
     @GetMapping("/api/search")
+    @Cacheable(value = "searchResults", key = "#query")
     public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query) {
         org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(query.trim(), org.springframework.data.domain.PageRequest.of(0, 50));
         List<Note> allMatches = matchesPage.getContent();

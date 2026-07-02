@@ -20,20 +20,57 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" th:href="@{/css/global-premium.css}">
+    <style>
+        body {
+            background: #10b981 !important;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-container {
+            width: 100%;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .premium-card {
+            width: 100%;
+            max-width: 400px !important;
+            padding: 2.5rem 2rem !important;
+            margin: 0 auto !important;
+            background: rgba(255, 255, 255, 0.3) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+        }
+        @media (max-width: 576px) {
+            .auth-container {
+                padding: 0.5rem;
+            }
+            .premium-card {
+                padding: 1.25rem 1rem !important;
+                border-radius: 16px !important;
+            }
+        }
+        .premium-btn {
+            width: 100% !important;
+            margin: 0 auto !important;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
-    <div class="bg-glow">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
-    </div>
 
     <div class="auth-container">
         <div class="premium-card">
             
             <div class="text-center mb-4 pb-2">
                 <a href="/" class="text-decoration-none d-inline-block mb-1">
-                    <span class="text-gradient fw-bold" style="font-size: 2.5rem; letter-spacing: -1.8px;">4LAZIE</span>
+                    <span class="fw-bold" style="font-size: 2.2rem; letter-spacing: -1.8px; color: #0f172a; font-weight: 900 !important;">4LAZIE</span>
                 </a>
                 <h4 class="fw-bold mb-1 mt-2 text-dark-custom" style="letter-spacing: -0.5px;">Create Account</h4>
                 <p class="text-muted-custom" style="font-size: 0.85rem; font-weight: 500;">Join the smart generation today</p>
@@ -88,7 +125,7 @@
             </div>
 
             <div class="d-flex justify-content-center mb-4 position-relative">
-                <div id="google-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; cursor: not-allowed;" onclick="alert('Tafadhali chagua kozi yako (Course / Program) kwanza kabla ya kujiunga kwa kutumia Google.')"></div>
+                <div id="google-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; cursor: not-allowed;" onclick="alert('Please select your course/program first before signing up with Google.')"></div>
                 <div id="g_id_onload"
                      data-client_id="226739305071-2b7frq975mp822vaua8404aci2cej5ds.apps.googleusercontent.com"
                      data-callback="handleCredentialResponse"
@@ -112,7 +149,7 @@
 
             <div class="text-center pt-2" style="border-top: 1px solid rgba(15,23,42,0.05);">
                 <span class="text-muted-custom" style="font-size: 0.95rem;">Already registered?</span> 
-                <a th:href="@{/login}" class="text-gradient fw-bold text-decoration-none ms-1" style="font-size: 0.95rem;">Sign In</a>
+                <a th:href="@{/login}" class="fw-bold text-decoration-none ms-1" style="font-size: 0.95rem; color: #0f172a;">Sign In</a>
             </div>
 
         </div>
@@ -132,7 +169,7 @@
         function handleCredentialResponse(response) {
             const courseDropdown = document.getElementById('courseProgram');
             if (courseDropdown && (!courseDropdown.value || courseDropdown.value === "")) {
-                alert("Tafadhali chagua kozi yako kwanza kabla ya kujiunga kwa kutumia Google.");
+                alert("Please select your course first before signing up with Google.");
                 return;
             }
             document.getElementById('google-credential').value = response.credential;
@@ -158,3 +195,4 @@
 
 </body>
 </html>
+

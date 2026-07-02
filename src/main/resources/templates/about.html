@@ -27,7 +27,7 @@
         /* About Page Specific Styles */
         .hero-section {
             text-align: center;
-            padding: 80px 20px 40px;
+            padding: clamp(10px, 5vw, 60px) 15px clamp(10px, 3vw, 30px);
             max-width: 800px;
             margin: 0 auto;
         }
@@ -41,7 +41,7 @@
             letter-spacing: -1px;
         }
         .gold-gradient-text {
-            background: linear-gradient(135deg, #b48608 0%, #f59e0b 50%, #d97706 100%);
+            background: linear-gradient(135deg, #b48608 0%, #10b981 50%, #059669 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
@@ -58,7 +58,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(224, 170, 62, 0.2);
             border-radius: 30px;
-            padding: 50px;
+            padding: clamp(15px, 4vw, 40px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
         }
         .story-heading {
@@ -78,23 +78,23 @@
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
             font-size: 0.95rem;
-            color: #d97706;
-            background: rgba(245, 158, 11, 0.1);
+            color: #059669;
+            background: rgba(16, 185, 129, 0.1);
             padding: 8px 16px;
             border-radius: 50px;
-            border: 1px solid rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
         .step-card {
             background: transparent;
             border: none;
-            padding: 5px 10px;
+            padding: 0px 10px;
             text-align: left;
             height: auto;
             transition: all 0.3s ease;
             position: relative;
             box-shadow: none;
             max-width: 800px;
-            margin: 0 auto;
+            margin: -12px auto;
             display: flex;
             align-items: center;
         }
@@ -109,9 +109,9 @@
             top: 50%;
             left: -15px;
             transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -119,8 +119,8 @@
             justify-content: center;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 1rem;
-            box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+            font-size: 0.85rem;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
             border: 2px solid #fff;
             transition: all 0.3s ease;
         }
@@ -128,25 +128,25 @@
             transform: translateY(-50%) scale(1.15) rotate(10deg);
         }
         .step-icon {
-            width: 54px;
-            height: 54px;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05));
-            border: 1px solid rgba(245, 158, 11, 0.2);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 20px 0 0;
-            font-size: 1.5rem;
-            color: #d97706;
+            margin: 0 15px 0 0;
+            font-size: 1.2rem;
+            color: #059669;
             transition: all 0.4s ease;
             flex-shrink: 0;
         }
         .step-card:hover .step-icon {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: #fff;
             transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(245, 158, 11, 0.2);
+            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.2);
         }
         .cta-text-link {
             text-decoration: none;
@@ -155,16 +155,16 @@
         }
         .cta-text-link h2 {
             font-family: 'Outfit', sans-serif;
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
             font-weight: 800;
             color: #0f172a;
             margin-bottom: 0;
         }
         .cta-text-link:hover .gold-gradient-text {
-            filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4));
+            filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.4));
         }
         .cta-subtitle {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #64748b;
         }
@@ -176,7 +176,7 @@
             color: #0f172a;
             margin-bottom: 15px;
             text-decoration: underline;
-            text-decoration-color: #d97706;
+            text-decoration-color: #059669;
             text-decoration-thickness: 4px;
             text-underline-offset: 8px;
             letter-spacing: -0.5px;
@@ -198,7 +198,7 @@
 <body>
 
     <!-- NAVBAR -->
-    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 2px solid rgba(245, 158, 11, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);">
+    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 2px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);">
         <div class="container d-flex justify-content-between align-items-center flex-nowrap">
             <div class="d-flex align-items-center gap-2">
                 <a href="home.html" th:href="@{/}" class="text-decoration-none d-flex flex-row align-items-center gap-2">
@@ -211,7 +211,7 @@
 
             <!-- Premium Nav Links -->
             <div class="d-none d-md-flex align-items-center gap-4" style="margin-right: 2rem;">
-                <a href="home.html" th:href="@{/}" class="text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; color: #64748b; transition: color 0.3s ease;" onmouseover="this.style.color='#f59e0b';" onmouseout="this.style.color='#64748b';">
+                <a href="home.html" th:href="@{/}" class="text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; color: #64748b; transition: color 0.3s ease;" onmouseover="this.style.color='#10b981';" onmouseout="this.style.color='#64748b';">
                     Home
                 </a>
                 <div class="story-link-active">
@@ -220,8 +220,12 @@
             </div>
 
             <div class="d-flex justify-content-end align-items-center" style="width: auto;">
-                <a href="/login" class="btn fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: all 0.3s ease; font-size: 0.95rem; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(245, 158, 11, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.3)';">
-                    <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #0f172a;"></i> <span>Sign In</span>
+                <a th:href="@{/login}"
+                    class="text-decoration-none d-flex align-items-center justify-content-center fw-bold gap-1"
+                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: all 0.3s ease; font-size: 0.85rem; padding: 6px clamp(10px, 2vw, 16px); height: 36px; line-height: 1; border-radius: 50px;"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.4)';"
+                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)';">
+                    <i class="bi bi-person-fill" style="font-size: 0.95rem; margin-top: -1px;"></i> <span>Sign In</span>
                 </a>
             </div>
         </div>
@@ -236,11 +240,10 @@
         
         <!-- Hero Section -->
         <section class="hero-section">
-            <div class="d-inline-flex align-items-center gap-2 mb-3" style="background: rgba(224, 170, 62, 0.1); border: 1px solid rgba(224, 170, 62, 0.2); padding: 6px 16px; border-radius: 50px;">
-                <i class="bi bi-award-fill" style="color: #b48608; font-size: 1rem;"></i>
-                <span class="fw-bold" style="color: #926c04; font-size: 0.75rem; letter-spacing: 1.2px; text-transform: uppercase;">The Origin of Excellence</span>
+            <div class="mb-3">
+                <span class="fw-bold" style="color: #64748b; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;">THE ORIGIN OF EXCELLENCE</span>
             </div>
-            <h1 class="hero-title">The Story Behind <br><span class="gold-gradient-text">The Smart Brain.</span></h1>
+            <h1 class="hero-title text-uppercase" style="color: #0f172a; font-size: clamp(0.7rem, 2vw, 1.2rem); font-weight: 600; letter-spacing: -0.5px; line-height: 0.8;">THE STORY BEHIND <br>THE SMART BRAIN.</h1>
             <p class="hero-subtitle">Born out of the frustration of endless WhatsApp scrolling, built to be the ultimate centralized academic archive for ambitious students.</p>
         </section>
 
@@ -250,7 +253,7 @@
                 <div class="story-card">
                     <div class="row align-items-center">
                         <div class="col-md-7">
-                            <h2 class="story-heading">It started with a <span class="gold-gradient-text">simple frustration.</span></h2>
+                            <h2 class="story-heading text-uppercase" style="color: #0f172a; font-size: clamp(0.7rem, 2vw, 1rem); font-weight: 600; letter-spacing: -0.5px; margin-bottom: 0.5rem; line-height: 0.8;">IT STARTED WITH A <br>SIMPLE FRUSTRATION.</h2>
                             <p class="story-paragraph">
                                 It was exam week at SJUIT. Students were panicking, spending hours frantically scrolling through WhatsApp groups trying to find that one specific PDF for Server Administration. Some files were corrupted, others were mixed up with memes and personal chats. The chaos was overwhelming.
                             </p>
@@ -258,7 +261,7 @@
                                 We realized a fundamental truth: <strong>Brilliant minds shouldn't waste their energy hunting for study materials.</strong>
                             </p>
                             <p class="story-paragraph mb-0">
-                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. We created this platform to bridge the gap between academic chaos and pure clarity. We do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignments—so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
+                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. We created this platform to bridge the gap between academic chaos and pure clarity. We do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignmentsâ€”so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
                                 Because true intelligence is knowing how to find things effortlessly. <em style="color: #b48608; font-weight: 600;">Smart in the Brain, Lazy in the Search.</em>
                             </p>
                         </div>
@@ -269,7 +272,7 @@
                                 <div style="width: 240px; height: 240px; background: white; border: 1px solid rgba(224, 170, 62, 0.3); border-radius: 40px; transform: rotate(5deg); position: absolute; box-shadow: 0 15px 40px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px;">
                                     <i class="bi bi-mortarboard-fill" style="font-size: 4.5rem; color: #e0aa3e; margin-bottom: 15px;"></i>
                                     <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #0f172a; font-size: 1.3rem;">Est. 2024</h4>
-                                    <p style="color: #64748b; font-size: 0.85rem; font-weight: 500; margin: 0;">SJUIT · Tanzania</p>
+                                    <p style="color: #64748b; font-size: 0.85rem; font-weight: 500; margin: 0;">SJUIT Â· Tanzania</p>
                                 </div>
                             </div>
                         </div>
@@ -280,20 +283,19 @@
 
 
         <!-- How It Works (Visual Steps) -->
-        <section class="py-3 mt-2 position-relative">
+        <section class="py-2 py-md-3 mt-1 mt-md-2 position-relative">
             <!-- Decorative Orbs for Glassmorphism -->
-            <div style="position: absolute; top: 10%; left: 5%; width: 300px; height: 300px; background: rgba(245, 158, 11, 0.12); border-radius: 50%; filter: blur(50px); z-index: -1;"></div>
+            <div style="position: absolute; top: 10%; left: 5%; width: 300px; height: 300px; background: rgba(16, 185, 129, 0.12); border-radius: 50%; filter: blur(50px); z-index: -1;"></div>
             <div style="position: absolute; bottom: 0%; right: 5%; width: 250px; height: 250px; background: rgba(59, 130, 246, 0.08); border-radius: 50%; filter: blur(50px); z-index: -1;"></div>
 
-            <div class="text-center mb-3">
-                <div class="d-inline-flex align-items-center gap-2 mb-2" style="background: rgba(224, 170, 62, 0.1); padding: 6px 16px; border-radius: 50px; border: 1px solid rgba(224, 170, 62, 0.2);">
-                    <i class="bi bi-gear-wide-connected" style="color: #b48608;"></i>
-                    <span class="fw-bold" style="color: #926c04; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase;">Simplicity at its best</span>
+            <div class="text-center mb-0">
+                <div class="mb-0">
+                    <span class="fw-bold" style="color: #64748b; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase;">Simplicity at its best</span>
                 </div>
-                <h2 class="how-it-works-title">How <span class="gold-gradient-text">4LAZIE</span> Works</h2>
+                <h2 class="text-uppercase mb-0" style="color: #0f172a; font-weight: 600; font-size: clamp(1.2rem, 4vw, 2rem); font-family: 'Outfit', sans-serif;">HOW 4LAZIE WORKS</h2>
             </div>
 
-            <div class="row g-1 mt-0 justify-content-center">
+            <div class="row g-0 mt-0 justify-content-center">
                 <!-- Step 1 -->
                 <div class="col-12 col-md-10 col-lg-8">
                     <div class="step-card">
@@ -302,8 +304,8 @@
                             <i class="bi bi-search"></i>
                         </div>
                         <div>
-                            <h4 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.25rem;">Search Once</h4>
-                            <p class="text-secondary mb-0" style="font-size: 0.95rem; line-height: 1.5;">Type the name of your module or topic in our global search. No digging through folders required.</p>
+                            <h4 class="fw-bold mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1rem;">Search Once</h4>
+                            <p class="text-secondary mb-0" style="font-size: 0.85rem; line-height: 1.2;">Type the name of your module or topic in our global search. No digging through folders required.</p>
                         </div>
                     </div>
                 </div>
@@ -315,8 +317,8 @@
                             <i class="bi bi-cloud-arrow-down-fill"></i>
                         </div>
                         <div>
-                            <h4 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.25rem;">Instant Access</h4>
-                            <p class="text-secondary mb-0" style="font-size: 0.95rem; line-height: 1.5;">Read notes instantly via our premium web viewer, or download the PDFs directly to your device.</p>
+                            <h4 class="fw-bold mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1rem;">Instant Access</h4>
+                            <p class="text-secondary mb-0" style="font-size: 0.85rem; line-height: 1.2;">Read notes instantly via our premium web viewer, or download the PDFs directly to your device.</p>
                         </div>
                     </div>
                 </div>
@@ -328,8 +330,8 @@
                             <i class="bi bi-award"></i>
                         </div>
                         <div>
-                            <h4 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.25rem;">Ace Your Exams</h4>
-                            <p class="text-secondary mb-0" style="font-size: 0.95rem; line-height: 1.5;">Focus 100% of your energy on absorbing the knowledge. Head to your exams with ultimate confidence.</p>
+                            <h4 class="fw-bold mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1rem;">Ace Your Exams</h4>
+                            <p class="text-secondary mb-0" style="font-size: 0.85rem; line-height: 1.2;">Focus 100% of your energy on absorbing the knowledge. Head to your exams with ultimate confidence.</p>
                         </div>
                     </div>
                 </div>
@@ -338,31 +340,29 @@
 
 
         <!-- Advice for Students (Modern Premium) -->
-        <section class="py-4 position-relative overflow-hidden">
+        <section class="py-2 py-md-4 position-relative overflow-hidden">
             <!-- Background Orbs -->
-            <div class="position-absolute" style="top: 10%; left: 5%; width: 250px; height: 250px; background: rgba(245, 158, 11, 0.08); filter: blur(50px); z-index: -1; border-radius: 50%;"></div>
+            <div class="position-absolute" style="top: 10%; left: 5%; width: 250px; height: 250px; background: rgba(16, 185, 129, 0.08); filter: blur(50px); z-index: -1; border-radius: 50%;"></div>
             <div class="position-absolute" style="bottom: 0%; right: 5%; width: 200px; height: 200px; background: rgba(16, 185, 129, 0.04); filter: blur(50px); z-index: -1; border-radius: 50%;"></div>
             
             <div class="mx-auto position-relative" style="max-width: 850px; padding: 30px 20px;">
                 <!-- Decorative Quote Mark -->
-                <div style="font-family: 'Outfit', sans-serif; font-size: 10rem; font-weight: 900; color: rgba(245, 158, 11, 0.1); line-height: 0; position: absolute; top: 70px; left: 0px; user-select: none; z-index: 0;">"</div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 10rem; font-weight: 900; color: rgba(16, 185, 129, 0.1); line-height: 0; position: absolute; top: 70px; left: 0px; user-select: none; z-index: 0;">"</div>
                 
-                <h2 class="text-center mb-2" style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2.2rem; color: #0f172a; letter-spacing: -1px; position: relative; z-index: 2;">
-                    A Message from the <span class="gold-gradient-text">Founders</span>
+                <h2 class="text-center text-uppercase mb-2" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: clamp(1.2rem, 4vw, 2rem); color: #0f172a; letter-spacing: -0.5px; position: relative; z-index: 2;">
+                    A MESSAGE FROM THE FOUNDERS
                 </h2>
                 
                 <div class="position-relative mx-auto" style="max-width: 750px; z-index: 2; padding: 10px 15px 30px;">
                     
                     <p style="font-family: 'Outfit', sans-serif; font-style: italic; font-size: 1.35rem; line-height: 1.9; color: #334155; font-weight: 300; margin-bottom: 10px; text-align: center;">
-                        "University is not just about passing exams; it's about building your capacity to solve real-world problems. Don't just memorize to pass—<span style="font-style: normal; font-weight: 300; color: #94a3b8; border-bottom: 1px solid rgba(148, 163, 184, 0.4); padding-bottom: 2px;">understand to innovate</span>.
+                        "University is not just about passing exams; it's about building your capacity to solve real-world problems. Don't just memorize to passâ€”<span style="font-style: normal; font-weight: 300; color: #94a3b8; border-bottom: 1px solid rgba(148, 163, 184, 0.4); padding-bottom: 2px;">understand to innovate</span>.
                     </p>
                     <p style="font-family: 'Outfit', sans-serif; font-style: italic; font-size: 1.35rem; line-height: 1.9; color: #334155; font-weight: 300; margin-bottom: 15px; text-align: center;">
                         We built 4LAZIE to handle the friction of searching, so you can spend your time building your skills, networking, and creating the future. Stay focused, stay smart, and remember:"
                     </p>
-                    <div class="text-center" style="margin-bottom: -15px;">
-                        <div class="d-inline-block" style="background: linear-gradient(135deg, #ffffff, #fdf8f6); border: 1px solid rgba(245, 158, 11, 0.3); padding: 12px 30px; border-radius: 50px; box-shadow: 0 12px 30px rgba(245, 158, 11, 0.12);">
-                            <span style="font-family: 'Outfit', sans-serif; font-size: 1.05rem; color: #94a3b8; font-weight: 300; letter-spacing: 1px; text-transform: uppercase;">Your brain is your greatest asset. Use it wisely.</span>
-                        </div>
+                    <div class="text-center mt-2" style="margin-bottom: -15px;">
+                        <span style="font-family: 'Outfit', sans-serif; font-size: clamp(0.75rem, 2.5vw, 1.05rem); color: #0f172a; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">Your brain is your greatest asset. Use it wisely.</span>
                     </div>
                 </div>
             </div>
@@ -370,15 +370,15 @@
 
         <!-- Acknowledgements -->
         <section class="py-1 text-center mb-3">
-            <div class="d-inline-flex flex-column align-items-center p-4 mx-auto" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 20px; max-width: 700px; width: 100%;">
+            <div class="d-inline-flex flex-column align-items-center p-4 mx-auto" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; max-width: 700px; width: 100%;">
                 <h5 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Special Acknowledgement</h5>
                 <p style="color: #64748b; margin-bottom: 15px; font-size: 1.05rem;">We extend our deepest gratitude for the immense support, guidance, and technological inspiration from:</p>
                 <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3 mt-1">
                     <div class="d-inline-flex align-items-center gap-2" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.15rem; color: #0f172a;">
-                        <i class="bi bi-mortarboard-fill" style="color: #d97706;"></i> SJUIT
+                        <i class="bi bi-mortarboard-fill" style="color: #059669;"></i> SJUIT
                     </div>
                     <span class="d-none d-md-inline" style="color: #cbd5e1; font-size: 1.5rem;">&bull;</span>
-                    <a href="https://www.mindenlabs.com" target="_blank" class="d-inline-flex align-items-center gap-2 text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.15rem; color: #d97706; transition: all 0.3s ease;" onmouseover="this.style.color='#f59e0b'; this.style.transform='scale(1.05)';" onmouseout="this.style.color='#d97706'; this.style.transform='none';">
+                    <a href="https://www.mindenlabs.com" target="_blank" class="d-inline-flex align-items-center gap-2 text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.15rem; color: #059669; transition: all 0.3s ease;" onmouseover="this.style.color='#10b981'; this.style.transform='scale(1.05)';" onmouseout="this.style.color='#059669'; this.style.transform='none';">
                         <i class="bi bi-globe"></i> www.mindenlabs.com
                     </a>
                 </div>
@@ -386,7 +386,7 @@
         </section>
 
         <!-- Call to Action (Text Only Premium) -->
-        <section class="py-5 text-center mb-4 position-relative">
+        <section class="py-3 py-md-5 text-center mb-2 mb-md-4 position-relative">
             <!-- Subtle glow behind the text -->
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(224, 170, 62, 0.1) 0%, transparent 70%); border-radius: 50%; z-index: -1;"></div>
             
@@ -398,7 +398,7 @@
                     Stop searching. Start learning today <i class="bi bi-arrow-right ms-2"></i>
                 </div>
                 
-                <div class="mt-4" style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.1rem; letter-spacing: 10px; text-transform: uppercase; display: block;">
+                <div class="mt-4" style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 0.85rem; letter-spacing: 10px; text-transform: uppercase; display: block;">
                     <span style="color: #64748b;">SMART IN</span> <span class="gold-gradient-text">BRAIN</span>
                 </div>
             </a>
@@ -407,8 +407,8 @@
     </main>
 
     <!-- Shared FOOTER -->
-    <footer th:replace="~{fragments/footer :: footer}" style="margin-top: auto; width: 100%; border-top: 1px solid rgba(245, 158, 11, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 10;">
-        <div class="container-fluid px-2 px-md-4 px-xl-5 py-4">
+    <footer th:replace="~{fragments/footer :: footer}" style="margin-top: auto; width: 100%; border-top: 1px solid rgba(16, 185, 129, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 10;">
+        <div class="container-fluid px-2 px-md-4 px-xl-5 py-2 py-md-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 <div style="color: #64748b; font-weight: 500; margin-bottom: 10px; margin-md-bottom: 0;">
                     &copy; 2026 
@@ -421,7 +421,7 @@
                     <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 8px;">
                         <i class="bi bi-code-slash" style="color: #cbd5e1;"></i>
                         Developed by 
-                        <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #d97706; font-weight: 800; transition: all 0.3s; background: rgba(245, 158, 11, 0.1); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(245, 158, 11, 0.2);" onmouseover="this.style.background='rgba(245, 158, 11, 0.2)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.transform='none';">
+                        <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #059669; font-weight: 800; transition: all 0.3s; background: rgba(16, 185, 129, 0.1); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2);" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.transform='none';">
                             mindenlabs.com
                         </a>
                     </span>
@@ -429,6 +429,9 @@
             </div>
         </div>
     </footer>
+
+    <!-- Bottom Navigation -->
+    <div th:replace="~{fragments/bottom_nav :: nav('story')}"></div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -492,3 +495,4 @@
 
 </body>
 </html>
+

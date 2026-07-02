@@ -17,9 +17,24 @@ public class NotificationService {
         Notification notification = new Notification(userId, title, message);
         notificationRepository.save(notification);
     }
+    
+    public void createNotification(String userId, String title, String message, String link) {
+        Notification notification = new Notification(userId, title, message, link);
+        notificationRepository.save(notification);
+    }
+
+    public Notification findById(String id) {
+        return notificationRepository.findById(id).orElse(null);
+    }
 
     public List<Notification> getUserNotifications(String userId) {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    public List<Notification> getUnreadNotifications(String userId) {
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+            .filter(n -> !n.isRead())
+            .toList();
     }
 
     public int getUnreadCount(String userId) {
