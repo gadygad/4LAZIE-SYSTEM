@@ -11,6 +11,19 @@ import org.springframework.stereotype.Controller;
 @ControllerAdvice(annotations = Controller.class)
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler({org.springframework.web.multipart.MaxUploadSizeExceededException.class, org.springframework.web.multipart.MultipartException.class})
+    public String handleMaxSizeException(Exception exc, HttpServletRequest request, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        String referer = request.getHeader("Referer");
+        
+        redirectAttributes.addFlashAttribute("error", "The file you are trying to upload is too large! Maximum allowed size is 50MB.");
+        redirectAttributes.addFlashAttribute("errorTitle", "File Too Large");
+        
+        if (referer != null && !referer.isEmpty()) {
+            return "redirect:" + referer;
+        }
+        return "redirect:/dashboard";
+    }
+
     @ExceptionHandler(Exception.class)
     public ModelAndView handleAllExceptions(HttpServletRequest request, Exception ex) {
         ModelAndView mav = new ModelAndView();
