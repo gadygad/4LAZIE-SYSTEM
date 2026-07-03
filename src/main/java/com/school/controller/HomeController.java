@@ -139,4 +139,9 @@ public class HomeController {
         model.addAttribute("pastPapers", pastPapers);
         return "ue_exams";
     }
+
+    @GetMapping("/policy")
+    public String policy() {
+        return "policy";
+    }
 }

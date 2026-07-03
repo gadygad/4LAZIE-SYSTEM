@@ -41,11 +41,22 @@ public class NoteService {
         List<Course> courses = courseRepository.findByProgramType(program);
         if (!courses.isEmpty()) {
             Course course = courses.get(0);
+            log.info("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
             List<Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNoOrderByIdAsc(course.getId(), level, semester);
+            log.info("Cached method returned {} subjects", subjects.size());
+            
+            if (subjects.isEmpty()) {
+                log.info("Falling back to non-cached method...");
+                subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), level, semester);
+                log.info("Non-cached method returned {} subjects", subjects.size());
+            }
+            
             for (Subject sub : subjects) {
                 groupedNotes.put(sub.getName(), new ArrayList<>());
                 moduleCodes.put(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
             }
+        } else {
+            log.warn("No course found for program: {}", program);
         }
 
         // The subjects have been fetched from the database above. No hardcoded fallbacks here.
