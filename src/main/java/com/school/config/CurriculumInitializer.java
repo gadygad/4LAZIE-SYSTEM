@@ -98,13 +98,13 @@ public class CurriculumInitializer {
                     "WEB DESIGNING"
             );
 
-            List<Subject> existingSubjectsCSE = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 5, 2);
+            List<Subject> existingSubjectsCSE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 5, 2);
             for (Subject s : existingSubjectsCSE) {
                 if (!moduleNamesCSE.contains(s.getName())) {
                     subjectRepository.delete(s);
                 }
             }
-            existingSubjectsCSE = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 5, 2);
+            existingSubjectsCSE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 5, 2);
             for (String name : moduleNamesCSE) {
                 boolean exists = existingSubjectsCSE.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -126,13 +126,13 @@ public class CurriculumInitializer {
 
             // Target subjects for IT Level 5 Sem 2
             List<String> moduleNamesIT = Arrays.asList("WEB DESIGNING");
-            List<Subject> existingSubjectsIT = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaIT.getId(), 5, 2);
+            List<Subject> existingSubjectsIT = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaIT, 5, 2);
             for (Subject s : existingSubjectsIT) {
                 if (!moduleNamesIT.contains(s.getName())) {
                     subjectRepository.delete(s);
                 }
             }
-            existingSubjectsIT = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaIT.getId(), 5, 2);
+            existingSubjectsIT = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaIT, 5, 2);
             for (String name : moduleNamesIT) {
                 boolean exists = existingSubjectsIT.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -156,13 +156,13 @@ public class CurriculumInitializer {
             List<String> generalLevel5Sem1 = Arrays.asList("ENGINEERING ENTREPRENEURSHIP", "ENGINEERING MATHEMATICS", "APPLIED CHEMISTRY");
             for (Course course : allCourses) {
                 if (course.getProgramType().startsWith("DIP_")) {
-                    List<Subject> existingLevel5Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 5, 1);
+                    List<Subject> existingLevel5Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 5, 1);
                     for (Subject s : existingLevel5Sem1) {
                         if (!generalLevel5Sem1.contains(s.getName())) {
                             subjectRepository.delete(s);
                         }
                     }
-                    existingLevel5Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 5, 1);
+                    existingLevel5Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 5, 1);
                     for (String name : generalLevel5Sem1) {
                         boolean exists = existingLevel5Sem1.stream().anyMatch(s -> s.getName().equals(name));
                         if (!exists) {
@@ -181,13 +181,13 @@ public class CurriculumInitializer {
             List<String> generalLevel4Sem1 = Arrays.asList("COMMUNICATION SKILLS", "BASIC ENGINEERING PHYSICS", "BASIC ENGINEERING MATHEMATICS");
             for (Course course : allCourses) {
                 if (course.getProgramType().startsWith("DIP_")) {
-                    List<Subject> existingLevel4Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 4, 1);
+                    List<Subject> existingLevel4Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 4, 1);
                     for (Subject s : existingLevel4Sem1) {
                         if (!generalLevel4Sem1.contains(s.getName())) {
                             subjectRepository.delete(s);
                         }
                     }
-                    existingLevel4Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 4, 1);
+                    existingLevel4Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 4, 1);
                     for (String name : generalLevel4Sem1) {
                         boolean exists = existingLevel4Sem1.stream().anyMatch(s -> s.getName().equals(name));
                         if (!exists) {
@@ -205,7 +205,7 @@ public class CurriculumInitializer {
 
             // Seed DIP_CSE Level 4 Sem 2 (Specifics)
             List<String> cseLevel4Sem2 = Arrays.asList("DATA STRUCTURE");
-            List<Subject> existingCseLevel4Sem2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 4, 2);
+            List<Subject> existingCseLevel4Sem2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 4, 2);
             for (String name : cseLevel4Sem2) {
                 boolean exists = existingCseLevel4Sem2.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -220,7 +220,7 @@ public class CurriculumInitializer {
             }
 
             List<String> cseLevel5Sem1 = Arrays.asList("OBJECT ORIENTED PROGRAMMING WITH JAVA", "BASIC VISUAL PROGRAMMING", "OPERATING SYSTEM");
-            List<Subject> existingCseLevel5Sem1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCSE.getId(), 5, 1);
+            List<Subject> existingCseLevel5Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 5, 1);
             for (String name : cseLevel5Sem1) {
                 boolean exists = existingCseLevel5Sem1.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -243,7 +243,7 @@ public class CurriculumInitializer {
                     "TECHNICAL SEMINAR",
                     "PROJECT"
             );
-            List<Subject> existingDegCseY4S2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(degreeCSE.getId(), 4, 2);
+            List<Subject> existingDegCseY4S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCSE, 4, 2);
             for (String name : degCseYear4Sem2) {
                 boolean exists = existingDegCseY4S2.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -261,7 +261,7 @@ public class CurriculumInitializer {
             List<String> degCseYear2Sem2 = Arrays.asList(
                     "OPERATING SYSTEM"
             );
-            List<Subject> existingDegCseY2S2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(degreeCSE.getId(), 2, 2);
+            List<Subject> existingDegCseY2S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCSE, 2, 2);
             for (String name : degCseYear2Sem2) {
                 boolean exists = existingDegCseY2S2.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -283,7 +283,7 @@ public class CurriculumInitializer {
                     "SUPERVISORY SKILLS",
                     "EMBEDED SYSTEM"
             );
-            List<Subject> existingDipCseL6S2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(diplomaCse6.getId(), 6, 2);
+            List<Subject> existingDipCseL6S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCse6, 6, 2);
             for (String name : dipCseLevel6Sem2) {
                 boolean exists = existingDipCseL6S2.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -305,7 +305,7 @@ public class CurriculumInitializer {
                     "COMPUTER ARCHITECTURE",
                     "COMPUTER INSTALLATION AND SERVICING"
             );
-            List<Subject> existingDegCsY1S1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(degreeCS.getId(), 1, 1);
+            List<Subject> existingDegCsY1S1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCS, 1, 1);
             for (String name : degCsYear1Sem1) {
                 boolean exists = existingDegCsY1S1.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {

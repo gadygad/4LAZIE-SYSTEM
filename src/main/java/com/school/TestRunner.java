@@ -27,11 +27,11 @@ public class TestRunner implements CommandLineRunner {
         Course course = courses.get(0);
         System.out.println("Course ID: " + course.getId());
         
-        List<Subject> subjects1 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), 5, 2);
-        System.out.println("findByCourseIdAndLevelNoAndSemesterNo size: " + subjects1.size());
+        List<Subject> subjects1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 5, 2);
+        System.out.println("findByCourseAndLevelNoAndSemesterNo size: " + subjects1.size());
         
-        List<Subject> subjects2 = subjectRepository.findByCourseIdAndLevelNoAndSemesterNoOrderByIdAsc(course.getId(), 5, 2);
-        System.out.println("findByCourseIdAndLevelNoAndSemesterNoOrderByIdAsc size: " + subjects2.size());
+        List<Subject> subjects2 = subjectRepository.findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(course, 5, 2);
+        System.out.println("findByCourseAndLevelNoAndSemesterNoOrderByIdAsc size: " + subjects2.size());
         
         System.out.println("================= ENDING TEST =================");
         System.exit(0);

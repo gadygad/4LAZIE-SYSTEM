@@ -9,10 +9,10 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Repository
 public interface SubjectRepository extends MongoRepository<Subject, String> {
-    List<Subject> findByCourseId(String courseId);
-    List<Subject> findByCourseIdAndSemesterNo(String courseId, Integer semesterNo);
-    List<Subject> findByCourseIdAndLevelNoAndSemesterNo(String courseId, Integer levelNo, Integer semesterNo);
+    List<Subject> findByCourse(Course course);
+    List<Subject> findByCourseAndSemesterNo(Course course, Integer semesterNo);
+    List<Subject> findByCourseAndLevelNoAndSemesterNo(Course course, Integer levelNo, Integer semesterNo);
     
-    @Cacheable(value = "subjectsByCourseLevelSemester", key = "#courseId + '-' + #levelNo + '-' + #semesterNo")
-    List<Subject> findByCourseIdAndLevelNoAndSemesterNoOrderByIdAsc(String courseId, Integer levelNo, Integer semesterNo);
+    @Cacheable(value = "subjectsByCourseLevelSemester", key = "#course.id + '-' + #levelNo + '-' + #semesterNo")
+    List<Subject> findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(Course course, Integer levelNo, Integer semesterNo);
 }

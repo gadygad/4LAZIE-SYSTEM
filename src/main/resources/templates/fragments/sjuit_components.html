@@ -545,6 +545,57 @@
                                                 </div>
                                             </th:block>
                                         </div>
+                                        <!-- GENERAL NOTES (No Unit) -->
+                                        <div style="border-bottom: 1px solid rgba(16, 185, 129,0.1); background: transparent;">
+                                            <th:block th:with="unitNotes=${entry.value.?[unitNumber == null and category != 'Assignment' and category != 'CAT 1' and category != 'CAT 2' and category != 'UE' and category != 'Project' and category != 'Past Paper']}">
+                                                <button class="accordion-button collapsed px-1 py-3 w-100"
+                                                        type="button"
+                                                        data-bs-toggle="collapse"
+                                                        th:data-bs-target="'#unitCollapse' + ${stat.index} + '_general'"
+                                                        style="background: transparent; border: none; font-family: 'Outfit', sans-serif; box-shadow: none;">
+                                                    <div class="d-flex align-items-center gap-3 w-100">
+                                                        <div style="color: var(--acc-icon-color, #059669); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                                            <i class="bi bi-bookmark-star-fill" style="font-size: 1.15rem;"></i>
+                                                        </div>
+                                                        <div class="d-flex flex-column text-start">
+                                                            <span class="fw-bold text-uppercase" style="color: #1e293b; font-size: 0.9rem; letter-spacing: 0.5px;">GENERAL NOTES</span>
+                                                            <span th:if="${#lists.isEmpty(unitNotes)}" style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">Pending</span>
+                                                            <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.65rem; color: var(--acc-text-light, #059669); font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                                <div th:id="'unitCollapse' + ${stat.index} + '_general'"
+                                                     class="accordion-collapse collapse"
+                                                     th:data-bs-parent="'#accordionUnits' + ${stat.index}">
+                                                    <div class="px-2 pb-3 pt-0 d-flex flex-column gap-1" style="border-left: 2px solid var(--acc-border, rgba(16, 185, 129,0.2)); margin-left: 10px; padding-left: 15px !important;">
+                                                        <th:block th:if="${not #lists.isEmpty(unitNotes)}" th:each="note : ${unitNotes}">
+                                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-2 rounded-3" style="transition: all 0.3s ease; border-bottom: 1px solid var(--acc-border-light, rgba(16, 185, 129,0.05));" onmouseover="this.style.backgroundColor='var(--acc-bg-hover, rgba(16, 185, 129,0.03))'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none'">
+                                                                <div class="d-flex align-items-center mb-3 mb-sm-0 pe-2">
+                                                                    <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: var(--acc-icon-bg, rgba(16, 185, 129,0.1)); color: var(--acc-icon-color, #059669);">
+                                                                        <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.1rem;"></i>
+                                                                    </div>
+                                                                    <div class="d-flex flex-column">
+                                                                        <span class="fw-bold text-uppercase" style="color: var(--acc-text-bold, #047857); font-size: 0.9rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
+                                                                        <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}" style="font-size: 0.65rem; color: var(--acc-text-light, #059669); font-weight: 600; opacity: 0.8;" th:text="${note.academicYear}">2024</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex gap-2 flex-shrink-0">
+                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: var(--acc-btn-read-bg, rgba(16, 185, 129, 0.15)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--acc-text-bold, #047857); border: 1px solid var(--acc-btn-read-border, rgba(16, 185, 129, 0.3)); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 80px;" onmouseover="if(!this.classList.contains('loading')){ this.style.background='var(--acc-btn-read-bg-hover, rgba(16, 185, 129, 0.25))'; this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--acc-btn-read-shadow-hover, 0 6px 12px rgba(16, 185, 129, 0.15))'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='var(--acc-btn-read-bg, rgba(16, 185, 129, 0.15))'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'; }">
+                                                                        <i class="bi bi-eye-fill"></i> <span>Read</span>
+                                                                    </button>
+                                                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm d-flex align-items-center gap-1" style="background: var(--acc-btn-down-bg, rgba(5, 150, 105, 0.85)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; border: 1px solid var(--acc-btn-down-border, rgba(5, 150, 105, 0.4)); font-weight: 600; font-size: 0.75rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='var(--acc-btn-down-bg-hover, rgba(5, 150, 105, 1))'; this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--acc-btn-down-shadow-hover, 0 6px 15px rgba(5, 150, 105, 0.3))';" onmouseout="this.style.background='var(--acc-btn-down-bg, rgba(5, 150, 105, 0.85))'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
+                                                                        <i class="bi bi-cloud-download-fill"></i> Download
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </th:block>
+                                                        <div th:if="${#lists.isEmpty(unitNotes)}" class="text-start py-2" style="color:#94a3b8; font-size:0.75rem; font-style: italic;">
+                                                            No general notes uploaded yet.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

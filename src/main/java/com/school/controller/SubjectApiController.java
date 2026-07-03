@@ -37,7 +37,7 @@ public class SubjectApiController {
         
         Course course = courses.get(0); // Assuming one course per program type for simplicity
         
-        List<Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), levelNo, semesterNo);
+        List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, levelNo, semesterNo);
         
         // Map to avoid infinite recursion with lazy loaded Course
         List<Map<String, Object>> response = subjects.stream().map(s -> {

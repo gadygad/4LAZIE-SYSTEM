@@ -42,12 +42,12 @@ public class NoteService {
         if (!courses.isEmpty()) {
             Course course = courses.get(0);
             log.info("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
-            List<Subject> subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNoOrderByIdAsc(course.getId(), level, semester);
+            List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(course, level, semester);
             log.info("Cached method returned {} subjects", subjects.size());
             
             if (subjects.isEmpty()) {
                 log.info("Falling back to non-cached method...");
-                subjects = subjectRepository.findByCourseIdAndLevelNoAndSemesterNo(course.getId(), level, semester);
+                subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, level, semester);
                 log.info("Non-cached method returned {} subjects", subjects.size());
             }
             
