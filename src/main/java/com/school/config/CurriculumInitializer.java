@@ -494,7 +494,7 @@ public class CurriculumInitializer {
                         "        <!-- HEADER -->\n" +
                         "        <div style=\"text-align: center; margin-bottom: 20px;\">\n" +
                         "            <h1 style=\"font-size: 1.4rem; font-weight: bold; color: #000; margin: 0 0 5px 0;\">ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</h1>\n" +
-                        "            <h2 style=\"font-size: 1.1rem; font-weight: bold; color: #059669; margin: 0 0 5px 0;\">DEPARTMENT OF CIVIL ENGINEERING AND BUILT ENVIRONMENT</h2>\n" +
+                        "            <h2 style=\"font-size: 1.1rem; font-weight: bold; color: #000; margin: 0 0 5px 0;\">DEPARTMENT OF CIVIL ENGINEERING AND BUILT ENVIRONMENT</h2>\n" +
                         "            <h3 style=\"font-size: 1rem; font-weight: bold; color: #000; margin: 0;\">THIRD YEAR (BATCH 18) SEMESTER II - DEGREE TIMETABLE APRIL 2026</h3>\n" +
                         "            <div style=\"display: flex; justify-content: space-between; margin-top: 20px; font-size: 0.9rem; font-weight: bold;\">\n" +
                         "                <div>CLASS ADVISOR: MR PRABU</div>\n" +
