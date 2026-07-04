@@ -86,4 +86,36 @@ public class EmailService {
             System.err.println("Failed to send notification email: " + e.getMessage());
         }
     }
+
+    @Async
+    public void sendSecureActivityReport(String to, byte[] pdfData) {
+        if (mailSender == null) {
+            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            return;
+        }
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(to);
+            helper.setSubject("🔒 Your Secure 4LAZIE Activity Report");
+            
+            String htmlBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;\">"
+                    + "<h2 style=\"color: #10b981;\">Hello Admin,</h2>"
+                    + "<p style=\"color: #475569; font-size: 16px;\">Please find attached the latest security activity logs for the 4LAZIE system.</p>"
+                    + "<p style=\"color: #ef4444; font-size: 15px; font-weight: bold;\">This document is password protected for your security.</p>"
+                    + "<p style=\"color: #475569; font-size: 15px;\">Please use your secret password to open it. Keep this information safe.</p>"
+                    + "<br/><p style=\"color: #94a3b8; font-size: 12px;\">&copy; 4LAZIE Security System</p>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            
+            // Add Attachment
+            org.springframework.core.io.ByteArrayResource resource = new org.springframework.core.io.ByteArrayResource(pdfData);
+            helper.addAttachment("4LAZIE_Security_Report.pdf", resource);
+            
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send secure report email: " + e.getMessage());
+        }
+    }
 }
