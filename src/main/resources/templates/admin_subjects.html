@@ -367,7 +367,7 @@
             }));
 
             // Initialize Tom Select
-            let eduTomSelect, courseTomSelect;
+            let eduTomSelect = null, courseTomSelect = null;
             try {
                 eduTomSelect = new TomSelect(eduSelectEl, { create: false, controlInput: null });
                 courseTomSelect = new TomSelect(courseSelectEl, { create: false, controlInput: null });
@@ -375,10 +375,8 @@
                 console.error('Tom Select error:', e);
             }
 
-            // Bulletproof logic: native listener handles both native select and Tom Select
-            eduSelectEl.addEventListener('change', function(e) {
-                let selectedType = e.target.value;
-
+            // Shared handler function
+            function handleEduChange(selectedType) {
                 if (!selectedType) {
                     dynamicFields.classList.add('d-none');
                     if (courseTomSelect) courseTomSelect.disable();
@@ -422,6 +420,14 @@
                         }
                     });
                 }
+            }
+
+            // Bind to TomSelect if available, otherwise bind to native
+            if (eduTomSelect) {
+                eduTomSelect.on('change', handleEduChange);
+            }
+            eduSelectEl.addEventListener('change', function(e) {
+                handleEduChange(e.target.value);
             });
         });
     </script>
