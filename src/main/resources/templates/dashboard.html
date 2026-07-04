@@ -168,7 +168,7 @@
                     .premium-table td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
                 </style>
 
-                <th:block th:if="${user != null and user.role != null and user.role.name() == 'ADMIN'}">
+                <th:block th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                 <!-- STATS CARDS ROW -->
                 <div class="row g-3 mb-4">
                     <div class="col-6 col-md-3">
@@ -245,7 +245,7 @@
                                         <tr th:each="u : ${liveUsersList}">
                                             <td class="fw-bold" style="color: #334155;">
                                                 <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle me-2 d-flex justify-content-center align-items-center text-white" style="width: 28px; height: 28px; background: linear-gradient(135deg, #10b981, #059669); font-size: 0.7rem;" th:text="${#strings.substring(u.name, 0, 1)}">U</div>
+                                                    <div class="rounded-circle me-2 d-flex justify-content-center align-items-center text-white" style="width: 28px; height: 28px; background: linear-gradient(135deg, #10b981, #059669); font-size: 0.7rem;" th:text="${u.name != null and u.name.length() > 0 ? #strings.substring(u.name, 0, 1) : 'U'}">U</div>
                                                     <span th:text="${u.name}">User</span>
                                                 </div>
                                             </td>
@@ -254,7 +254,7 @@
                                             </td>
                                             <td class="text-muted" th:text="${u.lastAction}">Viewing Dashboard</td>
                                         </tr>
-                                        <tr th:if="${liveUsersList == null || liveUsersList.isEmpty()}">
+                                        <tr th:if="${#lists.isEmpty(liveUsersList)}">
                                             <td colspan="3" class="text-center text-muted py-4">No active users right now.</td>
                                         </tr>
                                     </tbody>
@@ -293,12 +293,12 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="log : ${recentActivityLogs}">
-                                            <td style="color: #64748b; font-size: 0.75rem; font-weight: 500;" th:text="${#temporals.format(log.timestamp, 'HH:mm:ss')}">Time</td>
+                                            <td style="color: #64748b; font-size: 0.75rem; font-weight: 500;" th:text="${log.timestamp != null ? #temporals.format(log.timestamp, 'HH:mm:ss') : '-'}">Time</td>
                                             <td class="fw-bold" style="color: #334155;" th:text="${log.userName}">User</td>
                                             <td style="color: #059669; font-weight: 500;" th:text="${log.action}">Action</td>
                                             <td class="text-muted" style="font-size: 0.75rem; font-family: monospace;" th:text="${log.ipAddress}">IP</td>
                                         </tr>
-                                        <tr th:if="${recentActivityLogs == null || recentActivityLogs.isEmpty()}">
+                                        <tr th:if="${#lists.isEmpty(recentActivityLogs)}">
                                             <td colspan="4" class="text-center text-muted py-4">No logs available.</td>
                                         </tr>
                                     </tbody>
