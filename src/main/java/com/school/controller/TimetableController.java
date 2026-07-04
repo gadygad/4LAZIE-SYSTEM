@@ -21,6 +21,7 @@ public class TimetableController {
     @GetMapping("/timetable/view")
     public String viewTimetable(
             @RequestParam(name = "program", required = false) String program,
+            @RequestParam(name = "course", required = false) String course,
             @RequestParam(name = "level", required = false) Integer level,
             @RequestParam(name = "semester", required = false) Integer semester,
             @RequestParam(name = "academicYear", required = false) String academicYear,
@@ -48,8 +49,20 @@ public class TimetableController {
             semester = 1;
         }
 
+        // Determine actual programType (e.g. DEG_CE)
+        String programType = program.toUpperCase();
+        if (course != null && !course.isEmpty()) {
+            if (programType.equals("DEGREE")) {
+                programType = "DEG_" + course.toUpperCase();
+            } else if (programType.equals("DIPLOMA")) {
+                programType = "DIP_" + course.toUpperCase();
+            } else {
+                programType = programType + "_" + course.toUpperCase();
+            }
+        }
+
         // Fetch distinct years for this program/level/semester
-        java.util.List<Timetable> timetables = timetableRepository.findDistinctAcademicYears(program.toUpperCase(), level, semester);
+        java.util.List<Timetable> timetables = timetableRepository.findDistinctAcademicYears(programType, level, semester);
         java.util.List<String> availableYears = timetables.stream()
                 .map(Timetable::getAcademicYear)
                 .filter(year -> year != null && !year.isEmpty())
@@ -75,9 +88,9 @@ public class TimetableController {
 
         Optional<Timetable> timetableOpt;
         if (selectedYear != null && !selectedYear.isEmpty()) {
-            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(program.toUpperCase(), level, semester, selectedYear);
+            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(programType, level, semester, selectedYear);
         } else {
-            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(program.toUpperCase(), level, semester);
+            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(programType, level, semester);
         }
         
         if (timetableOpt.isPresent()) {
