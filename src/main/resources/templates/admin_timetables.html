@@ -313,17 +313,12 @@
             let i = 1;
             while(i <= 3) {
                 let val = document.getElementById(day + '_' + i).value.trim();
-                let match = val.match(/(.*?)\\s*\\((\\d+)\\)$/);
+                let match = val.match(/(.*?)\s*\(\s*(?:colspan\s*)?(\d+)\s*\)$/i);
                 if(match) {
                     html += `                <td colspan="${match[2]}" style="border: 1px solid #000; padding: 10px; font-weight: bold;">${match[1]}</td>\\n`;
                     i += parseInt(match[2]);
                 } else if(val === "") {
-                    // Skip empty if it's covered by a previous colspan, otherwise print empty cell
-                    if (document.getElementById(day + '_' + (i-1)) && document.getElementById(day + '_' + (i-1)).value.includes('(')) {
-                       // Covered by colspan, do nothing
-                    } else {
-                        html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
-                    }
+                    html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
                     i++;
                 } else {
                     html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;">${val}</td>\\n`;
@@ -335,14 +330,12 @@
             i = 4;
             while(i <= 5) {
                 let val = document.getElementById(day + '_' + i).value.trim();
-                let match = val.match(/(.*?)\\s*\\((\\d+)\\)$/);
+                let match = val.match(/(.*?)\s*\(\s*(?:colspan\s*)?(\d+)\s*\)$/i);
                 if(match) {
                     html += `                <td colspan="${match[2]}" style="border: 1px solid #000; padding: 10px; font-weight: bold;">${match[1]}</td>\\n`;
                     i += parseInt(match[2]);
                 } else if(val === "") {
-                    if (document.getElementById(day + '_' + (i-1)) && document.getElementById(day + '_' + (i-1)).value.includes('(')) {} else {
-                        html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
-                    }
+                    html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
                     i++;
                 } else {
                     html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;">${val}</td>\\n`;
@@ -354,14 +347,12 @@
             i = 6;
             while(i <= 7) {
                 let val = document.getElementById(day + '_' + i).value.trim();
-                let match = val.match(/(.*?)\\s*\\((\\d+)\\)$/);
+                let match = val.match(/(.*?)\s*\(\s*(?:colspan\s*)?(\d+)\s*\)$/i);
                 if(match) {
                     html += `                <td colspan="${match[2]}" style="border: 1px solid #000; padding: 10px; font-weight: bold;">${match[1]}</td>\\n`;
                     i += parseInt(match[2]);
                 } else if(val === "") {
-                    if (document.getElementById(day + '_' + (i-1)) && document.getElementById(day + '_' + (i-1)).value.includes('(')) {} else {
-                        html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
-                    }
+                    html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
                     i++;
                 } else {
                     html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;">${val}</td>\\n`;
