@@ -12,4 +12,8 @@ public interface UserRepository extends MongoRepository<User, String> {
     java.util.List<User> findByEmailIgnoreCaseOrNameIgnoreCase(String email, String name);
     Optional<User> findByPhoneNumber(String phoneNumber);
     Optional<User> findByVerificationToken(String verificationToken);
+    
+    long countByRole(com.school.model.Role role);
+    long countByLastActiveTimeAfter(java.time.LocalDateTime time);
+    java.util.List<User> findByLastActiveTimeAfterOrderByLastActiveTimeDesc(java.time.LocalDateTime time);
 }

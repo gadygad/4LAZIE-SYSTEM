@@ -84,6 +84,11 @@ public class NotesController {
     @Autowired
     private InstitutionRepository institutionRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private com.school.repository.ActivityLogRepository activityLogRepository;
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -306,6 +311,22 @@ public class NotesController {
         model.addAttribute("selectedSemester", semester);
         model.addAttribute("selectedProgram", program);
         model.addAttribute("user", loggedInUser);
+
+        java.time.LocalDateTime fiveMinutesAgo = java.time.LocalDateTime.now().minusMinutes(5);
+        long liveUsersCount = userRepository.countByLastActiveTimeAfter(fiveMinutesAgo);
+        long totalStudents = userRepository.countByRole(com.school.model.Role.STUDENT);
+        long totalSubjects = subjectRepository.count();
+        long notesToday = noteRepository.countByUploadDateAfter(java.time.LocalDate.now().atStartOfDay());
+        
+        List<User> liveUsers = userRepository.findByLastActiveTimeAfterOrderByLastActiveTimeDesc(fiveMinutesAgo);
+        List<com.school.model.ActivityLog> recentActivityLogs = activityLogRepository.findTop50ByOrderByTimestampDesc();
+
+        model.addAttribute("liveUsersCount", liveUsersCount);
+        model.addAttribute("totalStudents", totalStudents);
+        model.addAttribute("totalSubjects", totalSubjects);
+        model.addAttribute("notesToday", notesToday);
+        model.addAttribute("liveUsersList", liveUsers);
+        model.addAttribute("recentActivityLogs", recentActivityLogs);
 
         model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
         model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());

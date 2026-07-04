@@ -63,6 +63,158 @@
             <div class="center-col">
                 
 
+                <!-- STATS CARDS ROW -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card-custom p-3 d-flex align-items-center" style="border-left: 4px solid #10b981;">
+                            <div class="me-3" style="width: 45px; height: 45px; border-radius: 12px; background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center; color: #10b981;">
+                                <i class="bi bi-people-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-muted" style="font-size: 0.8rem; font-weight: 600;">Total Students</h6>
+                                <h3 class="mb-0 fw-bold" style="color: #1e293b;" th:text="${totalStudents != null ? totalStudents : 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-custom p-3 d-flex align-items-center position-relative" style="border-left: 4px solid #f59e0b;">
+                            <!-- Pulsing Dot -->
+                            <div class="position-absolute" style="top: 15px; right: 15px;">
+                                <span class="d-inline-block rounded-circle" style="width: 10px; height: 10px; background-color: #10b981; box-shadow: 0 0 0 0 rgba(16, 185, 129, 1); animation: pulse-green 2s infinite;"></span>
+                                <style>
+                                    @keyframes pulse-green {
+                                        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                                        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+                                        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+                                    }
+                                </style>
+                            </div>
+                            <div class="me-3" style="width: 45px; height: 45px; border-radius: 12px; background: rgba(245,158,11,0.1); display: flex; align-items: center; justify-content: center; color: #f59e0b;">
+                                <i class="bi bi-broadcast fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-muted" style="font-size: 0.8rem; font-weight: 600;">Live Users</h6>
+                                <h3 class="mb-0 fw-bold" style="color: #1e293b;" th:text="${liveUsersCount != null ? liveUsersCount : 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-custom p-3 d-flex align-items-center" style="border-left: 4px solid #3b82f6;">
+                            <div class="me-3" style="width: 45px; height: 45px; border-radius: 12px; background: rgba(59,130,246,0.1); display: flex; align-items: center; justify-content: center; color: #3b82f6;">
+                                <i class="bi bi-journal-arrow-up fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-muted" style="font-size: 0.8rem; font-weight: 600;">Notes Today</h6>
+                                <h3 class="mb-0 fw-bold" style="color: #1e293b;" th:text="${notesToday != null ? notesToday : 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-custom p-3 d-flex align-items-center" style="border-left: 4px solid #8b5cf6;">
+                            <div class="me-3" style="width: 45px; height: 45px; border-radius: 12px; background: rgba(139,92,246,0.1); display: flex; align-items: center; justify-content: center; color: #8b5cf6;">
+                                <i class="bi bi-collection-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-muted" style="font-size: 0.8rem; font-weight: 600;">Total Subjects</h6>
+                                <h3 class="mb-0 fw-bold" style="color: #1e293b;" th:text="${totalSubjects != null ? totalSubjects : 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECURITY ACTIVITY & LIVE USERS ROW -->
+                <div class="row g-4 mb-4">
+                    <!-- Live Users Table -->
+                    <div class="col-md-6">
+                        <div class="card-custom h-100">
+                            <h6 class="fw-bold mb-3 text-dark" style="font-family: 'Outfit', sans-serif;"><i class="bi bi-person-video2 text-success me-2"></i>Live Online Users</h6>
+                            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                                    <thead style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Role</th>
+                                            <th>Last Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="u : ${liveUsersList}">
+                                            <td class="fw-bold" style="color: #334155;" th:text="${u.name}">User</td>
+                                            <td>
+                                                <span class="badge" th:classappend="${u.role.name() == 'ADMIN' ? 'bg-danger' : 'bg-primary'}" th:text="${u.role.name()}">ROLE</span>
+                                            </td>
+                                            <td class="text-muted" th:text="${u.lastAction}">Viewing Dashboard</td>
+                                        </tr>
+                                        <tr th:if="${liveUsersList == null || liveUsersList.isEmpty()}">
+                                            <td colspan="3" class="text-center text-muted py-3">No active users right now.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Activity Log Table -->
+                    <div class="col-md-6">
+                        <div class="card-custom h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;"><i class="bi bi-shield-lock-fill text-warning me-2"></i>Security Activity Log</h6>
+                                <button onclick="downloadLogsPDF()" class="btn btn-sm" style="background: rgba(16,185,129,0.1); color: #10b981; font-weight: 600;"><i class="bi bi-file-pdf-fill me-1"></i> PDF Export</button>
+                            </div>
+                            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                                <table id="activityLogsTable" class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                                    <thead style="position: sticky; top: 0; background: white; z-index: 1;">
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>IP Address</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="log : ${recentActivityLogs}">
+                                            <td style="color: #64748b; font-size: 0.75rem;" th:text="${#temporals.format(log.timestamp, 'HH:mm:ss')}">Time</td>
+                                            <td class="fw-bold" style="color: #334155;" th:text="${log.userName}">User</td>
+                                            <td class="text-primary" th:text="${log.action}">Action</td>
+                                            <td class="text-muted" style="font-size: 0.75rem;" th:text="${log.ipAddress}">IP</td>
+                                        </tr>
+                                        <tr th:if="${recentActivityLogs == null || recentActivityLogs.isEmpty()}">
+                                            <td colspan="4" class="text-center text-muted py-3">No logs available.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- jspdf scripts for PDF Export -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+                <script>
+                    function downloadLogsPDF() {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF();
+                        
+                        doc.setFontSize(18);
+                        doc.text("4LAZIE - Security Activity Logs", 14, 22);
+                        
+                        doc.setFontSize(11);
+                        doc.setTextColor(100);
+                        doc.text("Generated on: " + new Date().toLocaleString(), 14, 30);
+                        
+                        doc.autoTable({
+                            html: '#activityLogsTable',
+                            startY: 35,
+                            theme: 'grid',
+                            headStyles: { fillColor: [16, 185, 129] },
+                            styles: { fontSize: 9 }
+                        });
+                        
+                        doc.save('4LAZIE_Security_Logs.pdf');
+                    }
+                </script>
+
                 <!-- Recent Notes Section (Premium Vertical List) -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-end mb-3 px-1">

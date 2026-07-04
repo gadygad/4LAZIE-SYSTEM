@@ -46,6 +46,8 @@ public class User {
     private Integer year;
     private LocalDateTime dateJoined;
     private LocalDateTime lastLoginTime;
+    private LocalDateTime lastActiveTime;
+    private String lastAction;
 
     @DBRef
     private Institution institution;
@@ -100,6 +102,10 @@ public class User {
     public void setDateJoined(LocalDateTime dateJoined) { this.dateJoined = dateJoined; }
     public LocalDateTime getLastLoginTime() { return lastLoginTime; }
     public void setLastLoginTime(LocalDateTime lastLoginTime) { this.lastLoginTime = lastLoginTime; }
+    public LocalDateTime getLastActiveTime() { return lastActiveTime; }
+    public void setLastActiveTime(LocalDateTime lastActiveTime) { this.lastActiveTime = lastActiveTime; }
+    public String getLastAction() { return lastAction; }
+    public void setLastAction(String lastAction) { this.lastAction = lastAction; }
     public Institution getInstitution() { return institution; }
     public void setInstitution(Institution institution) { this.institution = institution; }
     public Set<String> getSavedNotes() { return savedNotes; }

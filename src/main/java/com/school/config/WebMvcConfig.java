@@ -12,11 +12,19 @@ import org.springframework.lang.NonNull;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private ActiveUserInterceptor activeUserInterceptor;
+
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Serve files from the "uploads" folder located at the project root.
         // Fallback to classpath:/static/uploads/ if not found externally.
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:uploads/", "classpath:/static/uploads/");
+    }
+
+    @Override
+    public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
+        registry.addInterceptor(activeUserInterceptor);
     }
 }

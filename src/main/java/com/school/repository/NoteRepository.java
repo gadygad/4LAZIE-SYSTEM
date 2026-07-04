@@ -66,4 +66,6 @@ public interface NoteRepository extends MongoRepository<Note, String> {
         "{ '$group': { '_id': '$moduleName' } }"
     })
     List<String> findDistinctModuleNames();
+
+    long countByUploadDateAfter(java.time.LocalDateTime date);
 }
