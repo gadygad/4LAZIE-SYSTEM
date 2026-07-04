@@ -168,56 +168,7 @@
                     .premium-table td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
                 </style>
 
-                <!-- STATS CARDS ROW -->
-                <div class="row g-3 mb-4">
-                    <div class="col-6 col-md-3">
-                        <div class="glass-stat-card p-3 d-flex flex-column align-items-center text-center">
-                            <div class="icon-container-premium mb-2">
-                                <i class="bi bi-people-fill fs-3"></i>
-                            </div>
-                            <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;">Total Students</h6>
-                            <h2 class="mb-0 fw-black" style="color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;" th:text="${totalStudents != null ? totalStudents : 0}">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="glass-stat-card p-3 d-flex flex-column align-items-center text-center position-relative">
-                            <!-- Pulsing Dot -->
-                            <div class="position-absolute" style="top: 15px; right: 15px;">
-                                <span class="d-inline-block rounded-circle" style="width: 12px; height: 12px; background-color: #10b981; box-shadow: 0 0 0 0 rgba(16, 185, 129, 1); animation: pulse-green 2s infinite;"></span>
-                                <style>
-                                    @keyframes pulse-green {
-                                        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-                                        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-                                        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-                                    }
-                                </style>
-                            </div>
-                            <div class="icon-container-premium mb-2" style="color: #f59e0b; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));">
-                                <i class="bi bi-broadcast fs-3"></i>
-                            </div>
-                            <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;">Live Users</h6>
-                            <h2 class="mb-0 fw-black" style="color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;" th:text="${liveUsersCount != null ? liveUsersCount : 0}">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="glass-stat-card p-3 d-flex flex-column align-items-center text-center">
-                            <div class="icon-container-premium mb-2" style="color: #3b82f6; background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05));">
-                                <i class="bi bi-journal-arrow-up fs-3"></i>
-                            </div>
-                            <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;">Notes Today</h6>
-                            <h2 class="mb-0 fw-black" style="color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;" th:text="${notesToday != null ? notesToday : 0}">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="glass-stat-card p-3 d-flex flex-column align-items-center text-center">
-                            <div class="icon-container-premium mb-2" style="color: #8b5cf6; background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05));">
-                                <i class="bi bi-collection-fill fs-3"></i>
-                            </div>
-                            <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;">Total Subjects</h6>
-                            <h2 class="mb-0 fw-black" style="color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;" th:text="${totalSubjects != null ? totalSubjects : 0}">0</h2>
-                        </div>
-                    </div>
-                </div>
+
 
 
 

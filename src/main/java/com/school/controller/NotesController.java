@@ -312,16 +312,7 @@ public class NotesController {
         model.addAttribute("selectedProgram", program);
         model.addAttribute("user", loggedInUser);
 
-        java.time.LocalDateTime fiveMinutesAgo = java.time.LocalDateTime.now().minusMinutes(5);
-        long liveUsersCount = userRepository.countByLastActiveTimeAfter(fiveMinutesAgo);
-        long totalStudents = userRepository.countByRole(com.school.model.Role.STUDENT);
-        long totalSubjects = subjectRepository.count();
-        long notesToday = noteRepository.countByUploadDateAfter(java.time.LocalDate.now().atStartOfDay());
-        
-        model.addAttribute("liveUsersCount", liveUsersCount);
-        model.addAttribute("totalStudents", totalStudents);
-        model.addAttribute("totalSubjects", totalSubjects);
-        model.addAttribute("notesToday", notesToday);
+
 
         model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
         model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());
