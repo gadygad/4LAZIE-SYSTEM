@@ -189,6 +189,12 @@
                         <a href="/admin/notes" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-journal-text"></i>MANAGE NOTES
                         </a>
+                        <a href="/admin/timetables" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                            <i class="bi bi-calendar3 text-primary"></i>TIMETABLES
+                        </a>
+                        <a href="/admin/calendar" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                            <i class="bi bi-calendar-event text-primary"></i>ACADEMIC CALENDAR
+                        </a>
                         <a href="/profile/downloads" class="sidebar-nav-item">
                             <i class="bi bi-journal-bookmark-fill"></i>MY NOTES
                         </a>
