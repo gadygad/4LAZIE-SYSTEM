@@ -168,7 +168,7 @@
                     .premium-table td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
                 </style>
 
-                <th:block th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                <th:block th:if="${user != null and user.role != null and user.role.name() == 'ADMIN'}">
                 <!-- STATS CARDS ROW -->
                 <div class="row g-3 mb-4">
                     <div class="col-6 col-md-3">
