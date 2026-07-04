@@ -347,28 +347,34 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait slightly for Bootstrap to initialize
-            setTimeout(() => {
+        (function() {
+            // Function to initialize logic
+            function initTomSelect() {
                 try {
-                    let eduLevelSelect = new TomSelect('#eduLevel', {
+                    let eduSelectEl = document.getElementById('eduLevel');
+                    let courseSelectEl = document.getElementById('courseSelect');
+                    
+                    // Prevent double initialization
+                    if (eduSelectEl.tomselect) return;
+
+                    let eduLevelSelect = new TomSelect(eduSelectEl, {
                         create: false,
                         controlInput: null,
+                        dropdownParent: 'body'
                     });
 
-                    let courseSelectEl = document.getElementById('courseSelect');
                     // Save original options before TomSelect mutates them
                     let originalOptions = [];
                     courseSelectEl.querySelectorAll('option').forEach(opt => {
                         originalOptions.push({value: opt.value, text: opt.text, type: opt.getAttribute('data-type')});
                     });
                     
-                    let courseTomSelect = new TomSelect('#courseSelect', {
+                    let courseTomSelect = new TomSelect(courseSelectEl, {
                         create: false,
                         controlInput: null,
+                        dropdownParent: 'body'
                     });
 
-                    // Add listener to the actual original select element or TomSelect instance
                     eduLevelSelect.on('change', function(selectedType) {
                         let levelLabel = document.getElementById('levelLabel');
 
@@ -400,8 +406,16 @@
                 } catch(e) {
                     console.error('TomSelect initialization error:', e);
                 }
-            }, 100);
-        });
+            }
+
+            // Initialize when modal is shown to guarantee dimensions
+            let modalEl = document.getElementById('addSubjectModal');
+            if(modalEl) {
+                modalEl.addEventListener('shown.bs.modal', function () {
+                    initTomSelect();
+                });
+            }
+        })();
     </script>
 </body>
 </html>
