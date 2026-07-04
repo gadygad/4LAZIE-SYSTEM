@@ -91,8 +91,8 @@
                                     <td class="py-3 px-4 text-muted" th:text="${u.email}">john@example.com</td>
                                     <td class="py-3 px-4">
                                         <span class="badge rounded-pill" 
-                                              th:text="${u.role.name()}"
-                                              th:classappend="${u.role.name() == 'ADMIN' ? 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25' : 'bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25'}"
+                                              th:text="${u.role != null ? u.role.name() : 'STUDENT'}"
+                                              th:classappend="${u.role != null and u.role.name() == 'ADMIN' ? 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25' : 'bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25'}"
                                               style="font-size: 0.75rem; font-weight: 600; padding: 0.4em 0.8em;">STUDENT</span>
                                     </td>
                                     <td class="py-3 px-4 text-end">
@@ -105,8 +105,8 @@
                                                 <li>
                                                     <form th:action="@{/admin/users/{id}/role(id=${u.id})}" method="post" class="px-3 py-1">
                                                         <select name="role" class="form-select form-select-sm mb-2" onchange="this.form.submit()">
-                                                            <option value="STUDENT" th:selected="${u.role.name() == 'STUDENT'}">Set as Student</option>
-                                                            <option value="ADMIN" th:selected="${u.role.name() == 'ADMIN'}">Set as Admin</option>
+                                                            <option value="STUDENT" th:selected="${u.role == null or u.role.name() == 'STUDENT'}">Set as Student</option>
+                                                            <option value="ADMIN" th:selected="${u.role != null and u.role.name() == 'ADMIN'}">Set as Admin</option>
                                                         </select>
                                                     </form>
                                                 </li>

@@ -250,7 +250,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge rounded-pill px-2 py-1" th:style="${u.role.name() == 'ADMIN' ? 'background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);' : 'background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2);'}" th:text="${u.role.name()}">ROLE</span>
+                                                <span class="badge rounded-pill px-2 py-1" th:style="${u.role != null and u.role.name() == 'ADMIN' ? 'background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);' : 'background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2);'}" th:text="${u.role != null ? u.role.name() : 'STUDENT'}">ROLE</span>
                                             </td>
                                             <td class="text-muted" th:text="${u.lastAction}">Viewing Dashboard</td>
                                         </tr>
