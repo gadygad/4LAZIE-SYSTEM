@@ -58,7 +58,7 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
                         ActivityLog log = new ActivityLog(
                             user.getId(),
                             user.getName(),
-                            user.getRole().name(),
+                            user.getRole() != null ? user.getRole().name() : "STUDENT",
                             action,
                             uri,
                             ipAddress
