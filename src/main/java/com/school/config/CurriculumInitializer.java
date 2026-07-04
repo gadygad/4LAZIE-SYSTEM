@@ -151,6 +151,39 @@ public class CurriculumInitializer {
                     subjectRepository.save(s);
                 }
             }
+
+            // Target subjects for DIP_ME Level 5 Sem 2
+            Course diplomaME = courseRepository.findByProgramType("DIP_ME").stream().findFirst().orElse(null);
+            if (diplomaME != null) {
+                List<String> moduleNamesME = Arrays.asList(
+                    "INTRODUCTION TO WELDING AND FOUNDRY TECHNOLOGIES",
+                    "MACHINE COMPONENT PRODUCTION",
+                    "FLUID MECHANICS AND FLUID POWER",
+                    "APPLIED THERMODYNAMICS",
+                    "METAL CUTTING PROCESSES",
+                    "INDUSTRIAL PRACTICAL TRAINING II"
+                );
+                List<Subject> existingSubjectsME = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaME, 5, 2);
+                for (Subject s : existingSubjectsME) {
+                    if (!moduleNamesME.contains(s.getName())) {
+                        subjectRepository.delete(s);
+                    }
+                }
+                existingSubjectsME = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaME, 5, 2);
+                for (String name : moduleNamesME) {
+                    boolean exists = existingSubjectsME.stream().anyMatch(s -> s.getName().equals(name));
+                    if (!exists) {
+                        Subject subject = new Subject();
+                        subject.setName(name);
+                        subject.setSemesterNo(2);
+                        subject.setLevelNo(5);
+                        subject.setCourse(diplomaME);
+                        subject.setCode(""); 
+                        subjectRepository.save(subject);
+                    }
+                }
+            }
+
             // Target subjects for DEG_CE Level 3 (Year 3) Sem 2
             Course degreeCE = courseRepository.findByProgramType("DEG_CE").stream().findFirst().orElse(null);
             if (degreeCE != null) {
