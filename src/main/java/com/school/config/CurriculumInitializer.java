@@ -185,6 +185,36 @@ public class CurriculumInitializer {
                 }
             }
 
+            // Target subjects for DEG_CE Level 4 (Year 4) Sem 2
+            if (degreeCE != null) {
+                List<String> moduleNamesDEG_CE_Y4S2 = Arrays.asList(
+                    "ENTREPRENEURSHIP DEVELOPMENT (T)",
+                    "TECHNICAL SEMINAR (P)",
+                    "CONSTRUCTION TECHNIQUES,EQUIPMENT & PRACTICE (T)",
+                    "BRIDGE ENGINEERING (T)",
+                    "PROJECT PHASE II (P)"
+                );
+                List<Subject> existingSubjectsDEG_CE_Y4S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 2);
+                for (Subject s : existingSubjectsDEG_CE_Y4S2) {
+                    if (!moduleNamesDEG_CE_Y4S2.contains(s.getName())) {
+                        subjectRepository.delete(s);
+                    }
+                }
+                existingSubjectsDEG_CE_Y4S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 2);
+                for (String name : moduleNamesDEG_CE_Y4S2) {
+                    boolean exists = existingSubjectsDEG_CE_Y4S2.stream().anyMatch(s -> s.getName().equals(name));
+                    if (!exists) {
+                        Subject subject = new Subject();
+                        subject.setName(name);
+                        subject.setSemesterNo(2);
+                        subject.setLevelNo(4);
+                        subject.setCourse(degreeCE);
+                        subject.setCode("");
+                        subjectRepository.save(subject);
+                    }
+                }
+            }
+
             List<Course> allCourses = courseRepository.findAll();
             List<String> generalLevel5Sem1 = Arrays.asList("ENGINEERING ENTREPRENEURSHIP", "ENGINEERING MATHEMATICS", "APPLIED CHEMISTRY");
             for (Course course : allCourses) {
