@@ -57,10 +57,23 @@
         </nav>
 
         <!-- DASHBOARD CONTENT AREA -->
-        <div class="content-area">
+        <div class="content-area position-relative" style="background: linear-gradient(135deg, #f0fdf4 0%, #e2e8f0 100%); overflow-x: hidden; min-height: 100vh;">
             
+            <!-- Animated Background Blobs -->
+            <div style="position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 10s ease-in-out infinite;"></div>
+            <div style="position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 8s ease-in-out infinite reverse;"></div>
+            <div style="position: absolute; top: 40%; right: 20%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0) 70%); border-radius: 50%; filter: blur(30px); animation: float 12s ease-in-out infinite 2s;"></div>
+            <style>
+                @keyframes float {
+                    0% { transform: translate(0, 0) rotate(0deg); }
+                    33% { transform: translate(30px, -50px) rotate(10deg); }
+                    66% { transform: translate(-20px, 20px) rotate(-5deg); }
+                    100% { transform: translate(0, 0) rotate(0deg); }
+                }
+            </style>
+
             <!-- CENTER COLUMN (DASHBOARD OVERVIEW) -->
-            <div class="center-col">
+            <div class="center-col position-relative z-1" style="padding: 20px; max-width: 1400px; margin: 0 auto;">
                 
 
                 <!-- CUSTOM CSS FOR GLASSMORPHISM & ANIMATIONS -->
@@ -155,6 +168,7 @@
                     .premium-table td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
                 </style>
 
+                <th:block th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
                 <!-- STATS CARDS ROW -->
                 <div class="row g-3 mb-4">
                     <div class="col-6 col-md-3">
@@ -332,57 +346,45 @@
                         });
                     }
                 </script>
+                </th:block>
 
                 <!-- Recent Notes Section (Premium Vertical List) -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-end mb-3 px-1">
-                        <h6 class="fw-bold mb-0 text-dark text-uppercase section-header-premium" style="font-family: 'Outfit', sans-serif; border-bottom: 2px solid #10b981;">RECENTLY ADDED</h6>
+                        <h6 class="fw-bold mb-0 text-dark text-uppercase section-header-premium" style="font-family: 'Outfit', sans-serif; letter-spacing: 1px;"><i class="bi bi-clock-history text-primary me-2"></i>Recently Added</h6>
                     </div>
                     
                     <style>
                         .glass-card-recent {
-                            background: rgba(255, 255, 255, 0.65);
-                            backdrop-filter: blur(12px);
-                            -webkit-backdrop-filter: blur(12px);
+                            background: rgba(255, 255, 255, 0.7);
+                            backdrop-filter: blur(16px);
+                            -webkit-backdrop-filter: blur(16px);
                             border: 1px solid rgba(255, 255, 255, 0.8);
-                            border-left: 4px solid transparent;
+                            border-left: 4px solid #10b981;
+                            border-radius: 16px;
                             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-                            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                             position: relative;
                             overflow: hidden;
                         }
                         .glass-card-recent:hover {
-                            transform: translateY(-3px);
+                            transform: translateX(8px) scale(1.01);
                             box-shadow: 0 12px 24px rgba(16, 185, 129, 0.12);
-                            background: rgba(255, 255, 255, 0.9);
-                            border-left: 4px solid #10b981;
+                            border-left: 6px solid #10b981;
+                            background: rgba(255, 255, 255, 0.95);
+                        }
+                        .icon-container-recent {
+                            width: 48px; height: 48px; border-radius: 12px;
+                            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+                            color: #10b981;
+                            transition: all 0.3s ease;
+                        }
+                        .glass-card-recent:hover .icon-container-recent {
+                            background: linear-gradient(135deg, #10b981, #059669);
+                            color: #fff;
+                            transform: rotate(-10deg);
                         }
                     </style>
-                    <div class="d-flex flex-column gap-2">
-                        <div th:each="note : ${recentNotes}" class="glass-card-recent rounded-3 p-2 px-3 d-flex align-items-center">
-                            <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
-                            
-                            <a th:href="@{/view/{id}(id=${note.encryptedSlug})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
-                                <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.6);">
-                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.1rem;"></i>
-                                </div>
-                                
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <h6 class="fw-bold text-dark mb-0" style="font-size: 0.9rem; font-family: 'Outfit', sans-serif; letter-spacing: 0.2px;" th:text="${note.title}">Note Title</h6>
-                                    <div class="d-flex align-items-center flex-wrap text-muted mt-1" style="font-size: 0.72rem; font-weight: 500;">
-                                        <span class="me-2" style="color: #475569;" th:text="${note.moduleName}">Module Name</span>
-                                        <span style="color: #10b981; font-size: 0.8rem;">&bull;</span>
-                                        <span class="ms-2" style="color: #64748b;"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(note.uploadDate, 'MMM dd')}">Date</span></span>
-                                    </div>
-                                </div>
-                            </a>
-                            
-                            <div class="ms-2 text-end flex-shrink-0 d-flex flex-column align-items-end justify-content-center">
-                                <span class="badge rounded-pill mb-2" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 0.65rem; font-weight: 600; padding: 4px 10px;" th:text="${note.category}">Note</span>
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="fw-bold d-flex align-items-center" style="font-size: 0.75rem; color: #64748b;" title="Total Reads"><i class="bi bi-eye-fill me-1"></i> <span th:text="${note.viewCount != null ? note.viewCount : 0}">0</span></div>
-                                    <div class="fw-bold d-flex align-items-center" style="font-size: 0.75rem; color: #10b981;" title="Total Downloads"><i class="bi bi-cloud-arrow-down-fill me-1"></i> <span th:text="${note.downloadCount != null ? note.downloadCount : 0}">0</span></div>
-                                </div>
                                 <div class="d-flex align-items-center gap-2">
                                     <a th:href="@{/view/{id}(id=${note.encryptedSlug})}" class="btn btn-sm d-flex justify-content-center align-items-center shadow-sm px-3" style="border-radius: 20px; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.5px; transition: all 0.3s;" title="Read Note" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.transform='none';">
                                         <i class="bi bi-book-half me-1" style="font-size: 0.9rem;"></i> Read

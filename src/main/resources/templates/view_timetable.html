@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow-x: hidden; /* ZUIYA SCROLLING YA PEMBENI KABISA */
+            overflow-x: hidden; /* PREVENT HORIZONTAL SCROLLING COMPLETELY */
         }
 
         .main-container {
@@ -27,10 +27,10 @@
             padding-top: 10px;
         }
 
-        /* Hii ndio container itakayofinywa na Zoom */
+        /* This is the container that will be scaled by Zoom */
         #timetable-wrapper {
             background: #ffffff;
-            width: 960px; /* Fixed width kama original picha */
+            width: 960px; /* Fixed width matching the original image */
             padding: 15px 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             border-top: 8px solid #004080;
@@ -305,17 +305,17 @@
         // JS TO FORCE 960PX TABLE TO FIT INSIDE ANY MOBILE SCREEN WIDTH WITHOUT OVERFLOW
         function fitToScreen() {
             var screenWidth = window.innerWidth;
-            var tableWidth = 960; // Upana kamili wa document yetu (kama picha)
+            var tableWidth = 960; // Full width of our document (like an image)
             var wrapper = document.getElementById('timetable-wrapper');
             
             if (screenWidth < tableWidth) {
                 var scale = screenWidth / tableWidth;
-                // Tunatumia CSS zoom ambacho kinafinya mpaka container yenyewe (DOM Layout box)
-                // Hii inahakikisha hakuna scrollbar ya pembeni inayotokea, inafit 100%
+                // We use CSS zoom which shrinks the container itself (DOM Layout box)
+                // This ensures no horizontal scrollbar appears, it fits 100%
                 wrapper.style.zoom = scale;
                 
-                // Fallback kwa browser zisizosupport zoom (kama Firefox ya zamani)
-                // (Lakini Infinix Smart 6 na Android zote zinatumia Chrome/Blink ambazo zinasupport zoom vizuri sana)
+                // Fallback for browsers that do not support zoom (like older Firefox)
+                // (But modern Android devices use Chrome/Blink which supports zoom perfectly)
                 wrapper.style.transform = 'scale(' + scale + ')';
             } else {
                 wrapper.style.zoom = 1;

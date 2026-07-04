@@ -56,10 +56,10 @@ public class PasswordResetController {
 
         User user = userOpt.get();
         
-        // Futa token za zamani
+        // Delete old tokens
         tokenRepository.deleteByUser(user);
 
-        // Tengeneza token mpya (expire in 5 minutes)
+        // Generate new token (expire in 5 minutes)
         String otp = String.format("%06d", new java.util.Random().nextInt(999999));
         PasswordResetToken resetToken = new PasswordResetToken(otp, user, 5);
         tokenRepository.save(resetToken);
@@ -117,7 +117,7 @@ public class PasswordResetController {
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
 
-        // Futa token baada ya kutumika
+        // Delete token after use
         tokenRepository.delete(tokenOpt.get());
 
         redirectAttributes.addFlashAttribute("success", "Your password has been changed successfully! You can now log in.");

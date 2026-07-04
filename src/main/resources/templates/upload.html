@@ -63,19 +63,11 @@
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15) !important;
             background: #ffffff !important;
         }
-        /* Custom nice arrow for Tom Select */
+        /* Completely remove the arrow for Tom Select */
+        .ts-wrapper.single .ts-control::after,
         .ts-wrapper .ts-control::after {
-            content: '\\F282' !important; /* Bootstrap icon chevron-down */
-            font-family: 'bootstrap-icons' !important;
-            border: none !important;
-            margin-top: -10px !important;
-            right: 15px !important;
-            color: #10b981 !important;
-            font-size: 14px !important;
-            transition: transform 0.3s ease;
-        }
-        .ts-wrapper.focus .ts-control::after {
-            transform: rotate(180deg);
+            display: none !important;
+            content: none !important;
         }
         .ts-dropdown {
             border-radius: 12px !important;

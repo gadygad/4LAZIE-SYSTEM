@@ -12,10 +12,10 @@ public class MongoPoolConfig {
     @Bean
     public MongoClientSettingsBuilderCustomizer mongoConnectionPoolCustomizer() {
         return builder -> builder.applyToConnectionPoolSettings(pool -> {
-            pool.minSize(10) // Kima cha chini cha connections zinazobaki wazi (Min Connections)
-                .maxSize(100) // Kima cha juu kabisa (Max Connections) kuepusha server kuelemewa
-                .maxConnectionIdleTime(60, TimeUnit.SECONDS) // Kufunga connection ikiwa kimya kwa sekunde 60
-                .maxWaitTime(10, TimeUnit.SECONDS); // Muda wa kusubiri kupata connection (kuepuka timeout za muda mrefu)
+            pool.minSize(10) // Minimum idle connections
+                .maxSize(100) // Maximum connections to prevent server overload
+                .maxConnectionIdleTime(60, TimeUnit.SECONDS) // Close connection if idle for 60 seconds
+                .maxWaitTime(10, TimeUnit.SECONDS); // Maximum wait time for a connection to prevent long timeouts
         });
     }
 }

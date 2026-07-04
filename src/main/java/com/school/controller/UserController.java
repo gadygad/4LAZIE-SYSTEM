@@ -68,7 +68,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         if (!sessionUser.getEmail().equalsIgnoreCase(formUser.getEmail())) {
             Optional<User> existingUser = userRepository.findByEmail(formUser.getEmail());
             if (existingUser.isPresent()) {
-                model.addAttribute("error", "Email tayari inatumiwa na mtu mwingine.");
+                model.addAttribute("error", "Email is already in use by another account.");
                 model.addAttribute("user", sessionUser); // Revert form data
                 model.addAttribute("editMode", true);
                 return "profile";
