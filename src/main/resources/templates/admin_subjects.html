@@ -348,48 +348,59 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let eduLevelSelect = new TomSelect('#eduLevel', {
-                create: false,
-                sortField: { field: "text", direction: "asc" }
-            });
+            // Wait slightly for Bootstrap to initialize
+            setTimeout(() => {
+                try {
+                    let eduLevelSelect = new TomSelect('#eduLevel', {
+                        create: false,
+                        controlInput: null,
+                    });
 
-            // Initialize Course Select but without options initially
-            let originalOptions = Array.from(document.getElementById('courseSelect').querySelectorAll('option'));
-            let courseSelectEl = document.getElementById('courseSelect');
-            
-            let courseTomSelect = new TomSelect('#courseSelect', {
-                create: false,
-                sortField: { field: "text", direction: "asc" }
-            });
+                    let courseSelectEl = document.getElementById('courseSelect');
+                    // Save original options before TomSelect mutates them
+                    let originalOptions = [];
+                    courseSelectEl.querySelectorAll('option').forEach(opt => {
+                        originalOptions.push({value: opt.value, text: opt.text, type: opt.getAttribute('data-type')});
+                    });
+                    
+                    let courseTomSelect = new TomSelect('#courseSelect', {
+                        create: false,
+                        controlInput: null,
+                    });
 
-            document.getElementById('eduLevel').addEventListener('change', function(e) {
-                let selectedType = e.target.value;
-                let levelLabel = document.getElementById('levelLabel');
+                    // Add listener to the actual original select element or TomSelect instance
+                    eduLevelSelect.on('change', function(selectedType) {
+                        let levelLabel = document.getElementById('levelLabel');
 
-                // Change Level label
-                if (selectedType === 'DIP') {
-                    levelLabel.innerHTML = 'NTA Level';
-                } else if (selectedType === 'DEG') {
-                    levelLabel.innerHTML = 'Year';
-                } else {
-                    levelLabel.innerHTML = 'Level/Year';
-                }
+                        // Change Level label
+                        if (selectedType === 'DIP') {
+                            levelLabel.innerHTML = 'NTA Level';
+                        } else if (selectedType === 'DEG') {
+                            levelLabel.innerHTML = 'Year';
+                        } else {
+                            levelLabel.innerHTML = 'Level/Year';
+                        }
 
-                // Filter Courses
-                courseTomSelect.clear();
-                courseTomSelect.clearOptions();
-                
-                if (selectedType) {
-                    courseTomSelect.enable();
-                    originalOptions.forEach(opt => {
-                        if (opt.value && opt.getAttribute('data-type') === selectedType) {
-                            courseTomSelect.addOption({value: opt.value, text: opt.text});
+                        // Filter Courses
+                        courseTomSelect.clear(true);
+                        courseTomSelect.clearOptions();
+                        
+                        if (selectedType) {
+                            courseTomSelect.enable();
+                            courseTomSelect.addOption({value: "", text: "Select Course"});
+                            originalOptions.forEach(opt => {
+                                if (opt.value && opt.type === selectedType) {
+                                    courseTomSelect.addOption({value: opt.value, text: opt.text});
+                                }
+                            });
+                        } else {
+                            courseTomSelect.disable();
                         }
                     });
-                } else {
-                    courseTomSelect.disable();
+                } catch(e) {
+                    console.error('TomSelect initialization error:', e);
                 }
-            });
+            }, 100);
         });
     </script>
 </body>
