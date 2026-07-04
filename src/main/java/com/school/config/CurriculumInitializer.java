@@ -151,6 +151,39 @@ public class CurriculumInitializer {
                     subjectRepository.save(s);
                 }
             }
+            // Target subjects for DEG_CE Level 3 (Year 3) Sem 2
+            Course degreeCE = courseRepository.findByProgramType("DEG_CE").stream().findFirst().orElse(null);
+            if (degreeCE != null) {
+                List<String> moduleNamesDEG_CE = Arrays.asList(
+                    "STRUCTURAL ANALYIS II (T)",
+                    "DESIGN OF RC STRUCTURE (T)",
+                    "ENVIRONMENT ENGINEERING II (T)",
+                    "DESIGN OF STEEL STRUCTURE (T)",
+                    "PAVEMENT ENGINEERING (T)",
+                    "HYDROLOGY AND WATER RESOURCE ENGINEERING (T)",
+                    "ENVIRONMENTAL ENGINEERING LAB (P)",
+                    "STRUCTURAL DETAILING & DRAWING LAB (P)"
+                );
+                List<Subject> existingSubjectsDEG_CE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 3, 2);
+                for (Subject s : existingSubjectsDEG_CE) {
+                    if (!moduleNamesDEG_CE.contains(s.getName())) {
+                        subjectRepository.delete(s);
+                    }
+                }
+                existingSubjectsDEG_CE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 3, 2);
+                for (String name : moduleNamesDEG_CE) {
+                    boolean exists = existingSubjectsDEG_CE.stream().anyMatch(s -> s.getName().equals(name));
+                    if (!exists) {
+                        Subject subject = new Subject();
+                        subject.setName(name);
+                        subject.setSemesterNo(2);
+                        subject.setLevelNo(3);
+                        subject.setCourse(degreeCE);
+                        subject.setCode("");
+                        subjectRepository.save(subject);
+                    }
+                }
+            }
 
             List<Course> allCourses = courseRepository.findAll();
             List<String> generalLevel5Sem1 = Arrays.asList("ENGINEERING ENTREPRENEURSHIP", "ENGINEERING MATHEMATICS", "APPLIED CHEMISTRY");
