@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component
+// @Component
 public class TestRunner implements CommandLineRunner {
     @Autowired
     private SubjectRepository subjectRepository;
@@ -34,6 +34,6 @@ public class TestRunner implements CommandLineRunner {
         System.out.println("findByCourseAndLevelNoAndSemesterNoOrderByIdAsc size: " + subjects2.size());
         
         System.out.println("================= ENDING TEST =================");
-        System.exit(0);
+        // System.exit(0);
     }
 }
