@@ -316,24 +316,32 @@
                                 <option value="DEG">Degree</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold" style="font-size: 0.85rem; color: #64748b;">Course/Program</label>
-                            <select name="courseId" id="courseSelect" class="form-select ts-enabled" required style="border-radius: 10px; padding: 10px 15px;" disabled>
-                                <option value="">Select Course</option>
-                                <option th:each="course : ${courses}" th:value="${course.id}" th:data-type="${#strings.startsWith(course.programType.name(), 'DIP') ? 'DIP' : 'DEG'}" th:text="${course.programType} + ' - ' + ${course.name}"></option>
-                            </select>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label id="levelLabel" class="form-label fw-semibold" style="font-size: 0.85rem; color: #64748b;">Level/Year</label>
-                                <input type="number" name="levelNo" class="form-control" required min="1" max="8" style="border-radius: 10px; padding: 10px 15px;" placeholder="e.g. 4">
+                        <div id="dynamicFields" class="d-none" style="animation: fadeIn 0.4s ease;">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold" style="font-size: 0.85rem; color: #64748b;">Course/Program</label>
+                                <select name="courseId" id="courseSelect" class="form-select ts-enabled" required style="border-radius: 10px; padding: 10px 15px;">
+                                    <option value="">Select Course</option>
+                                    <option th:each="course : ${courses}" th:value="${course.id}" th:data-type="${#strings.startsWith(course.programType.name(), 'DIP') ? 'DIP' : 'DEG'}" th:text="${course.programType} + ' - ' + ${course.name}"></option>
+                                </select>
                             </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-semibold" style="font-size: 0.85rem; color: #64748b;">Semester</label>
-                                <input type="number" name="semesterNo" class="form-control" required min="1" max="2" style="border-radius: 10px; padding: 10px 15px;" placeholder="e.g. 2">
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label id="levelLabel" class="form-label fw-semibold" style="font-size: 0.85rem; color: #64748b;">Level/Year</label>
+                                    <input type="number" name="levelNo" class="form-control" required min="1" max="8" style="border-radius: 10px; padding: 10px 15px;" placeholder="e.g. 4">
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label fw-semibold" style="font-size: 0.85rem; color: #64748b;">Semester</label>
+                                    <input type="number" name="semesterNo" class="form-control" required min="1" max="2" style="border-radius: 10px; padding: 10px 15px;" placeholder="e.g. 2">
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <style>
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(-10px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                    </style>
                     <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background: #f8fafc; border-radius: 0 0 20px 20px;">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 10px; font-weight: 600;">Cancel</button>
                         <button type="submit" class="btn btn-success" style="border-radius: 10px; font-weight: 600; background: #10b981; border: none;">Save Subject</button>
@@ -377,31 +385,35 @@
 
                     eduLevelSelect.on('change', function(selectedType) {
                         let levelLabel = document.getElementById('levelLabel');
+                        let dynamicFields = document.getElementById('dynamicFields');
+
+                        if (!selectedType) {
+                            dynamicFields.classList.add('d-none');
+                            courseTomSelect.disable();
+                            return;
+                        }
+
+                        // Show the fields dynamically
+                        dynamicFields.classList.remove('d-none');
 
                         // Change Level label
                         if (selectedType === 'DIP') {
                             levelLabel.innerHTML = 'NTA Level';
                         } else if (selectedType === 'DEG') {
                             levelLabel.innerHTML = 'Year';
-                        } else {
-                            levelLabel.innerHTML = 'Level/Year';
                         }
 
                         // Filter Courses
                         courseTomSelect.clear(true);
                         courseTomSelect.clearOptions();
                         
-                        if (selectedType) {
-                            courseTomSelect.enable();
-                            courseTomSelect.addOption({value: "", text: "Select Course"});
-                            originalOptions.forEach(opt => {
-                                if (opt.value && opt.type === selectedType) {
-                                    courseTomSelect.addOption({value: opt.value, text: opt.text});
-                                }
-                            });
-                        } else {
-                            courseTomSelect.disable();
-                        }
+                        courseTomSelect.enable();
+                        courseTomSelect.addOption({value: "", text: "Select Course"});
+                        originalOptions.forEach(opt => {
+                            if (opt.value && opt.type === selectedType) {
+                                courseTomSelect.addOption({value: opt.value, text: opt.text});
+                            }
+                        });
                     });
                 } catch(e) {
                     console.error('TomSelect initialization error:', e);
