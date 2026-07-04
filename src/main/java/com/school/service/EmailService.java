@@ -22,6 +22,7 @@ public class EmailService {
         }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("support@4lazie.com");
             message.setTo(to);
             message.setSubject("Password Reset OTP - 4LAZIE");
             message.setText("You requested a password reset.\n\nYour secret OTP is: " + otp + "\n\nIt will expire in 5 minutes.\n\nIf you did not request this, please ignore this email.");
@@ -41,6 +42,7 @@ public class EmailService {
         }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("support@4lazie.com");
             message.setTo(to);
             message.setSubject("Verify your email address - 4LAZIE");
             message.setText("Welcome to 4LAZIE!\n\n" +
@@ -96,6 +98,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
             helper.setTo(to);
             helper.setSubject("🔒 Your Secure 4LAZIE Activity Report");
             
@@ -116,6 +119,44 @@ public class EmailService {
             mailSender.send(message);
         } catch (Exception e) {
             System.err.println("Failed to send secure report email: " + e.getMessage());
+        }
+    }
+    @Async
+    public void sendNewLoginAlertEmail(String to, String ipAddress, String deviceDetails) {
+        if (mailSender == null) {
+            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            return;
+        }
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
+            helper.setTo(to);
+            helper.setSubject("Security Alert: New Login Detected - 4LAZIE");
+            
+            String htmlBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;\">"
+                    + "<div style=\"text-align: center; margin-bottom: 20px;\">"
+                    + "<h1 style=\"color: #f59e0b; font-size: 24px; margin-bottom: 5px;\">4LAZIE SECURITY ALERT</h1>"
+                    + "</div>"
+                    + "<div style=\"padding: 20px 0; border-top: 2px solid #e2e8f0; border-bottom: 2px solid #e2e8f0;\">"
+                    + "<h2 style=\"color: #1e293b; font-size: 18px;\">Hello,</h2>"
+                    + "<p style=\"color: #475569; font-size: 15px; line-height: 1.6;\">We detected a new login to your 4LAZIE account from a new device or location.</p>"
+                    + "<div style=\"background-color: #f1f5f9; padding: 15px; border-radius: 6px; margin: 15px 0;\">"
+                    + "<p style=\"margin: 0 0 10px 0; color: #334155;\"><strong>IP Address:</strong> " + ipAddress + "</p>"
+                    + "<p style=\"margin: 0; color: #334155;\"><strong>Device Details:</strong> " + deviceDetails + "</p>"
+                    + "</div>"
+                    + "<p style=\"color: #475569; font-size: 15px; line-height: 1.6;\">If this was you, you can safely ignore this email.</p>"
+                    + "<p style=\"color: #ef4444; font-size: 15px; line-height: 1.6; font-weight: bold;\">If you did not authorize this login, please change your password immediately!</p>"
+                    + "</div>"
+                    + "<div style=\"text-align: center; padding-top: 15px; color: #94a3b8; font-size: 12px;\">"
+                    + "<p>&copy; " + java.time.Year.now().getValue() + " 4LAZIE Student Portal. All rights reserved.</p>"
+                    + "</div>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send login alert email: " + e.getMessage());
         }
     }
 }
