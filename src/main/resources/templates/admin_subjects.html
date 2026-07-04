@@ -355,79 +355,75 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
     <script>
-        (function() {
-            // Function to initialize logic
-            function initTomSelect() {
-                try {
-                    let eduSelectEl = document.getElementById('eduLevel');
-                    let courseSelectEl = document.getElementById('courseSelect');
-                    
-                    // Prevent double initialization
-                    if (eduSelectEl.tomselect) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            let eduSelectEl = document.getElementById('eduLevel');
+            let courseSelectEl = document.getElementById('courseSelect');
+            let levelLabel = document.getElementById('levelLabel');
+            let dynamicFields = document.getElementById('dynamicFields');
+            let originalOptions = Array.from(courseSelectEl.querySelectorAll('option')).map(opt => ({
+                value: opt.value, 
+                text: opt.text, 
+                type: opt.getAttribute('data-type')
+            }));
 
-                    let eduLevelSelect = new TomSelect(eduSelectEl, {
-                        create: false,
-                        controlInput: null,
-                        dropdownParent: 'body'
-                    });
+            // Initialize Tom Select
+            let eduTomSelect, courseTomSelect;
+            try {
+                eduTomSelect = new TomSelect(eduSelectEl, { create: false, controlInput: null });
+                courseTomSelect = new TomSelect(courseSelectEl, { create: false, controlInput: null });
+            } catch(e) {
+                console.error('Tom Select error:', e);
+            }
 
-                    // Save original options before TomSelect mutates them
-                    let originalOptions = [];
-                    courseSelectEl.querySelectorAll('option').forEach(opt => {
-                        originalOptions.push({value: opt.value, text: opt.text, type: opt.getAttribute('data-type')});
-                    });
-                    
-                    let courseTomSelect = new TomSelect(courseSelectEl, {
-                        create: false,
-                        controlInput: null,
-                        dropdownParent: 'body'
-                    });
+            // Bulletproof logic: native listener handles both native select and Tom Select
+            eduSelectEl.addEventListener('change', function(e) {
+                let selectedType = e.target.value;
 
-                    eduLevelSelect.on('change', function(selectedType) {
-                        let levelLabel = document.getElementById('levelLabel');
-                        let dynamicFields = document.getElementById('dynamicFields');
-
-                        if (!selectedType) {
-                            dynamicFields.classList.add('d-none');
-                            courseTomSelect.disable();
-                            return;
-                        }
-
-                        // Show the fields dynamically
-                        dynamicFields.classList.remove('d-none');
-
-                        // Change Level label
-                        if (selectedType === 'DIP') {
-                            levelLabel.innerHTML = 'NTA Level';
-                        } else if (selectedType === 'DEG') {
-                            levelLabel.innerHTML = 'Year';
-                        }
-
-                        // Filter Courses
-                        courseTomSelect.clear(true);
-                        courseTomSelect.clearOptions();
-                        
-                        courseTomSelect.enable();
-                        courseTomSelect.addOption({value: "", text: "Select Course"});
-                        originalOptions.forEach(opt => {
-                            if (opt.value && opt.type === selectedType) {
-                                courseTomSelect.addOption({value: opt.value, text: opt.text});
-                            }
-                        });
-                    });
-                } catch(e) {
-                    console.error('TomSelect initialization error:', e);
+                if (!selectedType) {
+                    dynamicFields.classList.add('d-none');
+                    if (courseTomSelect) courseTomSelect.disable();
+                    else courseSelectEl.disabled = true;
+                    return;
                 }
-            }
 
-            // Initialize when modal is shown to guarantee dimensions
-            let modalEl = document.getElementById('addSubjectModal');
-            if(modalEl) {
-                modalEl.addEventListener('shown.bs.modal', function () {
-                    initTomSelect();
-                });
-            }
-        })();
+                // Show the fields
+                dynamicFields.classList.remove('d-none');
+
+                // Update Labels
+                if (selectedType === 'DIP') {
+                    levelLabel.innerHTML = 'NTA Level';
+                } else if (selectedType === 'DEG') {
+                    levelLabel.innerHTML = 'Year';
+                } else {
+                    levelLabel.innerHTML = 'Level/Year';
+                }
+
+                // Update Course Options
+                if (courseTomSelect) {
+                    courseTomSelect.clear(true);
+                    courseTomSelect.clearOptions();
+                    courseTomSelect.enable();
+                    courseTomSelect.addOption({value: "", text: "Select Course"});
+                    originalOptions.forEach(opt => {
+                        if (opt.value && opt.type === selectedType) {
+                            courseTomSelect.addOption({value: opt.value, text: opt.text});
+                        }
+                    });
+                } else {
+                    // Fallback for native select
+                    courseSelectEl.innerHTML = '<option value="">Select Course</option>';
+                    courseSelectEl.disabled = false;
+                    originalOptions.forEach(opt => {
+                        if (opt.value && opt.type === selectedType) {
+                            let newOpt = document.createElement('option');
+                            newOpt.value = opt.value;
+                            newOpt.text = opt.text;
+                            courseSelectEl.appendChild(newOpt);
+                        }
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
