@@ -512,10 +512,10 @@ public class CurriculumInitializer {
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">1</th>\n" +
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">2</th>\n" +
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">3</th>\n" +
-                        "                        <th rowspan=\"7\" style=\"border: 1px solid #cbd5e1; background: #f1f5f9; color: #0f172a; padding: 10px; width: 40px; font-weight: 800; text-orientation: upright; writing-mode: vertical-rl;\">B<br>R<br>E<br>A<br>K</th>\n" +
+                        "                        <th rowspan=\"7\" style=\"border: 1px solid #cbd5e1; background: #f1f5f9; color: #0f172a; padding: 10px; width: 40px; font-weight: 800; line-height: 1.5; text-align: center;\">B<br>R<br>E<br>A<br>K</th>\n" +
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">4</th>\n" +
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">5</th>\n" +
-                        "                        <th rowspan=\"7\" style=\"border: 1px solid #cbd5e1; background: #f1f5f9; color: #0f172a; padding: 10px; width: 40px; font-weight: 800; text-orientation: upright; writing-mode: vertical-rl;\">L<br>U<br>N<br>C<br>H</th>\n" +
+                        "                        <th rowspan=\"7\" style=\"border: 1px solid #cbd5e1; background: #f1f5f9; color: #0f172a; padding: 10px; width: 40px; font-weight: 800; line-height: 1.5; text-align: center;\">L<br>U<br>N<br>C<br>H<br><br>B<br>R<br>E<br>A<br>K</th>\n" +
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">6</th>\n" +
                         "                        <th style=\"border: 1px solid #cbd5e1; background: #1e293b; color: #fff; padding: 10px;\">7</th>\n" +
                         "                    </tr>\n" +
