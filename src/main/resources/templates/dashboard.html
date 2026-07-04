@@ -220,7 +220,7 @@
                             </div>
                         </div>
                         
-                        <div th:if="${recentNotes == null || recentNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
+                        <div th:if="${#lists.isEmpty(recentNotes)}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No recent materials found.</p>
                         </div>
                         
@@ -274,7 +274,7 @@
                             </div>
                         </div>
                         
-                        <div th:if="${popularNotes == null || popularNotes.isEmpty()}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
+                        <div th:if="${#lists.isEmpty(popularNotes)}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No popular materials found.</p>
                         </div>
                     </div>

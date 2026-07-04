@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -350,14 +350,14 @@
     </div>
 
     <!-- Check if past timetables exist -->
-    <div th:if="${pastTimetables == null || pastTimetables.isEmpty()}" class="empty-state">
+    <div th:if="${#lists.isEmpty(pastTimetables)}" class="empty-state">
         <i class="bi bi-folder-x empty-icon"></i>
         <h4 class="fw-bold" style="color: #0f172a;">No Archives Found</h4>
         <p>There are no past timetables available in the archive yet.</p>
     </div>
 
     <!-- Grouped Timetables (Accordion Dropdown Magic) -->
-    <div th:if="${pastTimetables != null && !pastTimetables.isEmpty()}" class="accordion premium-accordion" id="archiveAccordion">
+    <div th:if="${pastTimetables != null and !pastTimetables.isEmpty()}" class="accordion premium-accordion" id="archiveAccordion">
         
         <div th:each="entry, iterStat : ${pastTimetables}" class="accordion-item">
             <h2 class="accordion-header" th:id="'heading' + ${iterStat.index}">

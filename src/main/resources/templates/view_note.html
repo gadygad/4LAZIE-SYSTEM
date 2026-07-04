@@ -47,8 +47,8 @@
         <!-- Action Buttons -->
         <div class="d-flex gap-2 align-items-center flex-shrink-0">
             <!-- Save/Bookmark Button -->
-            <button th:if="${user != null}" class="save-btn d-flex align-items-center justify-content-center" th:data-id="${note.id}" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'saved' : ''}" onclick="toggleSaveNote(this, this.getAttribute('data-id'))" title="Save for later" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #f1f5f9; color: #64748b; transition: all 0.3s;">
-                <i class="bi fs-5" th:classappend="${user.savedNotes != null && user.savedNotes.contains(note.id) ? 'bi-bookmark-fill text-success' : 'bi-bookmark'}"></i> 
+            <button th:if="${user != null}" class="save-btn d-flex align-items-center justify-content-center" th:data-id="${note.id}" th:classappend="${user.savedNotes != null and user.savedNotes.contains(note.id) ? 'saved' : ''}" onclick="toggleSaveNote(this, this.getAttribute('data-id'))" title="Save for later" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #f1f5f9; color: #64748b; transition: all 0.3s;">
+                <i class="bi fs-5" th:classappend="${user.savedNotes != null and user.savedNotes.contains(note.id) ? 'bi-bookmark-fill text-success' : 'bi-bookmark'}"></i>
             </button>
             
             <!-- Download Button -->
