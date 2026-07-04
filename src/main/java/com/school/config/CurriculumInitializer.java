@@ -93,7 +93,7 @@ public class CurriculumInitializer {
                     "SERVER ADMINISTRATION",
                     "COMPUTER ARCHITECTURE AND ASSEMBLY PROGRAMMING LANGUAGE",
                     "COMPUTER NETWORK",
-                    "MICROPROCESSOR AND MICROCONTROLLER",
+                    "MICROCONTROLLER AND MICROPROCESSOR",
                     "BASIC DATA COMMUNICATION",
                     "WEB DESIGNING"
             );
