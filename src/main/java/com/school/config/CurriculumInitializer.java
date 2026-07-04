@@ -496,37 +496,39 @@ public class CurriculumInitializer {
                         "            <h1 style=\"font-size: 1.4rem; font-weight: bold; color: #000; margin: 0 0 5px 0;\">ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</h1>\n" +
                         "            <h2 style=\"font-size: 1.1rem; font-weight: bold; color: #000; margin: 0 0 5px 0;\">DEPARTMENT OF CIVIL ENGINEERING AND BUILT ENVIRONMENT</h2>\n" +
                         "            <h3 style=\"font-size: 1rem; font-weight: bold; color: #000; margin: 0;\">THIRD YEAR (BATCH 18) SEMESTER II - DEGREE TIMETABLE APRIL 2026</h3>\n" +
-                        "            <div style=\"display: flex; justify-content: space-between; margin-top: 20px; font-size: 0.9rem; font-weight: bold;\">\n" +
-                        "                <div>CLASS ADVISOR: MR PRABU</div>\n" +
-                        "                <div>STRENGTH: 122</div>\n" +
-                        "                <div>LECTURE HALL: 96</div>\n" +
-                        "            </div>\n" +
+                        "        </div>\n" +
+                        "        <div style=\"display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 5px;\">\n" +
+                        "            <div>CLASS ADVISOR: MR PRABU</div>\n" +
+                        "            <div>STRENGHT:122</div>\n" +
+                        "        </div>\n" +
+                        "        <div style=\"font-size: 0.95rem; font-weight: bold; margin-bottom: 15px; text-align: left;\">\n" +
+                        "            LECTURE HALL: 96\n" +
                         "        </div>\n" +
                         "        <!-- TIMETABLE GRID -->\n" +
                         "        <div style=\"overflow-x: auto;\">\n" +
                         "            <table style=\"width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; border: 2px solid #000;\">\n" +
                         "                <thead>\n" +
                         "                    <tr>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">HOUR</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">1</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">2</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">3</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">HOUR</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">1</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">2</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">3</th>\n" +
                         "                        <th rowspan=\"7\" style=\"border: 1px solid #000; background: #a3a3a3; padding: 10px; width: 40px; font-weight: bold; line-height: 1.5; text-align: center;\">B<br>R<br>E<br>A<br>K</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">4</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">5</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">4</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">5</th>\n" +
                         "                        <th rowspan=\"7\" style=\"border: 1px solid #000; background: #a3a3a3; padding: 10px; width: 40px; font-weight: bold; line-height: 1.5; text-align: center;\">L<br>U<br>N<br>C<br>H<br><br>B<br>R<br>E<br>A<br>K</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">6</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 10px;\">7</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">6</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">7</th>\n" +
                         "                    </tr>\n" +
                         "                    <tr>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px;\">DAY/TIME</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">8.00AM<br>TO<br>8.55AM</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">8.55AM<br>TO<br>9.50AM</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">9.50AM<br>TO<br>10.45AM</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">11.00AM<br>TO<br>11.55AM</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">11.55AM<br>TO<br>12.45PM</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">1.45PM<br>TO<br>2.40PM</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; padding: 8px; font-size: 0.75rem;\">2.40PM<br>TO<br>3.35PM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px;\">DAY/TIME</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">8.00AM<br>TO<br>8.55AM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">8.55AM<br>TO<br>9.50AM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">9.50AM<br>TO<br>10.45AM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">11.00AM<br>TO<br>11.55AM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">11.55AM<br>TO<br>12.45PM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">1.45PM<br>TO<br>2.40PM</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">2.40PM<br>TO<br>3.35PM</th>\n" +
                         "                    </tr>\n" +
                         "                </thead>\n" +
                         "                <tbody>\n" +
@@ -573,8 +575,8 @@ public class CurriculumInitializer {
                         "            <table style=\"width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 2px solid #000; border-top: none;\">\n" +
                         "                <thead>\n" +
                         "                    <tr>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; color: #000; padding: 10px;\">MODULE CODE & MODULE NAME</th>\n" +
-                        "                        <th style=\"border: 1px solid #000; background: #e2e8f0; color: #000; padding: 10px;\">MODULE TEACHER</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;\">MODULE CODE & MODULE NAME</th>\n" +
+                        "                        <th style=\"border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;\">MODULE TEACHER</th>\n" +
                         "                    </tr>\n" +
                         "                </thead>\n" +
                         "                <tbody>\n" +
