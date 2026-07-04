@@ -484,11 +484,10 @@ public class CurriculumInitializer {
             }
             
             // Seed DEG_CE Year 3 Sem 2 Timetable
-            if (timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 3, 2).isEmpty()) {
-                com.school.model.Timetable tt = new com.school.model.Timetable();
-                tt.setProgramType("DEG_CE");
-                tt.setLevelNo(3);
-                tt.setSemesterNo(2);
+            com.school.model.Timetable tt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 3, 2).orElse(new com.school.model.Timetable());
+            tt.setProgramType("DEG_CE");
+            tt.setLevelNo(3);
+            tt.setSemesterNo(2);
                 tt.setAcademicYear("2025/2026");
                 tt.setUploadDate(java.time.LocalDateTime.now());
                 tt.setHtmlContent("<div style=\"font-family: 'Outfit', sans-serif; padding: 20px; background: #ffffff; color: #1e293b; max-width: 1000px; margin: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);\">\n" +
@@ -592,8 +591,7 @@ public class CurriculumInitializer {
                         "            </table>\n" +
                         "        </div>\n" +
                         "    </div>");
-                timetableRepository.save(tt);
-            }
+            timetableRepository.save(tt);
         };
     }
 }
