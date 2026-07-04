@@ -218,6 +218,37 @@ public class CurriculumInitializer {
                 }
             }
 
+            // Target subjects for DEG_CE Level 4 (Year 4) Sem 1
+            if (degreeCE != null) {
+                List<String> moduleNamesCEY4S1 = Arrays.asList(
+                    "PRINCIPLES OF MANAGEMENT AND PROFFESIONAL ETHICS (T)",
+                    "QUANTITY SURVEYING AND VALUATION (T)",
+                    "REPAIR AND REHABILITATION OF STRUCTURES (T)",
+                    "ENVIRONMENTAL IMPACT ASSESSMENT (T)",
+                    "COMPUTER AIDED STRUCTURAL ANALYSIS LAB (P)",
+                    "PROJECT WORK PHASE I AND VIVA VOICE (P)"
+                );
+                List<Subject> existingCEY4S1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 1);
+                for (Subject s : existingCEY4S1) {
+                    if (!moduleNamesCEY4S1.contains(s.getName())) {
+                        subjectRepository.delete(s);
+                    }
+                }
+                existingCEY4S1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 1);
+                for (String name : moduleNamesCEY4S1) {
+                    boolean exists = existingCEY4S1.stream().anyMatch(s -> s.getName().equals(name));
+                    if (!exists) {
+                        Subject subject = new Subject();
+                        subject.setName(name);
+                        subject.setSemesterNo(1);
+                        subject.setLevelNo(4);
+                        subject.setCourse(degreeCE);
+                        subject.setCode(""); 
+                        subjectRepository.save(subject);
+                    }
+                }
+            }
+
             // Target subjects for DEG_CE Level 4 (Year 4) Sem 2
             if (degreeCE != null) {
                 List<String> moduleNamesDEG_CE_Y4S2 = Arrays.asList(

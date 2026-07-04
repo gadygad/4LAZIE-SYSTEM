@@ -510,7 +510,7 @@
 
                 <div class="col-md-6 col-lg-3" id="levelContainer" style="display: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(-10px); z-index: 30;">
                     <div class="premium-input-group" style="z-index: 30;">
-                        <label class="premium-label">Which NTA Level?</label>
+                        <label class="premium-label" id="levelLabel">Which NTA Level?</label>
                         <div class="custom-glass-dropdown" id="levelDropdownWrapper">
                             <div class="glass-dropdown-header" id="levelDropdownHeader">
                                 <span id="levelDropdownText">NTA Level 4</span>
@@ -742,16 +742,53 @@
             // Handle NTA Level Dropdown Animation
             const levelContainer = document.getElementById('levelContainer');
             if (levelContainer) {
-                if (!isDegree) {
-                    levelContainer.style.display = 'block';
-                    // Trigger reflow for animation
-                    void levelContainer.offsetWidth;
-                    levelContainer.style.opacity = '1';
-                    levelContainer.style.transform = 'translateY(0)';
+                levelContainer.style.display = 'block';
+                void levelContainer.offsetWidth;
+                levelContainer.style.opacity = '1';
+                levelContainer.style.transform = 'translateY(0)';
+                
+                const levelLabel = document.getElementById('levelLabel');
+                const levelDropdownList = document.getElementById('levelDropdownList');
+                const levelDropdownText = document.getElementById('levelDropdownText');
+                const assignmentLevel = document.getElementById('assignmentLevel');
+                
+                if (isDegree) {
+                    if (levelLabel) levelLabel.textContent = "Which Year?";
+                    let opts = '<div class="glass-dropdown-item active" data-value="1">Year 1</div>' +
+                               '<div class="glass-dropdown-item" data-value="2">Year 2</div>' +
+                               '<div class="glass-dropdown-item" data-value="3">Year 3</div>';
+                    if (programVal !== 'DEG_CS') {
+                        opts += '<div class="glass-dropdown-item" data-value="4">Year 4</div>';
+                    }
+                    if (levelDropdownList) levelDropdownList.innerHTML = opts;
+                    if (levelDropdownText) levelDropdownText.textContent = "Year 1";
+                    if (assignmentLevel) assignmentLevel.value = "1";
                 } else {
-                    levelContainer.style.opacity = '0';
-                    levelContainer.style.transform = 'translateY(-10px)';
-                    levelContainer.style.display = 'none';
+                    if (levelLabel) levelLabel.textContent = "Which NTA Level?";
+                    let opts = '<div class="glass-dropdown-item active" data-value="4">NTA Level 4</div>' +
+                               '<div class="glass-dropdown-item" data-value="5">NTA Level 5</div>' +
+                               '<div class="glass-dropdown-item" data-value="6">NTA Level 6</div>';
+                    if (levelDropdownList) levelDropdownList.innerHTML = opts;
+                    if (levelDropdownText) levelDropdownText.textContent = "NTA Level 4";
+                    if (assignmentLevel) assignmentLevel.value = "4";
+                }
+                
+                // Rebind event listeners for new items
+                if (levelDropdownList) {
+                    const items = levelDropdownList.querySelectorAll('.glass-dropdown-item');
+                    const wrapper = document.getElementById('levelDropdownWrapper');
+                    const header = document.getElementById('levelDropdownHeader');
+                    items.forEach(item => {
+                        item.addEventListener('click', function(e) {
+                            if (levelDropdownText) levelDropdownText.textContent = this.textContent;
+                            if (assignmentLevel) assignmentLevel.value = this.dataset.value;
+                            items.forEach(i => i.classList.remove('active'));
+                            this.classList.add('active');
+                            if (wrapper) wrapper.classList.remove('open');
+                            if (header) header.classList.remove('open');
+                            e.stopPropagation();
+                        });
+                    });
                 }
             }
             

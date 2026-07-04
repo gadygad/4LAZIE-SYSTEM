@@ -1,0 +1,1 @@
+const fs = require('fs'); const html = fs.readFileSync('src/main/resources/templates/fragments/sjuit_components.html', 'utf8'); const startMatch = html.match(/<div[^>]*>/g); const endMatch = html.match(/<\/div>/g); console.log('div starts:', startMatch ? startMatch.length : 0); console.log('div ends:', endMatch ? endMatch.length : 0);
