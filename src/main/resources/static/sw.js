@@ -1,4 +1,4 @@
-const CACHE_NAME = '4lazie-cache-v2';
+const CACHE_NAME = '4lazie-cache-v3';
 const OFFLINE_URL = '/offline.html';
 
 const urlsToCache = [

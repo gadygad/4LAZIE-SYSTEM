@@ -17,6 +17,14 @@ public class PushNotificationController {
     @Autowired
     private PushSubscriptionRepository subscriptionRepository;
 
+    @org.springframework.beans.factory.annotation.Value("${vapid.public.key}")
+    private String publicKey;
+
+    @GetMapping("/public-key")
+    public ResponseEntity<?> getPublicKey() {
+        return ResponseEntity.ok(Map.of("publicKey", publicKey));
+    }
+
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@RequestBody Map<String, Object> payload, HttpSession session) {
         try {

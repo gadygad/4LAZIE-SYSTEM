@@ -832,11 +832,47 @@
 
     <!-- PWA Service Worker Registration -->
     <script>
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
                         console.log('PWA ServiceWorker registered with scope:', registration.scope);
+                        
+                        // Push Notification Subscription
+                        if ('PushManager' in window) {
+                            fetch('/api/notifications/public-key')
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.publicKey) {
+                                        const applicationServerKey = urlB64ToUint8Array(data.publicKey);
+                                        registration.pushManager.subscribe({
+                                            userVisibleOnly: true,
+                                            applicationServerKey: applicationServerKey
+                                        }).then(subscription => {
+                                            fetch('/api/notifications/subscribe', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify(subscription)
+                                            }).then(res => res.json())
+                                              .then(resData => console.log('Push subscription saved:', resData))
+                                              .catch(err => console.error('Failed to save push subscription', err));
+                                        }).catch(err => {
+                                            console.log('Failed to subscribe the user: ', err);
+                                        });
+                                    }
+                                }).catch(err => console.log('Failed to fetch VAPID public key', err));
+                        }
                     })
                     .catch(err => {
                         console.error('PWA ServiceWorker registration failed:', err);

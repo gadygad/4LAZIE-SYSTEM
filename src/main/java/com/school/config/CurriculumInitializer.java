@@ -203,6 +203,22 @@ public class CurriculumInitializer {
                 }
             }
 
+            // Seed DIP_CSE Level 4 Sem 1
+            List<String> cseLevel4Sem1 = Arrays.asList("COMMUNICATION SKILLS", "BASIC ENGINEERING PHYSICS", "BASIC ENGINEERING MATHEMATICS");
+            List<Subject> existingCseLevel4Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 4, 1);
+            for (String name : cseLevel4Sem1) {
+                boolean exists = existingCseLevel4Sem1.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(1);
+                    subject.setLevelNo(4);
+                    subject.setCourse(diplomaCSE);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+
             // Seed DIP_CSE Level 4 Sem 2 (Specifics)
             List<String> cseLevel4Sem2 = Arrays.asList("DATA STRUCTURE");
             List<Subject> existingCseLevel4Sem2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 4, 2);
@@ -274,8 +290,29 @@ public class CurriculumInitializer {
                     subjectRepository.save(subject);
                 }
             }
+            // Seed DIP_CSE Level 6 Sem 1
+            List<String> dipCseLevel6Sem1 = Arrays.asList(
+                    "DATABASE ADMINISTRATION",
+                    "SOFTWARE ENGINEERING",
+                    "SYSTEM ANALYSIS AND DESIGN",
+                    "ENTREPRENEURSHIP",
+                    "WEB DEVELOPMENT"
+            );
+            List<Subject> existingDipCseL6S1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 6, 1);
+            for (String name : dipCseLevel6Sem1) {
+                boolean exists = existingDipCseL6S1.stream().anyMatch(s -> s.getName().equals(name));
+                if (!exists) {
+                    Subject subject = new Subject();
+                    subject.setName(name);
+                    subject.setSemesterNo(1);
+                    subject.setLevelNo(6);
+                    subject.setCourse(diplomaCSE);
+                    subject.setCode("");
+                    subjectRepository.save(subject);
+                }
+            }
+
             // Seed DIP_CSE Level 6 Sem 2
-            Course diplomaCse6 = courseRepository.findByProgramType("DIP_CSE").get(0);
             List<String> dipCseLevel6Sem2 = Arrays.asList(
                     "MOBILE COMPUTING",
                     "COMPUTER NETWORK SECURITY",
@@ -283,7 +320,7 @@ public class CurriculumInitializer {
                     "SUPERVISORY SKILLS",
                     "EMBEDED SYSTEM"
             );
-            List<Subject> existingDipCseL6S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCse6, 6, 2);
+            List<Subject> existingDipCseL6S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 6, 2);
             for (String name : dipCseLevel6Sem2) {
                 boolean exists = existingDipCseL6S2.stream().anyMatch(s -> s.getName().equals(name));
                 if (!exists) {
@@ -291,7 +328,7 @@ public class CurriculumInitializer {
                     subject.setName(name);
                     subject.setSemesterNo(2);
                     subject.setLevelNo(6);
-                    subject.setCourse(diplomaCse6);
+                    subject.setCourse(diplomaCSE);
                     subject.setCode("");
                     subjectRepository.save(subject);
                 }
