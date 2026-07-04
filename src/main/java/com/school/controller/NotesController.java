@@ -318,15 +318,10 @@ public class NotesController {
         long totalSubjects = subjectRepository.count();
         long notesToday = noteRepository.countByUploadDateAfter(java.time.LocalDate.now().atStartOfDay());
         
-        List<User> liveUsers = userRepository.findByLastActiveTimeAfterOrderByLastActiveTimeDesc(fiveMinutesAgo);
-        List<com.school.model.ActivityLog> recentActivityLogs = activityLogRepository.findTop50ByOrderByTimestampDesc();
-
         model.addAttribute("liveUsersCount", liveUsersCount);
         model.addAttribute("totalStudents", totalStudents);
         model.addAttribute("totalSubjects", totalSubjects);
         model.addAttribute("notesToday", notesToday);
-        model.addAttribute("liveUsersList", liveUsers);
-        model.addAttribute("recentActivityLogs", recentActivityLogs);
 
         model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
         model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());
@@ -336,55 +331,6 @@ public class NotesController {
         return "dashboard";
     }
 
-    @org.springframework.web.bind.annotation.PostMapping("/admin/export-activity")
-    @org.springframework.web.bind.annotation.ResponseBody
-    public org.springframework.http.ResponseEntity<String> exportActivityLogs() {
-        try {
-            java.util.List<com.school.model.ActivityLog> logs = activityLogRepository.findTop50ByOrderByTimestampDesc();
-            
-            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-            com.lowagie.text.Document document = new com.lowagie.text.Document();
-            com.lowagie.text.pdf.PdfWriter writer = com.lowagie.text.pdf.PdfWriter.getInstance(document, baos);
-            
-            // Password Protection
-            writer.setEncryption("careen2015".getBytes(), "admin".getBytes(), 
-                                 com.lowagie.text.pdf.PdfWriter.ALLOW_PRINTING, 
-                                 com.lowagie.text.pdf.PdfWriter.ENCRYPTION_AES_128);
-            
-            document.open();
-            
-            com.lowagie.text.Font titleFont = com.lowagie.text.FontFactory.getFont(com.lowagie.text.FontFactory.HELVETICA_BOLD, 18);
-            document.add(new com.lowagie.text.Paragraph("4LAZIE - Security Activity Logs\n\n", titleFont));
-            document.add(new com.lowagie.text.Paragraph("Generated on: " + java.time.LocalDateTime.now() + "\n\n"));
-            
-            com.lowagie.text.pdf.PdfPTable table = new com.lowagie.text.pdf.PdfPTable(4);
-            table.setWidthPercentage(100);
-            table.addCell("Time");
-            table.addCell("User");
-            table.addCell("Action");
-            table.addCell("IP Address");
-            
-            for (com.school.model.ActivityLog log : logs) {
-                table.addCell(log.getTimestamp() != null ? log.getTimestamp().toString() : "");
-                table.addCell(log.getUserName() != null ? log.getUserName() : "");
-                table.addCell(log.getAction() != null ? log.getAction() : "");
-                table.addCell(log.getIpAddress() != null ? log.getIpAddress() : "");
-            }
-            
-            document.add(table);
-            document.close();
-            
-            byte[] pdfBytes = baos.toByteArray();
-            
-            // Send email to admin
-            emailService.sendSecureActivityReport("kilingepazasauti@gmail.com", pdfBytes);
-            
-            return org.springframework.http.ResponseEntity.ok("Secure report sent successfully to admin email.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return org.springframework.http.ResponseEntity.status(500).body("Failed to generate report.");
-        }
-    }
 
     @GetMapping("/upload")
     public String showUploadPage(HttpSession session, Model model) {
