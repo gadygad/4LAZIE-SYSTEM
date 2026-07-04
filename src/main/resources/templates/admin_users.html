@@ -145,22 +145,22 @@
                         <a href="/dashboard" class="sidebar-nav-item">
                             <i class="bi bi-grid-fill"></i>DASHBOARD
                         </a>
-                        <a href="/admin/users" class="sidebar-nav-item active" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                        <a href="/admin/users" class="sidebar-nav-item active" th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-people-fill text-primary"></i>USERS MANAGEMENT
                         </a>
-                        <a href="/admin/subjects" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                        <a href="/admin/subjects" class="sidebar-nav-item" th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-book-half text-primary"></i>MANAGE SUBJECTS
                         </a>
-                        <a href="/upload" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                        <a href="/upload" class="sidebar-nav-item" th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-cloud-arrow-up-fill"></i>UPLOAD NOTES
                         </a>
-                        <a href="/admin/notes" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                        <a href="/admin/notes" class="sidebar-nav-item" th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-journal-text"></i>MANAGE NOTES
                         </a>
-                        <a href="/admin/timetables" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                        <a href="/admin/timetables" class="sidebar-nav-item" th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-calendar3 text-primary"></i>TIMETABLES
                         </a>
-                        <a href="/admin/calendar" class="sidebar-nav-item" th:if="${session.user != null and session.user.role.name() == 'ADMIN'}">
+                        <a href="/admin/calendar" class="sidebar-nav-item" th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'ADMIN'}">
                             <i class="bi bi-calendar-event text-primary"></i>ACADEMIC CALENDAR
                         </a>
                         <a href="/profile/downloads" class="sidebar-nav-item">
