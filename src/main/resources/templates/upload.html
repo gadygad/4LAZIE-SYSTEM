@@ -25,6 +25,79 @@
     <link rel="stylesheet" th:href="@{/css/global-premium.css}">
     <!-- Tom Select CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        /* Premium Styling for Form Selects & Cards */
+        .upload-card-wrapper {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            padding: 30px;
+            transition: all 0.4s ease;
+        }
+        .upload-card-wrapper:hover {
+            box-shadow: 0 15px 50px rgba(16, 185, 129, 0.08);
+            transform: translateY(-2px);
+        }
+        /* Remove default bootstrap arrow (the v shape) */
+        .form-select {
+            background-image: none !important; 
+            padding-right: 15px !important;
+        }
+        /* Style Tom Select to look premium */
+        .ts-wrapper.form-select .ts-control {
+            background: rgba(248, 250, 252, 0.7) !important;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(16, 185, 129, 0.1) !important;
+            border-radius: 14px !important;
+            padding: 12px 15px !important;
+            font-size: 1rem !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02) !important;
+            color: #1e293b !important;
+        }
+        .ts-wrapper.form-select.focus .ts-control {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15) !important;
+            background: #ffffff !important;
+        }
+        /* Custom nice arrow for Tom Select */
+        .ts-wrapper .ts-control::after {
+            content: '\\F282' !important; /* Bootstrap icon chevron-down */
+            font-family: 'bootstrap-icons' !important;
+            border: none !important;
+            margin-top: -10px !important;
+            right: 15px !important;
+            color: #10b981 !important;
+            font-size: 14px !important;
+            transition: transform 0.3s ease;
+        }
+        .ts-wrapper.focus .ts-control::after {
+            transform: rotate(180deg);
+        }
+        .ts-dropdown {
+            border-radius: 12px !important;
+            border: 1px solid rgba(16, 185, 129, 0.2) !important;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+            overflow: hidden !important;
+            animation: dropdownFade 0.2s ease forwards;
+        }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ts-dropdown .option {
+            padding: 10px 15px !important;
+            transition: all 0.2s ease;
+        }
+        .ts-dropdown .option:hover, .ts-dropdown .active {
+            background-color: rgba(16, 185, 129, 0.08) !important;
+            color: #065f46 !important;
+            font-weight: 500;
+        }
+    </style>
 </head>
 
 <body>
@@ -197,7 +270,7 @@
         <div class="row g-4">
             <!-- Left Column: Upload Form -->
             <div class="col-lg-8">
-                <div style="padding: 20px; position: relative; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1); border-radius: 24px;">
+                <div class="upload-card-wrapper">
                     <!-- Decorative glow removed for cleaner international look -->
                     
                     <div class="text-center mb-2 position-relative z-1">
