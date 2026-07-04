@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Manage Timetables</title>
+    <title>Admin - Timetable Builder</title>
     <!-- Google Fonts: Outfit -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
@@ -12,74 +12,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .sidebar {
-            height: 100vh;
-            background: #111827;
-            color: white;
-            padding-top: 20px;
-            position: fixed;
-            width: 250px;
-        }
-
-        .sidebar a {
-            color: #d1d5db;
-            text-decoration: none;
-            display: block;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #10b981;
-            color: #111827;
-            font-weight: 600;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 30px;
-        }
-
-        .card-custom {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: none;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 10px 15px;
-            border: 1px solid #ced4da;
-        }
-
-        .form-control:focus, .form-select:focus {
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
-            border-color: #10b981;
-        }
-
-        .btn-warning {
-            background-color: #10b981;
-            border-color: #10b981;
-            color: white;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 8px;
-        }
-
-        .btn-warning:hover {
-            background-color: #059669;
-            border-color: #059669;
-            color: white;
-        }
+        body { background-color: #f8f9fa; font-family: 'Outfit', sans-serif; }
+        .sidebar { height: 100vh; background: #111827; color: white; padding-top: 20px; position: fixed; width: 250px; }
+        .sidebar a { color: #d1d5db; text-decoration: none; display: block; padding: 15px 20px; font-size: 1.1rem; transition: all 0.3s; }
+        .sidebar a:hover, .sidebar a.active { background: #10b981; color: #111827; font-weight: 600; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .card-custom { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: none; padding: 25px; margin-bottom: 30px; }
+        .form-control, .form-select { border-radius: 8px; padding: 10px 15px; border: 1px solid #ced4da; }
+        .form-control:focus, .form-select:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25); border-color: #10b981; }
+        .btn-primary { background-color: #10b981; border-color: #10b981; color: white; font-weight: 600; border-radius: 8px; }
+        .btn-primary:hover { background-color: #059669; border-color: #059669; }
+        .grid-input { width: 100%; text-align: center; border: 1px solid #ccc; padding: 5px; border-radius: 4px; }
+        .day-label { font-weight: bold; background: #e8f0fe; text-align: center; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -97,7 +41,7 @@
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">Manage Timetables</h2>
+        <h2 class="fw-bold text-dark">Timetable Builder</h2>
     </div>
 
     <!-- Alerts -->
@@ -110,25 +54,26 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <!-- Upload Form -->
-    <div class="card-custom">
-        <h4 class="mb-4"><i class="bi bi-plus-circle-fill text-warning me-2"></i> Add New Timetable HTML</h4>
-        <form action="/admin/timetables/upload" method="POST">
-            
-            <div class="row mb-3">
+    <!-- Form for Backend submission -->
+    <form id="ttForm" action="/admin/timetables/upload" method="POST">
+        <input type="hidden" name="htmlContent" id="htmlContent">
+        
+        <div class="card-custom">
+            <h4 class="mb-4 text-primary"><i class="bi bi-info-circle-fill me-2"></i> 1. Basic Info & Database Identity</h4>
+            <div class="row mb-3 g-3">
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Program Type</label>
                     <select name="programType" class="form-select" required>
-                        <option value="DIPLOMA">DIPLOMA</option>
                         <option value="DEGREE">DEGREE</option>
+                        <option value="DIPLOMA">DIPLOMA</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Level / Year</label>
-                    <input type="number" name="levelNo" class="form-control" placeholder="E.g. 4, 5, 6 for Diploma" required>
+                    <label class="form-label fw-bold">Level / Year (DB)</label>
+                    <input type="number" name="levelNo" class="form-control" placeholder="E.g. 4" required>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Semester</label>
+                    <label class="form-label fw-bold">Semester (DB)</label>
                     <select name="semesterNo" class="form-select" required>
                         <option value="1">Semester 1</option>
                         <option value="2">Semester 2</option>
@@ -139,60 +84,351 @@
                     <input type="text" name="academicYear" class="form-control" placeholder="E.g. 2025/2026" required>
                 </div>
             </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">Timetable HTML Code</label>
-                <textarea name="htmlContent" class="form-control" rows="10" placeholder="Paste the HTML table code here..." required></textarea>
-                <small class="text-muted">Paste the HTML code representing the timetable table structure. Do not include outer layout elements.</small>
-            </div>
-
-            <button type="submit" class="btn btn-warning w-100">
-                <i class="bi bi-save-fill me-2"></i> Save Timetable HTML
-            </button>
-        </form>
-    </div>
-
-    <!-- Existing Timetables -->
-    <div class="card-custom">
-        <h4 class="mb-4"><i class="bi bi-table text-warning me-2"></i> Existing Timetables</h4>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Program</th>
-                        <th>Level</th>
-                        <th>Semester</th>
-                        <th>Academic Year</th>
-                        <th>Upload Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="timetable : ${timetables}">
-                        <td th:text="${timetable.programType}" class="fw-bold">DIPLOMA</td>
-                        <td th:text="'Level ' + ${timetable.levelNo}">Level 5</td>
-                        <td th:text="'Sem ' + ${timetable.semesterNo}">Sem 2</td>
-                        <td th:text="${timetable.academicYear}">2025/2026</td>
-                        <td th:text="${#temporals.format(timetable.uploadDate, 'dd MMM yyyy, HH:mm')}">12 Oct 2023</td>
-                        <td>
-                            <a th:href="@{/timetable/view(program=${timetable.programType}, level=${timetable.levelNo}, semester=${timetable.semesterNo}, academicYear=${timetable.academicYear})}" class="btn btn-sm btn-outline-primary" target="_blank">
-                                <i class="bi bi-eye"></i> View
-                            </a>
-                            <!-- We can add delete logic later if needed -->
-                        </td>
-                    </tr>
-                    <tr th:if="${timetables == null || timetables.isEmpty()}">
-                        <td colspan="6" class="text-center text-muted py-4">No timetables available in the database.</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
-    </div>
 
+        <div class="card-custom">
+            <h4 class="mb-4 text-primary"><i class="bi bi-fonts me-2"></i> 2. PDF Header Text</h4>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">College Name</label>
+                    <input type="text" id="hCollege" class="form-control" value="St. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Department</label>
+                    <input type="text" id="hDept" class="form-control" value="DEPARTMENT OF CIVIL ENGINEERING AND BUILT ENVIRONMENT" required>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Title Line (Year, Semester, Batch, Date)</label>
+                    <input type="text" id="hTitle" class="form-control" value="FOURTH YEAR SEMESTER I - DEGREE BATCH - 17 TIMETABLE NOVEMBER 2025" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Class Advisor</label>
+                    <input type="text" id="hAdvisor" class="form-control" placeholder="MR. NGWANDIRA" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Strength</label>
+                    <input type="text" id="hStrength" class="form-control" placeholder="142" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Lecture Hall</label>
+                    <input type="text" id="hHall" class="form-control" placeholder="96" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-custom">
+            <h4 class="mb-4 text-primary"><i class="bi bi-grid-3x3-gap-fill me-2"></i> 3. Timetable Grid</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>DAY</th>
+                            <th>Hour 1<br><small>8.00-8.55</small></th>
+                            <th>Hour 2<br><small>8.55-9.50</small></th>
+                            <th>Hour 3<br><small>9.50-10.45</small></th>
+                            <th class="bg-secondary text-white">B</th>
+                            <th>Hour 4<br><small>11.00-11.55</small></th>
+                            <th>Hour 5<br><small>11.55-12.45</small></th>
+                            <th class="bg-secondary text-white">L</th>
+                            <th>Hour 6<br><small>1.45-2.40</small></th>
+                            <th>Hour 7<br><small>2.40-3.35</small></th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridBody">
+                        <!-- Days will be generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <small class="text-muted">Use the format `CE4102(colspan 2)` to make a cell span 2 columns. If you use colspan, leave the next input empty. Example: if Hour 1 is `CE4102(2)`, leave Hour 2 empty.</small>
+        </div>
+
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-primary m-0"><i class="bi bi-list-task me-2"></i> 4. Modules List</h4>
+                <select id="moduleColType" class="form-select w-auto">
+                    <option value="3">3 Columns (Code | Name | Teacher)</option>
+                    <option value="2">2 Columns (Code & Name | Teacher)</option>
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light" id="moduleThead">
+                        <tr>
+                            <th>Module Code</th>
+                            <th>Module Name</th>
+                            <th>Teacher</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moduleBody">
+                        <tr>
+                            <td><input type="text" class="form-control m-code" placeholder="CE4102"></td>
+                            <td><input type="text" class="form-control m-name" placeholder="QUANTITY SURVEYING"></td>
+                            <td><input type="text" class="form-control m-teacher" placeholder="MR KOMBE"></td>
+                            <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="btn btn-outline-primary mt-2" onclick="addModuleRow()"><i class="bi bi-plus"></i> Add Module</button>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-lg w-100 mb-5 py-3 shadow" onclick="generateAndSubmit()">
+            <i class="bi bi-magic me-2"></i> Generate Timetable & Save to Database
+        </button>
+    </form>
 </div>
+
+<script>
+    const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+    
+    // Initialize Grid
+    function initGrid() {
+        const tbody = document.getElementById('gridBody');
+        tbody.innerHTML = '';
+        days.forEach(day => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="day-label">${day}</td>
+                <td><input type="text" class="grid-input" id="${day}_1"></td>
+                <td><input type="text" class="grid-input" id="${day}_2"></td>
+                <td><input type="text" class="grid-input" id="${day}_3"></td>
+                <td class="bg-light text-center text-muted">B</td>
+                <td><input type="text" class="grid-input" id="${day}_4"></td>
+                <td><input type="text" class="grid-input" id="${day}_5"></td>
+                <td class="bg-light text-center text-muted">L</td>
+                <td><input type="text" class="grid-input" id="${day}_6"></td>
+                <td><input type="text" class="grid-input" id="${day}_7"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Toggle 2 vs 3 columns
+    document.getElementById('moduleColType').addEventListener('change', function(e) {
+        const thead = document.getElementById('moduleThead');
+        if(e.target.value === "2") {
+            thead.innerHTML = `<tr><th>Module Code & Name</th><th>Teacher</th><th>Action</th></tr>`;
+            document.querySelectorAll('#moduleBody tr').forEach(tr => {
+                const inputs = tr.querySelectorAll('input');
+                let codeName = '';
+                if(inputs.length === 3) { codeName = inputs[0].value + (inputs[0].value && inputs[1].value ? ' - ' : '') + inputs[1].value; }
+                tr.innerHTML = `
+                    <td><input type="text" class="form-control m-codename" placeholder="CE4102 - QUANTITY SURVEYING" value="${codeName}"></td>
+                    <td><input type="text" class="form-control m-teacher" placeholder="MR KOMBE" value="${inputs.length===3 ? inputs[2].value : ''}"></td>
+                    <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
+                `;
+            });
+        } else {
+            thead.innerHTML = `<tr><th>Module Code</th><th>Module Name</th><th>Teacher</th><th>Action</th></tr>`;
+            document.querySelectorAll('#moduleBody tr').forEach(tr => {
+                const inputs = tr.querySelectorAll('input');
+                let code = '', name = '';
+                if(inputs.length === 2) {
+                    let parts = inputs[0].value.split('-');
+                    code = parts[0] ? parts[0].trim() : '';
+                    name = parts[1] ? parts[1].trim() : '';
+                }
+                tr.innerHTML = `
+                    <td><input type="text" class="form-control m-code" placeholder="CE4102" value="${code}"></td>
+                    <td><input type="text" class="form-control m-name" placeholder="QUANTITY SURVEYING" value="${name}"></td>
+                    <td><input type="text" class="form-control m-teacher" placeholder="MR KOMBE" value="${inputs.length===2 ? inputs[1].value : ''}"></td>
+                    <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
+                `;
+            });
+        }
+    });
+
+    function addModuleRow() {
+        const type = document.getElementById('moduleColType').value;
+        const tr = document.createElement('tr');
+        if(type === "3") {
+            tr.innerHTML = `
+                <td><input type="text" class="form-control m-code" placeholder="Code"></td>
+                <td><input type="text" class="form-control m-name" placeholder="Name"></td>
+                <td><input type="text" class="form-control m-teacher" placeholder="Teacher"></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
+            `;
+        } else {
+            tr.innerHTML = `
+                <td><input type="text" class="form-control m-codename" placeholder="Code & Name"></td>
+                <td><input type="text" class="form-control m-teacher" placeholder="Teacher"></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
+            `;
+        }
+        document.getElementById('moduleBody').appendChild(tr);
+    }
+
+    function generateAndSubmit() {
+        // Build the HTML String
+        let html = '<div style="font-family: Arial, sans-serif; padding: 20px; background: #ffffff; color: #000; max-width: 1000px; margin: auto;">\\n';
+        
+        // Header
+        html += `    <div style="text-align: center; margin-bottom: 20px;">\\n`;
+        html += `        <h1 style="font-size: 1.4rem; font-weight: bold; color: #000; margin: 0 0 5px 0;">${document.getElementById('hCollege').value}</h1>\\n`;
+        html += `        <h2 style="font-size: 1.1rem; font-weight: bold; color: #000; margin: 0 0 5px 0;">${document.getElementById('hDept').value}</h2>\\n`;
+        html += `        <h3 style="font-size: 1rem; font-weight: bold; color: #000; margin: 0;">${document.getElementById('hTitle').value}</h3>\\n`;
+        html += `    </div>\\n`;
+        
+        // Subheader
+        html += `    <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 5px;">\\n`;
+        html += `        <div>CLASS ADVISOR: ${document.getElementById('hAdvisor').value}</div>\\n`;
+        html += `        <div>STRENGTH: ${document.getElementById('hStrength').value}</div>\\n`;
+        html += `    </div>\\n`;
+        html += `    <div style="font-size: 0.95rem; font-weight: bold; margin-bottom: 15px; text-align: left;">\\n`;
+        html += `        LECTURE HALL: ${document.getElementById('hHall').value}\\n`;
+        html += `    </div>\\n`;
+
+        // Grid
+        html += `    <div style="overflow-x: auto;">\\n`;
+        html += `        <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; border: 2px solid #000;">\\n`;
+        html += `            <tr>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">HOUR</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">1</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">2</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">3</th>\\n`;
+        html += `                <th rowspan="7" style="border: 1px solid #000; background: #e5e7eb; padding: 10px; width: 40px; font-weight: bold; line-height: 1.5; text-align: center; vertical-align: middle;">B<br>R<br>E<br>A<br>K</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">4</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">5</th>\\n`;
+        html += `                <th rowspan="7" style="border: 1px solid #000; background: #e5e7eb; padding: 10px; width: 40px; font-weight: bold; line-height: 1.5; text-align: center; vertical-align: middle;">L<br>U<br>N<br>C<br>H<br><br>B<br>R<br>E<br>A<br>K</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">6</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 10px;">7</th>\\n`;
+        html += `            </tr>\\n`;
+        html += `            <tr>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px;">DAY/TIME</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">8.00AM<br>TO<br>8.55AM</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">8.55 AM<br>TO<br>9.50AM</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">9.50 AM<br>TO<br>10.45AM</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">11.00 AM<br>TO<br>11.55AM</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">11.55 AM<br>TO<br>12.45PM</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">1.45 PM<br>TO<br>2.40PM</th>\\n`;
+        html += `                <th style="border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;">2.40PM<br>TO<br>3.35PM</th>\\n`;
+        html += `            </tr>\\n`;
+
+        days.forEach(day => {
+            html += `            <tr>\\n`;
+            html += `                <td style="border: 1px solid #000; font-weight: bold; padding: 10px;">${day}</td>\\n`;
+            
+            // Generate cols 1 to 3
+            let i = 1;
+            while(i <= 3) {
+                let val = document.getElementById(day + '_' + i).value.trim();
+                let match = val.match(/(.*?)\\s*\\((\\d+)\\)$/);
+                if(match) {
+                    html += `                <td colspan="${match[2]}" style="border: 1px solid #000; padding: 10px; font-weight: bold;">${match[1]}</td>\\n`;
+                    i += parseInt(match[2]);
+                } else if(val === "") {
+                    // Skip empty if it's covered by a previous colspan, otherwise print empty cell
+                    if (document.getElementById(day + '_' + (i-1)) && document.getElementById(day + '_' + (i-1)).value.includes('(')) {
+                       // Covered by colspan, do nothing
+                    } else {
+                        html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
+                    }
+                    i++;
+                } else {
+                    html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;">${val}</td>\\n`;
+                    i++;
+                }
+            }
+
+            // Generate cols 4 to 5
+            i = 4;
+            while(i <= 5) {
+                let val = document.getElementById(day + '_' + i).value.trim();
+                let match = val.match(/(.*?)\\s*\\((\\d+)\\)$/);
+                if(match) {
+                    html += `                <td colspan="${match[2]}" style="border: 1px solid #000; padding: 10px; font-weight: bold;">${match[1]}</td>\\n`;
+                    i += parseInt(match[2]);
+                } else if(val === "") {
+                    if (document.getElementById(day + '_' + (i-1)) && document.getElementById(day + '_' + (i-1)).value.includes('(')) {} else {
+                        html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
+                    }
+                    i++;
+                } else {
+                    html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;">${val}</td>\\n`;
+                    i++;
+                }
+            }
+
+            // Generate cols 6 to 7
+            i = 6;
+            while(i <= 7) {
+                let val = document.getElementById(day + '_' + i).value.trim();
+                let match = val.match(/(.*?)\\s*\\((\\d+)\\)$/);
+                if(match) {
+                    html += `                <td colspan="${match[2]}" style="border: 1px solid #000; padding: 10px; font-weight: bold;">${match[1]}</td>\\n`;
+                    i += parseInt(match[2]);
+                } else if(val === "") {
+                    if (document.getElementById(day + '_' + (i-1)) && document.getElementById(day + '_' + (i-1)).value.includes('(')) {} else {
+                        html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;"></td>\\n`;
+                    }
+                    i++;
+                } else {
+                    html += `                <td style="border: 1px solid #000; padding: 10px; font-weight: bold;">${val}</td>\\n`;
+                    i++;
+                }
+            }
+
+            html += `            </tr>\\n`;
+        });
+        
+        html += `        </table>\\n`;
+        html += `    </div>\\n`;
+
+        // Modules Table
+        const type = document.getElementById('moduleColType').value;
+        html += `    <!-- MODULES LIST -->\\n`;
+        html += `    <div style="margin-top: 0; overflow-x: auto;">\\n`;
+        html += `        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 2px solid #000; border-top: none;">\\n`;
+        html += `            <thead>\\n`;
+        html += `                <tr>\\n`;
+        if(type === "3") {
+            html += `                    <th style="border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;">MODULE<br>CODE</th>\\n`;
+            html += `                    <th style="border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;">MODULE NAME</th>\\n`;
+            html += `                    <th style="border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;">MODULE TEACHER</th>\\n`;
+        } else {
+            html += `                    <th style="border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;">MODULE CODE & MODULE NAME</th>\\n`;
+            html += `                    <th style="border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;">MODULE TEACHER</th>\\n`;
+        }
+        html += `                </tr>\\n`;
+        html += `            </thead>\\n`;
+        html += `            <tbody>\\n`;
+
+        document.querySelectorAll('#moduleBody tr').forEach(tr => {
+            html += `                <tr>`;
+            if(type === "3") {
+                const code = tr.querySelector('.m-code').value.trim();
+                const name = tr.querySelector('.m-name').value.trim();
+                const teacher = tr.querySelector('.m-teacher').value.trim();
+                html += `<td style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;">${code}</td>`;
+                html += `<td style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;">${name}</td>`;
+                html += `<td style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;">${teacher}</td>`;
+            } else {
+                const codename = tr.querySelector('.m-codename').value.trim();
+                const teacher = tr.querySelector('.m-teacher').value.trim();
+                html += `<td style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;">${codename}</td>`;
+                html += `<td style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;">${teacher}</td>`;
+            }
+            html += `</tr>\\n`;
+        });
+
+        html += `            </tbody>\\n`;
+        html += `        </table>\\n`;
+        html += `    </div>\\n`;
+        html += `</div>`;
+        
+        // Put HTML in hidden input
+        // Using replace to unescape line breaks used purely for formatting in JS
+        document.getElementById('htmlContent').value = html.replace(/\\n/g, '\n');
+        
+        // Submit the form
+        document.getElementById('ttForm').submit();
+    }
+
+    initGrid();
+</script>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
