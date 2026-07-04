@@ -483,6 +483,116 @@ public class CurriculumInitializer {
                 }
             }
             
+            
+            // Seed DEG_CE Year 4 Sem 1 Timetable
+            com.school.model.Timetable tt_ce_y4_s1 = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 4, 1).orElse(new com.school.model.Timetable());
+            tt_ce_y4_s1.setProgramType("DEG_CE");
+            tt_ce_y4_s1.setLevelNo(4);
+            tt_ce_y4_s1.setSemesterNo(1);
+            tt_ce_y4_s1.setHtmlContent("<div style=\"font-family: Arial, sans-serif; padding: 20px; background: #ffffff; color: #000; max-width: 1000px; margin: auto;\">\n" +
+"        <!-- HEADER -->\n" +
+"        <div style=\"text-align: center; margin-bottom: 20px;\">\n" +
+"            <h1 style=\"font-size: 1.4rem; font-weight: bold; color: #000; margin: 0 0 5px 0;\">St. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</h1>\n" +
+"            <h2 style=\"font-size: 1.1rem; font-weight: bold; color: #000; margin: 0 0 5px 0;\">DEPARTMENT OF CIVIL ENGINEERING AND BUILT ENVIRONMENT</h2>\n" +
+"            <h3 style=\"font-size: 1rem; font-weight: bold; color: #000; margin: 0;\">FOURTH YEAR SEMESTER I - DEGREE BATCH - 17 TIMETABLE NOVEMBER 2025</h3>\n" +
+"        </div>\n" +
+"        <div style=\"display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 5px;\">\n" +
+"            <div>CLASS ADVISOR: MR.NGWANDIRA</div>\n" +
+"            <div>STRENGTH: 142</div>\n" +
+"        </div>\n" +
+"        <div style=\"font-size: 0.95rem; font-weight: bold; margin-bottom: 15px; text-align: left;\">\n" +
+"            LECTURE HALL: 96\n" +
+"        </div>\n" +
+"        <!-- TIMETABLE GRID -->\n" +
+"        <div style=\"overflow-x: auto;\">\n" +
+"            <table style=\"width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; border: 2px solid #000;\">\n" +
+"                <thead>\n" +
+"                    <tr>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">HOUR</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">1</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">2</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">3</th>\n" +
+"                        <th rowspan=\"7\" style=\"border: 1px solid #000; background: #a3a3a3; padding: 10px; width: 40px; font-weight: bold; line-height: 1.5; text-align: center;\">B<br>R<br>E<br>A<br>K</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">4</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">5</th>\n" +
+"                        <th rowspan=\"7\" style=\"border: 1px solid #000; background: #a3a3a3; padding: 10px; width: 40px; font-weight: bold; line-height: 1.5; text-align: center;\">L<br>U<br>N<br>C<br>H<br><br>B<br>R<br>E<br>A<br>K</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">6</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 10px;\">7</th>\n" +
+"                    </tr>\n" +
+"                    <tr>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px;\">DAY/TIME</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">8.00AM<br>TO<br>8.55AM</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">8.55 AM<br>TO<br>9.50AM</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">9.50 AM<br>TO<br>10.45AM</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">11.00 AM<br>TO<br>11.55AM</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">11.55 AM<br>TO<br>12.45PM</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">1.45 PM<br>TO<br>2.40PM</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; padding: 8px; font-size: 0.75rem;\">2.40PM<br>TO<br>3.35PM</th>\n" +
+"                    </tr>\n" +
+"                </thead>\n" +
+"                <tbody>\n" +
+"                    <tr>\n" +
+"                        <td style=\"border: 1px solid #000; font-weight: bold; padding: 10px;\">MONDAY</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">CE4102</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">ELCE00021</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">ELCE00016</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                    </tr>\n" +
+"                    <tr>\n" +
+"                        <td style=\"border: 1px solid #000; font-weight: bold; padding: 10px;\">TUESDAY</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">ELCE00021</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">CE4105 (P)</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">CE4105 (P)</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                    </tr>\n" +
+"                    <tr>\n" +
+"                        <td style=\"border: 1px solid #000; font-weight: bold; padding: 10px;\">WEDNESDAY</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">ELCE00021</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">ELCE00016</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                    </tr>\n" +
+"                    <tr>\n" +
+"                        <td style=\"border: 1px solid #000; font-weight: bold; padding: 10px;\">THURSDAY</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">CE4102</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">CE4105 (P)</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">ELCE00016</td>\n" +
+"                    </tr>\n" +
+"                    <tr>\n" +
+"                        <td style=\"border: 1px solid #000; font-weight: bold; padding: 10px;\">FRIDAY</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">MG4101</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">MG4101</td>\n" +
+"                        <td style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                        <td colspan=\"2\" style=\"border: 1px solid #000; padding: 10px; font-weight: bold;\">PJCE4106</td>\n" +
+"                    </tr>\n" +
+"                </tbody>\n" +
+"            </table>\n" +
+"        </div>\n" +
+"        <!-- MODULES LIST -->\n" +
+"        <div style=\"margin-top: 0; overflow-x: auto;\">\n" +
+"            <table style=\"width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 2px solid #000; border-top: none;\">\n" +
+"                <thead>\n" +
+"                    <tr>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;\">MODULE<br>CODE</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;\">MODULE NAME</th>\n" +
+"                        <th style=\"border: 1px solid #000; background: #e8f0fe; color: #000; padding: 10px;\">MODULE TEACHER</th>\n" +
+"                    </tr>\n" +
+"                </thead>\n" +
+"                <tbody>\n" +
+"                    <tr><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">MG4101</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;\">PRINCIPLES OF MANAGEMENT AND PROFFESIONAL ETHICS</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">MR VALERIAN</td></tr>\n" +
+"                    <tr><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">CE4102</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;\">QUANTITY SURVEYING AND VALUATION</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">MR KOMBE</td></tr>\n" +
+"                    <tr><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">ELCE00016</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;\">REPAIR AND REHABILITATION OF STRUCTURES</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">DR RWANDALLAH</td></tr>\n" +
+"                    <tr><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">ELCE00021</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;\">ENVIRONMENTAL IMPACT ASSESSMENT</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">MRS DHIVYA</td></tr>\n" +
+"                    <tr><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">CE4105</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;\">COMPUTER AIDED STRUCTURAL ANALYSIS LAB (P)</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">MR JUMA</td></tr>\n" +
+"                    <tr><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">PJCE4106</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;\">Project Work Phase I & Viva Voce</td><td style=\"border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;\">DR RWANDALLAH / MR<br>KOMBE / MR ALLEN</td></tr>\n" +
+"                </tbody>\n" +
+"            </table>\n" +
+"        </div>\n" +
+"    </div>");
+            timetableRepository.save(tt_ce_y4_s1);
+
             // Seed DEG_CE Year 3 Sem 2 Timetable
             com.school.model.Timetable tt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 3, 2).orElse(new com.school.model.Timetable());
             tt.setProgramType("DEG_CE");
