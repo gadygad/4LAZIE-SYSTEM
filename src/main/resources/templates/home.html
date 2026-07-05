@@ -2850,12 +2850,12 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                             <select class="form-select custom-select-premium" name="course" id="courseSelect" required
                                 style="display: none;">
                                 <option value="" disabled selected>Choose your course...</option>
-                                <option value="IT">Information Technology</option>
-                                <option value="CSE">Computer Science Engineering</option>
-                                <option value="CE">Civil Engineering</option>
-                                <option value="ME">Mechanical Engineering</option>
-                                <option value="MTE">Mechatronics Engineering</option>
-                                <option value="EEE">Electrical & Electronics</option>
+                                
+                                <!-- Diploma Courses -->
+                                <option th:each="c : ${diplomaCourses}" th:value="${#strings.substringAfter(c.programType, '_')}" class="diploma-course" style="display: none;" th:text="${c.subtitle}"></option>
+                                
+                                <!-- Degree Courses -->
+                                <option th:each="c : ${degreeCourses}" th:value="${#strings.substringAfter(c.programType, '_')}" class="degree-course" style="display: none;" th:text="${c.subtitle}"></option>
                             </select>
                         </div>
 
@@ -2905,25 +2905,36 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             const programSelect = document.getElementById('programSelect');
             const diplomaLevels = document.querySelectorAll('.diploma-level');
             const degreeLevels = document.querySelectorAll('.degree-level');
+            const diplomaCourses = document.querySelectorAll('.diploma-course');
+            const degreeCourses = document.querySelectorAll('.degree-course');
 
             // Original logic + Dropdown update
             if (programSelect) {
                 programSelect.addEventListener('change', function () {
                     const levelSelect = document.getElementById('levelSelect');
+                    const courseSelect = document.getElementById('courseSelect');
                     levelSelect.value = '';
+                    courseSelect.value = '';
 
                     if (this.value === 'DIPLOMA') {
                         diplomaLevels.forEach(el => el.style.display = 'block');
                         degreeLevels.forEach(el => el.style.display = 'none');
+                        diplomaCourses.forEach(el => el.style.display = 'block');
+                        degreeCourses.forEach(el => el.style.display = 'none');
                     } else if (this.value === 'DEGREE') {
                         diplomaLevels.forEach(el => el.style.display = 'none');
                         degreeLevels.forEach(el => el.style.display = 'block');
+                        diplomaCourses.forEach(el => el.style.display = 'none');
+                        degreeCourses.forEach(el => el.style.display = 'block');
                     } else {
                         diplomaLevels.forEach(el => el.style.display = 'none');
                         degreeLevels.forEach(el => el.style.display = 'none');
+                        diplomaCourses.forEach(el => el.style.display = 'none');
+                        degreeCourses.forEach(el => el.style.display = 'none');
                     }
-                    // Re-render level dropdown to reflect displayed options
+                    // Re-render level and course dropdowns to reflect displayed options
                     updateCustomDropdown('levelSelect');
+                    updateCustomDropdown('courseSelect');
                 });
             }
 

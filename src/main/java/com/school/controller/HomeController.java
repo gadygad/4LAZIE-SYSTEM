@@ -58,6 +58,9 @@ public class HomeController {
     @Autowired
     private AcademicCalendarRepository academicCalendarRepository;
 
+    @Autowired
+    private com.school.repository.CourseRepository courseRepository;
+
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
         if (session.getAttribute("user") != null) {
@@ -89,6 +92,16 @@ public class HomeController {
             model.addAttribute("cat2Passed", false);
             model.addAttribute("uePassed", false);
         }
+
+        List<com.school.model.Course> allCourses = courseRepository.findAll();
+        List<com.school.model.Course> diplomaCourses = allCourses.stream()
+                .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
+                .collect(Collectors.toList());
+        List<com.school.model.Course> degreeCourses = allCourses.stream()
+                .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
+                .collect(Collectors.toList());
+        model.addAttribute("diplomaCourses", diplomaCourses);
+        model.addAttribute("degreeCourses", degreeCourses);
 
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
