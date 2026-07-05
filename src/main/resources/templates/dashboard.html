@@ -52,17 +52,14 @@
             <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0) 100%); box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);"></div>
         </nav>
 
-    <!-- DASHBOARD LAYOUT CONTAINER -->
-    <div class="dashboard-layout d-flex flex-grow-1" style="overflow: hidden; width: 100%; height: calc(100vh - 70px);">
+    <!-- PAGE LAYOUT CONTAINER -->
+    <div class="page-layout">
         
         <!-- LEFT SIDEBAR -->
         <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
 
-        <!-- MAIN WRAPPER -->
-        <div class="main-wrapper" style="flex-grow: 1; overflow-y: auto; overflow-x: hidden;">
-            
-            <!-- DASHBOARD CONTENT AREA -->
-            <div class="content-area position-relative" style="background: linear-gradient(135deg, #f0fdf4 0%, #e2e8f0 100%); min-height: 100%; overflow-x: hidden;">
+        <!-- MAIN CONTENT AREA -->
+        <div class="main-content">
             
             <!-- Animated Background Blobs -->
             <div style="position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 10s ease-in-out infinite;"></div>
@@ -78,7 +75,7 @@
             </style>
 
             <!-- CENTER COLUMN (DASHBOARD OVERVIEW) -->
-            <div class="center-col position-relative z-1" style="padding: 20px; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 64px);">
+            <div class="center-col position-relative z-1" style="padding: 20px; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; width: 100%;">
                 
 
                 <!-- CUSTOM CSS FOR GLASSMORPHISM & ANIMATIONS -->
@@ -363,13 +360,10 @@
 
             <!-- RIGHT COLUMN REMOVED -->
         </div>
+    </div>
         
-        <!-- Include Footer inside main wrapper -->
-        <div style="border-top: 1px solid #e2e8f0; background: #ffffff; margin-top: auto;">
-            <div th:replace="~{fragments/footer :: footer}"></div>
-        </div>
-    </div>
-    </div>
+    <!-- Footer outside page-layout -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
