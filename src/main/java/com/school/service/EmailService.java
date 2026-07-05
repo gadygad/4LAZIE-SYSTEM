@@ -61,6 +61,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
             helper.setTo(to);
             helper.setSubject("New Material Added: " + noteTitle);
             
