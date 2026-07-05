@@ -63,8 +63,8 @@ public class HomeController {
         if (session.getAttribute("user") != null) {
             return "redirect:/dashboard";
         }
-        // Fetch the absolute 6 most recent uploads (Public Quick Access)
-        List<Note> popularNotes = noteRepository.findTop6ByOrderByIdDesc();
+        // Fetch the absolute 10 most recent uploads (Public Quick Access)
+        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc();
         
         // Fetch distinct module names from database and map to advice
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()
