@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 
-@ControllerAdvice(annotations = Controller.class)
+@ControllerAdvice(value = "configGlobalExceptionHandler", annotations = Controller.class)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({org.springframework.web.multipart.MaxUploadSizeExceededException.class, org.springframework.web.multipart.MultipartException.class})
