@@ -1,0 +1,6 @@
+html = open('src/main/resources/templates/home.html').read()
+lines = html.split('\n')
+text = '\n'.join(lines[2092:2132])
+divs = text.count('<div')
+enddivs = text.count('</div')
+print(f"divs: {divs}, enddivs: {enddivs}")
