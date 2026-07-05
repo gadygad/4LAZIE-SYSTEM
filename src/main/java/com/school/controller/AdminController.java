@@ -56,12 +56,11 @@ public class AdminController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.school.util.AuthUtil authUtil;
+
     private User getLoggedInUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            return userRepository.findByEmail(auth.getName()).orElse(null);
-        }
-        return null;
+        return authUtil.getLoggedInUser();
     }
 
     @GetMapping("/users")

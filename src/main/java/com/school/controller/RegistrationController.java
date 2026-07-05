@@ -76,7 +76,10 @@ public class RegistrationController {
                                HttpServletRequest request,
                                HttpServletResponse response,
                                Model model) {
-        if (result.hasErrors()) {
+        if (result.hasErrors() || user.getInstitution() == null || user.getInstitution().getId() == null || user.getCourseProgram() == null || user.getCourseProgram().isEmpty()) {
+            if (!result.hasErrors()) {
+                model.addAttribute("error", "Please select both your Institution and Course.");
+            }
             model.addAttribute("institutions", institutionRepository.findAll());
             model.addAttribute("courses", courseRepository.findAll());
             return "register";
@@ -120,6 +123,7 @@ public class RegistrationController {
     @PostMapping("/register/google")
     public String registerWithGoogle(@RequestParam("credential") String credential, 
                                      @RequestParam(value = "courseProgram", required = false) String courseProgram,
+                                     @RequestParam(value = "institutionId", required = false) String institutionId,
                                      HttpServletRequest request, HttpServletResponse response, Model model) {
         HttpSession session = request.getSession(true);
         try {
@@ -132,8 +136,8 @@ public class RegistrationController {
                 if (existingUser.isPresent()) {
                     user = existingUser.get();
                 } else {
-                    if (courseProgram == null || courseProgram.trim().isEmpty()) {
-                        model.addAttribute("error", "Please select a course before signing in with Google.");
+                    if (courseProgram == null || courseProgram.trim().isEmpty() || institutionId == null || institutionId.trim().isEmpty()) {
+                        model.addAttribute("error", "Please select both your Institution and Course before signing in with Google.");
                         model.addAttribute("user", new User());
                         try {
                             model.addAttribute("institutions", institutionRepository.findAll());
@@ -150,7 +154,7 @@ public class RegistrationController {
                     user.setSemester(1); // Default
                     user.setYear(1); // Default
                     user.setCourseProgram(courseProgram); // Default
-                    institutionRepository.findById("1").ifPresent(user::setInstitution); // Default to SJCET
+                    institutionRepository.findById(institutionId).ifPresent(user::setInstitution); // Set chosen institution
                     user.setIsVerified(true); // Google accounts are auto-verified
                     userService.registerUser(user, null);
                 }
@@ -165,7 +169,9 @@ public class RegistrationController {
                 HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
                 securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
                 
-                
+                if (user.getRole() == Role.ADMIN) {
+                    return "redirect:/admin/users";
+                }
                 return "redirect:/dashboard";
             
         } catch (Exception e) {

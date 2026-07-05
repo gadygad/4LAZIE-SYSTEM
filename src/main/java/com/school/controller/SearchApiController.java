@@ -42,7 +42,7 @@ public class SearchApiController {
 
         List<Map<String, Object>> results = topResults.stream().map(note -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("id", note.getId());
+            map.put("id", note.getEncryptedSlug() != null ? note.getEncryptedSlug() : note.getId());
             map.put("title", note.getTitle());
             map.put("category", note.getCategory());
             map.put("levelNo", note.getLevelNo());

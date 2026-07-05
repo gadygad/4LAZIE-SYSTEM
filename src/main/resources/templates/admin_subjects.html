@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
 
     <!-- PWA Manifest & Theme Color -->
     <link rel="manifest" href="/manifest.json">
@@ -93,19 +94,17 @@
     </nav>
 
     <div class="container py-4">
-        <!-- Glassmorphism Toast Notification -->
-        <div th:if="${success}" class="toast-notification" id="toastSuccess" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 280px; max-width: 360px; padding: 12px 20px; border-radius: 14px; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.18); color: #065f46; font-weight: 600; font-size: 0.85rem; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 10px; animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1), fadeOut 0.5s ease 5s forwards;">
-            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem;"></i>
-            <span th:text="${success}"></span>
+        <!-- Premium Glassmorphism Toast Notifications -->
+        <div th:if="${success != null or error != null}" class="premium-toast-container">
+            <div th:if="${success}" class="premium-toast" id="toastSuccess">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="premium-toast error" id="toastError">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span th:text="${error}"></span>
+            </div>
         </div>
-        <div th:if="${error}" class="toast-notification" id="toastError" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 280px; max-width: 360px; padding: 12px 20px; border-radius: 14px; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.18); color: #065f46; font-weight: 600; font-size: 0.85rem; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 10px; animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1), fadeOut 0.5s ease 5s forwards;">
-            <i class="bi bi-exclamation-triangle-fill" style="color: #dc2626; font-size: 1.1rem;"></i>
-            <span th:text="${error}"></span>
-        </div>
-        <style>
-            @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-            @keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateY(-20px); } }
-        </style>
 
         <div class="row g-4">
             <!-- Left Column: Notes Table -->
@@ -236,9 +235,12 @@
             });
         });
 
-        // Auto-remove toast notifications after 3 seconds
-        document.querySelectorAll('.toast-notification').forEach(function(toast) {
-            setTimeout(function() { toast.remove(); }, 5000);
+                        // Auto-remove toast notifications after 3 seconds
+        document.querySelectorAll('.premium-toast').forEach(function(toast) {
+            setTimeout(function() { 
+                toast.classList.add('fade-out');
+                setTimeout(function() { toast.parentElement.remove(); }, 500);
+            }, 3000);
         });
     </script>
 

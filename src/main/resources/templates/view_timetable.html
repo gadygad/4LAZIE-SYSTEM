@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Timetable - 4LAZIE</title>
+    <!-- Google Fonts for a modern but formal look -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Timetable - 4LAZIE</title>
@@ -16,21 +26,23 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow-x: hidden; /* PREVENT HORIZONTAL SCROLLING COMPLETELY */
         }
 
         .main-container {
             width: 100%;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* Important for horizontal scrolling */
             align-items: flex-start;
             padding-top: 10px;
+            overflow-x: auto; /* Enable horizontal scrolling */
+            padding-bottom: 20px;
         }
 
         /* This is the container that will be scaled by Zoom */
         #timetable-wrapper {
             background: #ffffff;
-            width: 960px; /* Fixed width matching the original image */
+            min-width: 960px; /* Fixed min-width matching the original image to allow horizontal scroll */
+            max-width: 100%;
             padding: 15px 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             border-top: 8px solid #004080;
@@ -302,31 +314,7 @@
     </div> <!-- End of main-container -->
 
     <script>
-        // JS TO FORCE 960PX TABLE TO FIT INSIDE ANY MOBILE SCREEN WIDTH WITHOUT OVERFLOW
-        function fitToScreen() {
-            var screenWidth = window.innerWidth;
-            var tableWidth = 960; // Full width of our document (like an image)
-            var wrapper = document.getElementById('timetable-wrapper');
-            
-            if (screenWidth < tableWidth) {
-                var scale = screenWidth / tableWidth;
-                // We use CSS zoom which shrinks the container itself (DOM Layout box)
-                // This ensures no horizontal scrollbar appears, it fits 100%
-                wrapper.style.zoom = scale;
-                
-                // Fallback for browsers that do not support zoom (like older Firefox)
-                // (But modern Android devices use Chrome/Blink which supports zoom perfectly)
-                wrapper.style.transform = 'scale(' + scale + ')';
-            } else {
-                wrapper.style.zoom = 1;
-                wrapper.style.transform = 'none';
-            }
-        }
-
-        // Run when page loads
-        window.addEventListener('DOMContentLoaded', fitToScreen);
-        window.addEventListener('resize', fitToScreen);
+        // Zoom removed in favor of responsive table horizontal scrolling
     </script>
 </body>
 </html>
-

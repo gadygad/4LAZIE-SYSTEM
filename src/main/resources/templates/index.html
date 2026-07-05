@@ -79,20 +79,59 @@
                     <!-- Ctrl+K Shortcut Hint -->
                     <div class="shortcut-hint d-none d-md-block">Ctrl + K</div>
                 </div>
-                <div class="dropdown position-relative">
-                    <button type="button" class="btn text-secondary p-0 border-0" onclick="const m = this.nextElementSibling; m.classList.toggle('show');" onblur="setTimeout(() => this.nextElementSibling.classList.remove('show'), 200)" title="see more" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s ease; background: transparent;" onmouseover="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--primary)';" onmouseout="this.style.background='transparent'; this.style.color='#6c757d';">
-                        <i class="bi bi-three-dots-vertical"></i>
+                <div class="dropdown position-relative" id="premiumDropdownContainer">
+                    <button type="button" class="btn p-0 border-0 d-flex align-items-center justify-content-center" 
+                        onclick="const m = this.nextElementSibling; if(m.classList.contains('show')){ m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); } else { m.style.display='block'; setTimeout(()=>m.classList.add('show'),10); }" 
+                        onblur="setTimeout(() => { const m = this.nextElementSibling; m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }, 200)" 
+                        title="Explore Options" 
+                        style="font-size: 1.5rem; width: 45px; height: 45px; border-radius: 50%; transition: all 0.3s ease; background: rgba(16,185,129,0.05); color: #10b981;" 
+                        onmouseover="this.style.background='rgba(16,185,129,0.15)'; this.style.transform='scale(1.05)';" 
+                        onmouseout="this.style.background='rgba(16,185,129,0.05)'; this.style.transform='scale(1)';">
+                        <i class="bi bi-grid-fill"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 position-absolute" style="top: 100%; right: 0; border-radius: 16px; font-family: 'Outfit', sans-serif; padding: 12px 8px; min-width: 220px; z-index: 1050;">
-                        <li><h6 class="dropdown-header fw-bold text-uppercase" style="letter-spacing: 1.5px; font-size: 0.7rem; color: #94a3b8;">Search Filters</h6></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-journal-text text-primary"></i></div> Lecture Notes</a></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(16,185,129,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-file-earmark-check text-success"></i></div> Past Papers</a></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(16, 185, 129,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-pen text-warning"></i></div> Assignments</a></li>
-                        <li><hr class="dropdown-divider my-2" style="opacity: 0.05;"></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(148,163,184,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-sort-down text-secondary"></i></div> Sort by Newest</a></li>
-                        <li><hr class="dropdown-divider my-2" style="opacity: 0.05;"></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3 text-danger" href="#" style="font-size: 0.9rem; font-weight: 500;"><div style="width:30px; height:30px; border-radius:8px; background:rgba(239,68,68,0.1); display:flex; align-items:center; justify-content:center;"><i class="bi bi-chat-left-text"></i></div> Request a Note</a></li>
-                    </ul>
+                    
+                    <div class="dropdown-menu dropdown-menu-end position-absolute premium-glass-dropdown" 
+                         style="top: 120%; right: 0; min-width: 260px; z-index: 1050; display: none; opacity: 0; transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; box-shadow: 0 15px 35px rgba(16,185,129,0.15); padding: 15px 10px;">
+                        
+                        <style>
+                            .premium-glass-dropdown.show { opacity: 1 !important; transform: translateY(0) !important; }
+                            .premium-dropdown-item { padding: 10px 15px; border-radius: 12px; transition: all 0.3s ease; color: #334155; font-family: 'Outfit', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 5px; }
+                            .premium-dropdown-item:hover { background: rgba(16,185,129,0.1); color: #10b981; transform: translateX(5px); }
+                            .premium-dropdown-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.3s; }
+                            .premium-dropdown-item:hover .premium-dropdown-icon { background: #10b981; color: white !important; transform: rotate(5deg); }
+                            .icon-notes { background: rgba(59,130,246,0.1); color: #3b82f6; }
+                            .icon-papers { background: rgba(16,185,129,0.1); color: #10b981; }
+                            .icon-assignments { background: rgba(245,158,11,0.1); color: #f59e0b; }
+                            .icon-explore { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+                            .icon-request { background: rgba(239,68,68,0.1); color: #ef4444; }
+                        </style>
+
+                        <h6 class="px-3 mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px; color: #94a3b8; font-weight: 700;">Quick Access</h6>
+                        
+                        <a href="/guest-notes?category=Notes" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-notes"><i class="bi bi-journal-text"></i></div>
+                            <span>Lecture Notes</span>
+                        </a>
+                        <a href="/guest-notes?category=Past+Paper" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-papers"><i class="bi bi-file-earmark-check"></i></div>
+                            <span>Past Papers</span>
+                        </a>
+                        <a href="/guest-notes?category=Assignment" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-assignments"><i class="bi bi-pen"></i></div>
+                            <span>Assignments</span>
+                        </a>
+                        
+                        <div class="dropdown-divider my-2" style="border-color: rgba(16,185,129,0.1);"></div>
+                        
+                        <a href="/explore" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-explore"><i class="bi bi-compass"></i></div>
+                            <span>Explore All</span>
+                        </a>
+                        <a href="mailto:admin@4lazie.com?subject=Request%20a%20Note" class="premium-dropdown-item text-danger">
+                            <div class="premium-dropdown-icon icon-request"><i class="bi bi-chat-left-text"></i></div>
+                            <span style="color: #ef4444;">Request a Note</span>
+                        </a>
+                    </div>
                 </div>
                 
             </div>
@@ -229,12 +268,12 @@
                         </div>
                         <h2 class="mb-2"
                             style="font-family: 'Outfit', sans-serif; font-size: 1.85rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">
-                            Ready to Unlock <span style="color: #10b981;">Premium Features?</span>
+                            Ready to Unlock <span style="color: #10b981;">All Features?</span>
                         </h2>
                         <p class="mx-auto mb-4"
                             style="font-size: 0.95rem; color: #64748b; line-height: 1.6; font-weight: 400;">
                             Join thousands of students and gain full access to exclusive CAT assessments, assignments,
-                            premium past papers, and your personalized learning dashboard.
+                            past papers, and your personalized learning dashboard.
                         </p>
                         <a href="/register"
                             class="btn fw-bold px-4 py-2 rounded-pill position-relative overflow-hidden text-decoration-none"
@@ -268,6 +307,76 @@
                 loginDropdown.show();
             }
         });
+
+        // Global Search Initialization Logic
+        function initSearch(inputId, resultsId) {
+            const input = document.getElementById(inputId);
+            const results = document.getElementById(resultsId);
+            
+            if (!input || !results) return;
+
+            let debounceTimer;
+
+            input.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    results.style.display = 'none';
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetch('/api/search?q=' + encodeURIComponent(query))
+                        .then(response => response.json())
+                        .then(data => {
+                            results.innerHTML = '';
+                            if (data.length > 0) {
+                                data.forEach(note => {
+                                    const item = document.createElement('a');
+                                    item.href = '/view-note/' + (note.encryptedSlug || note.id);
+                                    item.className = 'list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 border-0 border-bottom';
+                                    item.style.transition = 'all 0.2s ease';
+                                    
+                                    item.innerHTML = `
+                                        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="bi bi-file-earmark-pdf text-primary fs-5"></i>
+                                        </div>
+                                        <div class="overflow-hidden">
+                                            <h6 class="mb-1 fw-bold text-dark text-truncate" style="font-family: 'Outfit', sans-serif;">${note.title}</h6>
+                                            <p class="mb-0 text-muted small text-truncate"><i class="bi bi-book"></i> ${note.subjectName}</p>
+                                        </div>
+                                    `;
+                                    results.appendChild(item);
+                                });
+                            } else {
+                                results.innerHTML = '<div class="p-4 text-center text-muted"><i class="bi bi-search fs-3 mb-2 d-block"></i> No notes found</div>';
+                            }
+                            results.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                            results.innerHTML = '<div class="p-3 text-danger small"><i class="bi bi-exclamation-triangle"></i> Failed to load results</div>';
+                            results.style.display = 'block';
+                        });
+                }, 300);
+            });
+
+            // Close search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!input.contains(e.target) && !results.contains(e.target)) {
+                    results.style.display = 'none';
+                }
+            });
+
+            // Handle Escape key
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    results.style.display = 'none';
+                    input.blur();
+                }
+            });
+        }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

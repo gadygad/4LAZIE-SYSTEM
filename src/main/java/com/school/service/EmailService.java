@@ -77,8 +77,8 @@ public class EmailService {
                     + "</div>"
                     + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Stay ahead of your studies with 4LAZIE.</p>"
                     + "</div>"
-                    + "<div style=\"text-align: center; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px;\">"
-                    + "<p>&copy; 2024 4LAZIE Student Portal. All rights reserved.</p>"
+                    + "<div style=\"text-align: center; padding-top: 15px; color: #94a3b8; font-size: 12px;\">"
+                    + "<p>&copy; 2024 4LAZIE Student Community. All rights reserved.</p>"
                     + "</div>"
                     + "</div>";
                     
@@ -149,7 +149,7 @@ public class EmailService {
                     + "<p style=\"color: #ef4444; font-size: 15px; line-height: 1.6; font-weight: bold;\">If you did not authorize this login, please change your password immediately!</p>"
                     + "</div>"
                     + "<div style=\"text-align: center; padding-top: 15px; color: #94a3b8; font-size: 12px;\">"
-                    + "<p>&copy; " + java.time.Year.now().getValue() + " 4LAZIE Student Portal. All rights reserved.</p>"
+                    + "<p>&copy; " + java.time.Year.now().getValue() + " 4LAZIE Student Community. All rights reserved.</p>"
                     + "</div>"
                     + "</div>";
                     

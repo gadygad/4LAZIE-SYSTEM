@@ -5,9 +5,23 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
+
+@Component
 public class EncryptionUtil {
-    private static final String SECRET_KEY = "4lazieSecretKeyForEncryption2024"; // Must be 32 bytes for AES-256 or 16 for AES-128
+
+    @Value("${app.encryption.secret-key:4lazieSecretKeyForEncryption2024}")
+    private String injectedSecretKey;
+
+    private static String SECRET_KEY; 
     private static final String ALGORITHM = "AES";
+
+    @PostConstruct
+    public void init() {
+        SECRET_KEY = this.injectedSecretKey;
+    }
 
     public static String encrypt(String value) {
         try {

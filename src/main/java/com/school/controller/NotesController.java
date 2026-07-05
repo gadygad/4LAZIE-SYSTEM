@@ -44,21 +44,11 @@ import com.school.model.Role;
 public class NotesController {
     private static final Logger log = LoggerFactory.getLogger(NotesController.class);
 
+    @Autowired
+    private com.school.util.AuthUtil authUtil;
+
     private User getLoggedInUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth instanceof AnonymousAuthenticationToken) {
-            return null;
-        }
-        Object principal = auth.getPrincipal();
-        String email;
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else if (principal instanceof String) {
-            email = (String) principal;
-        } else {
-            return null;
-        }
-        return userRepository.findByEmail(email).orElse(null);
+        return authUtil.getLoggedInUser();
     }
 
     // Utility to prevent ReDoS by escaping Regex special characters
@@ -360,10 +350,6 @@ public class NotesController {
         }
 
         try {
-            // Upload to Cloudinary
-            String fileUrl = fileStorageService.uploadFile(file);
-            String filename = file.getOriginalFilename();
-
             Note note = new Note();
             note.setTitle(title);
             note.setProgramType(programType);
@@ -374,49 +360,13 @@ public class NotesController {
             note.setCategory(category == null || category.trim().isEmpty() ? "Note" : category);
             note.setUnitNumber(unitNumber);
             note.setAcademicYear(academicYear != null ? academicYear.trim() : null);
-            note.setFilename(filename);
-            note.setFileUrl(fileUrl);
-            note.setUploadDate(LocalDateTime.now());
-            note.setIsPublic(true);
-            // Link to the uploader's institution automatically
-            Institution institution = loggedInUser.getInstitution();
-            note.setInstitution(institution);
-            noteRepository.save(note);
-            
-            // Send Push Notification
-            if (pushNotificationService != null) {
-                String pushTitle = "New Notes Added! 🎉";
-                String categoryLabel = (category == null || category.trim().isEmpty()) ? "Note" : category;
-                String pushBody = "Hey there! We just added a new " + categoryLabel + " titled '" + title + "'. Tap here to check it out!";
-                String pushUrl = "/view/" + note.getEncryptedSlug();
-                
-                // Send async to not block the upload response (Now uses @Async in service)
-                pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
-                
-                // Also create in-app notification and send EMAIL to matched students
-                if (notificationService != null && userRepository != null) {
-                    List<User> matchedUsers = userRepository.findAll().stream()
-                        .filter(u -> programType.equals(u.getCourseProgram()) &&
-                                     levelNo.equals(u.getLevel()) &&
-                                     semesterNo.equals(u.getSemester()))
-                        .collect(Collectors.toList());
-                        
-                    for (User u : matchedUsers) {
-                        // Notify everyone except the uploader (Admin)
-                        if (!u.getId().equals(loggedInUser.getId())) {
-                            notificationService.createNotification(u.getId(), pushTitle, pushBody);
-                            
-                            // Send HTML Email using the base URL
-                            String appUrl = "https://" + request.getServerName();
-                            if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-                                appUrl += ":" + request.getServerPort();
-                            }
-                            String emailLink = appUrl + pushUrl;
-                            emailService.sendNewNoteNotification(u.getEmail(), title, categoryLabel, emailLink);
-                        }
-                    }
-                }
+
+            String appUrl = "https://" + request.getServerName();
+            if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+                appUrl += ":" + request.getServerPort();
             }
+
+            noteService.uploadAndSaveNote(note, file, loggedInUser, appUrl);
             
         } catch (IOException e) {
             return "redirect:/upload?error=Upload failed: " + e.getMessage();
@@ -458,6 +408,9 @@ public class NotesController {
         noteRepository.save(note);
 
         if (loggedInUser != null) {
+            if (loggedInUser.getDownloadedNotes() == null) {
+                loggedInUser.setDownloadedNotes(new java.util.HashSet<>());
+            }
             loggedInUser.getDownloadedNotes().add(note.getId());
             userRepository.save(loggedInUser);
         }
@@ -608,6 +561,9 @@ public class NotesController {
         }
 
         boolean saved = false;
+        if (loggedInUser.getSavedNotes() == null) {
+            loggedInUser.setSavedNotes(new java.util.HashSet<>());
+        }
         if (loggedInUser.getSavedNotes().contains(id)) {
             loggedInUser.getSavedNotes().remove(id);
         } else {

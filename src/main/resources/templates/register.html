@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
 
     <!-- PWA Manifest & Theme Color -->
     <link rel="manifest" href="/manifest.json">
@@ -84,8 +85,9 @@
             <form th:action="@{/register}" method="post" th:object="${user}">
                 
                 <div class="mb-3">
-                    <select name="institution.id" class="premium-input form-select shadow-none" style="cursor: pointer;" required>
-                        <option value="1" selected>St. Joseph College of Engineering (SJUIT)</option>
+                    <select id="institutionId" name="institution.id" class="premium-input form-select shadow-none" style="cursor: pointer;" required>
+                        <option value="" disabled selected>Select Your Institution</option>
+                        <option th:each="inst : ${institutions}" th:value="${inst.id}" th:text="${inst.name}"></option>
                     </select>
                 </div>
                 
@@ -106,8 +108,6 @@
                     <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
                 </div>
                 
-
-                
                 <div class="mb-4">
                     <input type="password" name="password" th:field="*{password}" class="premium-input shadow-none" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" placeholder="Password" required>
                     <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback" style="font-size: 0.8rem; font-weight: 500; margin-top: 4px;"></div>
@@ -125,7 +125,7 @@
             </div>
 
             <div class="d-flex justify-content-center mb-4 position-relative">
-                <div id="google-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; cursor: not-allowed;" onclick="alert('Please select your course/program first before signing up with Google.')"></div>
+                <div id="google-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; cursor: not-allowed;" onclick="alert('Please select both your Institution and Course/Program first before signing up with Google.')"></div>
                 <div id="g_id_onload"
                      data-client_id="226739305071-2b7frq975mp822vaua8404aci2cej5ds.apps.googleusercontent.com"
                      data-callback="handleCredentialResponse"
@@ -145,6 +145,7 @@
             <form id="google-login-form" th:action="@{/register/google}" method="post" style="display: none;">
                 <input type="hidden" name="credential" id="google-credential">
                 <input type="hidden" name="courseProgram" id="google-course">
+                <input type="hidden" name="institutionId" id="google-institution">
             </form>
 
             <div class="text-center pt-2" style="border-top: 1px solid rgba(15,23,42,0.05);">
@@ -158,22 +159,31 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        document.getElementById('courseProgram').addEventListener('change', function() {
-            if (this.value) {
+        function checkGoogleAuthOverlay() {
+            const courseVal = document.getElementById('courseProgram').value;
+            const instVal = document.getElementById('institutionId').value;
+            if (courseVal && instVal) {
                 document.getElementById('google-overlay').style.display = 'none';
             } else {
                 document.getElementById('google-overlay').style.display = 'block';
             }
-        });
+        }
+
+        document.getElementById('courseProgram').addEventListener('change', checkGoogleAuthOverlay);
+        document.getElementById('institutionId').addEventListener('change', checkGoogleAuthOverlay);
 
         function handleCredentialResponse(response) {
             const courseDropdown = document.getElementById('courseProgram');
-            if (courseDropdown && (!courseDropdown.value || courseDropdown.value === "")) {
-                alert("Please select your course first before signing up with Google.");
+            const instDropdown = document.getElementById('institutionId');
+            
+            if (!courseDropdown.value || !instDropdown.value) {
+                alert("Please select both your Institution and Course first before signing up with Google.");
                 return;
             }
+            
             document.getElementById('google-credential').value = response.credential;
-            document.getElementById('google-course').value = courseDropdown ? courseDropdown.value : "";
+            document.getElementById('google-course').value = courseDropdown.value;
+            document.getElementById('google-institution').value = instDropdown.value;
             document.getElementById('google-login-form').submit();
         }
     </script>

@@ -33,8 +33,20 @@ public class NoteService {
     @Autowired
     private SubjectRepository subjectRepository;
 
+    @Autowired
+    private com.school.service.FileStorageService fileStorageService;
 
+    @Autowired(required = false)
+    private com.school.service.PushNotificationService pushNotificationService;
 
+    @Autowired
+    private com.school.service.NotificationService notificationService;
+
+    @Autowired
+    private com.school.service.EmailService emailService;
+
+    @Autowired
+    private com.school.repository.UserRepository userRepository;
     public void groupNotesByModule(List<Note> notes, String program, Integer level, Integer semester, 
                                    Map<String, List<Note>> groupedNotes, Map<String, String> moduleCodes) {
         // 1. Fetch subjects for this program, level, and semester FIRST to establish correct order
@@ -115,6 +127,41 @@ public class NoteService {
             }
             zos.finish();
             return baos.toByteArray();
+        }
+    }
+
+    public void uploadAndSaveNote(Note note, org.springframework.web.multipart.MultipartFile file, com.school.model.User loggedInUser, String appUrl) throws IOException {
+        String fileUrl = fileStorageService.uploadFile(file);
+        note.setFilename(file.getOriginalFilename());
+        note.setFileUrl(fileUrl);
+        note.setUploadDate(java.time.LocalDateTime.now());
+        note.setIsPublic(true);
+        note.setInstitution(loggedInUser.getInstitution());
+        noteRepository.save(note);
+
+        if (pushNotificationService != null) {
+            String pushTitle = "New Notes Added! 🎉";
+            String categoryLabel = (note.getCategory() == null || note.getCategory().trim().isEmpty()) ? "Note" : note.getCategory();
+            String pushBody = "Hey there! We just added a new " + categoryLabel + " titled '" + note.getTitle() + "'. Tap here to check it out!";
+            String pushUrl = "/view/" + note.getEncryptedSlug();
+            
+            pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
+            
+            if (notificationService != null && userRepository != null) {
+                List<com.school.model.User> matchedUsers = userRepository.findAll().stream()
+                    .filter(u -> note.getProgramType().equals(u.getCourseProgram()) &&
+                                 note.getLevelNo().equals(u.getLevel()) &&
+                                 note.getSemesterNo().equals(u.getSemester()))
+                    .collect(java.util.stream.Collectors.toList());
+                    
+                for (com.school.model.User u : matchedUsers) {
+                    if (!u.getId().equals(loggedInUser.getId())) {
+                        notificationService.createNotification(u.getId(), pushTitle, pushBody);
+                        String emailLink = appUrl + pushUrl;
+                        emailService.sendNewNoteNotification(u.getEmail(), note.getTitle(), categoryLabel, emailLink);
+                    }
+                }
+            }
         }
     }
 }

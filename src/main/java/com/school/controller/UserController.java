@@ -29,6 +29,19 @@ public class UserController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @GetMapping("/explore")
+    public String getExplorePage() {
+        return "explore";
+    }
+
+    @GetMapping("/notifications")
+    public String getAllNotifications(HttpSession session, Model model) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        return "notifications";
+    }
+
     @GetMapping("/profile")
     public String getProfile(@RequestParam(value = "edit", required = false, defaultValue = "false") boolean edit,
                              HttpSession session, Model model) {

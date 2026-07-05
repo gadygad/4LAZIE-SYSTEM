@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
 
     <!-- PWA Manifest & Theme Color -->
     <link rel="manifest" href="/manifest.json">
@@ -75,7 +76,7 @@
                                 </th:block>
                                 
                                 <th:block th:unless="${notifications == null || #lists.isEmpty(notifications)}">
-                                    <a th:each="notif : ${notifications}" href="#" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" style="transition: all 0.3s ease; background-color: transparent; position: relative; overflow: hidden;" th:styleappend="${!notif.read ? 'background-color: rgba(16, 185, 129, 0.05) !important;' : ''}">
+                                    <a th:each="notif : ${notifications}" th:href="@{'/api/notifications/click/' + ${notif.id}}" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" style="transition: all 0.3s ease; background-color: transparent; position: relative; overflow: hidden;" th:styleappend="${!notif.read ? 'background-color: rgba(16, 185, 129, 0.05) !important;' : ''}">
                                         <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #10b981; transform-origin: center;" th:style="${!notif.read ? 'transform: scaleY(1);' : 'transform: scaleY(0); transition: transform 0.3s ease;'}"></div>
                                         <div class="d-flex w-100 justify-content-between align-items-start">
                                             <div class="d-flex align-items-start">
@@ -94,9 +95,7 @@
                             </div>
                         </li>
                         <li class="text-center border-top">
-                            <a href="#" class="dropdown-item py-3 fw-bold view-activity-btn" style="font-size: 0.9rem; color: #10b981; transition: all 0.3s ease;">
-                                View All Activity
-                            </a>
+                            <a href="/notifications" class="text-decoration-none fw-bold" style="font-size: 0.9rem; color: #10b981; transition: color 0.2s;">View All Activity</a>
                         </li>
                     </ul>
                     
@@ -174,110 +173,26 @@
     <!-- Main Profile -->
     <div class="container profile-container animate-fade-in">
         
-        <!-- Floating Glassmorphism Toast -->
-        <div th:if="${success}" class="custom-toast-container">
-            <div class="custom-toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex align-items-center">
-                    <div class="toast-icon-bg">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                    <div class="toast-body fw-medium" th:text="${success}">Profile updated successfully!</div>
-                    <button type="button" class="btn-close me-2 m-auto toast-close-btn" aria-label="Close"></button>
-                </div>
+        <!-- Premium Glassmorphism Toast Notifications -->
+        <div th:if="${success != null or error != null}" class="premium-toast-container">
+            <div th:if="${success}" class="premium-toast" id="toastSuccess">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${success}"></span>
             </div>
-            <style>
-                .custom-toast-container {
-                    position: fixed;
-                    top: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    z-index: 9999;
-                    animation: popDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-                }
-                .custom-toast {
-                    background: rgba(16, 185, 129, 0.85) !important; /* Beautiful Green Glass */
-                    backdrop-filter: blur(16px);
-                    -webkit-backdrop-filter: blur(16px);
-                    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-                    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3) !important;
-                    border-radius: 50px;
-                    padding: 8px 16px 8px 8px;
-                    color: white;
-                    display: inline-flex;
-                    align-items: center;
-                    min-width: 280px;
-                    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-                }
-                .custom-toast:hover {
-                    background: rgba(16, 185, 129, 0.95) !important;
-                    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4) !important;
-                    transform: translateY(-2px);
-                }
-                .toast-icon-bg {
-                    background: rgba(255, 255, 255, 0.25);
-                    border-radius: 50%;
-                    width: 32px;
-                    height: 32px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin-right: 12px;
-                    font-size: 1.1rem;
-                    box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
-                }
-                .toast-body {
-                    padding: 0;
-                    font-size: 0.95rem;
-                    letter-spacing: 0.3px;
-                    flex-grow: 1;
-                }
-                .toast-close-btn {
-                    filter: brightness(0) invert(1);
-                    opacity: 0.8;
-                    font-size: 0.65rem;
-                    margin-left: 15px !important;
-                    cursor: pointer;
-                    transition: opacity 0.2s;
-                }
-                .toast-close-btn:hover {
-                    opacity: 1;
-                }
-                @keyframes popDown {
-                    0% { top: -50px; opacity: 0; }
-                    100% { top: 30px; opacity: 1; }
-                }
-                @keyframes popUpOut {
-                    0% { top: 30px; opacity: 1; }
-                    100% { top: -50px; opacity: 0; }
-                }
-            </style>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const toast = document.querySelector('.custom-toast-container');
-                    if (toast) {
-                        let hideTimeout = setTimeout(hideToast, 5000);
-                        
-                        function hideToast() {
-                            toast.style.animation = 'popUpOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
-                            setTimeout(() => toast.remove(), 5000);
-                        }
-                        
-                        // Pause timer on hover
-                        toast.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-                        toast.addEventListener('mouseleave', () => hideTimeout = setTimeout(hideToast, 5000));
-                        
-                        const closeBtn = toast.querySelector('.btn-close');
-                        if(closeBtn) {
-                            closeBtn.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                clearTimeout(hideTimeout);
-                                hideToast();
-                            });
-                        }
-                    }
-                });
-            </script>
+            <div th:if="${error}" class="premium-toast error" id="toastError">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span th:text="${error}"></span>
+            </div>
         </div>
+        <script>
+            // Auto-remove toast notifications after 3 seconds
+            document.querySelectorAll('.premium-toast').forEach(function(toast) {
+                setTimeout(function() { 
+                    toast.classList.add('fade-out');
+                    setTimeout(function() { toast.parentElement.remove(); }, 500);
+                }, 3000);
+            });
+        </script>
         
         <!-- View Mode -->
         <div th:if="${!editMode}" class="px-3 py-4 position-relative">
@@ -857,4 +772,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
 

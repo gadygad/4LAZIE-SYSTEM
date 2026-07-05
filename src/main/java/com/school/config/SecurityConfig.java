@@ -11,8 +11,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -50,8 +53,11 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout=true")
                 .permitAll()
             )
-                        .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'"))
+            );
 
         return http.build();
     }

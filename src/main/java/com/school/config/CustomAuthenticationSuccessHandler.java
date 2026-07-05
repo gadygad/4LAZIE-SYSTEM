@@ -39,11 +39,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                     .anyMatch(a -> a.getAuthority().equals("ROLE_" + com.school.model.Role.ADMIN.name()));
                     
             if (isAdmin) {
-                response.sendRedirect("/upload");
+                response.sendRedirect("/admin/users");
                 return;
             }
+            response.sendRedirect("/dashboard");
+        } else {
+            // User authenticated by Spring Security but not found in DB (phantom session)
+            request.getSession().invalidate();
+            org.springframework.security.core.context.SecurityContextHolder.clearContext();
+            response.sendRedirect("/login?error=true");
         }
-        
-        response.sendRedirect("/dashboard");
     }
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
 
     <!-- PWA Manifest & Theme Color -->
     <link rel="manifest" href="/manifest.json">
@@ -81,14 +82,27 @@
                 <p class="text-muted-custom" style="font-size: 0.85rem; font-weight: 500;">Enter the 6-digit OTP sent to <strong th:text="${email}"></strong></p>
             </div>
 
-            <!-- Alerts -->
-            <div th:if="${error}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #065f46; font-size: 0.85rem; backdrop-filter: blur(5px); transition: all 0.3s ease;">
-                <i class="bi bi-exclamation-triangle-fill fs-5 me-3"></i> <span th:text="${error}"></span>
+            <!-- Premium Glassmorphism Toast Notifications -->
+            <div th:if="${success != null or error != null}" class="premium-toast-container">
+                <div th:if="${success}" class="premium-toast" id="toastSuccess">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}" class="premium-toast error" id="toastError">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span th:text="${error}"></span>
+                </div>
             </div>
-            
-            <div th:if="${success}" class="alert d-flex align-items-center p-3 mb-4 rounded-4" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #065f46; font-size: 0.85rem; backdrop-filter: blur(5px); transition: all 0.3s ease;">
-                <i class="bi bi-check-circle-fill fs-5 me-3"></i> <span th:text="${success}"></span>
-            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.premium-toast').forEach(function(toast) {
+                        setTimeout(function() { 
+                            toast.classList.add('fade-out');
+                            setTimeout(function() { toast.parentElement.remove(); }, 500);
+                        }, 3000);
+                    });
+                });
+            </script>
 
             <form th:action="@{/verify-otp}" method="post">
                 <input type="hidden" name="email" th:value="${email}" />

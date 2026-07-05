@@ -37,6 +37,11 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
 
             if (email != null) {
                 userRepository.findByEmail(email).ifPresent(user -> {
+                    // Rehydrate HTTP Session if missing (e.g. session expired but Spring Security auth remains)
+                    if (request.getSession().getAttribute("user") == null) {
+                        request.getSession().setAttribute("user", user);
+                    }
+
                     String uri = request.getRequestURI();
                     String method = request.getMethod();
                     
