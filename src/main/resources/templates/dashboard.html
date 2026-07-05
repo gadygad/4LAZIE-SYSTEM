@@ -210,6 +210,27 @@
                             transform: rotate(-10deg);
                         }
                     </style>
+                    <div class="d-flex flex-column gap-2">
+                        <div th:each="note : ${recentNotes}" class="glass-card-recent rounded-3 p-2 px-3 d-flex align-items-center premium-list-item">
+                            <div class="green-accent" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #34d399 0%, #10b981 100%); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: center;"></div>
+                            
+                            <a th:href="@{/view/{id}(id=${note.encryptedSlug})}" class="text-decoration-none d-flex align-items-center flex-grow-1 overflow-hidden" style="color: inherit;">
+                                <div class="icon-box rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.2)); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.6);">
+                                    <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'" style="color: #10b981; font-size: 1.1rem;"></i>
+                                </div>
+                                
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <h6 class="fw-bold text-dark mb-0 premium-text-hover" style="font-size: 0.9rem; font-family: 'Outfit', sans-serif; letter-spacing: 0.2px;" th:text="${note.title}">Note Title</h6>
+                                    <div class="d-flex align-items-center flex-wrap text-muted mt-1" style="font-size: 0.72rem; font-weight: 500;">
+                                        <span class="me-2" style="color: #475569;" th:text="${note.moduleName}">Module Name</span>
+                                        <span style="color: #10b981; font-size: 0.8rem;">&bull;</span>
+                                        <span class="ms-2" style="color: #64748b;"><i class="bi bi-layer-forward me-1"></i> <span th:text="${note.programType}">Program</span></span>
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <div class="ms-2 text-end flex-shrink-0 d-flex flex-column align-items-end justify-content-center">
+                                <span class="badge rounded-pill mb-2" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 0.65rem; font-weight: 600; padding: 4px 10px;" th:text="${note.category}">Note</span>
                                 <div class="d-flex align-items-center gap-2">
                                     <a th:href="@{/view/{id}(id=${note.encryptedSlug})}" class="btn btn-sm d-flex justify-content-center align-items-center shadow-sm px-3" style="border-radius: 20px; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.5px; transition: all 0.3s;" title="Read Note" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.transform='none';">
                                         <i class="bi bi-book-half me-1" style="font-size: 0.9rem;"></i> Read
@@ -220,6 +241,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                         
                         <div th:if="${#lists.isEmpty(recentNotes)}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">No recent materials found.</p>
