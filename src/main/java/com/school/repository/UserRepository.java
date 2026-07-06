@@ -13,6 +13,8 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByPhoneNumber(String phoneNumber);
     Optional<User> findByVerificationToken(String verificationToken);
     
+    java.util.List<User> findTop5ByOrderByDateJoinedDesc();
+    
     long countByRole(com.school.model.Role role);
     long countByLastActiveTimeAfter(java.time.LocalDateTime time);
     java.util.List<User> findByLastActiveTimeAfterOrderByLastActiveTimeDesc(java.time.LocalDateTime time);

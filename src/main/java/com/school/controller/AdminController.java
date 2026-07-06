@@ -63,6 +63,31 @@ public class AdminController {
         return authUtil.getLoggedInUser();
     }
 
+    @GetMapping({"", "/", "/dashboard"})
+    public String adminDashboard(HttpSession session, Model model) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        long totalUsers = userRepository.count();
+        long totalNotes = noteRepository.count();
+        Long totalDownloads = noteRepository.getTotalDownloadCount();
+        Long totalViews = noteRepository.getTotalViewCount();
+        
+        List<User> recentUsers = userRepository.findTop5ByOrderByDateJoinedDesc();
+        List<Note> popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
+        
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalNotes", totalNotes);
+        model.addAttribute("totalDownloads", totalDownloads != null ? totalDownloads : 0L);
+        model.addAttribute("totalViews", totalViews != null ? totalViews : 0L);
+        model.addAttribute("recentUsers", recentUsers);
+        model.addAttribute("popularNotes", popularNotes);
+        
+        return "admin_dashboard";
+    }
+
     @GetMapping("/users")
     public String listUsers(HttpSession session, Model model) {
         User user = getLoggedInUser();

@@ -35,6 +35,8 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     List<Note> findAllByOrderByIdDesc();
 
     List<Note> findTop3ByOrderByDownloadCountDesc();
+    
+    List<Note> findTop5ByOrderByDownloadCountDesc();
 
     List<Note> findTop5ByInstitutionIdOrderByDownloadCountDesc(String institutionId);
 
@@ -52,6 +54,11 @@ public interface NoteRepository extends MongoRepository<Note, String> {
         "{ '$group': { '_id': null, 'total': { '$sum': '$downloadCount' } } }"
     })
     Long getTotalDownloadCount();
+
+    @Aggregation(pipeline = {
+        "{ '$group': { '_id': null, 'total': { '$sum': '$viewCount' } } }"
+    })
+    Long getTotalViewCount();
 
     @org.springframework.cache.annotation.Cacheable("popularNotes")
     List<Note> findTop3ByCategoryOrderByIdDesc(String category);
