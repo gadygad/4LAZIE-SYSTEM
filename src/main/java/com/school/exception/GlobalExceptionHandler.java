@@ -14,6 +14,13 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public String handleMaxSizeException(org.springframework.web.multipart.MaxUploadSizeExceededException exc, Model model) {
+        logger.error("Upload size exceeded: ", exc);
+        model.addAttribute("errorMessage", "File is too large! Maximum allowed size is 50MB.");
+        return "error/500";
+    }
+
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Throwable exception, Model model) {

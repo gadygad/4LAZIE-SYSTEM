@@ -182,10 +182,15 @@ public class AdminController {
             return "redirect:/login";
         }
         
+        if (name == null || name.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Subject name cannot be empty.");
+            return "redirect:/admin/subjects";
+        }
+        
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course != null) {
             Subject subject = new Subject();
-            subject.setName(name);
+            subject.setName(name.trim());
             subject.setLevelNo(levelNo);
             subject.setSemesterNo(semesterNo);
             subject.setCourse(course);
@@ -249,7 +254,11 @@ public class AdminController {
             timetable.setProgramType(programType);
             timetable.setLevelNo(levelNo);
             timetable.setSemesterNo(semesterNo);
-            timetable.setHtmlContent(htmlContent.trim());
+            String safeHtml = htmlContent.trim()
+                .replaceAll("(?is)<script.*?>.*?</script.*?>", "")
+                .replaceAll("(?is)<iframe.*?>.*?</iframe.*?>", "")
+                .replaceAll("(?i)onload\\s*=\\s*['\"].*?['\"]", "");
+            timetable.setHtmlContent(safeHtml);
             timetable.setUploadDate(java.time.LocalDateTime.now());
             timetable.setAcademicYear(academicYear);
 

@@ -342,7 +342,11 @@ public class NotesController {
         // Validate File Extension to prevent uploading malicious scripts/executables
         String originalFilename = file.getOriginalFilename();
         if (originalFilename != null) {
-            String ext = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toLowerCase();
+            int dotIndex = originalFilename.lastIndexOf('.');
+            if (dotIndex < 0 || dotIndex == originalFilename.length() - 1) {
+                return "redirect:/upload?error=Security Alert: Invalid file format. No extension found.";
+            }
+            String ext = originalFilename.substring(dotIndex + 1).toLowerCase();
             List<String> allowedExtensions = List.of("pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "jpg", "jpeg", "png", "txt");
             if (!allowedExtensions.contains(ext)) {
                 return "redirect:/upload?error=Security Alert: Invalid file type. Only standard documents and images are allowed.";
