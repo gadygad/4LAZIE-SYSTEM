@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Setup PDF.js worker
     if (typeof pdfjsLib !== 'undefined') {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        // Commented out to prevent cross-origin SecurityError in Chrome. 
+        // PDF.js will automatically fall back to a fake worker on the main thread.
+        // pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     }
 
     const url = window.documentUrl || '';
@@ -143,11 +145,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }).catch(err => {
             console.error('Error fetching PDF: ', err);
             hideLoader();
-            // Fallback to iframe if pdf.js fails (e.g. CORS)
+            // Fallback to Google Docs Viewer if pdf.js fails (e.g. CORS or Worker blocked)
             if (controls) controls.style.display = 'none';
             if (canvasContainer) {
                 canvasContainer.style.padding = '0';
-                canvasContainer.innerHTML = `<iframe src="${safeUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                canvasContainer.style.display = 'block';
+                canvasContainer.style.height = 'calc(100vh - 60px)';
+                const encodedUrl = encodeURIComponent(safeUrl);
+                const viewerUrl = "https://docs.google.com/gview?url=" + encodedUrl + "&embedded=true";
+                canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none; background: #fff;"></iframe>`;
             }
         });
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = '4lazie-cache-v3';
+const CACHE_NAME = '4lazie-cache-v4';
 const OFFLINE_URL = '/offline.html';
 
 const urlsToCache = [
@@ -45,11 +45,12 @@ self.addEventListener('fetch', event => {
           return cachedResponse;
         }
         return fetch(event.request).then(networkResponse => {
-          // Clone the response because it can only be consumed once
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+          }
           return networkResponse;
         }).catch(() => {
           // If offline and not in cache, let it fail silently or return a default offline document if suitable
