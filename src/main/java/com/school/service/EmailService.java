@@ -21,11 +21,34 @@ public class EmailService {
             return;
         }
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("support@4lazie.com");
-            message.setTo(to);
-            message.setSubject("Password Reset OTP - 4LAZIE");
-            message.setText("You requested a password reset.\n\nYour secret OTP is: " + otp + "\n\nIt will expire in 5 minutes.\n\nIf you did not request this, please ignore this email.");
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
+            helper.setTo(to);
+            helper.setSubject("Password Reset OTP - 4LAZIE");
+            
+            String htmlBody = "<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;\">"
+                    + "<div style=\"text-align: center; padding-bottom: 20px; border-bottom: 2px solid #10b981;\">"
+                    + "<h1 style=\"color: #10b981; font-weight: 800; margin: 0; letter-spacing: -1px;\">4LAZIE</h1>"
+                    + "<p style=\"color: #64748b; font-size: 14px; margin-top: 5px;\">Security Alert</p>"
+                    + "</div>"
+                    + "<div style=\"padding: 30px 0; text-align: center;\">"
+                    + "<h2 style=\"color: #1e293b; font-size: 22px;\">Password Reset Request</h2>"
+                    + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">We received a request to reset your password. Your secret OTP code is:</p>"
+                    + "<div style=\"margin: 30px auto; padding: 15px 30px; background-color: #ecfdf5; border: 2px dashed #10b981; border-radius: 12px; display: inline-block;\">"
+                    + "<h1 style=\"color: #059669; font-size: 36px; letter-spacing: 5px; margin: 0;\">" + otp + "</h1>"
+                    + "</div>"
+                    + "<p style=\"color: #ef4444; font-size: 14px; font-weight: bold;\">This code will expire in exactly 5 minutes.</p>"
+                    + "</div>"
+                    + "<div style=\"padding-top: 20px; border-top: 1px solid #e2e8f0;\">"
+                    + "<p style=\"color: #64748b; font-size: 14px; line-height: 1.6;\"><strong>Didn't request this?</strong><br>You can safely ignore this email. Your account is 100% secure because nobody can change your password without this secret code.</p>"
+                    + "</div>"
+                    + "<div style=\"text-align: center; padding-top: 25px; color: #94a3b8; font-size: 12px;\">"
+                    + "<p>&copy; " + java.time.Year.now().getValue() + " 4LAZIE Student Community. All rights reserved.</p>"
+                    + "</div>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
             // Log the error but don't crash, especially if credentials aren't set
