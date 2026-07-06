@@ -422,7 +422,7 @@ public class NotesController {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9]", "_") : "Document";
             String brandedName = "4LAZIE_" + cleanTitle;
             
-            if (cloudinaryUrl.contains("/upload/")) {
+            if (cloudinaryUrl.contains("/upload/") && !cloudinaryUrl.contains("/raw/upload/")) {
                 cloudinaryUrl = cloudinaryUrl.replace("/upload/", "/upload/fl_attachment:" + brandedName + "/");
             }
             try {
