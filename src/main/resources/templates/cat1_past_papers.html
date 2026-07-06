@@ -671,7 +671,7 @@
                 const levelLabel = document.getElementById('levelLabel');
                 const levelDropdownList = document.getElementById('levelDropdownList');
                 const levelDropdownText = document.getElementById('levelDropdownText');
-                const assignmentLevel = document.getElementById('assignmentLevel');
+                const cat1Level = document.getElementById('cat1Level');
                 
                 if (isDegree) {
                     if (levelLabel) levelLabel.textContent = "Which Year?";
@@ -683,7 +683,7 @@
                     }
                     if (levelDropdownList) levelDropdownList.innerHTML = opts;
                     if (levelDropdownText) levelDropdownText.textContent = "Year 1";
-                    if (assignmentLevel) assignmentLevel.value = "1";
+                    if (cat1Level) cat1Level.value = "1";
                 } else {
                     if (levelLabel) levelLabel.textContent = "Which NTA Level?";
                     let opts = '<div class="glass-dropdown-item active" data-value="4">NTA Level 4</div>' +
@@ -691,7 +691,7 @@
                                '<div class="glass-dropdown-item" data-value="6">NTA Level 6</div>';
                     if (levelDropdownList) levelDropdownList.innerHTML = opts;
                     if (levelDropdownText) levelDropdownText.textContent = "NTA Level 4";
-                    if (assignmentLevel) assignmentLevel.value = "4";
+                    if (cat1Level) cat1Level.value = "4";
                 }
                 
                 // Rebind event listeners for new items
@@ -702,7 +702,7 @@
                     items.forEach(item => {
                         item.addEventListener('click', function(e) {
                             if (levelDropdownText) levelDropdownText.textContent = this.textContent;
-                            if (assignmentLevel) assignmentLevel.value = this.dataset.value;
+                            if (cat1Level) cat1Level.value = this.dataset.value;
                             items.forEach(i => i.classList.remove('active'));
                             this.classList.add('active');
                             if (wrapper) wrapper.classList.remove('open');

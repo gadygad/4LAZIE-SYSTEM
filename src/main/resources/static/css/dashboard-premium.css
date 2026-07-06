@@ -37,8 +37,10 @@
             margin: 0;
             padding: 0;
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         /* ----- LEFT SIDEBAR ----- */
@@ -177,7 +179,7 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible;
             background-color: var(--bg-body);
         }
 
@@ -380,7 +382,7 @@
         .content-area {
             display: flex;
             flex-grow: 1;
-            overflow: hidden;
+            overflow: visible;
             padding: 24px 30px;
             gap: 24px;
         }
@@ -872,14 +874,17 @@
                 width: 100%;
                 order: 3;
             }
-            .content-area {
+            .content-area, .main-content {
                 flex-direction: column;
-                padding: 15px 20px;
+                padding: 15px 10px !important;
                 overflow: visible;
+                width: 100%;
             }
             .center-col {
                 overflow-y: visible;
                 padding-right: 0;
+                padding-left: 0;
+                width: 100% !important;
             }
             .right-col {
                 width: 100%;
@@ -890,6 +895,7 @@
             .module-header-container {
                 flex-wrap: wrap;
                 gap: 10px;
+                margin-bottom: 20px;
             }
             .semester-toggles {
                 margin-left: 0;
