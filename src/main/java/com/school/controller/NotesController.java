@@ -477,19 +477,23 @@ public class NotesController {
     }
 
     @GetMapping("/view/{slug}")
-    public String viewNotePage(@PathVariable("slug") String slug, HttpSession session, org.springframework.ui.Model model) {
+    public void viewNotePage(@PathVariable("slug") String slug, 
+                               HttpSession session,
+                               jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        // Support both old {id}-{title} slugs and new AES encrypted slugs
         String id;
         if (slug.contains("-")) {
             id = slug.split("-")[0];
         } else {
             id = com.school.util.EncryptionUtil.decrypt(slug);
         }
-        User loggedInUser = getLoggedInUser();
         Note note = noteRepository.findById(id).orElse(null);
-        
         if (note == null) {
-            return "redirect:/dashboard";
+            response.sendRedirect("/dashboard");
+            return;
         }
+
+        User loggedInUser = getLoggedInUser();
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
@@ -505,24 +509,34 @@ public class NotesController {
                 }
             }
             if (!isAllowed) {
-                return "redirect:/login";
+                response.sendRedirect("/login");
+                return;
             }
         }
-        
+
         note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
         noteRepository.save(note);
-        
+
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
-            return "redirect:/proxy/" + note.getId() + "/" + brandedName;
+            response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
+            return;
         }
-        
-        model.addAttribute("note", note);
-        model.addAttribute("user", loggedInUser);
-        
-        return "view_note";
+
+        String filename = note.getFilename();
+        if (filename == null || filename.isEmpty()) filename = "note-" + id + ".txt";
+
+        String fileContent = "=== STUDENT NOTES HUB ===\n" +
+                "Title: " + note.getTitle() + "\nProgram: " + note.getProgramType() + "\n" +
+                "Level/Year: " + note.getLevelNo() + "\nSemester: " + note.getSemesterNo() + "\n" +
+                "Category: " + note.getCategory() + "\nUploaded: " + note.getUploadDate() + "\n" +
+                "=========================\nDownloaded from 4LAZIE Student Notes Hub.";
+
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+        response.getOutputStream().write(fileContent.getBytes());
     }
 
     @GetMapping("/stream/{slug}")
