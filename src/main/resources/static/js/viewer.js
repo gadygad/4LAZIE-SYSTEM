@@ -26,137 +26,31 @@ document.addEventListener('DOMContentLoaded', function() {
         hideLoader();
         if (errorDiv) errorDiv.style.display = 'block';
     } else if (filename.endsWith('.pdf')) {
-        // LOAD PDF USING PDF.JS FOR BEAUTIFUL CUSTOM UI
+        // USE NATIVE BROWSER PDF VIEWER (HIGHEST QUALITY, NATIVE SCROLL/ZOOM)
         const safeUrl = directUrl.replace('http://', 'https://');
         
-        let observer = null;
-        let pdfDoc = null;
-        let scale = 1.2;
-
-        const renderAllPagesLazy = () => {
-            canvasContainer.innerHTML = '';
+        if (controls) controls.style.display = 'none';
+        hideLoader();
+        
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (canvasContainer) {
+            canvasContainer.style.padding = '0';
             canvasContainer.style.display = 'block';
-            canvasContainer.style.textAlign = 'center';
-            canvasContainer.style.padding = '20px 0';
-
-            if (observer) observer.disconnect();
-
-            pdfDoc.getPage(1).then(firstPage => {
-                let currentScale = scale;
-                if (window.innerWidth < 768) {
-                    const tempViewport = firstPage.getViewport({ scale: 1.0 });
-                    const containerWidth = window.innerWidth;
-                    currentScale = containerWidth / tempViewport.width;
-                    scale = currentScale;
-                    
-                    canvasContainer.style.padding = '0';
-                } else {
-                    canvasContainer.style.padding = '20px 0';
-                }
-                
-                const firstViewport = firstPage.getViewport({ scale: currentScale });
-                const pageW = Math.floor(firstViewport.width);
-                const pageH = Math.floor(firstViewport.height);
-                
-                // ULTRA HIGH QUALITY RENDERING FOR MOBILE
-                // We use devicePixelRatio * 3 (min 3) to ensure text is crystal clear even when zoomed
-                const outputScale = Math.max((window.devicePixelRatio || 1) * 3, 3.5);
-                
-                observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const canvas = entry.target;
-                            const num = parseInt(canvas.dataset.pageNum);
-                            document.getElementById('page-num').textContent = num;
-
-                            if (!canvas.dataset.rendered) {
-                                canvas.dataset.rendered = "true";
-                                
-                                pdfDoc.getPage(num).then(page => {
-                                    const scaledViewport = page.getViewport({ scale: currentScale * outputScale });
-                                    const displayViewport = page.getViewport({ scale: currentScale });
-                                    
-                                    canvas.width = Math.floor(scaledViewport.width);
-                                    canvas.height = Math.floor(scaledViewport.height);
-                                    canvas.style.width = Math.floor(displayViewport.width) + "px";
-                                    canvas.style.height = Math.floor(displayViewport.height) + "px";
-                                    
-                                    if (window.innerWidth < 768) {
-                                        canvas.style.borderRadius = '0';
-                                        canvas.style.boxShadow = 'none';
-                                        canvas.style.borderBottom = '1px solid #ccc';
-                                    }
-
-                                    const renderCtx = {
-                                        canvasContext: canvas.getContext('2d'),
-                                        viewport: scaledViewport
-                                    };
-                                    page.render(renderCtx);
-                                });
-                            }
-                        }
-                    });
-                }, { rootMargin: "800px 0px" });
-
-                for (let num = 1; num <= pdfDoc.numPages; num++) {
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'pdf-page-canvas';
-                    canvas.dataset.pageNum = num;
-                    canvas.style.boxShadow = '0 10px 40px rgba(0,0,0,0.1)';
-                    canvas.style.borderRadius = '8px';
-                    canvas.style.backgroundColor = '#fff';
-                    canvas.style.margin = '0 auto 20px auto';
-                    canvas.style.display = 'block';
-                    // Pre-allocate space to avoid scroll jumping
-                    canvas.style.width = pageW + "px";
-                    canvas.style.height = pageH + "px";
-                    
-                    canvasContainer.appendChild(canvas);
-                    observer.observe(canvas);
-                }
-            });
-        };
-
-        const zoomInBtn = document.getElementById('zoom-in');
-        const zoomOutBtn = document.getElementById('zoom-out');
-        
-        if (zoomInBtn) {
-            zoomInBtn.addEventListener('click', () => {
-                scale += 0.2;
-                renderAllPagesLazy();
-            });
-        }
-        
-        if (zoomOutBtn) {
-            zoomOutBtn.addEventListener('click', () => {
-                if (scale <= 0.6) return;
-                scale -= 0.2;
-                renderAllPagesLazy();
-            });
-        }
-
-        // Fetch PDF Document
-        pdfjsLib.getDocument(safeUrl).promise.then(pdfDoc_ => {
-            pdfDoc = pdfDoc_;
-            document.getElementById('page-count').textContent = pdfDoc.numPages;
-            hideLoader();
+            canvasContainer.style.height = 'calc(100vh - 60px)';
+            canvasContainer.style.overflow = 'hidden';
             
-            renderAllPagesLazy();
-        }).catch(err => {
-            console.error('Error fetching PDF: ', err);
-            hideLoader();
-            // Fallback to Google Docs Viewer if pdf.js fails (e.g. CORS or Worker blocked)
-            if (controls) controls.style.display = 'none';
-            if (canvasContainer) {
-                canvasContainer.style.padding = '0';
-                canvasContainer.style.display = 'block';
-                canvasContainer.style.height = 'calc(100vh - 60px)';
+            if (isMobile) {
+                // Mobile fallback since some mobile browsers don't support native PDF iframes
                 const fallbackUrl = directUrl.startsWith('http') ? directUrl.replace('http://', 'https://') : window.location.origin + directUrl;
                 const encodedUrl = encodeURIComponent(fallbackUrl);
                 const viewerUrl = "https://docs.google.com/gview?url=" + encodedUrl + "&embedded=true";
                 canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none; background: #fff;"></iframe>`;
+            } else {
+                // Desktop native viewer (gives the exact UI requested)
+                canvasContainer.innerHTML = `<iframe src="${safeUrl}" style="width: 100%; height: 100%; border: none; background: #fff;"></iframe>`;
             }
-        });
+        }
 
     } else if (filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png')) {
         // LOAD IMAGE DIRECTLY
