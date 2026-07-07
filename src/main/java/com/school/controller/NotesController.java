@@ -420,17 +420,11 @@ public class NotesController {
         }
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            String cloudinaryUrl = note.getFileUrl().replaceFirst("^http://", "https://");
-            
-            // Format a nice, branded filename for the download
-            String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9]", "_") : "Document";
-            String brandedName = "4LAZIE_" + cleanTitle;
-            
-            if (cloudinaryUrl.contains("/upload/") && !cloudinaryUrl.contains("/raw/upload/")) {
-                cloudinaryUrl = cloudinaryUrl.replace("/upload/", "/upload/fl_attachment:" + brandedName + "/");
-            }
+            String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
+            String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
+            String brandedName = "4LAZIE_" + cleanTitle + ext;
             try {
-                response.sendRedirect(cloudinaryUrl);
+                response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
                 return;
             } catch (Exception e) {
                 // fall through to text fallback
@@ -499,8 +493,10 @@ public class NotesController {
         noteRepository.save(note);
         
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
-            String safeUrl = note.getFileUrl().replaceFirst("^http://", "https://");
-            return "redirect:" + safeUrl;
+            String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
+            String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
+            String brandedName = "4LAZIE_" + cleanTitle + ext;
+            return "redirect:/proxy/" + note.getId() + "/" + brandedName;
         }
         
         model.addAttribute("note", note);
@@ -556,7 +552,7 @@ public class NotesController {
         return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"error.html\"").body(mockResource);
     }
 
-    @GetMapping("/proxy/{id}")
+    @GetMapping({"/proxy/{id}", "/proxy/{id}/{filename}"})
     public ResponseEntity<org.springframework.core.io.Resource> proxyDocument(@PathVariable("id") String id) {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
