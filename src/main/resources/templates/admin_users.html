@@ -60,14 +60,44 @@
       "@type": "FAQPage",
       "mainEntity": [{
         "@type": "Question",
-        "name": "Ni nani mwanzilishi wa 4LAZIE Student Community Forum na mwaka gani?",
+        "name": "Who is the founder of 4LAZIE Student Community Forum and in what year?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Godfrey Charles Nyagwisi ndiye mwanzilishi na mtengenezaji wa mfumo wa 4LAZIE Student Community Forum, aliouanzisha mnamo mwezi wa 6 mwaka 2026."
+          "text": "Godfrey Charles Nyagwisi is the founder and developer of 4LAZIE Student Community Forum, established in June 2026."
         }
       }]
     }
     </script>
+    <style>
+        .premium-role-select {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #1e293b !important;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 8px 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            font-family: 'Outfit', sans-serif;
+        }
+        .premium-role-select:hover, .premium-role-select:focus {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #059669 !important;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.2);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        .premium-role-select option {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-weight: 600;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -151,7 +181,7 @@
                                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; min-width: 200px;">
                                                 <li>
                                                     <form th:action="@{/admin/users/{id}/role(id=${u.id})}" method="post" class="px-3 py-1">
-                                                        <select name="role" class="form-select form-select-sm mb-2" onchange="this.form.submit()">
+                                                        <select name="role" class="form-select form-select-sm mb-2 premium-role-select" onchange="this.form.submit()">
                                                             <option value="STUDENT" th:selected="${u.role == null or u.role.name() == 'STUDENT'}">Set as Student</option>
                                                             <option value="ADMIN" th:selected="${u.role != null and u.role.name() == 'ADMIN'}">Set as Admin</option>
                                                         </select>
