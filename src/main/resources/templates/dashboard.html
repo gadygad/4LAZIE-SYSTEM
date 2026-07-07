@@ -186,22 +186,22 @@
                         <div class="col-md-8">
                             <span class="badge bg-success bg-opacity-10 text-success mb-2 px-3 py-2 rounded-pill" style="font-weight: 600; letter-spacing: 0.5px;">👋 WELCOME BACK</span>
                             <h2 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 2.2rem; letter-spacing: -0.5px;">
-                                Hello, <span th:text="${session.user != null ? session.user.fullName : 'Student'}" style="background: linear-gradient(90deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Student</span>!
+                                Hello, <span th:text="${session.user != null ? session.user.name : 'Student'}" style="background: linear-gradient(90deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Student</span>!
                             </h2>
                             <p class="text-muted mb-4" style="font-size: 1.05rem;">Ready to continue your studies? Here's everything you need to ace your exams.</p>
                             
                             <div class="d-flex gap-3 flex-wrap">
                                 <div class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(16,185,129,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                                     <div class="icon-circle bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;"><i class="bi bi-mortarboard-fill"></i></div>
-                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;" th:text="${session.user != null ? session.user.programType : 'Program'}">Program</span>
+                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;" th:text="${session.user != null ? session.user.courseProgram : 'Program'}">Program</span>
                                 </div>
                                 <div class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(59,130,246,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                                     <div class="icon-circle bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;"><i class="bi bi-layers-fill"></i></div>
-                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Level <span th:text="${session.user != null ? session.user.levelNo : '4'}">4</span></span>
+                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Level <span th:text="${session.user != null ? session.user.level : '4'}">4</span></span>
                                 </div>
-                                <div th:if="${session.user != null and session.user.semesterNo != null}" class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(245,158,11,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div th:if="${session.user != null and session.user.semester != null}" class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(245,158,11,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                                     <div class="icon-circle bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;"><i class="bi bi-calendar-event-fill"></i></div>
-                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Semester <span th:text="${session.user.semesterNo}">1</span></span>
+                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Semester <span th:text="${session.user.semester}">1</span></span>
                                 </div>
                             </div>
                         </div>
