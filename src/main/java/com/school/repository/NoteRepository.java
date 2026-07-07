@@ -50,15 +50,31 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByCategoryIgnoreCaseOrderByIdDesc(String category);
 
+    class AggregationCount {
+        private Long total;
+        public Long getTotal() { return total; }
+        public void setTotal(Long total) { this.total = total; }
+    }
+
     @Aggregation(pipeline = {
         "{ '$group': { '_id': null, 'total': { '$sum': '$downloadCount' } } }"
     })
-    Long getTotalDownloadCount();
+    AggregationCount aggregateTotalDownloadCount();
+
+    default Long getTotalDownloadCount() {
+        AggregationCount count = aggregateTotalDownloadCount();
+        return (count != null && count.getTotal() != null) ? count.getTotal() : 0L;
+    }
 
     @Aggregation(pipeline = {
         "{ '$group': { '_id': null, 'total': { '$sum': '$viewCount' } } }"
     })
-    Long getTotalViewCount();
+    AggregationCount aggregateTotalViewCount();
+
+    default Long getTotalViewCount() {
+        AggregationCount count = aggregateTotalViewCount();
+        return (count != null && count.getTotal() != null) ? count.getTotal() : 0L;
+    }
 
     @org.springframework.cache.annotation.Cacheable("popularNotes")
     List<Note> findTop3ByCategoryOrderByIdDesc(String category);
