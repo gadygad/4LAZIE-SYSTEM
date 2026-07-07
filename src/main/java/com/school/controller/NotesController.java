@@ -498,6 +498,11 @@ public class NotesController {
         note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
         noteRepository.save(note);
         
+        if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
+            String safeUrl = note.getFileUrl().replaceFirst("^http://", "https://");
+            return "redirect:" + safeUrl;
+        }
+        
         model.addAttribute("note", note);
         model.addAttribute("user", loggedInUser);
         

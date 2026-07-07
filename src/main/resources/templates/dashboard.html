@@ -176,32 +176,65 @@
 
 
 
-                <!-- WELCOME HERO SECTION -->
-                <div class="welcome-hero mb-4 position-relative" style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(59,130,246,0.05) 100%); border-radius: 20px; padding: 2.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 30px rgba(0,0,0,0.02); backdrop-filter: blur(10px);">
-                    <!-- Decorative background element -->
-                    <div style="position: absolute; top: -50px; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
-                    <div style="position: absolute; bottom: -30px; left: -30px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
+                <!-- WELCOME HERO SECTION (PREMIUM GLASSMORPHISM) -->
+                <div class="welcome-hero mb-4 position-relative" style="background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 100%); border-radius: 24px; padding: 2.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 16px 40px rgba(0,0,0,0.04), inset 0 0 0 1px rgba(255,255,255,0.5); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); transition: transform 0.3s ease;">
                     
+                    <!-- Premium Animated Background Orbs -->
+                    <div style="position: absolute; top: -15%; right: -5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16,185,129,0.25) 0%, rgba(16,185,129,0) 70%); border-radius: 50%; filter: blur(30px); animation: pulseOrb 6s infinite alternate;"></div>
+                    <div style="position: absolute; bottom: -20%; left: -10%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(59,130,246,0) 70%); border-radius: 50%; filter: blur(25px); animation: pulseOrb 8s infinite alternate-reverse;"></div>
+                    
+                    <style>
+                        @keyframes pulseOrb {
+                            0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+                            100% { transform: scale(1.2) translate(-20px, 20px); opacity: 1; }
+                        }
+                        .premium-badge {
+                            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+                            border: 1px solid rgba(255,255,255,0.8);
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+                            backdrop-filter: blur(10px);
+                            color: #10b981;
+                            font-weight: 700;
+                            letter-spacing: 1px;
+                        }
+                        .glass-pill {
+                            background: rgba(255,255,255,0.6);
+                            backdrop-filter: blur(16px);
+                            border: 1px solid rgba(255,255,255,0.9);
+                            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+                            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                        }
+                        .glass-pill:hover {
+                            transform: translateY(-3px);
+                            background: rgba(255,255,255,0.9);
+                            box-shadow: 0 12px 25px rgba(16,185,129,0.1);
+                        }
+                        @media (max-width: 768px) {
+                            .welcome-hero { padding: 1.75rem !important; }
+                            .hero-title { font-size: 1.8rem !important; }
+                        }
+                    </style>
+
                     <div class="row align-items-center position-relative z-1">
-                        <div class="col-md-8">
-                            <span class="badge bg-success bg-opacity-10 text-success mb-2 px-3 py-2 rounded-pill" style="font-weight: 600; letter-spacing: 0.5px;">👋 WELCOME BACK</span>
-                            <h2 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 2.2rem; letter-spacing: -0.5px;">
-                                Hello, <span th:text="${session.user != null ? session.user.name : 'Student'}" style="background: linear-gradient(90deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Student</span>!
+                        <div class="col-12">
+                            <span class="badge premium-badge mb-3 px-3 py-2 rounded-pill"><i class="bi bi-stars me-1 text-warning"></i> WELCOME BACK</span>
+                            <h2 class="fw-bold mb-3 hero-title" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 2.4rem; letter-spacing: -0.5px; line-height: 1.2;">
+                                Hello, <span th:text="${session.user != null ? session.user.name : 'Student'}" style="background: linear-gradient(135deg, #10b981, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 2px 10px rgba(16,185,129,0.15);">Student</span>!
                             </h2>
-                            <p class="text-muted mb-4" style="font-size: 1.05rem;">Ready to continue your studies? Here's everything you need to ace your exams.</p>
+                            <p class="text-muted mb-4" style="font-size: 1.1rem; max-width: 600px; line-height: 1.6; font-weight: 500;">Ready to continue your studies? Here's everything you need to ace your exams and stay ahead.</p>
                             
                             <div class="d-flex gap-3 flex-wrap">
-                                <div class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(16,185,129,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                                    <div class="icon-circle bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;"><i class="bi bi-mortarboard-fill"></i></div>
-                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;" th:text="${session.user != null ? session.user.courseProgram : 'Program'}">Program</span>
+                                <div class="glass-pill d-flex align-items-center px-3 py-2 rounded-pill">
+                                    <div class="icon-circle bg-success bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-2 shadow-sm" style="width: 34px; height: 34px;"><i class="bi bi-mortarboard-fill"></i></div>
+                                    <span class="fw-bold text-dark" style="font-size: 0.95rem; font-family: 'Outfit', sans-serif;" th:text="${session.user != null ? session.user.courseProgram : 'Program'}">Program</span>
                                 </div>
-                                <div class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(59,130,246,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                                    <div class="icon-circle bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;"><i class="bi bi-layers-fill"></i></div>
-                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Level <span th:text="${session.user != null ? session.user.level : '4'}">4</span></span>
+                                <div class="glass-pill d-flex align-items-center px-3 py-2 rounded-pill">
+                                    <div class="icon-circle bg-primary bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-2 shadow-sm" style="width: 34px; height: 34px;"><i class="bi bi-layers-fill"></i></div>
+                                    <span class="fw-bold text-dark" style="font-size: 0.95rem; font-family: 'Outfit', sans-serif;">Level <span th:text="${session.user != null ? session.user.level : '4'}">4</span></span>
                                 </div>
-                                <div th:if="${session.user != null and session.user.semester != null}" class="stat-pill d-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm" style="border: 1px solid rgba(245,158,11,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                                    <div class="icon-circle bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;"><i class="bi bi-calendar-event-fill"></i></div>
-                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Semester <span th:text="${session.user.semester}">1</span></span>
+                                <div th:if="${session.user != null and session.user.semester != null}" class="glass-pill d-flex align-items-center px-3 py-2 rounded-pill">
+                                    <div class="icon-circle bg-warning bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-2 shadow-sm" style="width: 34px; height: 34px;"><i class="bi bi-calendar-event-fill"></i></div>
+                                    <span class="fw-bold text-dark" style="font-size: 0.95rem; font-family: 'Outfit', sans-serif;">Semester <span th:text="${session.user.semester}">1</span></span>
                                 </div>
                             </div>
                         </div>
