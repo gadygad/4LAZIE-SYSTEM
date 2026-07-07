@@ -1,1 +1,0 @@
-const { MongoClient } = require('mongodb'); async function run() { const client = new MongoClient('mongodb://localhost:27017'); await client.connect(); const db = client.db('school_db'); const notes = await db.collection('notes').find({ levelNo: 5, semesterNo: 2 }).toArray(); console.log(JSON.stringify(notes, null, 2)); await client.close(); } run().catch(console.dir);
