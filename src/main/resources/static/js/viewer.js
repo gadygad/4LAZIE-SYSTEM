@@ -34,9 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const renderAllPagesLazy = () => {
             canvasContainer.innerHTML = '';
-            canvasContainer.style.flexDirection = 'column';
-            canvasContainer.style.alignItems = 'center';
-            canvasContainer.style.gap = '20px';
+            canvasContainer.style.display = 'block';
+            canvasContainer.style.textAlign = 'center';
             canvasContainer.style.padding = '20px 0';
 
             if (observer) observer.disconnect();
@@ -45,15 +44,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 let currentScale = scale;
                 if (window.innerWidth < 768) {
                     const tempViewport = firstPage.getViewport({ scale: 1.0 });
-                    const containerWidth = window.innerWidth; // Full width, no padding
+                    const containerWidth = window.innerWidth;
                     currentScale = containerWidth / tempViewport.width;
                     scale = currentScale;
                     
                     canvasContainer.style.padding = '0';
-                    canvasContainer.style.gap = '5px';
                 } else {
                     canvasContainer.style.padding = '20px 0';
-                    canvasContainer.style.gap = '20px';
                 }
                 
                 const firstViewport = firstPage.getViewport({ scale: currentScale });
@@ -107,6 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     canvas.style.boxShadow = '0 10px 40px rgba(0,0,0,0.1)';
                     canvas.style.borderRadius = '8px';
                     canvas.style.backgroundColor = '#fff';
+                    canvas.style.margin = '0 auto 20px auto';
+                    canvas.style.display = 'block';
                     // Pre-allocate space to avoid scroll jumping
                     canvas.style.width = pageW + "px";
                     canvas.style.height = pageH + "px";
