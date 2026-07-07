@@ -253,59 +253,116 @@
                         }
                     </style>
                     <style>
-                        .dashboard-notes-grid {
-                            display: grid;
-                            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                            gap: 1rem;
+                        .dashboard-notes-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 12px;
                         }
-                        .dashboard-note-card {
-                            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                            border: 1px solid rgba(16, 185, 129, 0.15);
+                        .glassmorphism-card {
+                            background: rgba(255, 255, 255, 0.45);
+                            backdrop-filter: blur(12px);
+                            -webkit-backdrop-filter: blur(12px);
+                            border: 1px solid rgba(255, 255, 255, 0.8);
+                            border-radius: 16px;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+                            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
                         }
-                        .dashboard-note-card:hover {
-                            transform: translateY(-6px);
-                            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.12) !important;
-                            border-color: rgba(16, 185, 129, 0.4) !important;
-                            background: rgba(255, 255, 255, 0.95);
+                        .glassmorphism-card:hover {
+                            background: rgba(255, 255, 255, 0.85);
+                            border: 1px solid rgba(16, 185, 129, 0.3);
+                            transform: translateY(-4px) scale(1.01);
+                            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.12);
+                            z-index: 10;
+                        }
+                        .glassmorphism-card .icon-box {
+                            transition: all 0.3s ease;
+                        }
+                        .glassmorphism-card:hover .icon-box {
+                            background: linear-gradient(135deg, #10b981, #059669) !important;
+                            color: white !important;
+                            transform: scale(1.1) rotate(5deg);
+                            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.2);
+                        }
+                        .btn-action-glass {
+                            border-radius: 8px;
+                            font-weight: 700;
+                            font-size: 0.75rem;
+                            padding: 8px 14px;
+                            border: none;
+                            transition: all 0.2s ease;
+                        }
+                        .btn-read {
+                            background: rgba(37,99,235,0.1);
+                            color: #2563eb;
+                        }
+                        .btn-read:hover {
+                            background: rgba(37,99,235,0.2);
+                            color: #1d4ed8;
+                            transform: translateY(-2px);
+                        }
+                        .btn-download {
+                            background: rgba(16,185,129,0.1);
+                            color: #10b981;
+                        }
+                        .btn-download:hover {
+                            background: rgba(16,185,129,0.2);
+                            color: #047857;
+                            transform: translateY(-2px);
+                        }
+                        
+                        /* Responsive adjustments for mobile */
+                        @media (max-width: 576px) {
+                            .glassmorphism-card {
+                                flex-direction: column;
+                                align-items: flex-start !important;
+                                gap: 1rem !important;
+                            }
+                            .glassmorphism-card .right-actions {
+                                width: 100%;
+                                justify-content: space-between;
+                            }
                         }
                     </style>
-                    <div class="dashboard-notes-grid">
-                        <div th:each="note : ${recentNotes}" class="dashboard-note-card premium-glass-card d-flex flex-column p-2 gap-2" style="border-radius: 12px;">
-                            <div class="d-flex align-items-start gap-2">
-                                <div class="icon-box flex-shrink-0" style="width: 40px; height: 40px; font-size: 1.2rem; border-radius: 10px;">
+                    <div class="dashboard-notes-list">
+                        <div th:each="note : ${recentNotes}" class="glassmorphism-card p-3 p-md-3 d-flex align-items-center justify-content-between gap-3">
+                            <!-- Left Side: Icon & Title -->
+                            <div class="d-flex align-items-center gap-3 w-100" style="min-width: 0;">
+                                <div class="icon-box flex-shrink-0 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.05)); color: #10b981;">
                                     <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'"></i>
                                 </div>
-                                <div class="w-100 position-relative">
-                                    <div class="fw-bold text-uppercase mb-1 pe-4" style="color: #1e293b; font-size: 0.8rem; font-family: 'Outfit', sans-serif; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${note.title}">TITLE</div>
-                                    <div class="d-flex flex-wrap align-items-center" style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; gap: 6px;">
-                                        <span style="color: #10b981;"><i class="bi bi-mortarboard-fill"></i> NTA <span th:text="${note.levelNo}">4</span></span>
-                                        <span th:if="${note.semesterNo != null}" style="color: #3b82f6;"><i class="bi bi-calendar2-week-fill"></i> S<span th:text="${note.semesterNo}">1</span></span>
-                                    </div>
-                                    <!-- Stats Badges -->
-                                    <div class="position-absolute top-0 end-0 d-flex flex-column align-items-end gap-1">
-                                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.6rem; font-weight: 700;"><i class="bi bi-eye-fill me-1"></i><span th:text="${note.viewCount != null ? note.viewCount : 0}"></span></span>
-                                        <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.6rem; font-weight: 700;"><i class="bi bi-cloud-arrow-down-fill me-1"></i><span th:text="${note.downloadCount != null ? note.downloadCount : 0}"></span></span>
+                                <div class="d-flex flex-column w-100" style="min-width: 0;">
+                                    <div class="fw-bold text-uppercase text-truncate mb-1" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;" th:text="${note.title}">TITLE</div>
+                                    <div class="d-flex flex-wrap align-items-center" style="font-size: 0.75rem; font-weight: 700; color: #64748b; gap: 12px; text-transform: uppercase;">
+                                        <span style="color: #10b981;"><i class="bi bi-mortarboard-fill"></i> NTA <span th:text="${note.levelNo}"></span></span>
+                                        <span th:if="${note.semesterNo != null}" style="color: #3b82f6;"><i class="bi bi-calendar2-week-fill"></i> S<span th:text="${note.semesterNo}"></span></span>
+                                        <span class="d-md-none badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill"><i class="bi bi-eye-fill me-1"></i><span th:text="${note.viewCount != null ? note.viewCount : 0}"></span></span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="d-flex gap-2 mt-auto border-top pt-2" style="border-color: rgba(0,0,0,0.05) !important;">
-                                <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="btn btn-sm flex-fill d-flex align-items-center justify-content-center" style="background: rgba(37,99,235,0.1); color: #2563eb; border-radius: 8px; font-weight: 700; font-size: 0.75rem; border: none; padding: 6px 0; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,99,235,0.2)';" onmouseout="this.style.background='rgba(37,99,235,0.1)';" title="Read">
-                                    <i class="bi bi-eye me-1"></i> Soma
-                                </a>
-                                <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm flex-fill d-flex align-items-center justify-content-center" style="background: rgba(16,185,129,0.1); color: #10b981; border-radius: 8px; font-weight: 700; font-size: 0.75rem; border: none; padding: 6px 0; transition: all 0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.2)';" onmouseout="this.style.background='rgba(16,185,129,0.1)';" title="Download">
-                                    <i class="bi bi-cloud-arrow-down me-1"></i> Pakua
-                                </a>
+                            <!-- Right Side: Stats & Buttons -->
+                            <div class="right-actions d-flex align-items-center gap-3 flex-shrink-0">
+                                <div class="d-none d-md-flex align-items-center gap-2">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.7rem;"><i class="bi bi-eye-fill me-1"></i><span th:text="${note.viewCount != null ? note.viewCount : 0}"></span></span>
+                                    <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.7rem;"><i class="bi bi-cloud-arrow-down-fill me-1"></i><span th:text="${note.downloadCount != null ? note.downloadCount : 0}"></span></span>
+                                </div>
+                                <div class="d-flex gap-2 w-100 justify-content-end">
+                                    <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="btn btn-action-glass btn-read flex-md-grow-0 flex-grow-1 text-center" title="Read">
+                                        <i class="bi bi-eye me-1"></i> Read
+                                    </a>
+                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-action-glass btn-download flex-md-grow-0 flex-grow-1 text-center" title="Download">
+                                        <i class="bi bi-cloud-arrow-down me-1"></i> Download
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
                         
-                        <div th:if="${#lists.isEmpty(recentNotes)}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
-                            <p class="text-muted mb-0" style="font-size: 0.85rem;">No recent materials found.</p>
+                        <div th:if="${#lists.isEmpty(recentNotes)}" class="w-100 text-center py-4 rounded-4" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px dashed rgba(16, 185, 129, 0.4);">
+                            <p class="text-muted mb-0 fw-medium" style="font-size: 0.9rem;">No recent materials found.</p>
                         </div>
                         
-                        <div class="text-center mt-2">
-                            <a th:href="@{/notes}" class="text-decoration-none d-inline-block px-4 py-2 rounded-pill fw-medium" style="font-size: 0.85rem; color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); transition: all 0.3s ease;">
+                        <div class="text-center mt-3">
+                            <a th:href="@{/notes}" class="text-decoration-none d-inline-block px-4 py-2 rounded-pill fw-bold shadow-sm" style="font-size: 0.85rem; color: #fff; background: linear-gradient(135deg, #10b981, #059669); transition: all 0.3s ease;">
                                 View All Materials <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -317,38 +374,41 @@
                     <div class="d-flex justify-content-between align-items-end mb-3 px-1">
                         <h6 class="fw-bold mb-0 text-dark text-uppercase section-header-premium" style="font-family: 'Outfit', sans-serif; border-bottom: 2px solid #10b981;">MOST POPULAR <i class="bi bi-fire ms-1 text-danger"></i></h6>
                     </div>
-                                      <div class="dashboard-notes-grid">
-                        <div th:each="note : ${popularNotes}" class="dashboard-note-card premium-glass-card d-flex flex-column p-2 gap-2" style="border-radius: 12px;">
-                            <div class="d-flex align-items-start gap-2">
-                                <div class="icon-box flex-shrink-0" style="width: 40px; height: 40px; font-size: 1.2rem; border-radius: 10px;">
+                    <div class="dashboard-notes-list">
+                        <div th:each="note : ${popularNotes}" class="glassmorphism-card p-3 p-md-3 d-flex align-items-center justify-content-between gap-3">
+                            <!-- Left Side: Icon & Title -->
+                            <div class="d-flex align-items-center gap-3 w-100" style="min-width: 0;">
+                                <div class="icon-box flex-shrink-0 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 14px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05)); color: #ef4444;">
                                     <i th:class="${note.filename != null and note.filename.endsWith('.pdf')} ? 'bi bi-file-earmark-pdf-fill' : 'bi bi-file-earmark-word-fill'"></i>
                                 </div>
-                                <div class="w-100 position-relative">
-                                    <div class="fw-bold text-uppercase mb-1 pe-4" style="color: #1e293b; font-size: 0.8rem; font-family: 'Outfit', sans-serif; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${note.title}">TITLE</div>
-                                    <div class="d-flex flex-wrap align-items-center" style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; gap: 6px;">
-                                        <span style="color: #10b981;"><i class="bi bi-mortarboard-fill"></i> NTA <span th:text="${note.levelNo}">4</span></span>
-                                        <span th:if="${note.semesterNo != null}" style="color: #3b82f6;"><i class="bi bi-calendar2-week-fill"></i> S<span th:text="${note.semesterNo}">1</span></span>
-                                    </div>
-                                    <!-- Stats Badges -->
-                                    <div class="position-absolute top-0 end-0 d-flex flex-column align-items-end gap-1">
-                                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.6rem; font-weight: 700;"><i class="bi bi-eye-fill me-1"></i><span th:text="${note.viewCount != null ? note.viewCount : 0}"></span></span>
-                                        <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.6rem; font-weight: 700;"><i class="bi bi-cloud-arrow-down-fill me-1"></i><span th:text="${note.downloadCount != null ? note.downloadCount : 0}"></span></span>
+                                <div class="d-flex flex-column w-100" style="min-width: 0;">
+                                    <div class="fw-bold text-uppercase text-truncate mb-1" style="color: #1e293b; font-size: 0.95rem; font-family: 'Outfit', sans-serif;" th:text="${note.title}">TITLE</div>
+                                    <div class="d-flex flex-wrap align-items-center" style="font-size: 0.75rem; font-weight: 700; color: #64748b; gap: 12px; text-transform: uppercase;">
+                                        <span style="color: #10b981;"><i class="bi bi-mortarboard-fill"></i> NTA <span th:text="${note.levelNo}"></span></span>
+                                        <span th:if="${note.semesterNo != null}" style="color: #3b82f6;"><i class="bi bi-calendar2-week-fill"></i> S<span th:text="${note.semesterNo}"></span></span>
+                                        <span class="d-md-none badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill"><i class="bi bi-eye-fill me-1"></i><span th:text="${note.viewCount != null ? note.viewCount : 0}"></span></span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="d-flex gap-2 mt-auto border-top pt-2" style="border-color: rgba(0,0,0,0.05) !important;">
-                                <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="btn btn-sm flex-fill d-flex align-items-center justify-content-center" style="background: rgba(37,99,235,0.1); color: #2563eb; border-radius: 8px; font-weight: 700; font-size: 0.75rem; border: none; padding: 6px 0; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,99,235,0.2)';" onmouseout="this.style.background='rgba(37,99,235,0.1)';" title="Read">
-                                    <i class="bi bi-eye me-1"></i> Soma
-                                </a>
-                                <a th:href="@{'/download/' + ${note.id}}" class="btn btn-sm flex-fill d-flex align-items-center justify-content-center" style="background: rgba(16,185,129,0.1); color: #10b981; border-radius: 8px; font-weight: 700; font-size: 0.75rem; border: none; padding: 6px 0; transition: all 0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.2)';" onmouseout="this.style.background='rgba(16,185,129,0.1)';" title="Download">
-                                    <i class="bi bi-cloud-arrow-down me-1"></i> Pakua
-                                </a>
+                            <!-- Right Side: Stats & Buttons -->
+                            <div class="right-actions d-flex align-items-center gap-3 flex-shrink-0">
+                                <div class="d-none d-md-flex align-items-center gap-2">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.7rem;"><i class="bi bi-eye-fill me-1"></i><span th:text="${note.viewCount != null ? note.viewCount : 0}"></span></span>
+                                    <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill d-flex align-items-center" style="font-size: 0.7rem;"><i class="bi bi-cloud-arrow-down-fill me-1"></i><span th:text="${note.downloadCount != null ? note.downloadCount : 0}"></span></span>
+                                </div>
+                                <div class="d-flex gap-2 w-100 justify-content-end">
+                                    <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="btn btn-action-glass btn-read flex-md-grow-0 flex-grow-1 text-center" title="Read">
+                                        <i class="bi bi-eye me-1"></i> Read
+                                    </a>
+                                    <a th:href="@{'/download/' + ${note.id}}" class="btn btn-action-glass btn-download flex-md-grow-0 flex-grow-1 text-center" title="Download">
+                                        <i class="bi bi-cloud-arrow-down me-1"></i> Download
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>       
-                        <div th:if="${#lists.isEmpty(popularNotes)}" class="w-100 text-center py-4 rounded-4" style="background: #f8fafc; border: 1px dashed rgba(16, 185, 129, 0.3);">
-                            <p class="text-muted mb-0" style="font-size: 0.85rem;">No popular materials found.</p>
+                        <div th:if="${#lists.isEmpty(popularNotes)}" class="w-100 text-center py-4 rounded-4" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px dashed rgba(16, 185, 129, 0.4);">
+                            <p class="text-muted mb-0 fw-medium" style="font-size: 0.9rem;">No popular materials found.</p>
                         </div>
                     </div>
                 </div>
