@@ -37,6 +37,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (loginAttemptService.isBlocked(email)) {
             throw new org.springframework.security.authentication.LockedException("Your account is locked due to too many failed login attempts. Please try again after 15 minutes.");
         }
+        
+        List<User> checkUsers = userRepository.findByEmailIgnoreCaseOrNameIgnoreCase(email, email);
+        for(User u : checkUsers) {
+            if(Boolean.TRUE.equals(u.getIsSuspended())) {
+                throw new org.springframework.security.authentication.LockedException("Your account has been suspended for violating our policies. Please contact support.");
+            }
+        }
 
         List<User> users = userRepository.findByEmailIgnoreCaseOrNameIgnoreCase(email, email);
         

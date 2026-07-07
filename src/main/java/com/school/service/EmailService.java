@@ -183,4 +183,103 @@ public class EmailService {
             System.err.println("Failed to send login alert email: " + e.getMessage());
         }
     }
+
+    @Async
+    public void sendWarningEmail(String to, String userName, String warningMessage) {
+        if (mailSender == null) return;
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
+            helper.setTo(to);
+            helper.setSubject("⚠️ Official Warning from 4LAZIE Administration");
+            
+            String htmlBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px;\">"
+                    + "<div style=\"text-align: center; margin-bottom: 20px;\">"
+                    + "<h1 style=\"color: #d97706; font-size: 24px; margin-bottom: 5px;\">OFFICIAL WARNING</h1>"
+                    + "</div>"
+                    + "<h2 style=\"color: #1e293b; font-size: 18px;\">Hello " + userName + ",</h2>"
+                    + "<p style=\"color: #475569; font-size: 15px; line-height: 1.6;\">This is an official warning regarding your account activity on 4LAZIE.</p>"
+                    + "<div style=\"background-color: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 15px 0;\">"
+                    + "<p style=\"margin: 0; color: #92400e; font-size: 15px;\"><strong>Admin Message:</strong><br><br>" + warningMessage.replace("\n", "<br>") + "</p>"
+                    + "</div>"
+                    + "<p style=\"color: #475569; font-size: 15px; line-height: 1.6;\">Please ensure you adhere to our community guidelines. Further violations may result in account suspension.</p>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send warning email: " + e.getMessage());
+        }
+    }
+
+    @Async
+    public void sendAccountSuspensionEmail(String to, String userName, boolean isSuspended) {
+        if (mailSender == null) return;
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
+            helper.setTo(to);
+            
+            String subject = isSuspended ? "🚫 Account Suspended - 4LAZIE" : "✅ Account Reactivated - 4LAZIE";
+            helper.setSubject(subject);
+            
+            String titleColor = isSuspended ? "#dc2626" : "#10b981";
+            String titleText = isSuspended ? "ACCOUNT SUSPENDED" : "ACCOUNT REACTIVATED";
+            String bodyText = isSuspended 
+                ? "We regret to inform you that your 4LAZIE account has been suspended by the administration due to policy violations. You will no longer be able to log in or access materials." 
+                : "Good news! Your 4LAZIE account has been reactivated. You can now log in and access all your study materials again.";
+                
+            String htmlBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;\">"
+                    + "<div style=\"text-align: center; margin-bottom: 20px;\">"
+                    + "<h1 style=\"color: " + titleColor + "; font-size: 24px; margin-bottom: 5px;\">" + titleText + "</h1>"
+                    + "</div>"
+                    + "<h2 style=\"color: #1e293b; font-size: 18px;\">Hello " + userName + ",</h2>"
+                    + "<p style=\"color: #475569; font-size: 15px; line-height: 1.6;\">" + bodyText + "</p>"
+                    + "<p style=\"color: #475569; font-size: 15px; line-height: 1.6;\">If you have any questions, please reply to this email.</p>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send suspension email: " + e.getMessage());
+        }
+    }
+
+    @Async
+    public void sendRecoveryMagicLink(String to, String userName, String magicLink) {
+        if (mailSender == null) return;
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("support@4lazie.com");
+            helper.setTo(to);
+            helper.setSubject("🔐 Account Recovery Link - 4LAZIE");
+            
+            String htmlBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;\">"
+                    + "<div style=\"text-align: center; padding-bottom: 20px; border-bottom: 2px solid #10b981;\">"
+                    + "<h1 style=\"color: #10b981; font-weight: 800; margin: 0;\">4LAZIE</h1>"
+                    + "</div>"
+                    + "<div style=\"padding: 30px 0; text-align: center;\">"
+                    + "<h2 style=\"color: #1e293b; font-size: 22px;\">Account Recovery</h2>"
+                    + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Hello " + userName + ", your administrator has initiated an account recovery process for you.</p>"
+                    + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Click the secure button below to instantly reset your password and restore access to your account:</p>"
+                    + "<div style=\"margin: 30px 0;\">"
+                    + "<a href=\"" + magicLink + "\" style=\"background-color: #10b981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);\">Restore My Account</a>"
+                    + "</div>"
+                    + "<p style=\"color: #ef4444; font-size: 14px; font-weight: bold;\">This magic link will expire in exactly 30 minutes.</p>"
+                    + "</div>"
+                    + "<div style=\"padding-top: 20px; border-top: 1px solid #e2e8f0;\">"
+                    + "<p style=\"color: #64748b; font-size: 14px; line-height: 1.6;\">If the button doesn't work, copy and paste this URL into your browser:<br>"
+                    + "<a href=\"" + magicLink + "\" style=\"color: #10b981; word-break: break-all;\">" + magicLink + "</a></p>"
+                    + "</div>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send recovery magic link: " + e.getMessage());
+        }
+    }
 }

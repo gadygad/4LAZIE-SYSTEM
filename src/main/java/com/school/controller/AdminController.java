@@ -19,6 +19,8 @@ import com.school.model.Timetable;
 import com.school.repository.TimetableRepository;
 import com.school.model.AcademicCalendar;
 import com.school.repository.AcademicCalendarRepository;
+import com.school.model.PasswordResetToken;
+import com.school.repository.PasswordResetTokenRepository;
 import com.school.model.Subject;
 import com.school.model.Course;
 import com.school.repository.SubjectRepository;
@@ -37,6 +39,9 @@ public class AdminController {
 
     @Autowired
     private NoteRepository noteRepository;
+    
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
     
     @Autowired
     private TimetableRepository timetableRepository;
@@ -128,6 +133,98 @@ public class AdminController {
             targetUser.setPassword(passwordEncoder.encode("SJUIT@123"));
             userRepository.save(targetUser);
             redirectAttributes.addFlashAttribute("success", "Password for " + targetUser.getName() + " has been reset to 'SJUIT@123'.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+        }
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/send-recovery")
+    public String sendRecoveryLink(@PathVariable String id, jakarta.servlet.http.HttpServletRequest request, HttpSession session, RedirectAttributes redirectAttributes) {
+        User admin = getLoggedInUser();
+        if (admin == null || admin.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null) {
+            // Delete old tokens
+            passwordResetTokenRepository.deleteByUser(targetUser);
+            
+            // Generate a secure UUID token for the magic link (valid for 30 minutes)
+            String token = java.util.UUID.randomUUID().toString();
+            PasswordResetToken resetToken = new PasswordResetToken(token, targetUser, 30);
+            passwordResetTokenRepository.save(resetToken);
+            
+            String baseUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String magicLink = baseUrl + "/reset-password?token=" + token;
+            
+            // Send email
+            com.school.service.EmailService emailService = org.springframework.web.context.support.WebApplicationContextUtils
+                .getRequiredWebApplicationContext(session.getServletContext())
+                .getBean(com.school.service.EmailService.class);
+            emailService.sendRecoveryMagicLink(targetUser.getEmail(), targetUser.getName(), magicLink);
+            
+            redirectAttributes.addFlashAttribute("success", "Secure recovery link sent to " + targetUser.getName() + " (" + targetUser.getEmail() + ").");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+        }
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/suspend")
+    public String toggleUserSuspension(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User admin = getLoggedInUser();
+        if (admin == null || admin.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        if (admin.getId().equals(id)) {
+            redirectAttributes.addFlashAttribute("error", "You cannot suspend yourself.");
+            return "redirect:/admin/users";
+        }
+        
+        User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null) {
+            boolean currentStatus = Boolean.TRUE.equals(targetUser.getIsSuspended());
+            targetUser.setIsSuspended(!currentStatus);
+            userRepository.save(targetUser);
+            
+            // Send email
+            com.school.service.EmailService emailService = org.springframework.web.context.support.WebApplicationContextUtils
+                .getRequiredWebApplicationContext(session.getServletContext())
+                .getBean(com.school.service.EmailService.class);
+            emailService.sendAccountSuspensionEmail(targetUser.getEmail(), targetUser.getName(), !currentStatus);
+            
+            String msg = !currentStatus ? "User suspended successfully." : "User reactivated successfully.";
+            redirectAttributes.addFlashAttribute("success", msg);
+        } else {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+        }
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/warn")
+    public String warnUser(@PathVariable String id, @RequestParam("warningMessage") String warningMessage, HttpSession session, RedirectAttributes redirectAttributes) {
+        User admin = getLoggedInUser();
+        if (admin == null || admin.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        
+        if (warningMessage == null || warningMessage.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Warning message cannot be empty.");
+            return "redirect:/admin/users";
+        }
+        
+        User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null) {
+            // Send email
+            com.school.service.EmailService emailService = org.springframework.web.context.support.WebApplicationContextUtils
+                .getRequiredWebApplicationContext(session.getServletContext())
+                .getBean(com.school.service.EmailService.class);
+            emailService.sendWarningEmail(targetUser.getEmail(), targetUser.getName(), warningMessage.trim());
+            
+            redirectAttributes.addFlashAttribute("success", "Warning sent to " + targetUser.getName() + " successfully.");
         } else {
             redirectAttributes.addFlashAttribute("error", "User not found.");
         }

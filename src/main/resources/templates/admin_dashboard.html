@@ -154,10 +154,18 @@
                                     <tbody>
                                         <tr th:each="u : ${recentUsers}" style="border-bottom: 1px solid #f1f5f9;">
                                             <td class="py-2">
-                                                <div class="fw-bold" style="color: #334155;" th:text="${u.name}">User Name</div>
+                                                <div class="fw-bold d-flex align-items-center" style="color: #334155;">
+                                                    <span th:text="${u.name}">User Name</span>
+                                                    <span th:if="${u.isSuspended}" class="badge rounded-pill bg-danger ms-2" style="font-size: 0.6rem; padding: 0.3em 0.6em;"><i class="bi bi-slash-circle me-1"></i>SUSPENDED</span>
+                                                </div>
                                                 <div class="small text-muted" style="font-size: 0.8rem;" th:text="${u.email}">user@email.com</div>
                                             </td>
                                             <td class="py-2 text-end align-middle">
+                                                <form th:action="@{/admin/users/{id}/send-recovery(id=${u.id})}" method="post" class="d-inline" onsubmit="return confirm('Send secure recovery link to this user?');">
+                                                    <button type="submit" class="btn btn-sm rounded-pill text-success me-2" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);" title="Send Recovery Link">
+                                                        <i class="bi bi-life-preserver"></i> Restore
+                                                    </button>
+                                                </form>
                                                 <span class="badge bg-light text-dark border" th:text="${#temporals.format(u.dateJoined, 'MMM dd, yyyy')}">Date</span>
                                             </td>
                                         </tr>

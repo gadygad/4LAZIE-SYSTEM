@@ -59,6 +59,8 @@ public class User {
     private String verificationToken;
     private LocalDateTime tokenExpiryDate;
 
+    private Boolean isSuspended = false;
+
     // Constructors
     public User() {
         this.role = Role.STUDENT;
@@ -118,4 +120,6 @@ public class User {
     public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
     public LocalDateTime getTokenExpiryDate() { return tokenExpiryDate; }
     public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) { this.tokenExpiryDate = tokenExpiryDate; }
+    public Boolean getIsSuspended() { return isSuspended; }
+    public void setIsSuspended(Boolean isSuspended) { this.isSuspended = isSuspended; }
 }
