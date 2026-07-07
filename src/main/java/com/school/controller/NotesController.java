@@ -399,10 +399,20 @@ public class NotesController {
 
         User loggedInUser = getLoggedInUser();
         
-        // Ensure only Assignments, Past Papers, CAT, UE, Projects require login.
-        if (note.getCategory() != null && loggedInUser == null) {
-            String cat = note.getCategory().toUpperCase().trim();
-            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
+        // Strict Whitelist: Only allow 'Note' or empty category for Guests
+        if (loggedInUser == null) {
+            boolean isAllowed = false;
+            if (note.getCategory() == null || note.getCategory().trim().isEmpty()) {
+                isAllowed = true;
+            } else {
+                String cat = note.getCategory().toUpperCase().trim().replaceAll("\\s+", "");
+                if (cat.contains("NOTE") || cat.equals("MODULE") || cat.contains("COURSEMATERIAL")) {
+                    isAllowed = true;
+                } else if (cat.contains("ASSIGNMENT") || cat.contains("PROJECT") || cat.contains("UE") || cat.contains("CAT") || cat.contains("PASTPAPER") || cat.contains("EXAM") || cat.contains("TEST")) {
+                    isAllowed = false;
+                }
+            }
+            if (!isAllowed) {
                 response.sendRedirect("/login");
                 return;
             }
@@ -481,10 +491,20 @@ public class NotesController {
             return "redirect:/dashboard";
         }
         
-        // Ensure only Assignments, Past Papers, CAT, UE, Projects require login.
-        if (note.getCategory() != null && loggedInUser == null) {
-            String cat = note.getCategory().toUpperCase().trim();
-            if (cat.equals("ASSIGNMENT") || cat.equals("PROJECT") || cat.equals("UE") || cat.startsWith("CAT ") || cat.equals("CAT") || cat.contains("PAST PAPER")) {
+        // Strict Whitelist: Only allow 'Note' or empty category for Guests
+        if (loggedInUser == null) {
+            boolean isAllowed = false;
+            if (note.getCategory() == null || note.getCategory().trim().isEmpty()) {
+                isAllowed = true;
+            } else {
+                String cat = note.getCategory().toUpperCase().trim().replaceAll("\\s+", "");
+                if (cat.contains("NOTE") || cat.equals("MODULE") || cat.contains("COURSEMATERIAL")) {
+                    isAllowed = true;
+                } else if (cat.contains("ASSIGNMENT") || cat.contains("PROJECT") || cat.contains("UE") || cat.contains("CAT") || cat.contains("PASTPAPER") || cat.contains("EXAM") || cat.contains("TEST")) {
+                    isAllowed = false;
+                }
+            }
+            if (!isAllowed) {
                 return "redirect:/login";
             }
         }

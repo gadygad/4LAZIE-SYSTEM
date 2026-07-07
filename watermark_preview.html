@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>4LAZIE - Watermark Preview</title>
+<style>
+  body {
+    background: #525659;
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+    font-family: "Times New Roman", Times, serif;
+    margin: 0;
+  }
+  .page {
+    background: white;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* HII NDIO WATERMARK INAYOJIRUDIA RUDIA */
+  .watermark-container {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    transform: rotate(-30deg);
+    pointer-events: none; /* Inaruhusu mtu kuselect text za chini yake */
+    z-index: 10; /* Inakaa KWA JUU YA MAANDISHI */
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    opacity: 0.02; /* Imefifia kabisa kabisa */
+  }
+  .watermark-text {
+    font-size: 80px;
+    font-weight: bold;
+    color: black;
+    margin: 50px 80px;
+    user-select: none;
+    font-family: Arial, sans-serif;
+  }
+  
+  .header { text-align: center; font-weight: bold; margin-bottom: 25px; font-size: 13pt; font-family: "Times New Roman", Times, serif; }
+  .line { border-bottom: 2px solid black; margin: 4px 0; }
+  .line-thin { border-bottom: 1px solid black; margin-bottom: 15px; }
+  .content { position: relative; z-index: 5; font-size: 11pt; line-height: 1.8; font-family: "Times New Roman", Times, serif; }
+  
+  .footer {
+    position: absolute; 
+    bottom: 20mm; 
+    width: calc(100% - 40mm); 
+    text-align: center; 
+    font-size: 10pt; 
+    color: #333;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    
+    <!-- Watermark Generator -->
+    <div class="watermark-container">
+      <script>
+        for(let i=0; i<150; i++) {
+          document.write('<div class="watermark-text">4LAZIE</div>');
+        }
+      </script>
+    </div>
+    
+    <!-- Content / Mtihani Wenyewe -->
+    <div class="content">
+      <div class="header">
+        ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY<br>
+        NTA LEVEL 5 - TECHNICIAN CERTIFICATE<br>
+        CONTINUOUS ASSESSMENT TEST - II - FEBRUARY-2026<br>
+        EDT 05103 - APPLIED CHEMISTRY
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; font-weight: bold;">
+        <div>SEMESTER: I<br>DURATION: 1 Hr 30 Min.</div>
+        <div style="text-align: right;">YEAR: II<br>MAX. MARKS: 50</div>
+      </div>
+      <div class="line"></div>
+      
+      <div style="font-weight: bold; margin: 20px 0;">PART - A (Answer all the Questions)</div>
+      
+      <ol>
+        <li style="margin-bottom: 20px;">The compressive strength of cement increases from 10² N/m² when initially set to 10⁷ N/m² after _____ days, reaching 70% of its final strength value (10⁸ N/m²) after _____ days.</li>
+        <li style="margin-bottom: 20px;">What is a reclaimed rubber?</li>
+        <li style="margin-bottom: 20px;">Define leaching as a concentration method in metallurgical operation.</li>
+        <li style="margin-bottom: 20px;">What is powder metallurgy?</li>
+        <li style="margin-bottom: 20px;">List the methods of making metal powder in powder metallurgy.</li>
+      </ol>
+
+      <div style="font-weight: bold; margin: 30px 0;">PART - B (Answer any three Questions)</div>
+      <ol start="8">
+        <li style="margin-bottom: 20px;">How lime is used in mining and metallurgy</li>
+        <li style="margin-bottom: 20px;">Explain the meaning of the following Quicklime, Hydrated lime and Dolomite lime</li>
+      </ol>
+      
+      <!-- Footer Text -->
+      <div class="footer">
+        Page 1 &mdash; Prepared exclusively by 4LAZIE System
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -62,12 +62,24 @@ self.addEventListener('fetch', event => {
   }
 
   if (event.request.mode === 'navigate') {
-    // Page navigations -> Network First, fallback to offline.html
+    // Page navigations -> Network First, fallback to cache, then offline.html
     event.respondWith(
-      fetch(event.request)
-        .catch(() => {
+      fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        return caches.match(event.request).then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
           return caches.match(OFFLINE_URL);
-        })
+        });
+      })
     );
   } else {
     // Static assets -> Cache First, fallback to Network with dynamic caching
