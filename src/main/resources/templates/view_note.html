@@ -105,8 +105,9 @@
     <!-- PDF.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script th:inline="javascript">
-        window.documentUrl = /*[[${note.fileUrl}]]*/ '';
+        window.documentUrl = /*[[@{/proxy/} + ${note.id}]]*/ '';
         window.documentFilename = /*[[${note.filename != null ? note.filename.toLowerCase() : ''}]]*/ '';
+        window.documentDirectUrl = /*[[${note.fileUrl}]]*/ '';
     </script>
     <script th:src="@{/js/viewer.js}"></script>
 

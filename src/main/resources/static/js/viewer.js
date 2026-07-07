@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const url = window.documentUrl || '';
+    const directUrl = window.documentDirectUrl || url;
     const filename = window.documentFilename || '';
     
     const loader = document.getElementById('pdf-loader');
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (errorDiv) errorDiv.style.display = 'block';
     } else if (filename.endsWith('.pdf')) {
         // LOAD PDF USING PDF.JS FOR BEAUTIFUL CUSTOM UI
-        const safeUrl = url.replace('http://', 'https://');
+        const safeUrl = directUrl.replace('http://', 'https://');
         
         let observer = null;
         let pdfDoc = null;
@@ -58,8 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const pageH = Math.floor(firstViewport.height);
                 
                 // ULTRA HIGH QUALITY RENDERING FOR MOBILE
-                // We use devicePixelRatio * 3 to ensure text is crystal clear even when zoomed
-                const outputScale = (window.devicePixelRatio || 1) * 3;
+                // We use devicePixelRatio * 3 (min 3) to ensure text is crystal clear even when zoomed
+                const outputScale = Math.max((window.devicePixelRatio || 1) * 3, 3.5);
                 
                 observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
@@ -150,7 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 canvasContainer.style.padding = '0';
                 canvasContainer.style.display = 'block';
                 canvasContainer.style.height = 'calc(100vh - 60px)';
-                const encodedUrl = encodeURIComponent(safeUrl);
+                const fallbackUrl = directUrl.startsWith('http') ? directUrl.replace('http://', 'https://') : window.location.origin + directUrl;
+                const encodedUrl = encodeURIComponent(fallbackUrl);
                 const viewerUrl = "https://docs.google.com/gview?url=" + encodedUrl + "&embedded=true";
                 canvasContainer.innerHTML = `<iframe src="${viewerUrl}" style="width: 100%; height: 100%; border: none; background: #fff;"></iframe>`;
             }
@@ -160,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // LOAD IMAGE DIRECTLY
         if (controls) controls.style.display = 'none';
         if (canvasContainer) {
-            canvasContainer.innerHTML = `<img src="${url}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" alt="Document Image">`;
+            canvasContainer.innerHTML = `<img src="${directUrl}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" alt="Document Image">`;
         }
         hideLoader();
     } else if (filename.endsWith('.doc') || filename.endsWith('.docx') || filename.endsWith('.ppt') || filename.endsWith('.pptx') || filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
@@ -172,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.style.height = 'calc(100vh - 60px)'; // Full screen minus navbar height
             canvasContainer.style.overflow = 'hidden';
             
-            const safeUrl = url.replace('http://', 'https://');
+            const safeUrl = directUrl.replace('http://', 'https://');
             const encodedUrl = encodeURIComponent(safeUrl);
             const viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodedUrl;
             
@@ -187,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.style.display = 'block';
             canvasContainer.style.height = '100vh';
             
-            const safeUrl = url.replace('http://', 'https://');
+            const safeUrl = directUrl.replace('http://', 'https://');
             const encodedUrl = encodeURIComponent(safeUrl);
             const viewerUrl = "https://docs.google.com/gview?url=" + encodedUrl + "&embedded=true";
             

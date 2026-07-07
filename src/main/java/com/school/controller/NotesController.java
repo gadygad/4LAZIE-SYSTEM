@@ -551,8 +551,40 @@ public class NotesController {
         return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_HTML).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"error.html\"").body(mockResource);
     }
 
-    // proxyDocument has been removed for better scalability.
-
+    @GetMapping("/proxy/{id}")
+    public ResponseEntity<org.springframework.core.io.Resource> proxyDocument(@PathVariable("id") String id) {
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            java.net.URL url = new java.net.URL(note.getFileUrl());
+            java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(30000);
+            
+            String filename = note.getFilename() != null ? note.getFilename().toLowerCase() : "document.pdf";
+            MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            if (filename.endsWith(".pdf")) {
+                mediaType = MediaType.APPLICATION_PDF;
+            } else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+                mediaType = MediaType.IMAGE_JPEG;
+            } else if (filename.endsWith(".png")) {
+                mediaType = MediaType.IMAGE_PNG;
+            }
+            
+            org.springframework.core.io.InputStreamResource resource = new org.springframework.core.io.InputStreamResource(connection.getInputStream());
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            log.error("Error proxying document", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
     @PostMapping("/save-note/{id}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveNoteToggle(@PathVariable("id") String id, HttpSession session) {
