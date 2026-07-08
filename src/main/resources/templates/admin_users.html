@@ -200,7 +200,10 @@
                             </thead>
                             <tbody>
                                 <tr th:each="u : ${users}">
-                                    <td class="py-3 px-4 fw-bold" style="color: #1e293b;" th:text="${u.name}">John Doe</td>
+                                    <td class="py-3 px-4">
+                                        <div class="fw-bold" style="color: #1e293b;" th:text="${u.name}">John Doe</div>
+                                        <span th:if="${u.courseProgram != null}" class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 mt-1" style="font-size: 0.65rem; font-weight: 600; padding: 0.3em 0.6em; letter-spacing: 0.5px;" th:text="${u.courseProgram}">Course</span>
+                                    </td>
                                     <td class="py-3 px-4 text-muted" th:text="${u.email}">john@example.com</td>
                                     <td class="py-3 px-4">
                                         <span class="badge rounded-pill" 
