@@ -16,6 +16,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     @Query("{ 'programType': ?0, 'levelNo': ?1, '$or': [ { 'title': { $regex: ?2, $options: 'i' } }, { 'category': { $regex: ?2, $options: 'i' } } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramAndLevel(String programType, Integer levelNo, String query, org.springframework.data.domain.Pageable pageable);
 
+    @Query("{ 'levelNo': ?1, '$and': [ { '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }, { '$or': [ { 'title': { $regex: ?2, $options: 'i' } }, { 'category': { $regex: ?2, $options: 'i' } } ] } ] }")
+    org.springframework.data.domain.Page<Note> searchNotesByProgramAndLevelWithGeneral(String programType, Integer levelNo, String query, org.springframework.data.domain.Pageable pageable);
+
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelAndSemester(String programType, Integer levelNo, Integer semesterNo, String query, org.springframework.data.domain.Pageable pageable);
 
@@ -24,6 +27,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, 'title': { $regex: ?4, $options: 'i' } }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelSemesterAndCategory(String programType, Integer levelNo, Integer semesterNo, String category, String query, org.springframework.data.domain.Pageable pageable);
+
+    @Query("{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$and': [ { '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }, { 'title': { $regex: ?4, $options: 'i' } } ] }")
+    org.springframework.data.domain.Page<Note> searchNotesByProgramLevelSemesterAndCategoryWithGeneral(String programType, Integer levelNo, Integer semesterNo, String category, String query, org.springframework.data.domain.Pageable pageable);
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, String category);
 
@@ -43,6 +49,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     org.springframework.data.domain.Page<Note> findAllByOrderByIdDesc(org.springframework.data.domain.Pageable pageable);
 
     List<Note> findByProgramTypeAndLevelNoOrderByIdDesc(String programType, Integer levelNo);
+
+    @Query(value = "{ 'levelNo': ?1, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    List<Note> findByProgramTypeAndLevelNoWithGeneral(String programType, Integer levelNo);
 
     List<Note> findAllByOrderByIdDesc();
 

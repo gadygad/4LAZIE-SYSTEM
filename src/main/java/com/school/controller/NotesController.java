@@ -106,12 +106,12 @@ public class NotesController {
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
-            notes = noteRepository.searchNotesByProgramAndLevel(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
+            notes = noteRepository.searchNotesByProgramAndLevelWithGeneral(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
                     .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
-            notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
+            notes = noteRepository.findByProgramTypeAndLevelNoWithGeneral(program, level).stream()
                     .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                     .limit(3)
                     .collect(Collectors.toList());
@@ -155,20 +155,20 @@ public class NotesController {
             if (category != null && !category.trim().isEmpty()) {
                 if (search != null && !search.trim().isEmpty()) {
                     String safeSearch = escapeRegex(search.trim());
-                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategory(program, level, semester, category, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
+                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategoryWithGeneral(program, level, semester, category, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
                     model.addAttribute("searchQuery", search);
                 } else {
-                    List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(program, level, semester, category);
+                    List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(program, level, semester, category);
                     notesPage = new org.springframework.data.domain.PageImpl<>(list);
                 }
                 model.addAttribute("selectedCategory", category);
             } else {
                 if (search != null && !search.trim().isEmpty()) {
                     String safeSearch = escapeRegex(search.trim());
-                    notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
+                    notesPage = noteRepository.searchNotesByProgramLevelAndSemesterWithGeneral(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
                     model.addAttribute("searchQuery", search);
                 } else {
-                    notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
+                    notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
                 }
             }
             model.addAttribute("selectedLevel", level);
@@ -710,7 +710,7 @@ public class NotesController {
             return "redirect:/notes?program=" + program + "&level=" + level + "&semester=" + semester + "&page=" + page;
         }
         
-        org.springframework.data.domain.Page<Note> notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
+        org.springframework.data.domain.Page<Note> notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
         List<Note> notes = notesPage.getContent();
         
         Map<String, List<Note>> groupedNotes = new LinkedHashMap<>();
