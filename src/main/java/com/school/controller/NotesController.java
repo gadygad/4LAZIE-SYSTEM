@@ -280,10 +280,10 @@ public class NotesController {
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
-            notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
+            notesPage = noteRepository.searchNotesByProgramLevelAndSemesterWithGeneral(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
             model.addAttribute("searchQuery", search);
         } else {
-            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
+            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
         }
 
         List<Note> notes = notesPage.getContent();

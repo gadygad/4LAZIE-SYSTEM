@@ -19,6 +19,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelAndSemester(String programType, Integer levelNo, Integer semesterNo, String query, org.springframework.data.domain.Pageable pageable);
 
+    @Query("{ 'levelNo': ?1, 'semesterNo': ?2, '$and': [ { '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }, { '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] } ] }")
+    org.springframework.data.domain.Page<Note> searchNotesByProgramLevelAndSemesterWithGeneral(String programType, Integer levelNo, Integer semesterNo, String query, org.springframework.data.domain.Pageable pageable);
+
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, 'title': { $regex: ?4, $options: 'i' } }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelSemesterAndCategory(String programType, Integer levelNo, Integer semesterNo, String category, String query, org.springframework.data.domain.Pageable pageable);
 
@@ -33,6 +36,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(String programType, Integer levelNo, Integer semesterNo);
     
     org.springframework.data.domain.Page<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, org.springframework.data.domain.Pageable pageable);
+    
+    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    org.springframework.data.domain.Page<Note> findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(String programType, Integer levelNo, Integer semesterNo, org.springframework.data.domain.Pageable pageable);
     
     org.springframework.data.domain.Page<Note> findAllByOrderByIdDesc(org.springframework.data.domain.Pageable pageable);
 
