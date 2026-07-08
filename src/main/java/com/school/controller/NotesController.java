@@ -306,7 +306,7 @@ public class NotesController {
 
 
 
-        model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
+        model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
         model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());
         model.addAttribute("totalNotes", noteRepository.count());
         model.addAttribute("totalDownloads", noteRepository.getTotalDownloadCount());

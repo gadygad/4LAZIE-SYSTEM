@@ -34,7 +34,6 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findAllByOrderByIdDesc();
 
-    List<Note> findTop3ByOrderByDownloadCountDesc();
     
     List<Note> findTop5ByOrderByDownloadCountDesc();
 
