@@ -691,6 +691,8 @@
             const items = wrapper.querySelectorAll('.glass-dropdown-item');
             
             header.addEventListener('click', function(e) {
+                document.querySelectorAll('.custom-glass-dropdown').forEach(d => { if (d !== wrapper) d.classList.remove('open'); });
+                document.querySelectorAll('.glass-dropdown-header').forEach(h => { if (h !== header) h.classList.remove('open'); });
                 wrapper.classList.toggle('open');
                 header.classList.toggle('open');
                 e.stopPropagation();
