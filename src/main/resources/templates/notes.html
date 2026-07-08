@@ -738,19 +738,21 @@
             const programVal = document.querySelector('input[name="notesProgram"]:checked').value;
             const isDegree = programVal === 'DEGREE';
             
-            // Handle NTA Level Dropdown Animation
+            // Handle NTA Level / Year Dropdown
             const levelContainer = document.getElementById('notesLevelContainer');
+            const levelLabel = document.getElementById('levelLabel');
+            const levelList = document.getElementById('levelDropdownList');
+            const levelText = document.getElementById('levelDropdownText');
+            
             if (levelContainer) {
-                if (!isDegree) {
-                    levelContainer.style.display = 'block';
-                    // Trigger reflow for animation
-                    void levelContainer.offsetWidth;
-                    levelContainer.style.opacity = '1';
-                    levelContainer.style.transform = 'translateY(0)';
-                } else {
-                    levelContainer.style.opacity = '0';
-                    levelContainer.style.transform = 'translateY(-10px)';
-                    levelContainer.style.display = 'none';
+                levelContainer.style.display = 'block';
+                void levelContainer.offsetWidth; // Trigger reflow
+                levelContainer.style.opacity = '1';
+                levelContainer.style.transform = 'translateY(0)';
+                
+                if (!levelLabel) {
+                    // Fallback label grab if missing ID
+                    levelContainer.querySelector('.premium-label').id = 'levelLabel';
                 }
             }
 
@@ -766,6 +768,50 @@
                 return;
             }
             
+            // Function to rebuild Level/Year dropdown based on selected course
+            function updateLevelOptions(courseVal, isDeg) {
+                const lvlLabel = document.getElementById('levelLabel');
+                const lvlList = document.getElementById('levelDropdownList');
+                const lvlText = document.getElementById('levelDropdownText');
+                const lvlSelect = document.getElementById('notesLevel');
+                
+                if (isDeg) {
+                    lvlLabel.textContent = "Which Year?";
+                    let yearsHTML = '';
+                    const maxYears = courseVal === 'DEG_CS' ? 3 : 4;
+                    for (let i = 1; i <= maxYears; i++) {
+                        yearsHTML += `<div class="glass-dropdown-item ${i === 1 ? 'active' : ''}" data-value="${i}">Year ${i}</div>`;
+                    }
+                    lvlList.innerHTML = yearsHTML;
+                    lvlText.textContent = "Year 1";
+                    lvlSelect.value = "1";
+                } else {
+                    lvlLabel.textContent = "Which NTA Level?";
+                    lvlList.innerHTML = `
+                        <div class="glass-dropdown-item active" data-value="4">NTA Level 4</div>
+                        <div class="glass-dropdown-item" data-value="5">NTA Level 5</div>
+                        <div class="glass-dropdown-item" data-value="6">NTA Level 6</div>
+                    `;
+                    lvlText.textContent = "NTA Level 4";
+                    lvlSelect.value = "4";
+                }
+                
+                // Rebind click events for newly created items
+                const wrapper = document.getElementById('levelDropdownWrapper');
+                const header = document.getElementById('levelDropdownHeader');
+                lvlList.querySelectorAll('.glass-dropdown-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        lvlText.textContent = this.textContent;
+                        lvlList.querySelectorAll('.glass-dropdown-item').forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        lvlSelect.value = this.dataset.value;
+                        wrapper.classList.remove('open');
+                        header.classList.remove('open');
+                        e.stopPropagation();
+                    });
+                });
+            }
+
             courses.forEach((c, index) => {
                 const item = document.createElement('div');
                 item.className = 'glass-dropdown-item' + (index === 0 ? ' active' : '');
@@ -775,15 +821,18 @@
                 if (index === 0) {
                     courseText.textContent = c.text;
                     courseSelect.value = c.value;
+                    updateLevelOptions(c.value, isDegree);
                 }
                 
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function(e) {
                     courseText.textContent = this.textContent;
                     courseList.querySelectorAll('.glass-dropdown-item').forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                     courseSelect.value = this.dataset.value;
                     courseWrapper.classList.remove('open');
                     courseHeader.classList.remove('open');
+                    updateLevelOptions(this.dataset.value, isDegree);
+                    e.stopPropagation();
                 });
                 
                 courseList.appendChild(item);
@@ -814,7 +863,7 @@
             const program = courseSelect.value;
             const semester = semesterSelect.value;
             const programVal = document.querySelector('input[name="notesProgram"]:checked').value;
-            const level = programVal === 'DIPLOMA' ? levelSelect.value : null;
+            const level = levelSelect.value;
 
             let url = `/api/notes/filter?category=${category}&program=${encodeURIComponent(program)}&semester=${semester}`;
             if (level) {
