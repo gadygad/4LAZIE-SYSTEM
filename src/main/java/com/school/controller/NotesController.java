@@ -384,14 +384,22 @@ public class NotesController {
                                @RequestParam(value = "force", required = false) String force,
                                HttpSession session,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
-        // Support both old {id}-{title} slugs and new AES encrypted slugs
-        String id;
-        if (slug.contains("-")) {
-            id = slug.split("-")[0];
-        } else {
-            id = com.school.util.EncryptionUtil.decrypt(slug);
+        // 1. Try slug as raw ID first (for JS-generated links from past papers)
+        Note note = noteRepository.findById(slug).orElse(null);
+        
+        // 2. If not found, try decrypting as AES slug or old format
+        if (note == null) {
+            String id;
+            if (slug.contains("-")) {
+                id = slug.split("-")[0];
+            } else {
+                id = com.school.util.EncryptionUtil.decrypt(slug);
+            }
+            if (id != null && !id.equals(slug)) {
+                note = noteRepository.findById(id).orElse(null);
+            }
         }
-        Note note = noteRepository.findById(id).orElse(null);
+        
         if (note == null) {
             response.sendError(404, "Note not found");
             return;
@@ -442,7 +450,7 @@ public class NotesController {
         }
 
         String filename = note.getFilename();
-        if (filename == null || filename.isEmpty()) filename = "note-" + id + ".txt";
+        if (filename == null || filename.isEmpty()) filename = "note-" + note.getId() + ".txt";
 
         String fileContent = "=== STUDENT NOTES HUB ===\n" +
                 "Title: " + note.getTitle() + "\nProgram: " + note.getProgramType() + "\n" +
@@ -480,14 +488,22 @@ public class NotesController {
     public void viewNotePage(@PathVariable("slug") String slug, 
                                HttpSession session,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
-        // Support both old {id}-{title} slugs and new AES encrypted slugs
-        String id;
-        if (slug.contains("-")) {
-            id = slug.split("-")[0];
-        } else {
-            id = com.school.util.EncryptionUtil.decrypt(slug);
+        // 1. Try slug as raw ID first (for JS-generated links from past papers)
+        Note note = noteRepository.findById(slug).orElse(null);
+        
+        // 2. If not found, try decrypting as AES slug
+        if (note == null) {
+            String id;
+            if (slug.contains("-")) {
+                id = slug.split("-")[0];
+            } else {
+                id = com.school.util.EncryptionUtil.decrypt(slug);
+            }
+            if (id != null && !id.equals(slug)) {
+                note = noteRepository.findById(id).orElse(null);
+            }
         }
-        Note note = noteRepository.findById(id).orElse(null);
+        
         if (note == null) {
             response.sendRedirect("/dashboard");
             return;
@@ -526,7 +542,7 @@ public class NotesController {
         }
 
         String filename = note.getFilename();
-        if (filename == null || filename.isEmpty()) filename = "note-" + id + ".txt";
+        if (filename == null || filename.isEmpty()) filename = "note-" + note.getId() + ".txt";
 
         String fileContent = "=== STUDENT NOTES HUB ===\n" +
                 "Title: " + note.getTitle() + "\nProgram: " + note.getProgramType() + "\n" +
@@ -541,13 +557,21 @@ public class NotesController {
 
     @GetMapping("/stream/{slug}")
     public Object streamNote(@PathVariable("slug") String slug, HttpSession session) {
-        String id;
-        if (slug.contains("-")) {
-            id = slug.split("-")[0];
-        } else {
-            id = com.school.util.EncryptionUtil.decrypt(slug);
+        // 1. Try slug as raw ID first
+        Note note = noteRepository.findById(slug).orElse(null);
+        
+        // 2. If not found, try decrypting
+        if (note == null) {
+            String id;
+            if (slug.contains("-")) {
+                id = slug.split("-")[0];
+            } else {
+                id = com.school.util.EncryptionUtil.decrypt(slug);
+            }
+            if (id != null && !id.equals(slug)) {
+                note = noteRepository.findById(id).orElse(null);
+            }
         }
-        Note note = noteRepository.findById(id).orElse(null);
 
         User loggedInUser = getLoggedInUser();
         if (note != null && !note.getIsPublic() && loggedInUser == null) {
@@ -566,7 +590,7 @@ public class NotesController {
                     .build();
         }
 
-        String title = note != null ? note.getTitle() : "Document " + id;
+        String title = note != null ? note.getTitle() : "Document " + slug;
 
         // Removed local uploads fallback to ensure Cloudinary persistency
 
