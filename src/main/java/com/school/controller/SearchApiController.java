@@ -86,7 +86,10 @@ public class SearchApiController {
         }
         
         if (program != null && !program.isEmpty()) {
-            query.addCriteria(Criteria.where("programType").regex(program, "i"));
+            query.addCriteria(new Criteria().orOperator(
+                Criteria.where("programType").regex(program, "i"),
+                Criteria.where("isGeneral").is(true)
+            ));
         }
         if (semester != null) {
             query.addCriteria(Criteria.where("semesterNo").is(semester));

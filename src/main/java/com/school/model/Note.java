@@ -41,6 +41,9 @@ public class Note {
     private Integer downloadCount = 0;
     private Integer viewCount = 0;
     private Integer unitNumber;
+    
+    @Indexed
+    private Boolean isGeneral = false;
 
     @DBRef
     private Institution institution;
@@ -110,6 +113,8 @@ public class Note {
     public void setViewCount(Integer viewCount) { this.viewCount = viewCount; }
     public Integer getUnitNumber() { return unitNumber; }
     public void setUnitNumber(Integer unitNumber) { this.unitNumber = unitNumber; }
+    public Boolean getIsGeneral() { return isGeneral != null ? isGeneral : false; }
+    public void setIsGeneral(Boolean isGeneral) { this.isGeneral = isGeneral; }
     public Institution getInstitution() { return institution; }
     public void setInstitution(Institution institution) { this.institution = institution; }
 

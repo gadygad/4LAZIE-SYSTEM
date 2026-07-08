@@ -24,7 +24,13 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, String category);
 
+    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(String programType, Integer levelNo, Integer semesterNo, String category);
+
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo);
+
+    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    List<Note> findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(String programType, Integer levelNo, Integer semesterNo);
     
     org.springframework.data.domain.Page<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, org.springframework.data.domain.Pageable pageable);
     

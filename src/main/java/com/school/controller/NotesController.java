@@ -334,6 +334,7 @@ public class NotesController {
                              @RequestParam(value = "category", required = false) String category,
                              @RequestParam(value = "unitNumber", required = false) Integer unitNumber,
                              @RequestParam(value = "academicYear", required = false) String academicYear,
+                             @RequestParam(value = "isGeneral", required = false, defaultValue = "false") Boolean isGeneral,
                              @RequestParam("file") MultipartFile file,
                              HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
         User loggedInUser = getLoggedInUser();
@@ -366,6 +367,7 @@ public class NotesController {
             note.setCategory(category == null || category.trim().isEmpty() ? "Note" : category);
             note.setUnitNumber(unitNumber);
             note.setAcademicYear(academicYear != null ? academicYear.trim() : null);
+            note.setIsGeneral(isGeneral);
 
             String appUrl = "https://" + request.getServerName();
             if (request.getServerPort() != 80 && request.getServerPort() != 443) {
