@@ -98,10 +98,13 @@
         
         <div class="row g-4">
             <!-- Left Column: Main Dashboard Content -->
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 
                 <!-- Welcome Banner -->
                 <div class="mb-4" style="padding: 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 24px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2); color: white; position: relative; overflow: hidden;">
+                    <button class="btn btn-sm btn-light position-absolute top-0 end-0 mt-3 me-3 d-flex align-items-center rounded-pill px-3 shadow-sm text-success fw-bold" style="z-index: 10;" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                        <i class="bi bi-list me-2"></i> Admin Menu
+                    </button>
                     <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(30px);"></div>
                     <h2 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif;">System Analytics Overview</h2>
                     <p class="mb-0 text-white-50">Here's what's happening in 4LAZIE today.</p>
@@ -200,37 +203,8 @@
 
             </div>
 
-            <!-- Right Column: Sidebar Navigation -->
-            <div class="col-lg-4">
-                <div class="sidebar-card position-sticky" style="top: 100px;">
-                    <h4 class="brand-font fw-bold mb-2 sidebar-title" style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1.5px; padding-bottom: 0.6rem; border-bottom: 2px solid rgba(16, 185, 129, 0.3); cursor: default; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;">
-                        <i class="bi bi-folder-fill text-success me-2" style="transition: transform 0.3s ease;"></i>ADMIN MENU
-                    </h4>
-                    <div class="d-flex flex-column gap-1">
-                        <a href="/admin/dashboard" class="sidebar-nav-item active">
-                            <i class="bi bi-grid-fill text-primary"></i>ANALYTICS DASHBOARD
-                        </a>
-                        <a href="/admin/users" class="sidebar-nav-item">
-                            <i class="bi bi-people-fill text-primary"></i>USERS MANAGEMENT
-                        </a>
-                        <a href="/admin/subjects" class="sidebar-nav-item">
-                            <i class="bi bi-book-half text-primary"></i>MANAGE SUBJECTS
-                        </a>
-                        <a href="/upload" class="sidebar-nav-item">
-                            <i class="bi bi-cloud-arrow-up-fill text-primary"></i>UPLOAD NOTES
-                        </a>
-                        <a href="/admin/notes" class="sidebar-nav-item">
-                            <i class="bi bi-journal-text text-primary"></i>MANAGE NOTES
-                        </a>
-                        <a href="/admin/timetables" class="sidebar-nav-item">
-                            <i class="bi bi-calendar3 text-primary"></i>TIMETABLES
-                        </a>
-                        <a href="/admin/calendar" class="sidebar-nav-item">
-                            <i class="bi bi-calendar-event text-primary"></i>ACADEMIC CALENDAR
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <!-- Offcanvas Admin Sidebar -->
+            <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='analytics')}"></div>
         </div>
     </div>
 

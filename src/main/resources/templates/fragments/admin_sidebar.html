@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="offcanvas">
+    <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="adminSidebar" aria-labelledby="adminSidebarLabel" style="width: 300px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: -10px 0 30px rgba(0,0,0,0.1);">
+        <div class="offcanvas-header border-bottom" style="background: rgba(248, 250, 252, 0.9);">
+            <h5 class="offcanvas-title fw-bold d-flex align-items-center" id="adminSidebarLabel" style="font-family: 'Outfit', sans-serif; color: #1e293b;">
+                <i class="bi bi-folder-fill text-success me-2"></i>ADMIN MENU
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="d-flex flex-column gap-2 mt-2">
+                <a href="/admin/dashboard" class="sidebar-nav-item" th:classappend="${activePage == 'analytics' ? 'active' : ''}">
+                    <i class="bi bi-grid-fill text-primary"></i>ANALYTICS DASHBOARD
+                </a>
+                <a href="/admin/users" class="sidebar-nav-item" th:classappend="${activePage == 'users' ? 'active' : ''}">
+                    <i class="bi bi-people-fill text-primary"></i>USERS MANAGEMENT
+                </a>
+                <a href="/admin/subjects" class="sidebar-nav-item" th:classappend="${activePage == 'subjects' ? 'active' : ''}">
+                    <i class="bi bi-book-half text-primary"></i>MANAGE SUBJECTS
+                </a>
+                <a href="/upload" class="sidebar-nav-item" th:classappend="${activePage == 'upload' ? 'active' : ''}">
+                    <i class="bi bi-cloud-arrow-up-fill text-primary"></i>UPLOAD NOTES
+                </a>
+                <a href="/admin/notes" class="sidebar-nav-item" th:classappend="${activePage == 'notes' ? 'active' : ''}">
+                    <i class="bi bi-journal-text text-primary"></i>MANAGE NOTES
+                </a>
+                <a href="/admin/timetables" class="sidebar-nav-item" th:classappend="${activePage == 'timetables' ? 'active' : ''}">
+                    <i class="bi bi-calendar3 text-primary"></i>TIMETABLES
+                </a>
+                <a href="/admin/calendar" class="sidebar-nav-item" th:classappend="${activePage == 'calendar' ? 'active' : ''}">
+                    <i class="bi bi-calendar-event text-primary"></i>ACADEMIC CALENDAR
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
