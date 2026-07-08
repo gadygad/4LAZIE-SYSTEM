@@ -278,6 +278,24 @@ public class AdminController {
         return "redirect:/admin/notes";
     }
 
+    @PostMapping("/notes/{id}/toggle-general")
+    public String toggleGeneralNote(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return "redirect:/login";
+        }
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note != null) {
+            boolean current = note.getIsGeneral() != null ? note.getIsGeneral() : false;
+            note.setIsGeneral(!current);
+            noteRepository.save(note);
+            redirectAttributes.addFlashAttribute("success", "Note updated to " + (!current ? "General" : "Specific") + " Subject successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Note not found.");
+        }
+        return "redirect:/admin/notes";
+    }
+
     // ============ ADMIN SUBJECTS MANAGEMENT ============
 
     @GetMapping("/subjects")
