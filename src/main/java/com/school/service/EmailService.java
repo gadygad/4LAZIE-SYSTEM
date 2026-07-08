@@ -14,6 +14,9 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username:kilingepazasauti@gmail.com}")
+    private String senderEmail;
+
     @Async
     public void sendPasswordResetEmail(String to, String otp) {
         if (mailSender == null) {
@@ -23,7 +26,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             helper.setSubject("Password Reset OTP - 4LAZIE");
             
@@ -65,7 +68,7 @@ public class EmailService {
         }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("support@4lazie.com");
+            message.setFrom(senderEmail);
             message.setTo(to);
             message.setSubject("Verify your email address - 4LAZIE");
             message.setText("Welcome to 4LAZIE!\n\n" +
@@ -84,7 +87,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             helper.setSubject("New Material Added: " + noteTitle);
             
@@ -122,7 +125,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             helper.setSubject("🔒 Your Secure 4LAZIE Activity Report");
             
@@ -154,7 +157,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             helper.setSubject("Security Alert: New Login Detected - 4LAZIE");
             
@@ -190,7 +193,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             helper.setSubject("⚠️ Official Warning from 4LAZIE Administration");
             
@@ -219,7 +222,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             
             String subject = isSuspended ? "🚫 Account Suspended - 4LAZIE" : "✅ Account Reactivated - 4LAZIE";
@@ -253,7 +256,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("support@4lazie.com");
+            helper.setFrom(senderEmail);
             helper.setTo(to);
             helper.setSubject("🔐 Account Recovery Link - 4LAZIE");
             
