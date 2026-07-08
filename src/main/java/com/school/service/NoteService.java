@@ -54,16 +54,23 @@ public class NoteService {
         if (!courses.isEmpty()) {
             Course course = courses.get(0);
             log.info("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
+            
+            // Try cached query first
             List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(course, level, semester);
             log.info("Cached method returned {} subjects", subjects.size());
             
-            if (subjects.isEmpty()) {
-                log.info("Falling back to non-cached method...");
-                subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, level, semester);
-                log.info("Non-cached method returned {} subjects", subjects.size());
+            // Always verify with non-cached query if cached returned fewer results
+            List<Subject> directSubjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, level, semester);
+            log.info("Direct (non-cached) method returned {} subjects", directSubjects.size());
+            
+            // Use whichever returned more results (handles stale cache)
+            if (directSubjects.size() > subjects.size()) {
+                log.warn("Cache was stale! Cached: {}, Direct: {}. Using direct results.", subjects.size(), directSubjects.size());
+                subjects = directSubjects;
             }
             
             for (Subject sub : subjects) {
+                log.info("  -> Subject: '{}' (code: {})", sub.getName(), sub.getCode());
                 groupedNotes.put(sub.getName(), new ArrayList<>());
                 moduleCodes.put(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
             }

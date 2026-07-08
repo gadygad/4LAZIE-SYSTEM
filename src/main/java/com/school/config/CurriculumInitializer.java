@@ -11,8 +11,14 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @Configuration
 public class CurriculumInitializer {
+
+    @Autowired
+    private CacheManager cacheManager;
 
     private void seedCourse(CourseRepository repo, String name, String type, String shortName, String subtitle, String icon, String color, String bg, int duration, String levelPrefix, int startLevel) {
         List<Course> existingCourses = repo.findByProgramType(type);
@@ -592,6 +598,17 @@ public class CurriculumInitializer {
 "        </div>\n" +
 "    </div>");
             timetableRepository.save(tt_ce_y4_s1);
+
+            // Evict all subject and course caches after seeding to prevent stale data
+            // This is critical: the @Cacheable queries used by groupNotesByModule may have
+            // cached incomplete results during or before the seeding process
+            org.springframework.cache.Cache subjectCache = cacheManager.getCache("subjectsByCourseLevelSemester");
+            if (subjectCache != null) subjectCache.clear();
+            org.springframework.cache.Cache courseCache = cacheManager.getCache("coursesByProgram");
+            if (courseCache != null) courseCache.clear();
+            org.springframework.cache.Cache allCoursesCache = cacheManager.getCache("allCourses");
+            if (allCoursesCache != null) allCoursesCache.clear();
+            System.out.println("[CurriculumInitializer] All subject/course caches evicted after seeding.");
         };
     }
 }
