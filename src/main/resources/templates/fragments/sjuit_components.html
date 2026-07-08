@@ -211,6 +211,22 @@
                         </div>
                     </div>
 
+                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CS' ? 'active' : ''}">
+                        <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_deg_cs">
+                            <div class="d-flex flex-column">
+                                <span><i class="bi bi-display me-2" style="color: #8b5cf6;"></i> DEGREE IN CS</span>
+                                <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-left: 24px; margin-top: 2px;">Computer Science</span>
+                            </div>
+                            <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content collapse" id="flyout_menu_deg_cs">
+                            <th:block th:each="year : ${#numbers.sequence(1, 3)}">
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CS&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_CS' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
+                                <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CS&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_CS' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
+                            </th:block>
+                        </div>
+                    </div>
+
                     <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CSE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_9">
                             <div class="d-flex flex-column">
@@ -220,7 +236,7 @@
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
                         </div>
                         <div class="sidebar-hover-content collapse" id="flyout_menu_9">
-                            <th:block th:each="year : ${#numbers.sequence(1, 3)}">
+                            <th:block th:each="year : ${#numbers.sequence(1, 4)}">
                                 <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=' + ${year} + '&semester=1'}" th:style="${selectedProgram == 'DEG_CSE' and selectedLevel == year and selectedSemester == 1 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 1'"></a>
                                 <a href="guest_notes.html" th:href="@{'/guest-notes?program=DEG_CSE&level=' + ${year} + '&semester=2'}" th:style="${selectedProgram == 'DEG_CSE' and selectedLevel == year and selectedSemester == 2 ? 'color: #fff;' : ''}" th:text="'Year ' + ${year} + ' - Sem 2'"></a>
                             </th:block>
