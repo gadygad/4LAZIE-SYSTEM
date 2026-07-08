@@ -4,6 +4,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap');
 @import url('mobile-spacing-standards.css');
+@import url('responsive-system.css');
 
 :root {
     /* Color Palette */
@@ -199,25 +200,13 @@ h1, h2, h3, h4, h5, h6 {
 /* ==========================================================================
    SIDEBAR & LAYOUT (WITH MOBILE OFFCANVAS)
    ========================================================================== */
-.page-layout { display: flex; flex: 1; min-height: calc(100vh - 64px); width: 100%; position: relative;}
-
-/* Sidebar Overlay for Mobile */
-.sidebar-overlay {
-    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5); z-index: 99; backdrop-filter: blur(4px);
-    opacity: 0; transition: opacity 0.3s ease;
-}
-.sidebar-overlay.active { display: block; opacity: 1; }
+/* Layout styles are now handled by responsive-system.css */
 
 .hero-sidebar {
-    width: 300px; min-width: 300px;
     background: var(--gradient-dark);
-    position: sticky; top: 64px; height: calc(100vh - 64px);
-    overflow-y: auto; overflow-x: hidden;
     display: flex; flex-direction: column; align-items: center;
     padding: 32px 20px; z-index: 100;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .hero-sidebar::-webkit-scrollbar { width: 6px; }
 .hero-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }

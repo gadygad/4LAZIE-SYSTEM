@@ -1,0 +1,1104 @@
+/* ==========================================================================
+   RESPONSIVE SYSTEM — 4LAZIE Student Portal
+   --------------------------------------------------------------------------
+   Standards followed:
+   • Material Design 3 (Google) — 8dp grid, adaptive layouts
+   • Apple Human Interface Guidelines — safe areas, touch targets 44pt+
+   • WCAG 2.1 AA — 4.5:1 contrast, 44×44px touch targets, focus indicators
+   • W3C CSS Media Queries Level 4
+   • Bootstrap 5 breakpoints compatible
+
+   BREAKPOINTS (mobile-first):
+     xs  < 360px  — Very small phones (Nokia, older Android)
+     sm  ≥ 576px  — Small phones (iPhone SE, Galaxy A series)
+     md  ≥ 768px  — Tablets (iPad Mini, small tablets)
+     lg  ≥ 992px  — Large tablets / small laptops
+     xl  ≥ 1200px — Desktops
+     xxl ≥ 1400px — Large desktops / TVs
+
+   ========================================================================== */
+
+/* ==========================================================================
+   1. VIEWPORT & ROOT SETTINGS
+   ========================================================================== */
+
+:root {
+    /* Responsive Spacing Scale (8dp grid) */
+    --rs-space-1:  4px;
+    --rs-space-2:  8px;
+    --rs-space-3:  12px;
+    --rs-space-4:  16px;
+    --rs-space-5:  20px;
+    --rs-space-6:  24px;
+    --rs-space-7:  32px;
+    --rs-space-8:  40px;
+    --rs-space-9:  48px;
+    --rs-space-10: 64px;
+
+    /* Touch Target Sizes */
+    --rs-touch-min: 44px;      /* Apple HIG minimum */
+    --rs-touch-md:  48px;      /* Material Design 3 */
+    --rs-touch-lg:  56px;      /* Material Design 3 Large */
+
+    /* Layout Widths */
+    --rs-sidebar-width: 280px;
+    --rs-navbar-height-mobile: 60px;
+    --rs-navbar-height-desktop: 72px;
+    --rs-bottom-nav-height: 72px;
+
+    /* Content Max Widths */
+    --rs-content-max-sm:  540px;
+    --rs-content-max-md:  720px;
+    --rs-content-max-lg:  960px;
+    --rs-content-max-xl:  1140px;
+    --rs-content-max-xxl: 1320px;
+
+    /* Fluid Typography Clamps */
+    --rs-font-xs:   clamp(0.7rem,  2vw, 0.8rem);
+    --rs-font-sm:   clamp(0.8rem,  2.5vw, 0.875rem);
+    --rs-font-base: clamp(0.9rem,  3vw, 1rem);
+    --rs-font-md:   clamp(1rem,    3.5vw, 1.125rem);
+    --rs-font-lg:   clamp(1.1rem,  4vw, 1.25rem);
+    --rs-font-xl:   clamp(1.3rem,  4.5vw, 1.5rem);
+    --rs-font-2xl:  clamp(1.5rem,  5vw, 2rem);
+    --rs-font-3xl:  clamp(1.8rem,  6vw, 2.5rem);
+    --rs-font-hero: clamp(2rem,    8vw, 3.5rem);
+
+    /* Gutters */
+    --rs-gutter-mobile:  16px;
+    --rs-gutter-tablet:  24px;
+    --rs-gutter-desktop: 32px;
+    --rs-gutter-xl:      48px;
+}
+
+/* ==========================================================================
+   2. BASE RESPONSIVE LAYOUT
+   ========================================================================== */
+
+/* Prevent horizontal overflow globally */
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    min-width: 320px; /* Minimum supported width */
+}
+
+/* All images are responsive by default */
+img, video, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   3. PAGE LAYOUT — SIDEBAR + MAIN CONTENT
+   ========================================================================== */
+
+/* Desktop: Sidebar is always visible */
+.page-layout {
+    display: flex;
+    flex: 1;
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - var(--rs-navbar-height-desktop));
+}
+
+/* Sidebar — Desktop Fixed */
+.hero-sidebar {
+    width: var(--rs-sidebar-width);
+    min-width: var(--rs-sidebar-width);
+    position: sticky;
+    top: var(--rs-navbar-height-desktop);
+    height: calc(100vh - var(--rs-navbar-height-desktop));
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, width;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+/* Sidebar — Collapsed State (Desktop Toggle) */
+.hero-sidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    min-width: 0; /* Prevents flex overflow */
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   4. MOBILE SIDEBAR (Offcanvas) — ≤ 991px
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+    /* Desktop sidebar is hidden on mobile/tablet */
+    .hero-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1055;
+        transform: translateX(-100%);
+        /* Override sticky top for mobile */
+        --sticky-top: 0;
+    }
+
+    .hero-sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* Main content takes full width */
+    .main-content {
+        width: 100%;
+    }
+
+    /* Page layout stacks vertically on mobile */
+    .page-layout {
+        flex-direction: column;
+        min-height: calc(100vh - var(--rs-navbar-height-mobile));
+    }
+}
+
+/* ==========================================================================
+   5. NAVBAR — RESPONSIVE
+   ========================================================================== */
+
+/* Navbar base */
+nav.navbar,
+.top-navbar {
+    height: var(--rs-navbar-height-desktop);
+    padding: 0 var(--rs-gutter-desktop);
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    width: 100%;
+}
+
+@media (max-width: 767.98px) {
+    nav.navbar,
+    .top-navbar {
+        height: var(--rs-navbar-height-mobile);
+        padding: 0 var(--rs-gutter-mobile);
+    }
+
+    /* Navbar brand text — hide NOTES on mobile */
+    .navbar-brand .d-sm-inline {
+        display: none !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    nav.navbar,
+    .top-navbar {
+        padding: 0 12px;
+    }
+}
+
+/* ==========================================================================
+   6. TYPOGRAPHY — FLUID RESPONSIVE
+   ========================================================================== */
+
+/* Fluid heading sizes */
+h1, .h1 { font-size: var(--rs-font-hero); line-height: 1.1; }
+h2, .h2 { font-size: var(--rs-font-3xl);  line-height: 1.15; }
+h3, .h3 { font-size: var(--rs-font-2xl);  line-height: 1.2; }
+h4, .h4 { font-size: var(--rs-font-xl);   line-height: 1.25; }
+h5, .h5 { font-size: var(--rs-font-lg);   line-height: 1.3; }
+h6, .h6 { font-size: var(--rs-font-md);   line-height: 1.35; }
+
+/* Override Bootstrap heading sizes for mobile */
+@media (max-width: 767.98px) {
+    h1, .h1 { font-size: clamp(1.75rem, 7vw, 2.25rem) !important; }
+    h2, .h2 { font-size: clamp(1.5rem,  6vw, 1.875rem) !important; }
+    h3, .h3 { font-size: clamp(1.25rem, 5vw, 1.5rem)  !important; }
+    h4, .h4 { font-size: clamp(1.1rem,  4.5vw, 1.25rem) !important; }
+    h5, .h5 { font-size: clamp(1rem,    4vw, 1.125rem)  !important; }
+    h6, .h6 { font-size: clamp(0.9rem,  3.5vw, 1rem)   !important; }
+}
+
+/* Body text */
+p, .body-text {
+    font-size: var(--rs-font-base);
+    line-height: 1.6;
+}
+
+/* Small text — never below 12px (WCAG) */
+small, .text-small, .text-xs {
+    font-size: max(0.75rem, 12px);
+}
+
+/* ==========================================================================
+   7. BUTTONS — TOUCH TARGETS (WCAG 2.1 SC 2.5.5)
+   ========================================================================== */
+
+/* All interactive elements must be at least 44px tall */
+button,
+.btn,
+a.btn,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+    min-height: var(--rs-touch-min); /* 44px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* Disables 300ms delay on mobile */
+}
+
+/* Full width buttons on mobile */
+@media (max-width: 575.98px) {
+    .btn-mobile-full {
+        width: 100% !important;
+        justify-content: center;
+    }
+
+    /* Stack button groups vertically on very small screens */
+    .btn-group-mobile-stack {
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    .btn-group-mobile-stack > .btn {
+        width: 100%;
+        border-radius: 12px !important;
+        margin: 4px 0;
+    }
+}
+
+/* ==========================================================================
+   8. FORM INPUTS — RESPONSIVE
+   ========================================================================== */
+
+/* All inputs get proper touch targets */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+textarea,
+select,
+.form-control,
+.form-select,
+.premium-input {
+    min-height: var(--rs-touch-min); /* 44px */
+    font-size: max(1rem, 16px); /* Prevents iOS zoom on focus */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* iOS prevents zoom if font-size ≥ 16px */
+@media (max-width: 767.98px) {
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+}
+
+/* ==========================================================================
+   9. CARDS & GRID — RESPONSIVE
+   ========================================================================== */
+
+/* Responsive grid helper classes */
+.rs-grid-1   { display: grid; grid-template-columns: 1fr; gap: var(--rs-space-4); }
+.rs-grid-2   { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--rs-space-4); }
+.rs-grid-3   { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rs-space-4); }
+.rs-grid-4   { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--rs-space-4); }
+.rs-grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--rs-space-4); }
+
+@media (max-width: 991.98px) {
+    .rs-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .rs-grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767.98px) {
+    .rs-grid-4,
+    .rs-grid-3,
+    .rs-grid-2 { grid-template-columns: 1fr; }
+    .rs-grid-auto { grid-template-columns: 1fr; }
+}
+
+/* Feature/stat cards responsive padding */
+.feature-card,
+.glass-stat-card,
+.navigator-card,
+.glassmorphism-card {
+    padding: clamp(16px, 3vw, 24px);
+}
+
+@media (max-width: 575.98px) {
+    .feature-card,
+    .glass-stat-card,
+    .navigator-card {
+        padding: 16px !important;
+        border-radius: 16px !important;
+    }
+}
+
+/* ==========================================================================
+   10. TABLES — RESPONSIVE (Mobile-friendly)
+   ========================================================================== */
+
+/* Horizontal scroll container for tables */
+.table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    /* Indicate scroll is available */
+    background:
+        linear-gradient(to right, white 30%, rgba(255,255,255,0)),
+        linear-gradient(to right, rgba(255,255,255,0), white 70%) 0 100%,
+        linear-gradient(to right, rgba(0,0,0,.06), rgba(0,0,0,0)),
+        linear-gradient(to left,  rgba(0,0,0,.06), rgba(0,0,0,0)) 0 100%;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+}
+
+/* Ensure .table-responsive from Bootstrap also gets smooth scroll */
+.table-responsive,
+.table-responsive-sm,
+.table-responsive-md,
+.table-responsive-lg {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile card-style tables */
+@media (max-width: 575.98px) {
+    .table-mobile-card thead {
+        display: none; /* Hide table headers on mobile */
+    }
+
+    .table-mobile-card tbody tr {
+        display: block;
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid rgba(0,0,0,0.06);
+        padding: 12px;
+    }
+
+    .table-mobile-card tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 4px;
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        font-size: 0.875rem;
+    }
+
+    .table-mobile-card tbody td:last-child {
+        border-bottom: none;
+    }
+
+    /* Label from data-label attribute */
+    .table-mobile-card tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        flex-shrink: 0;
+        margin-right: 8px;
+    }
+}
+
+/* ==========================================================================
+   11. MODAL — RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 575.98px) {
+    .modal-dialog {
+        margin: 8px;
+        max-width: calc(100vw - 16px);
+    }
+
+    .modal-content {
+        border-radius: 20px;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+    }
+
+    .modal-body {
+        padding: 16px 20px;
+    }
+
+    .modal-footer {
+        padding: 12px 20px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .modal-footer > * {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+/* Full-screen modal on very small screens */
+@media (max-width: 400px) {
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+
+    .modal-content {
+        height: 100%;
+        border-radius: 0;
+    }
+}
+
+/* ==========================================================================
+   12. DROPDOWN MENUS — RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 575.98px) {
+    .dropdown-menu {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 20px 20px 0 0 !important;
+        margin: 0 !important;
+        padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
+        transform: none !important;
+        animation: slideUpSheet 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        z-index: 1060;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.15) !important;
+    }
+
+    @keyframes slideUpSheet {
+        from { transform: translateY(100%); opacity: 0; }
+        to   { transform: translateY(0);   opacity: 1; }
+    }
+
+    /* Add overlay handle */
+    .dropdown-menu::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        margin: 0 auto 12px;
+    }
+
+    .dropdown-item {
+        padding: 14px 20px;
+        font-size: 1rem;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Notification dropdown exception - keep position on small screens */
+@media (max-width: 575.98px) {
+    .notification-dropdown.dropdown-menu {
+        position: fixed !important;
+        right: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        width: 100% !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+}
+
+/* ==========================================================================
+   13. FILTER BAR — RESPONSIVE
+   ========================================================================== */
+
+.premium-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+@media (max-width: 767.98px) {
+    .premium-filter-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .premium-filter-container > * {
+        width: 100%;
+    }
+
+    .premium-sem-toggle {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   14. NOTE/FILE LIST ROWS — RESPONSIVE
+   ========================================================================== */
+
+.note-row,
+.glassmorphism-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+@media (max-width: 575.98px) {
+    .note-row,
+    .glassmorphism-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .note-row .right-actions,
+    .glassmorphism-card .right-actions {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+    }
+
+    .note-row .right-actions > *,
+    .glassmorphism-card .right-actions > * {
+        flex: 1;
+    }
+}
+
+/* ==========================================================================
+   15. CONTENT AREA PADDING — RESPONSIVE
+   ========================================================================== */
+
+.content-area,
+.center-col {
+    padding: var(--rs-gutter-desktop);
+}
+
+@media (max-width: 1199.98px) {
+    .content-area,
+    .center-col {
+        padding: var(--rs-gutter-tablet);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .content-area,
+    .center-col {
+        padding: var(--rs-gutter-mobile);
+        padding-bottom: calc(var(--rs-bottom-nav-height) + var(--rs-gutter-mobile) + env(safe-area-inset-bottom));
+    }
+}
+
+@media (max-width: 359.98px) {
+    .content-area,
+    .center-col {
+        padding: 12px;
+    }
+}
+
+/* ==========================================================================
+   16. BOTTOM NAV PADDING
+   ========================================================================== */
+
+/* Ensure content is not hidden behind bottom nav on mobile */
+body.has-bottom-nav {
+    padding-bottom: 0; /* Reset, use margin on content instead */
+}
+
+@media (max-width: 991.98px) {
+    body.has-bottom-nav .main-content {
+        padding-bottom: calc(var(--rs-bottom-nav-height) + env(safe-area-inset-bottom, 16px));
+    }
+}
+
+/* ==========================================================================
+   17. SIDEBAR OVERLAY (Mobile Backdrop)
+   ========================================================================== */
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1054;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* ==========================================================================
+   18. ACCESSIBILITY — FOCUS INDICATORS (WCAG 2.1 AA)
+   ========================================================================== */
+
+/* Visible focus for keyboard navigation */
+:focus-visible {
+    outline: 3px solid rgba(16, 185, 129, 0.6);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Skip to content link */
+.skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 16px;
+    background: #10b981;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 0 0 12px 12px;
+    font-weight: 700;
+    text-decoration: none;
+    z-index: 9999;
+    transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* ==========================================================================
+   19. REDUCED MOTION — ACCESSIBILITY
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================================================
+   20. PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    .hero-sidebar,
+    .mobile-bottom-nav,
+    .custom-mobile-nav-wrapper,
+    nav.navbar,
+    .top-navbar,
+    .sidebar-overlay {
+        display: none !important;
+    }
+
+    .main-content,
+    .page-layout {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* ==========================================================================
+   21. UTILITY CLASSES — RESPONSIVE
+   ========================================================================== */
+
+/* Responsive text alignment */
+@media (max-width: 767.98px) {
+    .text-md-start { text-align: start !important; }
+    .text-mobile-center { text-align: center !important; }
+}
+
+/* Responsive padding/margin helpers */
+.px-mobile { padding-left: var(--rs-gutter-mobile) !important; padding-right: var(--rs-gutter-mobile) !important; }
+.py-mobile { padding-top: var(--rs-space-4) !important; padding-bottom: var(--rs-space-4) !important; }
+
+/* Truncate text to prevent overflow */
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Gap responsive */
+.gap-mobile { gap: var(--rs-space-2) !important; }
+
+@media (min-width: 768px) {
+    .gap-mobile { gap: var(--rs-space-4) !important; }
+}
+
+/* Full-width on mobile only */
+@media (max-width: 575.98px) {
+    .w-mobile-100 { width: 100% !important; }
+}
+
+/* Hide on mobile / show on desktop */
+.d-mobile-none { display: none; }
+@media (min-width: 768px) { .d-mobile-none { display: initial; } }
+
+.d-desktop-none { display: initial; }
+@media (min-width: 768px) { .d-desktop-none { display: none; } }
+
+/* ==========================================================================
+   22. OFFCANVAS SIDEBAR (Bootstrap compatible)
+   ========================================================================== */
+
+/* Override Bootstrap offcanvas for our sidebar */
+#mobileSidebar.offcanvas {
+    width: min(85vw, 320px);
+    border-right: none;
+}
+
+#mobileSidebar.offcanvas-start {
+    border-right: none;
+    box-shadow: 5px 0 30px rgba(0,0,0,0.3);
+}
+
+#mobileSidebar .offcanvas-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    min-height: var(--rs-navbar-height-mobile);
+}
+
+#mobileSidebar .offcanvas-body {
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+/* ==========================================================================
+   23. ADMIN DASHBOARD — RESPONSIVE TABLES
+   ========================================================================== */
+
+@media (max-width: 767.98px) {
+    /* Admin tables wrap */
+    .admin-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -16px;
+        padding: 0 16px;
+    }
+
+    .admin-table-wrapper table {
+        min-width: 600px;
+    }
+
+    /* Admin cards stack */
+    .admin-stat-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-stat-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ==========================================================================
+   24. AUTHENTICATION PAGES — RESPONSIVE
+   ========================================================================== */
+
+.auth-container,
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rs-gutter-mobile);
+}
+
+/* Split layout: left graphic + right form */
+.auth-layout {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 100vh;
+}
+
+.auth-left.graphic-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 60px);
+}
+
+.auth-right.form-side {
+    flex: 0 0 min(50%, 480px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 60px);
+}
+
+/* Mobile: hide graphic, show form full-width */
+@media (max-width: 899.98px) {
+    .auth-layout {
+        flex-direction: column;
+    }
+
+    .auth-left.graphic-side {
+        display: none; /* Hide illustration on mobile */
+    }
+
+    .auth-right.form-side {
+        flex: 1;
+        max-width: 100%;
+        width: 100%;
+        min-height: 100vh;
+        padding: clamp(20px, 5vw, 40px);
+    }
+}
+
+/* Auth form box */
+.login-box,
+.glass-pane.login-box {
+    width: 100%;
+    max-width: 420px;
+    padding: clamp(24px, 5vw, 48px) clamp(20px, 4vw, 40px);
+}
+
+@media (max-width: 575.98px) {
+    .login-box,
+    .glass-pane.login-box {
+        padding: 24px 20px;
+        border-radius: 20px;
+    }
+}
+
+/* ==========================================================================
+   25. HERO SECTIONS — RESPONSIVE
+   ========================================================================== */
+
+.hero-section {
+    min-height: clamp(400px, 60vh, 700px);
+    padding: clamp(40px, 8vh, 120px) var(--rs-gutter-mobile);
+}
+
+@media (min-width: 768px) {
+    .hero-section {
+        padding: clamp(60px, 10vh, 140px) var(--rs-gutter-desktop);
+    }
+}
+
+/* Hero text */
+.hero-text h1 {
+    font-size: clamp(2rem, 7vw, 4rem);
+    line-height: 1.1;
+}
+
+.hero-text p {
+    font-size: clamp(1rem, 3vw, 1.25rem);
+}
+
+/* ==========================================================================
+   26. TOAST NOTIFICATIONS — RESPONSIVE
+   ========================================================================== */
+
+.premium-toast-container {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Desktop: top right */
+@media (min-width: 576px) {
+    .premium-toast-container {
+        top: calc(var(--rs-navbar-height-desktop) + 16px);
+        right: 20px;
+        bottom: auto;
+        left: auto;
+    }
+
+    .premium-toast {
+        min-width: 300px;
+        max-width: 400px;
+    }
+}
+
+/* Mobile: bottom, full width */
+@media (max-width: 575.98px) {
+    .premium-toast-container {
+        bottom: calc(var(--rs-bottom-nav-height) + 16px + env(safe-area-inset-bottom));
+        left: 16px;
+        right: 16px;
+        top: auto;
+    }
+
+    .premium-toast {
+        min-width: unset;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   27. FLOATING ACTION BUTTON (FAB) — MOBILE
+   ========================================================================== */
+
+.fab {
+    position: fixed;
+    bottom: calc(var(--rs-bottom-nav-height) + 20px + env(safe-area-inset-bottom));
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fab:hover, .fab:focus {
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* ==========================================================================
+   28. LANDSCAPE MOBILE ADJUSTMENTS
+   ========================================================================== */
+
+@media (max-width: 767.98px) and (orientation: landscape) {
+    .hero-section {
+        min-height: auto;
+        padding: 32px var(--rs-gutter-mobile);
+    }
+
+    .auth-right.form-side {
+        min-height: auto;
+        padding: 20px;
+    }
+
+    .login-box {
+        padding: 20px;
+    }
+
+    /* Bottom nav takes less space in landscape */
+    body.has-bottom-nav .main-content {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+}
+
+/* ==========================================================================
+   29. DARK MODE SUPPORT
+   ========================================================================== */
+
+body.dark-mode {
+    --rs-bg-main: #0f172a;
+    --rs-bg-card: #1e293b;
+    --rs-text-main: #f1f5f9;
+    --rs-text-muted: #94a3b8;
+    --rs-border: rgba(255,255,255,0.08);
+}
+
+body.dark-mode .glass-stat-card,
+body.dark-mode .glassmorphism-card,
+body.dark-mode .navigator-card {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    color: #f1f5f9;
+}
+
+body.dark-mode nav.navbar,
+body.dark-mode .top-navbar {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+body.dark-mode .dropdown-menu {
+    background: rgba(30, 41, 59, 0.98) !important;
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark-mode .dropdown-item {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background: rgba(255,255,255,0.05) !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode .premium-input {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .custom-mobile-nav-inner {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+body.dark-mode .bottom-nav-btn {
+    color: #94a3b8 !important;
+}
+
+/* ==========================================================================
+   30. HIGH CONTRAST MODE SUPPORT
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+    :focus-visible {
+        outline: 4px solid #000;
+        outline-offset: 2px;
+    }
+
+    .btn, button {
+        border: 2px solid currentColor;
+    }
+}
