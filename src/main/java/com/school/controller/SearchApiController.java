@@ -102,7 +102,7 @@ public class SearchApiController {
         List<Map<String, Object>> results = notes.stream()
                 .map(note -> {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("id", note.getId());
+                    map.put("id", note.getEncryptedSlug() != null ? note.getEncryptedSlug() : note.getId());
                     map.put("title", note.getTitle());
                     map.put("moduleName", note.getModuleName());
                     map.put("year", note.getAcademicYear());

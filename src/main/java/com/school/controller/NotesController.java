@@ -386,15 +386,21 @@ public class NotesController {
                                @RequestParam(value = "force", required = false) String force,
                                HttpSession session,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
-        // 1. Try slug as raw ID first (for JS-generated links from past papers)
-        Note note = noteRepository.findById(slug).orElse(null);
+        Note note = null;
+        if (slug.length() == 24 && slug.matches("^[0-9a-fA-F]+$")) {
+            note = noteRepository.findById(slug).orElse(null);
+        }
         
         // 2. If not found, try decrypting as AES slug or old format
         if (note == null) {
-            String id;
+            String id = null;
             if (slug.contains("-")) {
-                id = slug.split("-")[0];
-            } else {
+                String potentialId = slug.split("-")[0];
+                if (potentialId.length() == 24 && potentialId.matches("^[0-9a-fA-F]+$")) {
+                    id = potentialId;
+                }
+            }
+            if (id == null) {
                 id = com.school.util.EncryptionUtil.decrypt(slug);
             }
             if (id != null && !id.equals(slug)) {
@@ -490,15 +496,21 @@ public class NotesController {
     public void viewNotePage(@PathVariable("slug") String slug, 
                                HttpSession session,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
-        // 1. Try slug as raw ID first (for JS-generated links from past papers)
-        Note note = noteRepository.findById(slug).orElse(null);
+        Note note = null;
+        if (slug.length() == 24 && slug.matches("^[0-9a-fA-F]+$")) {
+            note = noteRepository.findById(slug).orElse(null);
+        }
         
         // 2. If not found, try decrypting as AES slug
         if (note == null) {
-            String id;
+            String id = null;
             if (slug.contains("-")) {
-                id = slug.split("-")[0];
-            } else {
+                String potentialId = slug.split("-")[0];
+                if (potentialId.length() == 24 && potentialId.matches("^[0-9a-fA-F]+$")) {
+                    id = potentialId;
+                }
+            }
+            if (id == null) {
                 id = com.school.util.EncryptionUtil.decrypt(slug);
             }
             if (id != null && !id.equals(slug)) {
@@ -559,15 +571,21 @@ public class NotesController {
 
     @GetMapping("/stream/{slug}")
     public Object streamNote(@PathVariable("slug") String slug, HttpSession session) {
-        // 1. Try slug as raw ID first
-        Note note = noteRepository.findById(slug).orElse(null);
+        Note note = null;
+        if (slug.length() == 24 && slug.matches("^[0-9a-fA-F]+$")) {
+            note = noteRepository.findById(slug).orElse(null);
+        }
         
         // 2. If not found, try decrypting
         if (note == null) {
-            String id;
+            String id = null;
             if (slug.contains("-")) {
-                id = slug.split("-")[0];
-            } else {
+                String potentialId = slug.split("-")[0];
+                if (potentialId.length() == 24 && potentialId.matches("^[0-9a-fA-F]+$")) {
+                    id = potentialId;
+                }
+            }
+            if (id == null) {
                 id = com.school.util.EncryptionUtil.decrypt(slug);
             }
             if (id != null && !id.equals(slug)) {
