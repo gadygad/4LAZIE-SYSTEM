@@ -269,9 +269,11 @@ public class NotesController {
         if (level == null) level = (loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
         if (semester == null) semester = (loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
         
-        if ("DIPLOMA".equals(program) || "DIP_CSE".equals(program)) {
+        if ("DIPLOMA".equals(program)) {
             if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
                 program = loggedInUser.getCourseProgram();
+            } else {
+                program = "DIP_CSE";
             }
         }
 

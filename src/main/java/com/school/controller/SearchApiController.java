@@ -5,6 +5,8 @@ import com.school.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.cache.annotation.Cacheable;
+import com.school.model.User;
+import com.school.util.AuthUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,13 @@ public class SearchApiController {
 
     @Autowired
     private NoteRepository noteRepository;
+
+    @Autowired
+    private AuthUtil authUtil;
+    
+    private User getLoggedInUser() {
+        return authUtil.getLoggedInUser();
+    }
     
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -35,8 +44,9 @@ public class SearchApiController {
     public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query) {
         org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(query.trim(), org.springframework.data.domain.PageRequest.of(0, 50));
         List<Note> allMatches = matchesPage.getContent();
+        User loggedInUser = getLoggedInUser();
         List<Note> topResults = allMatches.stream()
-                .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+                .filter(n -> n != null && (loggedInUser != null || Boolean.TRUE.equals(n.getIsPublic())))
                 .limit(5)
                 .collect(Collectors.toList());
 
@@ -68,8 +78,12 @@ public class SearchApiController {
 
         Query query = new Query();
         query.addCriteria(Criteria.where("category").regex("^" + category + "$", "i"));
-        // Assuming we only want public notes for API filtering
-        query.addCriteria(Criteria.where("isPublic").is(true));
+        
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) {
+            // Only public notes for guests
+            query.addCriteria(Criteria.where("isPublic").is(true));
+        }
         
         if (program != null && !program.isEmpty()) {
             query.addCriteria(Criteria.where("programType").regex(program, "i"));
