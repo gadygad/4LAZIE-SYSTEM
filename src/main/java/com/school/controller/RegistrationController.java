@@ -66,7 +66,7 @@ public class RegistrationController {
             model.addAttribute("institutions", java.util.Collections.emptyList());
             model.addAttribute("courses", java.util.Collections.emptyList());
         }
-        return "register";
+        return "auth/register";
     }
 
     @PostMapping("/register")
@@ -82,14 +82,14 @@ public class RegistrationController {
             }
             model.addAttribute("institutions", institutionRepository.findAll());
             model.addAttribute("courses", courseRepository.findAll());
-            return "register";
+            return "auth/register";
         }
         
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             model.addAttribute("error", "Sorry, this email (" + user.getEmail() + ") is already registered. Please log in or use another email.");
             model.addAttribute("institutions", institutionRepository.findAll());
             model.addAttribute("courses", courseRepository.findAll());
-            return "register";
+            return "auth/register";
         }
         
         HttpSession session = request.getSession(true);
@@ -116,7 +116,7 @@ public class RegistrationController {
         } catch (Exception e) {
             log.error("Registration failed", e);
             model.addAttribute("error", "Registration failed: " + e.getMessage());
-            return "register";
+            return "auth/register";
         }
     }
 
@@ -143,7 +143,7 @@ public class RegistrationController {
                             model.addAttribute("institutions", institutionRepository.findAll());
                             model.addAttribute("courses", courseRepository.findAll());
                         } catch (Exception e) {}
-                        return "register";
+                        return "auth/register";
                     }
                     user = new User();
                     user.setEmail(email);
@@ -177,7 +177,7 @@ public class RegistrationController {
         } catch (Exception e) {
             log.error("Google Sign-In failed", e);
             model.addAttribute("error", "Google Sign-In failed: " + e.getMessage());
-            return "register";
+            return "auth/register";
         }
     }
 
@@ -188,7 +188,7 @@ public class RegistrationController {
             User user = userOpt.get();
             if (user.getTokenExpiryDate() != null && user.getTokenExpiryDate().isBefore(java.time.LocalDateTime.now())) {
                 model.addAttribute("error", "Verification link has expired. Please register again or request a new link.");
-                return "login";
+                return "auth/login";
             }
             user.setIsVerified(true);
             user.setVerificationToken(null);
@@ -197,6 +197,6 @@ public class RegistrationController {
             return "redirect:/login?verified=true";
         }
         model.addAttribute("error", "Invalid verification token.");
-        return "login";
+        return "auth/login";
     }
 }

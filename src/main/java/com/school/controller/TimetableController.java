@@ -41,7 +41,7 @@ public class TimetableController {
         // Validate params
         if (program == null || program.isEmpty() || level == null) {
             model.addAttribute("errorMsg", "Please select your program and level to view the timetable.");
-            return "view_timetable";
+            return "timetable/view_timetable";
         }
 
         // Default semester to 1 if not provided
@@ -107,7 +107,7 @@ public class TimetableController {
         model.addAttribute("semester", semester);
         model.addAttribute("selectedYear", selectedYear);
 
-        return "view_timetable";
+        return "timetable/view_timetable";
     }
 
     @GetMapping("/timetable/archive")
@@ -132,7 +132,7 @@ public class TimetableController {
 
         model.addAttribute("pastTimetables", sortedPastTimetables);
         model.addAttribute("currentYear", currentYear);
-        return "timetable_archive";
+        return "timetable/timetable_archive";
     }
 
     @GetMapping("/timetable/seed")

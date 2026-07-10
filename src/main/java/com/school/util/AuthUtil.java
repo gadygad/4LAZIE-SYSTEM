@@ -32,6 +32,28 @@ public class AuthUtil {
             return null;
         }
 
-        return userRepository.findByEmail(email).orElse(null);
+        User user = null;
+        try {
+            user = userRepository.findByEmail(email).orElse(null);
+        } catch (Exception e) {
+            // Handle corrupted user data (e.g., invalid Role enum in database)
+            org.slf4j.LoggerFactory.getLogger(AuthUtil.class)
+                .warn("Failed to load user by email '{}': {}", email, e.getMessage());
+            return null;
+        }
+        if (user != null && user.getRole() == com.school.model.Role.ADMIN) {
+            // Auto-promote to SUPER_ADMIN if no SUPER_ADMIN exists in the system
+            try {
+                long superAdminCount = userRepository.countByRole(com.school.model.Role.SUPER_ADMIN);
+                if (superAdminCount == 0) {
+                    user.setRole(com.school.model.Role.SUPER_ADMIN);
+                    userRepository.save(user);
+                }
+            } catch (Exception e) {
+                org.slf4j.LoggerFactory.getLogger(AuthUtil.class)
+                    .warn("Failed to count SUPER_ADMIN users: {}", e.getMessage());
+            }
+        }
+        return user;
     }
 }

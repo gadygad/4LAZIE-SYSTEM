@@ -47,6 +47,13 @@ public class SearchApiController {
         User loggedInUser = getLoggedInUser();
         List<Note> topResults = allMatches.stream()
                 .filter(n -> n != null && (loggedInUser != null || Boolean.TRUE.equals(n.getIsPublic())))
+                .filter(n -> {
+                    if (loggedInUser != null && loggedInUser.getRole() != com.school.model.Role.ADMIN && loggedInUser.getRole() != com.school.model.Role.SUPER_ADMIN) {
+                        String userProg = loggedInUser.getCourseProgram();
+                        return userProg != null && (userProg.equalsIgnoreCase(n.getProgramType()) || Boolean.TRUE.equals(n.getIsGeneral()));
+                    }
+                    return true;
+                })
                 .limit(5)
                 .collect(Collectors.toList());
 
@@ -76,10 +83,14 @@ public class SearchApiController {
             
         logger.info("API Called with: category={}, program={}, semester={}, level={}", category, program, semester, level);
 
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser != null && loggedInUser.getRole() != com.school.model.Role.ADMIN && loggedInUser.getRole() != com.school.model.Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+        }
+
         Query query = new Query();
         query.addCriteria(Criteria.where("category").regex("^" + category + "$", "i"));
         
-        User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) {
             // Only public notes for guests
             query.addCriteria(Criteria.where("isPublic").is(true));

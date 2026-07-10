@@ -56,9 +56,17 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
 
                         // Save Activity Log
                         String ipAddress = request.getHeader("X-Forwarded-For");
-                        if (ipAddress == null) {
+                        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
                             ipAddress = request.getRemoteAddr();
+                        } else {
+                            // If multiple IPs are present in X-Forwarded-For, take the first one
+                            if (ipAddress.contains(",")) {
+                                ipAddress = ipAddress.split(",")[0].trim();
+                            }
                         }
+                        
+                        String rawUserAgent = request.getHeader("User-Agent");
+                        String deviceInfo = parseUserAgent(rawUserAgent);
                         
                         ActivityLog log = new ActivityLog(
                             user.getId(),
@@ -66,7 +74,8 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
                             user.getRole() != null ? user.getRole().name() : "STUDENT",
                             action,
                             uri,
-                            ipAddress
+                            ipAddress,
+                            deviceInfo
                         );
                         activityLogRepository.save(log);
                     }
@@ -74,6 +83,27 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
             }
         }
         return true;
+    }
+
+    private String parseUserAgent(String userAgent) {
+        if (userAgent == null || userAgent.isEmpty()) return "Unknown Device";
+        
+        String os = "Unknown OS";
+        String browser = "Unknown Browser";
+        
+        if (userAgent.contains("Windows")) os = "Windows";
+        else if (userAgent.contains("Mac OS X")) os = "Mac OS";
+        else if (userAgent.contains("Linux")) os = "Linux";
+        else if (userAgent.contains("Android")) os = "Android";
+        else if (userAgent.contains("iPhone") || userAgent.contains("iPad")) os = "iOS";
+        
+        if (userAgent.contains("Edg")) browser = "Edge";
+        else if (userAgent.contains("Chrome")) browser = "Chrome";
+        else if (userAgent.contains("Firefox")) browser = "Firefox";
+        else if (userAgent.contains("Safari") && !userAgent.contains("Chrome")) browser = "Safari";
+        else if (userAgent.contains("Opera") || userAgent.contains("OPR")) browser = "Opera";
+        
+        return os + " / " + browser;
     }
 
     private String determineAction(String method, String uri) {

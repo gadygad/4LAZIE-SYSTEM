@@ -119,14 +119,14 @@ public class NotesController {
         model.addAttribute("notes", notes);
         model.addAttribute("selectedLevel", level);
         model.addAttribute("selectedProgram", program);
-        return "index";
+        return "public/index";
     }
 
     @GetMapping("/semesters")
     public String selectSemester(@RequestParam("level") Integer level, HttpSession session, Model model) {
         if (getLoggedInUser() == null) return "redirect:/login";
         model.addAttribute("selectedLevel", level);
-        return "semesters";
+        return "timetable/semesters";
     }
 
     @GetMapping("/notes")
@@ -139,11 +139,15 @@ public class NotesController {
                               HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
         
-        // If parameters are missing, fallback to logged-in user profile, otherwise default to DIP_CSE/4/1
-        if (program == null || program.isEmpty()) {
+        // Enforce course boundaries for students
+        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+        } else if (program == null || program.isEmpty()) {
+            // Fallback for admins/guests when program is empty
             program = (loggedInUser != null && loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) 
                       ? loggedInUser.getCourseProgram() : "DIP_CSE";
         }
+
         if (level == null) {
             level = (loggedInUser != null && loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
         }
@@ -196,12 +200,31 @@ public class NotesController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", notesPage.getTotalPages());
         model.addAttribute("selectedProgram", program);
-        model.addAttribute("popularNotes", noteRepository.findTop3ByOrderByDownloadCountDesc());
+
+        List<Note> popularNotes;
+        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            popularNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 3, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount")));
+        } else {
+            popularNotes = noteRepository.findTop3ByOrderByDownloadCountDesc();
+        }
+        model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("courses", getSimpleCourses());
-        return "notes";
+        return "notes/notes";
     }
 
     private List<Map<String, String>> getSimpleCourses() {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            String userProg = loggedInUser.getCourseProgram();
+            return courseRepository.findAll().stream()
+                .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(userProg))
+                .map(c -> {
+                    Map<String, String> map = new LinkedHashMap<>();
+                    map.put("programType", c.getProgramType());
+                    map.put("name", c.getName());
+                    return map;
+                }).collect(Collectors.toList());
+        }
         return courseRepository.findAll().stream()
             .map(c -> {
                 Map<String, String> map = new LinkedHashMap<>();
@@ -217,7 +240,7 @@ public class NotesController {
         if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
-        return "cat1_past_papers";
+        return "notes/cat1_past_papers";
     }
 
     @GetMapping("/cat2")
@@ -226,7 +249,7 @@ public class NotesController {
         if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
-        return "cat2_past_papers";
+        return "notes/cat2_past_papers";
     }
 
     @GetMapping("/assignments")
@@ -235,7 +258,7 @@ public class NotesController {
         if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
-        return "assignments_past_papers";
+        return "notes/assignments_past_papers";
     }
 
     @GetMapping("/ue_exams")
@@ -244,7 +267,7 @@ public class NotesController {
         if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
-        return "ue_past_papers";
+        return "notes/ue_past_papers";
     }
 
     @GetMapping("/projects")
@@ -253,7 +276,7 @@ public class NotesController {
         if (loggedInUser == null) return "redirect:/login";
         model.addAttribute("courses", getSimpleCourses());
         model.addAttribute("user", loggedInUser);
-        return "projects_past_papers";
+        return "notes/projects_past_papers";
     }
 
     @GetMapping("/dashboard")
@@ -266,16 +289,19 @@ public class NotesController {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
 
-        if (level == null) level = (loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
-        if (semester == null) semester = (loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
-        
-        if ("DIPLOMA".equals(program)) {
+        // Enforce course boundaries for students
+        if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+        } else if ("DIPLOMA".equals(program)) {
             if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
                 program = loggedInUser.getCourseProgram();
             } else {
                 program = "DIP_CSE";
             }
         }
+
+        if (level == null) level = (loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
+        if (semester == null) semester = (loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
 
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
@@ -304,14 +330,22 @@ public class NotesController {
         model.addAttribute("selectedProgram", program);
         model.addAttribute("user", loggedInUser);
 
+        List<Note> popularNotes;
+        List<Note> recentNotes;
+        if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            popularNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount")));
+            recentNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "uploadDate")));
+        } else {
+            popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
+            recentNotes = noteRepository.findTop5ByOrderByUploadDateDesc();
+        }
 
-
-        model.addAttribute("popularNotes", noteRepository.findTop5ByOrderByDownloadCountDesc());
-        model.addAttribute("recentNotes", noteRepository.findTop5ByOrderByUploadDateDesc());
+        model.addAttribute("popularNotes", popularNotes);
+        model.addAttribute("recentNotes", recentNotes);
         model.addAttribute("totalNotes", noteRepository.count());
         model.addAttribute("totalDownloads", noteRepository.getTotalDownloadCount());
 
-        return "dashboard";
+        return "user/dashboard";
     }
 
 
@@ -321,7 +355,7 @@ public class NotesController {
         if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
         model.addAttribute("user", loggedInUser);
         model.addAttribute("courses", courseRepository.findAll());
-        return "upload";
+        return "notes/upload";
     }
 
     @PostMapping("/upload")
@@ -416,6 +450,15 @@ public class NotesController {
         }
 
         User loggedInUser = getLoggedInUser();
+        
+        // Enforce course boundaries for students
+        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            boolean isCourseMatch = note.getProgramType() != null && note.getProgramType().equalsIgnoreCase(loggedInUser.getCourseProgram());
+            if (!isCourseMatch && !Boolean.TRUE.equals(note.getIsGeneral())) {
+                response.sendError(403, "Access Denied: You can only access materials related to your course (" + loggedInUser.getCourseProgram() + ")");
+                return;
+            }
+        }
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
@@ -526,6 +569,15 @@ public class NotesController {
         }
 
         User loggedInUser = getLoggedInUser();
+        
+        // Enforce course boundaries for students
+        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            boolean isCourseMatch = note.getProgramType() != null && note.getProgramType().equalsIgnoreCase(loggedInUser.getCourseProgram());
+            if (!isCourseMatch && !Boolean.TRUE.equals(note.getIsGeneral())) {
+                response.sendError(403, "Access Denied: You can only view materials related to your course (" + loggedInUser.getCourseProgram() + ")");
+                return;
+            }
+        }
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
@@ -726,7 +778,7 @@ public class NotesController {
         model.addAttribute("notesPage", notesPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", notesPage.getTotalPages());
-        return "guest_notes";
+        return "notes/guest_notes";
     }
 
     @GetMapping("/upgrade")
@@ -735,7 +787,7 @@ public class NotesController {
         if (loggedInUser == null) return "redirect:/login";
 
         model.addAttribute("user", loggedInUser);
-        return "upgrade";
+        return "user/upgrade";
     }
 
 }

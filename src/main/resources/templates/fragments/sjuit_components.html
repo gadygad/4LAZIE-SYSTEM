@@ -64,9 +64,9 @@
                     <!-- St. Joseph Programs (Collapsible) -->
                     <div class="collapse show" id="stJosephPrograms" style="padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); margin-left: 12px; margin-bottom: 10px;">
                     <!-- DIPLOMA PROGRAMMES -->
-                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Diploma Programmes</div>
+                    <div th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or (session.user.courseProgram != null and session.user.courseProgram.startsWith('DIP_'))}" style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Diploma Programmes</div>
                     
-                    <div class="sidebar-hover-item" th:classappend="${selectedProgram == 'DIP_IT' ? 'active' : ''}">
+                    <div class="sidebar-hover-item" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_IT'}" th:classappend="${selectedProgram == 'DIP_IT' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_1">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DIPLOMA IN IT</span>
@@ -84,7 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_CSE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_CSE'}" th:classappend="${selectedProgram == 'DIP_CSE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_2">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DIPLOMA IN CSE</span>
@@ -102,7 +102,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_CE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_CE'}" th:classappend="${selectedProgram == 'DIP_CE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_3">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DIPLOMA IN CE</span>
@@ -120,7 +120,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_ME' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_ME'}" th:classappend="${selectedProgram == 'DIP_ME' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_4">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-gear-wide-connected me-2" th:style="${session.user != null} ? 'color: #34d399;' : 'color: #10b981;'"></i> DIPLOMA IN ME</span>
@@ -138,7 +138,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_EEE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_EEE'}" th:classappend="${selectedProgram == 'DIP_EEE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_5">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-lightning me-2" style="color: #fcd34d;"></i> DIPLOMA IN EEE</span>
@@ -156,7 +156,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_MTE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_MTE'}" th:classappend="${selectedProgram == 'DIP_MTE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_6">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-robot me-2" style="color: #94a3b8;"></i> DIPLOMA IN MTE</span>
@@ -174,7 +174,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DIP_ECE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DIP_ECE'}" th:classappend="${selectedProgram == 'DIP_ECE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_7">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-broadcast me-2" style="color: #f43f5e;"></i> DIPLOMA IN ECE</span>
@@ -193,9 +193,9 @@
                     </div>
 
                                         <!-- DEGREE (ENGINEERING) -->
-                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
+                    <div th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or (session.user.courseProgram != null and session.user.courseProgram.startsWith('DEG_'))}" style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Engineering)</div>
                     
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_IT' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_IT'}" th:classappend="${selectedProgram == 'DEG_IT' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_8">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-laptop me-2" style="color: #60a5fa;"></i> DEGREE IN IT</span>
@@ -211,7 +211,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CS' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_CS'}" th:classappend="${selectedProgram == 'DEG_CS' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_deg_cs">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-display me-2" style="color: #8b5cf6;"></i> DEGREE IN CS</span>
@@ -227,7 +227,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CSE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_CSE'}" th:classappend="${selectedProgram == 'DEG_CSE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_9">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-motherboard me-2" style="color: #a78bfa;"></i> DEGREE IN CSE</span>
@@ -243,7 +243,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_CE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_CE'}" th:classappend="${selectedProgram == 'DEG_CE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_10">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-building me-2" style="color: #fb923c;"></i> DEGREE IN CE</span>
@@ -259,7 +259,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_ME' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_ME'}" th:classappend="${selectedProgram == 'DEG_ME' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_11">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-gear-wide-connected me-2" th:style="${session.user != null} ? 'color: #34d399;' : 'color: #10b981;'"></i> DEGREE IN ME</span>
@@ -275,7 +275,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_EEE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_EEE'}" th:classappend="${selectedProgram == 'DEG_EEE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_12">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-lightning me-2" style="color: #fcd34d;"></i> DEGREE IN EEE</span>
@@ -291,7 +291,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_MTE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_MTE'}" th:classappend="${selectedProgram == 'DEG_MTE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_13">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-robot me-2" style="color: #94a3b8;"></i> DEGREE IN MTE</span>
@@ -307,7 +307,7 @@
                         </div>
                     </div>
 
-                    <div class="sidebar-hover-item mt-2" th:classappend="${selectedProgram == 'DEG_ECE' ? 'active' : ''}">
+                    <div class="sidebar-hover-item mt-2" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEG_ECE'}" th:classappend="${selectedProgram == 'DEG_ECE' ? 'active' : ''}">
                         <div class="sidebar-hover-btn collapsed" data-bs-toggle="collapse" data-bs-target="#flyout_menu_14">
                             <div class="d-flex flex-column">
                                 <span><i class="bi bi-broadcast me-2" style="color: #f43f5e;"></i> DEGREE IN ECE</span>
@@ -324,9 +324,9 @@
                     </div>
 
                     <!-- DEGREE (EDUCATION) -->
-                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Education)</div>
+                    <div th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEGREE_EDU'}" style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Degree (Education)</div>
                     
-                    <div class="sidebar-hover-item" th:each="year : ${#numbers.sequence(1, 3)}">
+                    <div class="sidebar-hover-item" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == 'DEGREE_EDU'}" th:each="year : ${#numbers.sequence(1, 3)}">
                         <div class="sidebar-hover-btn" th:style="${selectedProgram == 'DEGREE_EDU' and selectedLevel == year ? 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);' : ''}">
                             <span><i class="bi bi-journal-text me-2" style="color: #4ade80;"></i> YEAR <span th:text="${year}"></span></span>
                             <i class="bi bi-chevron-right chevron" style="font-size: 0.7rem;"></i>
@@ -339,7 +339,7 @@
                 </div>
                 
                 <!-- OTHER UNIVERSITIES TOGGLE -->
-                <a href="#otherUniversities" data-bs-toggle="collapse" class="collapsed premium-sidebar-badge text-decoration-none" style="margin-top: 15px;">
+                <a th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN'}" href="#otherUniversities" data-bs-toggle="collapse" class="collapsed premium-sidebar-badge text-decoration-none" style="margin-top: 15px;">
                     <div class="d-flex align-items-center flex-grow-1" style="gap: 12px; min-width: 0;">
                         <div class="icon-container flex-shrink-0" style="background: linear-gradient(135deg, #10b981, #059669);">
                             <i class="bi bi-globe"></i>
@@ -349,7 +349,7 @@
                     <i class="bi bi-chevron-down flex-shrink-0" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; transition: transform 0.3s;"></i>
                 </a>
 
-                <div class="collapse" id="otherUniversities" style="padding-left: 10px; border-left: 1px solid rgba(16, 185, 129,0.2); margin-left: 12px; margin-bottom: 10px;">
+                <div th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN'}" class="collapse" id="otherUniversities" style="padding-left: 10px; border-left: 1px solid rgba(16, 185, 129,0.2); margin-left: 12px; margin-bottom: 10px;">
                     <div style="font-size:0.7rem; color:rgba(16, 185, 129,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Select University</div>
 
                     <div class="sidebar-hover-item" onclick="this.classList.toggle('active')">

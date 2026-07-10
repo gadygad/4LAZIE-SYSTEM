@@ -1228,12 +1228,9 @@ h1, h2, h3, h4, h5, h6, .brand-font {
         justify-content: flex-start !important;
     }
     
-    /* Push search and actions to next row cleanly if flex-wrap occurs */
-    .search-container {
-        order: 3;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 10px 0 !important;
+    /* Ensure navbar does not wrap items to a new row on tablet/desktop */
+    .navbar .container, .navbar-custom .container {
+        flex-wrap: nowrap !important;
     }
 }
 

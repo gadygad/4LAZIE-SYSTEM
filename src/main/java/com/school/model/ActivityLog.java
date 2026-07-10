@@ -21,6 +21,7 @@ public class ActivityLog {
     private String details;
     
     private String ipAddress;
+    private String deviceInfo;
     
     @Indexed
     private LocalDateTime timestamp;
@@ -29,13 +30,14 @@ public class ActivityLog {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ActivityLog(String userId, String userName, String userRole, String action, String details, String ipAddress) {
+    public ActivityLog(String userId, String userName, String userRole, String action, String details, String ipAddress, String deviceInfo) {
         this.userId = userId;
         this.userName = userName;
         this.userRole = userRole;
         this.action = action;
         this.details = details;
         this.ipAddress = ipAddress;
+        this.deviceInfo = deviceInfo;
         this.timestamp = LocalDateTime.now();
     }
 
@@ -60,6 +62,9 @@ public class ActivityLog {
     
     public String getIpAddress() { return ipAddress; }
     public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+    
+    public String getDeviceInfo() { return deviceInfo; }
+    public void setDeviceInfo(String deviceInfo) { this.deviceInfo = deviceInfo; }
     
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }

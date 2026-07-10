@@ -39,7 +39,7 @@ public class PasswordResetController {
 
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {
-        return "forgot_password";
+        return "auth/forgot_password";
     }
 
     @PostMapping("/forgot-password")
@@ -73,7 +73,7 @@ public class PasswordResetController {
     @GetMapping("/verify-otp")
     public String showVerifyOtpForm(@RequestParam("email") String email, Model model) {
         model.addAttribute("email", email);
-        return "verify_otp";
+        return "auth/verify_otp";
     }
     
     @PostMapping("/verify-otp")
@@ -94,11 +94,11 @@ public class PasswordResetController {
         
         if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
             model.addAttribute("error", "The OTP session is invalid or has expired. Please request a new one.");
-            return "forgot_password";
+            return "auth/forgot_password";
         }
         
         model.addAttribute("token", token);
-        return "reset_password";
+        return "auth/reset_password";
     }
 
     @PostMapping("/reset-password")

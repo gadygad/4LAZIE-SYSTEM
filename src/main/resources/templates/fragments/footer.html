@@ -148,6 +148,16 @@
                         });
                     }
                 });
+
+                // GLOBAL TOAST AUTO-DISMISS (5 seconds)
+                document.querySelectorAll('.premium-toast').forEach(function(toast) {
+                    setTimeout(function() {
+                        if (toast) {
+                            toast.classList.add('fade-out');
+                            setTimeout(function() { if (toast.parentElement) toast.remove(); }, 500);
+                        }
+                    }, 5000);
+                });
             });
         </script>
     </footer>

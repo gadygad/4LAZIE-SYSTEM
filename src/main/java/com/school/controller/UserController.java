@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/explore")
     public String getExplorePage() {
-        return "explore";
+        return "notes/explore";
     }
 
     @GetMapping("/notifications")
@@ -39,7 +39,7 @@ public class UserController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        return "notifications";
+        return "user/notifications";
     }
 
     @GetMapping("/profile")
@@ -65,7 +65,7 @@ public class UserController {
         
         model.addAttribute("user", user);
         model.addAttribute("editMode", edit);
-        return "profile";
+        return "user/profile";
     }
 
     @PostMapping("/profile")
@@ -84,7 +84,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
                 model.addAttribute("error", "Email is already in use by another account.");
                 model.addAttribute("user", sessionUser); // Revert form data
                 model.addAttribute("editMode", true);
-                return "profile";
+                return "user/profile";
             }
         }
         
@@ -100,7 +100,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
                 model.addAttribute("error", "Failed to upload profile picture: " + e.getMessage());
                 model.addAttribute("user", sessionUser);
                 model.addAttribute("editMode", true);
-                return "profile";
+                return "user/profile";
             }
         } else {
             // Preserve existing picture if no new file provided (Do not overwrite)
@@ -132,7 +132,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         model.addAttribute("user", sessionUser);
         model.addAttribute("success", "Profile updated successfully!");
         model.addAttribute("editMode", false);
-        return "profile";
+        return "user/profile";
     }
 
     @GetMapping("/profile/saved")
@@ -152,7 +152,7 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         model.addAttribute("notes", notes);
         model.addAttribute("pageTitle", "Saved Items");
         model.addAttribute("pageIcon", "bi-bookmark-fill");
-        return "my_notes";
+        return "user/my_notes";
     }
 
     @GetMapping("/profile/downloads")
@@ -172,6 +172,6 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         model.addAttribute("notes", notes);
         model.addAttribute("pageTitle", "Download History");
         model.addAttribute("pageIcon", "bi-cloud-arrow-down-fill");
-        return "my_notes";
+        return "user/my_notes";
     }
 }

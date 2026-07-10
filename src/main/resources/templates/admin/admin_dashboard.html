@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - 4LAZIE Super Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Premium Global CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/global-premium.css}">
+    <link rel="stylesheet" href="/css/mobile-spacing-standards.css">
+
+    <style>
+        body {
+            background: #f8fafc; /* Crisp white/slate background */
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Ambient Mesh Gradient Background */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08), transparent 30%),
+                        radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 30%);
+            background-color: #f8fafc;
+            overflow: hidden; pointer-events: none;
+        }
+        .ambient-orb {
+            position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.6;
+            animation: orbFloat 25s infinite alternate ease-in-out;
+        }
+        .ambient-orb-1 { width: 700px; height: 700px; background: rgba(16, 185, 129, 0.15); top: -200px; left: -150px; }
+        .ambient-orb-2 { width: 600px; height: 600px; background: rgba(16, 185, 129, 0.1); bottom: -100px; right: -150px; animation-delay: -7s; }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(30px, 50px) scale(1.05) rotate(180deg); }
+            100% { transform: translate(-40px, -60px) scale(1.1) rotate(360deg); }
+        }
+
+        /* Ultra Premium Light Glassmorphism Cards */
+        .premium-stat-card {
+            background: rgba(255, 255, 255, 0.75); /* Translucent white */
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.03), inset 0 1px 0 rgba(255, 255, 255, 1);
+            padding: 12px 16px;
+            text-align: left;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* Very smooth transition */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .premium-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 100%;
+            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(16, 185, 129, 0.05), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1; pointer-events: none;
+        }
+        .premium-stat-card:hover::before { opacity: 1; }
+
+        .premium-stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.1), 0 0 20px rgba(16, 185, 129, 0.03);
+            border-color: rgba(16, 185, 129, 0.25);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .stat-icon-wrapper {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .premium-stat-card:hover .stat-icon-wrapper {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.12) !important;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #1e293b; /* Dark text for light mode */
+            line-height: 1;
+            margin-bottom: 2px;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            letter-spacing: 0.3px;
+            margin-bottom: 0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Lists Cards */
+        .premium-list-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
+            padding: 20px;
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+        }
+
+        .premium-list-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Ultra Banner - Light Green */
+        .premium-banner {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 18px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15);
+            padding: 20px 28px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .banner-glow {
+            position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.3); filter: blur(90px);
+            top: -50px; left: -50px; opacity: 0.7; pointer-events: none;
+        }
+
+        .list-item-row {
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+        .list-item-row:hover {
+            background: rgba(16, 185, 129, 0.04); /* Soft green hover bg */
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            transform: translateX(6px) scale(1.005);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.05);
+        }
+
+        /* Chart Containers */
+        .chart-container-wrapper {
+            position: relative;
+            height: 260px;
+            width: 100%;
+        }
+
+        /* Custom scrollbar for tables */
+        .table-responsive::-webkit-scrollbar { height: 6px; }
+        .table-responsive::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 10px; }
+        .table-responsive::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.4); }
+
+        th { color: #64748b !important; border-bottom-color: rgba(0,0,0,0.05) !important; }
+        td { color: #334155 !important; border-color: transparent !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+    </div>
+
+    <!-- Premium Header Navbar -->
+    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border-bottom: 1px solid rgba(16, 185, 129, 0.15); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.05); z-index: 1040;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
+                <div class="d-flex align-items-center justify-content-center me-2" style="width: 38px; height: 38px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4), inset 0 2px 4px rgba(255,255,255,0.2);">
+                    <i class="bi bi-shield-check text-white" style="font-size: 1.2rem;"></i>
+                </div>
+                <div class="d-flex align-items-center" style="transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.02) translateY(-1px)';" onmouseout="this.style.transform='none';">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; color: #1e293b; letter-spacing: -1px; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.05);">4LAZIE</span>
+                    <div class="ms-2 position-relative d-inline-flex align-items-center">
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 4px 10px rgba(16, 185, 129, 0.3)); position: relative; z-index: 2; padding-right: 2px;">SUPER ADMIN</span>
+                    </div>
+                </div>
+            </a>
+            
+            <div th:replace="~{fragments/top_actions :: actions}"></div>
+        </div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.8) 50%, transparent 100%); box-shadow: 0 -2px 15px rgba(16, 185, 129, 0.4);"></div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row g-4 position-relative">
+            <!-- Sidebar Toggle Button -->
+            <div class="d-flex justify-content-end w-100 position-absolute" style="top: -20px; right: 10px; z-index: 5;">
+                <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-4 py-2 shadow" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" style="background: white; color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(16,185,129,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';">
+                    <i class="bi bi-grid-fill me-2"></i> Admin Menu
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-12 mt-4">
+                <!-- Welcome Banner -->
+                <div class="premium-banner mb-4">
+                    <div class="banner-glow"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <h2 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; letter-spacing: -0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #ffffff;">System Analytics Overview</h2>
+                        <p class="mb-0" style="opacity: 0.9; max-width: 600px; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.3px; color: #f8fafc;">Here's what's happening across the 4LAZIE community today. Monitor growth and activity.</p>
+                    </div>
+                    <div class="d-none d-md-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(16,185,129,0.2), inset 0 1px 3px rgba(255,255,255,0.5); position: relative; z-index: 1; transform: rotate(5deg); transition: all 0.5s;" onmouseover="this.style.transform='rotate(0deg) scale(1.1)';" onmouseout="this.style.transform='rotate(5deg) scale(1)';">
+                        <i class="bi bi-bar-chart-fill text-white" style="font-size: 1.3rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="row g-4 mb-5">
+                    <!-- Total Users -->
+                    <div class="col-md-6 col-xl-3">
+                        <div class="premium-stat-card">
+                            <div class="stat-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <p class="stat-label">Total Users</p>
+                                <h3 class="stat-value" th:text="${totalUsers}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Total Notes -->
+                    <div class="col-md-6 col-xl-3">
+                        <div class="premium-stat-card">
+                            <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                <i class="bi bi-file-earmark-text-fill"></i>
+                            </div>
+                            <div>
+                                <p class="stat-label">Total Notes</p>
+                                <h3 class="stat-value" th:text="${totalNotes}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Total Downloads -->
+                    <div class="col-md-6 col-xl-3">
+                        <div class="premium-stat-card">
+                            <div class="stat-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                <i class="bi bi-cloud-arrow-down-fill"></i>
+                            </div>
+                            <div>
+                                <p class="stat-label">Downloads</p>
+                                <h3 class="stat-value" th:text="${totalDownloads}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Total Views -->
+                    <div class="col-md-6 col-xl-3">
+                        <div class="premium-stat-card">
+                            <div class="stat-icon-wrapper" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                                <i class="bi bi-eye-fill"></i>
+                            </div>
+                            <div>
+                                <p class="stat-label">Total Views</p>
+                                <h3 class="stat-value" th:text="${totalViews}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section (NEW) -->
+                <div class="row g-4 mb-5">
+                    <!-- Engagement Line Chart -->
+                    <div class="col-xl-8">
+                        <div class="premium-list-card">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Platform Engagement</h5>
+                            </div>
+                            <div class="chart-container-wrapper">
+                                <canvas id="engagementChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Distribution Doughnut Chart -->
+                    <div class="col-xl-4">
+                        <div class="premium-list-card">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(139, 92, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                                    <i class="bi bi-pie-chart-fill"></i>
+                                </div>
+                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Content Types</h5>
+                            </div>
+                            <div class="chart-container-wrapper d-flex justify-content-center">
+                                <canvas id="contentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Tables -->
+                <div class="row g-4">
+                    <!-- Recent Users -->
+                    <div class="col-xl-6">
+                        <div class="premium-list-card">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                </div>
+                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Recent Users</h5>
+                            </div>
+                            
+                            <div class="d-flex flex-column gap-1">
+                                <div th:each="u : ${recentUsers}" class="list-item-row d-flex justify-content-between align-items-center" style="border-bottom: 1px solid rgba(0,0,0,0.03);">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1.2rem; border: 1px solid #e2e8f0;">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold d-flex align-items-center" style="color: #1e293b; font-size: 0.95rem;">
+                                                <span th:text="${u.name}">User Name</span>
+                                                <span th:if="${u.isSuspended}" class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-2" style="font-size: 0.65rem; padding: 0.3em 0.6em; letter-spacing: 0.5px;">SUSPENDED</span>
+                                            </div>
+                                            <div class="small" style="color: #64748b; font-size: 0.8rem;" th:text="${u.email}">user@email.com</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="badge rounded-pill" style="background: rgba(241, 245, 249, 0.8); color: #64748b; font-weight: 600; border: 1px solid #e2e8f0; padding: 0.5em 0.8em;" th:text="${#temporals.format(u.dateJoined, 'MMM dd, yyyy')}">Date</div>
+                                    </div>
+                                </div>
+                                <div th:if="${recentUsers.empty}" class="text-center py-4">
+                                    <p class="text-muted">No recent users found.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Popular Notes -->
+                    <div class="col-xl-6">
+                        <div class="premium-list-card">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Most Popular Notes</h5>
+                            </div>
+                            
+                            <div class="d-flex flex-column gap-1">
+                                <div th:each="n : ${popularNotes}" class="list-item-row d-flex justify-content-between align-items-center" style="border-bottom: 1px solid rgba(0,0,0,0.03);">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 44px; height: 44px; border-radius: 14px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.2rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-truncate" style="color: #1e293b; font-size: 0.95rem; max-width: 250px;" th:text="${n.title}">Note Title</div>
+                                            <div class="small" style="color: #64748b; font-size: 0.8rem;" th:text="${n.category}">Category</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.85rem; padding: 0.4em 0.8em;">
+                                            <i class="bi bi-download me-1"></i>[[${n.downloadCount}]]
+                                        </span>
+                                    </div>
+                                </div>
+                                <div th:if="${popularNotes.empty}" class="text-center py-4">
+                                    <p class="text-muted">No popular notes found.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Activity Logs -->
+                <div class="row g-4 mt-2 mb-5">
+                    <div class="col-12">
+                        <div class="premium-list-card">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: #f59e0b; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(245, 158, 11, 0.2);">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Recent System Activity</h5>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-borderless align-middle mb-0">
+                                    <thead style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                        <tr>
+                                            <th class="text-uppercase" style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;">User</th>
+                                            <th class="text-uppercase" style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;">Action</th>
+                                            <th class="text-uppercase" style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;">Details</th>
+                                            <th class="text-uppercase" style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;">Network & Device</th>
+                                            <th class="text-end text-uppercase" style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;">Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="log : ${recentLogs}" class="list-item-row">
+                                            <td class="py-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1rem; border: 1px solid #e2e8f0;">
+                                                        <i class="bi bi-person-fill"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold" style="color: #1e293b; font-size: 0.95rem;" th:text="${log.userName}">Name</div>
+                                                        <div class="small" style="font-size: 0.75rem; color: #10b981; font-weight: 700; letter-spacing: 0.5px;" th:text="${log.userRole}">ROLE</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3">
+                                                <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.2); font-size: 0.75rem; padding: 0.5em 1em; border-radius: 20px; font-weight: 600;" th:text="${log.action}">Action</span>
+                                            </td>
+                                            <td class="py-3" style="font-size: 0.85rem; max-width: 300px; color: #475569;" th:text="${log.details}">Details...</td>
+                                            <td class="py-3">
+                                                <div style="font-family: monospace; font-size: 0.85rem; color: #64748b; font-weight: 600;" th:text="${log.ipAddress}">0.0.0.0</div>
+                                                <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px; font-weight: 500;" th:text="${log.deviceInfo != null ? log.deviceInfo : 'Unknown'}">Windows / Chrome</div>
+                                            </td>
+                                            <td class="py-3 text-end">
+                                                <div th:if="${log.timestamp != null}" style="font-size: 0.85rem; color: #64748b; font-weight: 500;" th:text="${#temporals.format(log.timestamp, 'MMM dd, HH:mm')}">Date</div>
+                                                <div th:unless="${log.timestamp != null}" style="font-size: 0.85rem; color: #64748b; font-weight: 500;">-</div>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(recentLogs)}">
+                                            <td colspan="5" class="text-center py-4 text-muted">No recent activities found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Offcanvas Admin Sidebar -->
+            <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='analytics')}"></div>
+        </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div style="margin-top: 60px;">
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart Defaults for Premium Look
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
+            
+            // 1. Engagement Line Chart
+            const ctxLine = document.getElementById('engagementChart').getContext('2d');
+            
+            // Create Gradient for Line Chart
+            let gradientLine = ctxLine.createLinearGradient(0, 0, 0, 300);
+            gradientLine.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
+            gradientLine.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Active Users',
+                        data: [45, 62, 85, 112, 145, 182, 224],
+                        borderColor: '#10b981',
+                        backgroundColor: gradientLine,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#10b981',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4 // Smooth curves
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 14, weight: 'bold' },
+                            padding: 10,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false },
+                            ticks: { font: { size: 11 } }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+
+            // 2. Content Types Doughnut Chart
+            const ctxDoughnut = document.getElementById('contentChart').getContext('2d');
+            new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Notes', 'Past Papers', 'Timetables'],
+                    datasets: [{
+                        data: [55, 30, 15],
+                        backgroundColor: [
+                            '#10b981', // Green
+                            '#3b82f6', // Blue
+                            '#8b5cf6'  // Purple
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 12, family: "'Inter', sans-serif" }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            bodyFont: { size: 14, weight: 'bold' },
+                            padding: 10,
+                            cornerRadius: 8
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

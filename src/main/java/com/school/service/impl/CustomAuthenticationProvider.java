@@ -38,14 +38,22 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new org.springframework.security.authentication.LockedException("Your account is locked due to too many failed login attempts. Please try again after 15 minutes.");
         }
         
-        List<User> checkUsers = userRepository.findByEmailIgnoreCaseOrNameIgnoreCase(email, email);
-        for(User u : checkUsers) {
+        List<User> users;
+        try {
+            users = userRepository.findByEmailIgnoreCaseOrNameIgnoreCase(email, email);
+        } catch (Exception e) {
+            // Handle corrupted data in database (e.g., invalid Role enum values)
+            // Log the error and throw a user-friendly message
+            org.slf4j.LoggerFactory.getLogger(CustomAuthenticationProvider.class)
+                .error("Database error loading user '{}': {}", email, e.getMessage());
+            throw new BadCredentialsException("A system error occurred. Please contact the administrator.");
+        }
+
+        for(User u : users) {
             if(Boolean.TRUE.equals(u.getIsSuspended())) {
                 throw new org.springframework.security.authentication.LockedException("Your account has been suspended for violating our policies. Please contact support.");
             }
         }
-
-        List<User> users = userRepository.findByEmailIgnoreCaseOrNameIgnoreCase(email, email);
         
         for (User user : users) {
             // Fallback for plain text passwords in the live database before hashing was implemented

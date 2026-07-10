@@ -54,7 +54,7 @@ public class LoginController {
         model.addAttribute("selectedLevel", level);
         model.addAttribute("selectedProgram", program);
 
-        return "login";
+        return "auth/login";
     }
 
 }

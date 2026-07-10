@@ -2,5 +2,6 @@ package com.school.model;
 
 public enum Role {
     STUDENT,
-    ADMIN
+    ADMIN,
+    SUPER_ADMIN
 }

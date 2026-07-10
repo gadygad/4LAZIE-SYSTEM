@@ -60,6 +60,7 @@ public class User {
     private LocalDateTime tokenExpiryDate;
 
     private Boolean isSuspended = false;
+    private Set<String> permissions = new HashSet<>();
 
     // Constructors
     public User() {
@@ -122,4 +123,6 @@ public class User {
     public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) { this.tokenExpiryDate = tokenExpiryDate; }
     public Boolean getIsSuspended() { return isSuspended; }
     public void setIsSuspended(Boolean isSuspended) { this.isSuspended = isSuspended; }
+    public Set<String> getPermissions() { return permissions; }
+    public void setPermissions(Set<String> permissions) { this.permissions = permissions; }
 }

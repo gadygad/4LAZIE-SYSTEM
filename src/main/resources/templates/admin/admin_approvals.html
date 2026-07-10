@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Approvals - 4LAZIE Super Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Premium Global CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/global-premium.css}">
+    <link rel="stylesheet" href="/css/mobile-spacing-standards.css">
+
+    <style>
+        body {
+            background: #f8fafc; /* Fallback */
+            min-height: 100vh;
+        }
+
+        /* Ambient Glow Background */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            overflow: hidden; pointer-events: none;
+        }
+        .ambient-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+            animation: orbFloat 20s infinite alternate ease-in-out;
+        }
+        .ambient-orb-1 { width: 500px; height: 500px; background: rgba(16, 185, 129, 0.2); top: -100px; left: -100px; }
+        .ambient-orb-2 { width: 400px; height: 400px; background: rgba(5, 150, 105, 0.15); bottom: 10%; right: -50px; animation-delay: -5s; }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -50px) scale(1.1); }
+        }
+
+        /* Glassmorphism Table Container */
+        .premium-table-container {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.08);
+            overflow: hidden;
+            padding: 2px;
+        }
+
+        /* Inner White Container for smooth borders */
+        .table-responsive-wrapper {
+            background: #ffffff;
+            border-radius: 22px;
+            overflow: hidden;
+        }
+
+        /* Table Styling */
+        .table { margin-bottom: 0; }
+        .table thead { background: rgba(248, 250, 252, 0.8); border-bottom: 2px solid rgba(16, 185, 129, 0.1); }
+        .table thead th { 
+            color: #64748b; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.5px; 
+            padding: 16px; border: none; text-transform: uppercase;
+        }
+        .table tbody tr { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-bottom: 1px solid #f1f5f9; }
+        .table tbody tr:hover { 
+            background: rgba(16, 185, 129, 0.03); 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.05); 
+            position: relative; z-index: 1;
+        }
+        .table td { padding: 16px; vertical-align: middle; border: none; }
+
+        /* Badges & Buttons */
+        .badge-entity {
+            background: rgba(16, 185, 129, 0.1); color: #10b981;
+            padding: 0.5em 0.8em; border-radius: 8px; font-weight: 600; font-size: 0.75rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .btn-approve {
+            background: linear-gradient(135deg, #10b981, #059669); color: white; border: none;
+            padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-approve:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); color: white; }
+        
+        .btn-reject {
+            background: white; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        .btn-reject:hover { background: #ef4444; color: white; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2); }
+
+        /* Empty State */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .empty-icon-wrap {
+            width: 80px; height: 80px; margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.5), 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+    </div>
+
+    <!-- Premium Header Navbar -->
+    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16, 185, 129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
+                <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129,0.3);">
+                    <i class="bi bi-shield-check text-white" style="font-size: 1.1rem;"></i>
+                </div>
+                <div class="d-flex align-items-center" style="transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.03) translateY(-1px)';" onmouseout="this.style.transform='none';">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; color: #1e293b; letter-spacing: -1px; line-height: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.05);">4LAZIE</span>
+                    <div class="ms-2 position-relative d-inline-flex align-items-center">
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 4px 15px rgba(16, 185, 129,0.4); position: relative; z-index: 2; padding-right: 2px;">SUPER ADMIN</span>
+                    </div>
+                </div>
+            </a>
+            
+            <div th:replace="~{fragments/top_actions :: actions}"></div>
+        </div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(16, 185, 129,0) 0%, rgba(16, 185, 129,0.8) 50%, rgba(16, 185, 129,0) 100%); box-shadow: 0 2px 10px rgba(16, 185, 129,0.5);"></div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        <!-- Toast Notifications -->
+        <div th:if="${success != null or error != null}" class="premium-toast-container">
+            <div th:if="${success}" class="premium-toast" id="toastSuccess">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="premium-toast error" id="toastError">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span th:text="${error}"></span>
+            </div>
+        </div>
+
+        <div class="row g-4 position-relative">
+            <!-- Sidebar Toggle Button (Mobile & Desktop) -->
+            <div class="d-flex justify-content-end w-100 position-absolute" style="top: 0; right: 10px; z-index: 5;">
+                <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-3 shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" style="background: white; color: #10b981; border: 1px solid rgba(16,185,129,0.2);">
+                    <i class="bi bi-list me-2"></i> Admin Menu
+                </button>
+            </div>
+
+            <!-- Approvals Section -->
+            <div class="col-12 mt-5">
+                <div class="text-center mb-4">
+                    <div class="mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(16, 185, 129,0.15), rgba(5, 150, 105,0.05)); border-radius: 16px; box-shadow: 0 10px 25px rgba(16, 185, 129,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129,0.2);">
+                        <i class="bi bi-check-all" style="font-size: 2rem; color: #10b981;"></i>
+                    </div>
+                    <h1 class="fw-bolder mb-2" style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px;">Pending Approvals</h1>
+                    <p class="text-muted" style="font-size: 1rem;">Review and execute critical deletion requests from Sub-Admins.</p>
+                </div>
+
+                <div class="premium-table-container">
+                    <div class="table-responsive-wrapper">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Requester</th>
+                                    <th>Entity Type</th>
+                                    <th>Target Details</th>
+                                    <th>Action</th>
+                                    <th>Date Requested</th>
+                                    <th class="text-end pe-4">Decide</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="action : ${pendingActions}">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.1rem;">
+                                                <i class="bi bi-person-badge-fill"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark" style="font-size: 0.95rem; line-height: 1.2;" th:text="${action.requesterName}">Name</div>
+                                                <small class="text-muted" style="font-size: 0.75rem;">Sub-Admin</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge-entity" th:text="${action.targetEntity}">ENTITY</span></td>
+                                    <td>
+                                        <div class="fw-bold" style="font-size: 0.9rem; color: #334155;" th:text="${action.targetDescription}">Desc</div>
+                                        <div style="font-size: 0.75rem; color: #94a3b8; font-family: monospace;" th:text="'ID: ' + ${action.targetId}">ID</div>
+                                    </td>
+                                    <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2" th:text="${action.actionType}">DELETE</span></td>
+                                    <td style="color: #64748b; font-size: 0.9rem;" th:text="${#temporals.format(action.requestDate, 'dd MMM yyyy, HH:mm')}">Date</td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <form th:action="@{/admin/approvals/{id}/approve(id=${action.id})}" method="post">
+                                                <button type="submit" class="btn-approve">
+                                                    <i class="bi bi-check-lg me-1"></i> Approve
+                                                </button>
+                                            </form>
+                                            <form th:action="@{/admin/approvals/{id}/reject(id=${action.id})}" method="post">
+                                                <button type="submit" class="btn-reject">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${pendingActions.empty}">
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <div class="empty-icon-wrap">
+                                                <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #10b981;"></i>
+                                            </div>
+                                            <h4 class="fw-bolder" style="font-family: 'Outfit', sans-serif; color: #1e293b;">You're all caught up!</h4>
+                                            <p class="text-muted mx-auto" style="max-width: 400px;">There are no pending deletion requests from Sub-Admins at the moment. Excellent workflow!</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offcanvas Admin Sidebar -->
+            <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='approvals')}"></div>
+        </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div style="margin-top: 60px;">
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

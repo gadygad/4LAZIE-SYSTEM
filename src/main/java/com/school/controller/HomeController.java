@@ -105,7 +105,7 @@ public class HomeController {
 
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
-        return "home";
+        return "public/home";
     }
 
     /**
@@ -138,23 +138,23 @@ public class HomeController {
 
     @GetMapping("/about")
     public String about() {
-        return "about";
+        return "public/about";
     }
 
     @GetMapping("/premium")
     public String premium() {
-        return "premium";
+        return "user/premium";
     }
 
     @GetMapping("/ue-exams")
     public String ueExams(Model model) {
         List<Note> pastPapers = noteRepository.findByCategoryIgnoreCaseOrderByIdDesc("Past Paper");
         model.addAttribute("pastPapers", pastPapers);
-        return "ue_exams";
+        return "timetable/ue_exams";
     }
 
     @GetMapping("/policy")
     public String policy() {
-        return "policy";
+        return "public/policy";
     }
 }

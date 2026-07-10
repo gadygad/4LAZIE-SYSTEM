@@ -4,10 +4,10 @@
     <div th:fragment="actions" class="d-flex align-items-center" style="gap: 0.6rem;">
 <!-- Actions (Notifications, Profile) -->
         <!-- Global Search Bar (Desktop) -->
-        <div class="search-container position-relative me-3 d-none d-md-block" style="width: 280px;">
+        <div class="search-container position-relative me-3 d-none d-md-block" style="width: 220px; max-width: 280px; flex-shrink: 1;">
             <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; z-index: 5;"></i>
             <input type="text" id="globalDesktopSearch" autocomplete="off" class="form-control position-relative" placeholder="Search notes, past papers..."
-                   style="padding: 6px 16px 6px 40px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;"
+                   style="padding: 6px 16px 6px 40px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b; width: 100%;"
                    onfocus="this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'; this.style.background='#ffffff';"
                    onblur="setTimeout(()=>{document.getElementById('globalDesktopResults').classList.add('d-none')}, 200); this.style.boxShadow='none'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
             
@@ -143,6 +143,36 @@
                         </script>
                     </div>
 
+        <!-- Portal Switcher Button for Admin/Super Admin -->
+        <div th:if="${session.user != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}" class="d-none d-sm-flex align-items-center">
+            <a id="portalSwitchBtn" href="/dashboard" class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold d-flex align-items-center gap-2" 
+               style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.1); color: #047857; border: 1px solid rgba(16, 185, 129, 0.3); transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                <i class="bi bi-arrow-left-right"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const switchBtn = document.getElementById('portalSwitchBtn');
+                if (switchBtn) {
+                    const isAdminPath = window.location.pathname.startsWith('/admin');
+                    if (isAdminPath) {
+                        switchBtn.href = '/dashboard';
+                        switchBtn.querySelector('span').textContent = 'User View';
+                        switchBtn.style.background = 'rgba(59, 130, 246, 0.1)';
+                        switchBtn.style.color = '#1d4ed8';
+                        switchBtn.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                    } else {
+                        switchBtn.href = '/admin/dashboard';
+                        switchBtn.querySelector('span').textContent = 'Admin View';
+                        switchBtn.style.background = 'rgba(16, 185, 129, 0.1)';
+                        switchBtn.style.color = '#047857';
+                        switchBtn.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    }
+                }
+            });
+        </script>
+
         <!-- Profile Dropdown -->
         <div class="dropdown ms-3" th:if="${session.user != null}">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownTop" data-bs-toggle="dropdown" aria-expanded="false" 
@@ -200,16 +230,18 @@
                     .icon-box-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
                 </style>
 
-                <li th:if="${session.user != null and session.user.role == 'ADMIN'}">
-                    <a class="dropdown-item py-2 px-3 fw-bold premium-dropdown-item text-secondary" href="/upload" style="font-size: 0.95rem;">
+                <!-- Admin Dashboard Link (Only visible to admin/super_admin) -->
+                <li th:if="${session.user != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}">
+                    <a class="dropdown-item py-2 px-3 fw-bold premium-dropdown-item text-secondary" href="/admin/dashboard" style="font-size: 0.95rem;">
                         <div class="icon-box icon-box-green me-3"><i class="bi bi-speedometer2"></i></div>
                         Admin Dashboard
                     </a>
                 </li>
-                <li th:unless="${session.user != null and session.user.role == 'ADMIN'}">
+                <!-- User Dashboard/Home Link (Visible to everyone) -->
+                <li>
                     <a class="dropdown-item py-2 px-3 fw-medium premium-dropdown-item text-secondary" href="/dashboard" style="font-size: 0.95rem;">
                         <div class="icon-box icon-box-green me-3"><i class="bi bi-grid-1x2-fill"></i></div>
-                        Dashboard
+                        User Dashboard
                     </a>
                 </li>
                 <li>

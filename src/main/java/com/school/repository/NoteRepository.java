@@ -50,6 +50,9 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByProgramTypeAndLevelNoOrderByIdDesc(String programType, Integer levelNo);
 
+    @Query("{ '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }")
+    List<Note> findByProgramTypeWithGeneral(String programType, org.springframework.data.domain.Pageable pageable);
+
     @Query(value = "{ 'levelNo': ?1, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
     List<Note> findByProgramTypeAndLevelNoWithGeneral(String programType, Integer levelNo);
 
