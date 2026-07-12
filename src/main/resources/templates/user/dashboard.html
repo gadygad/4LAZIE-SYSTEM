@@ -332,7 +332,7 @@
                         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.015);
                         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
                         position: relative;
-                        padding: 10px 14px !important;
+                        padding: 6px 12px !important;
                         cursor: pointer;
                     }
                     .glassmorphism-card::before {
@@ -378,6 +378,7 @@
                         text-overflow: ellipsis;
                         white-space: normal;
                         transition: color 0.3s ease;
+                        margin-bottom: 0 !important;
                     }
                     .recent-card:hover .note-card-title {
                         color: #10b981;
@@ -386,9 +387,9 @@
                         color: #ef4444;
                     }
                     .glassmorphism-card .icon-box {
-                        width: 40px !important;
-                        height: 40px !important;
-                        min-width: 40px !important;
+                        width: 32px !important;
+                        height: 32px !important;
+                        min-width: 32px !important;
                         font-size: 1.2rem !important;
                         border-radius: 10px !important;
                         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -592,6 +593,12 @@
                             
                             <div th:if="${#lists.isEmpty(popularNotes)}" class="w-100 text-center py-4 rounded-4" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px dashed rgba(16, 185, 129, 0.4);">
                                 <p class="text-muted mb-0 fw-medium" style="font-size: 0.85rem;">No popular materials found.</p>
+                            </div>
+                            
+                            <div class="text-center mt-2">
+                                <a th:href="@{/notes}" class="text-decoration-none d-inline-block px-3 py-1.5 rounded-pill fw-bold shadow-sm" style="font-size: 0.8rem; color: #fff; background: linear-gradient(135deg, #10b981, #059669); transition: all 0.3s ease;">
+                                    View All <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
