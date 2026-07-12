@@ -49,7 +49,7 @@ public class User {
     private LocalDateTime lastActiveTime;
     private String lastAction;
 
-    @DBRef
+    @DBRef(lazy = true)
     private Institution institution;
 
     private Set<String> savedNotes = new HashSet<>();

@@ -100,6 +100,8 @@ public class AdminController {
             return "redirect:/login";
         }
         
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
+        
         // Use safe defaults in case any query fails
         long totalUsers = 0;
         long totalNotes = 0;
@@ -112,32 +114,32 @@ public class AdminController {
         try {
             totalUsers = userRepository.count();
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to count users: {}", e.getMessage());
+            log.warn("Failed to count users: {}", e.getMessage(), e);
         }
         try {
             totalNotes = noteRepository.count();
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to count notes: {}", e.getMessage());
+            log.warn("Failed to count notes: {}", e.getMessage(), e);
         }
         try {
             totalDownloads = noteRepository.getTotalDownloadCount();
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to get download count: {}", e.getMessage());
+            log.warn("Failed to get download count: {}", e.getMessage(), e);
         }
         try {
             totalViews = noteRepository.getTotalViewCount();
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to get view count: {}", e.getMessage());
+            log.warn("Failed to get view count: {}", e.getMessage(), e);
         }
         try {
             recentUsers = userRepository.findTop5ByOrderByDateJoinedDesc();
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to get recent users: {}", e.getMessage());
+            log.warn("Failed to get recent users: {}", e.getMessage(), e);
         }
         try {
             popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to get popular notes: {}", e.getMessage());
+            log.warn("Failed to get popular notes: {}", e.getMessage(), e);
         }
         try {
             recentLogs = activityLogRepository.findTop50ByOrderByTimestampDesc();
@@ -145,8 +147,12 @@ public class AdminController {
                 recentLogs = recentLogs.subList(0, 10);
             }
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).warn("Failed to get activity logs: {}", e.getMessage());
+            log.warn("Failed to get activity logs: {}", e.getMessage(), e);
         }
+        
+        log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, Views: {}, RecentUsers: {}, PopularNotes: {}, Logs: {}",
+                totalUsers, totalNotes, totalDownloads, totalViews, 
+                recentUsers.size(), popularNotes.size(), recentLogs.size());
         
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalNotes", totalNotes);

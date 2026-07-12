@@ -8,9 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class AuthUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthUtil.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -33,27 +37,44 @@ public class AuthUtil {
         }
 
         User user = null;
+
+        // Primary lookup: exact email match
         try {
             user = userRepository.findByEmail(email).orElse(null);
         } catch (Exception e) {
-            // Handle corrupted user data (e.g., invalid Role enum in database)
-            org.slf4j.LoggerFactory.getLogger(AuthUtil.class)
-                .warn("Failed to load user by email '{}': {}", email, e.getMessage());
+            log.warn("Failed to load user by exact email '{}': {}", email, e.getMessage());
+        }
+
+        // Fallback: case-insensitive lookup if exact match failed
+        if (user == null) {
+            try {
+                user = userRepository.findFirstByEmailIgnoreCaseOrNameIgnoreCase(email, email).orElse(null);
+            } catch (Exception e) {
+                log.warn("Failed to load user by case-insensitive email '{}': {}", email, e.getMessage());
+            }
+        }
+
+        if (user == null) {
+            log.warn("Could not find user for authenticated principal: {}", email);
             return null;
         }
-        if (user != null && user.getRole() == com.school.model.Role.ADMIN) {
-            // Auto-promote to SUPER_ADMIN if no SUPER_ADMIN exists in the system
+
+        // Auto-promote first ADMIN to SUPER_ADMIN if no SUPER_ADMIN exists
+        if (user.getRole() == com.school.model.Role.ADMIN) {
             try {
                 long superAdminCount = userRepository.countByRole(com.school.model.Role.SUPER_ADMIN);
                 if (superAdminCount == 0) {
                     user.setRole(com.school.model.Role.SUPER_ADMIN);
                     userRepository.save(user);
+                    log.info("Auto-promoted user '{}' to SUPER_ADMIN (no existing SUPER_ADMIN found)", email);
                 }
             } catch (Exception e) {
-                org.slf4j.LoggerFactory.getLogger(AuthUtil.class)
-                    .warn("Failed to count SUPER_ADMIN users: {}", e.getMessage());
+                log.warn("Failed to check/promote SUPER_ADMIN status: {}", e.getMessage());
+                // Don't return null here - user is still valid, just couldn't auto-promote
             }
         }
+
         return user;
     }
 }
+

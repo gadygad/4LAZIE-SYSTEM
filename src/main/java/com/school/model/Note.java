@@ -45,7 +45,7 @@ public class Note {
     @Indexed
     private Boolean isGeneral = false;
 
-    @DBRef
+    @DBRef(lazy = true)
     private Institution institution;
 
     // Constructors
