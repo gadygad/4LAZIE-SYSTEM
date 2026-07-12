@@ -525,6 +525,7 @@ public class NotesController {
     @GetMapping("/view/{slug}")
     public void viewNotePage(@PathVariable("slug") String slug, 
                                HttpSession session,
+                               jakarta.servlet.http.HttpServletRequest request,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
         Note note = null;
         if (slug.length() == 24 && slug.matches("^[0-9a-fA-F]+$")) {
@@ -590,6 +591,15 @@ public class NotesController {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
+            
+            String userAgent = request.getHeader("User-Agent");
+            boolean isMobile = userAgent != null && userAgent.toLowerCase().matches(".*(android|webos|iphone|ipad|ipod|blackberry|windows phone).*");
+            
+            if (isMobile && ext.equalsIgnoreCase(".pdf")) {
+                response.sendRedirect("/mobile-viewer/" + note.getId());
+                return;
+            }
+            
             response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
             return;
         }
@@ -606,6 +616,22 @@ public class NotesController {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
         response.getOutputStream().write(fileContent.getBytes());
+    }
+
+    @GetMapping("/mobile-viewer/{id}")
+    public String mobileViewer(@PathVariable("id") String id, Model model) {
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
+            return "redirect:/dashboard";
+        }
+        try {
+            String encodedUrl = java.net.URLEncoder.encode(note.getFileUrl(), "UTF-8");
+            model.addAttribute("googleDocsUrl", "https://docs.google.com/gview?embedded=true&url=" + encodedUrl);
+            model.addAttribute("note", note);
+        } catch (Exception e) {
+            return "redirect:/dashboard";
+        }
+        return "public/mobile_viewer";
     }
 
     @GetMapping("/stream/{slug}")

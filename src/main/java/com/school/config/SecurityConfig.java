@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR, jakarta.servlet.DispatcherType.INCLUDE).permitAll()
                 // Allow public access to static resources and public pages
                 .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/register/google", "/login", "/forgot-password", "/reset-password", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/search", "/api/subjects", "/api/notes/filter", "/policy", "/sw.js", "/manifest.json", "/offline.html", "/api/notifications/**").permitAll()
-                .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**", "/timetable/**").permitAll()
+                .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**", "/timetable/**", "/mobile-viewer/**").permitAll()
                 // Require ADMIN or SUPER_ADMIN role for admin pages and upload page
                 .requestMatchers("/upload", "/admin/**").hasAnyRole(com.school.model.Role.ADMIN.name(), com.school.model.Role.SUPER_ADMIN.name())
                 // All other requests require authentication
