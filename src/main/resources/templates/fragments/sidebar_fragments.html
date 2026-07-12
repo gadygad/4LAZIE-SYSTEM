@@ -29,7 +29,7 @@
                 </button>
                 <div class="sidebar-group-content">
                     <!-- DYNAMIC DIPLOMA COURSES -->
-                    <div class="sidebar-hover-item" th:each="course : ${diplomaCourses}">
+                    <div class="sidebar-hover-item" th:each="course : ${diplomaCourses}" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == course.programType}">
                         <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                             <div class="d-flex align-items-start gap-3">
                                 <i th:class="'bi mt-1 ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.2rem;'"></i>
@@ -66,7 +66,7 @@
                 </button>
                 <div class="sidebar-group-content">
                     <!-- DYNAMIC DEGREE COURSES -->
-                    <div class="sidebar-hover-item" th:each="course : ${degreeCourses}">
+                    <div class="sidebar-hover-item" th:each="course : ${degreeCourses}" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == course.programType}">
                         <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                             <div class="d-flex align-items-start gap-3">
                                 <i th:class="'bi mt-1 ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.2rem;'"></i>
@@ -89,7 +89,7 @@
 
             <!-- OTHER UNIVERSITIES GROUP -->
             <div class="sidebar-group mt-3" id="otherUniversitiesGroup" th:if="${otherUniversities != null and !otherUniversities.isEmpty()}">
-                <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')" style="border: 1px solid rgba(139, 92, 246, 0.2); background: rgba(139, 92, 246, 0.05);">
+                <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')" style="background: rgba(139, 92, 246, 0.05); border: none;">
                     <div class="d-flex align-items-center gap-3">
                         <div style="background: linear-gradient(135deg, #a855f7, #7e22ce); padding: 8px; border-radius: 8px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); border: 1px solid rgba(255,255,255,0.2);">
                             <i class="bi bi-bank2 text-white" style="font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
@@ -101,7 +101,7 @@
                     </div>
                     <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: #a855f7;"></i>
                 </button>
-                <div class="sidebar-group-content" style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.15); margin-top: 8px; padding: 6px; box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.05);">
+                <div class="sidebar-group-content" style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 12px; border: none; margin-top: 8px; padding: 6px; box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.05);">
                     <!-- DYNAMIC OTHER UNIVERSITIES -->
                     <div class="sidebar-hover-item" th:each="inst : ${otherUniversities}" style="transition: all 0.3s ease;">
                         <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)" style="padding: 10px; border-radius: 8px;">
@@ -116,7 +116,7 @@
                             </div>
                             <i class="bi bi-chevron-right chevron mt-2" style="color: #c084fc;"></i>
                         </button>
-                        <div class="sidebar-hover-content" style="background: rgba(168, 85, 247, 0.05); border-left: 2px solid #a855f7; margin-left: 16px; border-radius: 0 8px 8px 0;">
+                        <div class="sidebar-hover-content" style="background: rgba(168, 85, 247, 0.05); border: none; margin-left: 16px; border-radius: 0 8px 8px 0;">
                             <a href="guest_notes.html" th:href="@{'/notes?program=' + (${session.user != null and session.user.role.name() == 'STUDENT' ? session.user.courseProgram : ''}) + '&institution=' + ${inst.id}}" class="d-flex align-items-center gap-2" style="padding: 10px 15px; color: #475569; font-weight: 500; transition: all 0.2s ease;">
                                 <i class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>
                                 <span>Browse Notes</span>
@@ -177,12 +177,12 @@
 </div>
 
 <!-- Desktop Premium Sidebar -->
-<aside class="hero-sidebar d-none d-lg-block" th:fragment="desktop_sidebar" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border-right: 1px solid rgba(16,185,129,0.1); overflow: hidden; height: 100vh;">
+<aside class="hero-sidebar d-none d-lg-block" th:fragment="desktop_sidebar" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border-right: none; overflow: hidden; height: 100vh;">
     <!-- Glowing Ambient Orbs for Premium Vibe -->
     <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
     <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
 
-    <div class="px-3 pt-4 pb-2 border-bottom border-secondary border-opacity-25" style="background: rgba(255,255,255,0.02);">
+    <div class="px-3 pt-4 pb-2 border-0" style="background: rgba(255,255,255,0.02);">
         <h5 class="text-white fw-bold m-0" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
@@ -209,7 +209,7 @@
     <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
     <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
 
-    <div class="offcanvas-header border-bottom border-success border-opacity-10 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.9);">
+    <div class="offcanvas-header border-0 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.9);">
         <h5 class="offcanvas-title text-dark fw-bold d-flex flex-column" id="mobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
