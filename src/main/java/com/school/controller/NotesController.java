@@ -337,7 +337,8 @@ public class NotesController {
     @GetMapping("/upload")
     public String showUploadPage(HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
+        if (loggedInUser == null) return "redirect:/login";
+        // SecurityConfig already enforces ADMIN/SUPER_ADMIN access via hasAnyRole
         model.addAttribute("user", loggedInUser);
         model.addAttribute("courses", courseRepository.findAll());
         return "notes/upload";
@@ -357,7 +358,7 @@ public class NotesController {
                              @RequestParam("file") MultipartFile file,
                              HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
+        if (loggedInUser == null) return "redirect:/login";
 
         if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
 

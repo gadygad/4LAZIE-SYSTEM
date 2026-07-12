@@ -460,6 +460,16 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
     <script>
+        // Build course metadata map from option data attributes BEFORE Tom Select modifies the DOM
+        var courseMap = {};
+        document.querySelectorAll('#programType option[data-level-prefix]').forEach(function(opt) {
+            courseMap[opt.value] = {
+                levelPrefix: opt.getAttribute('data-level-prefix') || 'Level',
+                startLevel: parseInt(opt.getAttribute('data-start-level')) || 4,
+                duration: parseInt(opt.getAttribute('data-duration')) || 3
+            };
+        });
+
         // Global variables for Tom Select instances
         var programTs, levelTs, semesterTs, moduleTs, categoryTs, unitTs;
 
@@ -526,15 +536,7 @@
         }
         toggleUnit(); // initial call
 
-        // Build course metadata map from option data attributes
-        var courseMap = {};
-        document.querySelectorAll('#programType option[data-level-prefix]').forEach(function(opt) {
-            courseMap[opt.value] = {
-                levelPrefix: opt.getAttribute('data-level-prefix') || 'Level',
-                startLevel: parseInt(opt.getAttribute('data-start-level')) || 4,
-                duration: parseInt(opt.getAttribute('data-duration')) || 3
-            };
-        });
+
 
         function updateLevelDropdown() {
             var programType = document.getElementById('programType').value;

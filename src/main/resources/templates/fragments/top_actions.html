@@ -21,8 +21,8 @@
         </button>
                     
 <!-- Notification Button (Triggers Dropdown) -->
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" data-bs-toggle="dropdown" aria-expanded="false" role="button" id="notificationDropdown"
+                    <div class="dropdown premium-hover-dropdown">
+                        <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" role="button" id="notificationDropdown"
                            style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
                            onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
                            onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#10b981';">
@@ -33,10 +33,10 @@
                         </a>
                         
                         <!-- Notification Dropdown Menu -->
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg notification-dropdown border-0" aria-labelledby="notificationDropdown" style="border-radius: 16px; min-width: 280px; width: 300px; max-width: 85vw; padding: 0; margin-top: 12px; overflow: hidden; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg notification-dropdown border-0" aria-labelledby="notificationDropdown" style="border-radius: 16px; min-width: 280px; width: 300px; max-width: 85vw; padding: 0; margin-top: 12px; overflow: hidden; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); top: 100% !important; bottom: auto !important; right: 0 !important; left: auto !important; transform: none !important;">
                             <li class="dropdown-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="background: rgba(248, 250, 252, 0.95);">
                                 <h6 class="mb-0 fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b !important;">Notifications</h6>
-                                <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1" style="background: linear-gradient(135deg, #10b981, #059669); color: white !important; font-size: 0.75rem; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">3 New</span>
+                                <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white !important; font-size: 0.75rem; font-weight: 600; box-shadow: 0 2px 8px rgba(239,68,68,0.4);">3 New</span>
                             </li>
                             
                             <li class="p-0">
@@ -90,6 +90,14 @@
                             
                             .dropdown-menu.notification-dropdown.show {
                                 animation: customDropdownFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                                display: block;
+                            }
+                            
+                            @media (min-width: 992px) {
+                                .premium-hover-dropdown:hover > .dropdown-menu {
+                                    display: block;
+                                    animation: customDropdownFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                                }
                             }
 
                             .notification-item:hover .accent-bar {
@@ -179,8 +187,8 @@
         </script>
 
         <!-- Profile Dropdown -->
-        <div class="dropdown ms-3" th:if="${session.user != null}">
-            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownTop" data-bs-toggle="dropdown" aria-expanded="false" 
+        <div class="dropdown ms-3 premium-hover-dropdown" th:if="${session.user != null}">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownTop" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" 
                style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.6); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
                onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(16, 185, 129, 0.4)';" 
                onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.6)';">
@@ -195,7 +203,7 @@
                     <span class="lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #10b981;">Premium</span>
                 </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: rgba(16, 185, 129, 0.08); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(16, 185, 129, 0.25), inset 0 2px 10px rgba(255,255,255,0.4); border: 1px solid rgba(16, 185, 129, 0.3); animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right;">
+            <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2 profile-dropdown" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: #ffffff; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.2); transform-origin: top right; z-index: 9999; top: 100% !important; bottom: auto !important; right: 0 !important; left: auto !important; transform: none !important;">
                 <li class="px-4 py-3 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: inset 0 0 10px rgba(255,255,255,0.2);">
                     <p class="mb-0 fw-bold position-relative" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; letter-spacing: -0.3px; color: #064e3b !important;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</p>
                     <p class="mb-0 fw-bold position-relative" style="font-size: 0.7rem; color: #047857 !important; letter-spacing: 1px; text-transform: uppercase;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'STUDENT'}">STUDENT</p>
@@ -203,8 +211,12 @@
                 
                 <style>
                     @keyframes popupAnim {
-                        0% { opacity: 0; transform: scale(0.9) translateY(-10px); }
+                        0% { opacity: 0; transform: scale(0.95) translateY(-10px); }
                         100% { opacity: 1; transform: scale(1) translateY(0); }
+                    }
+                    .dropdown-menu.profile-dropdown.show {
+                        animation: popupAnim 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                        display: block;
                     }
                     @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
                     .premium-dropdown-item {

@@ -169,8 +169,8 @@ public class RegistrationController {
                 HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
                 securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
                 
-                if (user.getRole() == Role.ADMIN) {
-                    return "redirect:/admin/users";
+                if (user.getRole() == Role.ADMIN || user.getRole() == Role.SUPER_ADMIN) {
+                    return "redirect:/admin/dashboard";
                 }
                 return "redirect:/dashboard";
             
