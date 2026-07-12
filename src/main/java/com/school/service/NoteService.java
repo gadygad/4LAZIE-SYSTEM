@@ -182,10 +182,7 @@ public class NoteService {
         }
 
         if (program != null && !program.isEmpty()) {
-            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
-                org.springframework.data.mongodb.core.query.Criteria.where("programType").is(program),
-                org.springframework.data.mongodb.core.query.Criteria.where("isGeneral").is(true)
-            ));
+            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("programType").is(program));
         }
 
         if (level != null) {

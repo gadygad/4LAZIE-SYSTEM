@@ -106,12 +106,12 @@ public class NotesController {
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
-            notes = noteRepository.searchNotesByProgramAndLevelWithGeneral(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
+            notes = noteRepository.searchNotesByProgramAndLevel(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
                     .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
-            notes = noteRepository.findByProgramTypeAndLevelNoWithGeneral(program, level).stream()
+            notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
                     .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                     .limit(3)
                     .collect(Collectors.toList());
@@ -188,7 +188,7 @@ public class NotesController {
 
         List<Note> popularNotes;
         if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
-            popularNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 3, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount")));
+            popularNotes = noteService.fetchDashboardNotes(program, "downloadCount", 3);
         } else {
             popularNotes = noteRepository.findTop3ByOrderByDownloadCountDesc();
         }
@@ -291,10 +291,10 @@ public class NotesController {
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
-            notesPage = noteRepository.searchNotesByProgramLevelAndSemesterWithGeneral(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
+            notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
             model.addAttribute("searchQuery", search);
         } else {
-            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
+            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
         }
 
         List<Note> notes = notesPage.getContent();

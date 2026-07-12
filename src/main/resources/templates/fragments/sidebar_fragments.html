@@ -14,7 +14,7 @@
 
         <div id="mobileSidebarDynamicContent">
             <!-- DIPLOMA PROGRAMMES GROUP -->
-            <div class="sidebar-group" id="diplomaGroup">
+            <div class="sidebar-group" id="diplomaGroup" th:if="${diplomaCourses != null and !diplomaCourses.isEmpty()}">
                 <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
                     <div class="d-flex align-items-center gap-3">
                         <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
@@ -51,7 +51,7 @@
             </div>
 
             <!-- DEGREE PROGRAMMES GROUP -->
-            <div class="sidebar-group mt-3" id="degreeGroup">
+            <div class="sidebar-group mt-3" id="degreeGroup" th:if="${degreeCourses != null and !degreeCourses.isEmpty()}">
                 <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
                     <div class="d-flex align-items-center gap-3">
                         <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
