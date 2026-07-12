@@ -67,7 +67,9 @@ public class HomeController {
             return "redirect:/dashboard";
         }
         // Fetch the absolute 10 most recent uploads (Public Quick Access)
-        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc();
+        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc().stream()
+                .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
+                .collect(Collectors.toList());
         
         // Fetch distinct module names from database and map to advice
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()

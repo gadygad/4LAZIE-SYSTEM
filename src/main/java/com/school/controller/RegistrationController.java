@@ -131,7 +131,7 @@ public class RegistrationController {
             String email = payload.getEmail();
             String name = (String) payload.get("name");
 
-                Optional<User> existingUser = userRepository.findByEmail(email);
+                Optional<User> existingUser = userRepository.findFirstByEmailIgnoreCaseOrNameIgnoreCase(email, email);
                 User user;
                 if (existingUser.isPresent()) {
                     user = existingUser.get();

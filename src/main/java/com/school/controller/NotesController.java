@@ -107,12 +107,12 @@ public class NotesController {
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
             notes = noteRepository.searchNotesByProgramAndLevelWithGeneral(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
-                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+                    .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
             notes = noteRepository.findByProgramTypeAndLevelNoWithGeneral(program, level).stream()
-                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+                    .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                     .limit(3)
                     .collect(Collectors.toList());
         }

@@ -50,7 +50,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login?logout=true")
+                .logoutSuccessUrl("/")
                 .permitAll()
             )
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
