@@ -70,7 +70,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByInstitutionIdAndProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String institutionId, String programType, Integer levelNo, Integer semesterNo);
 
+    boolean existsByInstitutionIdAndProgramType(String institutionId, String programType);
+
     boolean existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(String title, String programType, Integer levelNo, Integer semesterNo, String moduleName, Integer unitNumber);
+
 
     List<Note> findByCategoryIgnoreCaseOrderByIdDesc(String category);
 

@@ -27,7 +27,7 @@
                            onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
                            onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#10b981';">
                             <i class="bi bi-bell-fill" style="color: #10b981; font-size: 1.2rem; transition: color 0.3s;"></i>
-                            <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #10b981; color: white !important; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
+                            <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #ef4444; color: #ffffff !important; font-size: 0.75rem; padding: 0.4em 0.6em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; font-weight: 900; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); animation: pulse-red-badge 1.5s infinite;">
                                 3
                             </span>
                         </a>
@@ -81,6 +81,11 @@
                                     opacity: 1;
                                     transform: translateY(0);
                                 }
+                            }
+                            @keyframes pulse-red-badge {
+                                0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                                70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+                                100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
                             }
                             
                             .dropdown-menu.notification-dropdown.show {
@@ -190,10 +195,10 @@
                     <span class="lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #10b981;">Premium</span>
                 </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15), inset 0 2px 10px rgba(255,255,255,1); border: 1px solid rgba(255,255,255,0.7); animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right;">
-                <li class="px-4 py-3 mb-2" style="background: #ecfdf5; border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2);">
+            <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: rgba(16, 185, 129, 0.08); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(16, 185, 129, 0.25), inset 0 2px 10px rgba(255,255,255,0.4); border: 1px solid rgba(16, 185, 129, 0.3); animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right;">
+                <li class="px-4 py-3 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: inset 0 0 10px rgba(255,255,255,0.2);">
                     <p class="mb-0 fw-bold position-relative" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; letter-spacing: -0.3px; color: #064e3b !important;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</p>
-                    <p class="mb-0 fw-bold position-relative" style="font-size: 0.7rem; color: #059669 !important; letter-spacing: 1px; text-transform: uppercase;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'STUDENT'}">STUDENT</p>
+                    <p class="mb-0 fw-bold position-relative" style="font-size: 0.7rem; color: #047857 !important; letter-spacing: 1px; text-transform: uppercase;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'STUDENT'}">STUDENT</p>
                 </li>
                 
                 <style>
@@ -210,11 +215,12 @@
                         align-items: center;
                     }
                     .premium-dropdown-item:hover {
-                        background: linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.05) 100%) !important;
+                        background: linear-gradient(90deg, rgba(16, 185, 129, 0.3) 0%, rgba(16, 185, 129, 0.1) 100%) !important;
                         transform: translateX(8px);
                         color: #047857 !important;
                         font-weight: 700 !important;
                         border-left: 3px solid #10b981;
+                        box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.2);
                     }
                     .premium-dropdown-item:hover .icon-box {
                         transform: scale(1.1);

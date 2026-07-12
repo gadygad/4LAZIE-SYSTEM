@@ -26,18 +26,51 @@ public class GlobalSidebarAdvice {
     @Autowired
     private com.school.repository.AcademicCalendarRepository academicCalendarRepository;
 
+    @Autowired
+    private com.school.repository.NoteRepository noteRepository;
+
     @ModelAttribute
     public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {
+        com.school.model.User user = (com.school.model.User) session.getAttribute("user");
         try {
             Institution currentInstitution = institutionRepository.findById("1").orElse(null);
             
             List<com.school.model.Course> allCourses = courseRepository.findAll();
-            List<com.school.model.Course> diplomaCourses = allCourses.stream()
-                    .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
-                    .collect(Collectors.toList());
-            List<com.school.model.Course> degreeCourses = allCourses.stream()
-                    .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
-                    .collect(Collectors.toList());
+            List<com.school.model.Course> diplomaCourses;
+            List<com.school.model.Course> degreeCourses;
+            
+            if (user != null && user.getRole() == com.school.model.Role.STUDENT) {
+                // Students only see their own course
+                diplomaCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(user.getCourseProgram()) && c.getProgramType().startsWith("DIP_"))
+                        .collect(Collectors.toList());
+                degreeCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(user.getCourseProgram()) && c.getProgramType().startsWith("DEG_"))
+                        .collect(Collectors.toList());
+                
+                // Fetch other universities that have this course
+                List<Institution> allInstitutions = institutionRepository.findAll();
+                List<Institution> otherUniversities = allInstitutions.stream()
+                        .filter(inst -> currentInstitution == null || !inst.getId().equals(currentInstitution.getId()))
+                        .filter(inst -> noteRepository.existsByInstitutionIdAndProgramType(inst.getId(), user.getCourseProgram()))
+                        .collect(Collectors.toList());
+                model.addAttribute("otherUniversities", otherUniversities);
+            } else {
+                // Admin/Guests see all
+                diplomaCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
+                        .collect(Collectors.toList());
+                degreeCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
+                        .collect(Collectors.toList());
+                
+                // Show all other universities for non-students
+                List<Institution> allInstitutions = institutionRepository.findAll();
+                List<Institution> otherUniversities = allInstitutions.stream()
+                        .filter(inst -> currentInstitution == null || !inst.getId().equals(currentInstitution.getId()))
+                        .collect(Collectors.toList());
+                model.addAttribute("otherUniversities", otherUniversities);
+            }
 
             model.addAttribute("currentInstitution", currentInstitution);
             model.addAttribute("diplomaCourses", diplomaCourses);
@@ -46,9 +79,9 @@ public class GlobalSidebarAdvice {
             model.addAttribute("currentInstitution", null);
             model.addAttribute("diplomaCourses", java.util.Collections.emptyList());
             model.addAttribute("degreeCourses", java.util.Collections.emptyList());
+            model.addAttribute("otherUniversities", java.util.Collections.emptyList());
         }
 
-        com.school.model.User user = (com.school.model.User) session.getAttribute("user");
         if (user != null) {
             try {
                 List<com.school.model.Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());

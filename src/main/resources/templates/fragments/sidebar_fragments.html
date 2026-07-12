@@ -86,6 +86,45 @@
                     </div>
                 </div>
             </div>
+
+            <!-- OTHER UNIVERSITIES GROUP -->
+            <div class="sidebar-group mt-3" id="otherUniversitiesGroup" th:if="${otherUniversities != null and !otherUniversities.isEmpty()}">
+                <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')" style="border: 1px solid rgba(139, 92, 246, 0.2); background: rgba(139, 92, 246, 0.05);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="background: linear-gradient(135deg, #a855f7, #7e22ce); padding: 8px; border-radius: 8px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); border: 1px solid rgba(255,255,255,0.2);">
+                            <i class="bi bi-bank2 text-white" style="font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                        </div>
+                        <div class="d-flex flex-column text-start">
+                            <span style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; color: #f8fafc; font-family: 'Outfit', sans-serif;">OTHER UNIVERSITIES</span>
+                            <span style="font-size: 0.6rem; color: #d8b4fe; font-weight: 500;"><span th:text="${otherUniversities.size()}">0</span> Connected Institutions</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: #a855f7;"></i>
+                </button>
+                <div class="sidebar-group-content" style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.15); margin-top: 8px; padding: 6px; box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.05);">
+                    <!-- DYNAMIC OTHER UNIVERSITIES -->
+                    <div class="sidebar-hover-item" th:each="inst : ${otherUniversities}" style="transition: all 0.3s ease;">
+                        <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)" style="padding: 10px; border-radius: 8px;">
+                            <div class="d-flex align-items-start gap-3 w-100">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(168, 85, 247, 0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(168, 85, 247, 0.2);">
+                                    <i class="bi bi-building" style="color: #c084fc; font-size: 1rem;"></i>
+                                </div>
+                                <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden">
+                                    <span style="font-weight: 600; font-size: 0.8rem; letter-spacing: 0.3px; color: #f8fafc; font-family: 'Outfit', sans-serif; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" th:text="${#strings.toUpperCase(inst.shortName != null ? inst.shortName : inst.name)}">INSTITUTION</span>
+                                    <span style="font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 400; margin-top: 2px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" th:text="${inst.name}">Full Name</span>
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right chevron mt-2" style="color: #c084fc;"></i>
+                        </button>
+                        <div class="sidebar-hover-content" style="background: rgba(168, 85, 247, 0.05); border-left: 2px solid #a855f7; margin-left: 16px; border-radius: 0 8px 8px 0;">
+                            <a href="guest_notes.html" th:href="@{'/notes?program=' + (${session.user != null and session.user.role.name() == 'STUDENT' ? session.user.courseProgram : ''}) + '&institution=' + ${inst.id}}" class="d-flex align-items-center gap-2" style="padding: 10px 15px; color: #e9d5ff; font-weight: 500; transition: all 0.2s ease;">
+                                <i class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>
+                                <span>Browse Notes</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <script>

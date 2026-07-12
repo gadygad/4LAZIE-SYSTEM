@@ -171,4 +171,63 @@ public class NoteService {
             }
         }
     }
+    @Autowired
+    private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+
+    public org.springframework.data.domain.Page<Note> fetchFilteredNotes(String institutionId, String program, Integer level, Integer semester, String category, String search, int page) {
+        org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+        
+        if (institutionId != null && !institutionId.isEmpty()) {
+            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("institution.$id").is(new org.bson.types.ObjectId(institutionId)));
+        }
+
+        if (program != null && !program.isEmpty()) {
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+                org.springframework.data.mongodb.core.query.Criteria.where("programType").is(program),
+                org.springframework.data.mongodb.core.query.Criteria.where("isGeneral").is(true)
+            ));
+        }
+
+        if (level != null) {
+            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("levelNo").is(level));
+        }
+        if (semester != null) {
+            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("semesterNo").is(semester));
+        }
+        if (category != null && !category.isEmpty()) {
+            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("category").is(category));
+        }
+        
+        if (search != null && !search.trim().isEmpty()) {
+            String safeSearch = search.trim().replaceAll("([\\\\\\.\\[\\{\\(\\*\\+\\?\\^\\$\\|])", "\\\\$1");
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+                org.springframework.data.mongodb.core.query.Criteria.where("title").regex(safeSearch, "i"),
+                org.springframework.data.mongodb.core.query.Criteria.where("category").regex(safeSearch, "i")
+            ));
+        }
+
+        long total = mongoTemplate.count(query, Note.class);
+        
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 50);
+        query.with(pageable);
+        query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "_id"));
+        
+        List<Note> notes = mongoTemplate.find(query, Note.class);
+        return new org.springframework.data.domain.PageImpl<>(notes, pageable, total);
+    }
+    public List<Note> fetchDashboardNotes(String programPrefix, String sortBy, int limit) {
+        org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+        
+        if (programPrefix != null && !programPrefix.isEmpty()) {
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+                org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programPrefix),
+                org.springframework.data.mongodb.core.query.Criteria.where("isGeneral").is(true)
+            ));
+        }
+
+        query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, sortBy));
+        query.limit(limit);
+        
+        return mongoTemplate.find(query, Note.class);
+    }
 }

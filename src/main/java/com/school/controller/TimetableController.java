@@ -31,9 +31,14 @@ public class TimetableController {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         model.addAttribute("loggedInUser", loggedInUser);
 
-        // If user is logged in and didn't provide specific params, try to use their profile
-        if (loggedInUser != null && program == null && level == null) {
-            program = loggedInUser.getCourseProgram(); // E.g., "DIPLOMA"
+        // Enforce course boundaries for students
+        if (loggedInUser != null && loggedInUser.getRole() != com.school.model.Role.ADMIN && loggedInUser.getRole() != com.school.model.Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+            // We do not force level here because a student might want to look at previous semester/level timetables
+            if (level == null) level = loggedInUser.getLevel();
+            if (semester == null) semester = loggedInUser.getSemester();
+        } else if (loggedInUser != null && program == null && level == null) {
+            program = loggedInUser.getCourseProgram(); 
             level = loggedInUser.getLevel();
             semester = loggedInUser.getSemester();
         }

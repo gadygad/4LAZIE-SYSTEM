@@ -135,6 +135,7 @@ public class NotesController {
                               @RequestParam(value = "semester", required = false) Integer semester,
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "search", required = false) String search,
+                              @RequestParam(value = "institution", required = false) String institutionId,
                               @RequestParam(value = "page", defaultValue = "0") int page,
                               HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
@@ -148,44 +149,28 @@ public class NotesController {
                       ? loggedInUser.getCourseProgram() : "DIP_CSE";
         }
 
+        if (institutionId == null || institutionId.isEmpty()) {
+            if (loggedInUser != null && loggedInUser.getInstitution() != null) {
+                institutionId = loggedInUser.getInstitution().getId();
+            } else {
+                institutionId = "1"; // Default to primary institution
+            }
+        }
+
         if (level == null) {
             level = (loggedInUser != null && loggedInUser.getLevel() != null) ? loggedInUser.getLevel() : 4;
         }
         if (semester == null) {
             semester = (loggedInUser != null && loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
         }
-        org.springframework.data.domain.Page<Note> notesPage;
-        if (level != null && semester != null) {
-            if (category != null && !category.trim().isEmpty()) {
-                if (search != null && !search.trim().isEmpty()) {
-                    String safeSearch = escapeRegex(search.trim());
-                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategoryWithGeneral(program, level, semester, category, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
-                    model.addAttribute("searchQuery", search);
-                } else {
-                    List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(program, level, semester, category);
-                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
-                }
-                model.addAttribute("selectedCategory", category);
-            } else {
-                if (search != null && !search.trim().isEmpty()) {
-                    String safeSearch = escapeRegex(search.trim());
-                    notesPage = noteRepository.searchNotesByProgramLevelAndSemesterWithGeneral(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
-                    model.addAttribute("searchQuery", search);
-                } else {
-                    notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
-                }
-            }
-            model.addAttribute("selectedLevel", level);
-            model.addAttribute("selectedSemester", semester);
-        } else {
-            if (search != null && !search.trim().isEmpty()) {
-                String safeSearch = escapeRegex(search.trim());
-                notesPage = noteRepository.searchNotes(safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
-                model.addAttribute("searchQuery", search);
-            } else {
-                notesPage = noteRepository.findAllByOrderByIdDesc(org.springframework.data.domain.PageRequest.of(page, 50));
-            }
-        }
+        
+        org.springframework.data.domain.Page<Note> notesPage = noteService.fetchFilteredNotes(institutionId, program, level, semester, category, search, page);
+        
+        model.addAttribute("searchQuery", search);
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedLevel", level);
+        model.addAttribute("selectedSemester", semester);
+        model.addAttribute("selectedInstitutionId", institutionId);
         model.addAttribute("notesPage", notesPage);
         model.addAttribute("notes", notesPage.getContent());
         
@@ -333,8 +318,8 @@ public class NotesController {
         List<Note> popularNotes;
         List<Note> recentNotes;
         if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
-            popularNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount")));
-            recentNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "uploadDate")));
+            popularNotes = noteService.fetchDashboardNotes(program, "downloadCount", 5);
+            recentNotes = noteService.fetchDashboardNotes(program, "uploadDate", 5);
         } else {
             popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
             recentNotes = noteRepository.findTop5ByOrderByUploadDateDesc();
