@@ -307,12 +307,7 @@
                             <div class="welcome-hero-content">
                                 <div class="welcome-subtitle">WELCOME BACK</div>
                                 <h1 class="welcome-name" th:text="${session.user != null ? session.user.name : 'Student'}">Dr. Alex Carter</h1>
-                                <div class="welcome-course" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'GENERAL PROGRAM'}">DIPLOMA IN INFORMATION TECHNOLOGY</div>
-                                <div class="welcome-meta">
-                                    <span>SEMESTER <span th:text="${session.user != null and session.user.semester != null ? session.user.semester : '1'}">2</span></span>
-                                    <span class="meta-dot">&bull;</span>
-                                    <span th:text="${session.user != null and session.user.courseProgram != null and (session.user.courseProgram.toUpperCase().contains('DEG') or session.user.courseProgram.toUpperCase().contains('BSC') or session.user.courseProgram.toUpperCase().contains('MD')) ? 'DEGREE' : 'DIPLOMA'}">DIPLOMA</span>
-                                </div>
+                                <div class="welcome-course" th:text="${session.user != null and session.user.courseProgram != null ? #strings.replace(session.user.courseProgram, '_', ' ') : 'GENERAL PROGRAM'}">DIPLOMA IN INFORMATION TECHNOLOGY</div>
                             </div>
                         </div>
                     </div>
