@@ -6,6 +6,7 @@ import com.school.repository.NoteRepository;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
 import com.school.repository.AcademicCalendarRepository;
+import com.school.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -53,6 +54,9 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Autowired
     private AcademicCalendarRepository academicCalendarRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -221,6 +225,50 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         // DUMMY NOTES REMOVED FOR PRODUCTION
         // We only create users, no fake notes.
+        
+        // Live DB Repair: Fix users with long course names or null dateJoined
+        try {
+            java.util.Map<String, String> courseMap = new java.util.HashMap<>();
+            courseRepository.findAll().forEach(c -> {
+                if (c.getName() != null && c.getProgramType() != null) {
+                    courseMap.put(c.getName().toUpperCase(), c.getProgramType());
+                }
+            });
+            
+            userRepository.findAll().forEach(u -> {
+                boolean modified = false;
+                if (u.getDateJoined() == null) {
+                    u.setDateJoined(LocalDateTime.now());
+                    modified = true;
+                }
+                
+                if (u.getCourseProgram() != null) {
+                    String progUpper = u.getCourseProgram().toUpperCase();
+                    if (courseMap.containsKey(progUpper)) {
+                        u.setCourseProgram(courseMap.get(progUpper));
+                        modified = true;
+                    } else if (progUpper.contains("DIPLOMA IN") || progUpper.contains("DEGREE IN")) {
+                        // Fallback logic if course is missing from DB
+                        String type = progUpper.contains("DIPLOMA") ? "DIP_" : "DEG_";
+                        if (progUpper.contains("COMPUTER SCIENCE")) u.setCourseProgram(type + "CSE");
+                        else if (progUpper.contains("CIVIL")) u.setCourseProgram(type + "CE");
+                        else if (progUpper.contains("ELECTRICAL")) u.setCourseProgram(type + "EEE");
+                        else if (progUpper.contains("MECHANICAL")) u.setCourseProgram(type + "ME");
+                        else if (progUpper.contains("MECHATRONICS")) u.setCourseProgram(type + "MTE");
+                        else u.setCourseProgram(type + "IT"); // default fallback
+                        modified = true;
+                    }
+                }
+                
+                if (modified) {
+                    userRepository.save(u);
+                }
+            });
+            log.info("Live DB Repair completed successfully.");
+        } catch (Exception e) {
+            log.warn("Live DB Repair failed: " + e.getMessage());
+        }
+
         log.info("Database Initialization complete (Users only).");
     }
 
