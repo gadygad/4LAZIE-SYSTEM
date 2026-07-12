@@ -145,23 +145,18 @@
             background: rgba(255, 255, 255, 0.95);
         }
 
-        /* Ultra Banner - Light Green */
+        /* Ultra Banner */
         .premium-banner {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-radius: 18px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15);
-            padding: 20px 28px;
+            background: transparent;
+            padding: 10px 0 25px 0;
             position: relative;
-            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .banner-glow {
-            position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.3); filter: blur(90px);
-            top: -50px; left: -50px; opacity: 0.7; pointer-events: none;
+            display: none;
         }
 
         .list-item-row {
@@ -227,25 +222,24 @@
 
     <!-- Main Content -->
     <div class="container my-5">
-        <div class="row g-4 position-relative">
+        <div class="row g-4">
             <!-- Sidebar Toggle Button -->
-            <div class="d-flex justify-content-end w-100 position-absolute" style="top: -20px; right: 10px; z-index: 5;">
+            <div class="col-12 d-flex justify-content-end mb-1">
                 <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-4 py-2 shadow" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" style="background: white; color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(16,185,129,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';">
                     <i class="bi bi-grid-fill me-2"></i> Admin Menu
                 </button>
             </div>
 
             <!-- Content Area -->
-            <div class="col-12 mt-4">
+            <div class="col-12 mt-1">
                 <!-- Welcome Banner -->
-                <div class="premium-banner mb-4">
-                    <div class="banner-glow"></div>
+                <div class="premium-banner mb-2">
                     <div style="position: relative; z-index: 1;">
-                        <h2 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; letter-spacing: -0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #ffffff;">System Analytics Overview</h2>
-                        <p class="mb-0" style="opacity: 0.9; max-width: 600px; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.3px; color: #f8fafc;">Here's what's happening across the 4LAZIE community today. Monitor growth and activity.</p>
+                        <h2 class="fw-bolder mb-2" style="font-family: 'Inter', sans-serif; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8;">SYSTEM ANALYTICS OVERVIEW</h2>
+                        <p class="mb-0" style="max-width: 600px; font-size: 0.95rem; font-weight: 500; color: #64748b;">Here's what's happening across the 4LAZIE community today. Monitor growth and activity.</p>
                     </div>
-                    <div class="d-none d-md-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(16,185,129,0.2), inset 0 1px 3px rgba(255,255,255,0.5); position: relative; z-index: 1; transform: rotate(5deg); transition: all 0.5s;" onmouseover="this.style.transform='rotate(0deg) scale(1.1)';" onmouseout="this.style.transform='rotate(5deg) scale(1)';">
-                        <i class="bi bi-bar-chart-fill text-white" style="font-size: 1.3rem;"></i>
+                    <div class="d-none d-md-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(16,185,129,0.1); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 4px 15px rgba(16,185,129,0.1); position: relative; z-index: 1; transform: rotate(5deg); transition: all 0.5s;" onmouseover="this.style.transform='rotate(0deg) scale(1.1)';" onmouseout="this.style.transform='rotate(5deg) scale(1)';">
+                        <i class="bi bi-bar-chart-fill text-success" style="font-size: 1.3rem;"></i>
                     </div>
                 </div>
 
