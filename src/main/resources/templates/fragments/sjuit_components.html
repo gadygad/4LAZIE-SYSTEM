@@ -1229,6 +1229,21 @@
             border-color: rgba(52, 211, 153, 0.5) !important;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebars = document.querySelectorAll('.offcanvas');
+            sidebars.forEach(function(sidebar) {
+                sidebar.addEventListener('show.bs.offcanvas', function () {
+                    if(window.innerWidth >= 576) {
+                        document.body.classList.add('sidebar-open-push');
+                    }
+                });
+                sidebar.addEventListener('hide.bs.offcanvas', function () {
+                    document.body.classList.remove('sidebar-open-push');
+                });
+            });
+        });
+    </script>
 </div>
 
 </body>

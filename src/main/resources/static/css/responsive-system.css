@@ -170,6 +170,15 @@ img, video, iframe, embed, object {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Sidebar Push Effect */
+body.sidebar-open-push .main-content {
+    margin-left: 280px;
+}
+body.sidebar-open-push .offcanvas-backdrop {
+    opacity: 0 !important;
 }
 
 /* ==========================================================================
