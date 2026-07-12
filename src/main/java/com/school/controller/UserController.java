@@ -24,6 +24,9 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
+    private com.school.service.NotificationService notificationService;
+
+    @Autowired
     private com.school.repository.NoteRepository noteRepository;
 
     @Autowired
@@ -36,9 +39,11 @@ public class UserController {
 
     @GetMapping("/notifications")
     public String getAllNotifications(HttpSession session, Model model) {
-        if (session.getAttribute("user") == null) {
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
             return "redirect:/login";
         }
+        model.addAttribute("notifications", notificationService.getUserNotifications(sessionUser.getId()));
         return "user/notifications";
     }
 

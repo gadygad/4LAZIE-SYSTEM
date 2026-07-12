@@ -56,7 +56,9 @@ public class GlobalModelAttributes {
                     
                     // Add notification details
                     try {
-                        model.addAttribute("notifications", notificationService.getUnreadNotifications(user.getId()));
+                        java.util.List<com.school.model.Notification> allNotifs = notificationService.getUserNotifications(user.getId());
+                        java.util.List<com.school.model.Notification> recentNotifs = allNotifs.stream().limit(10).toList();
+                        model.addAttribute("notifications", recentNotifs);
                         model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
                     } catch (Exception e) {
                         log.warn("Failed to load notifications for user '{}': {}", email, e.getMessage());
