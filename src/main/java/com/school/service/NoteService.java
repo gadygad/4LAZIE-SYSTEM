@@ -52,27 +52,28 @@ public class NoteService {
         // 1. Fetch subjects for this program, level, and semester FIRST to establish correct order
         List<Course> courses = courseRepository.findByProgramType(program);
         if (!courses.isEmpty()) {
-            Course course = courses.get(0);
-            log.info("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
-            
-            // Try cached query first
-            List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(course, level, semester);
-            log.info("Cached method returned {} subjects", subjects.size());
-            
-            // Always verify with non-cached query if cached returned fewer results
-            List<Subject> directSubjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, level, semester);
-            log.info("Direct (non-cached) method returned {} subjects", directSubjects.size());
-            
-            // Use whichever returned more results (handles stale cache)
-            if (directSubjects.size() > subjects.size()) {
-                log.warn("Cache was stale! Cached: {}, Direct: {}. Using direct results.", subjects.size(), directSubjects.size());
-                subjects = directSubjects;
-            }
-            
-            for (Subject sub : subjects) {
-                log.info("  -> Subject: '{}' (code: {})", sub.getName(), sub.getCode());
-                groupedNotes.put(sub.getName(), new ArrayList<>());
-                moduleCodes.put(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
+            for (Course course : courses) {
+                log.info("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
+                
+                // Try cached query first
+                List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(course, level, semester);
+                log.info("Cached method returned {} subjects", subjects.size());
+                
+                // Always verify with non-cached query if cached returned fewer results
+                List<Subject> directSubjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, level, semester);
+                log.info("Direct (non-cached) method returned {} subjects", directSubjects.size());
+                
+                // Use whichever returned more results (handles stale cache)
+                if (directSubjects.size() > subjects.size()) {
+                    log.warn("Cache was stale! Cached: {}, Direct: {}. Using direct results.", subjects.size(), directSubjects.size());
+                    subjects = directSubjects;
+                }
+                
+                for (Subject sub : subjects) {
+                    log.info("  -> Subject: '{}' (code: {})", sub.getName(), sub.getCode());
+                    groupedNotes.putIfAbsent(sub.getName(), new ArrayList<>());
+                    moduleCodes.putIfAbsent(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
+                }
             }
         } else {
             log.warn("No course found for program: {}", program);
