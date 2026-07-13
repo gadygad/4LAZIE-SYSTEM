@@ -652,21 +652,36 @@ img[alt="Profile Avatar"]:hover {
     flex-grow: 1;
 }
 
-/* Sidebar Push Effect */
+/* Sidebar Push Effect - Apple Style */
+body {
+    transition: background-color 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+body.sidebar-is-open {
+    background-color: #e2e8f0; /* Subtle background color behind the scaled content */
+    overflow-x: hidden;
+}
+
 body.sidebar-is-open .main-content,
 body.sidebar-is-open .navbar-custom,
 body.sidebar-is-open .premium-guest-navbar {
-    margin-left: 280px;
+    transform: translateX(280px) scale(0.96);
+    border-radius: 20px;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    transform-origin: center left;
+    pointer-events: none; /* Disable interactions with content when sidebar is open */
 }
+
 @media (max-width: 991.98px) {
     body.sidebar-is-open .main-content,
     body.sidebar-is-open .navbar-custom,
     body.sidebar-is-open .premium-guest-navbar {
-        margin-left: 0;
+        transform: translateX(80vw) scale(0.96);
     }
 }
+
 .main-content, .navbar-custom, .premium-guest-navbar {
-    transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), border-radius 0.5s ease, box-shadow 0.5s ease, margin-left 0.5s;
+    will-change: transform;
 }
 
 /* Magical Hover Effect for Sidebar items */

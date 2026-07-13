@@ -249,7 +249,19 @@
             }
         });
 
-        function urlB64ToUint8Array(base64String) {
+        
+        // Close offcanvas when clicking outside
+        document.addEventListener('click', function(event) {
+            let mobileSidebarEl = document.getElementById('mobileSidebar');
+            if (mobileSidebarEl && document.body.classList.contains('sidebar-is-open')) {
+                if (!mobileSidebarEl.contains(event.target) && !event.target.closest('[data-bs-toggle="offcanvas"]')) {
+                    let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl);
+                    if (bsOffcanvas) { bsOffcanvas.hide(); }
+                }
+            }
+        });
+
+function urlB64ToUint8Array(base64String) {
             const padding = '='.repeat((4 - base64String.length % 4) % 4);
             const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
             const rawData = window.atob(base64);
