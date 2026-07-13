@@ -229,12 +229,12 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Offcanvas Sidebar for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
-        <div class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
+        <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
             <h5 class="offcanvas-title text-white" id="mobileOffcanvasSidebarLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: -1px;">4LAZIE</h5>
             <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body p-0" style="overflow-x: hidden;">
+        <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body p-0" style="overflow-x: hidden;">
             <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
         </div>
     </div>
@@ -289,6 +289,22 @@
             });
         }
     </script>
+
+
+<!-- Sidebar Global Push Effect -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebars = document.querySelectorAll('.offcanvas');
+    sidebars.forEach(function(sidebar) {
+        sidebar.addEventListener('show.bs.offcanvas', function () {
+            document.body.classList.add('sidebar-is-open');
+        });
+        sidebar.addEventListener('hide.bs.offcanvas', function () {
+            document.body.classList.remove('sidebar-is-open');
+        });
+    });
+});
+</script>
 
 </body>
 </html>

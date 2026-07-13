@@ -198,7 +198,7 @@
         </h5>
     </div>
     
-    <div class="offcanvas-body custom-scrollbar">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body custom-scrollbar">
         <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
     </div>
 </aside>
@@ -209,7 +209,7 @@
     <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
     <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
 
-    <div class="offcanvas-header border-0 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.9);">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-header border-0 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.9);">
         <h5 class="offcanvas-title text-dark fw-bold d-flex flex-column" id="mobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
@@ -228,7 +228,7 @@
         </button>
     </div>
     
-    <div class="offcanvas-body custom-scrollbar" style="background: rgba(255,255,255,0.85);">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body custom-scrollbar" style="background: rgba(255,255,255,0.85);">
         <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
     </div>
 </div>
@@ -297,6 +297,22 @@
             });
         }
     </script>
+
+
+<!-- Sidebar Global Push Effect -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebars = document.querySelectorAll('.offcanvas');
+    sidebars.forEach(function(sidebar) {
+        sidebar.addEventListener('show.bs.offcanvas', function () {
+            document.body.classList.add('sidebar-is-open');
+        });
+        sidebar.addEventListener('hide.bs.offcanvas', function () {
+            document.body.classList.remove('sidebar-is-open');
+        });
+    });
+});
+</script>
 
 </body>
 </html>
