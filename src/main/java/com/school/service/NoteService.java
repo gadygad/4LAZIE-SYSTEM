@@ -80,16 +80,24 @@ public class NoteService {
         }
 
         // The subjects have been fetched from the database above. No hardcoded fallbacks here.
+        log.debug("After fetching subjects, groupedNotes has {} entries: {}", groupedNotes.size(), groupedNotes.keySet());
 
         // 2. Now add notes to the established buckets
+        log.debug("Processing {} notes into buckets", notes.size());
         for (Note note : notes) {
             String modName = note.getModuleName() != null ? note.getModuleName() : "GENERAL MODULE";
+            log.debug("  Note '{}' -> module '{}' (programType={}, levelNo={}, semesterNo={})", 
+                     note.getTitle(), modName, note.getProgramType(), note.getLevelNo(), note.getSemesterNo());
             
             // This will append non-matching subjects (like "GENERAL MODULE") at the bottom
             groupedNotes.computeIfAbsent(modName, k -> new ArrayList<>()).add(note);
             if (!moduleCodes.containsKey(modName) && note.getModuleCode() != null && !note.getModuleCode().isEmpty()) {
                 moduleCodes.put(modName, note.getModuleCode());
             }
+        }
+        log.debug("FINAL groupedNotes has {} entries. Keys: {}", groupedNotes.size(), groupedNotes.keySet());
+        for (Map.Entry<String, List<Note>> e : groupedNotes.entrySet()) {
+            log.debug("  Module '{}' -> {} notes", e.getKey(), e.getValue().size());
         }
     }
 

@@ -713,7 +713,7 @@
                                         <th:block th:with="restrictedNotes=${entry.value.?[category == 'Assignment' or category == 'CAT 1' or category == 'CAT 2' or category == 'UE' or category == 'Project' or category == 'Past Paper']}">
                                             <th:block th:if="${not #lists.isEmpty(restrictedNotes)}" th:each="note : ${restrictedNotes}">
                                                 <a th:href="${session.user == null ? '#' : '/view/' + note.id}" 
-                                                   th:onclick="${session.user == null ? 'new bootstrap.Modal(document.getElementById(''restrictedModal'')).show(); return false;' : ''}"
+                                                   th:attr="onclick=${session.user == null ? 'showRestrictedModal(); return false;' : ''}"
                                                    class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(16, 185, 129,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
                                                     <div class="d-flex flex-column align-items-start">
                                                         <span class="badge badge-custom badge-category mb-1" style="font-size: 0.7rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;" th:text="${note.academicYear != null ? note.academicYear : '2024'}">2024</span>
@@ -801,6 +801,10 @@
                 const isOpen = body.classList.contains('open');
                 btn.classList.toggle('open', !isOpen);
                 body.classList.toggle('open', !isOpen);
+            }
+            function showRestrictedModal() {
+                var modalEl = document.getElementById('restrictedModal');
+                if (modalEl) { new bootstrap.Modal(modalEl).show(); }
             }
             </script>
         </div>
