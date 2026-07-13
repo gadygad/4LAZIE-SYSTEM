@@ -255,8 +255,7 @@
             let mobileSidebarEl = document.getElementById('mobileSidebar');
             if (mobileSidebarEl && document.body.classList.contains('sidebar-is-open')) {
                 if (!mobileSidebarEl.contains(event.target) && !event.target.closest('[data-bs-toggle="offcanvas"]')) {
-                    let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl);
-                    if (bsOffcanvas) { bsOffcanvas.hide(); }
+                    try { let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl) || new bootstrap.Offcanvas(mobileSidebarEl); bsOffcanvas.hide(); } catch (e) { console.error("Offcanvas close error:", e); }
                 }
             }
         });
