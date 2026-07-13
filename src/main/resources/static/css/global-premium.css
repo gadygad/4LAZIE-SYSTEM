@@ -55,6 +55,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
@@ -233,7 +234,6 @@ h1, h2, h3, h4, h5, h6 {
 .sidebar-hover-btn:hover {
     background: rgba(16, 185, 129, 0.06);
     color: #10b981 !important;
-    transform: translateX(6px);
 }
 .sidebar-group-btn:hover, .sidebar-group.open .sidebar-group-btn {
     background: rgba(255, 255, 255, 0.8);
@@ -302,7 +302,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Main Content */
 .main-content { display: flex; flex-direction: column;
-    flex: 1; width: 100%; min-width: 0; min-height: calc(100vh - 64px); overflow-y: auto; z-index: 10;
+    flex: 1; width: 100%; min-width: 0; min-height: calc(100vh - 64px); z-index: 10;
+    overflow-x: hidden;
 }
 
 /* Mobile Sidebar Toggle */
@@ -685,10 +686,9 @@ body.sidebar-is-open .premium-guest-navbar {
 }
 
 /* Magical Hover Effect for Sidebar items */
-.sidebar-hover-btn:hover, .sidebar-hover-item.open-mobile .sidebar-hover-btn {
+.sidebar-hover-item.open-mobile .sidebar-hover-btn, .sidebar-hover-item.open-item .sidebar-hover-btn {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02)) !important;
     color: #10b981 !important;
-    transform: translateX(8px) scale(1.02) !important;
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15), inset 3px 0 0 #10b981 !important;
     border-radius: 12px !important;
 }

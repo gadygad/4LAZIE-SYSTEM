@@ -167,7 +167,6 @@ img, video, iframe, embed, object {
 .main-content {
     flex: 1;
     min-width: 0; /* Prevents flex overflow */
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -571,6 +570,22 @@ select,
         top: auto !important;
         width: 100% !important;
         border-radius: 20px 20px 0 0 !important;
+    }
+    .dropdown-menu.profile-dropdown {
+        position: absolute !important;
+        top: 100% !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: 0 !important;
+        width: 260px !important;
+        border-radius: 24px !important;
+        padding: 8px !important;
+        margin-top: 10px !important;
+        transform: none !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+    .dropdown-menu.profile-dropdown::before {
+        display: none !important;
     }
 }
 

@@ -379,7 +379,6 @@
         /* CENTER COLUMN (MODULES) */
         .center-col {
             flex: 1;
-            overflow-y: auto;
         }
         
         .center-col::-webkit-scrollbar { width: 6px; }
@@ -814,7 +813,6 @@
         @media (max-width: 1250px) {
             .content-area {
                 flex-direction: column;
-                overflow-y: auto;
             }
             .center-col {
                 overflow-y: visible;
@@ -830,7 +828,7 @@
         
         @media (max-width: 991px) {
             body.has-bottom-nav {
-                padding-bottom: 70px !important;
+                padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 95px) !important;
             }
             body {
                 height: auto;
