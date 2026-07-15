@@ -1156,7 +1156,7 @@
     </div>
 
     <!-- Exam Modal -->
-    <div class="offcanvas offcanvas-bottom" id="examModal" tabindex="-1" aria-labelledby="examModalLabel" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-top: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); height: auto; max-height: 85vh;">
+    <div class="offcanvas offcanvas-bottom" id="examModal" tabindex="-1" aria-labelledby="examModalLabel" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-top: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); height: auto; max-height: 70vh;">
         
         <!-- Drag Handle (Visual only) -->
         <div class="d-flex justify-content-center pt-3 pb-1 position-relative z-2">
@@ -1169,25 +1169,25 @@
             <button type="button" class="btn-close text-reset position-absolute" data-bs-dismiss="offcanvas" aria-label="Close" style="top: 15px; right: 20px; opacity: 0.8; z-index: 1050; padding: 10px; cursor: pointer;"></button>
         </div>
         
-        <div class="offcanvas-body px-4 pb-4 pt-1 text-center position-relative" style="z-index: 1;">
-            <div class="mb-3">
-                <div class="d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 48px; height: 48px; background: linear-gradient(135deg, #ffffff, #f8fafc); border-radius: 14px; border: 1px solid rgba(255,255,255,1); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.08);">
-                    <i class="bi bi-calendar2-check-fill" style="font-size: 1.4rem; background: -webkit-linear-gradient(135deg, #059669, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        <div class="offcanvas-body px-3 pb-3 pt-0 text-center position-relative" style="z-index: 1; overflow-y: auto;">
+            <div class="mb-2">
+                <div class="d-inline-flex align-items-center justify-content-center mb-1 shadow-sm" style="width: 36px; height: 36px; background: linear-gradient(135deg, #ffffff, #f8fafc); border-radius: 10px; border: 1px solid rgba(255,255,255,1); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.08);">
+                    <i class="bi bi-calendar2-check-fill" style="font-size: 1.1rem; background: -webkit-linear-gradient(135deg, #059669, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                 </div>
-                <h5 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.2px;" id="examModalTitle">Exam Schedule</h5>
-                <span class="d-inline-block rounded-pill" style="font-size: 0.7rem; color: #94a3b8; font-weight: 500; letter-spacing: 0.4px; border: 1px dashed #cbd5e1; background: rgba(241, 245, 249, 0.4); padding: 0.2rem 0.8rem; margin-bottom: 0;" id="examModalSubtitle">Here are the important dates.</span>
+                <h6 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.2px; font-size: 0.95rem;" id="examModalTitle">Exam Schedule</h6>
+                <span class="d-inline-block rounded-pill" style="font-size: 0.65rem; color: #94a3b8; font-weight: 500; letter-spacing: 0.4px; border: 1px dashed #cbd5e1; background: rgba(241, 245, 249, 0.4); padding: 0.15rem 0.7rem; margin-bottom: 0;" id="examModalSubtitle">Here are the important dates.</span>
             </div>
             
-            <div class="d-flex flex-column gap-3 text-start mx-auto" style="max-width: 450px;">
+            <div class="d-flex flex-column gap-2 text-start mx-auto" style="max-width: 450px;">
                 <!-- Semester 1 Card -->
-                <div class="exam-date-card p-3" style="background: rgba(255, 255, 255, 0.9); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); transition: all 0.3s ease;">
+                <div class="exam-date-card p-2" style="background: rgba(255, 255, 255, 0.9); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); transition: all 0.3s ease;">
                     <div class="d-flex align-items-center mb-2">
                         <div class="d-flex align-items-center justify-content-center rounded-circle me-2" style="width: 24px; height: 24px; background: rgba(16, 185, 129, 0.1); color: #10b981;">
                             <i class="bi bi-1-circle-fill" style="font-size: 1rem;"></i>
                         </div>
                         <span class="fw-bold m-0" style="color: #334155; font-size: 1rem; font-family: 'Outfit', sans-serif; text-transform: uppercase;">Semester 1</span>
                     </div>
-                    <div class="d-flex flex-wrap gap-4 mt-3 mb-2 justify-content-center">
+                    <div class="d-flex flex-wrap gap-3 mt-2 mb-1 justify-content-center">
                         <div class="d-flex flex-column align-items-center">
                             <div class="mb-1 text-center">
                                 <span class="fw-medium" style="color: #94a3b8; font-size: 0.65rem; letter-spacing: 0.3px; text-transform: uppercase;">STARTS:</span>
@@ -1218,7 +1218,7 @@
                 </div>
                 
                 <!-- Semester 2 Card -->
-                <div class="exam-date-card p-3 position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08); transition: all 0.3s ease;">
+                <div class="exam-date-card p-2 position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.95); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08); transition: all 0.3s ease;">
                     <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #10b981; border-radius: 16px 0 0 16px;"></div>
                     <div class="d-flex align-items-center mb-2 ms-2">
                         <div class="d-flex align-items-center justify-content-center rounded-circle me-2" style="width: 24px; height: 24px; background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);">
@@ -1227,7 +1227,7 @@
                         <span class="fw-bold m-0" style="color: #1e293b; font-size: 1rem; font-family: 'Outfit', sans-serif; text-transform: uppercase;">Semester 2</span>
                         <span class="d-inline-block ms-auto rounded-pill fw-medium" style="background: rgba(241, 245, 249, 0.4); color: #94a3b8; font-size: 10px; padding: 0.2em 0.6em; letter-spacing: 0.3px; border: 1px dashed #cbd5e1; text-transform: uppercase;">UPCOMING</span>
                     </div>
-                    <div class="d-flex flex-wrap gap-4 mt-3 mb-2 justify-content-center">
+                    <div class="d-flex flex-wrap gap-3 mt-2 mb-1 justify-content-center">
                         <div class="d-flex flex-column align-items-center">
                             <div class="mb-1 text-center">
                                 <span class="fw-medium" style="color: #94a3b8; font-size: 0.65rem; letter-spacing: 0.3px; text-transform: uppercase;">STARTS:</span>
