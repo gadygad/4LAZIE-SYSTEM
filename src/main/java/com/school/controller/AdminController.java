@@ -26,6 +26,7 @@ import com.school.model.Course;
 import com.school.repository.SubjectRepository;
 import com.school.repository.CourseRepository;
 import com.school.service.FileStorageService;
+import com.school.service.PdfParsingService;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
@@ -45,6 +46,9 @@ public class AdminController {
     
     @Autowired
     private TimetableRepository timetableRepository;
+
+    @Autowired
+    private PdfParsingService pdfParsingService;
 
     @Autowired
     private AcademicCalendarRepository academicCalendarRepository;
@@ -595,17 +599,80 @@ public class AdminController {
         return "admin_calendar";
     }
 
+    @org.springframework.web.bind.annotation.GetMapping("/calendar/force-autofill")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String forceAutofill() {
+        AcademicCalendar cal = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
+        if (cal == null) {
+            return "No current calendar found.";
+        }
+        if (cal.getFileUrl() == null || cal.getFileUrl().isEmpty()) {
+            return "Current calendar does not have a PDF file attached.";
+        }
+        try {
+            java.nio.file.Path filePath = java.nio.file.Paths.get("uploads", cal.getFileUrl());
+            if (!java.nio.file.Files.exists(filePath)) {
+                return "PDF file not found in uploads folder: " + filePath.toAbsolutePath();
+            }
+            java.io.InputStream is = java.nio.file.Files.newInputStream(filePath);
+            java.util.Map<String, String> extractedDates = pdfParsingService.extractDatesFromPdf(is);
+            is.close();
+            
+            if (extractedDates.isEmpty()) {
+                return "Could not extract any dates from the PDF.";
+            }
+
+            // Apply updates
+            if (extractedDates.containsKey("CAT1_SEM1")) cal.setSem1Cat1DegreeDate(extractedDates.get("CAT1_SEM1"));
+            if (extractedDates.containsKey("CAT1_SEM1")) cal.setSem1Cat1DiplomaDate(extractedDates.get("CAT1_SEM1"));
+            if (extractedDates.containsKey("CAT2_SEM1")) cal.setSem1Cat2DegreeDate(extractedDates.get("CAT2_SEM1"));
+            if (extractedDates.containsKey("CAT2_SEM1")) cal.setSem1Cat2DiplomaDate(extractedDates.get("CAT2_SEM1"));
+            if (extractedDates.containsKey("UE_SEM1")) cal.setSem1UeDegreeDate(extractedDates.get("UE_SEM1"));
+            if (extractedDates.containsKey("UE_SEM1")) cal.setSem1UeDiplomaDate(extractedDates.get("UE_SEM1"));
+
+            if (extractedDates.containsKey("CAT1_SEM2")) cal.setSem2Cat1DegreeDate(extractedDates.get("CAT1_SEM2"));
+            if (extractedDates.containsKey("CAT1_SEM2")) cal.setSem2Cat1DiplomaDate(extractedDates.get("CAT1_SEM2"));
+            if (extractedDates.containsKey("CAT2_SEM2")) cal.setSem2Cat2DegreeDate(extractedDates.get("CAT2_SEM2"));
+            if (extractedDates.containsKey("CAT2_SEM2")) cal.setSem2Cat2DiplomaDate(extractedDates.get("CAT2_SEM2"));
+            if (extractedDates.containsKey("UE_SEM2")) cal.setSem2UeDegreeDate(extractedDates.get("UE_SEM2"));
+            if (extractedDates.containsKey("UE_SEM2")) cal.setSem2UeDiplomaDate(extractedDates.get("UE_SEM2"));
+            
+            academicCalendarRepository.save(cal);
+            return "SUCCESS! Extracted and saved the following dates: " + extractedDates.toString() + ". You can now refresh your page.";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
     @PostMapping("/calendar/upload")
     public String uploadCalendar(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("academicYear") String academicYear,
-            @RequestParam("sem1Cat1Date") String sem1Cat1Date,
-            @RequestParam("sem1Cat2Date") String sem1Cat2Date,
-            @RequestParam("sem1UeDate") String sem1UeDate,
-            @RequestParam("sem2Cat1Date") String sem2Cat1Date,
-            @RequestParam("sem2Cat2Date") String sem2Cat2Date,
-            @RequestParam("sem2UeDate") String sem2UeDate,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "academicYear", required = false) String academicYear,
+            @RequestParam(value = "sem1Cat1DegreeDate", required = false) String sem1Cat1DegreeDate,
+            @RequestParam(value = "sem1Cat1DiplomaDate", required = false) String sem1Cat1DiplomaDate,
+            @RequestParam(value = "sem1Cat2DegreeDate", required = false) String sem1Cat2DegreeDate,
+            @RequestParam(value = "sem1Cat2DiplomaDate", required = false) String sem1Cat2DiplomaDate,
+            @RequestParam(value = "sem1UeDegreeDate", required = false) String sem1UeDegreeDate,
+            @RequestParam(value = "sem1UeDiplomaDate", required = false) String sem1UeDiplomaDate,
+            @RequestParam(value = "sem2Cat1DegreeDate", required = false) String sem2Cat1DegreeDate,
+            @RequestParam(value = "sem2Cat1DiplomaDate", required = false) String sem2Cat1DiplomaDate,
+            @RequestParam(value = "sem2Cat2DegreeDate", required = false) String sem2Cat2DegreeDate,
+            @RequestParam(value = "sem2Cat2DiplomaDate", required = false) String sem2Cat2DiplomaDate,
+            @RequestParam(value = "sem2UeDegreeDate", required = false) String sem2UeDegreeDate,
+            @RequestParam(value = "sem2UeDiplomaDate", required = false) String sem2UeDiplomaDate,
             @RequestParam(value = "isCurrent", required = false) boolean isCurrent,
+            @RequestParam(value = "sem1Cat1DegreeFile", required = false) MultipartFile sem1Cat1DegreeFile,
+            @RequestParam(value = "sem1Cat1DiplomaFile", required = false) MultipartFile sem1Cat1DiplomaFile,
+            @RequestParam(value = "sem1Cat2DegreeFile", required = false) MultipartFile sem1Cat2DegreeFile,
+            @RequestParam(value = "sem1Cat2DiplomaFile", required = false) MultipartFile sem1Cat2DiplomaFile,
+            @RequestParam(value = "sem1UeDegreeFile", required = false) MultipartFile sem1UeDegreeFile,
+            @RequestParam(value = "sem1UeDiplomaFile", required = false) MultipartFile sem1UeDiplomaFile,
+            @RequestParam(value = "sem2Cat1DegreeFile", required = false) MultipartFile sem2Cat1DegreeFile,
+            @RequestParam(value = "sem2Cat1DiplomaFile", required = false) MultipartFile sem2Cat1DiplomaFile,
+            @RequestParam(value = "sem2Cat2DegreeFile", required = false) MultipartFile sem2Cat2DegreeFile,
+            @RequestParam(value = "sem2Cat2DiplomaFile", required = false) MultipartFile sem2Cat2DiplomaFile,
+            @RequestParam(value = "sem2UeDegreeFile", required = false) MultipartFile sem2UeDegreeFile,
+            @RequestParam(value = "sem2UeDiplomaFile", required = false) MultipartFile sem2UeDiplomaFile,
             HttpSession session, RedirectAttributes redirectAttributes) {
 
         User user = getLoggedInUser();
@@ -614,14 +681,45 @@ public class AdminController {
         }
 
         try {
+            java.util.Map<String, String> extractedDates = new java.util.HashMap<>();
+            if (file != null && !file.isEmpty()) {
+                extractedDates = pdfParsingService.extractDatesFromPdf(file);
+            }
+
+            // Auto-fill Sem1 Dates if empty
+            if ((sem1Cat1DegreeDate == null || sem1Cat1DegreeDate.isEmpty()) && extractedDates.containsKey("CAT1_SEM1")) sem1Cat1DegreeDate = extractedDates.get("CAT1_SEM1");
+            if ((sem1Cat1DiplomaDate == null || sem1Cat1DiplomaDate.isEmpty()) && extractedDates.containsKey("CAT1_SEM1")) sem1Cat1DiplomaDate = extractedDates.get("CAT1_SEM1");
+            
+            if ((sem1Cat2DegreeDate == null || sem1Cat2DegreeDate.isEmpty()) && extractedDates.containsKey("CAT2_SEM1")) sem1Cat2DegreeDate = extractedDates.get("CAT2_SEM1");
+            if ((sem1Cat2DiplomaDate == null || sem1Cat2DiplomaDate.isEmpty()) && extractedDates.containsKey("CAT2_SEM1")) sem1Cat2DiplomaDate = extractedDates.get("CAT2_SEM1");
+            
+            if ((sem1UeDegreeDate == null || sem1UeDegreeDate.isEmpty()) && extractedDates.containsKey("UE_SEM1")) sem1UeDegreeDate = extractedDates.get("UE_SEM1");
+            if ((sem1UeDiplomaDate == null || sem1UeDiplomaDate.isEmpty()) && extractedDates.containsKey("UE_SEM1")) sem1UeDiplomaDate = extractedDates.get("UE_SEM1");
+
+            // Auto-fill Sem2 Dates if empty
+            if ((sem2Cat1DegreeDate == null || sem2Cat1DegreeDate.isEmpty()) && extractedDates.containsKey("CAT1_SEM2")) sem2Cat1DegreeDate = extractedDates.get("CAT1_SEM2");
+            if ((sem2Cat1DiplomaDate == null || sem2Cat1DiplomaDate.isEmpty()) && extractedDates.containsKey("CAT1_SEM2")) sem2Cat1DiplomaDate = extractedDates.get("CAT1_SEM2");
+            
+            if ((sem2Cat2DegreeDate == null || sem2Cat2DegreeDate.isEmpty()) && extractedDates.containsKey("CAT2_SEM2")) sem2Cat2DegreeDate = extractedDates.get("CAT2_SEM2");
+            if ((sem2Cat2DiplomaDate == null || sem2Cat2DiplomaDate.isEmpty()) && extractedDates.containsKey("CAT2_SEM2")) sem2Cat2DiplomaDate = extractedDates.get("CAT2_SEM2");
+            
+            if ((sem2UeDegreeDate == null || sem2UeDegreeDate.isEmpty()) && extractedDates.containsKey("UE_SEM2")) sem2UeDegreeDate = extractedDates.get("UE_SEM2");
+            if ((sem2UeDiplomaDate == null || sem2UeDiplomaDate.isEmpty()) && extractedDates.containsKey("UE_SEM2")) sem2UeDiplomaDate = extractedDates.get("UE_SEM2");
+
             AcademicCalendar calendar = new AcademicCalendar();
             calendar.setAcademicYear(academicYear);
-            calendar.setSem1Cat1Date(sem1Cat1Date);
-            calendar.setSem1Cat2Date(sem1Cat2Date);
-            calendar.setSem1UeDate(sem1UeDate);
-            calendar.setSem2Cat1Date(sem2Cat1Date);
-            calendar.setSem2Cat2Date(sem2Cat2Date);
-            calendar.setSem2UeDate(sem2UeDate);
+            calendar.setSem1Cat1DegreeDate(sem1Cat1DegreeDate);
+            calendar.setSem1Cat1DiplomaDate(sem1Cat1DiplomaDate);
+            calendar.setSem1Cat2DegreeDate(sem1Cat2DegreeDate);
+            calendar.setSem1Cat2DiplomaDate(sem1Cat2DiplomaDate);
+            calendar.setSem1UeDegreeDate(sem1UeDegreeDate);
+            calendar.setSem1UeDiplomaDate(sem1UeDiplomaDate);
+            calendar.setSem2Cat1DegreeDate(sem2Cat1DegreeDate);
+            calendar.setSem2Cat1DiplomaDate(sem2Cat1DiplomaDate);
+            calendar.setSem2Cat2DegreeDate(sem2Cat2DegreeDate);
+            calendar.setSem2Cat2DiplomaDate(sem2Cat2DiplomaDate);
+            calendar.setSem2UeDegreeDate(sem2UeDegreeDate);
+            calendar.setSem2UeDiplomaDate(sem2UeDiplomaDate);
             
             if (isCurrent) {
                 // unset others
@@ -632,9 +730,45 @@ public class AdminController {
             }
             calendar.setIsCurrent(isCurrent || academicCalendarRepository.count() == 0);
 
-            if (!file.isEmpty()) {
+            if (file != null && !file.isEmpty()) {
                 String fileUrl = fileStorageService.uploadFile(file);
                 calendar.setFileUrl(fileUrl);
+            }
+            if (sem1Cat1DegreeFile != null && !sem1Cat1DegreeFile.isEmpty()) {
+                calendar.setSem1Cat1DegreeUrl(fileStorageService.uploadFile(sem1Cat1DegreeFile));
+            }
+            if (sem1Cat1DiplomaFile != null && !sem1Cat1DiplomaFile.isEmpty()) {
+                calendar.setSem1Cat1DiplomaUrl(fileStorageService.uploadFile(sem1Cat1DiplomaFile));
+            }
+            if (sem1Cat2DegreeFile != null && !sem1Cat2DegreeFile.isEmpty()) {
+                calendar.setSem1Cat2DegreeUrl(fileStorageService.uploadFile(sem1Cat2DegreeFile));
+            }
+            if (sem1Cat2DiplomaFile != null && !sem1Cat2DiplomaFile.isEmpty()) {
+                calendar.setSem1Cat2DiplomaUrl(fileStorageService.uploadFile(sem1Cat2DiplomaFile));
+            }
+            if (sem1UeDegreeFile != null && !sem1UeDegreeFile.isEmpty()) {
+                calendar.setSem1UeDegreeUrl(fileStorageService.uploadFile(sem1UeDegreeFile));
+            }
+            if (sem1UeDiplomaFile != null && !sem1UeDiplomaFile.isEmpty()) {
+                calendar.setSem1UeDiplomaUrl(fileStorageService.uploadFile(sem1UeDiplomaFile));
+            }
+            if (sem2Cat1DegreeFile != null && !sem2Cat1DegreeFile.isEmpty()) {
+                calendar.setSem2Cat1DegreeUrl(fileStorageService.uploadFile(sem2Cat1DegreeFile));
+            }
+            if (sem2Cat1DiplomaFile != null && !sem2Cat1DiplomaFile.isEmpty()) {
+                calendar.setSem2Cat1DiplomaUrl(fileStorageService.uploadFile(sem2Cat1DiplomaFile));
+            }
+            if (sem2Cat2DegreeFile != null && !sem2Cat2DegreeFile.isEmpty()) {
+                calendar.setSem2Cat2DegreeUrl(fileStorageService.uploadFile(sem2Cat2DegreeFile));
+            }
+            if (sem2Cat2DiplomaFile != null && !sem2Cat2DiplomaFile.isEmpty()) {
+                calendar.setSem2Cat2DiplomaUrl(fileStorageService.uploadFile(sem2Cat2DiplomaFile));
+            }
+            if (sem2UeDegreeFile != null && !sem2UeDegreeFile.isEmpty()) {
+                calendar.setSem2UeDegreeUrl(fileStorageService.uploadFile(sem2UeDegreeFile));
+            }
+            if (sem2UeDiplomaFile != null && !sem2UeDiplomaFile.isEmpty()) {
+                calendar.setSem2UeDiplomaUrl(fileStorageService.uploadFile(sem2UeDiplomaFile));
             }
 
             academicCalendarRepository.save(calendar);
@@ -664,6 +798,18 @@ public class AdminController {
                     String publicId = fileStorageService.extractCloudinaryPublicId(calendar.getFileUrl());
                     fileStorageService.deleteFile(publicId);
                 }
+                if (calendar.getSem1Cat1DegreeUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem1Cat1DegreeUrl()));
+                if (calendar.getSem1Cat1DiplomaUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem1Cat1DiplomaUrl()));
+                if (calendar.getSem1Cat2DegreeUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem1Cat2DegreeUrl()));
+                if (calendar.getSem1Cat2DiplomaUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem1Cat2DiplomaUrl()));
+                if (calendar.getSem1UeDegreeUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem1UeDegreeUrl()));
+                if (calendar.getSem1UeDiplomaUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem1UeDiplomaUrl()));
+                if (calendar.getSem2Cat1DegreeUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem2Cat1DegreeUrl()));
+                if (calendar.getSem2Cat1DiplomaUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem2Cat1DiplomaUrl()));
+                if (calendar.getSem2Cat2DegreeUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem2Cat2DegreeUrl()));
+                if (calendar.getSem2Cat2DiplomaUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem2Cat2DiplomaUrl()));
+                if (calendar.getSem2UeDegreeUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem2UeDegreeUrl()));
+                if (calendar.getSem2UeDiplomaUrl() != null) fileStorageService.deleteFile(fileStorageService.extractCloudinaryPublicId(calendar.getSem2UeDiplomaUrl()));
             } catch (Exception ignored) {}
             academicCalendarRepository.delete(calendar);
             redirectAttributes.addFlashAttribute("success", "Academic Calendar deleted successfully.");

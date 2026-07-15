@@ -106,9 +106,15 @@ public class GlobalSidebarAdvice {
 
             if (calHolder[0] != null) {
                 com.school.model.AcademicCalendar cal = calHolder[0];
-                model.addAttribute("cat1Passed", hasDatePassed(cal.getSem1Cat1Date()) && hasDatePassed(cal.getSem2Cat1Date()));
-                model.addAttribute("cat2Passed", hasDatePassed(cal.getSem1Cat2Date()) && hasDatePassed(cal.getSem2Cat2Date()));
-                model.addAttribute("uePassed", hasDatePassed(cal.getSem1UeDate()) && hasDatePassed(cal.getSem2UeDate()));
+                model.addAttribute("cat1Passed", 
+                    hasDatePassed(cal.getSem1Cat1DegreeDate()) && hasDatePassed(cal.getSem1Cat1DiplomaDate()) && 
+                    hasDatePassed(cal.getSem2Cat1DegreeDate()) && hasDatePassed(cal.getSem2Cat1DiplomaDate()));
+                model.addAttribute("cat2Passed", 
+                    hasDatePassed(cal.getSem1Cat2DegreeDate()) && hasDatePassed(cal.getSem1Cat2DiplomaDate()) && 
+                    hasDatePassed(cal.getSem2Cat2DegreeDate()) && hasDatePassed(cal.getSem2Cat2DiplomaDate()));
+                model.addAttribute("uePassed", 
+                    hasDatePassed(cal.getSem1UeDegreeDate()) && hasDatePassed(cal.getSem1UeDiplomaDate()) && 
+                    hasDatePassed(cal.getSem2UeDegreeDate()) && hasDatePassed(cal.getSem2UeDiplomaDate()));
             } else {
                 model.addAttribute("cat1Passed", false);
                 model.addAttribute("cat2Passed", false);

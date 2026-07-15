@@ -11,11 +11,17 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-@Service
+// Not a @Service — instantiated by CloudinaryConfig.fileStorageService() when credentials are present
 public class CloudinaryStorageServiceImpl implements FileStorageService {
 
-    @Autowired
+    @Autowired(required = false)
     private Cloudinary cloudinary;
+
+    public CloudinaryStorageServiceImpl() {}
+
+    public void setCloudinary(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
 
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
