@@ -501,6 +501,28 @@ public class AdminController {
         return "redirect:/admin/subjects";
     }
 
+    @PostMapping("/subjects/{id}/edit")
+    public String editSubject(@PathVariable String id, @RequestParam("name") String name, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.SUPER_ADMIN) {
+            redirectAttributes.addFlashAttribute("error", "Access denied. Only Super Admin can edit subjects.");
+            return "redirect:/login";
+        }
+        if (name == null || name.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Subject name cannot be empty.");
+            return "redirect:/admin/subjects";
+        }
+        Subject subject = subjectRepository.findById(id).orElse(null);
+        if (subject != null) {
+            subject.setName(name.trim().toUpperCase());
+            subjectRepository.save(subject);
+            redirectAttributes.addFlashAttribute("success", "Subject updated successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Subject not found.");
+        }
+        return "redirect:/admin/subjects";
+    }
+
     // ============ ADMIN TIMETABLES MANAGEMENT ============
 
     @GetMapping("/timetables")
@@ -649,17 +671,29 @@ public class AdminController {
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "academicYear", required = false) String academicYear,
             @RequestParam(value = "sem1Cat1DegreeDate", required = false) String sem1Cat1DegreeDate,
+            @RequestParam(value = "sem1Cat1DegreeEndDate", required = false) String sem1Cat1DegreeEndDate,
             @RequestParam(value = "sem1Cat1DiplomaDate", required = false) String sem1Cat1DiplomaDate,
+            @RequestParam(value = "sem1Cat1DiplomaEndDate", required = false) String sem1Cat1DiplomaEndDate,
             @RequestParam(value = "sem1Cat2DegreeDate", required = false) String sem1Cat2DegreeDate,
+            @RequestParam(value = "sem1Cat2DegreeEndDate", required = false) String sem1Cat2DegreeEndDate,
             @RequestParam(value = "sem1Cat2DiplomaDate", required = false) String sem1Cat2DiplomaDate,
+            @RequestParam(value = "sem1Cat2DiplomaEndDate", required = false) String sem1Cat2DiplomaEndDate,
             @RequestParam(value = "sem1UeDegreeDate", required = false) String sem1UeDegreeDate,
+            @RequestParam(value = "sem1UeDegreeEndDate", required = false) String sem1UeDegreeEndDate,
             @RequestParam(value = "sem1UeDiplomaDate", required = false) String sem1UeDiplomaDate,
+            @RequestParam(value = "sem1UeDiplomaEndDate", required = false) String sem1UeDiplomaEndDate,
             @RequestParam(value = "sem2Cat1DegreeDate", required = false) String sem2Cat1DegreeDate,
+            @RequestParam(value = "sem2Cat1DegreeEndDate", required = false) String sem2Cat1DegreeEndDate,
             @RequestParam(value = "sem2Cat1DiplomaDate", required = false) String sem2Cat1DiplomaDate,
+            @RequestParam(value = "sem2Cat1DiplomaEndDate", required = false) String sem2Cat1DiplomaEndDate,
             @RequestParam(value = "sem2Cat2DegreeDate", required = false) String sem2Cat2DegreeDate,
+            @RequestParam(value = "sem2Cat2DegreeEndDate", required = false) String sem2Cat2DegreeEndDate,
             @RequestParam(value = "sem2Cat2DiplomaDate", required = false) String sem2Cat2DiplomaDate,
+            @RequestParam(value = "sem2Cat2DiplomaEndDate", required = false) String sem2Cat2DiplomaEndDate,
             @RequestParam(value = "sem2UeDegreeDate", required = false) String sem2UeDegreeDate,
+            @RequestParam(value = "sem2UeDegreeEndDate", required = false) String sem2UeDegreeEndDate,
             @RequestParam(value = "sem2UeDiplomaDate", required = false) String sem2UeDiplomaDate,
+            @RequestParam(value = "sem2UeDiplomaEndDate", required = false) String sem2UeDiplomaEndDate,
             @RequestParam(value = "isCurrent", required = false) boolean isCurrent,
             @RequestParam(value = "sem1Cat1DegreeFile", required = false) MultipartFile sem1Cat1DegreeFile,
             @RequestParam(value = "sem1Cat1DiplomaFile", required = false) MultipartFile sem1Cat1DiplomaFile,
@@ -709,17 +743,30 @@ public class AdminController {
             AcademicCalendar calendar = new AcademicCalendar();
             calendar.setAcademicYear(academicYear);
             calendar.setSem1Cat1DegreeDate(sem1Cat1DegreeDate);
+            calendar.setSem1Cat1DegreeEndDate(sem1Cat1DegreeEndDate);
             calendar.setSem1Cat1DiplomaDate(sem1Cat1DiplomaDate);
+            calendar.setSem1Cat1DiplomaEndDate(sem1Cat1DiplomaEndDate);
             calendar.setSem1Cat2DegreeDate(sem1Cat2DegreeDate);
+            calendar.setSem1Cat2DegreeEndDate(sem1Cat2DegreeEndDate);
             calendar.setSem1Cat2DiplomaDate(sem1Cat2DiplomaDate);
+            calendar.setSem1Cat2DiplomaEndDate(sem1Cat2DiplomaEndDate);
             calendar.setSem1UeDegreeDate(sem1UeDegreeDate);
+            calendar.setSem1UeDegreeEndDate(sem1UeDegreeEndDate);
             calendar.setSem1UeDiplomaDate(sem1UeDiplomaDate);
+            calendar.setSem1UeDiplomaEndDate(sem1UeDiplomaEndDate);
+            
             calendar.setSem2Cat1DegreeDate(sem2Cat1DegreeDate);
+            calendar.setSem2Cat1DegreeEndDate(sem2Cat1DegreeEndDate);
             calendar.setSem2Cat1DiplomaDate(sem2Cat1DiplomaDate);
+            calendar.setSem2Cat1DiplomaEndDate(sem2Cat1DiplomaEndDate);
             calendar.setSem2Cat2DegreeDate(sem2Cat2DegreeDate);
+            calendar.setSem2Cat2DegreeEndDate(sem2Cat2DegreeEndDate);
             calendar.setSem2Cat2DiplomaDate(sem2Cat2DiplomaDate);
+            calendar.setSem2Cat2DiplomaEndDate(sem2Cat2DiplomaEndDate);
             calendar.setSem2UeDegreeDate(sem2UeDegreeDate);
+            calendar.setSem2UeDegreeEndDate(sem2UeDegreeEndDate);
             calendar.setSem2UeDiplomaDate(sem2UeDiplomaDate);
+            calendar.setSem2UeDiplomaEndDate(sem2UeDiplomaEndDate);
             
             if (isCurrent) {
                 // unset others

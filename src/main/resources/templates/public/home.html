@@ -2860,6 +2860,8 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(59, 130, 246, 0.1) !important;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: visible;
+            min-height: 0 !important;
+            height: auto !important;
             /* Changed to visible for dropdowns */
         }
 
@@ -2895,19 +2897,20 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
         .premium-glass-modal .btn-submit-premium {
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #fbbf24, #d97706); /* Yellow gradient */
             border-radius: 12px;
             padding: 14px;
             border: none;
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3);
             transition: all 0.3s ease;
             font-weight: 800;
+            color: #1e293b !important; /* Dark text for contrast */
         }
 
         .premium-glass-modal .btn-submit-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
-            background: linear-gradient(135deg, #34d399, #10b981);
+            box-shadow: 0 12px 25px rgba(217, 119, 6, 0.4);
+            background: linear-gradient(135deg, #fcd34d, #fbbf24);
         }
 
         /* Java Magic Dropdown Styles */
@@ -3038,7 +3041,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body p-4 pb-2">
                     <form action="/timetable/view" method="GET" id="timetableForm">
 
                         <!-- Program Type -->
