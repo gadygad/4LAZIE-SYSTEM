@@ -62,6 +62,10 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes shimmerBar {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
         .ts-dropdown .option:hover, .ts-dropdown .option.active {
             background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05)) !important;
             color: #059669 !important;
@@ -212,25 +216,37 @@
                                         <!-- Edit Subject Modal -->
                                         <div th:if="${session.user.role.name() == 'SUPER_ADMIN'}" class="modal fade" th:id="'editSubjectModal-' + ${subject.id}" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered text-start">
-                                                <div class="modal-content" style="border-radius: 24px; border: 1px solid rgba(59, 130, 246, 0.2); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); box-shadow: 0 25px 50px rgba(0,0,0,0.15);">
-                                                    <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border-bottom: none; border-radius: 24px 24px 0 0; padding: 16px 20px;">
-                                                        <h5 class="modal-title fw-bold text-white text-uppercase" style="font-size: 1.1rem; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif;">
-                                                            <i class="bi bi-pencil-square me-2"></i>EDIT SUBJECT
-                                                        </h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
-                                                    </div>
-                                                    <form th:action="@{'/admin/subjects/' + ${subject.id} + '/edit'}" method="post">
-                                                        <div class="modal-body p-4">
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-semibold" style="font-size: 0.8rem; color: #475569; text-transform: uppercase;">Subject Name</label>
-                                                                <input type="text" name="name" class="form-control glass-input" th:value="${subject.name}" required style="text-transform: uppercase;">
+                                                <div class="modal-content" style="border-radius: 28px; border: 1px solid rgba(16, 185, 129, 0.25); background: rgba(255,255,255,0.15); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); box-shadow: 0 32px 64px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.15) inset; overflow: hidden; position: relative;">
+                                                    <!-- Glowing orbs -->
+                                                    <div style="position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: radial-gradient(circle, rgba(16,185,129,0.35) 0%, transparent 70%); border-radius: 50%; filter: blur(20px); pointer-events: none; z-index: 0;"></div>
+                                                    <div style="position: absolute; bottom: -30px; left: -30px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(52,211,153,0.2) 0%, transparent 70%); border-radius: 50%; filter: blur(15px); pointer-events: none; z-index: 0;"></div>
+                                                    <!-- Animated top bar -->
+                                                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #34d399, #10b981); background-size: 200% 100%; animation: shimmerBar 3s linear infinite; z-index: 2; border-radius: 28px 28px 0 0;"></div>
+                                                    <div class="modal-header border-0 pb-0 position-relative" style="z-index: 1; padding: 24px 24px 12px;">
+                                                        <div class="d-flex align-items-center gap-3">
+                                                            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(52,211,153,0.1)); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(16,185,129,0.15);">
+                                                                <i class="bi bi-pencil-square" style="font-size: 1.2rem; background: linear-gradient(135deg, #059669, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h5 class="modal-title fw-bolder mb-0 text-uppercase" style="font-size: 1rem; letter-spacing: 0.8px; font-family: 'Outfit', sans-serif; background: linear-gradient(135deg, #065f46, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Edit Subject</h5>
+                                                                <p class="mb-0" style="font-size: 0.7rem; color: #94a3b8; letter-spacing: 0.3px;">Update subject information below</p>
                                                             </div>
                                                         </div>
-                                                        <div class="modal-footer" style="border-top: none; background: rgba(248, 250, 252, 0.5); border-radius: 0 0 24px 24px; padding: 16px 20px;">
-                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 12px; font-weight: 600;">Cancel</button>
-                                                            <button type="submit" class="btn btn-primary" style="border-radius: 12px; font-weight: 600; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none;">
-                                                                <i class="bi bi-save-fill me-1"></i>Save Changes
-                                                            </button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 20px; right: 20px; opacity: 0.5; transition: all 0.3s ease;" onmouseover="this.style.opacity='1'; this.style.transform='rotate(90deg)';" onmouseout="this.style.opacity='0.5'; this.style.transform='rotate(0deg)';"></button>
+                                                    </div>
+                                                    <form th:action="@{'/admin/subjects/' + ${subject.id} + '/edit'}" method="post" style="position: relative; z-index: 1;">
+                                                        <div class="modal-body" style="padding: 20px 24px 8px;">
+                                                            <div class="mb-1">
+                                                                <label class="form-label fw-semibold mb-2" style="font-size: 0.72rem; color: #059669; text-transform: uppercase; letter-spacing: 1px;"><i class="bi bi-book-fill me-1"></i>Subject Name</label>
+                                                                <div style="position: relative;">
+                                                                    <input type="text" name="name" th:value="${subject.name}" required style="text-transform: uppercase; width: 100%; border-radius: 14px; border: 1.5px solid rgba(16,185,129,0.2); background: rgba(255,255,255,0.5); backdrop-filter: blur(10px); padding: 12px 16px 12px 44px; font-weight: 600; font-size: 0.9rem; color: #1e293b; transition: all 0.4s ease; box-shadow: 0 2px 8px rgba(16,185,129,0.05); outline: none;" onfocus="this.style.borderColor='rgba(16,185,129,0.6)'; this.style.boxShadow='0 0 0 4px rgba(16,185,129,0.08), 0 4px 16px rgba(16,185,129,0.12)'; this.style.background='rgba(255,255,255,0.85)';" onblur="this.style.borderColor='rgba(16,185,129,0.2)'; this.style.boxShadow='0 2px 8px rgba(16,185,129,0.05)'; this.style.background='rgba(255,255,255,0.5)';">
+                                                                    <i class="bi bi-pencil" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #10b981; font-size: 0.9rem; pointer-events: none;"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer border-0" style="padding: 16px 24px 24px; gap: 12px; background: rgba(248,250,252,0.3); border-radius: 0 0 28px 28px;">
+                                                            <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 14px; font-weight: 600; font-size: 0.85rem; padding: 10px 20px; background: rgba(241,245,249,0.8); color: #64748b; border: 1px solid rgba(203,213,225,0.5); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(226,232,240,0.9)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(241,245,249,0.8)'; this.style.transform='translateY(0)';"><i class="bi bi-x-circle me-1"></i>Cancel</button>
+                                                            <button type="submit" style="border-radius: 14px; font-weight: 700; font-size: 0.85rem; padding: 10px 24px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 4px 15px rgba(16,185,129,0.35); position: relative; overflow: hidden; letter-spacing: 0.3px; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(16,185,129,0.45)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.35)';"><i class="bi bi-check-circle-fill me-1"></i>Save Changes</button>
                                                         </div>
                                                     </form>
                                                 </div>
