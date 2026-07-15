@@ -1321,10 +1321,12 @@
                 // Hide on scroll
                 let lastScroll = 0;
                 window.addEventListener('scroll', () => {
-                    const navbar = document.getElementById('mainNavbar');
+                    const navbar = document.getElementById('mainNavbar') || document.querySelector('.navbar');
                     const currentScroll = window.pageYOffset;
-                    if (currentScroll > lastScroll && currentScroll > 100) navbar.classList.add('hide-on-scroll');
-                    else navbar.classList.remove('hide-on-scroll');
+                    if (navbar) {
+                        if (currentScroll > lastScroll && currentScroll > 100) navbar.classList.add('hide-on-scroll');
+                        else navbar.classList.remove('hide-on-scroll');
+                    }
                     lastScroll = currentScroll;
                 });
 
