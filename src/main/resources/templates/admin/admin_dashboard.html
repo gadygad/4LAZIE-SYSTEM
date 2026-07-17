@@ -318,7 +318,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(16, 185, 129, 0.2);">
                                     <i class="bi bi-graph-up-arrow"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Platform Engagement</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Platform Engagement</h5>
                             </div>
                             <div class="chart-container-wrapper">
                                 <canvas id="engagementChart"></canvas>
@@ -333,7 +333,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(139, 92, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(139, 92, 246, 0.2);">
                                     <i class="bi bi-pie-chart-fill"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Content Types</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Content Types</h5>
                             </div>
                             <div class="chart-container-wrapper d-flex justify-content-center">
                                 <canvas id="contentChart"></canvas>
@@ -351,7 +351,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(59, 130, 246, 0.2);">
                                     <i class="bi bi-person-lines-fill"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Recent Users</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Recent Users</h5>
                             </div>
                             
                             <div class="d-flex flex-column gap-1">
@@ -361,8 +361,8 @@
                                             <i class="bi bi-person-fill"></i>
                                         </div>
                                         <div>
-                                            <div class="fw-bold d-flex align-items-center" style="color: #1e293b; font-size: 0.95rem;">
-                                                <span th:text="${u.name}">User Name</span>
+                                            <div class="fw-bold d-flex align-items-center text-capitalize" style="color: #1e293b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 3px;">
+                                                <span th:text="${#strings.toLowerCase(u.name)}">User Name</span>
                                                 <span th:if="${u.isSuspended}" class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-2" style="font-size: 0.65rem; padding: 0.3em 0.6em; letter-spacing: 0.5px;">SUSPENDED</span>
                                             </div>
                                             <div class="small" style="color: #64748b; font-size: 0.8rem;" th:text="${u.email}">user@email.com</div>
@@ -386,7 +386,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(239, 68, 68, 0.2);">
                                     <i class="bi bi-fire"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Most Popular Notes</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Most Popular Notes</h5>
                             </div>
                             
                             <div class="d-flex flex-column gap-1">
@@ -422,7 +422,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: #f59e0b; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(245, 158, 11, 0.2);">
                                     <i class="bi bi-activity"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Recent System Activity</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Recent System Activity</h5>
                             </div>
                             
                             <div class="table-responsive">
@@ -438,13 +438,13 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="log : ${recentLogs}" class="list-item-row">
-                                            <td class="py-3">
+                                            <td class="py-3" style="min-width: 200px;">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1rem; border: 1px solid #e2e8f0;">
+                                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1rem; border: 1px solid #e2e8f0; flex-shrink: 0;">
                                                         <i class="bi bi-person-fill"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bold" style="color: #1e293b; font-size: 0.95rem;" th:text="${log.userName}">Name</div>
+                                                        <div class="fw-bold text-capitalize" style="color: #1e293b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 4px;" th:text="${#strings.toLowerCase(log.userName)}">Name</div>
                                                         <div class="small" style="font-size: 0.75rem; color: #10b981; font-weight: 700; letter-spacing: 0.5px;" th:text="${log.userRole}">ROLE</div>
                                                     </div>
                                                 </div>

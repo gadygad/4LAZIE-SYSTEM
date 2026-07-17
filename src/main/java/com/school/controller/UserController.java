@@ -58,6 +58,14 @@ public class UserController {
         // Fetch fresh user from DB to ensure we have the latest institution and stats
         User user = userRepository.findById(sessionUser.getId()).orElse(sessionUser);
         
+        // Safely get coverPhoto via reflection (handles old compiled classes without the field)
+        String coverPhoto = null;
+        try {
+            java.lang.reflect.Method m = user.getClass().getMethod("getCoverPhoto");
+            coverPhoto = (String) m.invoke(user);
+        } catch (Exception ignored) { }
+        model.addAttribute("coverPhoto", coverPhoto);
+        
         // Self-heal: If user has no institution, assign default SJUIT
         if (user.getInstitution() == null) {
             com.school.model.Institution sjuit = new com.school.model.Institution();
@@ -74,9 +82,10 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-public String updateProfile(@ModelAttribute("user") User formUser,
-                         @RequestParam(value = "file", required = false) MultipartFile file,
-                         HttpSession session, Model model) {
+    public String updateProfile(@ModelAttribute("user") User formUser,
+                             @RequestParam(value = "file", required = false) MultipartFile file,
+                             @RequestParam(value = "coverPhotoFile", required = false) MultipartFile coverPhotoFile,
+                             HttpSession session, Model model) {
 
         User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
@@ -110,6 +119,19 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         } else {
             // Preserve existing picture if no new file provided (Do not overwrite)
         }
+        
+        // Handle cover photo upload if present
+        if (coverPhotoFile != null && !coverPhotoFile.isEmpty()) {
+            try {
+                String coverUrl = fileStorageService.uploadFile(coverPhotoFile);
+                sessionUser.setCoverPhoto(coverUrl);
+            } catch (IOException e) {
+                model.addAttribute("error", "Failed to upload cover photo: " + e.getMessage());
+                model.addAttribute("user", sessionUser);
+                model.addAttribute("editMode", true);
+                return "user/profile";
+            }
+        }
         // sessionUser.setCourseProgram(formUser.getCourseProgram()); // Course modification disabled
         sessionUser.setLevel(formUser.getLevel());
         sessionUser.setSemester(formUser.getSemester());
@@ -135,6 +157,13 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         }
         
         model.addAttribute("user", sessionUser);
+        // Pass coverPhoto safely for template
+        String coverPhoto = null;
+        try {
+            java.lang.reflect.Method m = sessionUser.getClass().getMethod("getCoverPhoto");
+            coverPhoto = (String) m.invoke(sessionUser);
+        } catch (Exception ignored) { }
+        model.addAttribute("coverPhoto", coverPhoto);
         model.addAttribute("success", "Profile updated successfully!");
         model.addAttribute("editMode", false);
         return "user/profile";

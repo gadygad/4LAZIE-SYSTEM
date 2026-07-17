@@ -241,20 +241,79 @@
             });
         </script>
         
+        <style>
+            .profile-cover {
+                width: calc(100% + 2rem);
+                margin-left: -1rem;
+                margin-right: -1rem;
+                margin-top: -1.5rem;
+                height: 250px;
+                background-image: linear-gradient(to bottom, rgba(16, 185, 129, 0.2), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1200&auto=format&fit=crop');
+                background-size: cover;
+                background-position: center;
+                border-bottom-left-radius: 40px;
+                border-bottom-right-radius: 40px;
+                position: relative;
+                animation: coverFadeIn 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+                box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15);
+                z-index: 1;
+            }
+            .profile-cover::after {
+                content: '';
+                position: absolute;
+                bottom: -2px; left: 0; right: 0;
+                height: 100px;
+                background: linear-gradient(to top, #f8fafc, transparent);
+                pointer-events: none;
+            }
+            @keyframes coverFadeIn {
+                0% { opacity: 0; transform: translateY(-30px) scale(1.05); }
+                100% { opacity: 1; transform: translateY(0) scale(1); }
+            }
+            .profile-avatar-container {
+                margin-top: -100px !important; 
+                z-index: 5;
+                position: relative;
+                animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            @keyframes avatarPop {
+                to { opacity: 1; transform: scale(1); }
+            }
+            @keyframes quickSavePulse {
+                0%, 100% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+                50% { box-shadow: 0 4px 25px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.3); }
+            }
+        </style>
+        
         <!-- View Mode -->
         <div th:if="${!editMode}" class="px-3 py-4 position-relative">
-            
+
+            <!-- Premium Cover Photo -->
+            <div class="profile-cover" id="viewCoverPhoto"></div>
+            <script th:inline="javascript">
+                (function(){
+                    var coverPhoto = /*[[${coverPhoto}]]*/ null;
+                    var el = document.getElementById('viewCoverPhoto');
+                    var url = coverPhoto
+                        ? (coverPhoto.startsWith('http') ? coverPhoto : '/uploads/' + coverPhoto)
+                        : 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1200&auto=format&fit=crop';
+                    el.style.backgroundImage = 'linear-gradient(to bottom, rgba(16, 185, 129, 0.2), rgba(15, 23, 42, 0.7)), url(' + url + ')';
+                })();
+            </script>
+
             <!-- Edit Button positioned on the top right -->
-            <div class="position-absolute" style="top: 15px; right: 15px; z-index: 10;">
-                <a href="/profile?edit=true" class="btn rounded-pill px-3 py-1 fw-bold shadow-sm d-flex align-items-center" style="background: rgba(16, 185, 129, 0.08); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.8rem; transition: all 0.3s ease;" onmouseover="this.style.background='#10b981'; this.style.color='#fff';" onmouseout="this.style.background='rgba(16, 185, 129, 0.08)'; this.style.color='#10b981';">
-                    <i class="bi bi-pencil-square me-1"></i> Edit Profile
+            <div class="position-absolute" style="top: 20px; right: 20px; z-index: 10;">
+                <a href="/profile?edit=true" class="btn rounded-pill px-3 py-2 fw-bold shadow d-flex align-items-center" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 0.85rem; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);" onmouseover="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#10b981'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.color='#fff'; this.style.transform='none';">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Profile
                 </a>
             </div>
 
             <div class="d-flex flex-column align-items-center text-center mb-5 position-relative">
-                <div class="mb-3 position-relative mt-2">
-                    <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile Avatar" class="rounded-circle shadow" style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2) !important;" />
-                    <img th:unless="${user.profilePicture}" th:src="'https://ui-avatars.com/api/?name=' + ${user.name} + '&background=10b981&color=fff&size=200'" alt="Profile Avatar" class="rounded-circle shadow" style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2) !important;" />
+                <div class="mb-3 position-relative profile-avatar-container">
+                    <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile Avatar" class="rounded-circle shadow profile-pic-trigger" onclick="openProfileLightbox(this.src);" style="width: 150px; height: 150px; object-fit: cover; border: 5px solid #f8fafc; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(16, 185, 129, 0.2) !important; cursor: pointer; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" />
+                    <img th:unless="${user.profilePicture}" th:src="'https://ui-avatars.com/api/?name=' + ${user.name} + '&background=10b981&color=fff&size=200'" alt="Profile Avatar" class="rounded-circle shadow profile-pic-trigger" onclick="openProfileLightbox(this.src);" style="width: 150px; height: 150px; object-fit: cover; border: 5px solid #f8fafc; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(16, 185, 129, 0.2) !important; cursor: pointer; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" />
                 </div>
                 <div>
                     <h1 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #0f172a; font-size: 2.2rem; letter-spacing: -0.5px;" th:text="${user.name}"></h1>
@@ -440,14 +499,39 @@
                 }
             </style>
             <form th:action="@{/profile}" method="post" enctype="multipart/form-data">
-                <div class="d-flex justify-content-center mb-5">
-                    <div class="position-relative" style="width: 140px;">
-                        <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile Avatar" class="rounded-circle shadow-sm" style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #fff;" id="previewAvatar" />
-                        <img th:unless="${user.profilePicture}" th:src="'https://ui-avatars.com/api/?name=' + ${user.name} + '&background=10b981&color=fff&size=200'" alt="Profile Avatar" class="rounded-circle shadow-sm" style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #fff;" id="previewAvatar" />
-                        <label for="profileImage" class="position-absolute bottom-0 end-0 d-flex align-items-center justify-content-center rounded-circle shadow" style="width: 40px; height: 40px; background: #10b981; color: white; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='none'">
+                
+                <!-- Premium Cover Photo Edit -->
+                <div class="profile-cover mb-4" id="editCoverPhoto" style="position: relative;">
+                    <!-- Change Cover button -->
+                    <label for="coverImage" class="position-absolute d-flex align-items-center justify-content-center rounded-pill shadow" style="top: 20px; right: 20px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); padding: 8px 16px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.4); z-index: 5;" onmouseover="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#10b981'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.color='white'; this.style.transform='none';">
+                        <i class="bi bi-camera-fill me-2"></i> Change Cover
+                    </label>
+                    <input type="file" id="coverImage" name="coverPhotoFile" class="d-none" accept="image/*" onchange="previewCoverImage(event); showQuickSave();">
+                </div>
+                
+                <!-- Floating Quick Save button - fixed at top so it's easy to reach after changing cover -->
+                <button type="submit" id="quickSaveBtn" class="d-flex align-items-center justify-content-center rounded-pill shadow" style="position: fixed; top: 18px; left: 50%; transform: translateX(-50%) translateY(-60px) scale(0.8); background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; cursor: pointer; padding: 10px 28px; font-size: 0.9rem; font-weight: 700; border: 2px solid rgba(255, 255, 255, 0.5); z-index: 9999; opacity: 0; pointer-events: none; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); letter-spacing: 0.5px;">
+                    <i class="bi bi-check2-circle me-2" style="font-size: 1.1rem;"></i> Save Changes
+                </button>
+                <script th:inline="javascript">
+                    (function(){
+                        var coverPhoto = /*[[${coverPhoto}]]*/ null;
+                        var el = document.getElementById('editCoverPhoto');
+                        var url = coverPhoto
+                            ? (coverPhoto.startsWith('http') ? coverPhoto : '/uploads/' + coverPhoto)
+                            : 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1200&auto=format&fit=crop';
+                        el.style.backgroundImage = 'linear-gradient(to bottom, rgba(16, 185, 129, 0.4), rgba(15, 23, 42, 0.8)), url(' + url + ')';
+                    })();
+                </script>
+
+                <div class="d-flex flex-column align-items-center text-center mb-5 position-relative profile-avatar-container">
+                    <div class="position-relative" style="width: 150px;">
+                        <img th:if="${user.profilePicture}" th:src="${#strings.startsWith(user.profilePicture, 'http')} ? ${user.profilePicture} : @{'/uploads/' + ${user.profilePicture}}" alt="Profile Avatar" class="rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover; border: 5px solid #f8fafc; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;" id="previewAvatar" />
+                        <img th:unless="${user.profilePicture}" th:src="'https://ui-avatars.com/api/?name=' + ${user.name} + '&background=10b981&color=fff&size=200'" alt="Profile Avatar" class="rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover; border: 5px solid #f8fafc; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;" id="previewAvatar" />
+                        <label for="profileImage" class="position-absolute bottom-0 end-0 d-flex align-items-center justify-content-center rounded-circle shadow" style="width: 45px; height: 45px; background: #10b981; color: white; cursor: pointer; transition: all 0.2s; border: 3px solid #f8fafc;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='none'">
                             <i class="bi bi-camera-fill"></i>
                         </label>
-                        <input type="file" id="profileImage" name="file" class="d-none" accept="image/*" onchange="previewImage(event)">
+                        <input type="file" id="profileImage" name="file" class="d-none" accept="image/*" onchange="previewImage(event); showQuickSave();">
                     </div>
                 </div>
 
@@ -541,6 +625,27 @@
                 output.src = reader.result;
             };
             reader.readAsDataURL(event.target.files[0]);
+        }
+        
+        function previewCoverImage(event) {
+            var reader = new FileReader();
+            reader.onload = function(){
+                var output = document.getElementById('editCoverPhoto');
+                output.style.backgroundImage = 'linear-gradient(to bottom, rgba(16, 185, 129, 0.4), rgba(15, 23, 42, 0.8)), url(' + reader.result + ')';
+            };
+            if(event.target.files[0]){
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function showQuickSave() {
+            var btn = document.getElementById('quickSaveBtn');
+            if (btn) {
+                btn.style.opacity = '1';
+                btn.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+                btn.style.pointerEvents = 'auto';
+                btn.style.animation = 'quickSavePulse 2s ease-in-out infinite';
+            }
         }
 
         function selectCustomOption(inputId, btnId, value, text, event) {
@@ -817,6 +922,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     </script>
 
+    <!-- Profile Picture Lightbox JS -->
+    <script>
+        function openProfileLightbox(src) {
+            let lightbox = document.getElementById('profileLightbox');
+            if (!lightbox) {
+                lightbox = document.createElement('div');
+                lightbox.id = 'profileLightbox';
+                lightbox.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 99999; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); cursor: zoom-out;';
+                
+                const imgContainer = document.createElement('div');
+                imgContainer.style.cssText = 'position: relative; transform: scale(0.8) translateY(20px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);';
+                
+                const img = document.createElement('img');
+                img.id = 'profileLightboxImg';
+                img.style.cssText = 'max-width: 85vw; max-height: 85vh; border-radius: 50%; border: 6px solid #fff; box-shadow: 0 25px 60px rgba(16,185,129,0.4); object-fit: cover; aspect-ratio: 1/1; width: 400px; height: 400px; background: #f8fafc;';
+                
+                const closeBtn = document.createElement('div');
+                closeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+                closeBtn.style.cssText = 'position: absolute; top: -20px; right: -20px; color: #1e293b; font-size: 1.2rem; cursor: pointer; background: #fff; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s, background 0.2s;';
+                closeBtn.onmouseover = () => { closeBtn.style.transform = 'scale(1.1) rotate(90deg)'; closeBtn.style.background = '#f8fafc'; };
+                closeBtn.onmouseout = () => { closeBtn.style.transform = 'scale(1) rotate(0deg)'; closeBtn.style.background = '#fff'; };
+                
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(closeBtn);
+                lightbox.appendChild(imgContainer);
+                
+                lightbox.onclick = function() {
+                    lightbox.style.opacity = '0';
+                    imgContainer.style.transform = 'scale(0.8) translateY(20px)';
+                    setTimeout(() => lightbox.style.display = 'none', 400);
+                };
+                
+                document.body.appendChild(lightbox);
+            }
+            
+            const imgElement = document.getElementById('profileLightboxImg');
+            imgElement.src = src;
+            
+            if (src.includes('ui-avatars.com')) {
+                imgElement.src = src.replace(/&size=\d+/, '') + '&size=500';
+            }
+            
+            lightbox.style.display = 'flex';
+            void lightbox.offsetWidth;
+            lightbox.style.opacity = '1';
+            lightbox.children[0].style.transform = 'scale(1) translateY(0)';
+        }
+    </script>
 </body>
 </html>
 

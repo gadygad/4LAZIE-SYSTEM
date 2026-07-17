@@ -2,22 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <div th:fragment="actions" class="d-flex align-items-center">
-        <!-- Global Search Bar (Desktop) -->
-        <div class="search-container position-relative me-3 d-none d-md-block" style="width: 280px;">
-            <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; z-index: 5;"></i>
-            <input type="text" id="globalDesktopSearch" autocomplete="off" class="form-control position-relative" placeholder="Search notes, past papers..."
-                   style="padding: 6px 16px 6px 40px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;"
+        <!-- Global Search Bar -->
+        <div class="search-container position-relative me-2 me-md-3 d-block" style="min-width: 140px; max-width: 280px; flex-grow: 1;">
+            <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; z-index: 5; flex-shrink: 0; min-width: 16px;"></i>
+            <input type="text" id="globalDesktopSearch" autocomplete="off" class="form-control position-relative" placeholder="Search notes..."
+                   style="padding-left: 40px !important; padding-right: 16px; padding-top: 6px; padding-bottom: 6px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b; width: 100%;"
                    onfocus="this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'; this.style.background='#ffffff';"
                    onblur="setTimeout(()=>{document.getElementById('globalDesktopResults').classList.add('d-none')}, 200); this.style.boxShadow='none'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
             
-            <!-- Desktop Search Results Dropdown -->
+            <!-- Search Results Dropdown -->
             <div id="globalDesktopResults" class="d-none" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; margin-top: 8px; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.12); overflow: hidden; max-height: 350px; overflow-y: auto;"></div>
         </div>
-        
-        <!-- Mobile Search Button (Triggers Mobile Search Collapse below navbar) -->
-        <button class="btn d-md-none me-2 p-0 position-relative" id="mobileSearchToggleBtn" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #059669; display: flex; align-items: center; justify-content: center;">
-            <i class="bi bi-search" style="font-size: 1.1rem;"></i>
-        </button>
 
 
         <!-- Action Buttons -->
@@ -88,7 +83,7 @@
 
                 <!-- Notification Button -->
                 <div class="dropdown me-2 me-md-3">
-                    <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                    <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative notification-trigger" data-bs-toggle="dropdown" aria-expanded="false"
                        style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.85)); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1); backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
                        onmouseover="this.style.boxShadow='0 8px 25px var(--noti-shadow), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-3px)'; this.style.borderColor='var(--noti-border)'; this.querySelector('i').style.color='var(--noti-color)';" 
                        onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.8)'; this.querySelector('i').style.color='#64748b';">
@@ -100,7 +95,7 @@
                 </a>
                 
                 <!-- Notification Dropdown Menu -->
-                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 p-0" aria-labelledby="notificationDropdown" style="border-radius: 20px; min-width: 320px; overflow: hidden; animation: popupAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; border: 1px solid rgba(255,255,255,0.5);">
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 p-0 notification-dropdown" aria-labelledby="notificationDropdown" style="border-radius: 20px; min-width: 320px; overflow: hidden; transform-origin: top right; border: 1px solid rgba(255,255,255,0.5);">
                     <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
                         <span class="fw-bold text-dark" style="font-family: 'Outfit', sans-serif; font-size: 1rem;">Notifications</span>
                         <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1 text-white" style="background: linear-gradient(135deg, var(--noti-color), var(--noti-color-dark)); font-weight: 600; box-shadow: 0 2px 8px var(--noti-shadow); font-size: 0.7rem;">0 New</span>
@@ -139,6 +134,87 @@
                         <a href="/notifications" class="text-decoration-none fw-bold" style="font-size: 0.9rem; color: #10b981; transition: color 0.2s;">View All Notifications</a>
                     </li>
                 </ul>
+                
+                <style>
+                    /* Smooth Dropdown Animation */
+                    @keyframes customDropdownFadeIn {
+                        0% {
+                            opacity: 0;
+                            transform: perspective(400px) rotateX(-10deg) translateY(15px) scale(0.95);
+                        }
+                        100% {
+                            opacity: 1;
+                            transform: perspective(400px) rotateX(0) translateY(0) scale(1);
+                        }
+                    }
+                    
+                    .dropdown-menu.notification-dropdown.show {
+                        animation: customDropdownFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+                        display: block;
+                        box-shadow: 0 20px 50px rgba(16, 185, 129, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.1) !important;
+                    }
+                    
+                    /* Staggered falling down animation */
+                    @keyframes fallDownFade {
+                        0% {
+                            opacity: 0;
+                            transform: translateY(-15px) scale(0.98);
+                        }
+                        100% {
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
+                    }
+                    
+                    /* Apply animation when dropdown is shown */
+                    .dropdown-menu.show .notification-item {
+                        animation: fallDownFade 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                        opacity: 0; /* start hidden */
+                    }
+                    
+                    .dropdown-menu.show .notification-item:nth-child(1) { animation-delay: 0.05s; }
+                    .dropdown-menu.show .notification-item:nth-child(2) { animation-delay: 0.1s; }
+                    .dropdown-menu.show .notification-item:nth-child(3) { animation-delay: 0.15s; }
+                    .dropdown-menu.show .notification-item:nth-child(4) { animation-delay: 0.2s; }
+                </style>
+                <script>
+                    if (!window.notificationJsInitialized) {
+                        window.notificationJsInitialized = true;
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const notifDropdowns = document.querySelectorAll('.notification-trigger');
+                            notifDropdowns.forEach(dropdown => {
+                                dropdown.addEventListener('show.bs.dropdown', function () {
+                                    const getCsrfToken = () => {
+                                        const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                                        return match ? match[2] : '';
+                                    };
+                                    fetch('/api/notifications/mark-read', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-XSRF-TOKEN': getCsrfToken()
+                                        }
+                                    }).then(() => {
+                                        // Smoothly hide badges
+                                        const badges = document.querySelectorAll('.notification-trigger .badge, .notification-dropdown .badge, .notification-badge');
+                                        badges.forEach(b => {
+                                            b.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                                            b.style.opacity = '0';
+                                            b.style.transform = 'scale(0)';
+                                            setTimeout(() => b.style.display = 'none', 300);
+                                        });
+                                        const items = document.querySelectorAll('.notification-item');
+                                        items.forEach(i => {
+                                            i.style.backgroundColor = 'transparent';
+                                            const dot = i.querySelector('.unread-dot');
+                                            if(dot) dot.style.display = 'none';
+                                        });
+                                    }).catch(e => console.error(e));
+                                });
+                            });
+                        });
+                    }
+                </script>
                 </div>
             </div>
         </div>
@@ -146,14 +222,14 @@
         <!-- Profile Dropdown -->
         <div class="dropdown" th:if="${session.user != null}">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
-               style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.6); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+               style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.6); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0;"
                onmouseover="this.style.boxShadow='0 8px 25px var(--noti-shadow), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='var(--noti-border)';" 
                onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.6)';">
-                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px var(--noti-shadow);">
-                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);">
+                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2 profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px var(--noti-shadow); flex-shrink: 0 !important; cursor: pointer;">
+                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2 profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2); flex-shrink: 0 !important; cursor: pointer;">
                 <!-- Mobile-only avatar without margin -->
-                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-sm-none" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px var(--noti-shadow);">
-                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-sm-none" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);">
+                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-sm-none profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px var(--noti-shadow); flex-shrink: 0 !important; cursor: pointer;">
+                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-sm-none profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2); flex-shrink: 0 !important; cursor: pointer;">
                 
                 <div class="d-none d-sm-flex flex-column justify-content-center me-2">
                     <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</span>
