@@ -1009,7 +1009,7 @@
 
     <header class="navbar navbar-custom sticky-top py-2"
         style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(203, 213, 225, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);">
-        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+        <div class="container-fluid px-1 d-flex justify-content-between align-items-center flex-nowrap">
 
             <!-- Left side: Hamburger + Logo -->
             <div class="d-flex align-items-center gap-2">
@@ -2056,7 +2056,7 @@
                             <div class="d-flex align-items-center gap-3 mb-3 position-relative"
                                 th:if="${!popularNotes.isEmpty()}">
                                 <div>
-                                    <h3 class="premium-gradient-header warning">LATEST NOTES</h3>
+                                    <h3 class="quick-access-hover" style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0;">LATEST NOTES</h3>
                                     <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">
                                         Recently added study materials</p>
                                 </div>
@@ -2070,7 +2070,7 @@
                                     width: 100%;
                                     padding: 18px 20px;
                                     min-height: 80px;
-                                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(5, 150, 105, 0.03) 100%);
+                                    background: transparent;
                                     border: 1px solid rgba(16, 185, 129, 0.12);
                                     border-radius: 12px;
                                     cursor: pointer;
@@ -2178,9 +2178,9 @@
                                     white-space: nowrap;
                                 }
                                 .apple-note-module {
-                                    background: rgba(245, 158, 11, 0.08);
-                                    color: #b45309;
-                                    border: 1px solid rgba(245, 158, 11, 0.15);
+                                    background: rgba(245, 158, 11, 0.15);
+                                    color: #fbbf24;
+                                    border: 1px solid rgba(245, 158, 11, 0.2);
                                     padding: 1px 7px;
                                     border-radius: 20px;
                                     font-size: 0.52rem;
@@ -2349,7 +2349,25 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                         <div class="sticky-top" style="top: 100px;">
                             <div class="d-flex align-items-center gap-3 mb-3 mb-md-4 position-relative mt-4 mt-md-0">
                                 <div>
-                                    <h3 class="premium-gradient-header warning">QUICK ACCESS</h3>
+                                    <style>
+                                        .quick-access-hover {
+                                            color: #000 !important;
+                                            text-decoration: underline;
+                                            transition: color 0.3s ease;
+                                        }
+                                        .quick-access-hover:hover {
+                                            color: #10b981 !important;
+                                            text-decoration: underline;
+                                        }
+                                        .premium-glass-card .card-hover-text {
+                                            color: #000 !important;
+                                            transition: color 0.3s ease;
+                                        }
+                                        .premium-glass-card:hover .card-hover-text, .card-hover-text:hover {
+                                            color: #10b981 !important;
+                                        }
+                                    </style>
+                                    <h3 class="quick-access-hover" style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0;">QUICK ACCESS</h3>
                                     <p class="m-0 text-secondary mt-1" style="font-size: 0.9rem; font-weight: 500;">
                                         Essential academic resources</p>
                                 </div>
@@ -2368,8 +2386,8 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                                             <i class="bi bi-calendar-event text-white" style="font-size: 1.2rem;"></i>
                                         </div>
                                         <div>
-                                            <div class="premium-glass-card-text"
-                                                style="font-size: 0.95rem; color: #047857; text-transform: uppercase; font-weight: 800;">
+                                            <div class="premium-glass-card-text card-hover-text"
+                                                style="font-size: 0.95rem; text-transform: uppercase; font-weight: 800;">
                                                 Academic Calendar</div>
                                             <div
                                                 style="font-size: 0.7rem; color: #64748b; font-family: 'Inter', sans-serif; text-transform: uppercase;">
@@ -2389,8 +2407,8 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                                             <i class="bi bi-clock-history text-white" style="font-size: 1.2rem;"></i>
                                         </div>
                                         <div>
-                                            <div class="premium-glass-card-text"
-                                                style="font-size: 0.95rem; color: #047857; text-transform: uppercase; font-weight: 800;">
+                                            <div class="premium-glass-card-text card-hover-text"
+                                                style="font-size: 0.95rem; text-transform: uppercase; font-weight: 800;">
                                                 Class Timetables</div>
                                             <div
                                                 style="font-size: 0.7rem; color: #64748b; font-family: 'Inter', sans-serif; text-transform: uppercase;">
@@ -2409,8 +2427,8 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                                             <i class="bi bi-folder-fill text-white" style="font-size: 1.2rem;"></i>
                                         </div>
                                         <div>
-                                            <div class="premium-glass-card-text"
-                                                style="font-size: 0.95rem; color: #047857; text-transform: uppercase; font-weight: 800;">
+                                            <div class="premium-glass-card-text card-hover-text"
+                                                style="font-size: 0.95rem; text-transform: uppercase; font-weight: 800;">
                                                 Timetable Archive</div>
                                             <div
                                                 style="font-size: 0.7rem; color: #64748b; font-family: 'Inter', sans-serif; text-transform: uppercase;">
