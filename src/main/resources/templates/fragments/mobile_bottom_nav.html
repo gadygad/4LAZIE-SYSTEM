@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Mobile Bottom Navigation Bar (Hidden on desktop) -->
+    <div th:fragment="bottomNav" class="d-md-none position-fixed bottom-0 start-0 w-100" style="z-index: 1040; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(16, 185, 129, 0.1); box-shadow: 0 -4px 20px rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom);">
+        <div class="d-flex justify-content-around align-items-center" style="height: 65px;">
+            <!-- Home -->
+            <a href="/" class="text-decoration-none d-flex flex-column align-items-center justify-content-center" style="width: 25%; color: #94a3b8; transition: all 0.3s ease;">
+                <i class="bi bi-house-door" style="font-size: 1.2rem; margin-bottom: 2px;"></i>
+                <span style="font-size: 0.65rem; font-weight: 600; font-family: 'Inter', sans-serif;">Home</span>
+            </a>
+            
+            <!-- Quizzes / Practice -->
+            <a href="/quizzes" class="text-decoration-none d-flex flex-column align-items-center justify-content-center" style="width: 25%; color: #10b981; transition: all 0.3s ease;">
+                <div style="position: absolute; top: -15px; width: 50px; height: 50px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); border: 4px solid #f8fafc;">
+                    <i class="bi bi-lightning-fill text-white" style="font-size: 1.2rem;"></i>
+                </div>
+                <span style="font-size: 0.65rem; font-weight: 700; font-family: 'Inter', sans-serif; margin-top: 24px;">Practice</span>
+            </a>
+            
+            <!-- Dashboard/Login -->
+            <a th:href="${session.user != null ? '/student/dashboard' : '/login'}" class="text-decoration-none d-flex flex-column align-items-center justify-content-center" style="width: 25%; color: #94a3b8; transition: all 0.3s ease;">
+                <i th:class="${session.user != null ? 'bi bi-grid-1x2' : 'bi bi-box-arrow-in-right'}" style="font-size: 1.2rem; margin-bottom: 2px;"></i>
+                <span th:text="${session.user != null ? 'Dashboard' : 'Login'}" style="font-size: 0.65rem; font-weight: 600; font-family: 'Inter', sans-serif;">Login</span>
+            </a>
+            
+            <!-- Profile -->
+            <a th:if="${session.user != null}" href="/profile" class="text-decoration-none d-flex flex-column align-items-center justify-content-center" style="width: 25%; color: #94a3b8; transition: all 0.3s ease;">
+                <i class="bi bi-person" style="font-size: 1.2rem; margin-bottom: 2px;"></i>
+                <span style="font-size: 0.65rem; font-weight: 600; font-family: 'Inter', sans-serif;">Profile</span>
+            </a>
+            <a th:if="${session.user == null}" href="/register" class="text-decoration-none d-flex flex-column align-items-center justify-content-center" style="width: 25%; color: #94a3b8; transition: all 0.3s ease;">
+                <i class="bi bi-person-plus" style="font-size: 1.2rem; margin-bottom: 2px;"></i>
+                <span style="font-size: 0.65rem; font-weight: 600; font-family: 'Inter', sans-serif;">Register</span>
+            </a>
+        </div>
+        
+        <!-- Active link highlighting script -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const currentPath = window.location.pathname;
+                const navLinks = document.querySelectorAll('.d-md-none.position-fixed.bottom-0 a');
+                
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href === currentPath || (href !== '/' && currentPath.startsWith(href))) {
+                        // Not the center button
+                        if(!link.querySelector('.bg-gradient')) {
+                            link.style.color = '#10b981';
+                            const icon = link.querySelector('i');
+                            if(icon) {
+                                icon.className = icon.className.replace('-door', '-door-fill')
+                                    .replace('bi-grid-1x2', 'bi-grid-1x2-fill')
+                                    .replace('bi-person', 'bi-person-fill');
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

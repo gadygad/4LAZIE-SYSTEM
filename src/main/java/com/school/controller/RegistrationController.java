@@ -57,7 +57,11 @@ public class RegistrationController {
     private com.school.service.EmailService emailService;
 
     @GetMapping("/register")
-    public String showRegisterForm(Model model) {
+    public String showRegisterForm(@RequestParam(value = "redirect", required = false) String redirectUrl,
+                                   jakarta.servlet.http.HttpSession session, Model model) {
+        if (redirectUrl != null && !redirectUrl.isEmpty() && redirectUrl.startsWith("/")) {
+            session.setAttribute("redirectUrl", redirectUrl);
+        }
         model.addAttribute("user", new User());
         try {
             model.addAttribute("institutions", institutionRepository.findAll());

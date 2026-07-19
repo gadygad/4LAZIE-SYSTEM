@@ -172,7 +172,7 @@
             transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 991.98px) {
             .hero-sidebar {
                 display: none;
             }
@@ -1869,11 +1869,6 @@
                                     <div class="flex-shrink-0 p-3 rounded-4"
                                         style="width: 280px; scroll-snap-align: start; background: #fff; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
                                         <div class="d-flex gap-1 mb-2">
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
                                         </div>
                                         <p
                                             style="font-size:0.82rem; color:#475569; line-height:1.6; margin-bottom:10px;">
@@ -1897,11 +1892,6 @@
                                     <div class="flex-shrink-0 p-3 rounded-4"
                                         style="width: 280px; scroll-snap-align: start; background: #fff; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
                                         <div class="d-flex gap-1 mb-2">
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
                                         </div>
                                         <p
                                             style="font-size:0.82rem; color:#475569; line-height:1.6; margin-bottom:10px;">
@@ -1925,11 +1915,6 @@
                                     <div class="flex-shrink-0 p-3 rounded-4"
                                         style="width: 280px; scroll-snap-align: start; background: #fff; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
                                         <div class="d-flex gap-1 mb-2">
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-fill" style="color:#10b981; font-size:0.7rem;"></i>
-                                            <i class="bi bi-star-half" style="color:#10b981; font-size:0.7rem;"></i>
                                         </div>
                                         <p
                                             style="font-size:0.82rem; color:#475569; line-height:1.6; margin-bottom:10px;">
@@ -2466,6 +2451,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
                                     <div class="d-flex flex-column align-items-center w-100">
 
+
                                         <div onclick="window.location.href='/register'" class="premium-glass-card"
                                             style="cursor: pointer;">
                                             <span class="premium-glass-card-text">ASSIGNMENTS</span>
@@ -2502,12 +2488,178 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                             </div>
                                         </div>
 
-                                    </div>
-                                </div>
-                                <a th:href="@{/register}" class="btn-premium-gold">
+                                <a th:href="@{/register}" class="btn-premium-gold mb-4">
                                     <span>Create Free Account</span>
                                     <i class="bi bi-arrow-right"></i>
                                 </a>
+                                
+                                <!-- Premium Interactive Study Hub Banner -->
+                                <style>
+                                    .premium-study-hub {
+                                        position: relative;
+                                        width: 100%;
+                                        max-width: 400px;
+                                        background: #ffffff;
+                                        border-radius: 20px;
+                                        padding: 24px;
+                                        text-align: center;
+                                        overflow: hidden;
+                                        cursor: pointer;
+                                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                                        border: 2px solid #000000;
+                                        text-decoration: none !important;
+                                        display: block;
+                                    }
+                                    .premium-study-hub:hover {
+                                        transform: translateY(-8px) scale(1.02);
+                                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+                                        border-color: #000000;
+                                    }
+                                    .study-hub-content {
+                                        position: relative;
+                                        z-index: 1;
+                                    }
+                                    .study-hub-title {
+                                        font-family: 'Outfit', sans-serif;
+                                        font-size: 1.4rem;
+                                        font-weight: 800;
+                                        color: #000000;
+                                        margin-bottom: 8px;
+                                        letter-spacing: 1px;
+                                        text-transform: uppercase;
+                                    }
+                                    .study-hub-subtitle {
+                                        font-size: 0.85rem;
+                                        color: #333333;
+                                        margin-bottom: 16px;
+                                        font-weight: 500;
+                                    }
+                                     .study-badge {
+                                         font-size: 0.75rem;
+                                         font-weight: 700;
+                                         padding: 8px 16px;
+                                         border-radius: 50px;
+                                         text-transform: uppercase;
+                                         letter-spacing: 0.5px;
+                                         display: inline-flex;
+                                         align-items: center;
+                                         gap: 6px;
+                                         text-decoration: none !important;
+                                         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                                         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                         border: none;
+                                     }
+                                     
+                                     /* Permanent Soft Background Colors */
+                                     .badge-tz-green { background: #e6f7ec; color: #1eb53a !important; }
+                                     .badge-tz-blue { background: #e0f6fc; color: #00a3dd !important; }
+                                     .badge-tz-yellow { background: #fffbe6; color: #d4a000 !important; }
+                                     .badge-tz-black { background: #f1f5f9; color: #0f172a !important; }
+                                     .badge-tz-flag { background: #f0fdf4; color: #1eb53a !important; }
+                                     
+                                     /* Hover States */
+                                     .study-badge:hover {
+                                         transform: translateY(-3px) scale(1.05);
+                                     }
+                                     .badge-tz-green:hover { background: #1eb53a; color: #ffffff !important; box-shadow: 0 8px 20px rgba(30, 181, 58, 0.4); }
+                                     .badge-tz-blue:hover { background: #00a3dd; color: #ffffff !important; box-shadow: 0 8px 20px rgba(0, 163, 221, 0.4); }
+                                     .badge-tz-yellow:hover { background: #fcd116; color: #000000 !important; box-shadow: 0 8px 20px rgba(252, 209, 22, 0.5); }
+                                     .badge-tz-black:hover { background: #0f172a; color: #ffffff !important; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.4); }
+                                     .badge-tz-flag:hover { 
+                                         background: linear-gradient(135deg, #1eb53a 20%, #fcd116 35%, #0f172a 50%, #fcd116 65%, #00a3dd 80%); 
+                                         color: #ffffff !important;
+                                         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
+                                         background-size: 200% 200%;
+                                         animation: gradient-move 3s ease infinite;
+                                     }
+                                     
+                                     @keyframes gradient-move {
+                                         0% { background-position: 0% 50%; }
+                                         50% { background-position: 100% 50%; }
+                                         100% { background-position: 0% 50%; }
+                                     }
+                                     
+                                     .study-badge:hover i {
+                                         animation: pulse-icon 1s infinite;
+                                     }
+                                     
+                                     @keyframes pulse-icon {
+                                         0% { transform: scale(1); }
+                                         50% { transform: scale(1.2); }
+                                         100% { transform: scale(1); }
+                                     }
+                                    .study-badges-container {
+                                        display: flex;
+                                        flex-wrap: wrap;
+                                        justify-content: center;
+                                        gap: 8px;
+                                        margin-bottom: 20px;
+                                    }
+                                    .study-badge {
+                                        0% { background-position: 0% 50%; }
+                                        50% { background-position: 100% 50%; }
+                                        100% { background-position: 0% 50%; }
+                                    }
+                                    
+                                    .study-badge:hover i {
+                                        animation: pulse-icon 1s infinite;
+                                    }
+                                    
+                                    @keyframes pulse-icon {
+                                        0% { transform: scale(1); }
+                                        50% { transform: scale(1.2); }
+                                        100% { transform: scale(1); }
+                                    }
+                                    .study-hub-btn {
+                                        background: linear-gradient(135deg, #10b981, #059669);
+                                        color: white !important;
+                                        border: none;
+                                        padding: 10px 24px;
+                                        border-radius: 50px;
+                                        font-weight: 700;
+                                        font-size: 0.95rem;
+                                        display: inline-flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+                                        transition: all 0.3s ease;
+                                        cursor: pointer;
+                                    }
+                                    .study-hub-btn:hover {
+                                        background: linear-gradient(135deg, #1eb53a 20%, #fcd116 35%, #000000 50%, #fcd116 65%, #00a3dd 80%);
+                                        background-size: 200% 200%;
+                                        animation: gradient-move 3s ease infinite;
+                                        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+                                        transform: scale(1.05);
+                                    }
+                                    .study-hub-btn i {
+                                        transition: transform 0.3s ease;
+                                    }
+                                    .study-hub-btn:hover i {
+                                        transform: translateX(4px);
+                                    }
+                                </style>
+
+                                <div class="premium-study-hub mt-2">
+                                    <div class="study-hub-content">
+                                        <h4 class="study-hub-title">Practice &amp; Test Yourself</h4>
+                                        <p class="study-hub-subtitle">Test your knowledge with real-time feedback</p>
+                                        
+                                        <div class="study-badges-container">
+                                            <a href="/quizzes" class="study-badge badge-tz-green"><i class="bi bi-ui-checks"></i> Quiz</a>
+                                            <a href="/quizzes" class="study-badge badge-tz-blue"><i class="bi bi-pencil-square"></i> Exercise</a>
+                                            <a href="/quizzes" class="study-badge badge-tz-yellow"><i class="bi bi-lightbulb-fill"></i> Possible Qns</a>
+                                            <a href="/quizzes" class="study-badge badge-tz-black"><i class="bi bi-journal-check"></i> UE Qns</a>
+                                            <a href="/quizzes" class="study-badge badge-tz-flag"><i class="bi bi-file-earmark-bar-graph"></i> CATs Qns</a>
+                                        </div>
+                                        
+                                        <a href="/quizzes" class="study-hub-btn" style="text-decoration: none;">
+                                            Start Practicing <i class="bi bi-arrow-right-circle-fill"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- End Premium Interactive Study Hub Banner -->
                             </div>
                         </div>
                     </div>
@@ -3264,6 +3416,8 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
     </script>
     <!-- END TIMETABLE SELECTION MODAL -->
 
+    <!-- Mobile Bottom Nav -->
+    <div th:replace="~{fragments/bottom_nav :: nav(activePage='home')}"></div>
 </body>
 
 </html>

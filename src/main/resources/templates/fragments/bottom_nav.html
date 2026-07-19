@@ -8,15 +8,22 @@
                 style="pointer-events: auto; border: 1px solid rgba(16, 185, 129, 0.2); gap: 5px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
 
                 <!-- HOME Button -->
-                <a th:href="${session.user != null ? '/dashboard' : '/'}" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent" 
+                <a th:href="${session.user != null ? '/dashboard' : '/'}" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0" 
                     style="color: #64748b; width: 60px;">
                     <i class="bi bi-house-door-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">HOME</span>
                 </a>
 
+                <!-- Practice Button -->
+                <a href="/quizzes" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0" 
+                    style="color: #10b981; width: 60px;">
+                    <i class="bi bi-book-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">PRACTICE</span>
+                </a>
+
                 <!-- CAT 1 -->
                 <a th:if="${cat1Passed == null || !cat1Passed}" href="#"
-                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
                     style="color: #64748b; width: 60px;" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                     data-exam-title="CAT 1"
                     th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeDate != null ? currentCalendar.sem1Cat1DegreeDate : ''}"
@@ -37,7 +44,7 @@
 
                 <!-- CAT 2 -->
                 <a th:if="${cat2Passed == null || !cat2Passed}" href="#"
-                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
                     style="color: #64748b; width: 60px;" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                     data-exam-title="CAT 2"
                     th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeDate != null ? currentCalendar.sem1Cat2DegreeDate : ''}"
@@ -58,7 +65,7 @@
 
                 <!-- UE -->
                 <a th:if="${uePassed == null || !uePassed}" href="#"
-                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
                     style="color: #64748b; width: 60px;" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                     data-exam-title="UE"
                     th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1UeDegreeDate != null ? currentCalendar.sem1UeDegreeDate : ''}"
@@ -100,13 +107,23 @@
                     width: 100% !important;
                     border-radius: 24px !important;
                     padding: 8px 12px !important;
-                    justify-content: space-evenly !important;
+                    justify-content: flex-start !important;
                     min-width: unset !important;
                     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(16, 185, 129, 0.05) !important;
+                    overflow-x: auto !important;
+                    -webkit-overflow-scrolling: touch;
+                }
+                .custom-mobile-nav-inner::-webkit-scrollbar {
+                    display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+                }
+                .custom-mobile-nav-inner {
+                    -ms-overflow-style: none;  /* IE and Edge */
+                    scrollbar-width: none;  /* Firefox */
                 }
                 .bottom-nav-btn {
                     width: auto !important;
-                    flex: 1;
+                    flex: 0 0 auto;
+                    min-width: 65px;
                 }
                 
                 /* Prevent page content from being hidden behind fixed bottom nav */

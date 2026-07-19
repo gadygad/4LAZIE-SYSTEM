@@ -68,6 +68,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                     .anyMatch(a -> a.getAuthority().equals("ROLE_" + com.school.model.Role.ADMIN.name()) || 
                                    a.getAuthority().equals("ROLE_" + com.school.model.Role.SUPER_ADMIN.name()));
                     
+            String redirectUrl = (String) session.getAttribute("redirectUrl");
+            if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                session.removeAttribute("redirectUrl");
+                response.sendRedirect(redirectUrl);
+                return;
+            }
+
             if (isAdmin) {
                 response.sendRedirect("/admin/dashboard");
                 return;

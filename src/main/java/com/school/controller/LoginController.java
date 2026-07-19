@@ -22,7 +22,11 @@ public class LoginController {
     public String login(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
                         @RequestParam(value = "level", required = false) Integer level,
                         @RequestParam(value = "search", required = false) String search,
+                        @RequestParam(value = "redirect", required = false) String redirectUrl,
                         HttpSession session, Model model) {
+        if (redirectUrl != null && !redirectUrl.isEmpty() && redirectUrl.startsWith("/")) {
+            session.setAttribute("redirectUrl", redirectUrl);
+        }
         if (session.getAttribute("user") != null) {
             return "redirect:/dashboard";
         }
