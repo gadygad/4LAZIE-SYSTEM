@@ -47,30 +47,29 @@ public class NoteService {
 
     @Autowired
     private com.school.repository.UserRepository userRepository;
-    public void groupNotesByModule(List<Note> notes, String program, Integer level, Integer semester, 
+
+    public void groupNotesByModule(List<Note> notes, String program, Integer level, Integer semester,
                                    Map<String, List<Note>> groupedNotes, Map<String, String> moduleCodes) {
         // 1. Fetch subjects for this program, level, and semester FIRST to establish correct order
         List<Course> courses = courseRepository.findByProgramType(program);
         if (!courses.isEmpty()) {
             for (Course course : courses) {
-                log.info("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
-                
+                log.debug("Fetching subjects for course ID: {}, program: {}, level: {}, semester: {}", course.getId(), program, level, semester);
+
                 // Try cached query first
                 List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNoOrderByIdAsc(course, level, semester);
-                log.info("Cached method returned {} subjects", subjects.size());
-                
+
                 // Always verify with non-cached query if cached returned fewer results
                 List<Subject> directSubjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, level, semester);
-                log.info("Direct (non-cached) method returned {} subjects", directSubjects.size());
-                
+
                 // Use whichever returned more results (handles stale cache)
                 if (directSubjects.size() > subjects.size()) {
-                    log.warn("Cache was stale! Cached: {}, Direct: {}. Using direct results.", subjects.size(), directSubjects.size());
+                    log.warn("Subject cache was stale for course '{}' (cached: {}, direct: {}). Using direct results.", course.getId(), subjects.size(), directSubjects.size());
                     subjects = directSubjects;
                 }
-                
+
+                log.debug("Loaded {} subjects for course '{}' level {} sem {}", subjects.size(), course.getId(), level, semester);
                 for (Subject sub : subjects) {
-                    log.info("  -> Subject: '{}' (code: {})", sub.getName(), sub.getCode());
                     groupedNotes.putIfAbsent(sub.getName(), new ArrayList<>());
                     moduleCodes.putIfAbsent(sub.getName(), sub.getCode() != null ? sub.getCode() : "");
                 }

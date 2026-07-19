@@ -61,6 +61,9 @@ public class AdminController {
     
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private com.school.service.EmailService emailService;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -240,7 +243,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/send-recovery")
-    public String sendRecoveryLink(@PathVariable String id, jakarta.servlet.http.HttpServletRequest request, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String sendRecoveryLink(@PathVariable String id, jakarta.servlet.http.HttpServletRequest request, RedirectAttributes redirectAttributes) {
         User admin = getLoggedInUser();
         if (!hasPermission(admin, "MANAGE_USERS")) {
             return "redirect:/login";
@@ -259,10 +262,6 @@ public class AdminController {
             String baseUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
             String magicLink = baseUrl + "/reset-password?token=" + token;
             
-            // Send email
-            com.school.service.EmailService emailService = org.springframework.web.context.support.WebApplicationContextUtils
-                .getRequiredWebApplicationContext(session.getServletContext())
-                .getBean(com.school.service.EmailService.class);
             emailService.sendRecoveryMagicLink(targetUser.getEmail(), targetUser.getName(), magicLink);
             
             redirectAttributes.addFlashAttribute("success", "Secure recovery link sent to " + targetUser.getName() + " (" + targetUser.getEmail() + ").");
@@ -273,7 +272,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/suspend")
-    public String toggleUserSuspension(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String toggleUserSuspension(@PathVariable String id, RedirectAttributes redirectAttributes) {
         User admin = getLoggedInUser();
         if (!hasPermission(admin, "MANAGE_USERS")) {
             return "redirect:/login";
@@ -290,10 +289,6 @@ public class AdminController {
             targetUser.setIsSuspended(!currentStatus);
             userRepository.save(targetUser);
             
-            // Send email
-            com.school.service.EmailService emailService = org.springframework.web.context.support.WebApplicationContextUtils
-                .getRequiredWebApplicationContext(session.getServletContext())
-                .getBean(com.school.service.EmailService.class);
             emailService.sendAccountSuspensionEmail(targetUser.getEmail(), targetUser.getName(), !currentStatus);
             
             String msg = !currentStatus ? "User suspended successfully." : "User reactivated successfully.";
@@ -305,7 +300,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/warn")
-    public String warnUser(@PathVariable String id, @RequestParam("warningMessage") String warningMessage, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String warnUser(@PathVariable String id, @RequestParam("warningMessage") String warningMessage, RedirectAttributes redirectAttributes) {
         User admin = getLoggedInUser();
         if (!hasPermission(admin, "MANAGE_USERS")) {
             return "redirect:/login";
@@ -318,10 +313,6 @@ public class AdminController {
         
         User targetUser = userRepository.findById(id).orElse(null);
         if (targetUser != null) {
-            // Send email
-            com.school.service.EmailService emailService = org.springframework.web.context.support.WebApplicationContextUtils
-                .getRequiredWebApplicationContext(session.getServletContext())
-                .getBean(com.school.service.EmailService.class);
             emailService.sendWarningEmail(targetUser.getEmail(), targetUser.getName(), warningMessage.trim());
             
             redirectAttributes.addFlashAttribute("success", "Warning sent to " + targetUser.getName() + " successfully.");

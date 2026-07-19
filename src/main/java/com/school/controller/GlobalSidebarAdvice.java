@@ -82,7 +82,9 @@ public class GlobalSidebarAdvice {
             model.addAttribute("otherUniversities", java.util.Collections.emptyList());
         }
 
-        if (user != null) {
+        // Only add notifications from session if GlobalModelAttributes hasn't already set them
+        // (GlobalModelAttributes uses Spring Security auth — more authoritative source)
+        if (user != null && !model.containsAttribute("notifications")) {
             try {
                 List<com.school.model.Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
                 int unreadCount = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
@@ -92,7 +94,7 @@ public class GlobalSidebarAdvice {
                 model.addAttribute("notifications", java.util.Collections.emptyList());
                 model.addAttribute("unreadNotificationCount", 0);
             }
-        } else {
+        } else if (!model.containsAttribute("notifications")) {
             model.addAttribute("notifications", java.util.Collections.emptyList());
             model.addAttribute("unreadNotificationCount", 0);
         }
