@@ -5,9 +5,13 @@ import com.school.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ControllerAdvice
 public class GlobalControllerAdvice {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalControllerAdvice.class);
 
     @Autowired
     private AuthUtil authUtil;
@@ -19,8 +23,8 @@ public class GlobalControllerAdvice {
 
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public String handleException(Exception ex, org.springframework.ui.Model model) {
-        ex.printStackTrace(); // Log exact trace
-        model.addAttribute("errorMessage", "Error: " + ex.toString());
+        log.error("An unexpected error occurred", ex); // Securely log the exact trace internally
+        model.addAttribute("errorMessage", "An unexpected error occurred. Please try again later or contact support if the issue persists.");
         return "error";
     }
 }

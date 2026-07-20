@@ -14,7 +14,7 @@ public class QuestionService {
     private QuestionRepository questionRepository;
 
     public List<Question> getQuestionsBySubjectAndCategory(String subjectId, String category) {
-        return questionRepository.findBySubjectIdAndCategory(subjectId, category);
+        return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCase(subjectId, category);
     }
     
     public List<Question> getQuestionsBySubjectCategoryAndModule(String subjectId, String category, String moduleName) {

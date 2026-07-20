@@ -1007,7 +1007,9 @@
 
 <body>
 
-    <header class="navbar navbar-custom sticky-top py-2"
+    <!-- Combined Sticky Navbars Wrapper -->
+    <div id="combinedNavWrapper" class="sticky-top" style="z-index: 1030; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+    <header class="navbar navbar-custom py-2"
         style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(203, 213, 225, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);">
         <div class="container-fluid px-1 d-flex justify-content-between align-items-center flex-nowrap">
 
@@ -1318,17 +1320,6 @@
             </div>
 
             <script>
-                // Hide on scroll
-                let lastScroll = 0;
-                window.addEventListener('scroll', () => {
-                    const navbar = document.getElementById('mainNavbar') || document.querySelector('.navbar');
-                    const currentScroll = window.pageYOffset;
-                    if (navbar) {
-                        if (currentScroll > lastScroll && currentScroll > 100) navbar.classList.add('hide-on-scroll');
-                        else navbar.classList.remove('hide-on-scroll');
-                    }
-                    lastScroll = currentScroll;
-                });
 
                 // Ctrl+K Shortcut
                 document.addEventListener('keydown', (e) => {
@@ -1378,9 +1369,193 @@
         </div>
     </header>
 
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <!-- Secondary Dark Navigation Strip (W3Schools Style) -->
+    <div class="secondary-nav-strip d-none d-md-block">
+        <div class="container-fluid px-4 d-flex align-items-center justify-content-center gap-1">
+            <a href="#" class="exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">NOTES</a>
+            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
+                data-exam-title="CAT 1"
+                th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeDate != null ? currentCalendar.sem1Cat1DegreeDate : ''}"
+                th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeEndDate != null ? currentCalendar.sem1Cat1DegreeEndDate : ''}"
+                th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1Cat1DiplomaDate != null ? currentCalendar.sem1Cat1DiplomaDate : ''}"
+                th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DiplomaEndDate != null ? currentCalendar.sem1Cat1DiplomaEndDate : ''}"
+                th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1Cat1DegreeUrl : ''}"
+                th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1Cat1DiplomaUrl : ''}"
+                th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2Cat1DegreeDate != null ? currentCalendar.sem2Cat1DegreeDate : ''}"
+                th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2Cat1DegreeEndDate != null ? currentCalendar.sem2Cat1DegreeEndDate : ''}"
+                th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2Cat1DiplomaDate != null ? currentCalendar.sem2Cat1DiplomaDate : ''}"
+                th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2Cat1DiplomaEndDate != null ? currentCalendar.sem2Cat1DiplomaEndDate : ''}"
+                th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat1DegreeUrl : ''}"
+                th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat1DiplomaUrl : ''}">CAT 1</a>
+            
+            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
+                data-exam-title="CAT 2"
+                th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeDate != null ? currentCalendar.sem1Cat2DegreeDate : ''}"
+                th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeEndDate != null ? currentCalendar.sem1Cat2DegreeEndDate : ''}"
+                th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1Cat2DiplomaDate != null ? currentCalendar.sem1Cat2DiplomaDate : ''}"
+                th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DiplomaEndDate != null ? currentCalendar.sem1Cat2DiplomaEndDate : ''}"
+                th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1Cat2DegreeUrl : ''}"
+                th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1Cat2DiplomaUrl : ''}"
+                th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2Cat2DegreeDate != null ? currentCalendar.sem2Cat2DegreeDate : ''}"
+                th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2Cat2DegreeEndDate != null ? currentCalendar.sem2Cat2DegreeEndDate : ''}"
+                th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2Cat2DiplomaDate != null ? currentCalendar.sem2Cat2DiplomaDate : ''}"
+                th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2Cat2DiplomaEndDate != null ? currentCalendar.sem2Cat2DiplomaEndDate : ''}"
+                th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat2DegreeUrl : ''}"
+                th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat2DiplomaUrl : ''}">CAT 2</a>
+                
+            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
+                data-exam-title="UE"
+                th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1UeDegreeDate != null ? currentCalendar.sem1UeDegreeDate : ''}"
+                th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1UeDegreeEndDate != null ? currentCalendar.sem1UeDegreeEndDate : ''}"
+                th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1UeDiplomaDate != null ? currentCalendar.sem1UeDiplomaDate : ''}"
+                th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1UeDiplomaEndDate != null ? currentCalendar.sem1UeDiplomaEndDate : ''}"
+                th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1UeDegreeUrl : ''}"
+                th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1UeDiplomaUrl : ''}"
+                th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2UeDegreeDate != null ? currentCalendar.sem2UeDegreeDate : ''}"
+                th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2UeDegreeEndDate != null ? currentCalendar.sem2UeDegreeEndDate : ''}"
+                th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2UeDiplomaDate != null ? currentCalendar.sem2UeDiplomaDate : ''}"
+                th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2UeDiplomaEndDate != null ? currentCalendar.sem2UeDiplomaEndDate : ''}"
+                th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2UeDegreeUrl : ''}"
+                th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2UeDiplomaUrl : ''}">UE</a>
+            
+            <div class="nav-dropdown-container">
+                <a href="/quizzes" class="nav-dropdown-trigger">QUIZZES <i class="bi bi-chevron-down ms-1" style="font-size: 0.65rem; transition: transform 0.3s ease;"></i></a>
+                <div class="nav-dropdown-menu">
+                    <a href="/quizzes?type=exercise"><i class="bi bi-pencil-square"></i> EXERCISE</a>
+                    <a href="/quizzes?type=possible_qns"><i class="bi bi-lightbulb-fill"></i> POSSIBLE QNS</a>
+                    <a href="/quizzes?type=cats_qns"><i class="bi bi-file-earmark-bar-graph"></i> CATS QNS</a>
+                    <a href="/quizzes?type=ue_qns"><i class="bi bi-journal-check"></i> UE QNS</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <style>
+    .secondary-nav-strip {
+        background-color: #282A35;
+        width: 100%;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .secondary-nav-strip a {
+        color: #f1f5f9;
+        text-decoration: none;
+        padding: 8px 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .secondary-nav-strip a:hover {
+        background-color: #000000;
+        color: #10b981;
+    }
+    
+    /* Magical Glow Effect for Exam Links */
+    .exam-glow-hover {
+        overflow: hidden;
+        z-index: 1;
+        border-radius: 4px;
+    }
+    .exam-glow-hover::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: -1;
+    }
+    .exam-glow-hover:hover::before {
+        left: 100%;
+        transition: left 0.5s ease-in-out;
+    }
+    .exam-glow-hover:hover {
+        background-color: #052e16 !important;
+        color: #34d399 !important;
+        box-shadow: 0 0 20px rgba(16,185,129,0.6), inset 0 0 10px rgba(16,185,129,0.3);
+        transform: translateY(-1px) scale(1.02);
+        text-shadow: 0 0 10px rgba(52,211,153,0.8);
+    }
+
+    /* Magical Dropdown for QUIZZES */
+    .nav-dropdown-container {
+        position: relative;
+        display: inline-block;
+    }
+    .nav-dropdown-trigger {
+        display: flex !important;
+        align-items: center;
+    }
+    .nav-dropdown-container:hover .nav-dropdown-trigger i {
+        transform: rotate(180deg);
+    }
+    .nav-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(15px) scale(0.95);
+        opacity: 0;
+        visibility: hidden;
+        background-color: #282A35;
+        min-width: 180px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 1050;
+        pointer-events: none;
+    }
+    /* Invisible hover bridge */
+    .nav-dropdown-container::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 15px;
+        background: transparent;
+    }
+    .nav-dropdown-container:hover .nav-dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0) scale(1);
+        pointer-events: auto;
+    }
+    .nav-dropdown-menu a {
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 16px !important;
+        color: #f1f5f9 !important;
+        font-size: 0.8rem !important;
+        border-radius: 6px;
+        background: transparent;
+        transition: all 0.2s ease !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        font-family: 'Inter', sans-serif;
+    }
+    .nav-dropdown-menu a i {
+        font-size: 1rem;
+        transition: transform 0.2s ease;
+    }
+    .nav-dropdown-menu a:hover {
+        background-color: #000000 !important;
+        color: #10b981 !important;
+        transform: translateX(5px);
+    }
+    .nav-dropdown-menu a:hover i {
+        transform: scale(1.1);
+    }
+    </style>
+
+    <!-- ---------------------------------------------------- -->
     <!-- PAGE LAYOUT: SIDEBAR LEFT + CONTENT RIGHT -->
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <!-- â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
     <div class="page-layout">
 
         <!-- â”€â”€ LEFT HERO SIDEBAR REMOVED, USING OFFCANVAS â”€â”€ -->
@@ -1686,34 +1861,9 @@
                             <!-- SJUIT COLLEGE INTRO (PLAIN TEXT - ENGLISH)       -->
                             <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
                             <div class="mb-3 mb-md-5 text-center text-md-start hero-content-wrapper">
-                                <!-- Premium Glowing Floating Badge -->
-                                <div class="badge-3d-container mb-3">
-                                    <div class="floating-gold-badge">
-                                        <!-- Invisible spacer to size the container perfectly -->
-                                        <div
-                                            style="visibility: hidden; padding: 12px 36px; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">
-                                            No.1 Engineering Platform in Tanzania
-                                        </div>
-                                        <div class="badge-face badge-front">
-                                            <span>No.1 Engineering Platform in Tanzania</span>
-                                        </div>
-                                        <div class="badge-face badge-back">
-                                            <span>No.1 Engineering Platform in Tanzania</span>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- College Label -->
-                                <div class="d-flex align-items-center gap-2 mb-4 justify-content-center justify-content-md-start">
-                                    <div class="icon-wrapper" style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.05)); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);">
-                                        <i class="bi bi-mortarboard-fill"
-                                            style="background: linear-gradient(135deg, #10b981, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.2rem; filter: drop-shadow(0 2px 4px rgba(16, 185, 129,0.3));"></i>
-                                    </div>
-                                    <span
-                                        style="font-family:'Outfit',sans-serif; font-weight:800; font-size:0.75rem; color:#64748b; letter-spacing:1.8px; text-transform:uppercase; line-height:1.5; background: linear-gradient(90deg, #475569, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">St.
-                                        Joseph University in Science &amp; Technology <br class="d-md-none"><span
-                                            class="d-none d-md-inline" style="color: #cbd5e1; margin: 0 4px;">&bull;</span> Est. 2011</span>
-                                </div>
+
+
 
                                 <!-- Main Heading -->
                                 <style>
@@ -1737,10 +1887,10 @@
                                     }
                                 </style>
                                 <h2 class="hero-main-title text-center text-md-start"
-                                    style="font-family:'Outfit',sans-serif; font-weight:900; font-size:clamp(2.8rem, 4.5vw, 4rem); line-height:1.1; margin-bottom:28px; letter-spacing:-1.5px;">
-                                    <span class="premium-gradient-text">Your SJUIT Study Materials,</span><br class="d-none d-md-block"> 
+                                    style="font-family:'Outfit',sans-serif; font-weight:900; font-size:clamp(2.4rem, 4vw, 3.8rem); line-height:1.15; margin-bottom:28px; letter-spacing:-1px;">
+                                    <span class="premium-gradient-text">Unlock Your Academic Potential.</span><br class="d-none d-xl-block"> 
                                     <span class="hero-highlight position-relative" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">
-                                        All in One Place.
+                                        Study Smarter. Excel Faster.
                                         <svg class="position-absolute d-none d-md-block" style="bottom: -12px; left: 0; width: 100%; height: 16px; z-index: -1;" viewBox="0 0 200 12" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 10C50 2 150 2 200 10" stroke="url(#gradientStroke)" stroke-width="5" stroke-linecap="round"/><defs><linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="rgba(16, 185, 129, 0.4)" /><stop offset="100%" stop-color="rgba(5, 150, 105, 0.1)" /></linearGradient></defs></svg>
                                     </span>
                                 </h2>
@@ -1750,67 +1900,35 @@
                                     <!-- Paragraph Intro -->
                                     <div class="position-relative" style="padding-left: 20px; border-left: 4px solid #10b981; border-radius: 2px; margin-bottom: 32px; background: linear-gradient(90deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%); padding-top: 8px; padding-bottom: 8px;">
                                         <p style="font-size:1.05rem; color:#475569; line-height:1.8; margin-bottom:0; max-width:95%; font-weight: 400; letter-spacing: 0.2px;">
-                                            <strong style="color:#0f172a; font-weight: 700;">4LAZIE</strong> is a modern academic resource
-                                            platform built exclusively for students of
-                                            <strong style="color:#0f172a; font-weight: 600;">St. Joseph University in Science &amp; Technology
-                                                (SJUIT)</strong>, Dar es Salaam &mdash;
-                                            Tanzania's leading private technical university, fully accredited by the
-                                            <strong style="color:#0f172a; font-weight: 600;">Tanzania Commission for Universities
-                                                (TCU)</strong>, with engineering programmes
-                                            endorsed by the <strong style="color:#0f172a; font-weight: 600;">Engineers Registration Board
-                                                (ERB)</strong> of Tanzania.
+                                            <strong style="color:#0f172a; font-weight: 700;">4LAZIE</strong> is the premier digital campus for ambitious minds. We've curated a world-class repository of 
+                                            <strong style="color:#0f172a; font-weight: 600;">comprehensive lecture notes, verified past papers, and strategic study guides</strong> 
+                                            specifically designed for academic excellence. Say goodbye to scattered resources and hello to academic dominance.
                                         </p>
                                     </div>
 
                                     <!-- Bullet Points for Premium Mobile Readability -->
                                     <ul style="list-style: none; padding-left: 0; margin-bottom: 30px; max-width: 98%;">
-                                        <li
-                                            style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
-                                            <i class="bi bi-check-circle-fill"
-                                                style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
-                                            <span style="font-size: 0.95rem; color: #475569; line-height: 1.6;">Access
-                                                Lecture Notes, Past Papers (CAT 1, CAT 2 &amp; UE), and Assignments for
-                                                every module.</span>
+                                        <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                                            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
+                                            <span style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
+                                                <strong style="color:#0f172a;">Instant Access:</strong> Seamlessly retrieve CATs, UEs, and Assignments for every module with zero delay.
+                                            </span>
                                         </li>
-                                        <li
-                                            style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
-                                            <i class="bi bi-check-circle-fill"
-                                                style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
-                                            <span
-                                                style="font-size: 0.95rem; color: #475569; line-height: 1.6;">Organised
-                                                efficiently by programme, level, and semester.</span>
+                                        <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                                            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
+                                            <span style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
+                                                <strong style="color:#0f172a;">Intelligently Organized:</strong> Precision-structured by your specific program, academic level, and semester.
+                                            </span>
                                         </li>
-                                        <li
-                                            style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
-                                            <i class="bi bi-check-circle-fill"
-                                                style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
-                                            <span style="font-size: 0.95rem; color: #475569; line-height: 1.6;">No more
-                                                searching through WhatsApp groups; everything is right here and ready to
-                                                use.</span>
+                                        <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                                            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
+                                            <span style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
+                                                <strong style="color:#0f172a;">Zero Distractions:</strong> Escape the chaos of WhatsApp groups. Focus 100% of your energy on acing your exams.
+                                            </span>
                                         </li>
                                     </ul>
 
-                                    <!-- Awards Row -->
-                                    <div class="d-flex gap-3 flex-wrap align-items-center">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-trophy-fill" style="color:#10b981; font-size:0.9rem;"></i>
-                                            <span style="font-size:0.78rem; color:#64748b; font-weight:600;">WSIS 2025
-                                                Champion Â· Geneva, Switzerland</span>
-                                        </div>
-                                        <span style="color:#e2e8f0; font-size:0.8rem;">|</span>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-patch-check-fill"
-                                                style="color:#3b82f6; font-size:0.9rem;"></i>
-                                            <span style="font-size:0.78rem; color:#64748b; font-weight:600;">TCU &amp;
-                                                ERB Accredited</span>
-                                        </div>
-                                        <span style="color:#e2e8f0; font-size:0.8rem;">|</span>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-award-fill" style="color:#10b981; font-size:0.9rem;"></i>
-                                            <span style="font-size:0.78rem; color:#64748b; font-weight:600;">AEDT Expo
-                                                2026 Â· 1st Runner-Up, Innovation</span>
-                                        </div>
-                                    </div>
+
                                 </div>
 
                                 <!-- Read More Button (Visible only on mobile) -->
@@ -2909,19 +3027,21 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
                 // 1. Smart Hide-on-Scroll Navbar & Transparent-to-Blur
                 const navbar = document.querySelector('.navbar-custom');
+                const wrapper = document.getElementById('combinedNavWrapper');
                 if (navbar) {
                     if (scrollTop > 20) {
                         navbar.classList.add('navbar-scrolled');
                     } else {
                         navbar.classList.remove('navbar-scrolled');
                     }
-
+                }
+                if (wrapper) {
                     if (scrollTop > window.lastScrollTop && scrollTop > 100) {
-                        navbar.classList.add('navbar-hidden');
-                        navbar.classList.remove('navbar-visible');
+                        wrapper.classList.add('navbar-hidden');
+                        wrapper.classList.remove('navbar-visible');
                     } else {
-                        navbar.classList.remove('navbar-hidden');
-                        navbar.classList.add('navbar-visible');
+                        wrapper.classList.remove('navbar-hidden');
+                        wrapper.classList.add('navbar-visible');
                     }
                 }
                 window.lastScrollTop = scrollTop;

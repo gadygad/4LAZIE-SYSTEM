@@ -24,6 +24,13 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
+    private com.school.util.AuthUtil authUtil;
+
+    private User getLoggedInUser() {
+        return authUtil.getLoggedInUser();
+    }
+
+    @Autowired
     private com.school.service.NotificationService notificationService;
 
     @Autowired
@@ -38,8 +45,8 @@ public class UserController {
     }
 
     @GetMapping("/notifications")
-    public String getAllNotifications(HttpSession session, Model model) {
-        User sessionUser = (User) session.getAttribute("user");
+    public String getAllNotifications(Model model) {
+        User sessionUser = getLoggedInUser();
         if (sessionUser == null) {
             return "redirect:/login";
         }
@@ -49,8 +56,8 @@ public class UserController {
 
     @GetMapping("/profile")
     public String getProfile(@RequestParam(value = "edit", required = false, defaultValue = "false") boolean edit,
-                             HttpSession session, Model model) {
-        User sessionUser = (User) session.getAttribute("user");
+                             Model model) {
+        User sessionUser = getLoggedInUser();
         if (sessionUser == null) {
             return "redirect:/login";
         }
@@ -82,14 +89,20 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-    public String updateProfile(@ModelAttribute("user") User formUser,
-                             @RequestParam(value = "file", required = false) MultipartFile file,
-                             @RequestParam(value = "coverPhotoFile", required = false) MultipartFile coverPhotoFile,
+    public String updateProfile(@jakarta.validation.Valid @ModelAttribute("user") com.school.dto.UserProfileUpdateDTO formUser,
+                             org.springframework.validation.BindingResult bindingResult,
                              HttpSession session, Model model) {
 
-        User sessionUser = (User) session.getAttribute("user");
+        User sessionUser = getLoggedInUser();
         if (sessionUser == null) {
             return "redirect:/login";
+        }
+        
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("error", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            model.addAttribute("user", sessionUser); // Revert to current data for display
+            model.addAttribute("editMode", true);
+            return "user/profile";
         }
         
         if (!sessionUser.getEmail().equalsIgnoreCase(formUser.getEmail())) {
@@ -105,6 +118,10 @@ public class UserController {
         // Update mutable fields
         sessionUser.setName(formUser.getName());
         sessionUser.setEmail(formUser.getEmail());
+        
+        MultipartFile file = formUser.getFile();
+        MultipartFile coverPhotoFile = formUser.getCoverPhotoFile();
+        
         // Handle profile picture upload if present
         if (file != null && !file.isEmpty()) {
             try {
@@ -116,8 +133,6 @@ public class UserController {
                 model.addAttribute("editMode", true);
                 return "user/profile";
             }
-        } else {
-            // Preserve existing picture if no new file provided (Do not overwrite)
         }
         
         // Handle cover photo upload if present
@@ -132,7 +147,7 @@ public class UserController {
                 return "user/profile";
             }
         }
-        // sessionUser.setCourseProgram(formUser.getCourseProgram()); // Course modification disabled
+        
         sessionUser.setLevel(formUser.getLevel());
         sessionUser.setSemester(formUser.getSemester());
         // Save changes
@@ -170,8 +185,8 @@ public class UserController {
     }
 
     @GetMapping("/profile/saved")
-    public String getSavedNotes(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+    public String getSavedNotes(Model model) {
+        User user = getLoggedInUser();
         if (user == null) {
             return "redirect:/login";
         }
@@ -190,8 +205,8 @@ public class UserController {
     }
 
     @GetMapping("/profile/downloads")
-    public String getDownloadedNotes(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+    public String getDownloadedNotes(Model model) {
+        User user = getLoggedInUser();
         if (user == null) {
             return "redirect:/login";
         }

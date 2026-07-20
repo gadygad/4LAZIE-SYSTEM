@@ -190,7 +190,8 @@
 
         <script>
             document.querySelectorAll('.exam-nav-btn').forEach(function (btn) {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     var title = this.getAttribute('data-exam-title');
                     var sem1DegreeDate = this.getAttribute('data-sem1-degree-date');
                     var sem1DegreeEndDate = this.getAttribute('data-sem1-degree-end-date');

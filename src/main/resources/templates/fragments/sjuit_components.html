@@ -1123,6 +1123,28 @@
         #calendarModal.show .modal-dialog, #examModal.show .modal-dialog {
             transform: scale(1) translateY(0);
         }
+        
+        /* Magical Desktop Exam Modal (Floating Action Sheet) */
+        @media (min-width: 768px) {
+            #examModal.offcanvas-bottom {
+                max-width: 480px !important;
+                margin: 0 auto !important;
+                bottom: 30px !important;
+                height: auto !important;
+                max-height: 85vh !important;
+                border-radius: 28px !important;
+                border: 1px solid rgba(255, 255, 255, 0.9) !important;
+                box-shadow: 0 30px 60px rgba(16, 185, 129, 0.15), inset 0 2px 10px rgba(255, 255, 255, 0.8) !important;
+                transform: translateY(120%) !important;
+                transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            }
+            #examModal.offcanvas-bottom.show {
+                transform: translateY(0) !important;
+            }
+            #examModal .desktop-hide-drag {
+                display: none !important;
+            }
+        }
     </style>
     <!-- Calendar Modal -->
     <div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
@@ -1156,10 +1178,10 @@
     </div>
 
     <!-- Exam Modal -->
-    <div class="offcanvas offcanvas-bottom" id="examModal" tabindex="-1" aria-labelledby="examModalLabel" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-top: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); height: auto; max-height: 70vh;">
+    <div class="offcanvas offcanvas-bottom" id="examModal" tabindex="-1" aria-labelledby="examModalLabel" data-bs-scroll="true" data-bs-backdrop="true" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-top: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); height: auto; max-height: 70vh;">
         
         <!-- Drag Handle (Visual only) -->
-        <div class="d-flex justify-content-center pt-3 pb-1 position-relative z-2">
+        <div class="d-flex justify-content-center pt-3 pb-1 position-relative z-2 desktop-hide-drag">
             <div style="width: 40px; height: 5px; background: rgba(0,0,0,0.15); border-radius: 10px;"></div>
         </div>
 

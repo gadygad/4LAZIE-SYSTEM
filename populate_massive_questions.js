@@ -112,7 +112,8 @@ async function run() {
                 { name: "EXERCISE", count: 30 },
                 { name: "QUIZ", count: 15 },
                 { name: "CAT 1", count: 17 },
-                { name: "CAT 2", count: 17 }
+                { name: "CAT 2", count: 17 },
+                { name: "POSSIBLE QNS", count: 40 }
             ];
 
             let qIndex = 0;

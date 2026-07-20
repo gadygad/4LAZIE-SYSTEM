@@ -103,10 +103,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
         return (count != null && count.getTotal() != null) ? count.getTotal() : 0L;
     }
 
-    @org.springframework.cache.annotation.Cacheable("popularNotes")
+    @org.springframework.cache.annotation.Cacheable(value = "popularNotes", key = "'top3-' + #category")
     List<Note> findTop3ByCategoryOrderByIdDesc(String category);
     
-    @org.springframework.cache.annotation.Cacheable("popularNotes")
+    @org.springframework.cache.annotation.Cacheable(value = "popularNotes", key = "'top10-' + #category")
     List<Note> findTop10ByCategoryOrderByIdDesc(String category);
 
 

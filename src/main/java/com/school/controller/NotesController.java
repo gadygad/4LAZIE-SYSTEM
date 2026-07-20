@@ -345,22 +345,18 @@ public class NotesController {
     }
 
     @PostMapping("/upload")
-    public String uploadNote(@RequestParam("title") String title,
-                             @RequestParam(value = "programType", defaultValue = "DIPLOMA") String programType,
-                             @RequestParam("levelNo") Integer levelNo,
-                             @RequestParam("semesterNo") Integer semesterNo,
-                             @RequestParam(value = "moduleName", required = false) String moduleName,
-                             @RequestParam(value = "moduleCode", required = false) String moduleCode,
-                             @RequestParam(value = "category", required = false) String category,
-                             @RequestParam(value = "unitNumber", required = false) Integer unitNumber,
-                             @RequestParam(value = "academicYear", required = false) String academicYear,
-                             @RequestParam(value = "isGeneral", required = false, defaultValue = "false") Boolean isGeneral,
-                             @RequestParam("file") MultipartFile file,
-                             HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
+    public String uploadNote(@jakarta.validation.Valid @ModelAttribute("noteDTO") com.school.dto.NoteUploadDTO noteDTO,
+                             org.springframework.validation.BindingResult bindingResult,
+                             jakarta.servlet.http.HttpServletRequest request) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) return "redirect:/login";
 
-        if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
+        if (bindingResult.hasErrors()) {
+            return "redirect:/upload?error=" + java.net.URLEncoder.encode(bindingResult.getAllErrors().get(0).getDefaultMessage(), java.nio.charset.StandardCharsets.UTF_8);
+        }
+
+        MultipartFile file = noteDTO.getFile();
+        if (file == null || file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
 
         // Validate File Extension to prevent uploading malicious scripts/executables
         String originalFilename = file.getOriginalFilename();
@@ -378,16 +374,16 @@ public class NotesController {
 
         try {
             Note note = new Note();
-            note.setTitle(title);
-            note.setProgramType(programType);
-            note.setLevelNo(levelNo);
-            note.setSemesterNo(semesterNo);
-            note.setModuleName(moduleName != null && !moduleName.trim().isEmpty() ? moduleName.trim().toUpperCase() : "GENERAL MODULE");
-            note.setModuleCode(moduleCode != null ? moduleCode.trim().toUpperCase() : "");
-            note.setCategory(category == null || category.trim().isEmpty() ? "Note" : category);
-            note.setUnitNumber(unitNumber);
-            note.setAcademicYear(academicYear != null ? academicYear.trim() : null);
-            note.setIsGeneral(isGeneral);
+            note.setTitle(noteDTO.getTitle());
+            note.setProgramType(noteDTO.getProgramType());
+            note.setLevelNo(noteDTO.getLevelNo());
+            note.setSemesterNo(noteDTO.getSemesterNo());
+            note.setModuleName(noteDTO.getModuleName() != null && !noteDTO.getModuleName().trim().isEmpty() ? noteDTO.getModuleName().trim().toUpperCase() : "GENERAL MODULE");
+            note.setModuleCode(noteDTO.getModuleCode() != null ? noteDTO.getModuleCode().trim().toUpperCase() : "");
+            note.setCategory(noteDTO.getCategory() == null || noteDTO.getCategory().trim().isEmpty() ? "Note" : noteDTO.getCategory());
+            note.setUnitNumber(noteDTO.getUnitNumber());
+            note.setAcademicYear(noteDTO.getAcademicYear() != null ? noteDTO.getAcademicYear().trim() : null);
+            note.setIsGeneral(noteDTO.getIsGeneral());
 
             String appUrl = "https://" + request.getServerName();
             if (request.getServerPort() != 80 && request.getServerPort() != 443) {
@@ -481,7 +477,11 @@ public class NotesController {
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
             try {
-                response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
+                String redirectUrl = "/proxy/" + note.getId() + "/" + brandedName;
+                if ("true".equals(force)) {
+                    redirectUrl += "?force=true";
+                }
+                response.sendRedirect(redirectUrl);
                 return;
             } catch (Exception e) {
                 // fall through to text fallback
@@ -697,7 +697,7 @@ public class NotesController {
     }
 
     @GetMapping({"/proxy/{id}", "/proxy/{id}/{filename}"})
-    public ResponseEntity<org.springframework.core.io.Resource> proxyDocument(@PathVariable("id") String id) {
+    public ResponseEntity<org.springframework.core.io.Resource> proxyDocument(@PathVariable("id") String id, @RequestParam(value = "force", required = false) String force) {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -720,10 +720,11 @@ public class NotesController {
                 mediaType = MediaType.IMAGE_PNG;
             }
             
+            String disposition = "true".equals(force) ? "attachment" : "inline";
             org.springframework.core.io.InputStreamResource resource = new org.springframework.core.io.InputStreamResource(connection.getInputStream());
             return ResponseEntity.ok()
                     .contentType(mediaType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
                     .body(resource);
         } catch (Exception e) {
             log.error("Error proxying document", e);

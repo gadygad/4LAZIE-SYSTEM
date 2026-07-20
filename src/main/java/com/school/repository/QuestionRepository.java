@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends MongoRepository<Question, String> {
     List<Question> findBySubjectId(String subjectId);
-    List<Question> findBySubjectIdAndCategory(String subjectId, String category);
+    List<Question> findBySubjectIdAndCategoryStartingWithIgnoreCase(String subjectId, String category);
     List<Question> findBySubjectIdAndCategoryAndModuleName(String subjectId, String category, String moduleName);
     long countBySubjectId(String subjectId);
     long countBySubjectIdAndCategory(String subjectId, String category);

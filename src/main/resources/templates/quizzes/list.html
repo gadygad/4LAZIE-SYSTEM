@@ -93,6 +93,98 @@
             border-radius: 0 8px 8px 0;
             display: none;
         }
+        
+        /* Premium Textarea & Marking Scheme (Magic UI) */
+        .premium-textarea {
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 1.05rem;
+            color: #334155;
+            transition: all 0.3s ease;
+            resize: none;
+            background: rgba(255,255,255,0.8);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .premium-textarea:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16,185,129,0.1), inset 0 2px 4px rgba(0,0,0,0.02);
+            outline: none;
+        }
+        .premium-reveal-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border-radius: 14px;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .premium-reveal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shimmerSweep 3s infinite;
+            z-index: -1;
+        }
+        @keyframes shimmerSweep {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+        .premium-reveal-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+            color: white;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+        .premium-reveal-btn .bi-magic {
+            color: #fef3c7;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+            animation: wandPulse 2s infinite;
+        }
+        @keyframes wandPulse {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(15deg) scale(1.2); }
+        }
+        .marking-scheme-box {
+            background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+            border: 2px solid #10b981;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .marking-header {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            color: #059669;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            border-bottom: 2px dashed rgba(16, 185, 129, 0.2);
+            padding-bottom: 10px;
+        }
+        .marking-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #1e293b;
+        }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .progress-bar-custom {
             height: 6px;
             background: #e2e8f0;
@@ -584,7 +676,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <div class="category-card card-tz-green2" onclick="selectCategory('CAT', this)">
+                        <div class="category-card card-tz-green2" onclick="showCatSelectionModal(this)">
                             <div class="cat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
                             <div class="cat-name">CATs Qns</div>
                         </div>
@@ -827,6 +919,36 @@
         </div>
     </div>
 
+    <!-- CAT Selection Modal -->
+    <div class="modal fade" id="catSelectionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 24px; border: none; box-shadow: 0 25px 80px rgba(0,0,0,0.15); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit', sans-serif; color: #1e293b;">Which CAT are you practicing?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="category-card card-tz-green" onclick="confirmCatSelection('CAT 1')" style="padding: 20px 10px;">
+                                <div class="cat-icon"><i class="bi bi-1-circle-fill"></i></div>
+                                <div class="cat-name" style="font-size: 1rem;">CAT 1</div>
+                                <small class="text-muted" style="font-size: 0.75rem;">(Units 1 - 2.5)</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="category-card card-tz-blue" onclick="confirmCatSelection('CAT 2')" style="padding: 20px 10px;">
+                                <div class="cat-icon"><i class="bi bi-2-circle-fill"></i></div>
+                                <div class="cat-name" style="font-size: 1rem;">CAT 2</div>
+                                <small class="text-muted" style="font-size: 0.75rem;">(Units 2.5 - 5)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hidden Data for JS -->
     <input type="hidden" id="isGuest" th:value="${isGuest}">
     
@@ -841,7 +963,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const isGuest = document.getElementById('isGuest').value === 'true';
-        const GUEST_LIMIT = 10;
 
         let questions = [];
         let currentIdx = 0;
@@ -909,11 +1030,23 @@
             document.querySelectorAll('.step-section').forEach(el => el.style.display = 'none');
             document.getElementById('step' + step).style.display = 'block';
         }
+        
+        let catElementTemp = null;
+        function showCatSelectionModal(element) {
+            catElementTemp = element;
+            new bootstrap.Modal(document.getElementById('catSelectionModal')).show();
+        }
+
+        function confirmCatSelection(catLevel) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('catSelectionModal'));
+            modal.hide();
+            selectCategory(catLevel, catElementTemp);
+        }
 
         function selectCategory(category, element) {
             document.getElementById('selectedCategory').value = category;
             document.querySelectorAll('.category-card').forEach(card => card.classList.remove('selected'));
-            element.classList.add('selected');
+            if(element) element.classList.add('selected');
             
             // Auto advance to next step for better UX
             setTimeout(() => {
@@ -1122,8 +1255,30 @@
                 }
             } else {
                 html += `
-                    <input type="text" id="shortAnswerInput" class="form-control form-control-lg mb-3" placeholder="Type your answer...">
-                    <button class="btn btn-primary rounded-pill px-4" onclick="submitShortAnswer()">Submit Answer</button>`;
+                    <div class="self-assessment-wrapper mb-2">
+                        <textarea id="essayInput" class="form-control premium-textarea" rows="4" placeholder="Think deeply and type your answer here..."></textarea>
+                        <div class="text-center mt-4" id="revealBtnDiv">
+                            <button class="btn btn-lg premium-reveal-btn" onclick="revealMarkingScheme()">
+                                <i class="bi bi-magic me-2"></i> Reveal Marking Scheme
+                            </button>
+                        </div>
+                        <div id="markingSchemeDiv" class="marking-scheme-box" style="display: none;">
+                            <div class="marking-header"><i class="bi bi-check2-circle me-2"></i> Marking Scheme / Expected Answer</div>
+                            <div class="marking-content" id="markingContent"></div>
+                            
+                            <div class="self-grade-section mt-4 pt-3 border-top text-center" id="selfGradeSection">
+                                <h6 class="mb-3 text-muted fw-bold" style="font-family: 'Outfit', sans-serif;">Be honest, did you get it right?</h6>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button class="btn btn-outline-danger px-4 rounded-pill fw-bold" onclick="selfGrade(false)">
+                                        <i class="bi bi-x-circle me-1"></i> I Missed It
+                                    </button>
+                                    <button class="btn btn-success px-4 rounded-pill shadow-sm fw-bold" onclick="selfGrade(true)">
+                                        <i class="bi bi-check-circle me-1"></i> I Got It (+1)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
             }
 
             document.getElementById('questionContent').innerHTML = html;
@@ -1156,16 +1311,26 @@
             afterAnswer(q);
         }
 
-        function submitShortAnswer() {
-            const input = document.getElementById('shortAnswerInput');
+        function revealMarkingScheme() {
             const q = questions[currentIdx];
-            input.disabled = true;
-            if (input.value.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()) {
-                input.classList.add('is-valid');
-                score++;
-            } else {
-                input.classList.add('is-invalid');
+            document.getElementById('essayInput').disabled = true;
+            document.getElementById('revealBtnDiv').style.display = 'none';
+            
+            let schemeHtml = `<div class="mb-2"><strong class="text-dark">Expected Answer:</strong><br> ${q.correctAnswer}</div>`;
+            if(q.explanation) {
+                schemeHtml += `<div><strong class="text-dark">Detailed Explanation:</strong><br> ${q.explanation}</div>`;
             }
+            
+            document.getElementById('markingContent').innerHTML = schemeHtml;
+            document.getElementById('markingSchemeDiv').style.display = 'block';
+        }
+
+        function selfGrade(isCorrect) {
+            if (isCorrect) score++;
+            const q = questions[currentIdx];
+            document.getElementById('selfGradeSection').style.display = 'none';
+            // Suppress standard explanation box since we already showed it in Marking Scheme
+            q._suppressExplanation = true; 
             afterAnswer(q);
         }
 
@@ -1175,7 +1340,7 @@
 
         function afterAnswer(q) {
             answeredCount++;
-            if (q.explanation && q.explanation.trim()) {
+            if (q.explanation && q.explanation.trim() && !q._suppressExplanation) {
                 document.getElementById('explanationText').innerHTML = q.explanation;
                 document.getElementById('explanationBox').style.display = 'block';
             }
@@ -1184,7 +1349,10 @@
         }
 
         function nextQuestion() {
-            if (isGuest && answeredCount >= GUEST_LIMIT) {
+            const currentCat = document.getElementById('selectedCategory').value;
+            const limit = (currentCat === 'EXERCISE') ? 20 : 10;
+            
+            if (isGuest && answeredCount >= limit) {
                 showSoftWall();
                 return;
             }

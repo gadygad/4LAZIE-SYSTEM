@@ -81,23 +81,15 @@ public class AdminController {
         return authUtil.getLoggedInUser();
     }
 
-    private boolean hasPermission(User user, String requiredPermission) {
-        if (user == null) return false;
-        if (user.getRole() == Role.SUPER_ADMIN) return true;
-        if ((user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) return false;
-        if (requiredPermission == null || requiredPermission.isEmpty()) return true; // Just basic admin check
-        return user.getPermissions() != null && user.getPermissions().contains(requiredPermission);
-    }
+    @Autowired
+    private com.school.service.AdminService adminService;
 
     private String handleDeletionRequest(User admin, String entityType, String entityId, String entityDesc, RedirectAttributes redirectAttributes) {
-        if (admin.getRole() == Role.SUPER_ADMIN) {
-            return "PROCEED";
-        } else {
-            com.school.model.PendingAction pa = new com.school.model.PendingAction(admin.getId(), admin.getName(), entityType, entityId, entityDesc, "DELETE");
-            pendingActionRepository.save(pa);
+        String result = adminService.processDeletionRequest(admin, entityType, entityId, entityDesc);
+        if ("PENDING".equals(result)) {
             redirectAttributes.addFlashAttribute("info", "Deletion request submitted to Super Admin for approval.");
-            return "PENDING";
         }
+        return result;
     }
 
     @GetMapping({"", "/", "/dashboard"})
@@ -175,7 +167,7 @@ public class AdminController {
     @GetMapping("/users")
     public String listUsers(HttpSession session, Model model) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_USERS")) {
+        if (!adminService.hasPermission(user, "MANAGE_USERS")) {
             return "redirect:/login";
         }
         
@@ -202,7 +194,7 @@ public class AdminController {
     @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_USERS")) {
+        if (!adminService.hasPermission(user, "MANAGE_USERS")) {
             return "redirect:/login";
         }
         
@@ -227,7 +219,7 @@ public class AdminController {
     @PostMapping("/users/{id}/reset-password")
     public String resetUserPassword(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_USERS")) {
+        if (!adminService.hasPermission(user, "MANAGE_USERS")) {
             return "redirect:/login";
         }
         
@@ -245,7 +237,7 @@ public class AdminController {
     @PostMapping("/users/{id}/send-recovery")
     public String sendRecoveryLink(@PathVariable String id, jakarta.servlet.http.HttpServletRequest request, RedirectAttributes redirectAttributes) {
         User admin = getLoggedInUser();
-        if (!hasPermission(admin, "MANAGE_USERS")) {
+        if (!adminService.hasPermission(admin, "MANAGE_USERS")) {
             return "redirect:/login";
         }
         
@@ -274,7 +266,7 @@ public class AdminController {
     @PostMapping("/users/{id}/suspend")
     public String toggleUserSuspension(@PathVariable String id, RedirectAttributes redirectAttributes) {
         User admin = getLoggedInUser();
-        if (!hasPermission(admin, "MANAGE_USERS")) {
+        if (!adminService.hasPermission(admin, "MANAGE_USERS")) {
             return "redirect:/login";
         }
         
@@ -302,7 +294,7 @@ public class AdminController {
     @PostMapping("/users/{id}/warn")
     public String warnUser(@PathVariable String id, @RequestParam("warningMessage") String warningMessage, RedirectAttributes redirectAttributes) {
         User admin = getLoggedInUser();
-        if (!hasPermission(admin, "MANAGE_USERS")) {
+        if (!adminService.hasPermission(admin, "MANAGE_USERS")) {
             return "redirect:/login";
         }
         
@@ -385,7 +377,7 @@ public class AdminController {
     @PostMapping("/notes/{id}/delete")
     public String deleteNote(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_NOTES")) {
+        if (!adminService.hasPermission(user, "MANAGE_NOTES")) {
             return "redirect:/login";
         }
         Note note = noteRepository.findById(id).orElse(null);
@@ -476,7 +468,7 @@ public class AdminController {
     @PostMapping("/subjects/{id}/delete")
     public String deleteSubject(@PathVariable String id, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_SUBJECTS")) {
+        if (!adminService.hasPermission(user, "MANAGE_SUBJECTS")) {
             return "redirect:/login";
         }
         Subject subject = subjectRepository.findById(id).orElse(null);
@@ -554,10 +546,10 @@ public class AdminController {
             timetable.setProgramType(programType);
             timetable.setLevelNo(levelNo);
             timetable.setSemesterNo(semesterNo);
-            String safeHtml = htmlContent.trim()
-                .replaceAll("(?is)<script.*?>.*?</script.*?>", "")
-                .replaceAll("(?is)<iframe.*?>.*?</iframe.*?>", "")
-                .replaceAll("(?i)onload\\s*=\\s*['\"].*?['\"]", "");
+            
+            org.owasp.html.PolicyFactory policy = org.owasp.html.Sanitizers.FORMATTING.and(org.owasp.html.Sanitizers.LINKS).and(org.owasp.html.Sanitizers.BLOCKS).and(org.owasp.html.Sanitizers.STYLES).and(org.owasp.html.Sanitizers.TABLES);
+            String safeHtml = policy.sanitize(htmlContent.trim());
+            
             timetable.setHtmlContent(safeHtml);
             timetable.setUploadDate(java.time.LocalDateTime.now());
             timetable.setAcademicYear(academicYear);
@@ -575,7 +567,7 @@ public class AdminController {
     @PostMapping("/timetables/{id}/delete")
     public String deleteTimetable(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_TIMETABLES")) {
+        if (!adminService.hasPermission(user, "MANAGE_TIMETABLES")) {
             return "redirect:/login";
         }
         
@@ -821,7 +813,7 @@ public class AdminController {
     @PostMapping("/calendar/{id}/delete")
     public String deleteCalendar(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_CALENDAR")) {
+        if (!adminService.hasPermission(user, "MANAGE_CALENDAR")) {
             return "redirect:/login";
         }
         
@@ -936,7 +928,7 @@ public class AdminController {
     @org.springframework.cache.annotation.CacheEvict(value = {"allCourses", "coursesByProgram"}, allEntries = true)
     public String deleteCourse(@PathVariable String id, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (!hasPermission(user, "MANAGE_COURSES")) {
+        if (!adminService.hasPermission(user, "MANAGE_COURSES")) {
             return "redirect:/login";
         }
         Course course = courseRepository.findById(id).orElse(null);
