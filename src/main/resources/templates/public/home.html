@@ -1693,101 +1693,176 @@
                             </div>
 
                             <!-- ============================================ -->
-                            <!-- ✨ JAVA OOP FEATURED COURSE CARD (COMBINED) -->
+                            <!-- ✨ JAVA OOP FEATURED COURSE CARD (PREMIUM) -->
                             <!-- ============================================ -->
-                            <div class="mb-4 mb-md-5 w-100">
+                            <div class="mb-4 mb-md-5 w-100 position-relative" style="perspective: 1000px;">
                                 <style>
-                                    @keyframes quizShimmer { 0% { left: -100%; } 100% { left: 150%; } }
-                                    @keyframes hotPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
-                                    @keyframes floatIcon { 0%,100% { transform: translateY(0px) rotate(12deg); } 50% { transform: translateY(-8px) rotate(12deg); } }
-                                    @keyframes borderGlow { 0%,100% { box-shadow: 0 15px 40px rgba(16,185,129,0.15), 0 0 0 0 rgba(16,185,129,0.1); } 50% { box-shadow: 0 15px 40px rgba(16,185,129,0.25), 0 0 0 4px rgba(16,185,129,0.08); } }
+                                    /* Premium Animations */
+                                    @keyframes shimmerSweep {
+                                        0% { background-position: -200% center; }
+                                        100% { background-position: 200% center; }
+                                    }
+                                    @keyframes floatIconMagic {
+                                        0%, 100% { transform: translateY(0) scale(1) rotate(5deg); filter: drop-shadow(0 15px 25px rgba(16,185,129,0.4)); }
+                                        50% { transform: translateY(-10px) scale(1.05) rotate(0deg); filter: drop-shadow(0 25px 35px rgba(16,185,129,0.6)); }
+                                    }
+                                    @keyframes badgePulseGlow {
+                                        0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6), 0 4px 10px rgba(239, 68, 68, 0.4); }
+                                        50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0), 0 8px 20px rgba(239, 68, 68, 0.6); }
+                                    }
+                                    @keyframes ambientGlowBorder {
+                                        0%, 100% { box-shadow: 0 20px 50px rgba(16,185,129,0.12), inset 0 0 0 1px rgba(255,255,255,0.9); }
+                                        50% { box-shadow: 0 20px 60px rgba(16,185,129,0.22), inset 0 0 0 2px rgba(16,185,129,0.3); }
+                                    }
+                                    @keyframes bgMeshMove {
+                                        0% { background-position: 0% 50%; }
+                                        50% { background-position: 100% 50%; }
+                                        100% { background-position: 0% 50%; }
+                                    }
 
+                                    /* Main Card */
                                     .quiz-magic-card {
                                         display: block;
                                         text-decoration: none !important;
-                                        border-radius: 24px;
-                                        background: linear-gradient(145deg, #ffffff 0%, #f0fdf4 60%, #ecfdf5 100%);
-                                        border: 1.5px solid rgba(16,185,129,0.25);
-                                        padding: 20px 22px;
+                                        border-radius: 28px;
+                                        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,244,0.9) 100%);
+                                        backdrop-filter: blur(20px);
+                                        -webkit-backdrop-filter: blur(20px);
+                                        padding: 24px 28px;
                                         position: relative;
                                         overflow: hidden;
-                                        animation: borderGlow 3s ease-in-out infinite;
-                                        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                                        animation: ambientGlowBorder 4s ease-in-out infinite;
+                                        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+                                        transform-style: preserve-3d;
                                     }
-                                    .quiz-magic-card:hover {
-                                        transform: translateY(-6px);
-                                        box-shadow: 0 30px 60px rgba(16,185,129,0.2), 0 0 0 3px rgba(16,185,129,0.12) !important;
-                                        animation: none;
-                                    }
+                                    
+                                    /* Mesh background subtle pattern */
                                     .quiz-magic-card::before {
                                         content: '';
                                         position: absolute;
-                                        top: 0; left: -100%;
-                                        width: 55%; height: 100%;
-                                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-                                        animation: quizShimmer 3.5s ease-in-out infinite;
+                                        top: -50%; left: -50%; width: 200%; height: 200%;
+                                        background: radial-gradient(circle at 50% 50%, rgba(16,185,129,0.08) 0%, transparent 40%),
+                                                    radial-gradient(circle at 80% 20%, rgba(52,211,153,0.05) 0%, transparent 30%);
+                                        background-size: 200% 200%;
+                                        animation: bgMeshMove 15s ease infinite;
+                                        z-index: 0;
+                                        pointer-events: none;
                                     }
-                                    .quiz-magic-card:hover::before { animation: none; }
+
+                                    /* Top Gradient Line */
+                                    .quiz-magic-card::after {
+                                        content: '';
+                                        position: absolute;
+                                        top: 0; left: 0; width: 100%; height: 4px;
+                                        background: linear-gradient(90deg, #10b981, #34d399, #059669, #10b981);
+                                        background-size: 300% 100%;
+                                        animation: shimmerSweep 3s linear infinite;
+                                        border-radius: 28px 28px 0 0;
+                                        z-index: 2;
+                                    }
+
+                                    .quiz-magic-card:hover {
+                                        transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+                                        box-shadow: 0 40px 80px rgba(16,185,129,0.25), inset 0 0 0 2px rgba(16,185,129,0.4) !important;
+                                        animation: none;
+                                    }
+
+                                    /* Icon Container */
+                                    .quiz-icon-box {
+                                        width: 76px; height: 76px; border-radius: 24px;
+                                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                        color: white;
+                                        box-shadow: 0 15px 35px rgba(16,185,129,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+                                        position: relative;
+                                        z-index: 1;
+                                        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                                    }
+                                    .quiz-magic-card:hover .quiz-icon-box {
+                                        animation: floatIconMagic 3s ease-in-out infinite;
+                                    }
+
+                                    /* CTA Button */
+                                    .quiz-cta-btn { 
+                                        background: linear-gradient(135deg, #10b981, #059669);
+                                        color: white;
+                                        border-radius: 20px;
+                                        padding: 12px 26px;
+                                        font-size: 0.95rem;
+                                        font-weight: 800;
+                                        box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+                                        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                                        position: relative;
+                                        overflow: hidden;
+                                        z-index: 1;
+                                        letter-spacing: 0.5px;
+                                    }
+                                    .quiz-cta-btn::before {
+                                        content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+                                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                                        transition: all 0.5s ease; z-index: -1;
+                                    }
                                     .quiz-magic-card:hover .quiz-cta-btn {
-                                        background: linear-gradient(135deg, #059669, #047857) !important;
-                                        transform: translateX(4px);
-                                        box-shadow: 0 8px 25px rgba(16,185,129,0.5) !important;
+                                        transform: scale(1.05) translateY(-2px);
+                                        box-shadow: 0 15px 35px rgba(16,185,129,0.5);
                                     }
-                                    .quiz-cta-btn { transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-                                    .quiz-float-icon { animation: floatIcon 4s ease-in-out infinite; }
-                                    .quiz-hot-badge { animation: hotPulse 2s ease-in-out infinite; }
+                                    .quiz-magic-card:hover .quiz-cta-btn::before {
+                                        left: 100%; transition: all 0.7s ease;
+                                    }
+                                    .quiz-magic-card:hover .quiz-cta-btn i {
+                                        transform: translateX(5px);
+                                    }
+                                    .quiz-cta-btn i { transition: transform 0.3s ease; }
+
+                                    /* Watermark */
+                                    .quiz-watermark {
+                                        position: absolute; top: -10%; right: -5%;
+                                        font-size: 16rem; color: #10b981; opacity: 0.04;
+                                        transform: rotate(-15deg);
+                                        pointer-events: none; z-index: 0;
+                                        transition: all 0.7s ease;
+                                    }
+                                    .quiz-magic-card:hover .quiz-watermark {
+                                        transform: rotate(0deg) scale(1.1); opacity: 0.08;
+                                    }
+                                    
+                                    /* Hot Badge */
+                                    .premium-hot-badge {
+                                        background: linear-gradient(135deg, #ff416c, #ff4b2b);
+                                        color: white; font-size: 0.65rem; font-weight: 900;
+                                        padding: 5px 12px; border-radius: 20px;
+                                        letter-spacing: 0.5px;
+                                        animation: badgePulseGlow 2s infinite;
+                                        box-shadow: inset 0 2px 2px rgba(255,255,255,0.3);
+                                    }
                                 </style>
 
                                 <a href="/quizzes" class="quiz-magic-card w-100">
+                                    <i class="bi bi-cup-hot-fill quiz-watermark"></i>
 
-                                    <!-- Floating watermark icon -->
-                                    <div class="position-absolute" style="top: -10px; right: -5px; pointer-events:none; opacity: 0.07; z-index:0;">
-                                        <i class="bi bi-cup-hot-fill quiz-float-icon" style="font-size: 10rem; color: #059669; display:block;"></i>
-                                    </div>
-
-                                    <!-- Top accent line -->
-                                    <div class="position-absolute top-0 start-0 w-100" style="height: 3px; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #10b981); background-size: 200% 100%; animation: quizShimmer 2s linear infinite; border-radius: 24px 24px 0 0;"></div>
-
-                                    <div class="d-flex align-items-center gap-3 position-relative" style="z-index:1;">
-
+                                    <div class="d-flex align-items-center gap-3 gap-md-4 position-relative" style="z-index: 2;">
                                         <!-- Animated Icon -->
-                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center position-relative"
-                                            style="width: 66px; height: 66px; border-radius: 20px;
-                                                   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                                                   color: white;
-                                                   box-shadow: 0 10px 25px rgba(16,185,129,0.4), inset 0 1px 1px rgba(255,255,255,0.3);">
-                                            <i class="bi bi-cup-hot-fill" style="font-size: 2.1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-                                            <!-- Notification dot -->
-                                            <span class="position-absolute top-0 end-0" style="width:12px; height:12px; background:#ef4444; border-radius:50%; border: 2px solid white; transform: translate(30%,-30%);"></span>
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center quiz-icon-box">
+                                            <i class="bi bi-cup-hot-fill" style="font-size: 2.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                                            <span class="position-absolute top-0 end-0" style="width:16px; height:16px; background:#ef4444; border-radius:50%; border: 3px solid white; transform: translate(30%,-30%); box-shadow: 0 4px 8px rgba(239,68,68,0.4);"></span>
                                         </div>
 
                                         <!-- Content -->
-                                        <div class="flex-grow-1 text-start overflow-hidden">
-                                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                                                <span style="font-size: 0.68rem; font-weight: 800; color: #059669; letter-spacing: 1.5px; text-transform: uppercase;">🌟 Featured Course</span>
-                                                <span class="quiz-hot-badge badge" style="background: linear-gradient(135deg,#ef4444,#dc2626); color:white; font-size: 0.58rem; font-weight: 800; padding: 3px 9px; border-radius: 20px; letter-spacing:0.5px;">HOT 🔥</span>
+                                        <div class="flex-grow-1 text-start overflow-hidden py-1">
+                                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                                <span style="font-size: 0.8rem; font-weight: 900; color: #059669; letter-spacing: 1.5px; text-transform: uppercase;">🌟 Featured Course</span>
+                                                <span class="premium-hot-badge badge">HOT 🔥</span>
                                             </div>
-                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #0f172a; font-size: 1.05rem; line-height: 1.25; letter-spacing: -0.3px;">Object Oriented Programming (Java)</h5>
-                                            <p class="mb-0" style="font-size: 0.78rem; color: #64748b; font-weight: 500; line-height: 1.4;">
-                                                UE · CATs · Exercises &nbsp;·&nbsp;
-                                                <span style="color: #059669; font-weight: 700;">220+ Questions</span>
-                                                &nbsp;·&nbsp; Start Quiz Now →
+                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #0f172a; font-size: 1.3rem; letter-spacing: -0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Object Oriented Programming (Java)</h5>
+                                            <p class="mb-0 mt-2" style="font-size: 0.9rem; color: #64748b; font-weight: 600;">
+                                                UE · CATs · Exercises &nbsp;<span style="opacity: 0.3;">|</span>&nbsp;
+                                                <span style="color: #059669; font-weight: 800;">220+ Questions</span>
                                             </p>
                                         </div>
 
                                         <!-- CTA Button (desktop) -->
-                                        <div class="flex-shrink-0 d-none d-sm-flex">
-                                            <span class="quiz-cta-btn d-flex align-items-center gap-2"
-                                                style="background: linear-gradient(135deg, #10b981, #059669);
-                                                       color: white;
-                                                       border-radius: 16px;
-                                                       padding: 11px 20px;
-                                                       font-size: 0.83rem;
-                                                       font-weight: 800;
-                                                       white-space: nowrap;
-                                                       box-shadow: 0 6px 20px rgba(16,185,129,0.4);
-                                                       letter-spacing: 0.3px;">
-                                                <i class="bi bi-play-circle-fill" style="font-size: 1rem;"></i>
+                                        <div class="flex-shrink-0 d-none d-md-flex">
+                                            <span class="quiz-cta-btn d-flex align-items-center gap-2">
+                                                <i class="bi bi-play-circle-fill" style="font-size: 1.2rem;"></i>
                                                 Start Quiz
                                             </span>
                                         </div>
