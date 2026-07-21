@@ -1789,47 +1789,107 @@
                                 </script>
                             </div>
 
-                            <!-- ========================================== -->
-                            <!-- JAVA OOP MAGIC BUTTON & CARD               -->
-                            <!-- ========================================== -->
-                            <div class="mb-4 mb-md-5 text-center text-md-start w-100">
-                                
-                                <!-- MAGIC BUTTON -->
-                                <a href="/quizzes" class="btn btn-premium-gold position-relative overflow-hidden shadow-lg mb-4" style="margin: 0; max-width: 100%; border-radius: 20px; text-align: left; padding: 14px 24px;">
-                                    <div class="d-flex flex-column text-start">
-                                        <span style="font-size: 1.3rem; font-weight: 800; line-height: 1.2; letter-spacing: 0.5px;">Start Java OOP Quiz</span>
-                                        <span style="font-size: 0.8rem; font-weight: 600; opacity: 0.95; text-transform: uppercase; letter-spacing: 1px; color: #d1fae5;">220+ Questions Available 🔥</span>
-                                    </div>
-                                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%); transform: translateX(-100%); animation: shimmerMove 3s infinite;"></div>
-                                </a>
+                            <!-- ============================================ -->
+                            <!-- ✨ JAVA OOP FEATURED COURSE CARD (COMBINED) -->
+                            <!-- ============================================ -->
+                            <div class="mb-4 mb-md-5 w-100">
                                 <style>
-                                    @keyframes shimmerMove { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+                                    @keyframes quizShimmer { 0% { left: -100%; } 100% { left: 150%; } }
+                                    @keyframes hotPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
+                                    @keyframes floatIcon { 0%,100% { transform: translateY(0px) rotate(12deg); } 50% { transform: translateY(-8px) rotate(12deg); } }
+                                    @keyframes borderGlow { 0%,100% { box-shadow: 0 15px 40px rgba(16,185,129,0.15), 0 0 0 0 rgba(16,185,129,0.1); } 50% { box-shadow: 0 15px 40px rgba(16,185,129,0.25), 0 0 0 4px rgba(16,185,129,0.08); } }
+
+                                    .quiz-magic-card {
+                                        display: block;
+                                        text-decoration: none !important;
+                                        border-radius: 24px;
+                                        background: linear-gradient(145deg, #ffffff 0%, #f0fdf4 60%, #ecfdf5 100%);
+                                        border: 1.5px solid rgba(16,185,129,0.25);
+                                        padding: 20px 22px;
+                                        position: relative;
+                                        overflow: hidden;
+                                        animation: borderGlow 3s ease-in-out infinite;
+                                        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                                    }
+                                    .quiz-magic-card:hover {
+                                        transform: translateY(-6px);
+                                        box-shadow: 0 30px 60px rgba(16,185,129,0.2), 0 0 0 3px rgba(16,185,129,0.12) !important;
+                                        animation: none;
+                                    }
+                                    .quiz-magic-card::before {
+                                        content: '';
+                                        position: absolute;
+                                        top: 0; left: -100%;
+                                        width: 55%; height: 100%;
+                                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+                                        animation: quizShimmer 3.5s ease-in-out infinite;
+                                    }
+                                    .quiz-magic-card:hover::before { animation: none; }
+                                    .quiz-magic-card:hover .quiz-cta-btn {
+                                        background: linear-gradient(135deg, #059669, #047857) !important;
+                                        transform: translateX(4px);
+                                        box-shadow: 0 8px 25px rgba(16,185,129,0.5) !important;
+                                    }
+                                    .quiz-cta-btn { transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+                                    .quiz-float-icon { animation: floatIcon 4s ease-in-out infinite; }
+                                    .quiz-hot-badge { animation: hotPulse 2s ease-in-out infinite; }
                                 </style>
 
-                                <!-- MAGIC PREMIUM CARD -->
-                                <div class="premium-glass-card w-100 position-relative overflow-hidden" style="max-width: 100%; border-radius: 20px; padding: 22px; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.98)); border: 1px solid rgba(16,185,129,0.35); box-shadow: 0 15px 35px rgba(16,185,129,0.12); cursor: pointer; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); text-decoration: none;" onclick="window.location.href='/quizzes'" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(16,185,129,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 35px rgba(16,185,129,0.12)';">
-                                    <div class="position-absolute top-0 end-0 p-2 opacity-25">
-                                        <i class="bi bi-cup-hot-fill" style="font-size: 8rem; color: #10b981; transform: rotate(15deg) translate(20px, -30px);"></i>
+                                <a href="/quizzes" class="quiz-magic-card w-100">
+
+                                    <!-- Floating watermark icon -->
+                                    <div class="position-absolute" style="top: -10px; right: -5px; pointer-events:none; opacity: 0.07; z-index:0;">
+                                        <i class="bi bi-cup-hot-fill quiz-float-icon" style="font-size: 10rem; color: #059669; display:block;"></i>
                                     </div>
-                                    <div class="d-flex align-items-center w-100 position-relative" style="z-index: 1;">
-                                        <div class="premium-glass-card-icon d-flex align-items-center justify-content-center flex-shrink-0" style="width: 65px; height: 65px; border-radius: 18px; background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 8px 20px rgba(16,185,129,0.3);">
-                                            <i class="bi bi-cup-hot-fill" style="font-size: 2.2rem;"></i>
+
+                                    <!-- Top accent line -->
+                                    <div class="position-absolute top-0 start-0 w-100" style="height: 3px; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #10b981); background-size: 200% 100%; animation: quizShimmer 2s linear infinite; border-radius: 24px 24px 0 0;"></div>
+
+                                    <div class="d-flex align-items-center gap-3 position-relative" style="z-index:1;">
+
+                                        <!-- Animated Icon -->
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center position-relative"
+                                            style="width: 66px; height: 66px; border-radius: 20px;
+                                                   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                                   color: white;
+                                                   box-shadow: 0 10px 25px rgba(16,185,129,0.4), inset 0 1px 1px rgba(255,255,255,0.3);">
+                                            <i class="bi bi-cup-hot-fill" style="font-size: 2.1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                                            <!-- Notification dot -->
+                                            <span class="position-absolute top-0 end-0" style="width:12px; height:12px; background:#ef4444; border-radius:50%; border: 2px solid white; transform: translate(30%,-30%);"></span>
                                         </div>
-                                        <div class="ms-3 flex-grow-1 text-start">
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span style="font-size: 0.75rem; font-weight: 800; color: #10b981; letter-spacing: 1px; text-transform: uppercase;">🌟 Featured Course</span>
-                                                <span class="badge rounded-pill bg-danger shadow-sm" style="font-size: 0.65rem; font-weight: 700; padding: 5px 10px; animation: pulseGlow 2s infinite;">HOT</span>
+
+                                        <!-- Content -->
+                                        <div class="flex-grow-1 text-start overflow-hidden">
+                                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                                <span style="font-size: 0.68rem; font-weight: 800; color: #059669; letter-spacing: 1.5px; text-transform: uppercase;">🌟 Featured Course</span>
+                                                <span class="quiz-hot-badge badge" style="background: linear-gradient(135deg,#ef4444,#dc2626); color:white; font-size: 0.58rem; font-weight: 800; padding: 3px 9px; border-radius: 20px; letter-spacing:0.5px;">HOT 🔥</span>
                                             </div>
-                                            <h5 class="mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #0f172a; font-size: 1.25rem; line-height: 1.2;">Object Oriented Programming (Java)</h5>
-                                            <p class="mb-0" style="font-size: 0.85rem; color: #475569; font-weight: 500; max-width: 90%;">Practice for your UE, CATs & Exercises with over 220 randomly generated questions.</p>
+                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #0f172a; font-size: 1.05rem; line-height: 1.25; letter-spacing: -0.3px;">Object Oriented Programming (Java)</h5>
+                                            <p class="mb-0" style="font-size: 0.78rem; color: #64748b; font-weight: 500; line-height: 1.4;">
+                                                UE · CATs · Exercises &nbsp;·&nbsp;
+                                                <span style="color: #059669; font-weight: 700;">220+ Questions</span>
+                                                &nbsp;·&nbsp; Start Quiz Now →
+                                            </p>
                                         </div>
-                                        <div class="ms-2 d-none d-sm-flex align-items-center flex-shrink-0">
-                                            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center;">
-                                                <i class="bi bi-arrow-right text-success" style="font-size: 1.2rem; font-weight: bold;"></i>
-                                            </div>
+
+                                        <!-- CTA Button (desktop) -->
+                                        <div class="flex-shrink-0 d-none d-sm-flex">
+                                            <span class="quiz-cta-btn d-flex align-items-center gap-2"
+                                                style="background: linear-gradient(135deg, #10b981, #059669);
+                                                       color: white;
+                                                       border-radius: 16px;
+                                                       padding: 11px 20px;
+                                                       font-size: 0.83rem;
+                                                       font-weight: 800;
+                                                       white-space: nowrap;
+                                                       box-shadow: 0 6px 20px rgba(16,185,129,0.4);
+                                                       letter-spacing: 0.3px;">
+                                                <i class="bi bi-play-circle-fill" style="font-size: 1rem;"></i>
+                                                Start Quiz
+                                            </span>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
 
                             <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
