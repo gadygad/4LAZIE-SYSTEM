@@ -741,3 +741,33 @@ body.sidebar-is-open .premium-guest-navbar {
 .magic-auth-btn:hover i {
     transform: scale(1.1) rotate(-5deg);
 }
+
+/* ==========================================================================
+   MAGIC BRAND TEXT (4LAZIE LOGO)
+   ========================================================================== */
+.magic-brand-text {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+    letter-spacing: -1.5px;
+    line-height: 1;
+    background: linear-gradient(to right, #059669 0%, #34d399 25%, #10b981 50%, #059669 75%, #047857 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shineBrand 4s linear infinite;
+    display: inline-block;
+    position: relative;
+    filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.4));
+    transition: all 0.3s ease;
+}
+.magic-brand-text:hover {
+    transform: scale(1.05) translateY(-1px);
+    filter: drop-shadow(0 8px 20px rgba(16, 185, 129, 0.6));
+    letter-spacing: -1px;
+}
+@keyframes shineBrand {
+    to {
+        background-position: 200% center;
+    }
+}
