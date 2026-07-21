@@ -430,6 +430,7 @@ public class AdminController {
     public String addSubject(@RequestParam("name") String name,
                              @RequestParam("levelNo") Integer levelNo,
                              @RequestParam("semesterNo") Integer semesterNo,
+                             @RequestParam(value = "credits", required = false) Integer credits,
                              @RequestParam("courseId") List<String> courseIds,
                              RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
@@ -452,6 +453,7 @@ public class AdminController {
                 subject.setSemesterNo(semesterNo);
                 subject.setCourse(course);
                 subject.setCode("");
+                subject.setCredits(credits != null ? credits : 9); // Default 9 credits for diploma
                 subjectRepository.save(subject);
                 addedCount++;
             }
@@ -485,7 +487,10 @@ public class AdminController {
     }
 
     @PostMapping("/subjects/{id}/edit")
-    public String editSubject(@PathVariable String id, @RequestParam("name") String name, RedirectAttributes redirectAttributes) {
+    public String editSubject(@PathVariable String id,
+                              @RequestParam("name") String name,
+                              @RequestParam(value = "credits", required = false) Integer credits,
+                              RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.SUPER_ADMIN) {
             redirectAttributes.addFlashAttribute("error", "Access denied. Only Super Admin can edit subjects.");
@@ -498,6 +503,7 @@ public class AdminController {
         Subject subject = subjectRepository.findById(id).orElse(null);
         if (subject != null) {
             subject.setName(name.trim().toUpperCase());
+            if (credits != null) subject.setCredits(credits);
             subjectRepository.save(subject);
             redirectAttributes.addFlashAttribute("success", "Subject updated successfully.");
         } else {

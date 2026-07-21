@@ -1746,14 +1746,14 @@
                                         display: block;
                                         text-decoration: none !important;
                                         border-radius: 28px;
-                                        background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
+                                        background: linear-gradient(135deg, rgba(240, 253, 244, 0.6) 0%, rgba(209, 250, 229, 0.4) 100%);
                                         backdrop-filter: blur(20px);
                                         -webkit-backdrop-filter: blur(20px);
                                         padding: 24px 28px;
                                         position: relative;
                                         overflow: hidden;
                                         animation: ambientGlowBorder 4s ease-in-out infinite;
-                                        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+                                        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
                                         transform-style: preserve-3d;
                                     }
                                     
@@ -1769,7 +1769,7 @@
                                         z-index: 0;
                                         pointer-events: none;
                                     }
-
+ 
                                     /* Top Gradient Line */
                                     .quiz-magic-card::after {
                                         content: '';
@@ -1781,13 +1781,14 @@
                                         border-radius: 28px 28px 0 0;
                                         z-index: 2;
                                     }
-
+ 
                                     .quiz-magic-card:hover {
                                         transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
-                                        box-shadow: 0 40px 80px rgba(16,185,129,0.25), inset 0 0 0 2px rgba(16,185,129,0.4) !important;
+                                        box-shadow: 0 40px 80px rgba(16,185,129,0.18), inset 0 0 0 2px rgba(16,185,129,0.45) !important;
+                                        background: linear-gradient(135deg, rgba(240, 253, 244, 0.8) 0%, rgba(209, 250, 229, 0.6) 100%);
                                         animation: none;
                                     }
-
+ 
                                     /* Icon Container */
                                     .quiz-icon-box {
                                         width: 76px; height: 76px; border-radius: 24px;
@@ -1801,17 +1802,18 @@
                                     .quiz-magic-card:hover .quiz-icon-box {
                                         animation: floatIconMagic 3s ease-in-out infinite;
                                     }
-
+ 
                                     /* CTA Button */
                                     .quiz-cta-btn { 
-                                        background: linear-gradient(135deg, #10b981, #059669);
+                                        background: linear-gradient(135deg, #0f172a, #020617);
                                         color: white;
+                                        border: 1px solid rgba(16, 185, 129, 0.2);
                                         border-radius: 20px;
                                         padding: 12px 26px;
                                         font-size: 0.95rem;
                                         font-weight: 800;
-                                        box-shadow: 0 8px 25px rgba(16,185,129,0.3);
-                                        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                                        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                                        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
                                         position: relative;
                                         overflow: hidden;
                                         z-index: 1;
@@ -1819,12 +1821,15 @@
                                     }
                                     .quiz-cta-btn::before {
                                         content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-                                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
                                         transition: all 0.5s ease; z-index: -1;
                                     }
                                     .quiz-magic-card:hover .quiz-cta-btn {
                                         transform: scale(1.05) translateY(-2px);
-                                        box-shadow: 0 15px 35px rgba(16,185,129,0.5);
+                                        background: linear-gradient(135deg, #020617, #0f172a);
+                                        color: #10b981;
+                                        border-color: #10b981;
+                                        box-shadow: 0 15px 35px rgba(16,185,129,0.35), 0 0 15px rgba(16,185,129,0.15);
                                     }
                                     .quiz-magic-card:hover .quiz-cta-btn::before {
                                         left: 100%; transition: all 0.7s ease;
@@ -1833,7 +1838,7 @@
                                         transform: translateX(5px);
                                     }
                                     .quiz-cta-btn i { transition: transform 0.3s ease; }
-
+ 
                                     /* Watermark */
                                     .quiz-watermark {
                                         position: absolute; top: -10%; right: -5%;
@@ -1856,10 +1861,10 @@
                                         box-shadow: inset 0 2px 2px rgba(255,255,255,0.3);
                                     }
                                 </style>
-
+ 
                                 <a href="/quizzes" class="quiz-magic-card w-100">
                                     <i class="bi bi-cup-hot-fill quiz-watermark"></i>
-
+ 
                                     <div class="d-flex align-items-center gap-3 gap-md-4 position-relative" style="z-index: 2;">
                                         <!-- Animated Icon -->
                                         <div class="flex-shrink-0 d-flex align-items-center justify-content-center quiz-icon-box">
@@ -1870,23 +1875,22 @@
                                                 <span class="quiz-smoke s-3"></span>
                                             </div>
                                             <i class="bi bi-cup-hot-fill" style="font-size: 2.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 2;"></i>
-                                            <span class="position-absolute top-0 end-0" style="width:16px; height:16px; background:#ef4444; border-radius:50%; border: 3px solid #0f172a; transform: translate(30%,-30%); box-shadow: 0 4px 8px rgba(239,68,68,0.4); z-index: 3;"></span>
+                                            <span class="position-absolute top-0 end-0" style="width:16px; height:16px; background:#ef4444; border-radius:50%; border: 3px solid #d1fae5; transform: translate(30%,-30%); box-shadow: 0 4px 8px rgba(239,68,68,0.4); z-index: 3;"></span>
                                         </div>
-
+ 
                                         <!-- Content -->
                                         <div class="flex-grow-1 text-start overflow-hidden py-1">
                                             <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                                                <span style="font-size: 0.8rem; font-weight: 900; color: #10b981; letter-spacing: 1.5px; text-transform: uppercase;">🌟 Featured Course</span>
+                                                <span style="font-size: 0.8rem; font-weight: 900; color: #047857; letter-spacing: 1.5px; text-transform: uppercase;">🌟 Featured Course</span>
                                                 <span class="premium-hot-badge badge">HOT 🔥</span>
                                             </div>
-                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #f8fafc; font-size: 1.3rem; letter-spacing: -0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Object Oriented Programming (Java)</h5>
-                                            <p class="mb-0 mt-2" style="font-size: 0.9rem; color: #94a3b8; font-weight: 600;">
+                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #0f172a; font-size: 1.3rem; letter-spacing: -0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Object Oriented Programming (Java)</h5>
+                                            <p class="mb-0 mt-2" style="font-size: 0.9rem; color: #475569; font-weight: 600;">
                                                 UE · CATs · Exercises &nbsp;<span style="opacity: 0.3;">|</span>&nbsp;
-                                                <span style="color: #10b981; font-weight: 800;">220+ Questions</span>
+                                                <span style="color: #059669; font-weight: 800;">220+ Questions</span>
                                             </p>
                                         </div>
-
+ 
                                         <!-- CTA Button (desktop) -->
                                         <div class="flex-shrink-0 d-none d-md-flex">
                                             <span class="quiz-cta-btn d-flex align-items-center gap-2">
@@ -2712,6 +2716,84 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                     </div>
                                 </div>
                                 <!-- End Premium Interactive Study Hub Banner -->
+
+                                <!-- ✨ GPA SIMULATOR BANNER CARD -->
+                                <div class="premium-gpa-banner mt-3" data-bs-toggle="modal" data-bs-target="#gpaModal">
+                                    <style>
+                                        .premium-gpa-banner {
+                                            display: block;
+                                            text-decoration: none !important;
+                                            border-radius: 20px;
+                                            width: 100%;
+                                            max-width: 400px;
+                                            background: linear-gradient(135deg, rgba(239, 246, 255, 0.6) 0%, rgba(219, 234, 254, 0.4) 100%);
+                                            backdrop-filter: blur(20px);
+                                            -webkit-backdrop-filter: blur(20px);
+                                            padding: 24px;
+                                            border: 1px solid rgba(59, 130, 246, 0.15);
+                                            position: relative;
+                                            overflow: hidden;
+                                            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
+                                            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                                            cursor: pointer;
+                                            margin: 0 auto;
+                                        }
+                                        .premium-gpa-banner:hover {
+                                            transform: translateY(-5px);
+                                            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15), inset 0 0 0 1px rgba(59, 130, 246, 0.3) !important;
+                                            background: linear-gradient(135deg, rgba(239, 246, 255, 0.8) 0%, rgba(219, 234, 254, 0.6) 100%);
+                                        }
+                                        .gpa-banner-badge {
+                                            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                                            color: white;
+                                            font-size: 0.65rem;
+                                            font-weight: 900;
+                                            padding: 4px 10px;
+                                            border-radius: 20px;
+                                            letter-spacing: 0.5px;
+                                            animation: badgePulseGlowBlue 2s infinite;
+                                        }
+                                        @keyframes badgePulseGlowBlue {
+                                            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
+                                            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+                                        }
+                                        .gpa-banner-btn {
+                                            background: linear-gradient(135deg, #1e293b, #0f172a);
+                                            color: white;
+                                            border-radius: 16px;
+                                            padding: 10px 20px;
+                                            font-size: 0.85rem;
+                                            font-weight: 800;
+                                            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                                            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                                            border: 1px solid rgba(59, 130, 246, 0.2);
+                                        }
+                                        .premium-gpa-banner:hover .gpa-banner-btn {
+                                            transform: scale(1.03) translateY(-1px);
+                                            color: #3b82f6;
+                                            border-color: #3b82f6;
+                                            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+                                        }
+                                    </style>
+                                    <div class="d-flex align-items-center gap-3 position-relative" style="z-index: 2;">
+                                        <!-- GPA Icon -->
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);">
+                                            <i class="bi bi-calculator-fill" style="font-size: 1.8rem;"></i>
+                                        </div>
+                                        
+                                        <!-- Content -->
+                                        <div class="flex-grow-1 text-start overflow-hidden">
+                                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                                <span style="font-size: 0.72rem; font-weight: 900; color: #1d4ed8; letter-spacing: 1.5px; text-transform: uppercase;">📊 GPA Calculator</span>
+                                                <span class="gpa-banner-badge badge">NEW 🔥</span>
+                                            </div>
+                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #0f172a; font-size: 1.15rem; letter-spacing: -0.3px;"><span style="color: #10b981; font-weight: 900; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">4LAZIE</span> GPA Calculator</h5>
+                                            <p class="mb-0 mt-1" style="font-size: 0.75rem; color: #475569; font-weight: 600;">
+                                                NTA 4 &bull; 5 &bull; 6 &nbsp;<span style="opacity: 0.3;">|</span>&nbsp; Degree &nbsp;<span style="opacity: 0.3;">|</span>&nbsp; Target Simulator
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3465,6 +3547,965 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
         });
     </script>
     <!-- END TIMETABLE SELECTION MODAL -->
+
+    <!-- GPA Calculator Script -->
+    <script>
+        // ===== GPA CALCULATOR - COMPLETE SCRIPT =====
+        let currentScale = 'NTA45';
+
+        const gradeOptions = {
+            NTA45: [
+                { grade: 'A',  gp: 4.0 },
+                { grade: 'B+', gp: 3.5 },
+                { grade: 'B',  gp: 3.0 },
+                { grade: 'C',  gp: 2.0 },
+                { grade: 'D',  gp: 1.0 },
+                { grade: 'F',  gp: 0.0 }
+            ],
+            NTA6Degree: [
+                { grade: 'A',  gp: 5.0 },
+                { grade: 'B+', gp: 4.0 },
+                { grade: 'B',  gp: 3.0 },
+                { grade: 'C',  gp: 2.0 },
+                { grade: 'D',  gp: 1.0 },
+                { grade: 'F',  gp: 0.0 }
+            ]
+        };
+        // ── Populate dropdowns based on Program Type ──────────────────────────
+        // fromInit=true means this is called programmatically during initialization, not by user click
+        function gpaSelectOption(type, value, label, fromInit = false) {
+            // Update hidden input
+            const inputEl = document.getElementById('gpaAuto' + type);
+            if (inputEl) inputEl.value = value;
+            
+            // Update button text
+            const btnEl = document.getElementById('btnGpaAuto' + type);
+            if (btnEl) {
+                btnEl.innerHTML = `<span>${label}</span> <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>`;
+            }
+            
+            // Only trigger side effects for user manual selections (not init)
+            if (fromInit) return;
+            
+            if (type === 'ProgramType') {
+                gpaInitDropdowns();
+            } else if (type === 'CourseSelect') {
+                autoFetchGpaSubjects();
+            } else if (type === 'LevelSemSelect') {
+                gpaUpdateScale();
+                autoFetchGpaSubjects();
+            }
+        }
+
+        async function gpaInitDropdowns() {
+            const pTypeEl  = document.getElementById('gpaAutoProgramType');
+            const menuCourse = document.getElementById('menuGpaAutoCourseSelect');
+            const menuSem    = document.getElementById('menuGpaAutoLevelSemSelect');
+            if (!pTypeEl || !menuCourse || !menuSem) return;
+
+            const pType = pTypeEl.value;
+
+            // Populate courses dynamically from database
+            menuCourse.innerHTML = '<li><a class="dropdown-item text-muted" href="#">Loading...</a></li>';
+            try {
+                const res = await fetch('/api/courses?programType=' + pType);
+                if (res.ok) {
+                    const courses = await res.json();
+                    menuCourse.innerHTML = '';
+                    if (courses.length === 0) {
+                        menuCourse.innerHTML = '<li><a class="dropdown-item text-muted" href="#">No courses found</a></li>';
+                        gpaSelectOption('CourseSelect', '', 'No courses', true);
+                    } else {
+                        courses.forEach((c, idx) => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a class="dropdown-item" href="#" onclick="gpaSelectOption('CourseSelect', '${c.code}', '${c.name}')">${c.name}</a>`;
+                            menuCourse.appendChild(li);
+                            
+                            // Auto-select first item (fromInit=true, no fetch triggered)
+                            if (idx === 0) gpaSelectOption('CourseSelect', c.code, c.name, true);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching courses: ", err);
+            }
+
+            // Populate semesters
+            menuSem.innerHTML = '';
+            let opts = [];
+            if (pType === 'DIPLOMA') {
+                opts = [
+                    ['4-1','NTA Level 4 — Semester 1'],
+                    ['4-2','NTA Level 4 — Semester 2'],
+                    ['5-1','NTA Level 5 — Semester 1'],
+                    ['5-2','NTA Level 5 — Semester 2'],
+                    ['6-1','NTA Level 6 — Semester 1 (Scale 5.0)'],
+                    ['6-2','NTA Level 6 — Semester 2 (Scale 5.0)'],
+                ];
+            } else {
+                opts = [
+                    ['1-1','Year 1 — Semester 1'],['1-2','Year 1 — Semester 2'],
+                    ['2-1','Year 2 — Semester 1'],['2-2','Year 2 — Semester 2'],
+                    ['3-1','Year 3 — Semester 1'],['3-2','Year 3 — Semester 2'],
+                    ['4-1','Year 4 — Semester 1'],['4-2','Year 4 — Semester 2'],
+                ];
+            }
+            
+            opts.forEach(([v, t], idx) => { 
+                const li = document.createElement('li');
+                li.innerHTML = `<a class="dropdown-item" href="#" onclick="gpaSelectOption('LevelSemSelect', '${v}', '${t}')">${t}</a>`;
+                menuSem.appendChild(li);
+                
+                // Auto-select first item (fromInit=true, no fetch triggered)
+                if (idx === 0) gpaSelectOption('LevelSemSelect', v, t, true);
+            });
+
+            gpaUpdateScale();
+            
+            // ✅ Fetch subjects ONCE after BOTH dropdowns are fully populated
+            autoFetchGpaSubjects();
+        }
+
+        function onGpaAutoProgramTypeChange() { gpaInitDropdowns(); }
+
+        function onGpaLevelSemChange() { gpaUpdateScale(); }
+
+        function gpaUpdateScale() {
+            const semEl = document.getElementById('gpaAutoLevelSemSelect');
+            const pTypeEl = document.getElementById('gpaAutoProgramType');
+            if (!semEl || !pTypeEl) return;
+            const levelNo = (semEl.value || '4-1').split('-')[0];
+            const pType   = pTypeEl.value;
+            if (pType === 'DEGREE' || levelNo === '6') {
+                setGpaScale('NTA6Degree');
+            } else {
+                setGpaScale('NTA45');
+            }
+        }
+
+        // ── Auto-Fetch Subjects from DB ───────────────────────────────────────
+        async function autoFetchGpaSubjects() {
+            if (gpaFetching) return; // Prevent concurrent fetches
+            
+            const courseEl  = document.getElementById('gpaAutoCourseSelect');
+            const semEl     = document.getElementById('gpaAutoLevelSemSelect');
+            const fetchBtn  = document.getElementById('gpaAutoFetchBtn');
+            const statusEl  = document.getElementById('gpaAutoStatusText');
+            const container = document.getElementById('gpaCoursesContainer');
+
+            if (!courseEl || !semEl || !container) return;
+
+            const programType = courseEl.value;
+            if (!programType) return; // Don't fetch if no course selected yet
+            
+            const semValue = semEl.value;
+            if (!semValue) return; // Don't fetch if no semester selected yet
+            
+            const [levelNo, semesterNo] = semValue.split('-');
+
+            gpaFetching = true; // Lock
+            
+            // Loading state - always use hardcoded original HTML
+            if (fetchBtn) {
+                fetchBtn.disabled = true;
+                fetchBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Loading...`;
+            }
+            if (statusEl) { statusEl.style.color = '#059669'; statusEl.textContent = '⏳ Fetching subjects from database...'; }
+
+            try {
+                const res = await fetch(`/api/subjects?programType=${programType}&levelNo=${levelNo}&semesterNo=${semesterNo}`);
+                if (!res.ok) throw new Error('API error');
+                const subjects = await res.json();
+
+                // Remove only the course wrappers, leave the headers intact
+                container.querySelectorAll('.gpa-course-wrapper').forEach(row => row.remove());
+
+                if (subjects && subjects.length > 0) {
+                    subjects.forEach((sub, i) => {
+                        const label   = sub.code ? `${sub.code} — ${sub.name}` : sub.name;
+                        const credits = sub.credits || (programType.startsWith('DEG_') || levelNo === '6' ? 12 : 9);
+                        addCourseRow(label, credits, '', true); // ✅ Locked from DB
+                    });
+                    if (statusEl) {
+                        statusEl.style.color = '#10b981';
+                        statusEl.textContent = `✅ ${subjects.length} subjects loaded! Fill in your grades below.`;
+                    }
+                } else {
+                    for (let i = 0; i < 5; i++) addCourseRow('', '', '', false);
+                    if (statusEl) {
+                        statusEl.style.color = '#f59e0b';
+                        statusEl.textContent = `⚠️ No subjects in DB for this semester — fill manually below.`;
+                    }
+                }
+
+                container.style.opacity = '1';
+
+            } catch (err) {
+                console.error("Error auto fetching subjects:", err);
+                for (let i = 0; i < 4; i++) addCourseRow('', '', '', false);
+                container.style.opacity = '1';
+                if (statusEl) {
+                    statusEl.style.color = '#ef4444';
+                    statusEl.textContent = `❌ Could not reach database. Fill in manually.`;
+                }
+            } finally {
+                gpaFetching = false; // Release lock
+                if (container) container.style.opacity = '1';
+                // Always restore button to original state with hardcoded HTML
+                if (fetchBtn) {
+                    fetchBtn.disabled = false;
+                    fetchBtn.innerHTML = `<i class="bi bi-cloud-arrow-down-fill me-1"></i> Load`;
+                }
+            }
+        }
+
+        // ── SJCET Marks Mode Helper Logic ─────────────────────────────────────
+        function getGradingSystem() {
+            const pTypeEl = document.getElementById('gpaAutoProgramType');
+            const semEl = document.getElementById('gpaAutoLevelSemSelect');
+            const pType = pTypeEl ? pTypeEl.value : 'DIPLOMA';
+            const levelNo = semEl ? (semEl.value || '4-1').split('-')[0] : '4';
+            
+            if (pType === 'DEGREE') {
+                return {
+                    scale: 'DEGREE',
+                    thresholds: [
+                        { grade: 'A',  min: 70, gp: 5.0 },
+                        { grade: 'B+', min: 60, gp: 4.0 },
+                        { grade: 'B',  min: 50, gp: 3.0 },
+                        { grade: 'C',  min: 40, gp: 2.0 },
+                        { grade: 'D',  min: 35, gp: 1.0 },
+                        { grade: 'F',  min: 0,  gp: 0.0 }
+                    ]
+                };
+            } else if (levelNo === '6') {
+                return {
+                    scale: 'NTA6',
+                    thresholds: [
+                        { grade: 'A',  min: 75, gp: 5.0 },
+                        { grade: 'B+', min: 65, gp: 4.0 },
+                        { grade: 'B',  min: 55, gp: 3.0 },
+                        { grade: 'C',  min: 45, gp: 2.0 },
+                        { grade: 'D',  min: 35, gp: 1.0 },
+                        { grade: 'F',  min: 0,  gp: 0.0 }
+                    ]
+                };
+            } else {
+                return {
+                    scale: 'NTA45',
+                    thresholds: [
+                        { grade: 'A',  min: 75, gp: 4.0 },
+                        { grade: 'B+', min: 65, gp: 3.5 },
+                        { grade: 'B',  min: 55, gp: 3.0 },
+                        { grade: 'C',  min: 45, gp: 2.0 },
+                        { grade: 'D',  min: 35, gp: 1.0 },
+                        { grade: 'F',  min: 0,  gp: 0.0 }
+                    ]
+                };
+            }
+        }
+
+        function calculateRowGrade(rowId) {
+            const wrapper = document.getElementById(rowId);
+            if (!wrapper) return;
+
+            const cat1Val  = parseFloat(wrapper.querySelector('.gpa-mark-cat1').value) || 0;
+            const ass1Val  = parseFloat(wrapper.querySelector('.gpa-mark-ass1').value) || 0;
+            const cat2Val  = parseFloat(wrapper.querySelector('.gpa-mark-cat2').value) || 0;
+            const ass2Val  = parseFloat(wrapper.querySelector('.gpa-mark-ass2').value) || 0;
+            
+            const ueInput  = wrapper.querySelector('.gpa-mark-ue');
+            const hasUE    = ueInput.value.trim() !== '';
+            const ueVal    = parseFloat(ueInput.value) || 0;
+
+            const cat1Scaled = Math.min(20, (Math.min(50, cat1Val) / 50) * 20);
+            const ass1Scaled = Math.min(10, Math.min(10, ass1Val));
+            const cat2Scaled = Math.min(20, (Math.min(50, cat2Val) / 50) * 20);
+            const ass2Scaled = Math.min(10, Math.min(10, ass2Val));
+
+            const courseworkTotal = cat1Scaled + ass1Scaled + cat2Scaled + ass2Scaled;
+            const ueScaled = Math.min(40, (Math.min(100, ueVal) / 100) * 40);
+
+            const courseworkBadge = wrapper.querySelector('.gpa-coursework-badge');
+            if (courseworkBadge) {
+                courseworkBadge.innerText = `Coursework: ${courseworkTotal.toFixed(1)}/60`;
+            }
+
+            const totalBadge = wrapper.querySelector('.gpa-total-badge');
+            const predictorText = wrapper.querySelector('.gpa-predictor-text');
+            const gradeSelect = wrapper.querySelector('.gpa-grade-select');
+
+            const sys = getGradingSystem();
+
+            if (hasUE) {
+                const finalTotal = courseworkTotal + ueScaled;
+                if (totalBadge) {
+                    totalBadge.innerText = `Total: ${finalTotal.toFixed(1)}/100`;
+                    totalBadge.className = 'badge bg-success text-white border';
+                }
+
+                let matched = sys.thresholds[sys.thresholds.length - 1];
+                for (let th of sys.thresholds) {
+                    if (finalTotal >= th.min) {
+                        matched = th;
+                        break;
+                    }
+                }
+
+                if (gradeSelect) {
+                    gradeSelect.value = matched.gp;
+                    gradeSelect.style.pointerEvents = 'none';
+                    gradeSelect.style.background = '#e2e8f0';
+                }
+
+                if (predictorText) {
+                    predictorText.innerHTML = `<span class="text-success" style="font-size:0.75rem;">Grade: <strong>${matched.grade}</strong> (${finalTotal.toFixed(1)}%)</span>`;
+                }
+            } else {
+                if (totalBadge) {
+                    totalBadge.innerText = `Coursework Only`;
+                    totalBadge.className = 'badge bg-secondary text-white border';
+                }
+                
+                if (gradeSelect) {
+                    gradeSelect.value = '';
+                    gradeSelect.style.pointerEvents = 'auto';
+                    gradeSelect.style.background = '';
+                }
+
+                let predictions = [];
+                sys.thresholds.forEach(th => {
+                    if (th.grade === 'F') return;
+                    
+                    const neededScaled = th.min - courseworkTotal;
+                    if (neededScaled <= 0) {
+                        predictions.push(`<span class="text-success font-monospace" style="font-size:0.65rem;">${th.grade}: Secured!</span>`);
+                    } else {
+                        const neededPaper = (neededScaled / 40) * 100;
+                        if (neededPaper <= 100) {
+                            predictions.push(`<span class="text-primary font-monospace" style="font-size:0.65rem;">${th.grade}: <strong>${Math.ceil(neededPaper)}/100</strong></span>`);
+                        } else {
+                            predictions.push(`<span class="text-danger font-monospace" style="font-size:0.65rem;">${th.grade}: N/A</span>`);
+                        }
+                    }
+                });
+
+                if (predictorText) {
+                    predictorText.innerHTML = `<div class="d-flex flex-wrap justify-content-center gap-2 mt-1">${predictions.join(' | ')}</div>`;
+                }
+            }
+
+            calculateGpa();
+        }
+
+        function toggleDetailedMarks(rowId) {
+            const wrapper = document.getElementById(rowId);
+            if (!wrapper) return;
+            const container = wrapper.querySelector('.detailed-marks-container');
+            const toggleIcon = wrapper.querySelector('.btn-toggle-marks i');
+            
+            if (container) {
+                if (container.classList.contains('d-none')) {
+                    container.classList.remove('d-none');
+                    if (toggleIcon) toggleIcon.className = 'bi bi-dash-square-fill text-success';
+                } else {
+                    container.classList.add('d-none');
+                    if (toggleIcon) toggleIcon.className = 'bi bi-plus-square-fill text-success';
+                }
+            }
+        }
+
+        // ── Course Rows ───────────────────────────────────────────────────────
+        function addCourseRow(codeVal = '', creditsVal = '', gradeVal = '', isLocked = false) {
+            const container = document.getElementById('gpaCoursesContainer');
+            if (!container) return;
+            const rowId = 'gpa_row_' + Date.now() + Math.random().toString(36).substr(2, 5);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'gpa-course-wrapper mb-2 border rounded-3 p-2 bg-white shadow-xs';
+            wrapper.id = rowId;
+            wrapper.style.cssText = 'animation: gpaRowIn 0.3s ease forwards; opacity:0;';
+
+            wrapper.innerHTML = `
+                <div class="row g-2 align-items-center gpa-course-row">
+                    <div class="col-md-5 col-12 d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-outline-success border-0 p-1 btn-toggle-marks"
+                                onclick="toggleDetailedMarks('${rowId}')" title="Marks Detail (CAT/Assignment/UE)">
+                            <i class="bi bi-plus-square-fill"></i>
+                        </button>
+                        <input type="text" class="form-control form-control-sm gpa-row-input ${isLocked ? 'bg-light text-muted fw-semibold' : ''}"
+                               placeholder="Subject name / code" value="${codeVal}" ${isLocked ? 'readonly' : ''}>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <input type="number" min="1" max="30"
+                               class="form-control form-control-sm gpa-row-input gpa-credits-input ${isLocked ? 'bg-light text-muted fw-bold' : ''}"
+                               placeholder="Credits" value="${creditsVal}" oninput="calculateGpa()" ${isLocked ? 'readonly' : ''}>
+                    </div>
+                    <div class="col-md-3 col-5">
+                        <select class="form-select form-select-sm gpa-row-input gpa-grade-select" onchange="calculateGpa()">
+                        </select>
+                    </div>
+                    <div class="col-md-1 col-1 text-end">
+                        <button class="btn btn-sm btn-outline-danger border-0 p-1 gpa-delete-btn"
+                                onclick="deleteCourseRow('${rowId}')" style="border-radius:8px; ${isLocked ? 'display:none;' : ''}" title="Remove" ${isLocked ? 'disabled' : ''}>
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Detailed Marks collapsible container -->
+                <div class="detailed-marks-container d-none mt-2 pt-2 border-top">
+                    <div class="d-flex flex-wrap gap-2 justify-content-between text-center">
+                        <div style="flex: 1; min-width: 80px;">
+                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">CAT 1 (50)</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-cat1" min="0" max="50" placeholder="0-50" oninput="calculateRowGrade('${rowId}')">
+                        </div>
+                        <div style="flex: 1; min-width: 80px;">
+                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">Ass. 1 (10)</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ass1" min="0" max="10" placeholder="0-10" oninput="calculateRowGrade('${rowId}')">
+                        </div>
+                        <div style="flex: 1; min-width: 80px;">
+                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">CAT 2 (50)</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-cat2" min="0" max="50" placeholder="0-50" oninput="calculateRowGrade('${rowId}')">
+                        </div>
+                        <div style="flex: 1; min-width: 80px;">
+                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">Ass. 2 (10)</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ass2" min="0" max="10" placeholder="0-10" oninput="calculateRowGrade('${rowId}')">
+                        </div>
+                        <div style="flex: 1.2; min-width: 100px;">
+                            <label class="form-label fw-semibold text-success mb-0" style="font-size:0.62rem; text-transform:uppercase;">UE Exam (100)</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ue" min="0" max="100" placeholder="0-100" oninput="calculateRowGrade('${rowId}')" style="border-color:#10b981; color:#047857; font-weight:700;">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                        <span class="badge bg-light text-secondary border gpa-coursework-badge" style="font-size:0.7rem; font-weight:600;">Coursework: 0.0/60</span>
+                        <span class="badge bg-light text-success border gpa-total-badge" style="font-size:0.7rem; font-weight:700;">Coursework Only</span>
+                    </div>
+                    
+                    <div class="gpa-predictor-text mt-1 text-center text-muted fw-semibold" style="font-size:0.68rem; min-height:16px;">
+                        Fill in coursework to view required UE marks
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(wrapper);
+            const selectEl = wrapper.querySelector('.gpa-grade-select');
+            populateGradesDropdown(selectEl);
+            if (gradeVal !== '') selectEl.value = gradeVal;
+            calculateGpa();
+        }
+
+        function deleteCourseRow(rowId) {
+            const wrapper = document.getElementById(rowId);
+            if (wrapper) { wrapper.style.opacity = '0'; wrapper.style.transform = 'scale(0.95)'; setTimeout(() => { wrapper.remove(); calculateGpa(); }, 200); }
+        }
+
+        function clearGpaCalculator() {
+            const container = document.getElementById('gpaCoursesContainer');
+            if (container) {
+                container.querySelectorAll('.gpa-course-wrapper').forEach(row => row.remove());
+            }
+            for (let i = 0; i < 4; i++) addCourseRow('', '', '', false);
+        }
+
+        // ── GPA Calculation ───────────────────────────────────────────────────
+        function calculateGpa() {
+            let totalCredits = 0, totalWeightedPoints = 0;
+            document.querySelectorAll('.gpa-course-row').forEach(row => {
+                const credits    = parseFloat(row.querySelector('.gpa-credits-input').value);
+                const gradePoint = parseFloat(row.querySelector('.gpa-grade-select').value);
+                if (!isNaN(credits) && !isNaN(gradePoint)) {
+                    totalCredits        += credits;
+                    totalWeightedPoints += credits * gradePoint;
+                }
+            });
+
+            const gpa = totalCredits > 0 ? totalWeightedPoints / totalCredits : 0;
+
+            const el = id => document.getElementById(id);
+            if (el('totalCreditsVal')) el('totalCreditsVal').innerText = totalCredits;
+            if (el('totalPointsVal'))  el('totalPointsVal').innerText  = totalWeightedPoints.toFixed(1);
+
+            // Animate GPA number
+            const gpaEl = el('gpaResultVal');
+            if (gpaEl) {
+                gpaEl.style.transition = 'all 0.4s cubic-bezier(0.16,1,0.3,1)';
+                gpaEl.innerText = totalCredits > 0 ? gpa.toFixed(2) : '0.00';
+            }
+
+            // Ring animation
+            const maxVal = currentScale === 'NTA45' ? 4.0 : 5.0;
+            const ring   = el('gpaProgressRing');
+            if (ring) {
+                const circ   = 2 * Math.PI * 42;
+                const offset = circ - Math.min(1, gpa / maxVal) * circ;
+                ring.style.strokeDasharray  = `${circ} ${circ}`;
+                ring.style.strokeDashoffset = offset;
+            }
+
+            // Classification
+            let classText = 'No Courses', classColor = '#475569', bgGlow = 'rgba(148,163,184,0.1)', strokeColor = '#94a3b8';
+            if (totalCredits > 0) {
+                if (currentScale === 'NTA45') {
+                    if (gpa >= 3.5)      { classText = 'First Class 🌟';   classColor = '#047857'; bgGlow = 'rgba(16,185,129,0.15)';  strokeColor = '#10b981'; }
+                    else if (gpa >= 3.0) { classText = 'Second Class 👍';  classColor = '#1d4ed8'; bgGlow = 'rgba(59,130,246,0.15)';  strokeColor = '#3b82f6'; }
+                    else if (gpa >= 2.0) { classText = 'Pass 📝';          classColor = '#b45309'; bgGlow = 'rgba(245,158,11,0.15)';  strokeColor = '#f59e0b'; }
+                    else                 { classText = 'Fail ❌';           classColor = '#b91c1c'; bgGlow = 'rgba(239,68,68,0.15)';   strokeColor = '#ef4444'; }
+                } else {
+                    if (gpa >= 4.4)      { classText = 'First Class 🌟';   classColor = '#047857'; bgGlow = 'rgba(16,185,129,0.15)';  strokeColor = '#10b981'; }
+                    else if (gpa >= 3.5) { classText = 'Upper Second 🎓';  classColor = '#1d4ed8'; bgGlow = 'rgba(59,130,246,0.15)';  strokeColor = '#3b82f6'; }
+                    else if (gpa >= 2.7) { classText = 'Lower Second 📚';  classColor = '#b45309'; bgGlow = 'rgba(245,158,11,0.15)';  strokeColor = '#f59e0b'; }
+                    else if (gpa >= 2.0) { classText = 'Pass 📝';          classColor = '#64748b'; bgGlow = 'rgba(100,116,139,0.15)'; strokeColor = '#64748b'; }
+                    else                 { classText = 'Fail ❌';           classColor = '#b91c1c'; bgGlow = 'rgba(239,68,68,0.15)';   strokeColor = '#ef4444'; }
+                }
+            }
+
+            if (ring) ring.style.stroke = strokeColor;
+            const badge = el('gpaClassificationBadge');
+            if (badge) { badge.style.color = classColor; badge.style.backgroundColor = bgGlow; badge.innerText = classText; }
+        }
+
+        // ── Target Simulator ──────────────────────────────────────────────────
+        function runTargetSimulator() {
+            const targetGpa        = parseFloat(document.getElementById('targetCumulative').value);
+            const doneCredits      = parseFloat(document.getElementById('targetDoneCredits').value);
+            const doneGpa          = parseFloat(document.getElementById('targetDoneGpa').value);
+            const remainingCredits = parseFloat(document.getElementById('targetRemainingCredits').value);
+            const resultBox        = document.getElementById('targetResultText');
+            if (!resultBox) return;
+
+            if ([targetGpa, doneCredits, doneGpa, remainingCredits].some(isNaN)) {
+                resultBox.className = 'mt-1 text-primary fw-bold'; resultBox.innerText = 'Fill in all fields to calculate.'; return;
+            }
+            if (remainingCredits <= 0) {
+                resultBox.className = 'mt-1 text-danger fw-bold';  resultBox.innerText = 'Remaining credits must be > 0.'; return;
+            }
+
+            const neededGpa = ((targetGpa * (doneCredits + remainingCredits)) - (doneGpa * doneCredits)) / remainingCredits;
+            const maxVal    = currentScale === 'NTA45' ? 4.0 : 5.0;
+
+            if (neededGpa < 0)        { resultBox.className = 'mt-1 text-success fw-bold'; resultBox.innerText = `🎉 Already secured! You only need 0.00 in remaining credits.`; }
+            else if (neededGpa > maxVal) { resultBox.className = 'mt-1 text-danger fw-bold';  resultBox.innerText = `❌ Impossible! Would need ${neededGpa.toFixed(2)} (max ${maxVal}).`; }
+            else                       { resultBox.className = 'mt-1 text-success fw-bold'; resultBox.innerText = `✅ Average ${neededGpa.toFixed(2)} GPA in remaining ${remainingCredits} credits.`; }
+        }
+
+        // ── Init ──────────────────────────────────────────────────────────────
+        let gpaFetching = false; // Guard to prevent concurrent fetches
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            clearGpaCalculator();
+
+            // Init ONLY when modal is fully open (once, not multiple times)
+            const modalEl = document.getElementById('gpaModal');
+            if (modalEl) {
+                modalEl.addEventListener('shown.bs.modal', () => {
+                    gpaInitDropdowns();
+                });
+            }
+        });
+    </script>
+
+    <!-- ✨ GPA Calculator Modal (NTA 4, 5, 6 & Degree) -->
+    <div class="modal fade" id="gpaModal" tabindex="-1" aria-labelledby="gpaModalLabel" aria-hidden="true" style="z-index: 1070 !important;">
+        <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 960px;">
+            <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.25); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); max-height: 92vh; display: flex; flex-direction: column;">
+                
+                <!-- Custom Modal Styles -->
+                <style>
+                    #gpaModal .modal-header {
+                        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                        color: white;
+                        padding: 0.8rem 1.25rem;
+                    }
+                    #gpaModal .gpa-scale-btn {
+                        flex: 1;
+                        padding: 6px 12px;
+                        text-align: center;
+                        border-radius: 10px;
+                        border: 1px solid rgba(0,0,0,0.08);
+                        cursor: pointer;
+                        font-weight: 700;
+                        font-size: 0.82rem;
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                        background: white;
+                        color: #475569;
+                    }
+                    #gpaModal .gpa-scale-btn.active {
+                        background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+                        color: white;
+                        box-shadow: 0 6px 14px rgba(29, 78, 216, 0.2);
+                        border-color: transparent;
+                    }
+                    #gpaModal .gpa-glass-panel {
+                        background: linear-gradient(135deg, rgba(236,253,245,0.85) 0%, rgba(209,250,229,0.6) 100%) !important;
+                        backdrop-filter: blur(12px) !important;
+                        -webkit-backdrop-filter: blur(12px) !important;
+                        border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+                        border-radius: 18px !important;
+                        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08) !important;
+                    }
+                    #gpaModal .gpa-glass-select {
+                        border: 2px solid rgba(16, 185, 129, 0.4) !important;
+                        background: rgba(255, 255, 255, 0.95) !important;
+                        backdrop-filter: blur(8px) !important;
+                        -webkit-backdrop-filter: blur(8px) !important;
+                        border-radius: 12px !important;
+                        font-weight: 700 !important;
+                        color: #064e3b !important;
+                        font-size: 0.8rem !important;
+                        padding: 7px 12px !important;
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                        cursor: pointer !important;
+                        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.1) !important;
+                    }
+                    #gpaModal .gpa-glass-menu {
+                        background: rgba(255, 255, 255, 0.7) !important;
+                        backdrop-filter: blur(16px) !important;
+                        -webkit-backdrop-filter: blur(16px) !important;
+                        border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
+                        border-radius: 12px !important;
+                        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255,255,255,0.4) inset !important;
+                        padding: 6px !important;
+                        animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+                        z-index: 9999 !important;
+                    }
+                    #gpaModal .gpa-glass-menu .dropdown-item {
+                        border-radius: 8px !important;
+                        padding: 8px 14px !important;
+                        font-weight: 700 !important;
+                        font-size: 0.8rem !important;
+                        color: #064e3b !important;
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                        margin-bottom: 2px !important;
+                    }
+                    #gpaModal .gpa-glass-menu .dropdown-item:hover,
+                    #gpaModal .gpa-glass-menu .dropdown-item:focus {
+                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1)) !important;
+                        color: #047857 !important;
+                        transform: translateX(6px) !important;
+                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1) !important;
+                    }
+                    @keyframes dropdownFadeIn {
+                        from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+                        to { opacity: 1; transform: translateY(0) scale(1); }
+                    }
+                    #gpaModal .btn-fetch-green {
+                        background: linear-gradient(135deg, #10b981, #059669) !important;
+                        color: white !important;
+                        border: none !important;
+                        border-radius: 12px !important;
+                        font-weight: 800 !important;
+                        font-size: 0.8rem !important;
+                        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                    }
+                    #gpaModal .btn-fetch-green:hover {
+                        transform: translateY(-2px) scale(1.02) !important;
+                        box-shadow: 0 8px 22px rgba(16, 185, 129, 0.45) !important;
+                        background: linear-gradient(135deg, #059669, #047857) !important;
+                    }
+                    #gpaModal .gpa-row-input {
+                        border: 1px solid rgba(16, 185, 129, 0.2);
+                        background: #ffffff;
+                        border-radius: 8px;
+                        padding: 6px 10px;
+                        font-size: 0.82rem;
+                        font-weight: 600;
+                        color: #0f172a !important;
+                        transition: all 0.25s;
+                    }
+                    #gpaModal .gpa-row-input:focus {
+                        border-color: #3b82f6;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+                        outline: none;
+                        background: white;
+                    }
+                    #gpaModal .gpa-circle-progress {
+                        position: relative;
+                        width: 100px;
+                        height: 100px;
+                        margin: 0 auto;
+                    }
+                    #gpaModal .gpa-circle-bg {
+                        fill: none;
+                        stroke: #e2e8f0;
+                        stroke-width: 8;
+                    }
+                    #gpaModal .gpa-circle-val {
+                        fill: none;
+                        stroke-width: 8;
+                        stroke-linecap: round;
+                        transition: stroke-dashoffset 0.6s ease-out, stroke 0.6s ease;
+                        transform: rotate(-90deg);
+                        transform-origin: 50% 50%;
+                    }
+                    #gpaModal .gpa-number-overlay {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        text-align: center;
+                    }
+                    #gpaModal .gpa-badge-glow {
+                        font-size: 0.78rem;
+                        font-weight: 800;
+                        padding: 4px 12px;
+                        border-radius: 50px;
+                        display: inline-block;
+                        text-transform: uppercase;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+                    }
+                    #gpaModal .btn-gpa-action {
+                        border-radius: 10px;
+                        font-weight: 700;
+                        padding: 6px 14px;
+                        font-size: 0.8rem;
+                        transition: all 0.3s;
+                    }
+                    #gpaModal .btn-gpa-add {
+                        background: rgba(16, 185, 129, 0.08);
+                        color: #059669;
+                        border: 1px dashed rgba(16, 185, 129, 0.4);
+                    }
+                    #gpaModal .btn-gpa-add:hover {
+                        background: #10b981;
+                        color: white;
+                        transform: translateY(-1px);
+                        box-shadow: 0 5px 12px rgba(16, 185, 129, 0.25);
+                    }
+                    #gpaModal .gpa-card-summary {
+                        background: linear-gradient(135deg, rgba(239, 246, 255, 0.7) 0%, rgba(219, 234, 254, 0.5) 100%);
+                        border: 1px solid rgba(59, 130, 246, 0.15);
+                        border-radius: 16px;
+                        padding: 14px;
+                        height: 100%;
+                    }
+                    #gpaModal .target-calculator-box {
+                        background: white;
+                        border-radius: 12px;
+                        border: 1px solid rgba(0,0,0,0.05);
+                        padding: 10px 12px;
+                        margin-top: 10px;
+                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+                    }
+                    
+                    @keyframes gpaRowIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(10px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    
+                    @media print {
+                        body * {
+                            visibility: hidden;
+                        }
+                        #gpaModal, #gpaModal * {
+                            visibility: visible;
+                        }
+                        #gpaModal {
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                        }
+                        .btn-gpa-action, .gpa-scale-btn, .modal-footer, .btn-close {
+                            display: none !important;
+                        }
+                    }
+                </style>
+
+                <div class="modal-header border-0 d-flex align-items-center">
+                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2 m-0" id="gpaModalLabel" style="font-family: 'Outfit', sans-serif; font-size: 1.15rem;">
+                        <i class="bi bi-calculator-fill text-primary"></i> <span style="color: #10b981; font-weight: 900; text-shadow: 0 0 12px rgba(16, 185, 129, 0.4);">4LAZIE</span> GPA Calculator
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body p-3" style="background: #f8fafc; overflow-y: auto; flex: 1;">
+                    <!-- ✨ Auto-Fetch Registered Subjects Control Panel -->
+                    <div class="card border-0 mb-3 shadow-sm gpa-glass-panel">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span style="font-size: 0.74rem; font-weight: 900; color: #047857; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px;">
+                                    ⚡ AUTO-FETCH REGISTERED SUBJECTS
+                                </span>
+                                <span style="font-size: 0.7rem; color: #059669; font-weight: 700;" id="gpaAutoStatusText">
+                                    Select your course &amp; semester to load subjects
+                                </span>
+                            </div>
+                            <div class="row g-2 align-items-end">
+                                <!-- 1. Program Type Dropdown -->
+                                <div class="col-md-3 col-6 text-start">
+                                    <label class="form-label fw-bold mb-1" style="font-size: 0.75rem; color: #047857; text-transform: uppercase; letter-spacing: 0.4px;">
+                                        🎓 1. PROGRAM (DIPLOMA/DEGREE)
+                                    </label>
+                                    <div class="dropdown">
+                                        <button class="btn w-100 text-start d-flex justify-content-between align-items-center gpa-glass-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnGpaAutoProgramType">
+                                            <span>Diploma</span>
+                                            <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 gpa-glass-menu" aria-labelledby="btnGpaAutoProgramType" id="menuGpaAutoProgramType">
+                                            <li><a class="dropdown-item" href="#" onclick="gpaSelectOption('ProgramType', 'DIPLOMA', 'Diploma')">Diploma</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="gpaSelectOption('ProgramType', 'DEGREE', 'Degree')">Degree</a></li>
+                                        </ul>
+                                        <input type="hidden" id="gpaAutoProgramType" value="DIPLOMA">
+
+                                    </div>
+                                </div>
+                                <!-- 2. Course Selection Dropdown -->
+                                <div class="col-md-4 col-12 text-start">
+                                    <label class="form-label fw-bold mb-1" style="font-size: 0.75rem; color: #047857; text-transform: uppercase; letter-spacing: 0.4px;">
+                                        📚 2. COURSE (YOUR PROGRAM)
+                                    </label>
+                                    <div class="dropdown">
+                                        <button class="btn w-100 text-start d-flex justify-content-between align-items-center gpa-glass-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnGpaAutoCourseSelect">
+                                            <span>Select Course...</span>
+                                            <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 gpa-glass-menu" aria-labelledby="btnGpaAutoCourseSelect" id="menuGpaAutoCourseSelect">
+                                            <!-- Populated via JS -->
+                                        </ul>
+                                        <input type="hidden" id="gpaAutoCourseSelect" value="">
+                                    </div>
+                                </div>
+                                <!-- 3. Level & Semester Dropdown -->
+                                <div class="col-md-3 col-6 text-start">
+                                    <label class="form-label fw-bold mb-1" style="font-size: 0.75rem; color: #047857; text-transform: uppercase; letter-spacing: 0.4px;">
+                                        🗓️ 3. SEMESTER / NTA LEVEL
+                                    </label>
+                                    <div class="dropdown">
+                                        <button class="btn w-100 text-start d-flex justify-content-between align-items-center gpa-glass-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnGpaAutoLevelSemSelect">
+                                            <span>Select Semester...</span>
+                                            <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                                        </button>
+                                        <ul class="dropdown-menu w-100 gpa-glass-menu" aria-labelledby="btnGpaAutoLevelSemSelect" id="menuGpaAutoLevelSemSelect">
+                                            <!-- Populated via JS -->
+                                        </ul>
+                                        <input type="hidden" id="gpaAutoLevelSemSelect" value="">
+                                    </div>
+                                </div>
+                                <!-- 4. Fetch Action Button -->
+                                <div class="col-md-2 col-6">
+                                    <button type="button" class="btn btn-sm btn-fetch-green w-100 py-1.5 d-flex align-items-center justify-content-center gap-1" id="gpaAutoFetchBtn" onclick="autoFetchGpaSubjects()">
+                                        <i class="bi bi-cloud-arrow-down-fill me-1"></i> Load
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <!-- LEFT COLUMN: COURSE INPUTS -->
+                        <div class="col-lg-7">
+                            <div class="bg-white p-3 rounded-4 shadow-sm border h-100 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold m-0 text-dark" style="font-family: 'Outfit', sans-serif; font-size: 0.95rem;">Add Semesters &amp; Course Grades</h6>
+                                    <button class="btn btn-gpa-action btn-gpa-add py-1 px-3" onclick="addCourseRow()">
+                                        <i class="bi bi-plus-circle-fill me-1"></i> Add Course
+                                    </button>
+                                </div>
+                                
+                                <!-- Dynamic Rows Container -->
+                                <div id="gpaCoursesContainer" style="max-height: 230px; overflow-y: auto; padding-right: 4px;" class="flex-grow-1">
+                                    <!-- Row headers -->
+                                    <div class="row g-2 mb-1 d-none d-md-flex text-muted fw-bold" style="font-size: 0.72rem; text-transform: uppercase;">
+                                        <div class="col-md-5">Course Code / Name</div>
+                                        <div class="col-md-3">Credits</div>
+                                        <div class="col-md-3">Grade</div>
+                                        <div class="col-md-1"></div>
+                                    </div>
+                                    
+                                    <!-- Rows will be injected by JS -->
+                                </div>
+                                
+                                <div class="d-flex gap-2 justify-content-end mt-2 border-top pt-2">
+                                    <button class="btn btn-sm btn-light border fw-semibold rounded-pill px-3 py-1" style="font-size: 0.78rem;" onclick="clearGpaCalculator()">Reset Calculator</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- RIGHT COLUMN: RESULTS PANEL -->
+                        <div class="col-lg-5">
+                            <div class="gpa-card-summary shadow-sm">
+                                <h6 class="fw-bold text-dark text-center mb-2" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem;">Academic Standing</h6>
+                                
+                                <div class="d-flex align-items-center justify-content-around mb-2">
+                                    <!-- Circular Gauge Indicator -->
+                                    <div class="gpa-circle-progress">
+                                        <svg width="100" height="100">
+                                            <circle class="gpa-circle-bg" cx="50" cy="50" r="42"></circle>
+                                            <circle class="gpa-circle-val" id="gpaProgressRing" cx="50" cy="50" r="42" stroke="#3b82f6"></circle>
+                                        </svg>
+                                        <div class="gpa-number-overlay">
+                                            <span class="d-block fw-bold text-dark" id="gpaResultVal" style="font-size: 1.3rem; font-family: 'Outfit', sans-serif; line-height: 1;">0.00</span>
+                                            <span class="text-muted" id="gpaMaxLabel" style="font-size: 0.65rem; font-weight: 600;">out of 4.0</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <div class="gpa-badge-glow mb-2" id="gpaClassificationBadge" style="background: rgba(148, 163, 184, 0.1); color: #475569;">No Courses</div>
+                                        <div style="font-size: 0.78rem; font-weight: 600;">
+                                            <div class="d-flex justify-content-between gap-3 mb-1">
+                                                <span class="text-secondary">Total Credits:</span>
+                                                <span class="text-dark fw-bold" id="totalCreditsVal">0</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between gap-3">
+                                                <span class="text-secondary">Total Points:</span>
+                                                <span class="text-dark fw-bold" id="totalPointsVal">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Target Simulation Box -->
+                                <div class="target-calculator-box text-start">
+                                    <h6 class="fw-bold text-dark d-flex align-items-center gap-1 mb-1" style="font-size: 0.78rem;">
+                                        <i class="bi bi-lightbulb text-warning"></i> Target GPA Simulator
+                                    </h6>
+                                    <div class="row g-2 mb-1">
+                                        <div class="col-6">
+                                            <label class="form-label text-muted m-0" style="font-size: 0.68rem;">Target GPA</label>
+                                            <input type="number" step="0.01" class="form-control form-control-sm py-1" id="targetCumulative" oninput="runTargetSimulator()" style="border-radius: 6px; font-size: 0.78rem;">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label text-muted m-0" style="font-size: 0.68rem;">Done GPA</label>
+                                            <input type="number" step="0.01" class="form-control form-control-sm py-1" id="targetDoneGpa" oninput="runTargetSimulator()" style="border-radius: 6px; font-size: 0.78rem;">
+                                        </div>
+                                    </div>
+                                    <div class="row g-2 mb-1">
+                                        <div class="col-6">
+                                            <label class="form-label text-muted m-0" style="font-size: 0.68rem;">Done Credits</label>
+                                            <input type="number" class="form-control form-control-sm py-1" id="targetDoneCredits" oninput="runTargetSimulator()" style="border-radius: 6px; font-size: 0.78rem;">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label text-muted m-0" style="font-size: 0.68rem;">Remaining Credits</label>
+                                            <input type="number" class="form-control form-control-sm py-1" id="targetRemainingCredits" oninput="runTargetSimulator()" style="border-radius: 6px; font-size: 0.78rem;">
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 text-primary fw-bold" id="targetResultText" style="font-size: 0.73rem; line-height: 1.3;">
+                                        Fill in fields to calculate required GPA.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer border-0 bg-light justify-content-between p-2 px-3">
+                    <button type="button" class="btn btn-sm btn-light border fw-bold px-3" data-bs-dismiss="modal" style="border-radius: 8px; font-size: 0.8rem;">Close</button>
+                    <button type="button" class="btn btn-sm btn-primary fw-bold px-3 d-flex align-items-center gap-1" onclick="window.print()" style="background: linear-gradient(135deg, #1d4ed8, #3b82f6); border: none; border-radius: 8px; font-size: 0.8rem;">
+                        <i class="bi bi-printer-fill"></i> Print report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Bottom Nav -->
     <div th:replace="~{fragments/bottom_nav :: nav(activePage='home')}"></div>
