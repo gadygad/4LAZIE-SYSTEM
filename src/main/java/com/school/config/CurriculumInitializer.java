@@ -291,9 +291,10 @@ public class CurriculumInitializer {
                 if (course.getProgramType().startsWith("DIP_")) {
                     List<Subject> existingLevel5Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 5, 1);
                     for (Subject s : existingLevel5Sem1) {
-                        if (!generalLevel5Sem1.contains(s.getName())) {
-                            subjectRepository.delete(s);
-                        }
+                        // DO NOT delete here, as it deletes course-specific subjects!
+                        // if (!generalLevel5Sem1.contains(s.getName())) {
+                        //     subjectRepository.delete(s);
+                        // }
                     }
                     existingLevel5Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 5, 1);
                     for (String name : generalLevel5Sem1) {
@@ -316,9 +317,10 @@ public class CurriculumInitializer {
                 if (course.getProgramType().startsWith("DIP_")) {
                     List<Subject> existingLevel4Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 4, 1);
                     for (Subject s : existingLevel4Sem1) {
-                        if (!generalLevel4Sem1.contains(s.getName())) {
-                            subjectRepository.delete(s);
-                        }
+                        // DO NOT delete here, as it deletes course-specific subjects!
+                        // if (!generalLevel4Sem1.contains(s.getName())) {
+                        //     subjectRepository.delete(s);
+                        // }
                     }
                     existingLevel4Sem1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, 4, 1);
                     for (String name : generalLevel4Sem1) {

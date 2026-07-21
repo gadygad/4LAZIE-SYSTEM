@@ -194,8 +194,9 @@
     }
     </script>
 </head>
-<body>
-
+<body class="has-bottom-nav">
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+    
     <div class="main-container">
         <div id="timetable-wrapper">
             
@@ -390,5 +391,7 @@
         window.addEventListener('load', resizeTimetable);
         window.addEventListener('resize', resizeTimetable);
     </script>
+    <!-- FLOATING BOTTOM NAV BAR (Included globally) -->
+    <div th:replace="~{fragments/bottom_nav :: nav('timetable')}"></div>
 </body>
 </html>

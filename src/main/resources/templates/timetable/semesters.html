@@ -74,7 +74,7 @@
     </script>
 </head>
 
-<body>
+<body class="has-bottom-nav">
     <div class="page-layout">
         <aside class="hero-sidebar">
             <div class="orb orb-1"></div>
@@ -187,7 +187,8 @@
                 <div th:replace="~{fragments/navbar_actions :: actions}"></div>
             </div>
         </nav>
-
+        <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+  
     <div class="hub-container">
         
         <!-- Header Level Name -->
@@ -306,6 +307,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+    <!-- FLOATING BOTTOM NAV BAR (Included globally) -->
+    <div th:replace="~{fragments/bottom_nav :: nav('timetable')}"></div>
 </body>
 </html>
 

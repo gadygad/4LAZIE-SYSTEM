@@ -104,7 +104,7 @@ public class RegistrationController {
             // Set verification logic
             user.setIsVerified(false);
             user.setVerificationToken(UUID.randomUUID().toString());
-            user.setTokenExpiryDate(java.time.LocalDateTime.now().plusMinutes(5));
+            user.setTokenExpiryDate(java.time.LocalDateTime.now().plusHours(24));
 
             // Persist the new user (profile picture handled by service)
             userService.registerUser(user, profilePic);
@@ -165,7 +165,8 @@ public class RegistrationController {
                 session.setAttribute("user", user);
                 
                 // Set Spring Security Context for Google User
-                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+                String roleName = user.getRole() != null ? user.getRole().name() : Role.STUDENT.name();
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + roleName));
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 
@@ -181,6 +182,14 @@ public class RegistrationController {
         } catch (Exception e) {
             log.error("Google Sign-In failed", e);
             model.addAttribute("error", "Google Sign-In failed: " + e.getMessage());
+            model.addAttribute("user", new User());
+            try {
+                model.addAttribute("institutions", institutionRepository.findAll());
+                model.addAttribute("courses", courseRepository.findAll());
+            } catch (Exception ex) {
+                model.addAttribute("institutions", java.util.Collections.emptyList());
+                model.addAttribute("courses", java.util.Collections.emptyList());
+            }
             return "auth/register";
         }
     }
@@ -191,7 +200,8 @@ public class RegistrationController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (user.getTokenExpiryDate() != null && user.getTokenExpiryDate().isBefore(java.time.LocalDateTime.now())) {
-                model.addAttribute("error", "Verification link has expired. Please register again or request a new link.");
+                userRepository.delete(user);
+                model.addAttribute("error", "Verification link has expired (over 24 hours). Please register again.");
                 return "auth/login";
             }
             user.setIsVerified(true);

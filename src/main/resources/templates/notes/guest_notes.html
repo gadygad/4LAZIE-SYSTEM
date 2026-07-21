@@ -329,6 +329,14 @@
                         </div>
                     </div>
                 </a>
+
+                <!-- Home Link -->
+                <a th:href="@{/}" class="text-decoration-none d-none d-md-flex align-items-center ms-3"
+                    style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: #0f172a; transition: color 0.3s;"
+                    onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#0f172a'">
+                    <i class="bi bi-house-door-fill me-1" style="font-size: 1.1rem;"></i>
+                    Home
+                </a>
             </div>
 
             <!-- Center: Desktop Search Bar -->
@@ -458,11 +466,10 @@
         </div>
     </nav>
 
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+
     <div class="page-layout">
-        <!-- Mobile Sidebar (Offcanvas) -->
-        <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
-        
-        <div class="main-content d-flex flex-column" style="min-height: 100vh; width: 100%;">
+        <div class="main-content d-flex flex-column" style="width: 100%;">
 
     <div class="flex-grow-1">
     <div class="container-fluid px-2 px-md-4 px-xl-5 my-4">
@@ -567,6 +574,7 @@
 <!-- Exclusive Modal Component (Placed here to avoid z-index trap) -->
 <div th:replace="~{fragments/sjuit_components :: restricted_modal}"></div>
 <div th:replace="~{fragments/sjuit_components :: preview_modal}"></div>
+<div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
 
     <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

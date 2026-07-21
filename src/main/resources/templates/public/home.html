@@ -39,14 +39,15 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            min-height: 100dvh;
             margin: 0;
         }
 
         .page-layout {
             display: flex;
             flex: 1 0 auto;
-            min-height: calc(100vh - 64px);
             width: 100%;
+            min-height: 0 !important; /* Override premium-theme.css which sets 100vh */
         }
 
         /* Left Sidebar */
@@ -150,7 +151,6 @@
             background: #f8fafc;
             display: flex;
             flex-direction: column;
-            min-height: calc(100vh - 64px);
             min-width: 0;
             overflow-x: hidden;
             transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -182,7 +182,10 @@
             }
 
             .main-content {
-                min-height: calc(100vh - 64px);
+                min-height: auto;
+                padding-bottom: 0 !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
             }
 
             .hero-features {
@@ -1090,11 +1093,6 @@
             <!-- Premium Nav Links -->
             <div class="d-none d-md-flex align-items-center gap-4"
                 style="margin-left: 4rem !important; margin-right: 2rem;">
-                <a th:href="@{/}" class="text-decoration-none d-flex align-items-center"
-                    style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #0f172a; padding: 5px 0;">
-                    <i class="bi bi-house-door-fill me-1" style="color: #10b981; font-size: 1.2rem;"></i>
-                    Home
-                </a>
 
                 <style>
                     /* Desktop Mega Dropdown Styles */
@@ -1369,187 +1367,14 @@
         </div>
     </header>
 
-    <!-- Secondary Dark Navigation Strip (W3Schools Style) -->
-    <div class="secondary-nav-strip d-none d-md-block">
-        <div class="container-fluid px-4 d-flex align-items-center justify-content-center gap-1">
-            <a href="#" class="exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">NOTES</a>
-            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
-                data-exam-title="CAT 1"
-                th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeDate != null ? currentCalendar.sem1Cat1DegreeDate : ''}"
-                th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeEndDate != null ? currentCalendar.sem1Cat1DegreeEndDate : ''}"
-                th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1Cat1DiplomaDate != null ? currentCalendar.sem1Cat1DiplomaDate : ''}"
-                th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DiplomaEndDate != null ? currentCalendar.sem1Cat1DiplomaEndDate : ''}"
-                th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1Cat1DegreeUrl : ''}"
-                th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1Cat1DiplomaUrl : ''}"
-                th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2Cat1DegreeDate != null ? currentCalendar.sem2Cat1DegreeDate : ''}"
-                th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2Cat1DegreeEndDate != null ? currentCalendar.sem2Cat1DegreeEndDate : ''}"
-                th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2Cat1DiplomaDate != null ? currentCalendar.sem2Cat1DiplomaDate : ''}"
-                th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2Cat1DiplomaEndDate != null ? currentCalendar.sem2Cat1DiplomaEndDate : ''}"
-                th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat1DegreeUrl : ''}"
-                th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat1DiplomaUrl : ''}">CAT 1</a>
-            
-            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
-                data-exam-title="CAT 2"
-                th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeDate != null ? currentCalendar.sem1Cat2DegreeDate : ''}"
-                th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeEndDate != null ? currentCalendar.sem1Cat2DegreeEndDate : ''}"
-                th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1Cat2DiplomaDate != null ? currentCalendar.sem1Cat2DiplomaDate : ''}"
-                th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DiplomaEndDate != null ? currentCalendar.sem1Cat2DiplomaEndDate : ''}"
-                th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1Cat2DegreeUrl : ''}"
-                th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1Cat2DiplomaUrl : ''}"
-                th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2Cat2DegreeDate != null ? currentCalendar.sem2Cat2DegreeDate : ''}"
-                th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2Cat2DegreeEndDate != null ? currentCalendar.sem2Cat2DegreeEndDate : ''}"
-                th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2Cat2DiplomaDate != null ? currentCalendar.sem2Cat2DiplomaDate : ''}"
-                th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2Cat2DiplomaEndDate != null ? currentCalendar.sem2Cat2DiplomaEndDate : ''}"
-                th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat2DegreeUrl : ''}"
-                th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat2DiplomaUrl : ''}">CAT 2</a>
-                
-            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
-                data-exam-title="UE"
-                th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1UeDegreeDate != null ? currentCalendar.sem1UeDegreeDate : ''}"
-                th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1UeDegreeEndDate != null ? currentCalendar.sem1UeDegreeEndDate : ''}"
-                th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1UeDiplomaDate != null ? currentCalendar.sem1UeDiplomaDate : ''}"
-                th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1UeDiplomaEndDate != null ? currentCalendar.sem1UeDiplomaEndDate : ''}"
-                th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1UeDegreeUrl : ''}"
-                th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1UeDiplomaUrl : ''}"
-                th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2UeDegreeDate != null ? currentCalendar.sem2UeDegreeDate : ''}"
-                th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2UeDegreeEndDate != null ? currentCalendar.sem2UeDegreeEndDate : ''}"
-                th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2UeDiplomaDate != null ? currentCalendar.sem2UeDiplomaDate : ''}"
-                th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2UeDiplomaEndDate != null ? currentCalendar.sem2UeDiplomaEndDate : ''}"
-                th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2UeDegreeUrl : ''}"
-                th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2UeDiplomaUrl : ''}">UE</a>
-            
-            <div class="nav-dropdown-container">
-                <a href="/quizzes" class="nav-dropdown-trigger">QUIZZES <i class="bi bi-chevron-down ms-1" style="font-size: 0.65rem; transition: transform 0.3s ease;"></i></a>
-                <div class="nav-dropdown-menu">
-                    <a href="/quizzes?type=exercise"><i class="bi bi-pencil-square"></i> EXERCISE</a>
-                    <a href="/quizzes?type=possible_qns"><i class="bi bi-lightbulb-fill"></i> POSSIBLE QNS</a>
-                    <a href="/quizzes?type=cats_qns"><i class="bi bi-file-earmark-bar-graph"></i> CATS QNS</a>
-                    <a href="/quizzes?type=ue_qns"><i class="bi bi-journal-check"></i> UE QNS</a>
-                </div>
-            </div>
-        </div>
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
     </div>
-    </div>
+
     <style>
     .secondary-nav-strip {
         background-color: #282A35;
         width: 100%;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    .secondary-nav-strip a {
-        color: #f1f5f9;
-        text-decoration: none;
-        padding: 8px 20px;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: background-color 0.2s ease, color 0.2s ease;
-    }
-    .secondary-nav-strip a:hover {
-        background-color: #000000;
-        color: #10b981;
-    }
-    
-    /* Magical Glow Effect for Exam Links */
-    .exam-glow-hover {
-        overflow: hidden;
-        z-index: 1;
-        border-radius: 4px;
-    }
-    .exam-glow-hover::before {
-        content: '';
-        position: absolute;
-        top: 0; left: -100%;
-        width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent);
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        z-index: -1;
-    }
-    .exam-glow-hover:hover::before {
-        left: 100%;
-        transition: left 0.5s ease-in-out;
-    }
-    .exam-glow-hover:hover {
-        background-color: #052e16 !important;
-        color: #34d399 !important;
-        box-shadow: 0 0 20px rgba(16,185,129,0.6), inset 0 0 10px rgba(16,185,129,0.3);
-        transform: translateY(-1px) scale(1.02);
-        text-shadow: 0 0 10px rgba(52,211,153,0.8);
-    }
-
-    /* Magical Dropdown for QUIZZES */
-    .nav-dropdown-container {
-        position: relative;
-        display: inline-block;
-    }
-    .nav-dropdown-trigger {
-        display: flex !important;
-        align-items: center;
-    }
-    .nav-dropdown-container:hover .nav-dropdown-trigger i {
-        transform: rotate(180deg);
-    }
-    .nav-dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%) translateY(15px) scale(0.95);
-        opacity: 0;
-        visibility: hidden;
-        background-color: #282A35;
-        min-width: 180px;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        z-index: 1050;
-        pointer-events: none;
-    }
-    /* Invisible hover bridge */
-    .nav-dropdown-container::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        height: 15px;
-        background: transparent;
-    }
-    .nav-dropdown-container:hover .nav-dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(0) scale(1);
-        pointer-events: auto;
-    }
-    .nav-dropdown-menu a {
-        display: flex !important;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 16px !important;
-        color: #f1f5f9 !important;
-        font-size: 0.8rem !important;
-        border-radius: 6px;
-        background: transparent;
-        transition: all 0.2s ease !important;
-        font-weight: 600 !important;
-        text-transform: uppercase;
-        font-family: 'Inter', sans-serif;
-    }
-    .nav-dropdown-menu a i {
-        font-size: 1rem;
-        transition: transform 0.2s ease;
-    }
-    .nav-dropdown-menu a:hover {
-        background-color: #000000 !important;
-        color: #10b981 !important;
-        transform: translateX(5px);
-    }
-    .nav-dropdown-menu a:hover i {
-        transform: scale(1.1);
     }
     </style>
 
@@ -1888,9 +1713,9 @@
                                 </style>
                                 <h2 class="hero-main-title text-center text-md-start"
                                     style="font-family:'Outfit',sans-serif; font-weight:900; font-size:clamp(2.4rem, 4vw, 3.8rem); line-height:1.15; margin-bottom:28px; letter-spacing:-1px;">
-                                    <span class="premium-gradient-text">Unlock Your Academic Potential.</span><br class="d-none d-xl-block"> 
+                                    <span class="premium-gradient-text">Ditch the Stress. Keep the Grades.</span><br class="d-none d-xl-block"> 
                                     <span class="hero-highlight position-relative" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">
-                                        Study Smarter. Excel Faster.
+                                        Everything You Need to Ace Your Exams.
                                         <svg class="position-absolute d-none d-md-block" style="bottom: -12px; left: 0; width: 100%; height: 16px; z-index: -1;" viewBox="0 0 200 12" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 10C50 2 150 2 200 10" stroke="url(#gradientStroke)" stroke-width="5" stroke-linecap="round"/><defs><linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="rgba(16, 185, 129, 0.4)" /><stop offset="100%" stop-color="rgba(5, 150, 105, 0.1)" /></linearGradient></defs></svg>
                                     </span>
                                 </h2>
@@ -1962,6 +1787,49 @@
                                         }
                                     });
                                 </script>
+                            </div>
+
+                            <!-- ========================================== -->
+                            <!-- JAVA OOP MAGIC BUTTON & CARD               -->
+                            <!-- ========================================== -->
+                            <div class="mb-4 mb-md-5 text-center text-md-start w-100">
+                                
+                                <!-- MAGIC BUTTON -->
+                                <a href="/quizzes" class="btn btn-premium-gold position-relative overflow-hidden shadow-lg mb-4" style="margin: 0; max-width: 100%; border-radius: 20px; text-align: left; padding: 14px 24px;">
+                                    <div class="d-flex flex-column text-start">
+                                        <span style="font-size: 1.3rem; font-weight: 800; line-height: 1.2; letter-spacing: 0.5px;">Start Java OOP Quiz</span>
+                                        <span style="font-size: 0.8rem; font-weight: 600; opacity: 0.95; text-transform: uppercase; letter-spacing: 1px; color: #d1fae5;">220+ Questions Available 🔥</span>
+                                    </div>
+                                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%); transform: translateX(-100%); animation: shimmerMove 3s infinite;"></div>
+                                </a>
+                                <style>
+                                    @keyframes shimmerMove { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+                                </style>
+
+                                <!-- MAGIC PREMIUM CARD -->
+                                <div class="premium-glass-card w-100 position-relative overflow-hidden" style="max-width: 100%; border-radius: 20px; padding: 22px; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.98)); border: 1px solid rgba(16,185,129,0.35); box-shadow: 0 15px 35px rgba(16,185,129,0.12); cursor: pointer; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); text-decoration: none;" onclick="window.location.href='/quizzes'" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(16,185,129,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 35px rgba(16,185,129,0.12)';">
+                                    <div class="position-absolute top-0 end-0 p-2 opacity-25">
+                                        <i class="bi bi-cup-hot-fill" style="font-size: 8rem; color: #10b981; transform: rotate(15deg) translate(20px, -30px);"></i>
+                                    </div>
+                                    <div class="d-flex align-items-center w-100 position-relative" style="z-index: 1;">
+                                        <div class="premium-glass-card-icon d-flex align-items-center justify-content-center flex-shrink-0" style="width: 65px; height: 65px; border-radius: 18px; background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 8px 20px rgba(16,185,129,0.3);">
+                                            <i class="bi bi-cup-hot-fill" style="font-size: 2.2rem;"></i>
+                                        </div>
+                                        <div class="ms-3 flex-grow-1 text-start">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span style="font-size: 0.75rem; font-weight: 800; color: #10b981; letter-spacing: 1px; text-transform: uppercase;">🌟 Featured Course</span>
+                                                <span class="badge rounded-pill bg-danger shadow-sm" style="font-size: 0.65rem; font-weight: 700; padding: 5px 10px; animation: pulseGlow 2s infinite;">HOT</span>
+                                            </div>
+                                            <h5 class="mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #0f172a; font-size: 1.25rem; line-height: 1.2;">Object Oriented Programming (Java)</h5>
+                                            <p class="mb-0" style="font-size: 0.85rem; color: #475569; font-weight: 500; max-width: 90%;">Practice for your UE, CATs & Exercises with over 220 randomly generated questions.</p>
+                                        </div>
+                                        <div class="ms-2 d-none d-sm-flex align-items-center flex-shrink-0">
+                                            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-arrow-right text-success" style="font-size: 1.2rem; font-weight: bold;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
@@ -2881,6 +2749,8 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                     }
                 </script>
         </div>
+        </div>
+        </div>
         </section>
 
 
@@ -2917,12 +2787,6 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
     </div><!-- end .main-content -->
     </div><!-- end .page-layout -->
 
-    <!-- FLOATING BOTTOM NAV BAR (Included globally) -->
-    <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
-
-    <!-- Premium Mobile Offcanvas Sidebar for Guests -->
-    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
