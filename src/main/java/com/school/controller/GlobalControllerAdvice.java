@@ -16,9 +16,17 @@ public class GlobalControllerAdvice {
     @Autowired
     private AuthUtil authUtil;
 
+    @org.springframework.beans.factory.annotation.Value("${google.client.id:}")
+    private String googleClientId;
+
     @ModelAttribute("loggedInUser")
     public User getLoggedInUser() {
         return authUtil.getLoggedInUser();
+    }
+
+    @ModelAttribute("googleClientId")
+    public String getGoogleClientId() {
+        return googleClientId;
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
