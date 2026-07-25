@@ -1154,7 +1154,7 @@
             document.getElementById('subjectLoading').style.display = 'block';
             document.getElementById('startBtn').disabled = true;
 
-            fetch(`/api/subjects?programType=${courseProgram}&levelNo=${selectedLevel}&semesterNo=${selectedSemester}`)
+            fetch(`/api/subjects?programType=${courseProgram}&levelNo=${selectedLevel}&semesterNo=${selectedSemester}&_t=${Date.now()}`)
                 .then(res => res.json())
                 .then(data => {
                     const optionsDiv = document.getElementById('subjectOptions');
