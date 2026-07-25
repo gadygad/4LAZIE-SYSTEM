@@ -29,22 +29,7 @@ public class QuizApiController {
         }
         
         // Shuffle to randomize questions each time
-        // Removed shuffle to keep questions in the order arranged in the database
-        // Collections.shuffle(questions);
-        
-        
-        
-        
-        
-        if (questions == null || questions.isEmpty()) {
-            Question dummy = new Question();
-            dummy.setId("dummy123");
-            dummy.setQuestionText("DEBUG: Server found 0 questions! subjectId=" + subjectId + " category=" + category + " excludeIds=" + excludeIds);
-            dummy.setType("MULTIPLE_CHOICE");
-            dummy.setOptions(java.util.Arrays.asList("A", "B", "C"));
-            dummy.setCorrectAnswer("A");
-            return java.util.Collections.singletonList(dummy);
-        }
+        Collections.shuffle(questions);
         
         // Determine the limit based on the category
 
