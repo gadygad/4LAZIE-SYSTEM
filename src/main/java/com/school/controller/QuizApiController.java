@@ -37,8 +37,10 @@ public class QuizApiController {
         int limit = 20; // default
         if ("UE".equalsIgnoreCase(category)) {
             limit = 50;
-        } else if ("CAT".equalsIgnoreCase(category)) {
+        } else if (category != null && category.toUpperCase().startsWith("CAT")) {
             limit = 17;
+        } else if ("POSSIBLE".equalsIgnoreCase(category)) {
+            limit = 25;
         } else if ("EXERCISE".equalsIgnoreCase(category)) {
             limit = 30;
         } else if ("QUIZ".equalsIgnoreCase(category)) {
