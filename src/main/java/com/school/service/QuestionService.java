@@ -25,7 +25,7 @@ public class QuestionService {
         if (difficulty == null || difficulty.trim().isEmpty() || difficulty.equalsIgnoreCase("ALL")) {
             return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCase(subjectId, category);
         }
-        return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCaseAndDifficultyLevelIgnoreCase(subjectId, category, difficulty);
+        return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCaseAndDifficultyIgnoreCase(subjectId, category, difficulty);
     }
 
     public Question saveQuestion(Question question) {

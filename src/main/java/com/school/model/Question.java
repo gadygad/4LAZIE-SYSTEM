@@ -36,6 +36,7 @@ public class Question {
     
     private String explanation; // Shown after answering (Solution)
     
+    @org.springframework.data.mongodb.core.mapping.Field("difficultyLevel")
     private String difficulty; // EASY, MEDIUM, HARD
     
     private String imageUrl; // Optional image for the question
