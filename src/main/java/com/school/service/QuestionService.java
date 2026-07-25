@@ -20,6 +20,13 @@ public class QuestionService {
     public List<Question> getQuestionsBySubjectCategoryAndModule(String subjectId, String category, String moduleName) {
         return questionRepository.findBySubjectIdAndCategoryAndModuleName(subjectId, category, moduleName);
     }
+    
+    public List<Question> getQuestionsBySubjectCategoryAndDifficulty(String subjectId, String category, String difficulty) {
+        if (difficulty == null || difficulty.trim().isEmpty() || difficulty.equalsIgnoreCase("ALL")) {
+            return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCase(subjectId, category);
+        }
+        return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCaseAndDifficultyLevelIgnoreCase(subjectId, category, difficulty);
+    }
 
     public Question saveQuestion(Question question) {
         return questionRepository.save(question);

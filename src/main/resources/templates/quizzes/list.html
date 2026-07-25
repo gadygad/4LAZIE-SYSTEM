@@ -218,6 +218,66 @@
             justify-content: center;
             margin: 0 auto 24px;
             color: white;
+            .cat-icon i {
+            color: inherit;
+        }
+        
+        /* Difficulty Modal Cards */
+        .diff-card {
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .diff-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
+            z-index: -1;
+        }
+        .diff-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .diff-card-easy:hover { border-color: #10b981; background: #ecfdf5; }
+        .diff-card-medium:hover { border-color: #f59e0b; background: #fffbeb; }
+        .diff-card-hard:hover { border-color: #ef4444; background: #fef2f2; }
+        
+        .diff-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            display: inline-block;
+            padding: 15px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .diff-card:hover .diff-icon {
+            transform: scale(1.1);
+        }
+        .diff-card-easy .diff-icon { color: #10b981; }
+        .diff-card-medium .diff-icon { color: #f59e0b; }
+        .diff-card-hard .diff-icon { color: #ef4444; }
+        
+        .diff-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .diff-desc {
+            font-size: 0.85rem;
+            color: #64748b;
         }
         /* Tanzanian Flag Colors for Cards - Mobile Friendly Edition */
         .category-card {
@@ -772,7 +832,7 @@
                     </div>
                     <input type="hidden" id="subjectSelect" onchange="document.getElementById('startBtn').disabled = false">
 
-                    <button id="startBtn" class="btn btn-success btn-lg px-5 rounded-pill w-100 mt-2" onclick="startPractice()" disabled style="padding: 14px 20px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(16,185,129,0.3);">
+                    <button id="startBtn" class="btn btn-success btn-lg px-5 rounded-pill w-100 mt-2" onclick="openDifficultyModal()" disabled style="padding: 14px 20px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(16,185,129,0.3);">
                         <i class="bi bi-play-circle-fill me-2"></i>Start Practicing Now
                     </button>
                 </div>
@@ -964,6 +1024,47 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Selection Modal -->
+    <div class="modal fade" id="difficultyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 28px; border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 30px 100px rgba(0,0,0,0.15); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+                <div class="modal-header border-0 pb-0 pt-4 px-4 text-center d-block">
+                    <h4 class="modal-title fw-bold w-100" style="font-family: 'Outfit', sans-serif; color: #0f172a; font-size: 1.8rem;">Select Difficulty Level</h4>
+                    <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Choose a level that matches your current confidence</p>
+                </div>
+                <div class="modal-body p-4 p-md-5 pt-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="diff-card diff-card-easy" onclick="selectDifficulty('EASY')">
+                                <div class="diff-icon"><i class="bi bi-emoji-smile-fill"></i></div>
+                                <div class="diff-title">Easy</div>
+                                <div class="diff-desc">Basic concepts and straightforward questions to warm up.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="diff-card diff-card-medium" onclick="selectDifficulty('MEDIUM')">
+                                <div class="diff-icon"><i class="bi bi-emoji-sunglasses-fill"></i></div>
+                                <div class="diff-title">Medium</div>
+                                <div class="diff-desc">Standard exam-level questions requiring solid understanding.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="diff-card diff-card-hard" onclick="selectDifficulty('HARD')">
+                                <div class="diff-icon"><i class="bi bi-fire"></i></div>
+                                <div class="diff-title">Hard</div>
+                                <div class="diff-desc">Tricky and complex questions to truly test your expertise.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pb-4 justify-content-center">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" style="font-weight: 500;">Cancel</button>
+                    <button type="button" class="btn btn-dark rounded-pill px-4" onclick="selectDifficulty('ALL')" style="font-weight: 500;">Mix All Levels</button>
                 </div>
             </div>
         </div>
@@ -1198,12 +1299,29 @@
                 });
         }
 
-        function startPractice(isRetry = false) {
+        function openDifficultyModal() {
+            const subjectId = document.getElementById('subjectSelect').value;
+            if (!subjectId) {
+                alert('Please select a subject first.');
+                return;
+            }
+            const diffModal = new bootstrap.Modal(document.getElementById('difficultyModal'));
+            diffModal.show();
+        }
+
+        function selectDifficulty(level) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('difficultyModal'));
+            if(modal) modal.hide();
+            startPractice(false, level);
+        }
+
+        function startPractice(isRetry = false, difficultyLevel = null) {
             const subjectId = document.getElementById('subjectSelect').value;
             const category = document.getElementById('selectedCategory').value;
 
             console.log("SUBJECT ID:", subjectId);
             console.log("CATEGORY:", category);
+            console.log("DIFFICULTY:", difficultyLevel);
 
             if (!subjectId) {
                 alert('Please select a subject first.');
@@ -1214,13 +1332,20 @@
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
             btn.disabled = true;
 
-            const storageKey = `seenQs_${subjectId}_${category}`;
+            // Generate a unique storage key combining subject, category, and difficulty
+            const diffKeyStr = difficultyLevel ? `_${difficultyLevel}` : '';
+            const storageKey = `seenQs_${subjectId}_${category}${diffKeyStr}`;
             let excludeIds = localStorage.getItem(storageKey);
             if (!excludeIds || isRetry) {
                 excludeIds = "";
             }
 
-            fetch(`/api/public/quizzes/practice?subjectId=${subjectId}&category=${category}&excludeIds=${excludeIds}&_t=${Date.now()}`)
+            let url = `/api/public/quizzes/practice?subjectId=${subjectId}&category=${category}&excludeIds=${excludeIds}&_t=${Date.now()}`;
+            if (difficultyLevel && difficultyLevel !== 'ALL') {
+                url += `&difficulty=${difficultyLevel}`;
+            }
+
+            fetch(url)
                 .then(res => res.json())
                 .then(data => {
                     if (!data || data.length === 0) {

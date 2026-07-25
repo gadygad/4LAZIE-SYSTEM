@@ -19,9 +19,10 @@ public class QuizApiController {
     public List<Question> getPracticeQuestions(
             @RequestParam String subjectId,
             @RequestParam(defaultValue = "QUIZ") String category,
+            @RequestParam(required = false) String difficulty,
             @RequestParam(required = false) List<String> excludeIds) {
         
-        List<Question> questions = questionService.getQuestionsBySubjectAndCategory(subjectId, category);
+        List<Question> questions = questionService.getQuestionsBySubjectCategoryAndDifficulty(subjectId, category, difficulty);
         
         // Filter out already seen questions
         if (excludeIds != null && !excludeIds.isEmpty()) {
