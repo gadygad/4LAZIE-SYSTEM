@@ -32,7 +32,23 @@ public class QuizApiController {
         // Removed shuffle to keep questions in the order arranged in the database
         // Collections.shuffle(questions);
         
+        
+        
+        
+        
+        if (questions == null || questions.isEmpty()) {
+            Question dummy = new Question();
+            dummy.setId("dummy123");
+            dummy.setQuestionText("DEBUG: Server found 0 questions! subjectId=" + subjectId + " category=" + category + " excludeIds=" + excludeIds);
+            dummy.setType("MULTIPLE_CHOICE");
+            dummy.setOptions(java.util.Arrays.asList("A", "B", "C"));
+            dummy.setCorrectAnswer("A");
+            return java.util.Collections.singletonList(dummy);
+        }
+        
         // Determine the limit based on the category
+
+
         int limit = 20; // default
         if ("UE".equalsIgnoreCase(category)) {
             limit = 50;
