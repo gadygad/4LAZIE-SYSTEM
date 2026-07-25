@@ -29,7 +29,8 @@ public class QuizApiController {
         }
         
         // Shuffle to randomize questions each time
-        Collections.shuffle(questions);
+        // Removed shuffle to keep questions in the order arranged in the database
+        // Collections.shuffle(questions);
         
         // Determine the limit based on the category
         int limit = 20; // default
