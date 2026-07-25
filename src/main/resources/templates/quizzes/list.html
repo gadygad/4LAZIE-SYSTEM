@@ -786,9 +786,14 @@
         <div id="quizContainer" class="quiz-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="text-muted m-0 text-uppercase fw-bold" id="quizHeader">Quiz</h6>
-                <span class="badge bg-light text-dark border fw-normal fs-6">
-                    Q <span id="currentQNum">1</span> of <span id="totalQNum">0</span>
-                </span>
+                <div>
+                    <span class="badge bg-warning text-dark border fw-normal fs-6 me-2">
+                        <i class="bi bi-stopwatch"></i> <span id="timerDisplay">00:00</span>
+                    </span>
+                    <span class="badge bg-light text-dark border fw-normal fs-6">
+                        Q <span id="currentQNum">1</span> of <span id="totalQNum">0</span>
+                    </span>
+                </div>
             </div>
 
             <!-- Progress bar -->
@@ -817,7 +822,8 @@
                 <span style="font-size: 0.75rem; opacity: 0.85;">of <span id="finalTotal">0</span></span>
             </div>
             <h3 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif;">Practice Complete!</h3>
-            <p class="text-muted mb-4">Great work! Keep practicing to improve your score.</p>
+            <p class="text-muted mb-2">Great work! Keep practicing to improve your score.</p>
+            <p class="text-muted mb-4"><i class="bi bi-stopwatch"></i> Time Taken: <strong id="finalTime" class="text-dark fs-5">00:00</strong></p>
             <div class="d-flex gap-2 justify-content-center flex-wrap">
                 <button class="btn btn-success rounded-pill px-4" onclick="location.reload()">
                     <i class="bi bi-arrow-clockwise me-1"></i> Try Again
@@ -981,6 +987,17 @@
         let currentIdx = 0;
         let score = 0;
         let answeredCount = 0;
+        let startTime = null;
+        let timerInterval = null;
+
+        function updateTimerDisplay() {
+            if (!startTime) return;
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const s = String(elapsed % 60).padStart(2, '0');
+            const timerEl = document.getElementById('timerDisplay');
+            if (timerEl) timerEl.innerText = `${m}:${s}`;
+        }
 
         // Wizard State
         let selectedProgram = null;
@@ -1222,6 +1239,10 @@
                     currentIdx = 0;
                     score = 0;
                     answeredCount = 0;
+                    startTime = Date.now();
+                    if (timerInterval) clearInterval(timerInterval);
+                    timerInterval = setInterval(updateTimerDisplay, 1000);
+                    updateTimerDisplay();
 
                     // Add these new IDs to local storage for future filtering
                     let existingIds = excludeIds ? excludeIds.split(',') : [];
@@ -1395,6 +1416,12 @@
         }
 
         function showResults() {
+            if (timerInterval) clearInterval(timerInterval);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const s = String(elapsed % 60).padStart(2, '0');
+            document.getElementById('finalTime').innerText = `${m}:${s}`;
+
             document.getElementById('quizContainer').style.display = 'none';
             document.getElementById('resultsContainer').style.display = 'block';
             document.getElementById('finalScore').innerText = score;
