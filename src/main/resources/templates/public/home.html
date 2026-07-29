@@ -2652,21 +2652,10 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                         gap: 8px;
                                         margin-bottom: 20px;
                                     }
-                                    .study-badge {
-                                        0% { background-position: 0% 50%; }
-                                        50% { background-position: 100% 50%; }
-                                        100% { background-position: 0% 50%; }
-                                    }
-                                    
-                                    .study-badge:hover i {
-                                        animation: pulse-icon 1s infinite;
-                                    }
-                                    
-                                    @keyframes pulse-icon {
-                                        0% { transform: scale(1); }
-                                        50% { transform: scale(1.2); }
-                                        100% { transform: scale(1); }
-                                    }
+                                     .study-badge {
+                                         /* Add base properties if missing, otherwise this just resets the malformed block */
+                                         transition: all 0.3s;
+                                     }
                                     .study-hub-btn {
                                         background: linear-gradient(135deg, #10b981, #059669);
                                         color: white !important;
@@ -2717,83 +2706,235 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                 </div>
                                 <!-- End Premium Interactive Study Hub Banner -->
 
-                                <!-- ✨ GPA SIMULATOR BANNER CARD -->
-                                <div class="premium-gpa-banner mt-3" data-bs-toggle="modal" data-bs-target="#gpaModal">
+                                <!-- ✨ NEW INLINE GPA CALCULATOR BANNER (Matching latest screenshot) -->
+                                <div class="premium-inline-gpa-banner mt-4 mb-4" id="inlineGpaCalc">
                                     <style>
-                                        .premium-gpa-banner {
-                                            display: block;
-                                            text-decoration: none !important;
-                                            border-radius: 20px;
-                                            width: 100%;
-                                            max-width: 400px;
-                                            background: linear-gradient(135deg, rgba(239, 246, 255, 0.6) 0%, rgba(219, 234, 254, 0.4) 100%);
-                                            backdrop-filter: blur(20px);
-                                            -webkit-backdrop-filter: blur(20px);
-                                            padding: 24px;
-                                            border: 1px solid rgba(59, 130, 246, 0.15);
-                                            position: relative;
-                                            overflow: hidden;
-                                            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
-                                            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-                                            cursor: pointer;
-                                            margin: 0 auto;
+                                        .premium-inline-gpa-banner {
+                                            background: #ffffff;
+                                            border-radius: 12px;
+                                            padding: 12px 20px;
+                                            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: space-between;
+                                            flex-wrap: nowrap;
+                                            border: 1px solid rgba(0,0,0,0.02);
+                                            overflow-x: auto;
+                                            white-space: nowrap;
                                         }
-                                        .premium-gpa-banner:hover {
-                                            transform: translateY(-5px);
-                                            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15), inset 0 0 0 1px rgba(59, 130, 246, 0.3) !important;
-                                            background: linear-gradient(135deg, rgba(239, 246, 255, 0.8) 0%, rgba(219, 234, 254, 0.6) 100%);
-                                        }
-                                        .gpa-banner-badge {
-                                            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                                        .gpa-inline-icon-box {
+                                            width: 45px;
+                                            height: 45px;
+                                            border-radius: 10px;
+                                            background: linear-gradient(135deg, #3b82f6, #2563eb);
                                             color: white;
-                                            font-size: 0.65rem;
-                                            font-weight: 900;
-                                            padding: 4px 10px;
-                                            border-radius: 20px;
-                                            letter-spacing: 0.5px;
-                                            animation: badgePulseGlowBlue 2s infinite;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 1.5rem;
+                                            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+                                            flex-shrink: 0;
                                         }
-                                        @keyframes badgePulseGlowBlue {
-                                            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
-                                            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
-                                        }
-                                        .gpa-banner-btn {
-                                            background: linear-gradient(135deg, #1e293b, #0f172a);
-                                            color: white;
-                                            border-radius: 16px;
-                                            padding: 10px 20px;
-                                            font-size: 0.85rem;
+                                        .gpa-inline-title {
                                             font-weight: 800;
-                                            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                                            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-                                            border: 1px solid rgba(59, 130, 246, 0.2);
+                                            font-size: 1.05rem;
+                                            color: #1eb53a;
+                                            margin-bottom: 0px;
+                                            line-height: 1.2;
+                                            letter-spacing: 0.5px;
                                         }
-                                        .premium-gpa-banner:hover .gpa-banner-btn {
-                                            transform: scale(1.03) translateY(-1px);
-                                            color: #3b82f6;
-                                            border-color: #3b82f6;
-                                            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+                                        .gpa-inline-subtitle {
+                                            font-size: 0.95rem;
+                                            color: #475569;
+                                            font-weight: 600;
+                                            line-height: 1.2;
+                                        }
+                                        .gpa-inline-right-section {
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 15px;
+                                        }
+                                        .gpa-inline-inputs-wrapper {
+                                            display: flex;
+                                            flex-direction: row;
+                                            gap: 10px;
+                                            align-items: center;
+                                        }
+                                        .gpa-inline-input-group {
+                                            display: flex;
+                                            flex-direction: column;
+                                            align-items: flex-start;
+                                            gap: 2px;
+                                        }
+                                        .gpa-inline-label {
+                                            font-size: 0.7rem;
+                                            font-weight: 600;
+                                            color: #64748b;
+                                        }
+                                        .gpa-inline-input {
+                                            width: 65px;
+                                            height: 32px;
+                                            border-radius: 6px;
+                                            border: 1px solid #e2e8f0;
+                                            background: #ffffff;
+                                            padding: 0 8px;
+                                            font-weight: 500;
+                                            font-size: 0.85rem;
+                                            color: #94a3b8; /* Light placeholder-like color matching screenshot */
+                                            pointer-events: none;
+                                        }
+                                        .gpa-inline-calc-btn {
+                                            background: #1eb53a;
+                                            color: white;
+                                            border: none;
+                                            border-radius: 6px;
+                                            padding: 0 16px;
+                                            height: 34px;
+                                            font-weight: 600;
+                                            font-size: 0.85rem;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 4px;
+                                            transition: all 0.2s;
+                                            flex-shrink: 0;
+                                            margin-top: 14px; /* align with inputs rather than labels */
+                                        }
+                                        .gpa-inline-calc-btn:hover {
+                                            background: #16a32f;
+                                            box-shadow: 0 4px 12px rgba(30, 181, 58, 0.3);
+                                        }
+                                        
+                                        /* 💚 GLASSMORPHISM MODAL STYLES 💚 */
+                                        .glass-modal-content {
+                                            background: rgba(230, 247, 236, 0.85) !important;
+                                            backdrop-filter: blur(20px) saturate(180%);
+                                            -webkit-backdrop-filter: blur(20px) saturate(180%);
+                                            border: 1px solid rgba(25, 135, 84, 0.2) !important;
+                                            border-radius: 24px !important;
+                                            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                                            overflow: hidden;
+                                        }
+                                        .glass-modal-header {
+                                            border-bottom: 1px solid rgba(25, 135, 84, 0.1);
+                                            padding: 25px 30px 15px;
+                                        }
+                                        .glass-modal-body {
+                                            padding: 30px;
+                                        }
+                                        .glass-input {
+                                            background: rgba(255, 255, 255, 0.6) !important;
+                                            border: 1px solid rgba(25, 135, 84, 0.3) !important;
+                                            border-radius: 12px !important;
+                                            height: 50px;
+                                            font-size: 1.1rem;
+                                            font-weight: 600;
+                                            color: #198754;
+                                            text-align: center;
+                                            transition: all 0.3s ease;
+                                        }
+                                        .glass-input:focus {
+                                            background: rgba(255, 255, 255, 0.9) !important;
+                                            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2) !important;
+                                            outline: none;
+                                        }
+                                        .glass-label {
+                                            color: #146c43;
+                                            font-weight: 700;
+                                            font-size: 0.9rem;
+                                            margin-bottom: 8px;
+                                            display: block;
+                                        }
+                                        .glass-btn {
+                                            background: linear-gradient(135deg, #198754, #146c43);
+                                            border: none;
+                                            border-radius: 12px;
+                                            height: 55px;
+                                            color: white;
+                                            font-size: 1.1rem;
+                                            font-weight: 800;
+                                            width: 100%;
+                                            box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3);
+                                            transition: all 0.3s;
+                                            margin-top: 15px;
+                                        }
+                                        .glass-btn:hover {
+                                            transform: translateY(-3px);
+                                            box-shadow: 0 12px 25px rgba(25, 135, 84, 0.4);
+                                        }
+                                        .glass-result-box {
+                                            background: rgba(255, 255, 255, 0.7);
+                                            border-radius: 16px;
+                                            padding: 20px;
+                                            text-align: center;
+                                            margin-top: 25px;
+                                            display: none;
+                                            border: 1px dashed rgba(25, 135, 84, 0.4);
+                                        }
+                                        .glass-close {
+                                            background: rgba(255,255,255,0.5);
+                                            border-radius: 50%;
+                                            width: 35px;
+                                            height: 35px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            border: none;
+                                            color: #198754;
+                                            transition: all 0.2s;
+                                        }
+                                        .glass-close:hover {
+                                            background: #198754;
+                                            color: white;
+                                        }
+                                        /* Smooth sliding animation */
+                                        .modal.fade .glass-modal-content {
+                                            transform: translateY(-50px) scale(0.95);
+                                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                                            opacity: 0;
+                                        }
+                                        .modal.show .glass-modal-content {
+                                            transform: translateY(0) scale(1);
+                                            opacity: 1;
                                         }
                                     </style>
-                                    <div class="d-flex align-items-center gap-3 position-relative" style="z-index: 2;">
-                                        <!-- GPA Icon -->
-                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);">
-                                            <i class="bi bi-calculator-fill" style="font-size: 1.8rem;"></i>
+                                    
+                                    <!-- Left Section (Icon + Titles) -->
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="gpa-inline-icon-box" data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer;">
+                                            <i class="bi bi-calculator"></i>
                                         </div>
-                                        
-                                        <!-- Content -->
-                                        <div class="flex-grow-1 text-start overflow-hidden">
-                                            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                                                <span style="font-size: 0.72rem; font-weight: 900; color: #1d4ed8; letter-spacing: 1.5px; text-transform: uppercase;">📊 GPA Calculator</span>
-                                                <span class="gpa-banner-badge badge">NEW 🔥</span>
-                                            </div>
-                                            <h5 class="mb-1 text-truncate" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #0f172a; font-size: 1.15rem; letter-spacing: -0.3px;"><span style="color: #10b981; font-weight: 900; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">4LAZIE</span> GPA Calculator</h5>
-                                            <p class="mb-0 mt-1" style="font-size: 0.75rem; color: #475569; font-weight: 600;">
-                                                NTA 4 &bull; 5 &bull; 6 &nbsp;<span style="opacity: 0.3;">|</span>&nbsp; Degree &nbsp;<span style="opacity: 0.3;">|</span>&nbsp; Target Simulator
-                                            </p>
+                                        <div data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer;">
+                                            <div class="gpa-inline-title">4LAZIE</div>
+                                            <div class="gpa-inline-subtitle">GPA Calculator</div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Right Section (Inputs + Button) -->
+                                    <div class="gpa-inline-right-section">
+                                        <!-- Middle Inputs (Static Decor) -->
+                                        <div class="gpa-inline-inputs-wrapper" data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer;" title="Click to open Calculator">
+                                            <div class="gpa-inline-input-group">
+                                                <label class="gpa-inline-label">Current GPA</label>
+                                                <input type="text" class="gpa-inline-input" value="3.5" readonly>
+                                            </div>
+                                            <div class="gpa-inline-input-group">
+                                                <label class="gpa-inline-label">Target GPA</label>
+                                                <input type="text" class="gpa-inline-input" value="3.8" readonly>
+                                            </div>
+                                            <div class="gpa-inline-input-group">
+                                                <label class="gpa-inline-label">Credits</label>
+                                                <input type="text" class="gpa-inline-input" value="15" readonly style="width: 55px;">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right Button triggers the modal -->
+                                        <button class="gpa-inline-calc-btn" data-bs-toggle="modal" data-bs-target="#gpaModal">
+                                            CALCULATE <i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                
+                                
                             </div>
                         </div>
                     </div>
@@ -3571,67 +3712,61 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                 { grade: 'F',  gp: 0.0 }
             ]
         };
-        // ── Populate dropdowns based on Program Type ──────────────────────────
-        // fromInit=true means this is called programmatically during initialization, not by user click
-        function gpaSelectOption(type, value, label, fromInit = false) {
-            // Update hidden input
-            const inputEl = document.getElementById('gpaAuto' + type);
-            if (inputEl) inputEl.value = value;
-            
-            // Update button text
-            const btnEl = document.getElementById('btnGpaAuto' + type);
-            if (btnEl) {
-                btnEl.innerHTML = `<span>${label}</span> <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>`;
-            }
-            
-            // Only trigger side effects for user manual selections (not init)
-            if (fromInit) return;
-            
-            if (type === 'ProgramType') {
-                gpaInitDropdowns();
-            } else if (type === 'CourseSelect') {
-                autoFetchGpaSubjects();
-            } else if (type === 'LevelSemSelect') {
-                gpaUpdateScale();
-                autoFetchGpaSubjects();
-            }
+        // ── Native Select handlers (replaces Bootstrap dropdown logic) ────────────
+        function onGpaProgramTypeChange() {
+            gpaInitDropdowns();           // Repopulate courses & semesters only
+            clearSubjectRows();           // Clear old subjects when program changes
+        }
+        function onGpaCourseChange() {
+            clearSubjectRows();           // Clear subjects when course changes
+        }
+        function onGpaSemesterChange() {
+            gpaUpdateScale();
+            clearSubjectRows();           // Clear subjects when semester changes
+        }
+        function clearSubjectRows() {
+            // Remove loaded subject rows so stale data doesn't show
+            const container = document.getElementById('gpaCoursesContainer');
+            if (container) container.querySelectorAll('.gpa-course-wrapper').forEach(r => r.remove());
+            const statusEl = document.getElementById('gpaAutoStatusText');
+            if (statusEl) { statusEl.style.color = '#059669'; statusEl.textContent = 'Select your course & semester to load subjects'; }
         }
 
         async function gpaInitDropdowns() {
-            const pTypeEl  = document.getElementById('gpaAutoProgramType');
-            const menuCourse = document.getElementById('menuGpaAutoCourseSelect');
-            const menuSem    = document.getElementById('menuGpaAutoLevelSemSelect');
-            if (!pTypeEl || !menuCourse || !menuSem) return;
+            const pTypeEl    = document.getElementById('gpaAutoProgramType');
+            const courseEl   = document.getElementById('gpaAutoCourseSelect');
+            const semEl      = document.getElementById('gpaAutoLevelSemSelect');
+            if (!pTypeEl || !courseEl || !semEl) return;
 
             const pType = pTypeEl.value;
 
-            // Populate courses dynamically from database
-            menuCourse.innerHTML = '<li><a class="dropdown-item text-muted" href="#">Loading...</a></li>';
+            // ── Populate courses from database ───────────────────────
+            courseEl.innerHTML = '<option value="">Loading...</option>';
             try {
                 const res = await fetch('/api/courses?programType=' + pType);
                 if (res.ok) {
                     const courses = await res.json();
-                    menuCourse.innerHTML = '';
+                    courseEl.innerHTML = '';
                     if (courses.length === 0) {
-                        menuCourse.innerHTML = '<li><a class="dropdown-item text-muted" href="#">No courses found</a></li>';
-                        gpaSelectOption('CourseSelect', '', 'No courses', true);
+                        courseEl.innerHTML = '<option value="">No courses found</option>';
                     } else {
                         courses.forEach((c, idx) => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<a class="dropdown-item" href="#" onclick="gpaSelectOption('CourseSelect', '${c.code}', '${c.name}')">${c.name}</a>`;
-                            menuCourse.appendChild(li);
-                            
-                            // Auto-select first item (fromInit=true, no fetch triggered)
-                            if (idx === 0) gpaSelectOption('CourseSelect', c.code, c.name, true);
+                            const opt = document.createElement('option');
+                            opt.value = c.code;
+                            opt.textContent = c.name;
+                            courseEl.appendChild(opt);
                         });
+                        // Auto-select first
+                        courseEl.selectedIndex = 0;
                     }
                 }
             } catch (err) {
-                console.error("Error fetching courses: ", err);
+                console.error('Error fetching courses: ', err);
+                courseEl.innerHTML = '<option value="">Error loading courses</option>';
             }
 
-            // Populate semesters
-            menuSem.innerHTML = '';
+            // ── Populate semesters ───────────────────────────────────
+            semEl.innerHTML = '';
             let opts = [];
             if (pType === 'DIPLOMA') {
                 opts = [
@@ -3650,22 +3785,20 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                     ['4-1','Year 4 — Semester 1'],['4-2','Year 4 — Semester 2'],
                 ];
             }
-            
-            opts.forEach(([v, t], idx) => { 
-                const li = document.createElement('li');
-                li.innerHTML = `<a class="dropdown-item" href="#" onclick="gpaSelectOption('LevelSemSelect', '${v}', '${t}')">${t}</a>`;
-                menuSem.appendChild(li);
-                
-                // Auto-select first item (fromInit=true, no fetch triggered)
-                if (idx === 0) gpaSelectOption('LevelSemSelect', v, t, true);
+            opts.forEach(([v, t]) => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.textContent = t;
+                semEl.appendChild(opt);
             });
+            semEl.selectedIndex = 0;
 
             gpaUpdateScale();
-            
-            // ✅ Fetch subjects ONCE after BOTH dropdowns are fully populated
-            autoFetchGpaSubjects();
+            // ✅ Do NOT auto-fetch here. Let the user click Load button.
+            // This prevents race conditions with concurrent fetches.
         }
 
+        // Keep backward compatibility alias
         function onGpaAutoProgramTypeChange() { gpaInitDropdowns(); }
 
         function onGpaLevelSemChange() { gpaUpdateScale(); }
@@ -3675,7 +3808,8 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             const pTypeEl = document.getElementById('gpaAutoProgramType');
             if (!semEl || !pTypeEl) return;
             const levelNo = (semEl.value || '4-1').split('-')[0];
-            const pType   = pTypeEl.value;
+            const pType   = pTypeEl.value; // 'DIPLOMA' or 'DEGREE'
+            // For degree or NTA level 6, use 5.0 scale
             if (pType === 'DEGREE' || levelNo === '6') {
                 setGpaScale('NTA6Degree');
             } else {
@@ -3685,8 +3819,6 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
         // ── Auto-Fetch Subjects from DB ───────────────────────────────────────
         async function autoFetchGpaSubjects() {
-            if (gpaFetching) return; // Prevent concurrent fetches
-            
             const courseEl  = document.getElementById('gpaAutoCourseSelect');
             const semEl     = document.getElementById('gpaAutoLevelSemSelect');
             const fetchBtn  = document.getElementById('gpaAutoFetchBtn');
@@ -3696,16 +3828,24 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             if (!courseEl || !semEl || !container) return;
 
             const programType = courseEl.value;
-            if (!programType) return; // Don't fetch if no course selected yet
+            if (!programType) {
+                if (statusEl) { statusEl.style.color = '#f59e0b'; statusEl.textContent = '⚠️ Please select a course first.'; }
+                return;
+            }
             
             const semValue = semEl.value;
-            if (!semValue) return; // Don't fetch if no semester selected yet
+            if (!semValue) {
+                if (statusEl) { statusEl.style.color = '#f59e0b'; statusEl.textContent = '⚠️ Please select a semester first.'; }
+                return;
+            }
             
             const [levelNo, semesterNo] = semValue.split('-');
 
-            gpaFetching = true; // Lock
-            
-            // Loading state - always use hardcoded original HTML
+            // ── Request ID: only apply results from the LATEST request ──────────
+            const myRequestId = ++gpaFetchRequestId;
+            gpaFetching = true;
+
+            // Show loading state
             if (fetchBtn) {
                 fetchBtn.disabled = true;
                 fetchBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Loading...`;
@@ -3714,50 +3854,53 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
             try {
                 const res = await fetch(`/api/subjects?programType=${programType}&levelNo=${levelNo}&semesterNo=${semesterNo}`);
-                if (!res.ok) throw new Error('API error');
+                if (!res.ok) throw new Error('API error ' + res.status);
                 const subjects = await res.json();
 
-                // Remove only the course wrappers, leave the headers intact
+                // ── STALE CHECK: discard if a newer request was made ─────────
+                if (myRequestId !== gpaFetchRequestId) return;
+
+                // Clear ALL existing subject rows
                 container.querySelectorAll('.gpa-course-wrapper').forEach(row => row.remove());
 
                 if (subjects && subjects.length > 0) {
-                    subjects.forEach((sub, i) => {
+                    // Add each subject as a premium row
+                    subjects.forEach((sub) => {
                         const label   = sub.code ? `${sub.code} — ${sub.name}` : sub.name;
                         const credits = sub.credits || (programType.startsWith('DEG_') || levelNo === '6' ? 12 : 9);
-                        addCourseRow(label, credits, '', true); // ✅ Locked from DB
+                        addCourseRow(label, credits, '', true); // Locked (from DB)
                     });
                     if (statusEl) {
                         statusEl.style.color = '#10b981';
-                        statusEl.textContent = `✅ ${subjects.length} subjects loaded! Fill in your grades below.`;
+                        statusEl.textContent = `✅ ${subjects.length} masomo yamepakiwa! Jaza maksi zako hapa chini.`;
                     }
                 } else {
-                    for (let i = 0; i < 5; i++) addCourseRow('', '', '', false);
+                    // No subjects in DB — show 4 empty rows for manual entry
+                    for (let i = 0; i < 4; i++) addCourseRow('', '', '', false);
                     if (statusEl) {
                         statusEl.style.color = '#f59e0b';
-                        statusEl.textContent = `⚠️ No subjects in DB for this semester — fill manually below.`;
+                        statusEl.textContent = `⚠️ Hakuna masomo kwenye DB kwa semester hii — jaza mwenyewe.`;
                     }
                 }
 
-                container.style.opacity = '1';
-
             } catch (err) {
-                console.error("Error auto fetching subjects:", err);
+                if (myRequestId !== gpaFetchRequestId) return; // Stale
+                console.error('Error auto fetching subjects:', err);
+                container.querySelectorAll('.gpa-course-wrapper').forEach(row => row.remove());
                 for (let i = 0; i < 4; i++) addCourseRow('', '', '', false);
-                container.style.opacity = '1';
                 if (statusEl) {
                     statusEl.style.color = '#ef4444';
-                    statusEl.textContent = `❌ Could not reach database. Fill in manually.`;
+                    statusEl.textContent = `❌ Hitilafu ya mtandao. Jaza masomo mwenyewe.`;
                 }
             } finally {
-                gpaFetching = false; // Release lock
-                if (container) container.style.opacity = '1';
-                // Always restore button to original state with hardcoded HTML
+                gpaFetching = false;
                 if (fetchBtn) {
                     fetchBtn.disabled = false;
                     fetchBtn.innerHTML = `<i class="bi bi-cloud-arrow-down-fill me-1"></i> Load`;
                 }
             }
         }
+
 
         // ── SJCET Marks Mode Helper Logic ─────────────────────────────────────
         function getGradingSystem() {
@@ -3916,74 +4059,117 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
         }
 
         // ── Course Rows ───────────────────────────────────────────────────────
+        let gpaRowCount = 0; // Row counter for numbering
         function addCourseRow(codeVal = '', creditsVal = '', gradeVal = '', isLocked = false) {
             const container = document.getElementById('gpaCoursesContainer');
             if (!container) return;
             const rowId = 'gpa_row_' + Date.now() + Math.random().toString(36).substr(2, 5);
 
+            // Count existing rows to assign a number
+            const existingRows = container.querySelectorAll('.gpa-course-wrapper').length;
+            const rowNum = existingRows + 1;
+
             const wrapper = document.createElement('div');
-            wrapper.className = 'gpa-course-wrapper mb-2 border rounded-3 p-2 bg-white shadow-xs';
+            wrapper.className = 'gpa-course-wrapper';
             wrapper.id = rowId;
-            wrapper.style.cssText = 'animation: gpaRowIn 0.3s ease forwards; opacity:0;';
+            wrapper.style.cssText = `
+                animation: gpaRowIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+                animation-delay: ${existingRows * 0.06}s;
+                opacity: 0;
+                margin-bottom: 8px;
+            `;
 
             wrapper.innerHTML = `
-                <div class="row g-2 align-items-center gpa-course-row">
-                    <div class="col-md-5 col-12 d-flex align-items-center gap-1">
-                        <button type="button" class="btn btn-sm btn-outline-success border-0 p-1 btn-toggle-marks"
-                                onclick="toggleDetailedMarks('${rowId}')" title="Marks Detail (CAT/Assignment/UE)">
-                            <i class="bi bi-plus-square-fill"></i>
-                        </button>
-                        <input type="text" class="form-control form-control-sm gpa-row-input ${isLocked ? 'bg-light text-muted fw-semibold' : ''}"
+                <div class="d-flex align-items-center gap-2 gpa-course-row"
+                     style="background: ${isLocked ? 'linear-gradient(135deg,rgba(236,253,245,0.9),rgba(209,250,229,0.6))' : 'white'};
+                            border: 1.5px solid ${isLocked ? 'rgba(16,185,129,0.3)' : 'rgba(0,0,0,0.08)'};
+                            border-radius: 14px; padding: 10px 12px;
+                            box-shadow: 0 2px 8px rgba(16,185,129,0.06);
+                            transition: box-shadow 0.2s ease;">
+
+                    <!-- Row Number Badge -->
+                    <div style="min-width:28px; height:28px; border-radius:50%; background: linear-gradient(135deg,#10b981,#059669);
+                                color:white; font-size:0.7rem; font-weight:800; display:flex; align-items:center;
+                                justify-content:center; flex-shrink:0; box-shadow:0 2px 6px rgba(16,185,129,0.35);">
+                        ${rowNum}
+                    </div>
+
+                    <!-- Expand Marks Button -->
+                    <button type="button" class="btn btn-sm p-0 btn-toggle-marks"
+                            onclick="toggleDetailedMarks('${rowId}')"
+                            title="Click to enter CAT/Assignment/UE marks"
+                            style="color:#10b981; border:none; background:none; font-size:1rem; flex-shrink:0; line-height:1;">
+                        <i class="bi bi-clipboard-data-fill"></i>
+                    </button>
+
+                    <!-- Subject Name -->
+                    <div class="flex-grow-1" style="min-width:0;">
+                        <input type="text" class="form-control form-control-sm gpa-row-input border-0 p-0 fw-bold"
+                               style="background:transparent; font-size:0.8rem; color:#064e3b; letter-spacing:0.2px;"
                                placeholder="Subject name / code" value="${codeVal}" ${isLocked ? 'readonly' : ''}>
                     </div>
-                    <div class="col-md-3 col-6">
+
+                    <!-- Credits Badge -->
+                    <div style="flex-shrink:0;">
                         <input type="number" min="1" max="30"
-                               class="form-control form-control-sm gpa-row-input gpa-credits-input ${isLocked ? 'bg-light text-muted fw-bold' : ''}"
-                               placeholder="Credits" value="${creditsVal}" oninput="calculateGpa()" ${isLocked ? 'readonly' : ''}>
+                               class="gpa-row-input gpa-credits-input text-center fw-bold"
+                               style="width:52px; border-radius:8px; border:1.5px solid rgba(16,185,129,0.3);
+                                      background:rgba(16,185,129,0.07); color:#047857; font-size:0.78rem;
+                                      padding:4px 2px; outline:none;"
+                               placeholder="Cr" value="${creditsVal}" oninput="calculateGpa()" ${isLocked ? 'readonly' : ''}>
                     </div>
-                    <div class="col-md-3 col-5">
-                        <select class="form-select form-select-sm gpa-row-input gpa-grade-select" onchange="calculateGpa()">
+
+                    <!-- Grade Selector -->
+                    <div style="flex-shrink:0; min-width:80px;">
+                        <select class="gpa-row-input gpa-grade-select form-select form-select-sm fw-bold"
+                                onchange="calculateGpa()"
+                                style="border-radius:10px; border:1.5px solid rgba(16,185,129,0.35);
+                                       background:white; color:#047857; font-size:0.8rem; font-weight:700;">
                         </select>
                     </div>
-                    <div class="col-md-1 col-1 text-end">
-                        <button class="btn btn-sm btn-outline-danger border-0 p-1 gpa-delete-btn"
-                                onclick="deleteCourseRow('${rowId}')" style="border-radius:8px; ${isLocked ? 'display:none;' : ''}" title="Remove" ${isLocked ? 'disabled' : ''}>
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </div>
+
+                    <!-- Delete Button -->
+                    <button class="btn btn-sm p-0 gpa-delete-btn"
+                            onclick="deleteCourseRow('${rowId}')"
+                            style="color:#ef4444; border:none; background:none; font-size:0.85rem;
+                                   flex-shrink:0; ${isLocked ? 'display:none;' : ''}"
+                            title="Remove" ${isLocked ? 'disabled' : ''}>
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
                 </div>
-                
+
                 <!-- Detailed Marks collapsible container -->
-                <div class="detailed-marks-container d-none mt-2 pt-2 border-top">
+                <div class="detailed-marks-container d-none mt-1"
+                     style="background: linear-gradient(135deg,rgba(240,253,244,0.8),rgba(220,252,231,0.5));
+                            border: 1px solid rgba(16,185,129,0.2); border-radius:12px; padding:12px;">
                     <div class="d-flex flex-wrap gap-2 justify-content-between text-center">
-                        <div style="flex: 1; min-width: 80px;">
-                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">CAT 1 (50)</label>
-                            <input type="number" class="form-control form-control-sm text-center gpa-mark-cat1" min="0" max="50" placeholder="0-50" oninput="calculateRowGrade('${rowId}')">
+                        <div style="flex: 1; min-width: 72px;">
+                            <label class="form-label fw-bold mb-1" style="font-size:0.6rem; text-transform:uppercase; color:#047857;">CAT 1 /50</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-cat1" min="0" max="50" placeholder="0-50" oninput="calculateRowGrade('${rowId}')" style="border-color:rgba(16,185,129,0.3); border-radius:8px;">
                         </div>
-                        <div style="flex: 1; min-width: 80px;">
-                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">Ass. 1 (10)</label>
-                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ass1" min="0" max="10" placeholder="0-10" oninput="calculateRowGrade('${rowId}')">
+                        <div style="flex: 1; min-width: 72px;">
+                            <label class="form-label fw-bold mb-1" style="font-size:0.6rem; text-transform:uppercase; color:#047857;">Ass.1 /10</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ass1" min="0" max="10" placeholder="0-10" oninput="calculateRowGrade('${rowId}')" style="border-color:rgba(16,185,129,0.3); border-radius:8px;">
                         </div>
-                        <div style="flex: 1; min-width: 80px;">
-                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">CAT 2 (50)</label>
-                            <input type="number" class="form-control form-control-sm text-center gpa-mark-cat2" min="0" max="50" placeholder="0-50" oninput="calculateRowGrade('${rowId}')">
+                        <div style="flex: 1; min-width: 72px;">
+                            <label class="form-label fw-bold mb-1" style="font-size:0.6rem; text-transform:uppercase; color:#047857;">CAT 2 /50</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-cat2" min="0" max="50" placeholder="0-50" oninput="calculateRowGrade('${rowId}')" style="border-color:rgba(16,185,129,0.3); border-radius:8px;">
                         </div>
-                        <div style="flex: 1; min-width: 80px;">
-                            <label class="form-label fw-semibold text-muted mb-0" style="font-size:0.62rem; text-transform:uppercase;">Ass. 2 (10)</label>
-                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ass2" min="0" max="10" placeholder="0-10" oninput="calculateRowGrade('${rowId}')">
+                        <div style="flex: 1; min-width: 72px;">
+                            <label class="form-label fw-bold mb-1" style="font-size:0.6rem; text-transform:uppercase; color:#047857;">Ass.2 /10</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ass2" min="0" max="10" placeholder="0-10" oninput="calculateRowGrade('${rowId}')" style="border-color:rgba(16,185,129,0.3); border-radius:8px;">
                         </div>
-                        <div style="flex: 1.2; min-width: 100px;">
-                            <label class="form-label fw-semibold text-success mb-0" style="font-size:0.62rem; text-transform:uppercase;">UE Exam (100)</label>
-                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ue" min="0" max="100" placeholder="0-100" oninput="calculateRowGrade('${rowId}')" style="border-color:#10b981; color:#047857; font-weight:700;">
+                        <div style="flex: 1.2; min-width: 88px;">
+                            <label class="form-label fw-bold mb-1" style="font-size:0.6rem; text-transform:uppercase; color:#10b981;">UE Exam /100</label>
+                            <input type="number" class="form-control form-control-sm text-center gpa-mark-ue" min="0" max="100" placeholder="0-100" oninput="calculateRowGrade('${rowId}')" style="border-color:#10b981; color:#047857; font-weight:700; border-radius:8px;">
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-between align-items-center mt-2 px-1">
-                        <span class="badge bg-light text-secondary border gpa-coursework-badge" style="font-size:0.7rem; font-weight:600;">Coursework: 0.0/60</span>
-                        <span class="badge bg-light text-success border gpa-total-badge" style="font-size:0.7rem; font-weight:700;">Coursework Only</span>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="badge gpa-coursework-badge" style="background:rgba(16,185,129,0.1); color:#047857; font-size:0.68rem; padding:4px 8px;">Coursework: 0.0/60</span>
+                        <span class="badge gpa-total-badge" style="background:rgba(16,185,129,0.15); color:#065f46; font-size:0.68rem; padding:4px 8px; font-weight:700;">Coursework Only</span>
                     </div>
-                    
-                    <div class="gpa-predictor-text mt-1 text-center text-muted fw-semibold" style="font-size:0.68rem; min-height:16px;">
+                    <div class="gpa-predictor-text mt-1 text-center fw-semibold" style="font-size:0.65rem; color:#6b7280; min-height:14px;">
                         Fill in coursework to view required UE marks
                     </div>
                 </div>
@@ -4007,6 +4193,21 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                 container.querySelectorAll('.gpa-course-wrapper').forEach(row => row.remove());
             }
             for (let i = 0; i < 4; i++) addCourseRow('', '', '', false);
+        }
+
+        function populateGradesDropdown(selectEl) {
+            if (!selectEl) return;
+            selectEl.innerHTML = '';
+            
+            const sys = getGradingSystem();
+            
+            for (let i = sys.thresholds.length - 1; i >= 0; i--) {
+                const th = sys.thresholds[i];
+                const opt = document.createElement('option');
+                opt.value = th.gp;
+                opt.textContent = th.grade;
+                selectEl.appendChild(opt);
+            }
         }
 
         // ── GPA Calculation ───────────────────────────────────────────────────
@@ -4092,24 +4293,39 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
         // ── Init ──────────────────────────────────────────────────────────────
         let gpaFetching = false; // Guard to prevent concurrent fetches
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            clearGpaCalculator();
+        let gpaFetchRequestId = 0; // Track latest fetch request to cancel stale results
 
-            // Init ONLY when modal is fully open (once, not multiple times)
-            const modalEl = document.getElementById('gpaModal');
-            if (modalEl) {
-                modalEl.addEventListener('shown.bs.modal', () => {
-                    gpaInitDropdowns();
-                });
+        // Pre-load dropdowns when page is ready (does NOT fetch subjects)
+        window.addEventListener('load', function() {
+            clearGpaCalculator();
+            gpaInitDropdowns(); // Populate course & semester selects only
+
+            // Wire change handlers — clear subjects only, Load button triggers fetch
+            const pTypeEl = document.getElementById('gpaAutoProgramType');
+            if (pTypeEl) pTypeEl.addEventListener('change', function() {
+                gpaInitDropdowns();
+                clearSubjectRows();
+            });
+
+            const courseEl = document.getElementById('gpaAutoCourseSelect');
+            if (courseEl) courseEl.addEventListener('change', function() { clearSubjectRows(); });
+
+            const semEl = document.getElementById('gpaAutoLevelSemSelect');
+            if (semEl) semEl.addEventListener('change', function() { gpaUpdateScale(); clearSubjectRows(); });
+        });
+
+        // Re-populate dropdowns every time modal opens (no subject fetch)
+        document.addEventListener('shown.bs.modal', function(e) {
+            if (e.target && e.target.id === 'gpaModal') {
+                gpaInitDropdowns(); // Populate selects only
             }
         });
     </script>
 
     <!-- ✨ GPA Calculator Modal (NTA 4, 5, 6 & Degree) -->
     <div class="modal fade" id="gpaModal" tabindex="-1" aria-labelledby="gpaModalLabel" aria-hidden="true" style="z-index: 1070 !important;">
-        <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 960px;">
-            <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.25); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); max-height: 92vh; display: flex; flex-direction: column;">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 20px; overflow: visible; box-shadow: 0 25px 60px rgba(0,0,0,0.25); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); max-height: 92vh; display: flex; flex-direction: column;">
                 
                 <!-- Custom Modal Styles -->
                 <style>
@@ -4159,16 +4375,49 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                         cursor: pointer !important;
                         box-shadow: 0 4px 14px rgba(16, 185, 129, 0.1) !important;
                     }
+                    #gpaModal .gpa-native-select {
+                        border: 2px solid rgba(16, 185, 129, 0.4) !important;
+                        background: rgba(255, 255, 255, 0.97) !important;
+                        border-radius: 12px !important;
+                        font-weight: 700 !important;
+                        color: #064e3b !important;
+                        font-size: 0.8rem !important;
+                        padding: 8px 12px !important;
+                        transition: all 0.3s ease !important;
+                        cursor: pointer !important;
+                        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.1) !important;
+                        width: 100% !important;
+                        appearance: auto !important;
+                    }
+                    #gpaModal .gpa-native-select:focus {
+                        outline: none !important;
+                        border-color: #10b981 !important;
+                        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+                    }
+                    #gpaModal .gpa-native-select:hover {
+                        border-color: #10b981 !important;
+                        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2) !important;
+                    }
+                    #gpaModal .gpa-native-select option {
+                        background: #ffffff !important;
+                        color: #064e3b !important;
+                        font-weight: 600 !important;
+                        padding: 8px 12px !important;
+                    }
+
                     #gpaModal .gpa-glass-menu {
-                        background: rgba(255, 255, 255, 0.7) !important;
+                        background: rgba(255, 255, 255, 0.98) !important;
                         backdrop-filter: blur(16px) !important;
                         -webkit-backdrop-filter: blur(16px) !important;
                         border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
                         border-radius: 12px !important;
-                        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255,255,255,0.4) inset !important;
+                        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255,255,255,0.4) inset !important;
                         padding: 6px !important;
                         animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-                        z-index: 9999 !important;
+                        z-index: 99999 !important;
+                        max-height: 320px !important;
+                        overflow-y: auto !important;
+                        position: absolute !important;
                     }
                     #gpaModal .gpa-glass-menu .dropdown-item {
                         border-radius: 8px !important;
@@ -4178,6 +4427,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                         color: #064e3b !important;
                         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
                         margin-bottom: 2px !important;
+                        white-space: normal !important;
                     }
                     #gpaModal .gpa-glass-menu .dropdown-item:hover,
                     #gpaModal .gpa-glass-menu .dropdown-item:focus {
@@ -4327,10 +4577,10 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 
-                <div class="modal-body p-3" style="background: #f8fafc; overflow-y: auto; flex: 1;">
+                <div class="modal-body p-3" style="background: #f0fdf4; overflow-y: auto; flex: 1;">
                     <!-- ✨ Auto-Fetch Registered Subjects Control Panel -->
-                    <div class="card border-0 mb-3 shadow-sm gpa-glass-panel">
-                        <div class="card-body p-3">
+                    <div class="card border-0 mb-3 shadow-sm gpa-glass-panel" style="overflow: visible;">
+                        <div class="card-body p-3" style="overflow: visible;">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span style="font-size: 0.74rem; font-weight: 900; color: #047857; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px;">
                                     ⚡ AUTO-FETCH REGISTERED SUBJECTS
@@ -4340,55 +4590,33 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                 </span>
                             </div>
                             <div class="row g-2 align-items-end">
-                                <!-- 1. Program Type Dropdown -->
-                                <div class="col-md-3 col-6 text-start">
+                                <!-- 1. Program Type Select -->
+                                <div class="col-md-2 col-6 text-start">
                                     <label class="form-label fw-bold mb-1" style="font-size: 0.75rem; color: #047857; text-transform: uppercase; letter-spacing: 0.4px;">
                                         🎓 1. PROGRAM (DIPLOMA/DEGREE)
                                     </label>
-                                    <div class="dropdown">
-                                        <button class="btn w-100 text-start d-flex justify-content-between align-items-center gpa-glass-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnGpaAutoProgramType">
-                                            <span>Diploma</span>
-                                            <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                                        </button>
-                                        <ul class="dropdown-menu w-100 gpa-glass-menu" aria-labelledby="btnGpaAutoProgramType" id="menuGpaAutoProgramType">
-                                            <li><a class="dropdown-item" href="#" onclick="gpaSelectOption('ProgramType', 'DIPLOMA', 'Diploma')">Diploma</a></li>
-                                            <li><a class="dropdown-item" href="#" onclick="gpaSelectOption('ProgramType', 'DEGREE', 'Degree')">Degree</a></li>
-                                        </ul>
-                                        <input type="hidden" id="gpaAutoProgramType" value="DIPLOMA">
-
-                                    </div>
+                                    <select id="gpaAutoProgramType" class="form-select gpa-native-select" onchange="onGpaProgramTypeChange()">
+                                        <option value="DIPLOMA">Diploma</option>
+                                        <option value="DEGREE">Degree</option>
+                                    </select>
                                 </div>
-                                <!-- 2. Course Selection Dropdown -->
-                                <div class="col-md-4 col-12 text-start">
+                                <!-- 2. Course Selection Select -->
+                                <div class="col-md-5 col-12 text-start">
                                     <label class="form-label fw-bold mb-1" style="font-size: 0.75rem; color: #047857; text-transform: uppercase; letter-spacing: 0.4px;">
                                         📚 2. COURSE (YOUR PROGRAM)
                                     </label>
-                                    <div class="dropdown">
-                                        <button class="btn w-100 text-start d-flex justify-content-between align-items-center gpa-glass-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnGpaAutoCourseSelect">
-                                            <span>Select Course...</span>
-                                            <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                                        </button>
-                                        <ul class="dropdown-menu w-100 gpa-glass-menu" aria-labelledby="btnGpaAutoCourseSelect" id="menuGpaAutoCourseSelect">
-                                            <!-- Populated via JS -->
-                                        </ul>
-                                        <input type="hidden" id="gpaAutoCourseSelect" value="">
-                                    </div>
+                                    <select id="gpaAutoCourseSelect" class="form-select gpa-native-select" onchange="onGpaCourseChange()">
+                                        <option value="">-- Select Course --</option>
+                                    </select>
                                 </div>
-                                <!-- 3. Level & Semester Dropdown -->
+                                <!-- 3. Level & Semester Select -->
                                 <div class="col-md-3 col-6 text-start">
                                     <label class="form-label fw-bold mb-1" style="font-size: 0.75rem; color: #047857; text-transform: uppercase; letter-spacing: 0.4px;">
                                         🗓️ 3. SEMESTER / NTA LEVEL
                                     </label>
-                                    <div class="dropdown">
-                                        <button class="btn w-100 text-start d-flex justify-content-between align-items-center gpa-glass-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnGpaAutoLevelSemSelect">
-                                            <span>Select Semester...</span>
-                                            <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                                        </button>
-                                        <ul class="dropdown-menu w-100 gpa-glass-menu" aria-labelledby="btnGpaAutoLevelSemSelect" id="menuGpaAutoLevelSemSelect">
-                                            <!-- Populated via JS -->
-                                        </ul>
-                                        <input type="hidden" id="gpaAutoLevelSemSelect" value="">
-                                    </div>
+                                    <select id="gpaAutoLevelSemSelect" class="form-select gpa-native-select" onchange="onGpaSemesterChange()">
+                                        <option value="">-- Select Semester --</option>
+                                    </select>
                                 </div>
                                 <!-- 4. Fetch Action Button -->
                                 <div class="col-md-2 col-6">
@@ -4412,12 +4640,12 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                 </div>
                                 
                                 <!-- Dynamic Rows Container -->
-                                <div id="gpaCoursesContainer" style="max-height: 230px; overflow-y: auto; padding-right: 4px;" class="flex-grow-1">
+                                <div id="gpaCoursesContainer" style="max-height: 380px; overflow-y: auto; padding-right: 4px; scroll-behavior: smooth;" class="flex-grow-1">  
                                     <!-- Row headers -->
-                                    <div class="row g-2 mb-1 d-none d-md-flex text-muted fw-bold" style="font-size: 0.72rem; text-transform: uppercase;">
-                                        <div class="col-md-5">Course Code / Name</div>
-                                        <div class="col-md-3">Credits</div>
-                                        <div class="col-md-3">Grade</div>
+                                    <div class="row g-2 mb-1 d-none d-md-flex fw-bold" style="font-size: 0.7rem; text-transform: uppercase; color: #047857; background: rgba(16,185,129,0.07); border-radius: 8px; padding: 6px 8px;">
+                                        <div class="col-md-5">📚 Subject Name</div>
+                                        <div class="col-md-2 text-center">Credits</div>
+                                        <div class="col-md-4 text-center">Grade</div>
                                         <div class="col-md-1"></div>
                                     </div>
                                     
@@ -4509,6 +4737,265 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
     <!-- Mobile Bottom Nav -->
     <div th:replace="~{fragments/bottom_nav :: nav(activePage='home')}"></div>
+
+<!-- ✨ MAGICAL GLASSMORPHISM GREEN MODAL ✨ -->
+                                <div class="modal fade" id="glassCalcModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                                        <div class="modal-content glass-modal-content" style="background: rgba(250,250,250,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: none; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);">
+                                            
+                                            <!-- Black Header -->
+                                            <div class="glass-modal-header d-flex justify-content-between align-items-center" style="background: #000; padding: 14px 24px; border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi bi-calculator" style="color: #10b981; font-size: 1.15rem;"></i>
+                                                    <h5 style="margin: 0; font-weight: 700; font-family: 'Outfit', sans-serif;">
+                                                        <span style="color: #10b981; margin-right: 3px;">4LAZIE</span> <span style="color: #ffffff;">GPA Calculator</span>
+                                                    </h5>
+                                                </div>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; font-size: 0.8rem;"></button>
+                                            </div>
+                                            
+                                            <!-- Glass Body -->
+                                            <div class="glass-modal-body" style="padding: 30px 24px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                                                <div class="glass-fetch-container" style="background: #e6fdf0; border: 1px solid #6ee7b7; border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.05);">
+                                                    
+                                                    <div class="row align-items-end g-3">
+                                                        <!-- 1. PROGRAM TYPE -->
+                                                        <div class="col-md-3">
+                                                            <label style="font-size: 0.72rem; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 6px;">
+                                                                🎓 1. PROGRAM
+                                                            </label>
+                                                            <div class="dropdown custom-glass-dropdown">
+                                                                <button class="btn dropdown-toggle glass-select-input w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="progTypeBtn">
+                                                                    <span id="progTypeLabel">Diploma</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu glass-dropdown-menu" id="modalProgTypeMenu">
+                                                                    <li><a class="dropdown-item" href="#" onclick="selectGlassOption('progType', 'DIPLOMA', 'Diploma')">Diploma</a></li>
+                                                                    <li><a class="dropdown-item" href="#" onclick="selectGlassOption('progType', 'DEGREE', 'Degree')">Degree</a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <input type="hidden" id="modalProgType" value="DIPLOMA">
+                                                        </div>
+                                                        
+                                                        <!-- 2. COURSE / PROGRAM -->
+                                                        <div class="col-md-5">
+                                                            <label style="font-size: 0.72rem; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 6px;">
+                                                                📚 2. COURSE
+                                                            </label>
+                                                            <div class="dropdown custom-glass-dropdown">
+                                                                <button class="btn dropdown-toggle glass-select-input w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="courseBtn">
+                                                                    <span id="courseLabel" class="text-truncate">Select a course...</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu glass-dropdown-menu" id="modalCourseMenu">
+                                                                    <!-- Courses will be populated via JS -->
+                                                                </ul>
+                                                            </div>
+                                                            <input type="hidden" id="modalCourse" value="">
+                                                        </div>
+                                                        
+                                                        <!-- 3. YEAR / SEMESTER -->
+                                                        <div class="col-md-3">
+                                                            <label style="font-size: 0.72rem; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 6px;">
+                                                                🗓️ 3. SEMESTER
+                                                            </label>
+                                                            <div class="dropdown custom-glass-dropdown">
+                                                                <button class="btn dropdown-toggle glass-select-input w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="semBtn">
+                                                                    <span id="semLabel" class="text-truncate">Select semester...</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu glass-dropdown-menu" id="modalSemMenu">
+                                                                    <!-- Semesters will be populated via JS -->
+                                                                </ul>
+                                                            </div>
+                                                            <input type="hidden" id="modalSem" value="">
+                                                        </div>
+                                                        
+                                                        <!-- LOAD BUTTON -->
+                                                        <div class="col-md-1">
+                                                            <button class="btn w-100 glass-load-btn" onclick="runModalLoad()">
+                                                                <i class="bi bi-cloud-arrow-down-fill me-1"></i> Load
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <style>
+                                    /* Modal Custom CSS */
+                                    .glass-select-input {
+                                        background-color: #d1fae5 !important;
+                                        border: 1px solid #34d399 !important;
+                                        border-radius: 8px !important;
+                                        color: #064e3b !important;
+                                        font-weight: 700 !important;
+                                        font-size: 0.85rem !important;
+                                        padding: 10px 15px !important;
+                                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+                                        transition: all 0.3s ease !important;
+                                        cursor: pointer;
+                                    }
+                                    .glass-select-input:focus, .glass-select-input[aria-expanded="true"] {
+                                        background-color: #ffffff !important;
+                                        border-color: #10b981 !important;
+                                        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2) !important;
+                                        outline: none !important;
+                                    }
+                                    
+                                    /* Custom Dropdown Menu for Glassmorphism */
+                                    .glass-dropdown-menu {
+                                        background: rgba(236, 253, 245, 0.95) !important;
+                                        backdrop-filter: blur(15px);
+                                        -webkit-backdrop-filter: blur(15px);
+                                        border: 1px solid #6ee7b7 !important;
+                                        border-radius: 12px !important;
+                                        padding: 8px !important;
+                                        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.15) !important;
+                                        animation: glassDropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                                        transform-origin: top;
+                                        max-height: 250px;
+                                        overflow-y: auto;
+                                    }
+                                    @keyframes glassDropIn {
+                                        0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+                                        100% { opacity: 1; transform: translateY(0) scale(1); }
+                                    }
+                                    .glass-dropdown-menu .dropdown-item {
+                                        border-radius: 8px;
+                                        padding: 10px 16px;
+                                        color: #064e3b;
+                                        font-weight: 600;
+                                        font-size: 0.85rem;
+                                        transition: all 0.2s ease;
+                                        margin-bottom: 2px;
+                                        white-space: normal;
+                                    }
+                                    .glass-dropdown-menu .dropdown-item:hover {
+                                        background: #10b981;
+                                        color: #fff;
+                                        transform: translateX(5px);
+                                        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+                                    }
+                                    
+                                    .glass-load-btn {
+                                        background: #10b981 !important;
+                                        color: #fff !important;
+                                        border-radius: 8px !important;
+                                        font-weight: 700 !important;
+                                        padding: 10px 0px !important;
+                                        font-size: 0.85rem !important;
+                                        border: none !important;
+                                        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3) !important;
+                                        transition: all 0.3s ease !important;
+                                    }
+                                    .glass-load-btn:hover {
+                                        background: #059669 !important;
+                                        color: #fff !important;
+                                        transform: translateY(-2px) !important;
+                                        box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4) !important;
+                                    }
+                                    /* Smooth sliding animation */
+                                    .modal.fade .glass-modal-content {
+                                        transform: translateY(-40px) scale(0.97) !important;
+                                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+                                        opacity: 0 !important;
+                                    }
+                                    .modal.show .glass-modal-content {
+                                        transform: translateY(0) scale(1) !important;
+                                        opacity: 1 !important;
+                                    }
+                                </style>
+                                
+                                <script>
+                                    async function selectGlassOption(type, value, label) {
+                                        document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).value = value;
+                                        document.getElementById(type + 'Label').innerText = label;
+                                        
+                                        if (type === 'progType') {
+                                            await fetchModalCourses(value);
+                                        }
+                                    }
+                                    
+                                    async function fetchModalCourses(progType) {
+                                        const menuCourse = document.getElementById('modalCourseMenu');
+                                        const menuSem = document.getElementById('modalSemMenu');
+                                        
+                                        menuCourse.innerHTML = '<li><a class="dropdown-item text-muted" href="#">Loading...</a></li>';
+                                        
+                                        try {
+                                            const res = await fetch('/api/courses?programType=' + progType);
+                                            if (res.ok) {
+                                                const courses = await res.json();
+                                                menuCourse.innerHTML = '';
+                                                if (courses.length === 0) {
+                                                    menuCourse.innerHTML = '<li><a class="dropdown-item text-muted" href="#">No courses found</a></li>';
+                                                    selectGlassOption('course', '', 'No courses');
+                                                } else {
+                                                    courses.forEach((c, idx) => {
+                                                        const li = document.createElement('li');
+                                                        li.innerHTML = `<a class="dropdown-item" href="#" onclick="selectGlassOption('course', '${c.code}', '${c.name.replace(/'/g, "\\'")}')">${c.name}</a>`;
+                                                        menuCourse.appendChild(li);
+                                                        if (idx === 0) selectGlassOption('course', c.code, c.name);
+                                                    });
+                                                }
+                                            }
+                                        } catch (err) {
+                                            console.error("Error fetching courses for modal: ", err);
+                                            menuCourse.innerHTML = '<li><a class="dropdown-item text-danger" href="#">Error loading</a></li>';
+                                        }
+                                        
+                                        // Populate semesters
+                                        menuSem.innerHTML = '';
+                                        let opts = [];
+                                        if (progType === 'DIPLOMA') {
+                                            opts = [
+                                                ['4-1','NTA Level 4 — Semester 1'], ['4-2','NTA Level 4 — Semester 2'],
+                                                ['5-1','NTA Level 5 — Semester 1'], ['5-2','NTA Level 5 — Semester 2'],
+                                                ['6-1','NTA Level 6 — Semester 1'], ['6-2','NTA Level 6 — Semester 2'],
+                                            ];
+                                        } else {
+                                            opts = [
+                                                ['1-1','Year 1 — Semester 1'], ['1-2','Year 1 — Semester 2'],
+                                                ['2-1','Year 2 — Semester 1'], ['2-2','Year 2 — Semester 2'],
+                                                ['3-1','Year 3 — Semester 1'], ['3-2','Year 3 — Semester 2'],
+                                                ['4-1','Year 4 — Semester 1'], ['4-2','Year 4 — Semester 2'],
+                                            ];
+                                        }
+                                        
+                                        opts.forEach(([v, t], idx) => { 
+                                            const li = document.createElement('li');
+                                            li.innerHTML = `<a class="dropdown-item" href="#" onclick="selectGlassOption('sem', '${v}', '${t}')">${t}</a>`;
+                                            menuSem.appendChild(li);
+                                            if (idx === 0) selectGlassOption('sem', v, t);
+                                        });
+                                    }
+                                    
+                                    // Initial fetch on modal open
+                                    document.getElementById('glassCalcModal').addEventListener('show.bs.modal', function () {
+                                        const currentProg = document.getElementById('modalProgType').value || 'DIPLOMA';
+                                        fetchModalCourses(currentProg);
+                                    });
+                                    
+                                    function runModalLoad() {
+                                        const progType = document.getElementById('modalProgType').value;
+                                        const courseCode = document.getElementById('modalCourse').value;
+                                        const semValue = document.getElementById('modalSem').value;
+                                        
+                                        // Sync with the main background fields so the backend gets the correct selections
+                                        gpaSelectOption('ProgramType', progType, progType === 'DIPLOMA' ? 'Diploma' : 'Degree', true);
+                                        gpaSelectOption('CourseSelect', courseCode, document.getElementById('courseLabel').innerText, true);
+                                        gpaSelectOption('LevelSemSelect', semValue, document.getElementById('semLabel').innerText, true);
+                                        
+                                        const modalEl = document.getElementById('glassCalcModal');
+                                        const modal = bootstrap.Modal.getInstance(modalEl);
+                                        if(modal) modal.hide();
+                                        
+                                        setTimeout(() => {
+                                            const autoFetch = document.getElementById('gpaAutoFetchBtn');
+                                            if(autoFetch) autoFetch.click();
+                                        }, 400);
+                                    }
+                                </script>
 </body>
 
 </html>
