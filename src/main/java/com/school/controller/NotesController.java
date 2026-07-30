@@ -330,6 +330,28 @@ public class NotesController {
         return "user/dashboard";
     }
 
+    @GetMapping("/recent-materials")
+    public String viewRecentMaterials(
+            @RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            HttpSession session, Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+
+        if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+        } else if ("DIPLOMA".equals(program)) {
+            if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
+                program = loggedInUser.getCourseProgram();
+            } else {
+                program = "DIP_CSE";
+            }
+        }
+        
+        org.springframework.data.domain.Page<Note> notesPage = noteService.fetchRecentMaterialsPaginated(program, page);
+        model.addAttribute("notesPage", notesPage);
+        return "notes/recent_notes";
+    }
 
     @GetMapping("/upload")
     public String showUploadPage(HttpSession session, Model model) {
