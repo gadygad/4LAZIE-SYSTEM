@@ -1939,17 +1939,31 @@
                                         What Students Say</h6>
                                 </div>
 
-                                <div class="d-flex gap-3 overflow-auto pb-2"
+                                <div class="d-flex gap-3 overflow-auto pb-2 testimonials-scroll-container"
                                     style="scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none;">
                                     <style>
-                                        .d-flex.gap-3.overflow-auto::-webkit-scrollbar {
+                                        .testimonials-scroll-container::-webkit-scrollbar {
                                             display: none;
+                                        }
+                                        /* Each testimonial card: fixed 280px on desktop, 85% width on mobile */
+                                        .testimonial-card {
+                                            flex-shrink: 0;
+                                            scroll-snap-align: start;
+                                            width: 280px;
+                                            background: #fff;
+                                            border: 1px solid rgba(0,0,0,0.04);
+                                            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+                                        }
+                                        @media (max-width: 576px) {
+                                            .testimonial-card {
+                                                width: 85vw; /* Show ~1 card at a time on mobile */
+                                                min-width: 240px;
+                                            }
                                         }
                                     </style>
 
                                     <!-- Testimonial 1 -->
-                                    <div class="flex-shrink-0 p-3 rounded-4"
-                                        style="width: 280px; scroll-snap-align: start; background: #fff; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                                    <div class="testimonial-card flex-shrink-0 p-3 rounded-4">
                                         <div class="d-flex gap-1 mb-2">
                                         </div>
                                         <p
@@ -1971,8 +1985,7 @@
                                     </div>
 
                                     <!-- Testimonial 2 -->
-                                    <div class="flex-shrink-0 p-3 rounded-4"
-                                        style="width: 280px; scroll-snap-align: start; background: #fff; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                                    <div class="testimonial-card flex-shrink-0 p-3 rounded-4">
                                         <div class="d-flex gap-1 mb-2">
                                         </div>
                                         <p
@@ -1994,8 +2007,7 @@
                                     </div>
 
                                     <!-- Testimonial 3 -->
-                                    <div class="flex-shrink-0 p-3 rounded-4"
-                                        style="width: 280px; scroll-snap-align: start; background: #fff; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                                    <div class="testimonial-card flex-shrink-0 p-3 rounded-4">
                                         <div class="d-flex gap-1 mb-2">
                                         </div>
                                         <p
@@ -2218,7 +2230,7 @@
                                     display: flex;
                                     align-items: center;
                                     gap: 6px;
-                                    flex-wrap: nowrap;
+                                    flex-wrap: wrap;
                                 }
                                 .apple-note-tag {
                                     background: rgba(16, 185, 129, 0.1);
@@ -2743,10 +2755,9 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                             display: flex;
                                             align-items: center;
                                             justify-content: space-between;
-                                            flex-wrap: nowrap;
+                                            flex-wrap: wrap;           /* allow wrapping on mobile */
+                                            gap: 12px;
                                             border: 1px solid rgba(0,0,0,0.02);
-                                            overflow-x: auto;
-                                            white-space: nowrap;
                                         }
                                         .gpa-inline-icon-box {
                                             width: 45px;
@@ -2779,6 +2790,36 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                             display: flex;
                                             align-items: center;
                                             gap: 15px;
+                                            flex-wrap: wrap;    /* allow inputs to wrap on mobile */
+                                        }
+                                        /* Mobile: stack GPA banner vertically */
+                                        @media (max-width: 576px) {
+                                            .premium-inline-gpa-banner {
+                                                flex-direction: column;
+                                                align-items: flex-start;
+                                                padding: 14px 16px;
+                                            }
+                                            .gpa-inline-right-section {
+                                                width: 100%;
+                                                flex-direction: column;
+                                                align-items: stretch;
+                                                gap: 10px;
+                                            }
+                                            .gpa-inline-inputs-wrapper {
+                                                width: 100%;
+                                                justify-content: space-between;
+                                            }
+                                            .gpa-inline-input {
+                                                width: 100% !important;
+                                                flex: 1;
+                                            }
+                                            .gpa-inline-calc-btn {
+                                                width: 100%;
+                                                justify-content: center;
+                                                margin-top: 0 !important;
+                                                height: 40px;
+                                                font-size: 0.9rem;
+                                            }
                                         }
                                         .gpa-inline-inputs-wrapper {
                                             display: flex;
