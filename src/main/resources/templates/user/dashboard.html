@@ -381,7 +381,7 @@
                                     th:text="${session.user != null ? session.user.name : 'Student'}">Dr. Alex Carter
                                 </h1>
                                 <div class="welcome-course"
-                                    th:text="${session.user != null and session.user.courseProgram != null ? #strings.replace(session.user.courseProgram, '_', ' ') : 'GENERAL PROGRAM'}">
+                                    th:text="${fullCourseName != null ? fullCourseName : 'GENERAL PROGRAM'}">
                                     DIPLOMA IN INFORMATION TECHNOLOGY</div>
                             </div>
                         </div>

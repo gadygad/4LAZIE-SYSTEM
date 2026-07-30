@@ -2,6 +2,7 @@ package com.school.controller;
 
 import com.school.model.Note;
 import com.school.model.User;
+import com.school.model.Course;
 import com.school.service.NoteService;
 import com.school.repository.UserRepository;
 
@@ -311,6 +312,10 @@ public class NotesController {
         model.addAttribute("selectedSemester", semester);
         model.addAttribute("selectedProgram", program);
         model.addAttribute("user", loggedInUser);
+
+        List<Course> foundCourses = courseRepository.findByProgramType(program);
+        String fullCourseName = foundCourses.isEmpty() ? program : foundCourses.get(0).getName();
+        model.addAttribute("fullCourseName", fullCourseName);
 
         List<Note> popularNotes;
         List<Note> recentNotes;
