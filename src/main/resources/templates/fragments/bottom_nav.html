@@ -88,7 +88,9 @@
         </div>
 
         <style>
-            /* === BOTTOM NAV: DESKTOP === */
+            /* ============================================
+               BOTTOM NAV — DESKTOP (floating pill)
+               ============================================ */
             .custom-mobile-nav-wrapper {
                 margin-bottom: 1.5rem;
             }
@@ -96,40 +98,79 @@
                 min-width: 280px;
             }
 
-            /* === BOTTOM NAV: MOBILE === */
-            @media (max-width: 768px) {
+            /* ============================================
+               BOTTOM NAV — MOBILE (flat fixed bar, Material Design 3 standard)
+               ============================================ */
+            @media (max-width: 991.98px) {
+
+                /* Wrapper: stretch full width, flush to bottom edge */
                 .custom-mobile-nav-wrapper {
-                    margin-bottom: calc(env(safe-area-inset-bottom, 12px) + 16px) !important;
-                    padding-left: calc(env(safe-area-inset-left, 0px) + 20px) !important;
-                    padding-right: calc(env(safe-area-inset-right, 0px) + 20px) !important;
+                    margin-bottom: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
+                    display: block !important;
+                    justify-content: unset !important;
                 }
+
+                /* Inner bar: flat, full-width, NOT a pill */
                 .custom-mobile-nav-inner {
                     width: 100% !important;
-                    border-radius: 24px !important;
-                    padding: 8px 12px !important;
-                    justify-content: flex-start !important;
+                    border-radius: 20px 20px 0 0 !important;   /* only top corners rounded */
+                    padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+                    justify-content: space-around !important;
                     min-width: unset !important;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(16, 185, 129, 0.05) !important;
-                    overflow-x: auto !important;
-                    -webkit-overflow-scrolling: touch;
+                    gap: 0 !important;
+                    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08), 0 -1px 4px rgba(16, 185, 129, 0.06) !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    border-bottom: none !important;
+                    border-top: 1px solid rgba(16, 185, 129, 0.15) !important;
+                    overflow: visible !important;
+                    background: rgba(255, 255, 255, 0.97) !important;
+                    backdrop-filter: blur(20px) !important;
+                    -webkit-backdrop-filter: blur(20px) !important;
                 }
-                .custom-mobile-nav-inner::-webkit-scrollbar {
-                    display: none; /* Hide scrollbar for Chrome, Safari and Opera */
-                }
-                .custom-mobile-nav-inner {
-                    -ms-overflow-style: none;  /* IE and Edge */
-                    scrollbar-width: none;  /* Firefox */
-                }
+
+                /* Each nav item: equal flex share, vertically stacked icon + label */
                 .bottom-nav-btn {
+                    flex: 1 1 0 !important;        /* equal width for all items */
                     width: auto !important;
-                    flex: 0 0 auto;
-                    min-width: 65px;
+                    min-width: 0 !important;
+                    max-width: none !important;
+                    padding: 8px 4px 6px !important;
+                    border-radius: 0 !important;
+                    border: none !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 3px !important;
                 }
-                
-                /* Prevent page content from being hidden behind fixed bottom nav */
+
+                /* Icon size: clear and readable on mobile */
+                .bottom-nav-btn i {
+                    font-size: 1.4rem !important;
+                    margin-bottom: 0 !important;
+                    line-height: 1 !important;
+                }
+
+                /* Label: always fully visible, never clipped or squeezed */
+                .bottom-nav-btn span {
+                    font-size: 0.62rem !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.3px !important;
+                    text-align: center !important;
+                    white-space: nowrap !important;
+                    line-height: 1.2 !important;
+                    display: block !important;
+                }
+
+                /* Body padding: prevent content going behind nav */
                 body {
-                    /* Increased padding-bottom to account for the floating mobile nav margin-bottom */
-                    padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 95px) !important;
+                    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
                 }
             }
             .bottom-nav-btn {
