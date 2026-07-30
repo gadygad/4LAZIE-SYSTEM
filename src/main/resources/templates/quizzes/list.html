@@ -55,6 +55,36 @@
             line-height: 1.6;
             white-space: pre-wrap;
         }
+        
+        .question-text pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 16px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .question-text code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: rgba(30, 41, 59, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #b91c1c;
+            font-size: 0.95em;
+        }
+        .question-text pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
         .option-btn {
             display: block;
             width: 100%;
@@ -1374,6 +1404,7 @@
                 return;
             }
 
+
             const btn = document.getElementById('startBtn');
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
             btn.disabled = true;
@@ -1454,24 +1485,21 @@
 
             let html = `<p class="question-text">${displayText}</p>`;
 
-            // Automatically generate options if they are missing or if it's not multiple choice
+            // ALWAYS render as Multiple Choice - no textarea/reveal cheating allowed
             if (!q.options || q.options.length < 2) {
+                // Auto-generate options from other questions' answers as distractors
                 let distractors = [];
                 for (let i = 0; i < questions.length; i++) {
                     if (i !== currentIdx && questions[i].correctAnswer && questions[i].correctAnswer !== q.correctAnswer) {
                         distractors.push(questions[i].correctAnswer);
                     }
                 }
-                // Shuffle distractors and pick up to 3
                 distractors.sort(() => 0.5 - Math.random());
                 q.options = [q.correctAnswer].concat(distractors.slice(0, 3));
-                
-                // Shuffle the final options
                 q.options.sort(() => 0.5 - Math.random());
-                q.type = 'MULTIPLE_CHOICE'; // Treat it as MCQ
             }
 
-            // Always render options
+            // Force type to MULTIPLE_CHOICE always - textarea/essay mode disabled
             const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
             q.options.forEach((opt, i) => {
                 let prefix = letters[i] ? `<span class="fw-bold me-2 text-primary">${letters[i]}.</span>` : '';
@@ -1482,55 +1510,42 @@
         }
 
         function playFeedback(isCorrect) {
-            try {
-                // 1. Play the bell sound using AudioContext
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gainNode = ctx.createGain();
-                    
-                    osc.connect(gainNode);
-                    gainNode.connect(ctx.destination);
-                    
+            // Bell sound - inline, no external dependencies
+            (function() {
+                try {
+                    var AC = window.AudioContext || window.webkitAudioContext;
+                    if (!AC) return;
+                    var ctx = new AC();
+                    var o = ctx.createOscillator();
+                    var g = ctx.createGain();
+                    o.connect(g);
+                    g.connect(ctx.destination);
                     if (isCorrect) {
-                        // Success chime (high pitch, pleasant)
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(800, ctx.currentTime); 
-                        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-                        gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                        o.type = 'sine';
+                        o.frequency.value = 880;
+                        g.gain.setValueAtTime(1, 0);
+                        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
                     } else {
-                        // Buzzer sound (low pitch, harsh)
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(150, ctx.currentTime); 
-                        gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                        o.type = 'square';
+                        o.frequency.value = 200;
+                        g.gain.setValueAtTime(0.7, 0);
+                        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
                     }
-                    
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.5);
-                }
+                    o.start();
+                    o.stop(ctx.currentTime + 1);
+                } catch(e) { console.warn('audio:', e); }
+            })();
 
-                // 2. Speak the result
-                if ('speechSynthesis' in window) {
-                    // Cancel any ongoing speech so it doesn't overlap if clicked quickly
+            // Speech
+            (function() {
+                try {
+                    if (!window.speechSynthesis) return;
                     window.speechSynthesis.cancel();
-                    
-                    const msg = new SpeechSynthesisUtterance();
-                    msg.text = isCorrect ? "Correct!" : "Incorrectly!";
-                    msg.volume = 1;
-                    msg.rate = 1.1;
-                    msg.pitch = isCorrect ? 1.2 : 0.8;
-                    
-                    // Delay speech slightly to let the bell ring first
-                    setTimeout(() => {
-                        window.speechSynthesis.speak(msg);
-                    }, 300);
-                }
-            } catch(e) {
-                console.error("Audio feedback failed:", e);
-            }
+                    var u = new SpeechSynthesisUtterance(isCorrect ? 'Correctly!' : 'Incorrectly!');
+                    u.volume = 1; u.rate = 1; u.pitch = isCorrect ? 1.5 : 0.6;
+                    setTimeout(function(){ window.speechSynthesis.speak(u); }, 200);
+                } catch(e) { console.warn('speech:', e); }
+            })();
         }
 
         function selectAnswer(idx, btn) {
