@@ -189,7 +189,9 @@ public class NoteService {
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
         
         if (institutionId != null && !institutionId.isEmpty()) {
-            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("institution.$id").is(new org.bson.types.ObjectId(institutionId)));
+            if (institutionId.length() == 24 && institutionId.matches("^[0-9a-fA-F]+$")) {
+                query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("institution.$id").is(new org.bson.types.ObjectId(institutionId)));
+            }
         }
 
         if (program != null && !program.isEmpty()) {
