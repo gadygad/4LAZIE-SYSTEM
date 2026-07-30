@@ -1500,6 +1500,16 @@
 
             disableOptions();
 
+            // Fill-in-the-blank magic: replace underscores with the selected option
+            const questionEl = document.querySelector('.question-text');
+            if (questionEl && questionEl.innerHTML.match(/_{3,}/)) {
+                const selectedText = q.options[idx];
+                const isCorrectMatch = (idx === correctIdx);
+                const colorClass = isCorrectMatch ? 'text-success' : 'text-danger';
+                const borderClass = isCorrectMatch ? 'border-success' : 'border-danger';
+                questionEl.innerHTML = questionEl.innerHTML.replace(/_{3,}/, `<span class="fw-bold ${colorClass} bg-light px-2 rounded border border-2 ${borderClass}">${selectedText}</span>`);
+            }
+
             if (idx === correctIdx) {
                 btn.classList.add('correct');
                 btn.innerHTML += ' <i class="bi bi-check-circle-fill float-end"></i>';
