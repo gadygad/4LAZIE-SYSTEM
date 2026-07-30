@@ -1521,28 +1521,55 @@
                     o.connect(g);
                     g.connect(ctx.destination);
                     if (isCorrect) {
+                        // High quality "Ting" bell sound
                         o.type = 'sine';
-                        o.frequency.value = 880;
-                        g.gain.setValueAtTime(1, 0);
-                        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+                        o.frequency.setValueAtTime(800, ctx.currentTime);
+                        o.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
+                        g.gain.setValueAtTime(1, ctx.currentTime);
+                        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
                     } else {
-                        o.type = 'square';
-                        o.frequency.value = 200;
-                        g.gain.setValueAtTime(0.7, 0);
+                        // Soft error "Buzzer" sound
+                        o.type = 'triangle';
+                        o.frequency.setValueAtTime(200, ctx.currentTime);
+                        o.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.2);
+                        g.gain.setValueAtTime(0.5, ctx.currentTime);
                         g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
                     }
                     o.start();
-                    o.stop(ctx.currentTime + 1);
+                    o.stop(ctx.currentTime + 1.5);
                 } catch(e) { console.warn('audio:', e); }
             })();
 
-            // Speech
+            // Clear, High-Quality Speech Synthesis
             (function() {
                 try {
                     if (!window.speechSynthesis) return;
-                    window.speechSynthesis.cancel();
-                    var u = new SpeechSynthesisUtterance(isCorrect ? 'Correctly!' : 'Incorrectly!');
-                    u.volume = 1; u.rate = 1; u.pitch = isCorrect ? 1.5 : 0.6;
+                    window.speechSynthesis.cancel(); // clear queue
+                    
+                    var text = isCorrect ? 'Correct!' : 'Incorrect!';
+                    var u = new SpeechSynthesisUtterance(text);
+                    u.volume = 1.0;
+                    u.rate = 0.9;  // Slightly slower for better clarity
+                    u.pitch = isCorrect ? 1.2 : 0.8;
+
+                    // Select the best available English voice
+                    var applyVoice = function() {
+                        var voices = window.speechSynthesis.getVoices();
+                        if (voices && voices.length > 0) {
+                            // Prefer Google/Microsoft natural voices, fallback to any English
+                            var bestVoice = voices.find(v => v.name.includes('Google US English')) 
+                                || voices.find(v => v.name.includes('UK English Female'))
+                                || voices.find(v => v.name.includes('Microsoft Zira'))
+                                || voices.find(v => v.lang && v.lang.startsWith('en-'));
+                            if (bestVoice) u.voice = bestVoice;
+                        }
+                    };
+                    
+                    applyVoice();
+                    if (window.speechSynthesis.getVoices().length === 0) {
+                        window.speechSynthesis.onvoiceschanged = applyVoice;
+                    }
+
                     setTimeout(function(){ window.speechSynthesis.speak(u); }, 200);
                 } catch(e) { console.warn('speech:', e); }
             })();
