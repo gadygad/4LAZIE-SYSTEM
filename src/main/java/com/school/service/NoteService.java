@@ -256,4 +256,23 @@ public class NoteService {
         List<Note> notes = mongoTemplate.find(query, Note.class);
         return new org.springframework.data.domain.PageImpl<>(notes, pageable, total);
     }
+
+    public org.springframework.data.domain.Page<Note> fetchPopularMaterialsPaginated(String programPrefix, int page) {
+        org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+        
+        if (programPrefix != null && !programPrefix.isEmpty()) {
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+                org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programPrefix),
+                org.springframework.data.mongodb.core.query.Criteria.where("isGeneral").is(true)
+            ));
+        }
+
+        long total = mongoTemplate.count(query, Note.class);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 20);
+        query.with(pageable);
+        query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount", "viewCount"));
+        
+        List<Note> notes = mongoTemplate.find(query, Note.class);
+        return new org.springframework.data.domain.PageImpl<>(notes, pageable, total);
+    }
 }
