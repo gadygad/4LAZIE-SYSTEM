@@ -220,8 +220,6 @@ h1, h2, h3, h4, h5, h6 {
     border-right: 1px solid rgba(16, 185, 129, 0.1);
     box-shadow: -15px 0 40px rgba(16, 185, 129, 0.08);
 }
-.hero-sidebar::-webkit-scrollbar { width: 6px; }
-.hero-sidebar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.15); border-radius: 10px; }
 
 /* Sidebar Buttons */
 .sidebar-hover-btn, .sidebar-group-btn {
@@ -770,4 +768,15 @@ body.sidebar-is-open .premium-guest-navbar {
     to {
         background-position: 200% center;
     }
+}
+
+/* Hide all scrollbars globally based on user request */
+::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+* {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
 }
