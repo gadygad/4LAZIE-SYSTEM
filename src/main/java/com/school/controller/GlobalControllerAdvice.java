@@ -33,6 +33,12 @@ public class GlobalControllerAdvice {
         return googleClientId;
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    @org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.NOT_FOUND)
+    public String handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex, org.springframework.ui.Model model) {
+        return "error/404";
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public String handleException(Exception ex, org.springframework.ui.Model model) {
         log.error("An unexpected error occurred", ex); // Securely log the exact trace internally
