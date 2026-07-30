@@ -1410,41 +1410,29 @@
 
             let html = `<p class="question-text">${displayText}</p>`;
 
-            if (q.type === 'MULTIPLE_CHOICE' || q.type === 'TRUE_FALSE') {
-                if (q.options && q.options.length > 0) {
-                    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-                    q.options.forEach((opt, i) => {
-                        let prefix = letters[i] ? `<span class="fw-bold me-2 text-primary">${letters[i]}.</span>` : '';
-                        html += `<button class="option-btn" onclick="selectAnswer(${i}, this)">${prefix} ${opt}</button>`;
-                    });
+            // Automatically generate options if they are missing or if it's not multiple choice
+            if (!q.options || q.options.length < 2) {
+                let distractors = [];
+                for (let i = 0; i < questions.length; i++) {
+                    if (i !== currentIdx && questions[i].correctAnswer && questions[i].correctAnswer !== q.correctAnswer) {
+                        distractors.push(questions[i].correctAnswer);
+                    }
                 }
-            } else {
-                html += `
-                    <div class="self-assessment-wrapper mb-2">
-                        <textarea id="essayInput" class="form-control premium-textarea" rows="4" placeholder="Think deeply and type your answer here..."></textarea>
-                        <div class="text-center mt-4" id="revealBtnDiv">
-                            <button class="btn btn-lg premium-reveal-btn" onclick="revealMarkingScheme()">
-                                <i class="bi bi-magic me-2"></i> Reveal Marking Scheme
-                            </button>
-                        </div>
-                        <div id="markingSchemeDiv" class="marking-scheme-box" style="display: none;">
-                            <div class="marking-header"><i class="bi bi-check2-circle me-2"></i> Marking Scheme / Expected Answer</div>
-                            <div class="marking-content" id="markingContent"></div>
-                            
-                            <div class="self-grade-section mt-4 pt-3 border-top text-center" id="selfGradeSection">
-                                <h6 class="mb-3 text-muted fw-bold" style="font-family: 'Outfit', sans-serif;">Be honest, did you get it right?</h6>
-                                <div class="d-flex justify-content-center gap-3">
-                                    <button class="btn btn-outline-danger px-4 rounded-pill fw-bold" onclick="selfGrade(false)">
-                                        <i class="bi bi-x-circle me-1"></i> I Missed It
-                                    </button>
-                                    <button class="btn btn-success px-4 rounded-pill shadow-sm fw-bold" onclick="selfGrade(true)">
-                                        <i class="bi bi-check-circle me-1"></i> I Got It (+1)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+                // Shuffle distractors and pick up to 3
+                distractors.sort(() => 0.5 - Math.random());
+                q.options = [q.correctAnswer].concat(distractors.slice(0, 3));
+                
+                // Shuffle the final options
+                q.options.sort(() => 0.5 - Math.random());
+                q.type = 'MULTIPLE_CHOICE'; // Treat it as MCQ
             }
+
+            // Always render options
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+            q.options.forEach((opt, i) => {
+                let prefix = letters[i] ? `<span class="fw-bold me-2 text-primary">${letters[i]}.</span>` : '';
+                html += `<button class="option-btn" onclick="selectAnswer(${i}, this)">${prefix} ${opt}</button>`;
+            });
 
             document.getElementById('questionContent').innerHTML = html;
         }
