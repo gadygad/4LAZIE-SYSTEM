@@ -12,8 +12,12 @@ import java.security.Principal;
 @RequestMapping("/quizzes")
 public class QuizController {
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
+
+    public QuizController(SubjectRepository subjectRepository) {
+        this.subjectRepository = subjectRepository;
+    }
+
 
     @GetMapping
     public String showQuizzesHub(Model model, Principal principal) {

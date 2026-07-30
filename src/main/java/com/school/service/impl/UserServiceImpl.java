@@ -13,14 +13,18 @@ import java.io.IOException;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private com.school.service.FileStorageService fileStorageService;
+        private com.school.service.FileStorageService fileStorageService;
+
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, com.school.service.FileStorageService fileStorageService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.fileStorageService = fileStorageService;
+    }
+
 
     @Override
     public User registerUser(User user, MultipartFile profilePic) throws Exception {

@@ -31,8 +31,12 @@ public class PushNotificationService {
     @Value("${vapid.subject}")
     private String subject;
 
-    @Autowired
-    private PushSubscriptionRepository subscriptionRepository;
+        private PushSubscriptionRepository subscriptionRepository;
+
+    public PushNotificationService(PushSubscriptionRepository subscriptionRepository) {
+        this.subscriptionRepository = subscriptionRepository;
+    }
+
 
     private PushService pushService;
 

@@ -18,11 +18,15 @@ public class GlobalModelAttributes {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalModelAttributes.class);
 
-    @Autowired
-    private NotificationService notificationService;
+        private NotificationService notificationService;
     
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
+
+    public GlobalModelAttributes(NotificationService notificationService, UserRepository userRepository) {
+        this.notificationService = notificationService;
+        this.userRepository = userRepository;
+    }
+
 
     @ModelAttribute
     public void addGlobalAttributes(HttpServletRequest request, org.springframework.ui.Model model) {

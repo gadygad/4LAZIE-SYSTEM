@@ -2,10 +2,8 @@ package com.school.repository;
 
 import com.school.model.Question;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 
-@Repository
 public interface QuestionRepository extends MongoRepository<Question, String> {
     List<Question> findBySubjectId(String subjectId);
     List<Question> findBySubjectIdAndCategoryStartingWithIgnoreCase(String subjectId, String category);

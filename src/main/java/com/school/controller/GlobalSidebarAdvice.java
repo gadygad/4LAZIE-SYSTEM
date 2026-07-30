@@ -14,20 +14,24 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalSidebarAdvice {
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private com.school.repository.NotificationRepository notificationRepository;
+        private com.school.repository.NotificationRepository notificationRepository;
 
-    @Autowired
-    private com.school.repository.AcademicCalendarRepository academicCalendarRepository;
+        private com.school.repository.AcademicCalendarRepository academicCalendarRepository;
 
-    @Autowired
-    private com.school.repository.NoteRepository noteRepository;
+        private com.school.repository.NoteRepository noteRepository;
+
+    public GlobalSidebarAdvice(InstitutionRepository institutionRepository, CourseRepository courseRepository, com.school.repository.NotificationRepository notificationRepository, com.school.repository.AcademicCalendarRepository academicCalendarRepository, com.school.repository.NoteRepository noteRepository) {
+        this.institutionRepository = institutionRepository;
+        this.courseRepository = courseRepository;
+        this.notificationRepository = notificationRepository;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.noteRepository = noteRepository;
+    }
+
 
     @ModelAttribute
     public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {

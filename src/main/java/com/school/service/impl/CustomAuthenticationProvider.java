@@ -20,14 +20,18 @@ import java.util.List;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private com.school.service.LoginAttemptService loginAttemptService;
+        private com.school.service.LoginAttemptService loginAttemptService;
+
+    public CustomAuthenticationProvider(UserRepository userRepository, PasswordEncoder passwordEncoder, com.school.service.LoginAttemptService loginAttemptService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.loginAttemptService = loginAttemptService;
+    }
+
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

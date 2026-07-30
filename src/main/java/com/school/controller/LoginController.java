@@ -15,8 +15,12 @@ import java.util.stream.Collectors;
 public class LoginController {
 
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
+
+    public LoginController(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
+    }
+
 
     @GetMapping("/login")
     public String login(@RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,

@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
 import com.school.repository.CourseRepository;
@@ -38,23 +35,27 @@ import com.school.model.Role;
 public class RegistrationController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
-    @Autowired
-    private UserService userService;
+        private UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private com.school.service.GoogleAuthService googleAuthService;
+        private com.school.service.GoogleAuthService googleAuthService;
 
-    @Autowired
-    private com.school.service.EmailService emailService;
+        private com.school.service.EmailService emailService;
+
+    public RegistrationController(UserService userService, UserRepository userRepository, InstitutionRepository institutionRepository, CourseRepository courseRepository, com.school.service.GoogleAuthService googleAuthService, com.school.service.EmailService emailService) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.institutionRepository = institutionRepository;
+        this.courseRepository = courseRepository;
+        this.googleAuthService = googleAuthService;
+        this.emailService = emailService;
+    }
+
 
     @GetMapping("/register")
     public String showRegisterForm(@RequestParam(value = "redirect", required = false) String redirectUrl,

@@ -52,14 +52,18 @@ public class HomeController {
         }
     }
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
-    @Autowired
-    private AcademicCalendarRepository academicCalendarRepository;
+        private AcademicCalendarRepository academicCalendarRepository;
 
-    @Autowired
-    private com.school.repository.CourseRepository courseRepository;
+        private com.school.repository.CourseRepository courseRepository;
+
+    public HomeController(NoteRepository noteRepository, AcademicCalendarRepository academicCalendarRepository, com.school.repository.CourseRepository courseRepository) {
+        this.noteRepository = noteRepository;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.courseRepository = courseRepository;
+    }
+
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {

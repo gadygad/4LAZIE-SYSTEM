@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 public class NotificationService {
 
-    @Autowired
-    private NotificationRepository notificationRepository;
+        private NotificationRepository notificationRepository;
+
+    public NotificationService(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
+
 
     public void createNotification(String userId, String title, String message) {
         Notification notification = new Notification(userId, title, message);

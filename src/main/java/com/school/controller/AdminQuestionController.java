@@ -16,11 +16,15 @@ import java.util.List;
 @RequestMapping("/admin/questions")
 public class AdminQuestionController {
 
-    @Autowired
-    private QuestionService questionService;
+        private QuestionService questionService;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
+
+    public AdminQuestionController(QuestionService questionService, SubjectRepository subjectRepository) {
+        this.questionService = questionService;
+        this.subjectRepository = subjectRepository;
+    }
+
 
     @GetMapping
     public String listQuestions(Model model) {

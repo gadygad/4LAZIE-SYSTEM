@@ -18,11 +18,15 @@ import java.util.stream.Collectors;
 @RestController
 public class SubjectApiController {
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
+
+    public SubjectApiController(CourseRepository courseRepository, SubjectRepository subjectRepository) {
+        this.courseRepository = courseRepository;
+        this.subjectRepository = subjectRepository;
+    }
+
 
     @GetMapping("/api/subjects")
     public ResponseEntity<?> getSubjects(

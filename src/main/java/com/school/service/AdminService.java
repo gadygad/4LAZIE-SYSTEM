@@ -10,8 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminService {
 
-    @Autowired
-    private PendingActionRepository pendingActionRepository;
+        private PendingActionRepository pendingActionRepository;
+
+    public AdminService(PendingActionRepository pendingActionRepository) {
+        this.pendingActionRepository = pendingActionRepository;
+    }
+
 
     public boolean hasPermission(User user, String requiredPermission) {
         if (user == null) return false;

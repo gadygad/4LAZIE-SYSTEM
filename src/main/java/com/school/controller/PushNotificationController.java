@@ -3,7 +3,6 @@ package com.school.controller;
 import com.school.model.PushSubscription;
 import com.school.model.User;
 import com.school.repository.PushSubscriptionRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,7 @@ public class PushNotificationController {
 
     private static final Logger log = LoggerFactory.getLogger(PushNotificationController.class);
 
-    @Autowired
-    private PushSubscriptionRepository subscriptionRepository;
+        private PushSubscriptionRepository subscriptionRepository;
 
     @org.springframework.beans.factory.annotation.Value("${vapid.public.key}")
     private String publicKey;
@@ -29,8 +27,13 @@ public class PushNotificationController {
         return ResponseEntity.ok(Map.of("publicKey", publicKey));
     }
 
-    @Autowired
-    private com.school.util.AuthUtil authUtil;
+        private com.school.util.AuthUtil authUtil;
+
+    public PushNotificationController(PushSubscriptionRepository subscriptionRepository, com.school.util.AuthUtil authUtil) {
+        this.subscriptionRepository = subscriptionRepository;
+        this.authUtil = authUtil;
+    }
+
 
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@RequestBody Map<String, Object> payload) {

@@ -17,8 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Configuration
 public class CurriculumInitializer {
 
-    @Autowired
-    private CacheManager cacheManager;
+        private CacheManager cacheManager;
+
+    public CurriculumInitializer(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
 
     private void seedCourse(CourseRepository repo, String name, String type, String shortName, String subtitle, String icon, String color, String bg, int duration, String levelPrefix, int startLevel) {
         List<Course> existingCourses = repo.findByProgramType(type);

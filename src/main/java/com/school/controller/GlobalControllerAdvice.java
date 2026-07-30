@@ -13,8 +13,12 @@ public class GlobalControllerAdvice {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalControllerAdvice.class);
 
-    @Autowired
-    private AuthUtil authUtil;
+        private AuthUtil authUtil;
+
+    public GlobalControllerAdvice(AuthUtil authUtil) {
+        this.authUtil = authUtil;
+    }
+
 
     @org.springframework.beans.factory.annotation.Value("${google.client.id:}")
     private String googleClientId;

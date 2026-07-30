@@ -1,6 +1,5 @@
 package com.school.controller;
 
-import com.school.model.User;
 import com.school.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,15 @@ import org.springframework.http.HttpStatus;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
-    @Autowired
-    private NotificationService notificationService;
+        private NotificationService notificationService;
     
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
+
+    public NotificationController(NotificationService notificationService, UserRepository userRepository) {
+        this.notificationService = notificationService;
+        this.userRepository = userRepository;
+    }
+
 
     @PostMapping("/mark-read")
     public ResponseEntity<?> markAllAsRead(@AuthenticationPrincipal UserDetails userDetails) {

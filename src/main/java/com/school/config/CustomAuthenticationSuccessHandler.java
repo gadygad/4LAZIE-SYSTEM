@@ -21,8 +21,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
+
+    public CustomAuthenticationSuccessHandler(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,

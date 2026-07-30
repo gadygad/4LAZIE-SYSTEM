@@ -20,24 +20,28 @@ import java.util.Optional;
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private com.school.util.AuthUtil authUtil;
+        private com.school.util.AuthUtil authUtil;
 
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
 
-    @Autowired
-    private com.school.service.NotificationService notificationService;
+        private com.school.service.NotificationService notificationService;
 
-    @Autowired
-    private com.school.repository.NoteRepository noteRepository;
+        private com.school.repository.NoteRepository noteRepository;
 
-    @Autowired
-    private FileStorageService fileStorageService;
+        private FileStorageService fileStorageService;
+
+    public UserController(UserRepository userRepository, com.school.util.AuthUtil authUtil, com.school.service.NotificationService notificationService, com.school.repository.NoteRepository noteRepository, FileStorageService fileStorageService) {
+        this.userRepository = userRepository;
+        this.authUtil = authUtil;
+        this.notificationService = notificationService;
+        this.noteRepository = noteRepository;
+        this.fileStorageService = fileStorageService;
+    }
+
 
     @GetMapping("/explore")
     public String getExplorePage() {

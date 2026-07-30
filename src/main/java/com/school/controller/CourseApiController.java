@@ -16,8 +16,12 @@ import java.util.stream.Collectors;
 @RestController
 public class CourseApiController {
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
+
+    public CourseApiController(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
+
 
     @GetMapping("/api/courses")
     public ResponseEntity<?> getCourses(@RequestParam(value = "programType", required = false) String programType) {

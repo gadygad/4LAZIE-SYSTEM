@@ -10,8 +10,12 @@ import java.util.Optional;
 @Service
 public class QuestionService {
 
-    @Autowired
-    private QuestionRepository questionRepository;
+        private QuestionRepository questionRepository;
+
+    public QuestionService(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
+
 
     public List<Question> getQuestionsBySubjectAndCategory(String subjectId, String category) {
         return questionRepository.findBySubjectIdAndCategoryStartingWithIgnoreCase(subjectId, category);

@@ -13,8 +13,12 @@ import java.util.Collections;
 // @Service (Disabled in favor of CustomAuthenticationProvider)
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {

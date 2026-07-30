@@ -8,7 +8,6 @@ import com.school.repository.CourseRepository;
 import com.school.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.cloudinary.Cloudinary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,29 +23,22 @@ import org.slf4j.LoggerFactory;
 public class NoteService {
     private static final Logger log = LoggerFactory.getLogger(NoteService.class);
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
 
-    @Autowired
-    private com.school.service.FileStorageService fileStorageService;
+        private com.school.service.FileStorageService fileStorageService;
 
     @Autowired(required = false)
     private com.school.service.PushNotificationService pushNotificationService;
 
-    @Autowired
-    private com.school.service.NotificationService notificationService;
+        private com.school.service.NotificationService notificationService;
 
-    @Autowired
-    private com.school.service.EmailService emailService;
+        private com.school.service.EmailService emailService;
 
-    @Autowired
-    private com.school.repository.UserRepository userRepository;
+        private com.school.repository.UserRepository userRepository;
 
     public void groupNotesByModule(List<Note> notes, String program, Integer level, Integer semester,
                                    Map<String, List<Note>> groupedNotes, Map<String, String> moduleCodes) {
@@ -179,8 +171,19 @@ public class NoteService {
             }
         }
     }
-    @Autowired
-    private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+        private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+
+    public NoteService(NoteRepository noteRepository, CourseRepository courseRepository, SubjectRepository subjectRepository, com.school.service.FileStorageService fileStorageService, com.school.service.NotificationService notificationService, com.school.service.EmailService emailService, com.school.repository.UserRepository userRepository, org.springframework.data.mongodb.core.MongoTemplate mongoTemplate) {
+        this.noteRepository = noteRepository;
+        this.courseRepository = courseRepository;
+        this.subjectRepository = subjectRepository;
+        this.fileStorageService = fileStorageService;
+        this.notificationService = notificationService;
+        this.emailService = emailService;
+        this.userRepository = userRepository;
+        this.mongoTemplate = mongoTemplate;
+    }
+
 
     public org.springframework.data.domain.Page<Note> fetchFilteredNotes(String institutionId, String program, Integer level, Integer semester, String category, String search, int page) {
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();

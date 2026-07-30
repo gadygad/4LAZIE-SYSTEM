@@ -23,18 +23,14 @@ public class DatabaseInitializer implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        private PasswordEncoder passwordEncoder;
 
     // ── Credentials zinasomwa kutoka properties/env vars (sio hardcoded) ──
     @Value("${app.admin.email:admin@school.com}")
@@ -52,11 +48,19 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Value("${app.student.password:student_change_me_2024}")
     private String studentPassword;
 
-    @Autowired
-    private AcademicCalendarRepository academicCalendarRepository;
+        private AcademicCalendarRepository academicCalendarRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
+
+    public DatabaseInitializer(UserRepository userRepository, InstitutionRepository institutionRepository, NoteRepository noteRepository, PasswordEncoder passwordEncoder, AcademicCalendarRepository academicCalendarRepository, CourseRepository courseRepository) {
+        this.userRepository = userRepository;
+        this.institutionRepository = institutionRepository;
+        this.noteRepository = noteRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.courseRepository = courseRepository;
+    }
+
 
     @Override
     public void run(String... args) throws Exception {

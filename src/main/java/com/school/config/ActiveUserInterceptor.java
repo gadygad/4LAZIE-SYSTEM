@@ -18,11 +18,15 @@ import java.time.LocalDateTime;
 @Component
 public class ActiveUserInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private ActivityLogRepository activityLogRepository;
+        private ActivityLogRepository activityLogRepository;
+
+    public ActiveUserInterceptor(UserRepository userRepository, ActivityLogRepository activityLogRepository) {
+        this.userRepository = userRepository;
+        this.activityLogRepository = activityLogRepository;
+    }
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

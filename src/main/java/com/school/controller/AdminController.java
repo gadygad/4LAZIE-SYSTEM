@@ -12,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.school.model.Timetable;
 import com.school.repository.TimetableRepository;
@@ -28,61 +26,64 @@ import com.school.repository.CourseRepository;
 import com.school.service.FileStorageService;
 import com.school.service.PdfParsingService;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
     
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
+        private PasswordResetTokenRepository passwordResetTokenRepository;
     
-    @Autowired
-    private TimetableRepository timetableRepository;
+        private TimetableRepository timetableRepository;
 
-    @Autowired
-    private PdfParsingService pdfParsingService;
+        private PdfParsingService pdfParsingService;
 
-    @Autowired
-    private AcademicCalendarRepository academicCalendarRepository;
+        private AcademicCalendarRepository academicCalendarRepository;
     
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
     
-    @Autowired
-    private FileStorageService fileStorageService;
+        private FileStorageService fileStorageService;
 
-    @Autowired
-    private com.school.service.EmailService emailService;
+        private com.school.service.EmailService emailService;
     
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private com.school.repository.PendingActionRepository pendingActionRepository;
+        private com.school.repository.PendingActionRepository pendingActionRepository;
 
-    @Autowired
-    private com.school.repository.ActivityLogRepository activityLogRepository;
+        private com.school.repository.ActivityLogRepository activityLogRepository;
 
-    @Autowired
-    private com.school.util.AuthUtil authUtil;
+        private com.school.util.AuthUtil authUtil;
 
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
 
-    @Autowired
-    private com.school.service.AdminService adminService;
+        private com.school.service.AdminService adminService;
+
+    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.service.EmailService emailService, PasswordEncoder passwordEncoder, com.school.repository.PendingActionRepository pendingActionRepository, com.school.repository.ActivityLogRepository activityLogRepository, com.school.util.AuthUtil authUtil, com.school.service.AdminService adminService) {
+        this.userRepository = userRepository;
+        this.noteRepository = noteRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.timetableRepository = timetableRepository;
+        this.pdfParsingService = pdfParsingService;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.subjectRepository = subjectRepository;
+        this.courseRepository = courseRepository;
+        this.fileStorageService = fileStorageService;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.pendingActionRepository = pendingActionRepository;
+        this.activityLogRepository = activityLogRepository;
+        this.authUtil = authUtil;
+        this.adminService = adminService;
+    }
+
 
     private String handleDeletionRequest(User admin, String entityType, String entityId, String entityDesc, RedirectAttributes redirectAttributes) {
         String result = adminService.processDeletionRequest(admin, entityType, entityId, entityDesc);

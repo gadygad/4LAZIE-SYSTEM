@@ -15,8 +15,12 @@ import java.util.Optional;
 @Controller
 public class TimetableController {
 
-    @Autowired
-    private TimetableRepository timetableRepository;
+        private TimetableRepository timetableRepository;
+
+    public TimetableController(TimetableRepository timetableRepository) {
+        this.timetableRepository = timetableRepository;
+    }
+
 
     @GetMapping("/timetable/view")
     public String viewTimetable(

@@ -12,8 +12,12 @@ import java.util.List;
 @RequestMapping("/api/public/quizzes")
 public class QuizApiController {
 
-    @Autowired
-    private QuestionService questionService;
+        private QuestionService questionService;
+
+    public QuizApiController(QuestionService questionService) {
+        this.questionService = questionService;
+    }
+
 
     @GetMapping("/practice")
     public List<Question> getPracticeQuestions(

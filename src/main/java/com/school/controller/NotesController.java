@@ -3,14 +3,9 @@ package com.school.controller;
 import com.school.model.Note;
 import com.school.model.User;
 import com.school.service.NoteService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import com.school.repository.UserRepository;
 
 import com.school.repository.NoteRepository;
-import com.school.model.Institution;
 import com.school.repository.CourseRepository;
 import com.school.repository.InstitutionRepository;
 import com.school.repository.SubjectRepository;
@@ -26,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -35,7 +29,6 @@ import com.school.service.FileStorageService;
 import com.school.service.PushNotificationService;
 import com.school.service.NotificationService;
 import com.school.service.EmailService;
-import com.cloudinary.Cloudinary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.school.model.Role;
@@ -44,8 +37,7 @@ import com.school.model.Role;
 public class NotesController {
     private static final Logger log = LoggerFactory.getLogger(NotesController.class);
 
-    @Autowired
-    private com.school.util.AuthUtil authUtil;
+        private com.school.util.AuthUtil authUtil;
 
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
@@ -58,39 +50,44 @@ public class NotesController {
     }
 
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
-    @Autowired
-    private NoteService noteService;
+        private NoteService noteService;
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
 
-    @Autowired
-    private com.school.repository.ActivityLogRepository activityLogRepository;
+        private com.school.repository.ActivityLogRepository activityLogRepository;
 
-    @Autowired
-    private FileStorageService fileStorageService;
+        private FileStorageService fileStorageService;
 
     @Autowired(required = false)
     private PushNotificationService pushNotificationService;
 
-    @Autowired
-    private NotificationService notificationService;
+        private NotificationService notificationService;
 
-    @Autowired
-    private EmailService emailService;
+        private EmailService emailService;
+
+    public NotesController(com.school.util.AuthUtil authUtil, NoteRepository noteRepository, NoteService noteService, UserRepository userRepository, CourseRepository courseRepository, InstitutionRepository institutionRepository, SubjectRepository subjectRepository, com.school.repository.ActivityLogRepository activityLogRepository, FileStorageService fileStorageService, NotificationService notificationService, EmailService emailService) {
+        this.authUtil = authUtil;
+        this.noteRepository = noteRepository;
+        this.noteService = noteService;
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.institutionRepository = institutionRepository;
+        this.subjectRepository = subjectRepository;
+        this.activityLogRepository = activityLogRepository;
+        this.fileStorageService = fileStorageService;
+        this.notificationService = notificationService;
+        this.emailService = emailService;
+    }
+
 
 
     @GetMapping("/home")

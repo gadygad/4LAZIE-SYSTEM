@@ -16,8 +16,12 @@ public class AuthUtil {
 
     private static final Logger log = LoggerFactory.getLogger(AuthUtil.class);
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
+
+    public AuthUtil(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
 
     public User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
