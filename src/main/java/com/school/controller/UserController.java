@@ -93,7 +93,7 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-    public String updateProfile(@jakarta.validation.Valid @ModelAttribute("user") com.school.dto.UserProfileUpdateDTO formUser,
+    public String updateProfile(@jakarta.validation.Valid @ModelAttribute("formUser") com.school.dto.UserProfileUpdateDTO formUser,
                              org.springframework.validation.BindingResult bindingResult,
                              HttpSession session, Model model) {
 
