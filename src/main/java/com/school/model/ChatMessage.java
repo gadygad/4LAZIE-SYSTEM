@@ -1,0 +1,62 @@
+package com.school.model;
+
+import java.time.LocalDateTime;
+
+public class ChatMessage {
+    private String senderId; // "ADMIN" or user's ID
+    private String senderName; // E.g. "4LAZIE", "John Doe"
+    private String messageText;
+    private String attachmentUrl;
+    private LocalDateTime timestamp;
+
+    public ChatMessage() {
+    }
+
+    public ChatMessage(String senderId, String senderName, String messageText, String attachmentUrl) {
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.messageText = messageText;
+        this.attachmentUrl = attachmentUrl;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
+
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
+    }
+
+    public String getAttachmentUrl() {
+        return attachmentUrl;
+    }
+
+    public void setAttachmentUrl(String attachmentUrl) {
+        this.attachmentUrl = attachmentUrl;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+}

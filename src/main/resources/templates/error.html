@@ -76,8 +76,12 @@
             <h2 class="fw-bold mt-3">Oops! Something went wrong</h2>
             <p class="text-danger fw-bold" style="font-size: 1.1rem;">EXCEPTION OCCURRED:</p>
             <p class="text-muted" style="background: #f8d7da; padding: 10px; border-radius: 5px; text-align: left; word-wrap: break-word;">
+                <strong>Status:</strong> <span th:text="${status}"></span><br/>
+                <strong>Error:</strong> <span th:text="${error}"></span><br/>
+                <strong>Message:</strong> <span th:text="${message}"></span><br/>
+                <strong>Exception:</strong> <span th:text="${exception}"></span><br/>
                 <strong>Error Details</strong>:
-                <span th:text="${errorMessage != null ? errorMessage : (message != null ? message : 'No details available')}">An unexpected error occurred.</span>
+                <span th:text="${errorMessage != null ? errorMessage : 'No details available'}">An unexpected error occurred.</span>
             </p>
             <a href="/" class="btn-home">Return to Home</a>
         </div>

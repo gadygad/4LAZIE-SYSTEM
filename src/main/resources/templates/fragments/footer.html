@@ -76,7 +76,25 @@
                 </div>
             </div>
         </div>
-        <script src="/js/push-subscription.js"></script>
+        
+        
+        <!-- Fix Bootstrap Modal Stacking Context Issue -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var assignmentModal = document.getElementById('assignmentHelpModal');
+                if (assignmentModal) {
+                    document.body.appendChild(assignmentModal);
+                }
+                var comingSoonModal = document.getElementById('comingSoonModal');
+                if (comingSoonModal) {
+                    document.body.appendChild(comingSoonModal);
+                }
+                var pushModal = document.getElementById('pushNotificationPrompt');
+                if (pushModal) {
+                    document.body.appendChild(pushModal);
+                }
+            });
+        </script>
 
         <!-- GLOBAL PREMIUM BUTTON LOADING SCRIPT -->
         <script>

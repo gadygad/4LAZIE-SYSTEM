@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Messages | 4LAZIE</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Container */
+        .messages-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+            height: calc(100vh - 120px);
+            overflow: hidden;
+            display: flex;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Left Panel (List) */
+        .list-panel {
+            width: 350px;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        /* Right Panel (Chat) */
+        .chat-panel {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #ffffff;
+        }
+
+        /* Chat Items */
+        .msg-list-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .msg-list-item:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .msg-list-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+        }
+
+        /* Threaded UI Styles */
+        .chat-thread-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-thread-item {
+            display: flex;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+            animation: slideFadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .thread-line {
+            position: absolute;
+            left: 20px; /* Center of avatar (40px / 2) */
+            top: 40px;
+            bottom: -30px;
+            width: 2px;
+            background: linear-gradient(to bottom, rgba(16,185,129,0.3), rgba(16,185,129,0.05));
+            z-index: 1;
+        }
+
+        .chat-thread-item:last-child .thread-line {
+            display: none; /* No line after the last message */
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background-color: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .chat-bubble-content {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border-radius: 20px;
+            padding: 16px 20px;
+            flex-grow: 1;
+            max-width: 90%;
+        }
+
+        .chat-bubble-student .chat-bubble-content {
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+
+        .chat-bubble-admin .chat-bubble-content {
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        /* Hover Actions */
+        .chat-action-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0.7;
+            position: relative;
+            z-index: 20;
+        }
+
+        .chat-action-btn:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            color: #10b981;
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+        
+        @keyframes slideFadeIn {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chat-body-container {
+            background: #f8fafc;
+            position: relative;
+        }
+        
+        /* Background Mesh Gradient for Glassmorphism */
+        .chat-body-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .pdf-card {
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Smooth Sliding for Mobile */
+        @media (max-width: 768px) {
+            .messages-container {
+                height: calc(100vh - 160px); /* Account for mobile navs */
+                border-radius: 16px;
+                margin-top: 10px;
+            }
+            .list-panel {
+                width: 100%;
+                transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .chat-panel {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                transform: translateX(100%);
+                transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                z-index: 10;
+            }
+            .messages-container.chat-active .list-panel {
+                transform: translateX(-30%);
+                opacity: 0;
+            }
+            .messages-container.chat-active .chat-panel {
+                transform: translateX(0);
+            }
+        }
+        
+        /* Typing Effect CSS */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: #10b981;
+            font-weight: bold;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Insert Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid px-2 px-md-4">
+        
+        <div class="messages-container" id="messagesContainer">
+            
+            <!-- LEFT PANEL: LIST -->
+            <div class="list-panel">
+                <div class="p-4 border-bottom" style="background: rgba(255,255,255,0.8);">
+                    <h4 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #1e293b;">
+                        <i class="bi bi-chat-left-dots-fill me-2" style="color: #10b981;"></i> My Messages
+                    </h4>
+                </div>
+                
+                <div class="overflow-auto flex-grow-1" style="scrollbar-width: thin;">
+                    <!-- Empty State -->
+                    <div th:if="${messages == null or #lists.isEmpty(messages)}" class="text-center p-5">
+                        <div class="mb-3" style="width: 80px; height: 80px; background: rgba(16,185,129,0.1); border-radius: 50%; display: flex; align-items:center; justify-content:center; margin: 0 auto; color: #10b981; font-size: 2rem;">
+                            <i class="bi bi-inbox-fill"></i>
+                        </div>
+                        <h5 class="fw-bold" style="color: #475569;">No Messages Yet</h5>
+                        <p class="text-muted" style="font-size: 0.9rem;">Ask 4LAZIE for assignment help and your replies will appear here.</p>
+                    </div>
+
+                    <!-- List Items -->
+                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
+                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="text-muted mb-0 text-truncate" style="font-size: 0.85rem; max-width: 70%;" th:text="${msg.status == 'SOLVED' ? 'Reply received' : 'Waiting for magic...'}">Status</p>
+                            
+                            <!-- Unread Badge -->
+                            <span th:if="${msg.status == 'SOLVED' and !msg.read}" class="badge rounded-pill bg-danger" style="animation: pulse-red-badge 2s infinite;">New</span>
+                            
+                            <!-- Status Icons -->
+                            <i th:if="${msg.status == 'SOLVED' and msg.read}" class="bi bi-check2-all" style="color: #10b981; font-size: 1.1rem;"></i>
+                            <i th:if="${msg.status == 'PENDING'}" class="bi bi-clock-history" style="color: #f59e0b;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: CHAT -->
+            <div class="chat-panel" id="chatPanel">
+                <!-- Default State -->
+                <div id="chatDefault" class="d-flex flex-column align-items-center justify-content-center h-100" style="background: #f8fafc;">
+                    <i class="bi bi-chat-square-heart text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                    <h5 class="fw-bold mt-3 text-muted">Select a message to read</h5>
+                </div>
+
+                <!-- Chat Views (Hidden by default, shown via JS) -->
+                <div th:each="msg : ${messages}" th:id="'chat-view-' + ${msg.id}" class="chat-view d-none d-flex flex-column h-100">
+                    
+                    <!-- Chat Header (Auto-Heading) -->
+                    <div class="p-3 px-md-4 border-bottom d-flex align-items-center" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
+                        <button class="btn btn-light d-md-none me-2 p-2" onclick="closeChat()" style="border-radius: 10px;">
+                            <i class="bi bi-arrow-left fs-5"></i>
+                        </button>
+                        <div class="d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background: rgba(16,185,129,0.1); border-radius: 12px; color: #10b981;">
+                            <i class="bi bi-journal-text fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; color: #1e293b;" th:text="${msg.subjectName} + ' ASSIGNMENT'">SUBJECT</h5>
+                            
+                            <span th:if="${msg.status == 'SOLVED'}" class="text-success fw-bold" style="font-size: 0.8rem;">
+                                <i class="bi bi-check2-all"></i> Solved & Ready
+                            </span>
+                            <span th:if="${msg.status == 'PENDING'}" class="text-warning fw-bold" style="font-size: 0.8rem;">
+                                <i class="bi bi-hourglass-split"></i> Experts are working on it...
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Chat Body -->
+                    <div class="flex-grow-1 p-4 chat-body-container" style="overflow-y: auto; scroll-behavior: smooth;" th:id="'chat-scroll-' + ${msg.id}">
+                        <div class="chat-thread-container">
+                            
+                            <!-- Initial Request Bubble (Student) -->
+                            <div class="chat-thread-item chat-bubble-student">
+                                <div class="thread-line"></div>
+                                <div class="chat-avatar" style="color: #3b82f6;">
+                                    <i th:if="${session.user.profilePicture == null}" class="bi bi-person-fill fs-5"></i>
+                                    <img th:if="${session.user.profilePicture != null}" th:src="${session.user.profilePicture.startsWith('http') ? session.user.profilePicture : '/uploads/' + session.user.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                    <div class="status-dot" style="background-color: #10b981;"></div>
+                                </div>
+                                <div class="chat-bubble-content">
+                                    <div class="d-flex align-items-center mb-1 gap-2">
+                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;" th:text="${session.user.name}">You</span>
+                                        <i class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
+                                        <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:00 AM</small>
+                                    </div>
+                                    <p class="mb-2" style="font-size: 0.95rem; color: #334155; line-height: 1.6;" th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</p>
+                                    
+                                    <div th:if="${msg.attachmentUrl != null}" class="mt-3 p-3 rounded-3" style="background: rgba(0,0,0,0.02); border: 1px dashed rgba(0,0,0,0.1);">
+                                        <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2" style="color: #64748b; font-weight: 600; font-size: 0.85rem;">
+                                            <i class="bi bi-paperclip fs-5"></i> View my attachment
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="mt-2 d-flex gap-2">
+                                        <button class="chat-action-btn"><i class="bi bi-heart"></i> Like</button>
+                                        <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fallback for Legacy Admin Reply -->
+                            <div th:if="${msg.status == 'SOLVED' and (msg.messages == null or msg.messages.isEmpty())}" class="chat-thread-item chat-bubble-admin">
+                                <div class="thread-line"></div>
+                                <div class="chat-avatar" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                                    <img src="/images/logo.png" alt="4LAZIE" style="width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: white; padding: 2px;">
+                                    <div class="status-dot" style="background-color: #10b981;"></div>
+                                </div>
+                                <div class="chat-bubble-content">
+                                    <div class="d-flex align-items-center mb-1 gap-2">
+                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;">4LAZIE</span>
+                                        <i class="bi bi-patch-check-fill text-success" style="font-size: 0.8rem;"></i>
+                                        <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:05 AM</small>
+                                    </div>
+                                    <p class="mb-0" th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; color: #334155;" th:text="${msg.adminReply}">Admin reply</p>
+                                    
+                                    <div th:if="${msg.replyPdfUrl != null}" class="pdf-card mt-3">
+                                        <i class="bi bi-file-earmark-pdf-fill fs-2 me-3" style="color: #ef4444;"></i>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Magic_Solution.pdf</h6>
+                                            <div class="d-flex gap-2 mt-2">
+                                                <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="btn btn-sm text-white fw-bold" style="background: #10b981; border-radius: 8px;">
+                                                    <i class="bi bi-eye"></i> View File
+                                                </a>
+                                                <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" download class="btn btn-sm fw-bold" style="background: rgba(16,185,129,0.1); color: #059669; border-radius: 8px;">
+                                                    <i class="bi bi-download"></i> Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="mt-3 d-flex gap-2">
+                                        <button class="chat-action-btn"><i class="bi bi-heart"></i> <span th:text="${(msg.id * 7) % 25 + 5}">24</span></button>
+                                        <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chat Messages Thread -->
+                            <th:block th:if="${msg.messages != null and !msg.messages.isEmpty()}">
+                                <div th:each="chat, iterStat : ${msg.messages}" class="chat-thread-item" th:classappend="${chat.senderId == 'ADMIN'} ? 'chat-bubble-admin' : 'chat-bubble-student'">
+                                    <div class="thread-line"></div>
+                                    
+                                    <!-- Avatar -->
+                                    <th:block th:if="${chat.senderId == 'ADMIN'}">
+                                        <div class="chat-avatar" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                                            <img src="/images/logo.png" alt="4LAZIE" style="width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: white; padding: 2px;">
+                                            <div class="status-dot" style="background-color: #10b981;"></div>
+                                        </div>
+                                    </th:block>
+                                    <th:block th:unless="${chat.senderId == 'ADMIN'}">
+                                        <div class="chat-avatar" style="color: #3b82f6;">
+                                            <i th:if="${session.user.profilePicture == null}" class="bi bi-person-fill fs-5"></i>
+                                            <img th:if="${session.user.profilePicture != null}" th:src="${session.user.profilePicture.startsWith('http') ? session.user.profilePicture : '/uploads/' + session.user.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                            <div class="status-dot" style="background-color: #10b981;"></div>
+                                        </div>
+                                    </th:block>
+
+                                    <!-- Content -->
+                                    <div class="chat-bubble-content">
+                                        <div class="d-flex align-items-center mb-1 gap-2">
+                                            <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;" th:text="${chat.senderId == 'ADMIN' ? '4LAZIE' : session.user.name}">Name</span>
+                                            <i th:if="${chat.senderId == 'ADMIN'}" class="bi bi-patch-check-fill text-success" style="font-size: 0.8rem;"></i>
+                                            <i th:unless="${chat.senderId == 'ADMIN'}" class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
+                                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</small>
+                                        </div>
+                                        
+                                        <!-- Note: Typing effect applied only if unread -->
+                                        <p class="mb-2" th:classappend="${!msg.read and chat.senderId == 'ADMIN' and iterStat.last} ? 'typing-text' : ''" style="font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; color: #334155;" th:text="${chat.messageText}">Message</p>
+                                        
+                                        <div th:if="${chat.attachmentUrl != null}" th:classappend="${chat.senderId == 'ADMIN'} ? 'pdf-card mt-3' : 'mt-3 p-3 rounded-3'" th:style="${chat.senderId != 'ADMIN'} ? 'background: rgba(0,0,0,0.02); border: 1px dashed rgba(0,0,0,0.1);' : ''">
+                                            <th:block th:if="${chat.senderId == 'ADMIN'}">
+                                                <i class="bi bi-file-earmark-pdf-fill fs-2 me-3" style="color: #ef4444;"></i>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Magic_Solution.pdf</h6>
+                                                    <div class="d-flex gap-2 mt-2">
+                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="btn btn-sm text-white fw-bold" style="background: #10b981; border-radius: 8px;">
+                                                            <i class="bi bi-eye"></i> View File
+                                                        </a>
+                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" download class="btn btn-sm fw-bold" style="background: rgba(16,185,129,0.1); color: #059669; border-radius: 8px;">
+                                                            <i class="bi bi-download"></i> Download
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                            
+                                            <th:block th:unless="${chat.senderId == 'ADMIN'}">
+                                                <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2" style="color: #64748b; font-weight: 600; font-size: 0.85rem;">
+                                                    <i class="bi bi-paperclip fs-5"></i> View attached file
+                                                </a>
+                                            </th:block>
+                                        </div>
+                                        
+                                        <!-- Action Buttons -->
+                                        <div class="mt-3 d-flex gap-2">
+                                            <button class="chat-action-btn"><i class="bi bi-heart"></i> <span th:text="${(chat.id * 3) % 15 + 2}">12</span></button>
+                                            <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Reply Box (User Side) -->
+                    <div th:if="${msg.status == 'SOLVED'}" class="p-3 p-md-4 border-top" style="background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);">
+                        <form th:action="@{'/api/assignments/chat/' + ${msg.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data" class="chat-reply-form">
+                            <!-- Using standard POST with redirect/reload for simplicity, but JS fetch is better. We will use JS fetch in the script below. -->
+                            <div class="chat-input-wrapper d-flex align-items-end gap-2">
+                                <textarea name="messageText" class="form-control form-control-lg auto-resize-textarea" rows="1" placeholder="Type a message to 4LAZIE..." required style="border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); background: rgba(248, 250, 252, 0.8); resize: none; overflow-y: hidden; padding-top: 12px; padding-bottom: 12px;"></textarea>
+                                <button type="submit" class="btn fw-bold px-3 py-2" style="background: transparent; color: #dc2626; border: none; font-size: 1.1rem; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Send
+                                </button>
+                            </div>
+                            <!-- Attachment button hidden, but can be toggled -->
+                            <div class="mt-2 text-start ms-2">
+                                <label class="btn btn-sm btn-light rounded-pill" style="color: #64748b; font-weight: 500; font-size: 0.8rem; border: 1px solid #e2e8f0; cursor: pointer;">
+                                    <i class="bi bi-paperclip me-1"></i> Attach file
+                                    <input type="file" name="file" style="display: none;" onchange="this.parentElement.innerHTML = '<i class=\'bi bi-file-earmark-check text-success me-1\'></i> File selected';">
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Insert Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function openChat(id) {
+            try {
+                // Auto-read logic via AJAX
+                const listItem = document.getElementById('list-item-' + id);
+                if (!listItem) {
+                    console.error("List item not found for id: " + id);
+                    return;
+                }
+                
+                const badge = listItem.querySelector('.badge.bg-danger');
+                
+                if (badge) {
+                    // Send read request
+                    const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                    const csrfToken = match ? match[2] : '';
+                    
+                    fetch('/api/assignments/read/' + id, {
+                        method: 'POST',
+                        headers: { 'X-XSRF-TOKEN': csrfToken }
+                    }).then(() => {
+                        // Remove badge and update icon visually
+                        badge.remove();
+                        const iconContainer = listItem.querySelector('.bi-check2-all');
+                        if(iconContainer) iconContainer.style.color = '#10b981';
+                    }).catch(e => console.error("Error updating read status", e));
+                }
+
+                // UI Logic
+                document.querySelectorAll('.msg-list-item').forEach(el => el.classList.remove('active'));
+                listItem.classList.add('active');
+                
+                const chatDefault = document.getElementById('chatDefault');
+                if (chatDefault) {
+                    chatDefault.classList.add('d-none');
+                    chatDefault.classList.remove('d-flex');
+                }
+                
+                document.querySelectorAll('.chat-view').forEach(el => {
+                    el.classList.add('d-none');
+                    el.classList.remove('d-flex');
+                });
+                
+                const view = document.getElementById('chat-view-' + id);
+                if (view) {
+                    view.classList.remove('d-none');
+                    view.classList.add('d-flex');
+                } else {
+                    console.error("Chat view not found for id: " + id);
+                }
+
+                // Mobile sliding
+                if (window.innerWidth <= 768) {
+                    const container = document.getElementById('messagesContainer');
+                    if(container) container.classList.add('chat-active');
+                }
+                
+                // Scroll to bottom
+                const scrollContainer = document.getElementById('chat-scroll-' + id);
+                if(scrollContainer) {
+                    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                }
+                
+                // Trigger Typing Effect Sequentially
+                if (view) {
+                    const typingElements = Array.from(view.querySelectorAll('.typing-text')).filter(el => !el.hasAttribute('data-typed'));
+                    
+                    function typeNextElement(index) {
+                        if (index >= typingElements.length) return;
+                        
+                        const typingElement = typingElements[index];
+                        const text = typingElement.innerHTML; // get original HTML/text
+                        typingElement.innerHTML = ''; // clear it
+                        typingElement.classList.add('typing-cursor');
+                        typingElement.setAttribute('data-typed', 'true');
+                        
+                        let i = 0;
+                        function typeWriter() {
+                            if (i < text.length) {
+                                typingElement.innerHTML += text.charAt(i);
+                                i++;
+                                if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                                setTimeout(typeWriter, 50); // Slower typing speed
+                            } else {
+                                typingElement.classList.remove('typing-cursor');
+                                setTimeout(() => typeNextElement(index + 1), 300);
+                            }
+                        }
+                        setTimeout(typeWriter, 50);
+                    }
+                    
+                    if (typingElements.length > 0) {
+                        setTimeout(() => typeNextElement(0), 200); // Small delay before typing starts
+                    }
+                }
+            } catch (error) {
+                console.error("Error in openChat:", error);
+                alert("Error opening chat. Please refresh the page.");
+            }
+        }
+
+        function closeChat() {
+            const container = document.getElementById('messagesContainer');
+            if (container) container.classList.remove('chat-active');
+        }
+
+        // AJAX Chat Submission
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto resize text area
+            document.querySelectorAll('.auto-resize-textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                    if (this.scrollHeight > 150) {
+                        this.style.overflowY = 'auto';
+                        this.style.height = '150px';
+                    } else {
+                        this.style.overflowY = 'hidden';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.chat-reply-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalBtnContent = submitBtn.innerHTML;
+                    // Removed loading spinner to keep chat UI clean
+                    submitBtn.disabled = true;
+                    
+                    const formData = new FormData(this);
+                    
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find the chat container
+                            const chatContainerId = this.closest('.chat-view').id.replace('chat-view', 'chat-scroll');
+                            const chatContainer = document.getElementById(chatContainerId);
+                            
+                            // Build attachment HTML if exists
+                            let attachmentHtml = '';
+                            if (data.attachmentUrl) {
+                                const url = data.attachmentUrl.startsWith('http') ? data.attachmentUrl : '/uploads/' + data.attachmentUrl;
+                                attachmentHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-decoration-none d-inline-flex align-items-center" style="background: rgba(16,185,129,0.1); color: #059669; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 500;"><i class="bi bi-file-earmark-pdf me-2 fs-6"></i>View File</a></div>`;
+                            }
+                            
+                            // Build new chat bubble (Threaded Style)
+                            const newBubble = document.createElement('div');
+                            newBubble.className = 'chat-thread-item chat-bubble-student';
+                            const profilePicHtml = data.profilePicture 
+                                ? `<img src="${data.profilePicture.startsWith('http') ? data.profilePicture : '/uploads/' + data.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+                                : `<i class="bi bi-person-fill fs-5"></i>`;
+                            
+                            newBubble.innerHTML = `
+                                <div class="thread-line"></div>
+                                <div class="chat-avatar" style="color: #3b82f6;">
+                                    ${profilePicHtml}
+                                    <div class="status-dot" style="background-color: #10b981;"></div>
+                                </div>
+                                <div class="chat-bubble-content">
+                                    <div class="d-flex align-items-center mb-1 gap-2">
+                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;">You</span>
+                                        <i class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
+                                        <small class="text-muted" style="font-size: 0.75rem;">${data.time}</small>
+                                    </div>
+                                    <p class="mb-2 dynamic-typing-text" style="font-size: 0.95rem; color: #334155; line-height: 1.6; white-space: pre-wrap;"></p>
+                                    ${attachmentHtml}
+                                    
+                                    <div class="mt-2 d-flex gap-2">
+                                        <button class="chat-action-btn"><i class="bi bi-heart"></i> Like</button>
+                                        <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // Append bubble to the thread container
+                            const threadContainer = chatContainer.querySelector('.chat-thread-container');
+                            if (threadContainer) {
+                                threadContainer.appendChild(newBubble);
+                            } else {
+                                chatContainer.appendChild(newBubble);
+                            }
+                            
+                            // Apply Typing Effect to the sent message
+                            const msgText = data.messageText;
+                            const textElem = newBubble.querySelector('.dynamic-typing-text');
+                            textElem.classList.add('typing-cursor');
+                            let charIndex = 0;
+                            const scrollArea = document.getElementById(chatContainerId);
+                            
+                            function typeNewMessage() {
+                                if (charIndex < msgText.length) {
+                                    textElem.innerHTML += msgText.charAt(charIndex);
+                                    charIndex++;
+                                    if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+                                    setTimeout(typeNewMessage, 100);
+                                } else {
+                                    textElem.classList.remove('typing-cursor');
+                                }
+                            }
+                            typeNewMessage();
+                            
+                            this.reset();
+                            const textarea = this.querySelector('textarea');
+                            if(textarea) { textarea.style.height = 'auto'; }
+                            if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+                        } else {
+                            alert("Failed to send message: " + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert("An error occurred while sending the message.");
+                    })
+                    .finally(() => {
+                        submitBtn.innerHTML = originalBtnContent;
+                        submitBtn.disabled = false;
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

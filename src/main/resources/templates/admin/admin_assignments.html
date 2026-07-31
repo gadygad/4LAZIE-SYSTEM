@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Requests | Admin 4LAZIE</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .request-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(16,185,129,0.1);
+            border-color: rgba(16,185,129,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div th:replace="~{fragments/top_actions :: actions}"></div>
+
+    <div class="container py-4 py-md-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <div class="d-inline-flex align-items-center mb-1" style="background: #f1f5f9; padding: 14px 24px; border-radius: 12px; border: 1.5px dashed #cbd5e1; width: 100%; max-width: 400px;">
+                    <h2 class="fw-bold m-0" style="font-family: 'Inter', sans-serif; color: #94a3b8; font-size: 1.15rem; text-transform: uppercase; letter-spacing: 1px;">
+                        ASSIGNMENT REQUESTS...
+                    </h2>
+                </div>
+                <p class="mt-2 mb-0 ms-2" style="color: #64748b; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.3px;">Manage and solve student assignments with ease</p>
+            </div>
+            
+            <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-4 py-2 shadow flex-shrink-0" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" style="background: white; color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(16,185,129,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';">
+                <i class="bi bi-grid-fill me-2"></i> Admin Menu
+            </button>
+        </div>
+
+        <!-- Success/Error Alerts -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+            <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Requests List -->
+        <div class="row">
+            <div th:if="${requests == null or #lists.isEmpty(requests)}" class="col-12 text-center py-5">
+                <i class="bi bi-emoji-smile fs-1 text-muted d-block mb-3"></i>
+                <h5 class="text-muted">No assignment requests at the moment.</h5>
+            </div>
+
+            <div th:each="req : ${requests}" class="col-lg-6">
+                <div class="request-card p-4 position-relative">
+                    
+                    <!-- Status Badge -->
+                    <span th:if="${req.status == 'PENDING'}" class="badge bg-warning position-absolute top-0 end-0 m-3 rounded-pill px-3 py-2">
+                        <i class="bi bi-hourglass-split me-1"></i> Pending
+                    </span>
+                    <span th:if="${req.status == 'SOLVED'}" class="badge bg-success position-absolute top-0 end-0 m-3 rounded-pill px-3 py-2">
+                        <i class="bi bi-check2-all me-1"></i> Solved
+                    </span>
+
+                    <!-- Student Info -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div style="width:40px; height:40px; background: rgba(59,130,246,0.1); color: #3b82f6; border-radius: 50%; display: flex; align-items:center; justify-content:center; font-weight:bold; font-size: 1.2rem;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-0" th:text="${userMap != null and userMap.containsKey(req.userId) ? userMap.get(req.userId).name : 'Student'}">Student Name</h6>
+                            <small class="text-muted" th:text="${#temporals.format(req.createdAt, 'dd MMM yyyy, HH:mm')}">Date</small>
+                        </div>
+                    </div>
+
+                    <!-- Subject and Question -->
+                    <h5 class="fw-bold text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b;" th:text="${req.subjectName}">SUBJECT</h5>
+                    <p class="text-muted" style="font-size: 0.95rem; line-height: 1.6;" th:text="${req.questionText != null and !req.questionText.isEmpty() ? req.questionText : 'No question text provided.'}">Question text...</p>
+                    
+                    <p class="mb-3 text-danger fw-bold" style="font-size: 0.85rem;" th:if="${req.deadline != null}"><i class="bi bi-calendar-event me-1"></i> Deadline: <span th:text="${req.deadline}"></span></p>
+
+                    <!-- Attachment -->
+                    <div th:if="${req.attachmentUrl != null}" class="mb-4">
+                        <a th:href="${req.attachmentUrl.startsWith('http') ? req.attachmentUrl : '/uploads/' + req.attachmentUrl}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">
+                            <i class="bi bi-paperclip"></i> View Student's Attachment
+                        </a>
+                    </div>
+
+                    <hr style="opacity: 0.1;">
+
+                    <!-- Admin Action Area -->
+                    <div th:if="${req.status == 'PENDING'}">
+                        <h6 class="fw-bold mb-3 text-success"><i class="bi bi-magic"></i> Send Automated 4LAZIE Reply</h6>
+                        <form th:action="@{'/admin/assignments/reply/' + ${req.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label text-muted" style="font-size: 0.85rem;">Attach Solution PDF/Image (Required for Magic Reply)</label>
+                                <input type="file" name="file" class="form-control" style="border-radius: 10px;" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 fw-bold" style="border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                                <i class="bi bi-stars me-1"></i> Send Magic Reply
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Chat Area for SOLVED -->
+                    <div th:if="${req.status == 'SOLVED'}" class="mt-4">
+                        <h6 class="fw-bold text-muted mb-3"><i class="bi bi-chat-dots-fill"></i> Chat Thread</h6>
+                        
+                        <div class="chat-container p-3 rounded-4" style="background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05); max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
+                            
+                            <!-- Legacy message fallback if messages list is empty -->
+                            <div th:if="${req.messages == null or req.messages.isEmpty()}" class="d-flex flex-column align-items-start">
+                                <span class="badge bg-success mb-1">4LAZIE Admin</span>
+                                <div class="p-3 rounded-3" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); max-width: 85%;">
+                                    <p class="mb-2" style="font-size: 0.9rem; white-space: pre-wrap;" th:text="${req.adminReply}"></p>
+                                    <a th:if="${req.replyPdfUrl != null}" th:href="${req.replyPdfUrl.startsWith('http') ? req.replyPdfUrl : '/uploads/' + req.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #059669;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
+                                </div>
+                            </div>
+                            
+                            <!-- Loop through messages -->
+                            <div th:each="msg : ${req.messages}" class="d-flex flex-column" th:classappend="${msg.senderId == 'ADMIN'} ? 'align-items-start' : 'align-items-end'">
+                                <span class="badge mb-1" th:classappend="${msg.senderId == 'ADMIN'} ? 'bg-success' : 'bg-primary'" th:text="${msg.senderName}"></span>
+                                <div class="p-3 rounded-3" th:style="${msg.senderId == 'ADMIN'} ? 'background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); max-width: 85%;' : 'background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); max-width: 85%;'">
+                                    <p class="mb-2 chat-message-text" th:classappend="${msg.senderId != 'ADMIN'} ? 'typing-text-admin' : ''" style="font-size: 0.9rem; white-space: pre-wrap;" th:text="${msg.messageText}"></p>
+                                    <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #059669;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
+                                    <div class="text-end mt-1"><small class="text-muted" style="font-size: 0.7rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></small></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reply Form -->
+                        <div class="mt-3 p-3 rounded-4" style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8);">
+                            <form th:action="@{'/admin/assignments/chat/' + ${req.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data" class="admin-chat-form">
+                                <div class="d-flex align-items-end gap-2">
+                                    <textarea name="messageText" class="form-control auto-resize-textarea" rows="2" placeholder="Type a reply..." required style="border-radius: 20px; background: rgba(255,255,255,0.8); resize: none; overflow-y: hidden;"></textarea>
+                                    <button class="btn fw-bold px-3 py-2" type="submit" style="background: transparent; color: #8B0000; border: none; font-size: 1.1rem; flex-shrink: 0;">Send</button>
+                                </div>
+                                <div class="mt-2">
+                                    <input type="file" name="file" class="form-control form-control-sm" style="border-radius: 10px; background: rgba(255,255,255,0.5);">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='assignments')}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Typing effect for student messages on admin side sequentially
+            const typingElements = Array.from(document.querySelectorAll('.typing-text-admin')).filter(el => !el.hasAttribute('data-typed'));
+            
+            function typeNextElement(index) {
+                if (index >= typingElements.length) return;
+                
+                const el = typingElements[index];
+                const text = el.innerHTML;
+                el.innerHTML = '';
+                el.classList.add('typing-cursor');
+                el.setAttribute('data-typed', 'true');
+                let i = 0;
+                
+                function typeWriter() {
+                    if (i < text.length) {
+                        el.innerHTML += text.charAt(i);
+                        i++;
+                        const chatContainer = el.closest('.chat-container');
+                        if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                        setTimeout(typeWriter, 100); // 100ms
+                    } else {
+                        el.classList.remove('typing-cursor');
+                        setTimeout(() => typeNextElement(index + 1), 300); // Wait 300ms before next message
+                    }
+                }
+                setTimeout(typeWriter, 100);
+            }
+            
+            if (typingElements.length > 0) {
+                setTimeout(() => typeNextElement(0), 300);
+            }
+
+            // Auto resize text area
+            document.querySelectorAll('.auto-resize-textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                    if (this.scrollHeight > 150) {
+                        this.style.overflowY = 'auto';
+                        this.style.height = '150px';
+                    } else {
+                        this.style.overflowY = 'hidden';
+                    }
+                });
+            });
+
+            // AJAX form submission
+            document.querySelectorAll('.admin-chat-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalBtnContent = submitBtn.innerHTML;
+                    // Removed loading spinner to keep chat UI clean
+                    submitBtn.disabled = true;
+
+                    const formData = new FormData(this);
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const chatContainer = this.closest('.chat-container');
+                            const newBubble = document.createElement('div');
+                            newBubble.className = 'd-flex flex-column align-items-start mb-3';
+                            let attachmentHtml = '';
+                            if (data.attachmentUrl) {
+                                const url = data.attachmentUrl.startsWith('http') ? data.attachmentUrl : '/uploads/' + data.attachmentUrl;
+                                attachmentHtml = `<a href="${url}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #059669;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>`;
+                            }
+                            newBubble.innerHTML = `
+                                <span class="badge bg-success mb-1">4LAZIE Admin</span>
+                                <div class="p-3 rounded-3" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); max-width: 85%;">
+                                    <p class="mb-2 admin-dynamic-typing-text" style="font-size: 0.9rem; white-space: pre-wrap;"></p>
+                                    ${attachmentHtml}
+                                    <div class="text-end mt-1"><small class="text-muted" style="font-size: 0.7rem;">${data.time}</small></div>
+                                </div>
+                            `;
+                            // Insert before the form container
+                            this.parentElement.parentElement.insertBefore(newBubble, this.parentElement);
+
+                            // Apply Typing Effect
+                            const msgText = data.messageText;
+                            const textElem = newBubble.querySelector('.admin-dynamic-typing-text');
+                            textElem.classList.add('typing-cursor');
+                            let charIndex = 0;
+                            
+                            function typeNewMessage() {
+                                if (charIndex < msgText.length) {
+                                    textElem.innerHTML += msgText.charAt(charIndex);
+                                    charIndex++;
+                                    if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                                    setTimeout(typeNewMessage, 100);
+                                } else {
+                                    textElem.classList.remove('typing-cursor');
+                                }
+                            }
+                            typeNewMessage();
+
+                            this.reset();
+                            const textarea = this.querySelector('textarea');
+                            if(textarea) { textarea.style.height = 'auto'; }
+                            if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                        } else {
+                            alert("Failed to send message.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("An error occurred. Check console for details.");
+                    })
+                    .finally(() => {
+                        submitBtn.innerHTML = originalBtnContent;
+                        submitBtn.disabled = false;
+                    });
+                });
+            });
+            
+            // Initial scroll to bottom
+            document.querySelectorAll('.chat-container').forEach(container => {
+                container.scrollTop = container.scrollHeight;
+            });
+        });
+    </script>
+</body>
+</html>

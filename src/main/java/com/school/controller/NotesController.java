@@ -141,6 +141,7 @@ public class NotesController {
         // Enforce course boundaries for students
         if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
             program = loggedInUser.getCourseProgram();
+            if (program == null || program.isEmpty()) program = "DIP_CSE";
         } else if (program == null || program.isEmpty()) {
             // Fallback for admins/guests when program is empty
             program = (loggedInUser != null && loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) 
@@ -275,6 +276,7 @@ public class NotesController {
         // Enforce course boundaries for students
         if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
             program = loggedInUser.getCourseProgram();
+            if (program == null || program.isEmpty()) program = "DIP_CSE";
         } else if ("DIPLOMA".equals(program)) {
             if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
                 program = loggedInUser.getCourseProgram();
