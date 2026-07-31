@@ -278,7 +278,7 @@
                     </div>
 
                     <!-- List Items -->
-                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
+                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" th:onclick="|openChat('${msg.id}')|" th:id="'list-item-' + ${msg.id}">
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
                             <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
@@ -306,7 +306,7 @@
                 </div>
 
                 <!-- Chat Views (Hidden by default, shown via JS) -->
-                <div th:each="msg : ${messages}" th:id="'chat-view-' + ${msg.id}" class="chat-view d-none d-flex flex-column h-100">
+                <div th:each="msg : ${messages}" th:id="'chat-view-' + ${msg.id}" class="chat-view d-none flex-column h-100">
                     
                     <!-- Chat Header (Auto-Heading) -->
                     <div class="p-3 px-md-4 border-bottom d-flex align-items-center" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
