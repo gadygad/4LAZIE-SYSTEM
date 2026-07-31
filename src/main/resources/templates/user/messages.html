@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Messages | 4LAZIE</title>
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/global-premium.css?v=2}">
+    <link rel="stylesheet" th:href="@{/css/dashboard-premium.css?v=6}">
+    <link rel="stylesheet" href="/css/mobile-spacing-standards.css?v=2">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#10b981">
 
@@ -254,6 +257,9 @@
 
     <!-- Insert Navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
     <div class="container-fluid px-2 px-md-4">
         
@@ -268,6 +274,7 @@
                 </div>
                 
                 <div class="overflow-auto flex-grow-1" style="scrollbar-width: thin;">
+                    <!-- DEBUG -->
                     <!-- Empty State -->
                     <div th:if="${messages == null or #lists.isEmpty(messages)}" class="text-center p-5">
                         <div class="mb-3" style="width: 80px; height: 80px; background: rgba(16,185,129,0.1); border-radius: 50%; display: flex; align-items:center; justify-content:center; margin: 0 auto; color: #10b981; font-size: 2rem;">
@@ -278,7 +285,7 @@
                     </div>
 
                     <!-- List Items -->
-                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" th:onclick="|openChat('${msg.id}')|" th:id="'list-item-' + ${msg.id}">
+                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
                             <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
@@ -356,8 +363,6 @@
                                     
                                     <!-- Action Buttons -->
                                     <div class="mt-2 d-flex gap-2">
-                                        <button class="chat-action-btn"><i class="bi bi-heart"></i> Like</button>
-                                        <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
                                     </div>
                                 </div>
                             </div>
@@ -394,8 +399,6 @@
                                     
                                     <!-- Action Buttons -->
                                     <div class="mt-3 d-flex gap-2">
-                                        <button class="chat-action-btn"><i class="bi bi-heart"></i> <span th:text="${(msg.subjectName.length() * 7) % 25 + 5}">24</span></button>
-                                        <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
                                     </div>
                                 </div>
                             </div>
@@ -457,8 +460,6 @@
                                         
                                         <!-- Action Buttons -->
                                         <div class="mt-3 d-flex gap-2">
-                                            <button class="chat-action-btn"><i class="bi bi-heart"></i> <span th:text="${(iterStat.index * 3) % 15 + 2}">12</span></button>
-                                            <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
                                         </div>
                                     </div>
                                 </div>
@@ -493,8 +494,6 @@
 
     <!-- Insert Footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         function openChat(id) {
@@ -670,8 +669,6 @@
                                     ${attachmentHtml}
                                     
                                     <div class="mt-2 d-flex gap-2">
-                                        <button class="chat-action-btn"><i class="bi bi-heart"></i> Like</button>
-                                        <button class="chat-action-btn"><i class="bi bi-reply"></i> Reply</button>
                                     </div>
                                 </div>
                             `;
@@ -723,5 +720,5 @@
             });
         });
     </script>
-</body>
+<script>document.addEventListener("click", function(e) { if(e.target.closest("[data-bs-toggle=\"dropdown\"]")) { console.log("Dropdown toggle clicked!", e.target); try { var dropdown = new bootstrap.Dropdown(e.target.closest("[data-bs-toggle=\"dropdown\"]")); dropdown.toggle(); } catch(err) { alert("Bootstrap error: " + err.message); } } });</script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script></body>
 </html>
