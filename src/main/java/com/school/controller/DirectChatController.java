@@ -70,6 +70,7 @@ public class DirectChatController {
         DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd MMM");
         for (ChatMessage msg : chat.getMessages()) {
             Map<String, Object> m = new HashMap<>();
+            m.put("id",                   msg.getId());
             m.put("senderId",            msg.getSenderId());
             m.put("senderName",           msg.getSenderName());
             m.put("senderProfilePicture", msg.getSenderProfilePicture());
@@ -179,6 +180,7 @@ public class DirectChatController {
 
         ChatMessage last = chat.getMessages().get(chat.getMessages().size() - 1);
         resp.put("success", true);
+        resp.put("id", last.getId());
         resp.put("messageText", last.getMessageText());
         resp.put("time", DateTimeFormatter.ofPattern("hh:mm a").format(last.getTimestamp()));
         return ResponseEntity.ok(resp);
@@ -283,6 +285,7 @@ public class DirectChatController {
 
         ChatMessage last = updated.getMessages().get(updated.getMessages().size() - 1);
         resp.put("success", true);
+        resp.put("id", last.getId());
         resp.put("messageText", last.getMessageText());
         resp.put("time", DateTimeFormatter.ofPattern("hh:mm a").format(last.getTimestamp()));
         return ResponseEntity.ok(resp);

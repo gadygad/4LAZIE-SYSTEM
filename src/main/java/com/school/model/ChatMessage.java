@@ -1,8 +1,10 @@
 package com.school.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ChatMessage {
+    private String id = UUID.randomUUID().toString();
     private String senderId;             // "ADMIN" or user's ID
     private String senderName;            // E.g. "4LAZIE", "John Doe"
     private String senderProfilePicture;  // Profile picture URL (null = use initial)
@@ -28,6 +30,14 @@ public class ChatMessage {
         this.messageText = messageText;
         this.attachmentUrl = attachmentUrl;
         this.timestamp = LocalDateTime.now();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getSenderId() {
