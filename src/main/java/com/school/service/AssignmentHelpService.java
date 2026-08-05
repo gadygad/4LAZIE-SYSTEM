@@ -55,6 +55,15 @@ public class AssignmentHelpService {
         return assignmentRequestRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    public org.springframework.data.domain.Page<AssignmentRequest> getAdminRequestsPaginated(String status, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        if (status == null || status.isEmpty() || status.equalsIgnoreCase("ALL")) {
+            return assignmentRequestRepository.findAllByOrderByCreatedAtDesc(pageable);
+        } else {
+            return assignmentRequestRepository.findByStatusOrderByCreatedAtDesc(status.toUpperCase(), pageable);
+        }
+    }
+
     public Optional<AssignmentRequest> getRequestById(String id) {
         return assignmentRequestRepository.findById(id);
     }

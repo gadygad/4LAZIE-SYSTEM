@@ -95,18 +95,24 @@ public class AssignmentHelpController {
     // --- ADMIN ENDPOINTS ---
 
     @GetMapping("/admin/assignments")
-    public String getAdminAssignments(HttpSession session, Model model) {
+    public String getAdminAssignments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "30") int size,
+            @RequestParam(defaultValue = "ALL") String status,
+            HttpSession session, Model model) {
         User admin = (User) session.getAttribute("user");
         if (admin == null || (!"ADMIN".equals(admin.getRole().name()) && !"SUPER_ADMIN".equals(admin.getRole().name()))) {
             return "redirect:/login";
         }
         
-        List<AssignmentRequest> requests = assignmentHelpService.getAllRequests();
-        model.addAttribute("requests", requests);
+        org.springframework.data.domain.Page<AssignmentRequest> requestsPage = assignmentHelpService.getAdminRequestsPaginated(status, page, size);
+        model.addAttribute("requestsPage", requestsPage);
+        model.addAttribute("requests", requestsPage.getContent());
+        model.addAttribute("currentStatus", status);
         
         // Add user map for resolving names
         Map<String, User> userMap = new HashMap<>();
-        for (AssignmentRequest req : requests) {
+        for (AssignmentRequest req : requestsPage.getContent()) {
             if (!userMap.containsKey(req.getUserId())) {
                 userRepository.findById(req.getUserId()).ifPresent(u -> userMap.put(req.getUserId(), u));
             }
