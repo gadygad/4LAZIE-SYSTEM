@@ -192,6 +192,21 @@ public class AdminController {
         return "admin/admin_users";
     }
 
+    @GetMapping("/users/{id}/profile")
+    public String viewUserProfile(@PathVariable String id, HttpSession session, Model model) {
+        User admin = getLoggedInUser();
+        if (!adminService.hasPermission(admin, "MANAGE_USERS")) {
+            return "redirect:/login";
+        }
+        User profileUser = userRepository.findById(id).orElse(null);
+        if (profileUser == null) {
+            return "redirect:/admin/users";
+        }
+        model.addAttribute("loggedInUser", admin);
+        model.addAttribute("profileUser", profileUser);
+        return "admin/admin_user_profile";
+    }
+
     @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
