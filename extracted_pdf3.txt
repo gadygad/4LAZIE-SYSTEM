@@ -1,0 +1,721 @@
+
+
+UNIT-II 
+Data Link Layer 
+The Data Link Layer is the second layer (Layer 2) in the OSI Model used in computer 
+networking. 
+Simple Definition 
+The Data Link Layer is responsible for reliable transfer of data between two directly 
+connected devices on the same network. 
+Main Functions 
+1. Framing 
+It takes raw data from the Network Layer and breaks it into frames (smaller units). 
+2. Physical Addressing (MAC Address)  
+It adds source and destination MAC addresses to each frame so devices can identify 
+each other on a local network. 
+3. Error Detection & Correction 
+Detects errors during transmission using techniques like checksums or CRC. 
+4. Flow Control 
+Ensures that data is sent at a speed the receiver can handle. 
+5. Access Control 
+Determines which device has permission to send data at a given time (important in shared 
+networks). 
+ Sub layers of Data Link Layer 
+1. Logical Link Control (LLC) 
+o Manages communication between devices 
+o Provides error checking and flow control 
+2. Media Access Control (MAC) 
+o Controls how devices access the network medium 
+o Handles MAC addressing 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+In the Data Link Layer, design issues are the key challenges engineers must solve to ensure 
+reliable and efficient communication between directly connected devices (within the OSI 
+Model). 
+Here are the main design issues explained clearly: 
+ 1. Framing 
+Problem: How to divide a continuous stream of bits into meaningful units. 
+Solution: Use frames with clear boundaries. 
+Methods: 
+ Character count 
+ Byte stuffing 
+ Bit stuffing 
+ Physical layer coding violations 
+Ensures the receiver knows where each frame starts and ends. 
+2. Physical Addressing (MAC Addressing) 
+Problem: How devices identify each other on the same network. 
+Solution: Use MAC addresses (unique hardware addresses). 
+Ensures data reaches the correct device within a LAN. 
+ 3. Error Control 
+Problem: Data may get corrupted during transmission. 
+Solution: Detect and sometimes correct errors. 
+Techniques: 
+ Parity check 
+ CRC (Cyclic Redundancy Check) 
+ Acknowledgment & retransmission (ARQ) 
+Ensures reliable communication. 
+
+  
+ 
+ 
+4. Flow Control 
+Problem: Sender may send data faster than the receiver can handle. 
+Solution: Regulate the data transmission rate. 
+Methods: 
+ Stop-and-Wait 
+ Sliding Window 
+Prevents data loss due to overflow. 
+ 
+5. Access Control (Medium Access Control) 
+Problem: Multiple devices share the same communication medium. 
+Solution: Decide who can send data and when. 
+Techniques: 
+ CSMA/CD (used in Ethernet) 
+ CSMA/CA (used in Wi-Fi) 
+Prevents collisions and chaos in the network. 
+ 6. Link Management 
+Problem: How to establish, maintain, and terminate a connection. 
+Solution: Define procedures for: 
+ Connection setup 
+ Data transfer 
+ Disconnection 
+ Ensures smooth communication lifecycle. 
+ 
+ 
+ 
+ 
+ 
+
+ 
+Error Detection and Error Correction (Data 
+Link Layer) 
+These are key mechanisms used in networking (especially in the OSI Model) to ensure data is 
+transmitted accurately and reliably. 
+ 
+1. Error Detection 
+ 
+ Meaning 
+Error detection is the process of identifying whether data has been corrupted during 
+transmission. 
+It does not fix the error, it only tells that an error exists. 
+Common Techniques 
+1. Parity Check 
+ Adds 1 extra bit (parity bit) 
+ Types: 
+o Even parity 
+o Odd parity 
+ Simple but not very reliable 
+
+ 
+2. Checksum 
+ Data is divided into blocks 
+ Sender computes a sum and sends it 
+ Receiver recomputes and compares 
+Used in some protocols but can miss complex errors 
+ 
+3. CRC (Cyclic Redundancy Check) 
+ Most powerful and widely used method 
+ Uses binary division with a generator polynomial 
+Very effective in detecting errors in: 
+ Ethernet 
+ Wi-Fi 
+ 
+
+2. Error Correction 
+ 
+ 
+ 
+
+ 
+ Meaning 
+Error correction is the process of detecting AND fixing errors in the received data. 
+ 
+Types of Error Correction 
+ A. Forward Error Correction (FEC) 
+ Sender adds extra redundant bits 
+ Receiver can correct errors without retransmission 
+Example: 
+ Hamming Code 
+Used where retransmission is costly (e.g., satellite communication) 
+ 
+B. Automatic Repeat reQuest (ARQ) 
+ If error is detected → receiver asks for retransmission 
+
+Types: 
+1. Stop-and-Wait ARQ 
+2. Go-Back-N ARQ 
+3. Selective Repeat ARQ 
+Common in reliable data communication systems 
+Key Differences 
+Feature Error Detection Error Correction 
+Purpose Finds errors Finds & fixes errors 
+Retransmission Needed Not always needed 
+Complexity Simple More complex 
+Example CRC, Parity Hamming Code, ARQ 
+ 
+Simple Analogy 
+ Error Detection → Like a teacher marking an answer wrong ❌ 
+ Error Correction → Like a teacher correcting it to the right answer ✔️ 
+ 
+ Summary 
+ Error Detection = Check if data is wrong 
+ Error Correction = Fix the wrong data 
+ Both are essential for reliable communication 
+ 
+ 
+ 
+ 
+ 
+
+ Elementary Data Link Layer Protocols 
+These are basic (theoretical) protocols used to understand how the Data Link Layer works in 
+the OSI Model. 
+They assume ideal or simplified conditions and help build the foundation for real protocols. 
+ 
+1. Simple Protocol (Unrestricted Simplex Protocol) 
+ 
+ Features 
+ Data flows in one direction only (simplex) 
+ Sender keeps sending data without waiting 
+ Receiver is always ready 
+ Assumptions 
+ No errors 
+ No data loss 
+ Receiver can handle all incoming data 
+
+ Very unrealistic, but useful for learning basics. 
+ 
+2. Stop-and-Wait Protocol 
+ Features 
+ Sender sends one frame at a time 
+ Waits for ACK (acknowledgment) before sending next 
+Advantages 
+ Simple and reliable 
+Disadvantages 
+ Slow (low efficiency) 
+3. Stop-and-Wait ARQ 
+ Features 
+ Similar to Stop-and-Wait, but includes: 
+o Error detection 
+o Retransmission 
+ 
+ 
+Sliding Window Protocols (Data Link Layer) 
+Sliding Window Protocols are advanced techniques used in the OSI Model to improve 
+efficiency, flow control, and error control compared to Stop-and-Wait. 
+ 
+ Why Use Sliding Window? 
+  Increases speed and efficiency 
+  Better use of bandwidth 
+  Supports continuous data transmission 
+ 
+ 
+ 
+
+How It Works 
+ Frames are numbered (sequence numbers) 
+ Sender sends multiple frames within the window 
+ Receiver sends ACKs 
+ Window slides forward as ACKs are received 
+ Types of Sliding Window Protocols 
+1. Go-Back-N ARQ 
+ Features 
+ Sender can send N frames continuously 
+ Receiver accepts only in-order frames 
+ If error occurs → sender retransmits from the error frame onward 
+Advantages 
+ Simple implementation 
+ Better than Stop-and-Wait 
+Disadvantages 
+ Wastes bandwidth (retransmits many frames) 
+ 
+2. Elective Repeat ARQ 
+ Features 
+ Sender sends multiple frames 
+ Receiver accepts and stores out-of-order frames 
+ Only incorrect/lost frames are retransmitted 
+ Advantages 
+ Very efficient 
+ Minimal retransmission 
+ Disadvantages 
+ More complex 
+ Requires more memory (buffering) 
+ 
+
+Multiple Access Protocols (MAC Protocols) 
+Multiple Access Protocols are used in the Data Link Layer (MAC sublayer) of the OSI Model 
+to control how multiple devices share the same communication channel. 
+The main goal: avoid collisions and ensure fair use of the medium. 
+The Core Problem 
+If many devices try to send data at the same time on a shared medium →Collision occurs → 
+data is lost 
+ 
+ Categories of Multiple Access Protocols 
+ 
+1.  Random Access Protocols 
+Devices transmit randomly, but handle collisions when they occur. 
+Types: 
+ALOHA 
+ Pure ALOHA → send anytime 
+ Slotted ALOHA → send in time slots 
+ 
+ CSMA (Carrier Sense Multiple Access) 
+ Device listens before transmitting 
+ 
+2.  Controlled Access Protocols 
+Devices take turns in a controlled manner. 
+Types: 
+ Polling 
+ One device (master) controls others 
+ Asks each device if it wants to send 
+ 
+ 
+
+Token Passing 
+ A special token circulates 
+ Only the device with the token can transmit 
+       Used in older networks like Token Ring 
+ 
+ Reservation 
+ Devices reserve time slots in advance 
+ 
+3. Channelization Protocols 
+The channel is divided into smaller parts. 
+Types: 
+ FDMA (Frequency Division) 
+ Each device gets a different frequency 
+ 
+ TDMA (Time Division) 
+ Each device gets a time slot 
+ 
+ CDMA (Code Division) 
+ All devices share channel using unique codes 
+ 
+ 
+ 
+ 
+ 
+ALOHA Protocol (Multiple Access Protocol) 
+ALOHA is one of the earliest random access protocols used in the Data Link Layer of the OSI 
+Model. 
+
+ It allows devices to transmit data whenever they have data to send, without strict control. 
+ 
+Types of ALOHA 
+ 
+1. Pure ALOHA 
+ Features 
+ Send data at any time 
+ No synchronization between devices 
+ Problem 
+ High chance of collision 
+ Efficiency 
+ Maximum efficiency ≈ 18.4% 
+ 
+2. Slotted ALOHA 
+Features 
+ Time is divided into equal slots 
+ Devices can send only at the beginning of a slot 
+ Advantage 
+ Reduces collisions 
+Efficiency 
+ Maximum efficiency ≈ 36.8% (better than Pure ALOHA) 
+ 
+ 
+CSMA (Carrier Sense Multiple Access) 
+CSMA is a multiple access protocol used in the Data Link Layer (MAC sublayer) of the OSI 
+Model. 
+It improves on ALOHA by making devices listen before transmitting. 
+
+ Basic Idea 
+ A device checks (senses) the channel before sending 
+ If the channel is idle → transmit 
+ If the channel is busy → wait 
+This reduces collisions compared to ALOHA, but does not eliminate them completely. 
+ Types of CSMA 
+ 
+1. Persistent CSMA 
+ Features 
+ If channel is idle → transmit immediately (probability = 1) 
+ If busy → keep sensing continuously 
+ Advantage 
+ Fast transmission 
+ Disadvantage 
+ High chance of collision (many devices send at once) 
+ 
+2. Non-Persistent CSMA 
+Features 
+ If channel is busy → wait a random time before retrying 
+ Advantage 
+ Fewer collisions 
+ Disadvantage 
+ More delay 
+ 
+3. Persistent CSMA (used in slotted systems) 
+ Features 
+ When channel is idle: 
+o Transmit with probability  
+
+o Wait with probability  
+ Advantage 
+ Balances collision and delay 
+ 
+CSMA/CD (Carrier Sense Multiple Access with 
+Collision Detection) 
+CSMA/CD is a network protocol used in the Data Link Layer (MAC sublayer) of the OSI 
+Model. 
+It allows devices to detect collisions while transmitting and react immediately. 
+Basic Idea 
+ Devices listen before transmitting (like CSMA) 
+ While transmitting, they monitor the channel 
+ If a collision occurs → stop immediately and resend later 
+ How CSMA/CD Works 
+Steps: 
+1. Device senses the channel 
+2. If idle → starts transmitting 
+3. While transmitting → keeps listening 
+4. If collision detected: 
+o Stops transmission 
+o Sends a jam signal 
+o Waits for a random time (backoff) 
+5. Retransmits the frame 
+ 
+ 
+Where CSMA/CD is used 
+ Classic wired LANs like Ethernet 
+Note: 
+Modern switched Ethernet does not use CSMA/CD because: 
+ No shared medium 
+ No collisions (full-duplex communication) 
+
+Advantages 
+ Reduces wasted transmission time 
+ Improves network efficiency 
+ Simple and effective for shared networks 
+ Disadvantages 
+ Not suitable for wireless networks 
+ Collisions still possible 
+ Less useful in modern switched networks 
+ 
+CSMA/CA (Carrier Sense Multiple Access with 
+Collision Avoidance) 
+CSMA/CA is a multiple access protocol used in the Data Link Layer (MAC sublayer) of the OSI 
+Model. 
+ It is mainly used in wireless networks to avoid collisions before they happen. 
+Basic Idea 
+ Devices listen before sending data 
+ But unlike CSMA/CD, wireless devices cannot easily detect collisions while transmitting 
+ So instead, they try to prevent collisions in advance 
+How CSMA/CA Works 
+Steps: 
+1. Device senses the channel 
+2. If idle → waits for a short time (DIFS) 
+3. Uses random backoff timer 
+4. When timer expires → sends data 
+5. Receiver sends ACK (acknowledgment) 
+6. If no ACK → retransmission occurs 
+Advantages 
+ Reduces collisions in wireless networks 
+ Improves reliability 
+ Works well with shared air medium 
+ 
+
+ Disadvantages 
+ Extra delay due to waiting/backoff 
+ Lower throughput compared to wired Ethernet 
+ More complex (RTS/CTS mechanism) 
+ Collision-Free Protocols (Multiple Access) 
+Collision-free protocols are methods used in the Data Link Layer of the OSI Model to ensure 
+that no two devices transmit at the same time, so collisions are completely avoided. 
+Unlike ALOHA or CSMA (which may still collide), these protocols are fully controlled or 
+scheduled. 
+ 
+Basic Idea 
+Instead of “competing” for the channel, devices are given: 
+ Turns (permission-based access) 
+ Time slots (scheduled access) 
+ Ordered sequence (controlled transmission) 
+ 
+Main Types of Collision-Free Protocols 
+ 
+1. Bit-Map Protocol 
+How it works 
+ Time is divided into reservation cycles 
+ Each station has a bit position 
+ Stations indicate if they want to transmit by setting their bit to 1 
+ Process: 
+1. Reservation phase (stations announce intent) 
+2. Transmission phase (ordered sending) 
+ Advantage 
+ No collisions 
+ Fair access 
+ Disadvantage 
+
+ Overhead increases when many stations exist 
+3. Token Passing Protocol 
+ 
+How it works 
+ A special frame called a token circulates in the network 
+ Only the device holding the token can transmit 
+ Process: 
+1. Token circulates among devices 
+2. Device with data captures token 
+3. Sends data 
+4. Releases token 
+ Used in: 
+ Token Ring (historical LANs) 
+ Advantage 
+ No collisions 
+ Predictable access time 
+Disadvantage 
+ If token is lost → network fails 
+ Slower in large networks 
+3. Polling Protocol 
+How it works 
+ A central controller (master) checks each device one by one 
+ Devices respond only when asked 
+Process: 
+1. Master polls station A, B, C... 
+2. Station sends data only when permitted 
+Used in: 
+ Centralized networks 
+ Some industrial systems 
+Advantage 
+
+ Simple control 
+ No collisions 
+ Disadvantage 
+ Single point of failure 
+ Polling delay 
+Ethernet – Physical Layer 
+Ethernet is a widely used LAN technology defined in the standards of the Ethernet. 
+At the Physical Layer (Layer 1) of the OSI Model, Ethernet deals with how bits are 
+transmitted over the physical medium. 
+ 
+Meaning of Ethernet Physical Layer 
+The Ethernet Physical Layer defines: 
+  Type of cables and connectors used 
+  Electrical or optical signals for data transmission 
+  Speed and distance limits 
+  Encoding of bits into signals 
+ In simple terms: 
+It is responsible for sending raw bits (0s and 1s) across the network cable or wireless 
+medium (rarely Ethernet is wireless). 
+ 
+ Key Components of Ethernet Physical Layer 
+1. Transmission Media 
+Ethernet uses different media: 
+Twisted Pair Cable (most common) 
+ Used in LANs (Cat5e, Cat6, Cat6a) 
+ Uses RJ-45 connectors 
+ Fiber Optic Cable 
+ High speed & long distance 
+ Uses light signals instead of electricity 
+ Coaxial Cable (old Ethernet) 
+ Used in early Ethernet standards 
+
+ 
+ 
+ 
+2. Signaling and Encoding 
+Ethernet converts bits into signals using encoding methods such as: 
+ Manchester encoding (classic Ethernet) 
+ 4B/5B encoding (Fast Ethernet) 
+ PAM encoding (Gigabit Ethernet) 
+ Purpose: 
+ Ensure synchronization 
+ Reduce transmission errors 
+3. Data Rate (Speed) 
+Ethernet supports different speeds: 
+ 10 Mbps → Ethernet (old) 
+ 100 Mbps → Fast Ethernet 
+ 1 Gbps → Gigabit Ethernet 
+ 10 Gbps and above → Modern Ethernet 
+ 
+4. Topology Support 
+Modern Ethernet uses star topology: 
+ Devices connect to a switch 
+ Switch manages communication centrally 
+ 
+5. Physical Layer Devices 
+ Hubs (old technology) 
+ Switches (modern Ethernet backbone) 
+ Network Interface Cards (NICs) 
+ 
+ 
+ 
+
+ 
+ 
+ Important Concept: Ethernet and Other Layers 
+Although Ethernet is mainly Physical + Data Link: 
+ Physical Layer → transmits bits 
+ Data Link Layer → handles frames, MAC addresses, and error control 
+Both work together for full communication. 
+ 
+ Advantages of Ethernet Physical Layer 
+  High speed (up to 100 Gbps and more) 
+  Reliable transmission 
+  Supports long distances (especially fiber) 
+  Cost-effective 
+ 
+ Limitations 
+  Requires physical cables (less mobility) 
+ Installation can be complex in large buildings 
+ Cable length limits (for copper media) 
+ 
+Ethernet MAC Sub-layer (Media Access Control Sub-
+layer) 
+The Ethernet MAC sub-layer is a part of the Data Link Layer (Layer 2) in the OSI model. It 
+is responsible for controlling how devices in a network access the transmission medium and how 
+data is framed and transmitted over Ethernet. 
+ 
+1. Position in OSI Model 
+The Data Link Layer is divided into two sub-layers: 
+ LLC (Logical Link Control) – upper part 
+ MAC (Media Access Control) – lower part ⬅ Ethernet MAC belongs here 
+
+ 
+2. Main Functions of MAC Sub-layer 
+(a) Frame Encapsulation 
+It packages data from the Network Layer into Ethernet frames, which include: 
+ Destination MAC address 
+ Source MAC address 
+ Type/Length field 
+ Data (payload) 
+ FCS (Frame Check Sequence for error detection) 
+ 
+(b) Physical Addressing 
+Uses MAC addresses (48-bit hardware addresses) to identify devices on a local network. 
+Example: 
+00:1A:2B:3C:4D:5E 
+ 
+(c) Media Access Control 
+Determines how devices share the same transmission medium. 
+In traditional Ethernet, it uses: 
+ CSMA/CD (Carrier Sense Multiple Access with Collision Detection) 
+o Listen before sending 
+o Detect collisions 
+o Retransmit if collision occurs 
+(In modern switched Ethernet, collisions are mostly eliminated.) 
+ 
+(d) Error Detection 
+Uses CRC (Cyclic Redundancy Check) in the Frame Check Sequence to detect corrupted 
+frames. 
+ 
+3. Role in Ethernet Communication 
+When a device sends data: 
+
+1. MAC sub-layer creates an Ethernet frame 
+2. Adds MAC addresses 
+3. Sends frame to Physical Layer 
+4. Physical layer transmits bits over cable/wireless medium 
+ 
+4. Importance 
+ Ensures correct device-to-device delivery in LAN 
+ Prevents data collisions (in shared networks) 
+ Provides reliable frame delivery 
+ Enables efficient local communication 
+ 
+Components of a Communication System 
+A communication system is made up of several key components that work together to transmit 
+information from sender to receiver. 
+1. Information Source (Message) 
+ The origin of data 
+ Can be voice, text, video, or images 
+Example: a person speaking or a computer sending data 
+2. Transmitter (Sender) 
+ Converts the message into a suitable signal for transmission 
+ Performs encoding, modulation, and sometimes compression 
+Example: mobile phone, radio station transmitter 
+3. Transmission Medium (Channel) 
+ The path through which the signal travels 
+ Can be wired or wireless 
+Examples: 
+ Copper cable 
+ Fiber optic cable 
+ Air (radio waves, Wi-Fi, satellite) 
+4. Receiver 
+ Accepts the transmitted signal 
+ Converts it back into original form (demodulation and decoding) 
+Example: phone, TV, computer 
+ 
+
+5. Destination 
+ The final point where the message is delivered 
+Example: a person listening to a call or viewing a video 
+ 
+6. Noise 
+ Unwanted disturbances that affect signal quality 
+ Can occur in any part of the channel 
+Example: interference in Wi-Fi or static in radio. 
+ 
+PSTN (Public Switched Telephone Network) 
+PSTN stands for Public Switched Telephone Network. 
+It is the traditional global telephone system used for making voice calls over landline telephones 
+using circuit-switched technology. 
+ 
+1. Simple Definition 
+PSTN is: 
+A worldwide network of interconnected telephone lines, switches, and exchanges that allows 
+users to make voice calls. 
+ 
+2. Key Components of PSTN 
+(a) Telephone Sets (End Users) 
+ Landline phones used by customers 
+ Convert voice into electrical signals 
+ 
+(b) Local Loop 
+ The physical cable connecting the user to the local exchange 
+ Usually copper wire or fiber 
+ 
+(c) Local Exchange (Switching Center) 
+
+ Routes calls within a local area 
+ Connects caller to the correct destination 
+ 
+(d) Trunk Lines 
+ High-capacity lines connecting different exchanges or cities 
+ Carry many calls at once 
+ 
+(e) International Gateway 
+ Connects PSTN between different countries 
+ 
+(f) Switching System 
+ The brain of PSTN 
+ Establishes, maintains, and ends call connections 
+ 
+3. How PSTN Works (Simple Flow) 
+1. You dial a number 
+2. Signal goes to local exchange 
+3. Network finds the destination route 
+4. A circuit (dedicated line) is established 
+5. Voice communication takes place 
+6. Call is disconnected when finished 
+ 
+4. Characteristics of PSTN 
+ Circuit-switched network 
+ Uses dedicated connection during a call 
+ Mainly used for voice communication 
+ Reliable but less flexible than modern internet systems 
+ 
+5. Advantages 
+ High call quality 
+ Reliable connections 
+ Works without internet 
+
+ 
+6. Disadvantages 
+ Expensive for long-distance calls 
+ Limited to voice (not efficient for data) 
+ Less flexible compared to VoIP systems 
+ 
+ 
+ 

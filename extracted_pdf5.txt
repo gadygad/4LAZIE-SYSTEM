@@ -1,0 +1,1271 @@
+
+
+ 
+ 
+ 
+UNIT 2 
+ 
+INTRODUCTION TO DATALINK LAYER 
+ 
+INTRODUCTION: 
+ 
+The  Internet  is  a  combination  of  networks  glued  together  by  connecting 
+devices (routers or switches). If a packet is to travel from a host to another host, it 
+needs to pass through these networks. 
+ 
+Communication  at  the  data-link  layer  is  made  up  of  five  separate  logical 
+connections between the data-link layers in the path. 
+ 
+NODES AND LINKS: 
+ 
+Communication at the data-link layer is node-to-node. A data unit from one 
+point  in  the  Internet  needs  to  pass  through  many  networks  (LANs  and  WANs)  to 
+reach another point.  
+ 
+Theses LANs and WANs are connected by routers. It is customary to refer to 
+the two end hosts and the routers as nodes and the networks in between as links. 
+Figure 2.1 is a simple representation of links and nodes when the path of the data 
+unit is only six nodes.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.1: NODES AND LINKS 
+ 
+The first node  is the  source  host;  the last node is the destination host. The 
+other four nodes are four routers. The first, the third, and the fifth links represent 
+the three LANs; the second and the fourth links represent the two WANs. 
+ 
+Services: 
+ 
+The  data-link  layer  is  located  between  the  physical  and  the network  layers. 
+The data link layer provides services to the network layer; it receives services from 
+the physical layer. 
+ 
+51 
+ 
+
+The  duty  scope  of  the  data-link  layer  is  node-to-node.  When  a  packet  is 
+travelling  in  the  Internet,  the  data-link  layer  of  a node  (host  or  router)  is 
+responsible for delivering a datagram to the next node in the path. 
+ 
+For   this   purpose,   the   data-link   layer   of   the   sending   node   needs   to 
+encapsulate the datagram received from the network in a frame, and the data-link 
+layer of the receiving node needs to decapsulate the datagram from the frame. 
+ 
+In  other  words,  the  data-link  layer  of  the  source  host  needs  only  to 
+encapsulate,  the  data-link  layer  of  the  destination  host  needs  to  decapsulate,  but 
+each intermediate node needs to both encapsulate and decapsulate. We can list the 
+services provided by a data-link layer as shown below. 
+ 
+FRAMING: Definitely,  the  first  service  provided  by  the  data-link  layer  is 
+framing.  The  data-link  layer  at  each  node  needs  to  encapsulate  the  datagram 
+(packet received from the network layer) in a frame before sending it to the next 
+node. The node also needs to decapsulate the datagram from the frame received on 
+the logical channel.  
+ 
+FLOW  CONTROL: The  sending  data-link  layer  at  the  end  of  a  link  is  a 
+producer of  frames;  the  receiving  data-link  layer  at  the  other  end  of  a  link  is  a 
+consumer.  
+ 
+If the rate of produced frames is higher than the rate of consumed frames, 
+frames  at  the  receiving  end  need  to  be  buffered  while  waiting  to  be  consumed 
+(processed).  Definitely,  we  cannot  have  an  unlimited  buffer  size  at  the  receiving 
+side.  We  have  two  choices.  The  first  choice  is  to  let  the  receiving  data-link  layer 
+drop the frames if its buffer is full. 
+ 
+The  second  choice  is  to  let  the  receiving  data-link  layer  send  a  feedback  to 
+the sending data-link layer to ask it to stop or slow down. Different data-link-layer 
+protocols use different strategies for flow control. 
+ 
+ERROR CONTROL: At the sending node, a frame in a data-link layer needs 
+to  be  changed  to  bits,  transformed  to  electromagnetic  signals,  and  transmitted 
+through the transmission media. At the receiving node, electromagnetic signals are 
+received, transformed to bits, and put together to create a frame. 
+ 
+Since electromagnetic signals are susceptible to error, a frame is susceptible 
+to error. The error needs first to be detected. After detection, it needs to be either 
+corrected at the receiver node or discarded and retransmitted by the sending node. 
+ 
+CONGESTION  CONTROL: Although  a  link  may  be  congested  with  frames, 
+which may result in frame loss, most data-link-layer protocols do not directly use a 
+congestion control to alleviate congestion, although some wide-area networks do. 
+ 
+ 
+ 
+52 
+ 
+
+In  general,  congestion  control  is  considered  an  issue  in  the  network  layer  or  the 
+transport layer because of its end-to-end nature. 
+ 
+Two categories of links: We can have a data-link layer that uses the whole 
+capacity of the medium; we can also have a data-link layer that uses only part of 
+the capacity of the link. 
+ 
+In  other  words,  we can  have  a point-to-point  link or  a broadcast  link.  In  a 
+point-to-point link, the link is dedicated to the two devices; in a broadcast link, the 
+link is shared between several pairs of devices. 
+ 
+Two Sub layers: 
+ 
+To  better  understand  the  functionality  of  and  the  services  provided  by  the 
+link layer, we can divide the data-link layer into two sub layers: data link control 
+(DLC) and media access control (MAC). 
+ 
+The data link control sub layer deals with all issues common to both point-to-
+point and broadcast links; the media access control sub layer deals only with issues 
+specific to broadcast links.  
+ 
+LINK-LAYER ADDRESSING: 
+ 
+A link-layer address is sometimes called a link address, sometimes a physical 
+address, and sometimes a MAC address. 
+ 
+Since a link is controlled at the data-link layer, the addresses need to belong to the 
+data-link  layer.  When  a  datagram  passes  from  the  network  layer  to  the  data-link 
+layer, the datagram will be encapsulated in a frame and two data-link  
+ 
+addresses are added to the frame header. These two addresses are changed 
+every time the frame moves from one link to another. 
+ 
+Three types of addresses: 
+ 
+Some link-layer protocols define three types of addresses: unicast, multicast, 
+and broadcast. 
+Unicast  Address: Each  host  or  each  interface  of  a  router  is  assigned  a 
+unicast address. Unicasting means one-to-one communication. 
+ 
+Multicast  Address: Some  link-layer  protocols  define  multicast  addresses. 
+Multicasting means one-to-many communication. 
+Broadcast  Address: Some  link-layer  protocols  define  a  broadcast  address. 
+Broadcasting   means   one-to-all   communication.   A   frame   with   a   destination 
+broadcast address is sent to all entities in the link. 
+ 
+Address Resolution Protocol (ARP): 
+ 
+ 
+53 
+ 
+
+Anytime a node has an IP datagram to send to another node in a link, it has 
+the IP address of the receiving node. The source host knows the IP address of the 
+default router. 
+ 
+Each  router except  the  last  one  in  the  path  gets  the  IP  address  of  the  next 
+router  by  using  its  forwarding  table.  The  last  router  knows  the IP  address  of  the 
+destination host. 
+ 
+However,  the  IP  address  of  the  next  node  is  not  helpful  in  moving  a  frame 
+through  a  link;  we  need  the  link-layer  address  of  the  next  node.  This  is  the  time 
+when the Address Resolution Protocol (ARP) becomes helpful. 
+ 
+The  ARP  protocol  is  one  of  the  auxiliary  protocols  defined  in  the  network 
+layer. It belongs to the network layer, but we discuss it here because it maps an IP 
+address to a logical-link address. ARP accepts an IP address from the IP protocol, 
+maps  the  address to  the  corresponding  link-layer  address,  and  passes  it  to  the 
+data-link layer. 
+ 
+Anytime  a  host  or  a  router  needs  to  find  the  link-layer  address  of  another 
+host or router in its network, it sends an ARP request packet. The packet includes 
+the  link-layer  and  IP  addresses  of  the  sender and the  IP  address  of  the  receiver. 
+Because the sender does not know the link-layer address of the receiver, the query 
+is broadcast over the link using the link-layer broadcast address. 
+ 
+Every host or router on the network receives and processes the ARP request 
+packet, but only the intended recipient recognizes its IP address and sends back an 
+ARP response packet. The response packet contains the recipient‘s IP and link-layer 
+addresses. The packet is unicast directly to the node that sent the request packet. 
+ 
+Packet Format: 
+ 
+Figure  2.2  shows  the  format  of  an  ARP  packet.  The  names  of  the  fields  are 
+self-explanatory. The hardware type field defines the type of the link-layer protocol; 
+Ethernet is given the type 1. 
+ 
+The protocol  type field  defines  the  network-layer  protocol:  IPv4  protocol  is 
+(0800)16. The source hardware and source protocol addresses are variable-length 
+fields defining the link-layer and network-layer addresses of the sender. 
+ 
+The  destination  hardware  address  and  destination  protocol  address  fields 
+define  the  receiver  link-layer  and  network-layer  addresses.  An  ARP  packet  is 
+encapsulated  directly  into  a  data-link  frame.  The  frame  needs  to  have  a  field  to 
+show that the payload belongs to the ARP and not to the network-layer datagram. 
+ 
+ 
+ 
+ 
+ 
+ 
+54 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.2: ARP PACKET 
+ 
+ERROR DETECTION AND CORRECTION: 
+ 
+Networks  must  be  able  to  transfer  data  from  one  device  to  another  with 
+acceptable accuracy. For most applications, a system must guarantee that the data 
+received are identical to the data transmitted. 
+ 
+Any time data are transmitted from one node to the next, they can become 
+corrupted in passage. Many factors can alter one ormore bits of a message. Some 
+applications require a mechanism for detecting and correcting errors. 
+ 
+Some  applications  can  tolerate  a  small  level  of  error.  For  example,  random 
+errors in audio or video transmissions maybe tolerable, but when we transfer text, 
+we expect a very high level of accuracy. 
+ 
+At  the  data-link  layer,  if  a  frame  is  corrupted  between  the  two  nodes,  it 
+needs to be corrected before it continues its journey to other nodes. However, most 
+link-layer  protocols  simply  discard  the  frame  and  let  the  upper-layer  protocols 
+handle  the  retransmission  of  the  frame.  Some  multimedia  applications,  however, 
+try to correct the corrupted frame. 
+ 
+Types of Errors: 
+ 
+Whenever   bits   flow   from   one   point   to   another,   they   are   subject   to 
+unpredictable  changes  because  of interference. This  interference  can  change  the 
+shape  of  the  signal.  The  term single-bit  error means  that  only  1  bit  of  a  given 
+data unit (such as a byte, character, or packet) is changed from 1 to 0 or from 0 to 
+1. 
+ 
+The  term burst  error means  that  2  or  more  bits  in  the  data  unit  have 
+changed from 1 to 0 or from 0 to 1. Figure 2.3 shows the effect of a single-bit and a 
+burst error on a data unit. 
+ 
+ 
+ 
+ 
+ 
+ 
+55 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.3: SINGLE-BIT AND BURST ERROR 
+ 
+A  burst  error  is  more  likely  to  occur  than  a  single-bit  error  because  the 
+duration  of  the  noise  signal  is  normally  longer  than  the  duration  of  1  bit,  which 
+means that when noise affects data, it affects a set of bits. 
+ 
+The number of bits affected depends on the data rate and duration of noise. 
+For example, if we are sending data at 1 kbps, a noise of 1/100 second can affect 
+10 bits; if we are sending data at 1 Mbps, the same noise can affect 10,000 bits. 
+ 
+Redundancy: 
+ 
+The  central  concept  in  detecting  or  correcting errors is redundancy. To  be 
+able  to  detect  or  correct  errors,  we  need  to  send  some  extra  bits  with  our  data. 
+These redundant bits are added by the sender and removed by the receiver. Their 
+presence allows the receiver to detect or correct corrupted bits. 
+ 
+Detection versus Correction:  
+ 
+The  correction  of  errors is more  difficult  than  the  detection.  In error 
+detection, we are only looking to see if any error has occurred. The answer is a  
+simple  yes  or  no.  We  are  not even  interested  in  the  number  of  corrupted  bits.  A 
+single-bit error is the same for  us as a burst error. 
+ 
+In error  correction, we  need  to  know  the  exact  number  of  bits  that  are 
+corrupted  and,  more  importantly,  their  location  in  the  message.  The  number  of 
+errors and the size of the message are important factors. 
+ 
+Hamming Distance: 
+ 
+One  of  the  central  concepts  in  coding  for  error  control  is  the  idea  of  the 
+Hamming distance. The Hamming distance between two words (of the same size) 
+is  the  number  of  differences  between  the  corresponding  bits.  We  show  the 
+Hamming  distance  between  two  words x and y as d(x, y).  We  may  wonder  why 
+Hamming distance is important for error detection. 
+ 
+The  reason  is  that  the  Hamming  distance  between  the  received  codeword  and 
+the  sent  codeword  is  the  number  of  bits  that  are  corrupted  during  transmission.  For 
+example, if the codeword 00000 is sent and 01101 is received, 3 bits are in error and 
+the Hamming distance between the two is d(00000, 01101) = 3. 
+ 
+56 
+ 
+
+In other words, if the Hamming distance between the send and the received 
+codeword is not zero, the codeword has been corrupted during transmission. 
+ 
+The Hamming distance can easily be found if we apply the XOR operation (⊕) on the two words and count 
+the number of 1s in the result. Note that the Hamming distance is a value greater than or equal to zero 
+ 
+CYCLIC CODES: 
+ 
+Cyclic  codes  are  special  linear  block  codes  with  one  extra  property.  In  a 
+cyclic code, if  a  codeword  is  cyclically  shifted  (rotated),  the  result  is  another 
+codeword. For example, if 1011000 is a codeword and we cyclically left-shift, then 
+0110001 is also a codeword. 
+ 
+In this case, if we call the bits in the first word a0 to a6, and the bits in the 
+second word b0 to b6, we can shift the bits by using the following: 
+ 
+ 
+  
+In  the  rightmost  equation,  the  last  bit  of  the  first  word  is  wrapped  around 
+and becomes the first bit of the second word.  
+ 
+Cyclic Redundancy Check: 
+ 
+We  can  create  cyclic  codes  to  correct  errors.  In  this  section,  we  simply 
+discuss a subset of cyclic codes called the cyclic redundancy check (CRC), which 
+is used in networks such as LANs and WANs. 
+ 
+Advantages of cyclic codes: 
+ 
+We have seen that  cyclic codes have a very good performance in detecting 
+single-bit errors, double errors, an odd number of errors, and burst errors. 
+ 
+They  can  easily  be  implemented  in  hardware  and  software.  They  are 
+especially fast when implemented in hardware. This has made cyclic codes a good 
+candidate for many networks. 
+ 
+CHECKSUM: 
+ 
+Checksum is an error-detecting technique that can be applied to a message 
+of  any  length.  In  the  Internet,  the  checksum  technique  is  mostly  used  at  the 
+network and transport layer rather than the data-link layer. 
+ 
+At  the  source,  the  message  is  first  divided  into m-bit  units.  The  generator 
+then  creates  an  extra m-bit  unit  called  the checksum, which  is  sent  with  the 
+message. 
+ 
+ 
+ 
+ 
+57 
+ 
+
+At   the   destination,   the   checker   creates   a   new   checksum   from   the 
+combination of the message and sent checksum. If the new checksum is all 0s, the 
+message is accepted; otherwise, the message is discarded. 
+ 
+The idea of the traditional checksum is simple. We show this using a simple 
+example. 
+ 
+Example: 
+ 
+Suppose the message is a list of five 4-bit numbers that we want to send to a 
+destination.  In  addition  to  sending  these  numbers,  we  send  the  sum  of  the 
+numbers. For example, if the set of numbers is (7, 11, 12, 0, 6), we send (7, 11, 
+12, 0, 6, 36), where 36 is the sum of the original numbers. 
+ 
+The receiver adds the five numbers and compares the result with the sum. If 
+the  two  are  the  same,  the  receiver  assumes  no  error,  accepts  the  five  numbers, 
+and discards the sum. Otherwise, there is an error somewhere and the message is 
+not accepted.  
+ 
+FORWARD ERROR CORRECTION: 
+ 
+Retransmission  of  corrupted  and  lost packets is  not  useful  for  real-time 
+multimedia  transmission  because  it  creates  an  unacceptable  delay  in  reproducing: 
+we need to wait until the lost or corrupted packet is resent. 
+ 
+We  need  to  correct  the error or reproduce  the  packet  immediately.  Several 
+schemes have been designed and used in this case that is collectively referred to as 
+forward error correction (FEC) techniques. 
+ 
+USING HAMMING DISTANCE: 
+ 
+We earlier discussed the Hamming distance for error detection. We said that 
+to  detect s errors,  the  minimum  Hamming  distance  should  be dmin  = s +  1.  For 
+error detection, we definitely need more distance. 
+ 
+It can be shown that to detect t errors, we need to have dmin = 2t + 1. In 
+other  words,  if  we  want  to correct  10  bits  in  a  packet,  we  need  to  make  the 
+minimum hamming distance 21 bits, which means a lot of redundant bits, need to 
+be sent with the data. 
+ 
+CHUNK INTERLEAVING: 
+ 
+Another way to achieve FEC in multimedia is to allow some small chunks to 
+be missing at the receiver. We cannot afford to let all the chunks belonging to the 
+same  packet  be  missing;  however,  we  can  afford  to  let  one  chunk  be  missing  in 
+each packet. 
+ 
+ 
+ 
+58 
+ 
+
+Figure 2.4 shows that we can divide each packet into 5 chunks (normally the 
+number  is  much  larger).  We  can  then  create  data  chunk  by  chunk  (horizontally), 
+but  combine  the  chunks  into  packets  vertically.  In  this  case,  each  packet  sent 
+carries a chunk from several original packets. If the packet is lost, we miss only one 
+chunk in each packet, which is normally acceptable in multimedia communication. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.4: INTERLEAVING 
+ 
+DATA LINK CONTROL 
+ 
+DLC SERVICES: 
+ 
+The data  link  control  (DLC) deals  with  procedures  for  communication 
+between  two  adjacent  nodes—node-to-node communication—no  matter  whether 
+the  link  is  dedicated  or  broadcast.  Data  link  control  functions  include framing and 
+flow and error control. 
+ 
+FRAMING: 
+ 
+Data  transmission  in  the  physical  layer  means  moving  bits  in  the  form  of  a 
+signal   from   the   source   to   the destination.   The   physical   layer   provides   bit 
+synchronization to ensure that the sender and receiver use the same bit durations 
+and timing. 
+ 
+The  data-link  layer,  on  the  other  hand,  needs  to  pack  bits  into  frames,  so 
+that  each  frame  is  distinguishable  from  another. Framing in  the  data-link  layer 
+separates a message from one source to a destination by adding a sender address 
+and a destination address. The destination address defines where the packet is to 
+go; the sender address helps the recipient acknowledge the receipt. 
+ 
+Although  the  whole  message  could  be  packed  in  one  frame,  which  is  not 
+normally done; one reason is that a frame can be very large, making flow and error 
+control very inefficient. When a message is carried in one very large frame, even a 
+single-bit error would require the retransmission of the whole frame. When a 
+ 
+ 
+59 
+ 
+
+message  is  divided  into  smaller  frames,  a  single-bit  error  affects  only  that  small 
+frame. 
+ 
+Frame Size: 
+ 
+Frames  can  be  of  fixed  or  variable  size.  In fixed-size  framing, there is  no 
+need  for  defining  the  boundaries  of  the  frames;  the  size  itself  can  be  used  as  a 
+delimiter. 
+ 
+In variable-size framing, we need a way to define the end of one frame and 
+the beginning of the next. Historically, two approaches were used for this purpose: 
+a character-oriented approach and a bit-oriented approach. 
+ 
+Character-Oriented Framing: 
+ 
+In character-oriented (or byte-oriented) framing, data to be carried are 8-bit 
+characters from a coding system such as ASCII. 
+ 
+The header, which normally carries the source and destination addresses and 
+other  control  information,  and  the  trailer,  which  carries  error  detection  redundant 
+bits,  are  also  multiples  of  8  bits.  Figure  2.5  shows  the  format  of  a  frame  in  a 
+character-oriented protocol.  
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.5: A FRAME IN A CHARACTER-ORIENTED PROTOCOL 
+ 
+Character-oriented framing  was  popular  when  only  text  was  exchanged  by 
+the data-link layers. 
+ 
+However,  we  send  other  types  of  information  such  as  graphs,  audio,  and 
+video; any character used for the flag could also be part of the information. If this 
+happens,  the  receiver,  when  it  encounters  this  pattern  in  the  middle  of  the  data, 
+thinks it has reached the end of the frame. 
+ 
+To fix this problem, a byte-stuffing strategy was added to character-oriented 
+framing.  In byte stuffing (or  character  stuffing),  a  special  byte  is  added  to  the 
+data  section  of  the  frame  when  there  is  a  character  with  the  same  pattern  as  the 
+flag. The data section is stuffed with an extra byte. 
+ 
+This  byte  is usually called  the escape  character  (ESC) and  has  a  predefined  bit 
+pattern.  Whenever  the  receiver  encounters  the  ESC  character,  it  removes  it  from  the 
+data section and treats the next character as data, not as a delimiting flag. 
+ 
+Bit-Oriented Framing: 
+ 
+ 
+60 
+ 
+
+In bit-oriented framing, the data section of a frame is a sequence of bits to 
+be  interpreted  by  the  upper  layer  as  text,  graphic,  audio,  video,  and  so  on. 
+However, in addition to headers (and possible trailers), we still need a delimiter to 
+separate one frame from the other. 
+ 
+Most protocols use a special 8-bit pattern flag, 01111110, as the delimiter to 
+define the beginning and the end of the frame, as shown in Figure 2.6. 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.6: A FRAME IN A BIT-ORIENTED PROTOCOL 
+ 
+This  flag  can  create  the  same  type  of  problem  we  saw  in  the  character-
+oriented  protocols.  That  is,  if  the  flag  pattern  appears  in  the  data,  we  need  to 
+somehow inform the  receiver that this  is not the end of the frame. We do this  by 
+stuffing  1  single  bit  (instead  of  1  byte)  to  prevent  the  pattern  from  looking  like  a 
+flag. The strategy is called bit stuffing.  
+ 
+In bit stuffing, if a 0 and five consecutive 1 bits are encountered, an extra 0 
+is added. This extra stuffed bit is eventually removed from the data by the receiver. 
+ 
+Note that the extra bit is added after one 0 followed by five 1s regardless of 
+the  value  of  the  next  bit.  This  guarantees  that  the  flag  field  sequence  does  not 
+inadvertently appear in the frame.  
+ 
+FLOW AND ERROR CONTROL: 
+ 
+Whenever  an  entity produces items  and  another  entity  consumes  them,  there 
+should be  a  balance  between  production  and  consumption  rates.  If  the  items  are 
+produced  faster  than  they  can  be  consumed,  the  consumer  can  be  overwhelmed 
+and may need to discard some items. 
+ 
+If  the  items  are  produced  more  slowly  than  they  can  be  consumed,  the 
+consumer must wait, and the system becomes less efficient. Flow control is related 
+to the first issue. We need to prevent losing the data items at the consumer site. 
+ 
+In  communication  at  the  data-link  layer,  we  are  dealing  with  four  entities: 
+network and data-link layers at the sending node and network and data-link layers 
+at the receiving node. 
+ 
+Buffers: 
+ 
+Although  flow  control  can  be  implemented  in  several  ways,  one  of  the 
+solutions is normally to use two buffers; one at the sending data-link layer and the 
+other at the receiving data-link layer. 
+ 
+ 
+61 
+ 
+
+A buffer is a set of memory locations that can hold packets at the sender and 
+receiver.  The  flow  control  communication  can  occur  by  sending  signals  from  the 
+consumer to the producer. When the buffer of the receiving data-link layer is full, it 
+informs the sending data-link layer to stop pushing frames. 
+ 
+Error Control: 
+ 
+Since the underlying technology at the physical layer is not fully reliable, we 
+need to implement error control at the data-link layer to prevent the receiving node 
+from delivering corrupted packets to its network layer. 
+ 
+Error control at the data-link layer is normally very simple and implemented 
+using  one  of  the  following  two  methods.  In  both  methods,  a  CRC  is  added  to  the 
+frame header by the sender and checked by the receiver. 
+ 
+
+ In the first method, if the frame is corrupted, it is silently discarded; if it 
+is not corrupted, the packet is delivered to the network layer. This method 
+is used mostly in wired LANs such as Ethernet.
+
+
+
+ In the second method, if the frame is corrupted, it is silently discarded; if 
+it  is  not  corrupted,  an  acknowledgment  is  sent  (for  the  purpose  of  both 
+flow and error control) to the sender.
+
+ 
+ 
+ 
+A DLC protocol can be either connectionless or connection-oriented. 
+ 
+Connectionless Protocol: 
+ 
+In  a  connectionless protocol, frames  are  sent  from  one  node  to  the  next 
+without any relationship between the frames; each frame is independent. Note that 
+the  term connectionless here  does  not  mean  that  there  is  no  physical  connection 
+(transmission  medium)  between  the  nodes;  it  means  that  there  is  no connection 
+between frames. The frames are not numbered and there is no sense of ordering. 
+Most of the data-link protocols for LANs are connectionless protocols. 
+ 
+Connection-Oriented Protocol: 
+ 
+In  a  connection-oriented  protocol,  a  logical  connection  should  first  be 
+established  between  the  two  nodes  (setup  phase).  After  all  frames  that  are 
+somehow  related  to  each  other  are  transmitted  (transfer  phase),  the  logical 
+connection  is  terminated  (teardown  phase).  In  this  type  of  communication,  the 
+frames are numbered and sent in order. 
+ 
+If they are not received in order, the receiver needs to wait until all frames 
+belonging to the same set are received and then deliver them in order to the 
+ 
+ 
+ 
+62 
+ 
+
+network layer. Connection oriented protocols are rare in wired LANs, but we can see 
+them in some point-to-point protocols, some wireless LANs, and some WANs. 
+ 
+DATA-LINK LAYER PROTOCOLS: 
+ 
+Traditionally four protocols have been defined for the data-link layer to deal 
+with  flow  and  error  control:  Simple,  Stop-and-Wait,  Go-Back-N,  and  Selective-
+Repeat. Although the first two protocols still are used at the data-link layer, the last 
+two have disappeared. 
+ 
+Simple  Protocol: Our first  protocol  is  a simple  protocol with neither flow 
+nor error control. We assume that the receiver can immediately handle any frame it 
+receives.  In  other  words,  the  receiver  can  never  be  overwhelmed  with  incoming 
+frames. 
+ 
+The data-link layer at the sender gets a packet from its network layer, makes 
+a frame out of it, and sends the frame. The data-link layer at the receiver receives 
+a frame from the link, extracts the packet from the frame, and delivers the packet 
+to its network layer.  
+ 
+The data-link layers of the sender and receiver provide transmission services 
+for their network layers.  
+ 
+Stop-and-Wait Protocol: Our second protocol is called the Stop-and-Wait 
+protocol, which uses both flow and error control. In this protocol, the sender sends 
+one  frame  at  a  time  and  waits  for an  acknowledgement before  sending  the  next 
+one. To detect corrupted frames, we need to add a CRC to each data frame. 
+ 
+When a frame arrives at the receiver site, it is checked. If its CRC is incorrect, the 
+frame is corrupted  and silently  discarded. The  silence of the receiver is a signal 
+for the sender that a frame was either corrupted or lost. 
+ 
+Every  time  the  sender  sends  a  frame,  it  starts  a  timer.  If  an  acknowledgment 
+arrives before the timer expires, the timer is stopped and the sender sends the next 
+frame (if it has one to send). If the timer expires, the sender resends the previous 
+frame, assuming that the frame was either lost or corrupted. 
+ 
+This  means  that  the  sender  needs  to  keep  a  copy  of  the  frame  until  its 
+acknowledgment  arrives.  When  the  corresponding  acknowledgment  arrives,  the 
+sender discards the copy and sends the next frame if it is ready. 
+ 
+Piggybacking: 
+ 
+The two protocols we discussed in this section are designed for unidirectional 
+communication,  in  which  data  is  flowing  only  in  one  direction  although  the 
+acknowledgment may travel in the other direction. 
+ 
+ 
+ 
+63 
+ 
+
+Protocols  have  been  designed  in  the  past  to  allow  data  to  flow  in  both 
+directions.  However,  to  make  the  communication  more  efficient,  the  data  in  one 
+direction is piggybacked with the acknowledgment in the other direction. 
+ 
+In  other  words,  when  node  A  is  sending  data  to  node  B,  Node  A  also 
+acknowledges  the  data  received  from  node  B.  Because  piggybacking  makes 
+communication  at  the  data  link  layer  more  complicated,  it  is  not  a  common 
+practice. 
+ 
+HDLC: 
+ 
+High-level  Data  Link  Control  (HDLC) is  a  bit-oriented  protocol  for 
+communication  over  point-to-point  and  multipoint  links.  It  implements  the  Stop-
+and-Wait protocol. 
+ 
+Configurations and Transfer Modes: 
+ 
+HDLC  provides  two  common  transfer  modes  that  can  be used  in  different 
+configurations: normal  response  mode  (NRM) and asynchronous  balanced  mode 
+(ABM). In normal response mode (NRM), the station configuration is unbalanced. 
+ 
+We  have  one  primary  station  and  multiple  secondary  stations.  A primary 
+station can send  commands;  a secondary station can  only  respond.  The  NRM  is 
+used for both point-to-point and multipointlinks, as shown in Figure 2.7. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.7: NORMAL RESPONSE MODE 
+ 
+In  ABM,  the  configuration  is  balanced.  The  link  is  point-to-point, and  each 
+station  can  function  as  a  primary  and  a  secondary  (acting  as  peers),  as  shown  in 
+Figure 2.8. This is the common mode today. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.8: ASYNCHRONOUS BALANCED MODE 
+ 
+ 
+ 
+64 
+ 
+
+To provide the flexibility necessary to support all the options possible in the 
+modes  and  configurations  just  described,  HDLC  defines  three  types  of  frames: 
+information  frames  (I-frames), supervisory  frames  (S-frames),  and unnumbered 
+frames (U-frames). 
+ 
+Each type of frame serves as an envelope for the transmission of a different 
+type of message. I-frames are used to data-link user data and control information 
+relating to user data (piggybacking). 
+ 
+S-frames  are  used  only  to  transport  control  information.  U-frames  are 
+reserved for system management. Information carried by U-frames is intended for 
+managing the link itself. 
+ 
+Each frame in HDLC may contain up to six fields, as shown in Figure 2.9: a 
+beginning  flag  field,  an  address  field,  a  control  field,  an  information  field,  a  frame 
+check   sequence   (FCS)   field,   and   an   ending   flag   field.   In   multiple-frame 
+transmissions, the ending flag of one frame can serve as the beginning flag of the 
+next frame.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.9: HDLC FRAMES 
+ 
+
+ Flag  field. This  field  contains  synchronization  pattern  01111110,  which 
+identifies both the beginning and the end of a frame.
+
+
+
+ Address field. This field contains the address of the secondary station. If 
+a primary station created the frame, it contains to address. If a secondary 
+station creates the frame, it contains from address. The address field can 
+be  one  byte  or  several  bytes  long,  depending  on  the  needs  of  the 
+network.
+
+
+
+ Control field. The control field is one or two bytes used for flow and error 
+control.
+
+
+
+ Information  field. The  information  field  contains  the  user‘s  data  from 
+the  network  layer or  management  information.  Its  length  can  vary  from 
+one network to another.
+
+
+
+ FCS  field. The  frame  check  sequence  (FCS)  is  the  HDLC  error  detection 
+field. It can contain either a 2- or 4-byte CRC.
+
+ 
+POINT-TO-POINT PROTOCOL (PPP): 
+ 
+65 
+ 
+
+One of the most common protocols for point-to-point access is the Point-to-
+Point Protocol (PPP). Today, millions of Internet users who need to connect their 
+home computers to the server of an Internet service provider use PPP. 
+ 
+The majority of these users have a traditional modem; they are connected to 
+the  Internet  through  a  telephone  line,  which  provides  the  services  of  the  physical 
+layer. But to control and manage the transfer of data, there is a need for a point-
+to-point protocol at the data-link layer. PPP is by far the most common. 
+ 
+Services provided by PPP: 
+ 
+PPP  defines  the  format  of  the  frame  to  be  exchanged  between  devices.  It 
+also  defines  how  two  devices  can  negotiate  the  establishment  of  the  link  and  the 
+exchange of data. PPP is designed to accept payloads from several network layers 
+(not only IP). 
+ 
+Authentication  is  also  provided  in  the  protocol,  but  it  is  optional.  The  new 
+version  of  PPP,  called Multilink  PPP, provides  connections  over  multiple  links.  One 
+interesting feature of PPP is that it provides network address configuration. This is 
+particularly  useful  when  a  home  user  needs  a temporary network  address  to 
+connect to the Internet.  
+ 
+Services Not Provided by PPP: 
+ 
+PPP  does  not  provide  flow  control.  A  sender  can  send  several  frames  one 
+after  another  with  no  concern  about  overwhelming  the  receiver.  PPP  has  a  very 
+simple mechanism for error control. A CRC field is used to detect errors. 
+ 
+If  the  frame  is  corrupted,  it  is  silently  discarded;  the  upper-layer  protocol 
+needs to take care of the problem. Lack of error control and sequence  numbering 
+may  cause  a  packet  to  be  received  out  of  order.  PPP  does  not  provide  a 
+sophisticated addressing mechanism to handle frames in a multipoint configuration. 
+ 
+Framing: 
+ 
+PPP  uses  a  character-oriented  (or  byte-oriented)  frame.  Figure  2.10  shows 
+the format of a PPP frame. The description of each field follows: 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.10: PPP FRAME FORMAT 
+ 
+
+ Flag. A PPP frame starts and ends with a 1-byte flag with the bit pattern 
+01111110.
+
+ 
+ 
+66 
+ 
+
+
+ Address. The address field in this protocol is a constant value and set to 
+11111111 (broadcast address).
+
+
+
+ Control. This  field  is  set  to  the  constant  value  00000011  (imitating 
+unnumbered frames in HDLC).
+
+
+
+ Protocol. The protocol field defines what is being carried in the data field: 
+either user data or other information. This field is by default 2 bytes long, 
+but the two parties can agree to use only 1 byte.
+
+
+
+ Payload field. The data field is a sequence of bytes with the default of a 
+maximum of 1500 bytes; but this can be changed during negotiation.
+
+ 
+o The data field is byte-stuffed if the flag byte pattern appears in this 
+field. 
+ 
+o Because there is no field defining the size of the data field, padding 
+is needed if the size is less than the maximum default value or the 
+ 
+maximum negotiated value. 
+ 
+
+ FCS. The frame check sequence (FCS) is simply a 2-byte or 4-byte 
+standard CRC.  
+ 
+MEDIA ACCESS CONTROL (MAC)  
+ 
+When  nodes  or  stations  are  connected  and  use  a  common  link,  called  a 
+multipoint or broadcast  link, we  need  a  multiple-access  protocol  to  coordinate 
+access to the link. The problem of controlling the access to the medium is similar to 
+the rules of speaking in an assembly. 
+ 
+Many  protocols  have  been  devised  to  handle  access  to  a  shared  link.  All  of 
+these  protocols  belong  to  a  sub  layer  in  the  data-link  layer  called media  access 
+control (MAC). We categorize them into three groups, as shown in Figure 2.11. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.11: TAXONOMY OF MULTIPLE-ACCESS PROTOCOLS 
+ 
+RANDOM ACCESS: 
+ 
+ 
+ 
+ 
+67 
+ 
+
+In random-access or contention methods,  no  station  is superior  to 
+another  station  and  none  is  assigned  control  over  another.  At  each  instance,  a 
+station that has data to send uses a procedure defined by the protocol to make a 
+decision on whether or not to send. 
+ 
+This  decision  depends  on  the  state  of  the  medium  (idle  or  busy).  Two 
+features give this method its name. 
+ 
+
+ First,  there  is  no  scheduled  time  for  a  station  to  transmit.  Transmission  is 
+random  among  the  stations.  That  is  why  these  methods  are  called random 
+access.
+
+
+
+ Second, no rules specify which station should send next. Stations compete with 
+one  another  to  access  the  medium.  That  is  why  these  methods  are  also  called 
+contention methods.
+
+ 
+In  a  random-access  method,  each  station  has  the  right  to  the  medium 
+without  being  controlled  by  any  other  station.  However,  if  more  than  one  station 
+tries  to  send,  there  is  an  access  conflict—collision—and  the  frames  will  be  either 
+destroyed  or  modified.  To  avoid  access  conflict or to  resolve  it  when  it  happens, 
+each station follows a procedure that answers the following questions: 
+ 
+ 
+
+ When can the station access the medium?
+
+
+
+ What can the station do if the medium is busy?
+
+
+
+ How can the station determine the success or failure of the transmission?
+
+
+
+ What can the station do if there is an access conflict?
+
+ 
+The  random-access  methods  have  evolved  from  a  very  interesting  protocol 
+known  as ALOHA,  which  used  a  very  simple  procedure  called multiple  access 
+(MA). 
+ 
+The  method  was  improved  with  the  addition  of  a  procedure  that  forces  the 
+station  to  sense  the  medium  before  transmitting.  This was  called carrier  sense 
+multiple  access (CSMA).  This  method  later  evolved  into  two  parallel  methods: 
+carrier  sense  multiple  access  with  collision  detection  (CSMA/CD), which  tells  the 
+station  what  to  do  when  a  collision  is  detected,  and carrier  sense  multiple  access 
+with collision avoidance (CSMA/CA), which tries to avoid the collision. 
+ 
+CONTROLLED ACCESS: 
+ 
+In controlled access, the stations consult one another to find which station 
+has the right to send. A station cannot send unless it has been authorized by other 
+stations. There are three controlled-access methods: 
+ 
+ 
+
+ 
+68 
+ 
+
+Reservation: In  the reservation method,  a  station  needs  to  make  a 
+reservation  before  sending  data.  Time  is  divided  into  intervals.  In  each  interval,  a 
+reservation frame precedes the data frames sent in that interval. 
+ 
+If  there  are N stations  in  the  system,  there  are  exactly N reservation 
+minislots  in  the  reservation  frame.  Each  minislot  belongs  to  a  station.  When  a 
+station needs to send a data frame, it makes a reservation in its own minislot. 
+ 
+The  stations  that  have  made  reservations  can  send  their  data  frames  after 
+the reservation frame. Figure 2.12 shows a situation with five stations and a five-
+minislot reservation frame. In the first interval, only stations 1, 3, and 4 have made 
+reservations. In the second interval, only station 1 has made a reservation. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.12: RESERVATION ACCESS METHOD 
+ 
+Polling: Polling works with topologies in which one device is designated as 
+a primary  station and  the  other  devices  are secondary  stations. All  data 
+exchanges  must  be  made  through the primary  device  even  when  the  ultimate 
+destination is a secondary device.  
+ 
+The  primary  device  controls  the  link;  the  secondary  devices  follow  its 
+instructions. It is up to the primary device to determine which device is allowed to 
+use the channel at a given time. 
+ 
+The primary device, therefore, is always the initiator of a session (see Figure 
+2.13).  This  method  uses  poll  and  select  functions  to  prevent  collisions.  However, 
+the drawback is if the primary station fails, the system goes down. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+69 
+ 
+
+FIGURE 2.13: SELECT & POLL FUNCTIONS IN POLLING-ACCESS 
+ 
+METHOD 
+ 
+Select: The select function  is  used  whenever  the  primary  device  has 
+something to send. Before sending data, the primary creates and transmits a select 
+(SEL) frame, one field of which includes the address of the intended secondary. 
+ 
+Poll: The poll function is used by the primary device to solicit transmissions 
+from the secondary devices. When the primary is ready to receive data, it must ask 
+(poll) each device in turn if it has anything to send. 
+ 
+When the first secondary is approached, it responds either with a NAK frame 
+if it has nothing to send or with data (in the form of a data frame) if it does. If the 
+response is negative  (a NAK frame), then the primary polls the next secondary  in 
+the same manner until it finds one with data to send. 
+ 
+When  the  response  is  positive  (a  data  frame),  the  primary  reads  the  frame 
+and returns an acknowledgment (ACK frame), verifying its receipt. 
+ 
+Token  Passing: In  the token-passing method,  the  stations  in  a  network 
+are  organized  in  a  logical  ring.  In  other  words,  for  each  station,  there  is  a 
+predecessor and a successor.  
+ 
+The predecessor is  the  station  which  is  logically  before  the  station  in  the 
+ring; the successor is the station which is after the station in the ring. The current 
+station  is  the  one  that  is  accessing  the  channel  now.  The  right  to  this  access  has 
+been passed from the predecessor to the current station. The right will be passed to 
+the successor when the current station has no more data to send. 
+ 
+But  how  is  the  right  to  access  the  channel  passed  from  one  station  to 
+another?  In  this  method,  a  special  packet  called  a token circulates  through  the 
+ring. 
+ 
+The possession (meaning control) of the token gives the station the right to 
+access  the  channel  and  send  its  data.  When  a  station  has  some  data  to  send,  it 
+waits until it receives the token from its predecessor. 
+ 
+It  then  holds  the  token  and  sends  its  data.  When  the  station  has  no  more 
+data to send, it releases the token, passing it to the next logical station in the ring. 
+The station cannot send data until it receives the token again in the next round. In 
+this  process,  when  a  station  receives  the  token  and  has  no  data  to  send,  it  just 
+passes the data to the next station. 
+ 
+CHANNELIZATION: 
+ 
+Channelization (or channel  partition, as  it  is  sometimes  called)  is  a 
+multiple-access method in which the available bandwidth of a link is shared in time, 
+ 
+70 
+ 
+
+frequency,   or   through   code,   among   different   stations.   There   are   three 
+channelization protocols: FDMA, TDMA, and CDMA. 
+ 
+FDMA: 
+ 
+In frequency-division  multiple  access  (FDMA), the  available  bandwidth 
+is divided into frequency bands. Each station is allocated a band to send its data. In 
+other  words, each  band  is  reserved  for  a  specific  station,  and  it  belongs  to  the 
+station all the time. 
+ 
+Each  station  also  uses  a  band  pass  filter  to  confine  the  transmitter 
+frequencies.  To  prevent  station  interferences,  the  allocated  bands  are  separated 
+from one another by small guard bands. 
+ 
+FDMA  specifies  a  predetermined  frequency  band  for  the  entire  period  of 
+communication. This means that stream data (a continuous flow of data that may 
+not be packetized) can easily be used with FDMA. 
+ 
+We   need   to   emphasize   that   although   FDMA   and   frequency-division 
+multiplexing (FDM) conceptually seem similar, there are differences between them. 
+ 
+FDM  is  a  physical  layer  technique  that  combines  the  loads  from  low 
+bandwidth channels and transmits them by using a high-bandwidth channel. 
+ 
+FDMA,  on  the  other  hand,  is  an access method  in  the  data-link  layer.  The 
+datalink  layer  in  each  station  tells  its physical  layer  to  make  a  bandpass  signal 
+from the data passed to it. The signal must be created in the allocated band. 
+ 
+TDMA: 
+ 
+In time-division   multiple   access   (TDMA), the   stations   share   the 
+bandwidth of the channel in time. Each station is allocated a time slot during which 
+it can send data. Each station transmits its data in its assigned time slot. 
+ 
+The  main  problem  with  TDMA  lies  in  achieving  synchronization  between  the 
+different  stations.  Each  station  needs  to  know  the  beginning  of  its  slot  and  the 
+location of its slot. This may be difficult because of propagation delays introduced in 
+the system if the stations are spread over a large area. 
+ 
+To compensate for the delays, we can insert guard times. Synchronization is 
+normally  accomplished  by  having  some  synchronization  bits  (normally  referred  to 
+as preamble bits) at the beginning of each slot. 
+ 
+We   also   need   to   emphasize   that   although   TDMA   and time-division 
+multiplexing  (TDM)  conceptually  seem  the  same,  there  are  differences  between 
+them. 
+ 
+ 
+ 
+71 
+ 
+
+TDM  is  a  physical  layer  technique  that  combines  the  data  from  slower 
+channels and transmits them by using a faster channel. The process uses a physical 
+multiplexer that interleaves data units from each channel. 
+ 
+TDMA,  on  the  other  hand,  is  an  access  method  in  the  data-link  layer.  The 
+data-link layer in each station tells its physical layer to use the allocated time slot. 
+There is no physical multiplexer at the physical layer. 
+ 
+CDMA: 
+ 
+Code-division    multiple    access    (CDMA) was   conceived   (meaning 
+imagine/visualize)  several  decades  ago.  Recent  advances  in  electronic  technology 
+have finally made its implementation possible. 
+ 
+CDMA  differs  from  FDMA  in  that  only  one  channel  occupies  the  entire 
+bandwidth  of  the  link.  It  differs  from  TDMA  in  that  all  stations  can  send  data 
+simultaneously;   there   is   no   timesharing.   In   CDMA,   one  channel   carries   all 
+transmissions simultaneously.  
+ 
+CONNECTING DEVICES AND VIRTUAL LAN’S 
+ 
+Hosts  or  LANs  do  not  normally  operate  in  isolation.  They  are  connected  to 
+one  another  or  to  the  Internet.  To  connect  hosts  or  LANs,  we  use  connecting 
+devices. Connecting devices can operate in different layers of the Internet model. 
+ 
+CONNECTING DEVICES: 
+ 
+Hosts and networks do not normally operate in isolation. We use connecting 
+devices to  connect  hosts together to  make  a  network  or  to  connect  networks 
+together to make an internet. Connecting devices can operate in different layers of 
+the Internet model. 
+ 
+We  discuss  three  kinds  of connecting  devices: hubs, link-layer  switches, 
+and routers. 
+ 
+Hubs  today  operate  in  the  first  layer  of  the  Internet  model.  Link-layer 
+switches  operate  in  the  first  two  layers.  Routers  operate  in  the  first  three  layers. 
+(See Figure 2.14) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+72 
+ 
+
+FIGURE 2.14: THREE CATEGORIES OF CONNECTING DEVICES 
+ 
+HUBS: A hub is  a  device  that  operates  only  in  the  physical  layer.  Signals 
+that  carry  information  within  a  network  can  travel  a  fixed  distance  before 
+attenuation endangers the integrity of the data. A repeater receives a signal and, 
+before it becomes  too weak or corrupted, regenerates and retimes the original bit 
+pattern. 
+ 
+The  repeater  then  sends  the  refreshed  signal.  In  the  past,  when  Ethernet 
+LANs were using bus topology, a repeater was used to connect two segments of a 
+LAN  to  overcome  the  length  restriction  of  the  coaxial  cable.  Today,  however, 
+Ethernet LANs use star topology. 
+ 
+In  a  star  topology,  a  repeater  is  a  multiport  device,  often  called  a hub  that 
+can  be  used  to  serve  as  the  connecting  point  and  at  the  same  time  function  as  a 
+repeater. 
+ 
+Figure 2.15 shows that when a packet from station A to station B arrives at 
+the  hub,  the  signal  representing  the  frame  is  regenerated  to  remove  any  possible 
+corrupting noise, but the hub forwards the packet from all outgoing ports except 
+The one from which the signal was received   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+FIGURE 2.15: A HUB 
+ 
+In  other  words,  the  frame  is  broadcast.  All  stations  in  the  LAN  receive  the 
+frame,  but  only  station  B  keeps  it.  The  rest  of  the  stations  discard  it.  Figure  2.15 
+shows the role of a repeater or a hub in a switched LAN. A repeater has no filtering 
+capability. 
+ 
+A hub or a repeater is a physical-layer device. They do not have a link-layer 
+address  and  they  do not  check  the  link-layer  address of  the  received  frame.  They 
+just regenerate the corrupted bits and send them out from every port. 
+ 
+Link-Layer  Switches: A link-layer  switch (or switch)  operates  in  both 
+the physical and the data-link layers. As a physical-layer device, it regenerates the 
+signal  it  receives.  As  a  link-layer  device,  the  link-layer  switch  can  check  the  MAC 
+addresses (source and destination) contained in the frame. 
+ 
+Filtering: 
+ 
+ 
+73 
+ 
