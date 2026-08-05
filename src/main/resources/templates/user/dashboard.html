@@ -743,29 +743,30 @@
                     @media (max-width: 768px) {
                         .apple-note-card {
                             padding: 10px 12px;
-                            gap: 8px;
-                            flex-direction: column;
-                            align-items: flex-start;
+                            gap: 10px;
+                            flex-wrap: wrap;
                         }
 
                         .apple-note-icon {
-                            width: 28px;
-                            height: 28px;
-                            min-width: 28px;
-                            font-size: 0.75rem;
+                            width: 36px;
+                            height: 36px;
+                            min-width: 36px;
+                            font-size: 1rem;
                         }
 
                         .apple-note-info {
-                            width: 100%;
+                            width: auto;
+                            flex-grow: 1;
                             gap: 6px;
                         }
 
                         .apple-note-title {
-                            font-size: 0.8rem;
+                            font-size: 0.85rem;
                             white-space: normal;
                             display: -webkit-box;
                             -webkit-line-clamp: 2;
                             -webkit-box-orient: vertical;
+                            overflow: hidden;
                         }
 
                         .apple-note-meta {
@@ -786,7 +787,9 @@
                             margin-left: 0;
                             width: 100%;
                             justify-content: flex-end;
-                            margin-top: 4px;
+                            margin-top: 0px;
+                            padding-top: 6px;
+                            border-top: 1px solid rgba(0,0,0,0.03);
                         }
 
                         .apple-btn-read {
