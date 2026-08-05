@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="/css/mobile-spacing-standards.css?v=2">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#10b981">
+    
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <style>
         * { box-sizing: border-box; }
@@ -445,9 +449,19 @@
             input.value = '';
             input.style.height = 'auto';
 
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
             const fd = new FormData();
             fd.append('messageText', text);
-            fetch(SEND_URL, { method: 'POST', body: fd, credentials: 'same-origin' })
+            fetch(SEND_URL, { 
+                method: 'POST', 
+                body: fd, 
+                headers: {
+                    [csrfHeader]: csrfToken
+                },
+                credentials: 'same-origin' 
+            })
                 .then(r => r.json())
                 .catch(() => ({ success: false }))
                 .finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
