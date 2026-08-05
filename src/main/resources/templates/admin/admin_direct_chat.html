@@ -317,34 +317,81 @@
         // ── Escape HTML ────────────────────────
         const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 
+        function avatarHtml(isAdmin, name, pic) {
+            if (isAdmin) {
+                return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.25);">
+                          <img src="/images/logo.png" alt="4LAZIE" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                        </div>`;
+            }
+            if (pic) {
+                const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
+                return `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(59,130,246,0.2);">
+                          <img src="${src}" alt="${name}" style="width:100%;height:100%;object-fit:cover;">
+                        </div>`;
+            }
+            const initial = (name || 'S').charAt(0).toUpperCase();
+            return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);">${initial}</div>`;
+        }
+
         // ── Build bubble element ───────────────
         function makeBubble(msg, typeIt = false) {
-            const row   = document.createElement('div');
-            row.className = 'msg-row' + (msg.isSelf ? ' self' : '');
+            const isAdmin = msg.isSelf;
+            const row = document.createElement('div');
+            row.id = 'msg-' + msg.id;
+            row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;padding:10px 14px;border-radius:12px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:left center;border-left:3px solid transparent;';
+            
+            row.onmouseover = () => {
+                row.style.background = isAdmin ? 'linear-gradient(90deg, rgba(16,185,129,0.04), transparent)' : 'linear-gradient(90deg, rgba(59,130,246,0.04), transparent)';
+                row.style.borderLeftColor = isAdmin ? '#10b981' : '#3b82f6';
+                row.style.transform = 'translateX(4px)';
+            };
+            row.onmouseout = () => {
+                row.style.background = 'transparent';
+                row.style.borderLeftColor = 'transparent';
+                row.style.transform = 'translateX(0)';
+            };
 
-            const av    = document.createElement('div');
-            av.className = 'av-sm ' + (msg.isSelf ? 'av-admin' : 'av-student');
-            av.textContent = msg.isSelf ? 'A' : (msg.senderName||'S').charAt(0).toUpperCase();
+            const av = document.createElement('div');
+            av.innerHTML = avatarHtml(isAdmin, msg.senderName, msg.senderProfilePicture);
+            row.appendChild(av.firstElementChild);
 
-            const bub   = document.createElement('div');
-            bub.className = 'bubble ' + (msg.isSelf ? 'self' : 'other');
+            const contentCol = document.createElement('div');
+            contentCol.style.cssText = 'flex:1;min-width:0;';
 
-            const textSpan = document.createElement('span');
-            const timeSpan = document.createElement('span');
-            timeSpan.className = 'b-time';
-            timeSpan.textContent = msg.time;
-            bub.appendChild(textSpan);
-            bub.appendChild(timeSpan);
+            const headerRow = document.createElement('div');
+            headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
+            
+            const nameEl = document.createElement('span');
+            nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
+            nameEl.textContent = isAdmin ? '4LAZIE Admin' : (msg.senderName || 'Student');
+            
+            if (isAdmin) {
+                const badge = document.createElement('span');
+                badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:-3px;';
+                badge.textContent = 'OFFICIAL';
+                nameEl.appendChild(badge);
+            }
+            
+            const timeEl = document.createElement('span');
+            timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
+            timeEl.textContent = msg.time;
+            
+            headerRow.appendChild(nameEl);
+            headerRow.appendChild(timeEl);
 
-            if (msg.isSelf) { row.appendChild(bub); row.appendChild(av); }
-            else            { row.appendChild(av);  row.appendChild(bub); }
+            const textEl = document.createElement('div');
+            textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.55;word-break:break-word;';
+
+            contentCol.appendChild(headerRow);
+            contentCol.appendChild(textEl);
+            row.appendChild(contentCol);
 
             if (typeIt && !msg.isSelf) {
                 // Typing effect — character by character
-                typingQueue.push({ el: textSpan, text: msg.messageText || '', row });
+                typingQueue.push({ el: textEl, text: msg.messageText || '', row });
                 if (!isTyping) drainQueue();
             } else {
-                textSpan.innerHTML = esc(msg.messageText || '');
+                textEl.innerHTML = esc(msg.messageText || '');
             }
 
             return row;

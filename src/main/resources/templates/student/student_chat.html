@@ -320,40 +320,68 @@
             return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\n/g, '<br>');
         }
 
+        function avatarHtml(isAdmin, name) {
+            if (isAdmin) {
+                return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.25);">
+                          <img src="/images/logo.png" alt="4LAZIE" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                        </div>`;
+            }
+            const initial = (name || 'Y').charAt(0).toUpperCase();
+            return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);">${initial}</div>`;
+        }
+
         // ── Build bubble ───────────────────────
         function makeBubble(msg, typeIt = false) {
             const isAdmin = !msg.isSelf;
             const row = document.createElement('div');
-            row.className = 'msg-row' + (msg.isSelf ? ' self' : '');
+            row.id = 'msg-' + msg.id;
+            row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;padding:10px 14px;border-radius:12px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);animation:msgIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:left center;border-left:3px solid transparent;';
+            
+            row.onmouseover = () => {
+                row.style.background = isAdmin ? 'linear-gradient(90deg, rgba(16,185,129,0.04), transparent)' : 'linear-gradient(90deg, rgba(59,130,246,0.04), transparent)';
+                row.style.borderLeftColor = isAdmin ? '#10b981' : '#3b82f6';
+                row.style.transform = 'translateX(4px)';
+            };
+            row.onmouseout = () => {
+                row.style.background = 'transparent';
+                row.style.borderLeftColor = 'transparent';
+                row.style.transform = 'translateX(0)';
+            };
 
-            // Avatar
             const av = document.createElement('div');
-            av.className = 'av-small ' + (isAdmin ? 'av-admin-sm' : 'av-student-sm');
-            if (isAdmin) {
-                av.innerHTML = '<img src="/images/logo.png" alt="4LAZIE">';
-            } else {
-                av.innerHTML = '<i class="bi bi-person-fill"></i>';
-            }
+            av.innerHTML = avatarHtml(isAdmin, isAdmin ? '4LAZIE' : 'You');
+            row.appendChild(av.firstElementChild);
 
-            // Bubble
-            const bub = document.createElement('div');
-            bub.className = 'bubble ' + (isAdmin ? 'admin-bub' : 'student-bub');
+            const contentCol = document.createElement('div');
+            contentCol.style.cssText = 'flex:1;min-width:0;';
 
-            const nameEl = document.createElement('div');
-            nameEl.className = 'b-name';
+            const headerRow = document.createElement('div');
+            headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
+            
+            const nameEl = document.createElement('span');
+            nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
             nameEl.textContent = isAdmin ? '4LAZIE' : 'You';
-
-            const textEl = document.createElement('span');
+            
+            if (isAdmin) {
+                const badge = document.createElement('span');
+                badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:-3px;';
+                badge.textContent = 'OFFICIAL';
+                nameEl.appendChild(badge);
+            }
+            
             const timeEl = document.createElement('span');
-            timeEl.className = 'b-time';
+            timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
             timeEl.textContent = msg.time;
+            
+            headerRow.appendChild(nameEl);
+            headerRow.appendChild(timeEl);
 
-            bub.appendChild(nameEl);
-            bub.appendChild(textEl);
-            bub.appendChild(timeEl);
+            const textEl = document.createElement('div');
+            textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.55;word-break:break-word;';
 
-            if (msg.isSelf) { row.appendChild(bub); row.appendChild(av); }
-            else            { row.appendChild(av);  row.appendChild(bub); }
+            contentCol.appendChild(headerRow);
+            contentCol.appendChild(textEl);
+            row.appendChild(contentCol);
 
             if (typeIt && isAdmin) {
                 // Typing animation for admin messages
