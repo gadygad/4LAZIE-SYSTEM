@@ -267,10 +267,15 @@
             
             <!-- LEFT PANEL: LIST -->
             <div class="list-panel">
-                <div class="p-4 border-bottom" style="background: rgba(255,255,255,0.8);">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.8);">
                     <h4 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #1e293b;">
                         <i class="bi bi-chat-left-dots-fill me-2" style="color: #10b981;"></i> My Messages
                     </h4>
+                    <form th:action="@{/student/chat/start}" method="post" style="margin:0;">
+                        <button type="submit" class="btn btn-sm shadow-sm" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;" title="Direct Chat with Admin" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                            <i class="bi bi-pencil-square" style="font-size: 1.1rem;"></i>
+                        </button>
+                    </form>
                 </div>
                 
                 <div class="overflow-auto flex-grow-1" style="scrollbar-width: thin;">

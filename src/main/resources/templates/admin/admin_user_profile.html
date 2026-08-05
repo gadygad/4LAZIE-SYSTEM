@@ -271,6 +271,11 @@
                             </div>
                             <!-- Quick Action Buttons -->
                             <div class="d-flex gap-2 flex-wrap">
+                                <form th:action="@{'/admin/chat/start/' + ${profileUser.id}}" method="post">
+                                    <button type="submit" class="btn btn-sm rounded-pill px-3 fw-bold" style="background: rgba(99,102,241,0.1); color: #4f46e5; border: 1px solid rgba(99,102,241,0.2);">
+                                        <i class="bi bi-chat-dots-fill me-1"></i> Message
+                                    </button>
+                                </form>
                                 <form th:action="@{'/admin/users/' + ${profileUser.id} + '/suspend'}" method="post">
                                     <button type="submit" class="btn btn-sm rounded-pill px-3 fw-bold"
                                             th:classappend="${profileUser.isSuspended} ? 'btn-outline-success' : 'btn-outline-danger'"
