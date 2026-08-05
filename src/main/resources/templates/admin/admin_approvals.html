@@ -124,26 +124,28 @@
         <div class="ambient-orb ambient-orb-2"></div>
     </div>
 
-    <!-- Premium Header Navbar -->
-    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16, 185, 129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
-        <div class="container d-flex justify-content-between align-items-center">
+    <!-- Premium Admin Navbar -->
+    <nav class="navbar sticky-top py-2" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border-bottom: 1px solid rgba(16,185,129,0.15); box-shadow: 0 10px 30px rgba(16,185,129,0.05); z-index: 1040;">
+        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
             <!-- Brand -->
-            <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
-                <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129,0.3);">
-                    <i class="bi bi-shield-check text-white" style="font-size: 1.1rem;"></i>
+            <a class="navbar-brand d-flex align-items-center text-decoration-none flex-shrink-1 overflow-hidden me-2" th:href="${session.user != null ? '/admin/dashboard' : '/'}">
+                <div class="d-flex align-items-center justify-content-center me-2 flex-shrink-0" style="width: 34px; height: 34px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 6px 15px rgba(16,185,129,0.35);">
+                    <i class="bi bi-shield-check text-white" style="font-size: 1rem;"></i>
                 </div>
-                <div class="d-flex align-items-center" style="transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.03) translateY(-1px)';" onmouseout="this.style.transform='none';">
+                <div class="d-flex align-items-center text-nowrap" style="transition: all 0.5s cubic-bezier(0.25,1,0.5,1); cursor: pointer;" onmouseover="this.style.transform='scale(1.02) translateY(-1px)';" onmouseout="this.style.transform='none';">
                     <span class="magic-brand-text">4LAZIE</span>
-                    <div class="ms-2 position-relative d-inline-flex align-items-center">
-                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 4px 15px rgba(16, 185, 129,0.4); position: relative; z-index: 2; padding-right: 2px;">SUPER ADMIN</span>
-                    </div>
+                    <span class="admin-brand-text ms-1" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SUPER ADMIN</span>
                 </div>
             </a>
-            
-            <div th:replace="~{fragments/top_actions :: actions}"></div>
+            <div class="flex-shrink-0" th:replace="~{fragments/top_actions :: actions}"></div>
         </div>
-        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, rgba(16, 185, 129,0) 0%, rgba(16, 185, 129,0.8) 50%, rgba(16, 185, 129,0) 100%); box-shadow: 0 2px 10px rgba(16, 185, 129,0.5);"></div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(16,185,129,0.8) 50%, transparent 100%); box-shadow: 0 -2px 15px rgba(16,185,129,0.4);"></div>
     </nav>
+    <style>
+        .admin-brand-text { font-size: 1.6rem; }
+        @media (max-width: 576px) { .admin-brand-text { font-size: 1.15rem; } }
+        @media (min-width: 577px) and (max-width: 768px) { .admin-brand-text { font-size: 1.3rem; } }
+    </style>
 
     <!-- Main Content -->
     <div class="container my-4">
