@@ -33,21 +33,70 @@ public class DirectChatController {
 
     // ─────────────────────────────────────────────
     //  SSE Emitter Registry — chatId → list of emitters
+    //  Each entry stores the emitter + the viewer's identifier
     // ─────────────────────────────────────────────
-    private static final Map<String, List<SseEmitter>> chatEmitters = new ConcurrentHashMap<>();
 
-    /** Notify all listeners of a chatId that new messages are available */
-    public static void notifyChat(String chatId, Object payload) {
+    // Viewer identifier stored alongside the emitter
+    private static final Map<String, List<SseEmitter>> chatEmitters   = new ConcurrentHashMap<>();
+    // Maps each emitter to its viewer identifier ("ADMIN" or studentId)
+    private static final Map<SseEmitter, String>       emitterViewers = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * Notify ALL listeners for a chatId with personalized isSelf payloads.
+     * Admin sees messages from ADMIN perspective, student sees from their own ID perspective.
+     */
+    private static void notifyChat(String chatId, DirectChat updatedChat) {
         List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
         List<SseEmitter> dead = new ArrayList<>();
         for (SseEmitter emitter : emitters) {
+            String viewer = emitterViewers.getOrDefault(emitter, "ADMIN");
             try {
+                List<Map<String, Object>> payload = buildMessageListStatic(updatedChat, viewer);
                 emitter.send(SseEmitter.event().name("message").data(payload, MediaType.APPLICATION_JSON));
             } catch (IOException e) {
                 dead.add(emitter);
             }
         }
-        emitters.removeAll(dead);
+        for (SseEmitter d : dead) {
+            emitters.remove(d);
+            emitterViewers.remove(d);
+        }
+    }
+
+    /** Static helper usable from notifyChat static context */
+    private static List<Map<String, Object>> buildMessageListStatic(DirectChat chat, String viewerIdentifier) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        DateTimeFormatter fmt     = DateTimeFormatter.ofPattern("hh:mm a");
+        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd MMM");
+        for (ChatMessage msg : chat.getMessages()) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("senderId",            msg.getSenderId());
+            m.put("senderName",           msg.getSenderName());
+            m.put("senderProfilePicture", msg.getSenderProfilePicture());
+            m.put("messageText",          msg.getMessageText());
+            m.put("time",  msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
+            m.put("date",  msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
+            boolean isSelf = "ADMIN".equals(viewerIdentifier)
+                    ? "ADMIN".equals(msg.getSenderId())
+                    : viewerIdentifier.equals(msg.getSenderId());
+            m.put("isSelf", isSelf);
+            result.add(m);
+        }
+        return result;
+    }
+
+    /** Helper to register emitter with viewer identifier and handle cleanup */
+    private static void registerEmitter(String chatId, SseEmitter emitter, String viewerIdentifier) {
+        chatEmitters.computeIfAbsent(chatId, k -> new CopyOnWriteArrayList<>()).add(emitter);
+        emitterViewers.put(emitter, viewerIdentifier);
+        emitter.onCompletion(() -> {
+            chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter);
+            emitterViewers.remove(emitter);
+        });
+        emitter.onTimeout(() -> {
+            chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter);
+            emitterViewers.remove(emitter);
+        });
     }
 
     // ─────────────────────────────────────────────
@@ -87,22 +136,20 @@ public class DirectChatController {
     @ResponseBody
     public SseEmitter adminStream(@PathVariable String chatId, HttpSession session) {
         User admin = (User) session.getAttribute("user");
-        SseEmitter emitter = new SseEmitter(180_000L); // 3 min timeout
+        SseEmitter emitter = new SseEmitter(180_000L);
         if (admin == null) { emitter.complete(); return emitter; }
 
-        chatEmitters.computeIfAbsent(chatId, k -> new CopyOnWriteArrayList<>()).add(emitter);
+        // Register with ADMIN perspective
+        registerEmitter(chatId, emitter, "ADMIN");
 
-        // Send current state immediately
+        // Send current messages immediately from ADMIN's perspective
         DirectChat chat = directChatService.getChatById(chatId);
         if (chat != null) {
             try {
                 emitter.send(SseEmitter.event().name("init")
-                        .data(buildMessageList(chat, "ADMIN"), MediaType.APPLICATION_JSON));
+                        .data(buildMessageListStatic(chat, "ADMIN"), MediaType.APPLICATION_JSON));
             } catch (IOException e) { /* ignore */ }
         }
-
-        emitter.onCompletion(() -> chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter));
-        emitter.onTimeout(() -> chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter));
         return emitter;
     }
 
@@ -127,8 +174,8 @@ public class DirectChatController {
         DirectChat chat = directChatService.sendMessage(chatId, "ADMIN", "4LAZIE Admin", messageText.trim());
         if (chat == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp); }
 
-        // Push to ALL listeners via SSE
-        notifyChat(chatId, buildMessageList(chat, "STUDENT_SIDE"));
+        // Push personalized SSE to every listener (admin sees isSelf=true, student sees isSelf=false)
+        notifyChat(chatId, chat);
 
         ChatMessage last = chat.getMessages().get(chat.getMessages().size() - 1);
         resp.put("success", true);
@@ -196,17 +243,17 @@ public class DirectChatController {
         SseEmitter emitter = new SseEmitter(180_000L);
         if (student == null) { emitter.complete(); return emitter; }
 
-        chatEmitters.computeIfAbsent(chatId, k -> new CopyOnWriteArrayList<>()).add(emitter);
+        // Register with student's own ID as perspective
+        registerEmitter(chatId, emitter, student.getId());
 
+        // Send current messages from student's perspective
         DirectChat chat = directChatService.getChatById(chatId);
         if (chat != null) {
             try {
                 emitter.send(SseEmitter.event().name("init")
-                        .data(buildMessageList(chat, student.getId()), MediaType.APPLICATION_JSON));
+                        .data(buildMessageListStatic(chat, student.getId()), MediaType.APPLICATION_JSON));
             } catch (IOException e) { /* ignore */ }
         }
-        emitter.onCompletion(() -> chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter));
-        emitter.onTimeout(() -> chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter));
         return emitter;
     }
 
@@ -231,8 +278,8 @@ public class DirectChatController {
         DirectChat updated = directChatService.sendMessage(chatId, student.getId(), student.getName(), messageText.trim());
         if (updated == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp); }
 
-        // Push to ALL listeners (admin, student) via SSE
-        notifyChat(chatId, buildMessageList(updated, "ADMIN"));
+        // Push personalized SSE to every listener (student sees isSelf=true, admin sees isSelf=false)
+        notifyChat(chatId, updated);
 
         ChatMessage last = updated.getMessages().get(updated.getMessages().size() - 1);
         resp.put("success", true);
@@ -261,27 +308,10 @@ public class DirectChatController {
     }
 
     // ─────────────────────────────────────────────
-    //  Helper — build JSON message list
+    //  Instance helper — wraps the static one
     // ─────────────────────────────────────────────
     private List<Map<String, Object>> buildMessageList(DirectChat chat, String viewerIdentifier) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("hh:mm a");
-        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd MMM");
-        for (ChatMessage msg : chat.getMessages()) {
-            Map<String, Object> m = new HashMap<>();
-            m.put("senderId",            msg.getSenderId());
-            m.put("senderName",           msg.getSenderName());
-            m.put("senderProfilePicture", msg.getSenderProfilePicture());
-            m.put("messageText",          msg.getMessageText());
-            m.put("time",  msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
-            m.put("date",  msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
-            boolean isSelf = "ADMIN".equals(viewerIdentifier)
-                    ? "ADMIN".equals(msg.getSenderId())
-                    : viewerIdentifier.equals(msg.getSenderId());
-            m.put("isSelf", isSelf);
-            result.add(m);
-        }
-        return result;
+        return buildMessageListStatic(chat, viewerIdentifier);
     }
 
     // ─────────────────────────────────────────────
