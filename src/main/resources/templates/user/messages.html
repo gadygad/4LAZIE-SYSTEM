@@ -457,17 +457,17 @@
                             
                             <!-- Initial Request Bubble (Student) -->
                             <div class="d-flex justify-content-end mb-4 ms-auto">
-                                <div style="max-width:85%; transform-origin: right center;">
+                                <div style="max-width:85%; transform-origin: right center; text-align: right;">
                                     <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
                                         <span class="fw-bold text-muted" style="font-size:0.8rem;" th:text="${session.user.name}">You</span>
                                         <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:00 AM</span>
                                     </div>
-                                    <div class="p-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 15px rgba(16,185,129,0.25); border: 1px solid rgba(255,255,255,0.2); position: relative; overflow: hidden; transition: all 0.3s ease;">
-                                        <div style="font-size:0.95rem; line-height:1.5; white-space:pre-wrap; position: relative; z-index: 1;" th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
+                                    <div class="p-2" style="position: relative; transition: all 0.3s ease;">
+                                        <div style="font-size:0.95rem; color:#334155; line-height:1.5; white-space:pre-wrap; position: relative; z-index: 1;" th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
                                         
-                                        <div th:if="${msg.attachmentUrl != null}" class="mt-3 p-3 rounded-3" style="background: rgba(255,255,255,0.15); border: 1px dashed rgba(255,255,255,0.3); position: relative; z-index: 1;">
-                                            <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2" style="color: white; font-weight: 600; font-size: 0.85rem;">
-                                                <i class="bi bi-paperclip fs-5"></i> View my attachment
+                                        <div th:if="${msg.attachmentUrl != null}" class="mt-2 text-end">
+                                            <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #3b82f6;">
+                                                <i class="bi bi-paperclip"></i> View my attachment
                                             </a>
                                         </div>
                                     </div>
@@ -487,22 +487,13 @@
                                             <span class="badge" style="background: rgba(16,185,129,0.1); color: #059669; font-size:0.65rem; padding: 2px 6px;">Support</span>
                                             <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:05 AM</span>
                                         </div>
-                                        <div class="p-3" style="background: white; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.04); border-left: 3px solid #10b981; position: relative; transition: all 0.3s ease;">
+                                        <div class="p-2" style="position: relative; transition: all 0.3s ease;">
                                             <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:0.95rem; color:#334155; line-height:1.6; white-space:pre-wrap;" th:text="${msg.adminReply}">Admin reply</div>
                                             
-                                            <div th:if="${msg.replyPdfUrl != null}" class="pdf-card mt-3">
-                                                <i class="bi bi-file-earmark-pdf-fill fs-2 me-3" style="color: #ef4444;"></i>
-                                                <div class="flex-grow-1">
-                                                    <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Magic_Solution.pdf</h6>
-                                                    <div class="d-flex gap-2 mt-2">
-                                                        <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="btn btn-sm text-white fw-bold" style="background: #10b981; border-radius: 8px;">
-                                                            <i class="bi bi-eye"></i> View File
-                                                        </a>
-                                                        <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" download class="btn btn-sm fw-bold" style="background: rgba(16,185,129,0.1); color: #059669; border-radius: 8px;">
-                                                            <i class="bi bi-download"></i> Download
-                                                        </a>
-                                                    </div>
-                                                </div>
+                                            <div th:if="${msg.replyPdfUrl != null}" class="mt-2 text-start">
+                                                <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
+                                                    <i class="bi bi-file-earmark-pdf"></i> View Attachment
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -527,22 +518,13 @@
                                                         <span class="badge" style="background: rgba(16,185,129,0.1); color: #059669; font-size:0.65rem; padding: 2px 6px;">Support</span>
                                                         <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
                                                     </div>
-                                                    <div class="p-3" style="background: white; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.04); border-left: 3px solid #10b981; position: relative; transition: all 0.3s ease;">
+                                                    <div class="p-2" style="position: relative; transition: all 0.3s ease;">
                                                         <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:0.95rem; color:#334155; line-height:1.6; white-space:pre-wrap;" th:text="${chat.messageText}">Message</div>
                                                         
-                                                        <div th:if="${chat.attachmentUrl != null}" class="pdf-card mt-3">
-                                                            <i class="bi bi-file-earmark-pdf-fill fs-2 me-3" style="color: #ef4444;"></i>
-                                                            <div class="flex-grow-1">
-                                                                <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Magic_Solution.pdf</h6>
-                                                                <div class="d-flex gap-2 mt-2">
-                                                                    <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="btn btn-sm text-white fw-bold" style="background: #10b981; border-radius: 8px;">
-                                                                        <i class="bi bi-eye"></i> View File
-                                                                    </a>
-                                                                    <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" download class="btn btn-sm fw-bold" style="background: rgba(16,185,129,0.1); color: #059669; border-radius: 8px;">
-                                                                        <i class="bi bi-download"></i> Download
-                                                                    </a>
-                                                                </div>
-                                                            </div>
+                                                        <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-start">
+                                                            <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
+                                                                <i class="bi bi-file-earmark-pdf"></i> View Attachment
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -553,17 +535,17 @@
                                     <th:block th:unless="${chat.senderId == 'ADMIN'}">
                                         <!-- Student Message -->
                                         <div class="d-flex justify-content-end ms-auto">
-                                            <div style="max-width:85%; transform-origin: right center;">
+                                            <div style="max-width:85%; transform-origin: right center; text-align: right;">
                                                 <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
                                                     <span class="fw-bold text-muted" style="font-size:0.8rem;" th:text="${session.user.name}">You</span>
                                                     <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
                                                 </div>
-                                                <div class="p-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 15px rgba(16,185,129,0.25); border: 1px solid rgba(255,255,255,0.2); position: relative; overflow: hidden; transition: all 0.3s ease;">
-                                                    <div style="font-size:0.95rem; line-height:1.5; white-space:pre-wrap; position: relative; z-index: 1;" th:text="${chat.messageText}">Message</div>
+                                                <div class="p-2" style="position: relative; transition: all 0.3s ease;">
+                                                    <div style="font-size:0.95rem; color:#334155; line-height:1.5; white-space:pre-wrap; position: relative; z-index: 1;" th:text="${chat.messageText}">Message</div>
                                                     
-                                                    <div th:if="${chat.attachmentUrl != null}" class="mt-3 p-3 rounded-3" style="background: rgba(255,255,255,0.15); border: 1px dashed rgba(255,255,255,0.3); position: relative; z-index: 1;">
-                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2" style="color: white; font-weight: 600; font-size: 0.85rem;">
-                                                            <i class="bi bi-paperclip fs-5"></i> View attached file
+                                                    <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-end">
+                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #3b82f6;">
+                                                            <i class="bi bi-paperclip"></i> View attached file
                                                         </a>
                                                     </div>
                                                 </div>
