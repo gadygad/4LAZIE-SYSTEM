@@ -23,11 +23,11 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 
 - **Notes & past papers** — upload, browse, search, and download PDFs
 - **Course-based access** — students only see materials for their program (e.g. DIP_CSE)
-- **Timetables** — view schedules by program, level, and semester
-- **Academic calendar** — CAT and UE dates for each semester
-- **User accounts** — register with email or Google Sign-In
-- **Email verification** — new users must verify their email before logging in
-- **Admin dashboard** — manage users, notes, subjects, courses, and timetables
+- **Timetables & Academic calendar** — view schedules and CAT/UE dates for each semester
+- **Assignment Help** — students can submit assignments with deadlines and get solutions from admins
+- **Real-time Messaging** — Slack-like live chat between students and admins using Server-Sent Events (SSE) with typing indicators
+- **User accounts & Security** — register with email or Google Sign-In, with email OTP verification
+- **Admin dashboard** — manage users, notes, subjects, assignments, and timetables
 - **Super Admin approvals** — sensitive delete actions need approval
 - **Push notifications** — works as a PWA on mobile (installable, offline support)
 - **Premium section** — optional upgrade area for extra features
@@ -185,8 +185,11 @@ java -jar target/school-system-1.0-SNAPSHOT.jar
 | `/register` | Create account |
 | `/dashboard` | Student dashboard (login required) |
 | `/notes` | Browse notes |
+| `/assignments` | Submit and track assignments |
+| `/messages` | Direct chat with Admins |
 | `/upload` | Upload notes (admin only) |
 | `/admin/dashboard` | Admin panel |
+| `/admin/messages` | Admin chat panel |
 
 ---
 
