@@ -6,6 +6,7 @@ import com.school.repository.NoteRepository;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
 import com.school.repository.AcademicCalendarRepository;
+import com.school.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -22,18 +23,14 @@ public class DatabaseInitializer implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        private PasswordEncoder passwordEncoder;
 
     // ── Credentials zinasomwa kutoka properties/env vars (sio hardcoded) ──
     @Value("${app.admin.email:admin@school.com}")
@@ -51,8 +48,19 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Value("${app.student.password:student_change_me_2024}")
     private String studentPassword;
 
-    @Autowired
-    private AcademicCalendarRepository academicCalendarRepository;
+        private AcademicCalendarRepository academicCalendarRepository;
+
+        private CourseRepository courseRepository;
+
+    public DatabaseInitializer(UserRepository userRepository, InstitutionRepository institutionRepository, NoteRepository noteRepository, PasswordEncoder passwordEncoder, AcademicCalendarRepository academicCalendarRepository, CourseRepository courseRepository) {
+        this.userRepository = userRepository;
+        this.institutionRepository = institutionRepository;
+        this.noteRepository = noteRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.courseRepository = courseRepository;
+    }
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -107,12 +115,18 @@ public class DatabaseInitializer implements CommandLineRunner {
                 com.school.model.AcademicCalendar cal = new com.school.model.AcademicCalendar();
                 cal.setAcademicYear("2025/2026");
                 cal.setFileUrl("academic_calendar_2025.pdf");
-                cal.setSem1Cat1Date("2026-01-13");
-                cal.setSem1Cat2Date("2026-03-02");
-                cal.setSem1UeDate("2026-03-23");
-                cal.setSem2Cat1Date("2026-06-01");
-                cal.setSem2Cat2Date("2026-07-20");
-                cal.setSem2UeDate("2026-08-10");
+                cal.setSem1Cat1DegreeDate("2026-01-13");
+                cal.setSem1Cat1DiplomaDate("2026-01-13");
+                cal.setSem1Cat2DegreeDate("2026-03-02");
+                cal.setSem1Cat2DiplomaDate("2026-03-02");
+                cal.setSem1UeDegreeDate("2026-03-23");
+                cal.setSem1UeDiplomaDate("2026-03-23");
+                cal.setSem2Cat1DegreeDate("2026-06-01");
+                cal.setSem2Cat1DiplomaDate("2026-06-01");
+                cal.setSem2Cat2DegreeDate("2026-07-20");
+                cal.setSem2Cat2DiplomaDate("2026-07-20");
+                cal.setSem2UeDegreeDate("2026-08-10");
+                cal.setSem2UeDiplomaDate("2026-08-10");
                 cal.setIsCurrent(true);
                 academicCalendarRepository.save(cal);
                 log.info("Default Academic Calendar seeded.");
@@ -221,6 +235,50 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         // DUMMY NOTES REMOVED FOR PRODUCTION
         // We only create users, no fake notes.
+        
+        // Live DB Repair: Fix users with long course names or null dateJoined
+        try {
+            java.util.Map<String, String> courseMap = new java.util.HashMap<>();
+            courseRepository.findAll().forEach(c -> {
+                if (c.getName() != null && c.getProgramType() != null) {
+                    courseMap.put(c.getName().toUpperCase(), c.getProgramType());
+                }
+            });
+            
+            userRepository.findAll().forEach(u -> {
+                boolean modified = false;
+                if (u.getDateJoined() == null) {
+                    u.setDateJoined(LocalDateTime.now());
+                    modified = true;
+                }
+                
+                if (u.getCourseProgram() != null) {
+                    String progUpper = u.getCourseProgram().toUpperCase();
+                    if (courseMap.containsKey(progUpper)) {
+                        u.setCourseProgram(courseMap.get(progUpper));
+                        modified = true;
+                    } else if (progUpper.contains("DIPLOMA IN") || progUpper.contains("DEGREE IN")) {
+                        // Fallback logic if course is missing from DB
+                        String type = progUpper.contains("DIPLOMA") ? "DIP_" : "DEG_";
+                        if (progUpper.contains("COMPUTER SCIENCE")) u.setCourseProgram(type + "CSE");
+                        else if (progUpper.contains("CIVIL")) u.setCourseProgram(type + "CE");
+                        else if (progUpper.contains("ELECTRICAL")) u.setCourseProgram(type + "EEE");
+                        else if (progUpper.contains("MECHANICAL")) u.setCourseProgram(type + "ME");
+                        else if (progUpper.contains("MECHATRONICS")) u.setCourseProgram(type + "MTE");
+                        else u.setCourseProgram(type + "IT"); // default fallback
+                        modified = true;
+                    }
+                }
+                
+                if (modified) {
+                    userRepository.save(u);
+                }
+            });
+            log.info("Live DB Repair completed successfully.");
+        } catch (Exception e) {
+            log.warn("Live DB Repair failed: " + e.getMessage());
+        }
+
         log.info("Database Initialization complete (Users only).");
     }
 

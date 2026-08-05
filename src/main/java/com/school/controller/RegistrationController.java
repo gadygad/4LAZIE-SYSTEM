@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import com.school.repository.UserRepository;
 import com.school.repository.InstitutionRepository;
 import com.school.repository.CourseRepository;
@@ -38,26 +35,34 @@ import com.school.model.Role;
 public class RegistrationController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
-    @Autowired
-    private UserService userService;
+        private UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private com.school.service.GoogleAuthService googleAuthService;
+        private com.school.service.GoogleAuthService googleAuthService;
 
-    @Autowired
-    private com.school.service.EmailService emailService;
+        private com.school.service.EmailService emailService;
+
+    public RegistrationController(UserService userService, UserRepository userRepository, InstitutionRepository institutionRepository, CourseRepository courseRepository, com.school.service.GoogleAuthService googleAuthService, com.school.service.EmailService emailService) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.institutionRepository = institutionRepository;
+        this.courseRepository = courseRepository;
+        this.googleAuthService = googleAuthService;
+        this.emailService = emailService;
+    }
+
 
     @GetMapping("/register")
-    public String showRegisterForm(Model model) {
+    public String showRegisterForm(@RequestParam(value = "redirect", required = false) String redirectUrl,
+                                   jakarta.servlet.http.HttpSession session, Model model) {
+        if (redirectUrl != null && !redirectUrl.isEmpty() && redirectUrl.startsWith("/")) {
+            session.setAttribute("redirectUrl", redirectUrl);
+        }
         model.addAttribute("user", new User());
         try {
             model.addAttribute("institutions", institutionRepository.findAll());
@@ -100,7 +105,7 @@ public class RegistrationController {
             // Set verification logic
             user.setIsVerified(false);
             user.setVerificationToken(UUID.randomUUID().toString());
-            user.setTokenExpiryDate(java.time.LocalDateTime.now().plusMinutes(5));
+            user.setTokenExpiryDate(java.time.LocalDateTime.now().plusHours(24));
 
             // Persist the new user (profile picture handled by service)
             userService.registerUser(user, profilePic);
@@ -131,7 +136,7 @@ public class RegistrationController {
             String email = payload.getEmail();
             String name = (String) payload.get("name");
 
-                Optional<User> existingUser = userRepository.findByEmail(email);
+                Optional<User> existingUser = userRepository.findFirstByEmailIgnoreCaseOrNameIgnoreCase(email, email);
                 User user;
                 if (existingUser.isPresent()) {
                     user = existingUser.get();
@@ -161,7 +166,8 @@ public class RegistrationController {
                 session.setAttribute("user", user);
                 
                 // Set Spring Security Context for Google User
-                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+                String roleName = user.getRole() != null ? user.getRole().name() : Role.STUDENT.name();
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + roleName));
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 
@@ -169,14 +175,22 @@ public class RegistrationController {
                 HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
                 securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
                 
-                if (user.getRole() == Role.ADMIN) {
-                    return "redirect:/admin/users";
+                if (user.getRole() == Role.ADMIN || user.getRole() == Role.SUPER_ADMIN) {
+                    return "redirect:/admin/dashboard";
                 }
                 return "redirect:/dashboard";
             
         } catch (Exception e) {
             log.error("Google Sign-In failed", e);
             model.addAttribute("error", "Google Sign-In failed: " + e.getMessage());
+            model.addAttribute("user", new User());
+            try {
+                model.addAttribute("institutions", institutionRepository.findAll());
+                model.addAttribute("courses", courseRepository.findAll());
+            } catch (Exception ex) {
+                model.addAttribute("institutions", java.util.Collections.emptyList());
+                model.addAttribute("courses", java.util.Collections.emptyList());
+            }
             return "auth/register";
         }
     }
@@ -187,7 +201,8 @@ public class RegistrationController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (user.getTokenExpiryDate() != null && user.getTokenExpiryDate().isBefore(java.time.LocalDateTime.now())) {
-                model.addAttribute("error", "Verification link has expired. Please register again or request a new link.");
+                userRepository.delete(user);
+                model.addAttribute("error", "Verification link has expired (over 24 hours). Please register again.");
                 return "auth/login";
             }
             user.setIsVerified(true);

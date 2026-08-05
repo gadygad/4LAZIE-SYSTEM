@@ -20,14 +20,28 @@ import java.util.Optional;
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private com.school.repository.NoteRepository noteRepository;
+        private com.school.util.AuthUtil authUtil;
 
-    @Autowired
-    private FileStorageService fileStorageService;
+    private User getLoggedInUser() {
+        return authUtil.getLoggedInUser();
+    }
+
+        private com.school.service.NotificationService notificationService;
+
+        private com.school.repository.NoteRepository noteRepository;
+
+        private FileStorageService fileStorageService;
+
+    public UserController(UserRepository userRepository, com.school.util.AuthUtil authUtil, com.school.service.NotificationService notificationService, com.school.repository.NoteRepository noteRepository, FileStorageService fileStorageService) {
+        this.userRepository = userRepository;
+        this.authUtil = authUtil;
+        this.notificationService = notificationService;
+        this.noteRepository = noteRepository;
+        this.fileStorageService = fileStorageService;
+    }
+
 
     @GetMapping("/explore")
     public String getExplorePage() {
@@ -35,23 +49,33 @@ public class UserController {
     }
 
     @GetMapping("/notifications")
-    public String getAllNotifications(HttpSession session, Model model) {
-        if (session.getAttribute("user") == null) {
+    public String getAllNotifications(Model model) {
+        User sessionUser = getLoggedInUser();
+        if (sessionUser == null) {
             return "redirect:/login";
         }
+        model.addAttribute("notifications", notificationService.getUserNotifications(sessionUser.getId()));
         return "user/notifications";
     }
 
     @GetMapping("/profile")
     public String getProfile(@RequestParam(value = "edit", required = false, defaultValue = "false") boolean edit,
-                             HttpSession session, Model model) {
-        User sessionUser = (User) session.getAttribute("user");
+                             Model model) {
+        User sessionUser = getLoggedInUser();
         if (sessionUser == null) {
             return "redirect:/login";
         }
         
         // Fetch fresh user from DB to ensure we have the latest institution and stats
         User user = userRepository.findById(sessionUser.getId()).orElse(sessionUser);
+        
+        // Safely get coverPhoto via reflection (handles old compiled classes without the field)
+        String coverPhoto = null;
+        try {
+            java.lang.reflect.Method m = user.getClass().getMethod("getCoverPhoto");
+            coverPhoto = (String) m.invoke(user);
+        } catch (Exception ignored) { }
+        model.addAttribute("coverPhoto", coverPhoto);
         
         // Self-heal: If user has no institution, assign default SJUIT
         if (user.getInstitution() == null) {
@@ -69,13 +93,20 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-public String updateProfile(@ModelAttribute("user") User formUser,
-                         @RequestParam(value = "file", required = false) MultipartFile file,
-                         HttpSession session, Model model) {
+    public String updateProfile(@jakarta.validation.Valid @ModelAttribute("formUser") com.school.dto.UserProfileUpdateDTO formUser,
+                             org.springframework.validation.BindingResult bindingResult,
+                             HttpSession session, Model model) {
 
-        User sessionUser = (User) session.getAttribute("user");
+        User sessionUser = getLoggedInUser();
         if (sessionUser == null) {
             return "redirect:/login";
+        }
+        
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("error", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            model.addAttribute("user", sessionUser); // Revert to current data for display
+            model.addAttribute("editMode", true);
+            return "user/profile";
         }
         
         if (!sessionUser.getEmail().equalsIgnoreCase(formUser.getEmail())) {
@@ -91,6 +122,10 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         // Update mutable fields
         sessionUser.setName(formUser.getName());
         sessionUser.setEmail(formUser.getEmail());
+        
+        MultipartFile file = formUser.getFile();
+        MultipartFile coverPhotoFile = formUser.getCoverPhotoFile();
+        
         // Handle profile picture upload if present
         if (file != null && !file.isEmpty()) {
             try {
@@ -102,10 +137,21 @@ public String updateProfile(@ModelAttribute("user") User formUser,
                 model.addAttribute("editMode", true);
                 return "user/profile";
             }
-        } else {
-            // Preserve existing picture if no new file provided (Do not overwrite)
         }
-        // sessionUser.setCourseProgram(formUser.getCourseProgram()); // Course modification disabled
+        
+        // Handle cover photo upload if present
+        if (coverPhotoFile != null && !coverPhotoFile.isEmpty()) {
+            try {
+                String coverUrl = fileStorageService.uploadFile(coverPhotoFile);
+                sessionUser.setCoverPhoto(coverUrl);
+            } catch (IOException e) {
+                model.addAttribute("error", "Failed to upload cover photo: " + e.getMessage());
+                model.addAttribute("user", sessionUser);
+                model.addAttribute("editMode", true);
+                return "user/profile";
+            }
+        }
+        
         sessionUser.setLevel(formUser.getLevel());
         sessionUser.setSemester(formUser.getSemester());
         // Save changes
@@ -130,14 +176,21 @@ public String updateProfile(@ModelAttribute("user") User formUser,
         }
         
         model.addAttribute("user", sessionUser);
+        // Pass coverPhoto safely for template
+        String coverPhoto = null;
+        try {
+            java.lang.reflect.Method m = sessionUser.getClass().getMethod("getCoverPhoto");
+            coverPhoto = (String) m.invoke(sessionUser);
+        } catch (Exception ignored) { }
+        model.addAttribute("coverPhoto", coverPhoto);
         model.addAttribute("success", "Profile updated successfully!");
         model.addAttribute("editMode", false);
         return "user/profile";
     }
 
     @GetMapping("/profile/saved")
-    public String getSavedNotes(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+    public String getSavedNotes(Model model) {
+        User user = getLoggedInUser();
         if (user == null) {
             return "redirect:/login";
         }
@@ -156,8 +209,8 @@ public String updateProfile(@ModelAttribute("user") User formUser,
     }
 
     @GetMapping("/profile/downloads")
-    public String getDownloadedNotes(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+    public String getDownloadedNotes(Model model) {
+        User user = getLoggedInUser();
         if (user == null) {
             return "redirect:/login";
         }

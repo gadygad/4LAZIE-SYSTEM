@@ -6,36 +6,47 @@
 <div th:fragment="sidebar_inner_content">
     <div class="p-3 pb-5 custom-scrollbar position-relative" id="mobileSidebarBody">
         <!-- College Name Link (St. Joseph College) -->
-        <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(255, 255, 255, 0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.08)';">
-            <i class="bi bi-building" style="color: #60a5fa; font-size: 1rem; flex-shrink: 0;"></i>
-            <span class="text-white text-truncate" style="font-size: 0.75rem; font-weight: 500; font-family: 'Outfit', sans-serif; letter-spacing: 0.3px;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Eng. & Tech'}">St. Joseph College of Eng. & Tech</span>
-            <i class="bi bi-box-arrow-up-right ms-auto flex-shrink-0" style="color: rgba(255,255,255,0.4); font-size: 0.75rem;"></i>
+        <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(16, 185, 129, 0.05); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.05)'; this.style.borderColor='rgba(16, 185, 129, 0.1)';">
+            <i class="bi bi-building" style="color: #10b981; font-size: 1rem; flex-shrink: 0;"></i>
+            <span class="text-truncate" style="color: #1e293b; font-size: 0.85rem; font-weight: 500; font-family: 'Outfit', sans-serif; letter-spacing: 0.3px;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Eng. & Tech'}">St. Joseph College of Eng. & Tech</span>
+            <i class="bi bi-box-arrow-up-right ms-auto flex-shrink-0" style="color: #94a3b8; font-size: 0.85rem;"></i>
         </a>
 
         <div id="mobileSidebarDynamicContent">
+            <!-- MY MESSAGES LINK -->
+            <a href="/messages" class="text-decoration-none d-flex align-items-center gap-3 mb-3 p-2 rounded-3 sidebar-hover-item" style="transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.05)';" onmouseout="this.style.background='transparent';">
+                <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                    <i class="bi bi-chat-dots-fill text-white" style="font-size: 1.1rem;"></i>
+                </div>
+                <div class="d-flex flex-column text-start">
+                    <span style="font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; color: #1e293b;">MY MESSAGES</span>
+                    <span style="font-size: 0.7rem; color: #64748b; font-weight: 400;">Assignment Help Replies</span>
+                </div>
+            </a>
+            
             <!-- DIPLOMA PROGRAMMES GROUP -->
-            <div class="sidebar-group" id="diplomaGroup">
+            <div class="sidebar-group" id="diplomaGroup" th:if="${diplomaCourses != null and !diplomaCourses.isEmpty()}">
                 <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
                     <div class="d-flex align-items-center gap-3">
                         <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
                             <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
                         </div>
                         <div class="d-flex flex-column text-start">
-                            <span style="font-size: 0.75rem; font-weight: 500; letter-spacing: 0.5px; color: #f8fafc;">DIPLOMA COURSES</span>
-                            <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400;"><span th:text="${diplomaCourses != null ? diplomaCourses.size() : 0}">0</span> Programmes</span>
+                            <span style="font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; color: #1e293b;">DIPLOMA COURSES</span>
+                            <span style="font-size: 0.7rem; color: #64748b; font-weight: 400;"><span th:text="${diplomaCourses != null ? diplomaCourses.size() : 0}">0</span> Programmes</span>
                         </div>
                     </div>
                     <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.3s ease;"></i>
                 </button>
                 <div class="sidebar-group-content">
                     <!-- DYNAMIC DIPLOMA COURSES -->
-                    <div class="sidebar-hover-item" th:each="course : ${diplomaCourses}">
+                    <div class="sidebar-hover-item" th:each="course : ${diplomaCourses}" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == course.programType}">
                         <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                             <div class="d-flex align-items-start gap-3">
                                 <i th:class="'bi mt-1 ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.2rem;'"></i>
                                 <div class="d-flex flex-column text-start">
-                                    <span style="font-weight: 500; font-size: 0.75rem; letter-spacing: 0.5px;" th:text="${#strings.toUpperCase(course.shortName != null ? course.shortName : course.name)}">DIPLOMA</span>
-                                    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400; text-transform: uppercase; margin-top: 2px;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
+                                    <span style="font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px;" th:text="${#strings.toUpperCase(course.shortName != null ? course.shortName : course.name)}">DIPLOMA</span>
+                                    <span style="font-size: 0.7rem; color: #64748b; font-weight: 400; text-transform: uppercase; margin-top: 2px;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
                                 </div>
                             </div>
                             <i class="bi bi-chevron-right chevron mt-2"></i>
@@ -51,28 +62,28 @@
             </div>
 
             <!-- DEGREE PROGRAMMES GROUP -->
-            <div class="sidebar-group mt-3" id="degreeGroup">
+            <div class="sidebar-group mt-3" id="degreeGroup" th:if="${degreeCourses != null and !degreeCourses.isEmpty()}">
                 <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')">
                     <div class="d-flex align-items-center gap-3">
                         <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
                             <i class="bi bi-award-fill text-white" style="font-size: 1.1rem;"></i>
                         </div>
                         <div class="d-flex flex-column text-start">
-                            <span style="font-size: 0.75rem; font-weight: 500; letter-spacing: 0.5px; color: #f8fafc;">DEGREE COURSES</span>
-                            <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400;"><span th:text="${degreeCourses != null ? degreeCourses.size() : 0}">0</span> Programmes</span>
+                            <span style="font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; color: #1e293b;">DEGREE COURSES</span>
+                            <span style="font-size: 0.7rem; color: #64748b; font-weight: 400;"><span th:text="${degreeCourses != null ? degreeCourses.size() : 0}">0</span> Programmes</span>
                         </div>
                     </div>
                     <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.3s ease;"></i>
                 </button>
                 <div class="sidebar-group-content">
                     <!-- DYNAMIC DEGREE COURSES -->
-                    <div class="sidebar-hover-item" th:each="course : ${degreeCourses}">
+                    <div class="sidebar-hover-item" th:each="course : ${degreeCourses}" th:if="${session.user == null or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN' or session.user.courseProgram == course.programType}">
                         <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)">
                             <div class="d-flex align-items-start gap-3">
                                 <i th:class="'bi mt-1 ' + ${course.iconClass != null ? course.iconClass : 'bi-book'}" th:style="'color: ' + ${course.iconColor != null ? course.iconColor : '#3b82f6'} + '; font-size: 1.2rem;'"></i>
                                 <div class="d-flex flex-column text-start">
-                                    <span style="font-weight: 500; font-size: 0.75rem; letter-spacing: 0.5px;" th:text="${#strings.toUpperCase(course.shortName != null ? course.shortName : course.name)}">DEGREE</span>
-                                    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); font-weight: 400; text-transform: uppercase; margin-top: 2px;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
+                                    <span style="font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px;" th:text="${#strings.toUpperCase(course.shortName != null ? course.shortName : course.name)}">DEGREE</span>
+                                    <span style="font-size: 0.7rem; color: #64748b; font-weight: 400; text-transform: uppercase; margin-top: 2px;" th:text="${course.subtitle != null ? course.subtitle : 'Program'}">Subtitle</span>
                                 </div>
                             </div>
                             <i class="bi bi-chevron-right chevron mt-2"></i>
@@ -82,6 +93,45 @@
                                 <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.startLevel + year - 1} + '&semester=1'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 1'">Year 1 - Sem 1</a>
                                 <a href="guest_notes.html" th:href="@{'/guest-notes?program=' + ${course.programType} + '&level=' + ${course.startLevel + year - 1} + '&semester=2'}" th:text="${course.levelPrefix} + ' ' + (${course.levelPrefix == 'Year' ? year : (course.startLevel + year - 1)}) + ' - Sem 2'">Year 1 - Sem 2</a>
                             </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTHER UNIVERSITIES GROUP -->
+            <div class="sidebar-group mt-3" id="otherUniversitiesGroup" th:if="${otherUniversities != null and !otherUniversities.isEmpty()}">
+                <button class="sidebar-group-btn" onclick="this.parentElement.classList.toggle('open')" style="background: rgba(139, 92, 246, 0.05); border: none;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="background: linear-gradient(135deg, #a855f7, #7e22ce); padding: 8px; border-radius: 8px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); border: 1px solid rgba(255,255,255,0.2);">
+                            <i class="bi bi-bank2 text-white" style="font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                        </div>
+                        <div class="d-flex flex-column text-start">
+                            <span style="font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; color: #1e293b; font-family: 'Outfit', sans-serif;">OTHER UNIVERSITIES</span>
+                            <span style="font-size: 0.7rem; color: #d8b4fe; font-weight: 500;"><span th:text="${otherUniversities.size()}">0</span> Connected Institutions</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-down group-chevron" style="transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: #a855f7;"></i>
+                </button>
+                <div class="sidebar-group-content" style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 12px; border: none; margin-top: 8px; padding: 6px; box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.05);">
+                    <!-- DYNAMIC OTHER UNIVERSITIES -->
+                    <div class="sidebar-hover-item" th:each="inst : ${otherUniversities}" style="transition: all 0.3s ease;">
+                        <button class="sidebar-hover-btn align-items-start" onclick="toggleMobileSidebarItem(this)" style="padding: 10px; border-radius: 8px;">
+                            <div class="d-flex align-items-start gap-3 w-100">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(168, 85, 247, 0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(168, 85, 247, 0.2);">
+                                    <i class="bi bi-building" style="color: #c084fc; font-size: 1rem;"></i>
+                                </div>
+                                <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden">
+                                    <span style="font-weight: 600; font-size: 0.9rem; letter-spacing: 0.3px; color: #1e293b; font-family: 'Outfit', sans-serif; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" th:text="${#strings.toUpperCase(inst.shortName != null ? inst.shortName : inst.name)}">INSTITUTION</span>
+                                    <span style="font-size: 0.75rem; color: #64748b; font-weight: 400; margin-top: 2px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" th:text="${inst.name}">Full Name</span>
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right chevron mt-2" style="color: #c084fc;"></i>
+                        </button>
+                        <div class="sidebar-hover-content" style="background: rgba(168, 85, 247, 0.05); border: none; margin-left: 16px; border-radius: 0 8px 8px 0;">
+                            <a href="guest_notes.html" th:href="@{'/notes?program=' + (${session.user != null and session.user.role.name() == 'STUDENT' ? session.user.courseProgram : ''}) + '&institution=' + ${inst.id}}" class="d-flex align-items-center gap-2" style="padding: 10px 15px; color: #475569; font-weight: 500; transition: all 0.2s ease;">
+                                <i class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>
+                                <span>Browse Notes</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -138,16 +188,16 @@
 </div>
 
 <!-- Desktop Premium Sidebar -->
-<aside class="hero-sidebar d-none d-lg-block" th:fragment="desktop_sidebar" style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.05); overflow: hidden; height: 100vh;">
+<aside class="hero-sidebar d-none d-lg-block" th:fragment="desktop_sidebar" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border-right: none; overflow: hidden; height: 100vh;">
     <!-- Glowing Ambient Orbs for Premium Vibe -->
-    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
-    <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+    <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
 
-    <div class="px-3 pt-4 pb-2 border-bottom border-secondary border-opacity-25" style="background: rgba(255,255,255,0.02);">
+    <div class="px-3 pt-4 pb-2 border-0" style="background: rgba(255,255,255,0.02);">
         <h5 class="text-white fw-bold m-0" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="logo-gradient" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.6rem; font-weight: 900; letter-spacing: -1px; line-height: 1;">4LAZIE</span>
+                    <span class="magic-brand-text">4LAZIE</span>
                     <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3); overflow: hidden; width: fit-content;">
                         <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
                         <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #0d6efd; display: flex; align-items: center; white-space: nowrap;">
@@ -159,22 +209,22 @@
         </h5>
     </div>
     
-    <div class="offcanvas-body custom-scrollbar">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body custom-scrollbar">
         <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
     </div>
 </aside>
 
 <!-- Mobile Premium Sidebar (Offcanvas) -->
-<div class="offcanvas offcanvas-start border-0" tabindex="-1" id="mobileSidebar" th:fragment="mobile_sidebar" aria-labelledby="mobileSidebarLabel" style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 20px 0 50px rgba(0,0,0,0.5); overflow: hidden;">
+<div class="offcanvas offcanvas-start border-0" tabindex="-1" id="mobileSidebar" th:fragment="mobile_sidebar" aria-labelledby="mobileSidebarLabel" data-bs-scroll="true" data-bs-backdrop="true" style="width: 280px; max-width: 80vw; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 20px 0 50px rgba(0,0,0,0.1); overflow: hidden;">
     <!-- Glowing Ambient Orbs for Premium Vibe -->
-    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
-    <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
+    <div style="position: absolute; bottom: 10%; right: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;"></div>
 
-    <div class="offcanvas-header border-bottom border-secondary border-opacity-25 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.02);">
-        <h5 class="offcanvas-title text-white fw-bold d-flex flex-column" id="mobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-header border-0 pb-3 pt-4 px-4 position-relative" style="background: rgba(255,255,255,0.9);">
+        <h5 class="offcanvas-title text-dark fw-bold d-flex flex-column" id="mobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="logo-gradient" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; line-height: 1;">4LAZIE</span>
+                    <span class="magic-brand-text">4LAZIE</span>
                     <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3); overflow: hidden; width: fit-content;">
                         <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
                         <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #0d6efd; display: flex; align-items: center; white-space: nowrap;">
@@ -184,11 +234,12 @@
                 </div>
             </a>
         </h5>
-        <button type="button" class="btn d-flex align-items-center justify-content-center p-0" data-bs-dismiss="offcanvas" aria-label="Close" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.8)'; this.style.transform='rotate(90deg)';" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='rotate(0deg)';">
-            <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
+        <button type="button" class="btn d-flex align-items-center justify-content-center p-0" data-bs-dismiss="offcanvas" aria-label="Close" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'; this.style.transform='rotate(90deg)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.transform='rotate(0deg)';">
+            <i class="bi bi-x-lg" style="font-size: 1.2rem;"></i>
         </button>
     </div>
-    <div class="offcanvas-body custom-scrollbar">
+    
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body custom-scrollbar" style="background: rgba(255,255,255,0.85);">
         <div th:replace="~{fragments/sidebar_fragments :: sidebar_inner_content}"></div>
     </div>
 </div>
@@ -196,7 +247,31 @@
 
     <!-- PWA Service Worker Registration -->
     <script>
-        function urlB64ToUint8Array(base64String) {
+        // Push Sidebar Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            let mobileSidebarEl = document.getElementById('mobileSidebar');
+            if(mobileSidebarEl) {
+                mobileSidebarEl.addEventListener('show.bs.offcanvas', function () {
+                    document.body.classList.add('sidebar-is-open');
+                });
+                mobileSidebarEl.addEventListener('hide.bs.offcanvas', function () {
+                    document.body.classList.remove('sidebar-is-open');
+                });
+            }
+        });
+
+        
+        // Close offcanvas when clicking outside
+        document.addEventListener('click', function(event) {
+            let mobileSidebarEl = document.getElementById('mobileSidebar');
+            if (mobileSidebarEl && document.body.classList.contains('sidebar-is-open')) {
+                if (!mobileSidebarEl.contains(event.target) && !event.target.closest('[data-bs-toggle="offcanvas"]')) {
+                    try { let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl) || new bootstrap.Offcanvas(mobileSidebarEl); bsOffcanvas.hide(); } catch (e) { console.error("Offcanvas close error:", e); }
+                }
+            }
+        });
+
+function urlB64ToUint8Array(base64String) {
             const padding = '='.repeat((4 - base64String.length % 4) % 4);
             const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
             const rawData = window.atob(base64);
@@ -245,6 +320,8 @@
         }
     </script>
 
+
 </body>
 </html>
+
 

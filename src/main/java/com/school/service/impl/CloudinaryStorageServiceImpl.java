@@ -4,18 +4,23 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.school.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-@Service
+// Not a @Service — instantiated by CloudinaryConfig.fileStorageService() when credentials are present
 public class CloudinaryStorageServiceImpl implements FileStorageService {
 
-    @Autowired
+    @Autowired(required = false)
     private Cloudinary cloudinary;
+
+    public CloudinaryStorageServiceImpl() {}
+
+    public void setCloudinary(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
 
     @Override
     public String uploadFile(MultipartFile file) throws IOException {

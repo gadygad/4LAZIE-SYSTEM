@@ -31,8 +31,12 @@ public class PushNotificationService {
     @Value("${vapid.subject}")
     private String subject;
 
-    @Autowired
-    private PushSubscriptionRepository subscriptionRepository;
+        private PushSubscriptionRepository subscriptionRepository;
+
+    public PushNotificationService(PushSubscriptionRepository subscriptionRepository) {
+        this.subscriptionRepository = subscriptionRepository;
+    }
+
 
     private PushService pushService;
 
@@ -85,5 +89,30 @@ public class PushNotificationService {
     private String escapeJson(String input) {
         if (input == null) return "";
         return input.replace("\"", "\\\"").replace("\n", "\\n");
+    }
+
+    @Async
+    public void sendToUser(String userId, String title, String body, String url) {
+        if (pushService == null) return;
+
+        List<PushSubscription> subs = subscriptionRepository.findByUserId(userId);
+        if (subs == null || subs.isEmpty()) return;
+        
+        String payload = String.format("{\"title\": \"%s\", \"body\": \"%s\", \"url\": \"%s\"}", 
+            escapeJson(title), escapeJson(body), escapeJson(url));
+
+        for (PushSubscription sub : subs) {
+            try {
+                Subscription.Keys keys = new Subscription.Keys(sub.getP256dh(), sub.getAuth());
+                Subscription subscription = new Subscription(sub.getEndpoint(), keys);
+                Notification notification = new Notification(subscription, payload);
+                pushService.send(notification);
+            } catch (Exception e) {
+                logger.error("Failed to send push to endpoint: " + sub.getEndpoint(), e);
+                if (e.getMessage() != null && (e.getMessage().contains("404") || e.getMessage().contains("410"))) {
+                    subscriptionRepository.delete(sub);
+                }
+            }
+        }
     }
 }

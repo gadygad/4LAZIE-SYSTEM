@@ -18,11 +18,15 @@ import java.util.stream.Collectors;
 @RestController
 public class SubjectApiController {
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
+
+    public SubjectApiController(CourseRepository courseRepository, SubjectRepository subjectRepository) {
+        this.courseRepository = courseRepository;
+        this.subjectRepository = subjectRepository;
+    }
+
 
     @GetMapping("/api/subjects")
     public ResponseEntity<?> getSubjects(
@@ -39,12 +43,14 @@ public class SubjectApiController {
         
         List<Subject> subjects = subjectRepository.findByCourseAndLevelNoAndSemesterNo(course, levelNo, semesterNo);
         
-        // Map to avoid infinite recursion with lazy loaded Course
         List<Map<String, Object>> response = subjects.stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
             map.put("id", s.getId());
             map.put("name", s.getName());
             map.put("code", s.getCode());
+            map.put("levelNo", s.getLevelNo());
+            map.put("semesterNo", s.getSemesterNo());
+            map.put("credits", s.getCredits() != null ? s.getCredits() : 9); // Default 9 if not set
             return map;
         }).collect(Collectors.toList());
         

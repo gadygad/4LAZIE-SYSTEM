@@ -17,25 +17,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class PasswordResetController {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private PasswordResetTokenRepository tokenRepository;
+        private PasswordResetTokenRepository tokenRepository;
 
-    @Autowired
-    private EmailService emailService;
+        private EmailService emailService;
 
-    @Autowired
-    private SmsService smsService;
+        private SmsService smsService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        private PasswordEncoder passwordEncoder;
+
+    public PasswordResetController(UserRepository userRepository, PasswordResetTokenRepository tokenRepository, EmailService emailService, SmsService smsService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
+        this.emailService = emailService;
+        this.smsService = smsService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {

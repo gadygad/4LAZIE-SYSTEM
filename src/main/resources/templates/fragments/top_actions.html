@@ -3,40 +3,46 @@
 <body>
     <div th:fragment="actions" class="d-flex align-items-center" style="gap: 0.6rem;">
 <!-- Actions (Notifications, Profile) -->
-        <!-- Global Search Bar (Desktop) -->
-        <div class="search-container position-relative me-3 d-none d-md-block" style="width: 220px; max-width: 280px; flex-shrink: 1;">
-            <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; z-index: 5;"></i>
-            <input type="text" id="globalDesktopSearch" autocomplete="off" class="form-control position-relative" placeholder="Search notes, past papers..."
-                   style="padding: 6px 16px 6px 40px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b; width: 100%;"
+        <!-- Global Search Bar (Desktop only) -->
+        <div class="search-container position-relative d-none d-md-block me-2 me-md-3" style="min-width: 160px; max-width: 280px; flex-grow: 1;">
+            <i class="bi bi-search position-absolute text-muted" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; z-index: 5; flex-shrink: 0; min-width: 16px;"></i>
+            <input type="text" id="globalDesktopSearch" autocomplete="off" class="form-control position-relative" placeholder="Search notes..."
+                   style="padding-left: 40px !important; padding-right: 16px; padding-top: 6px; padding-bottom: 6px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b; width: 100%;"
                    onfocus="this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'; this.style.background='#ffffff';"
                    onblur="setTimeout(()=>{document.getElementById('globalDesktopResults').classList.add('d-none')}, 200); this.style.boxShadow='none'; this.style.borderColor='rgba(0,0,0,0.1)'; this.style.background='#f8fafc';">
             
-            <!-- Desktop Search Results Dropdown -->
+            <!-- Search Results Dropdown -->
             <div id="globalDesktopResults" class="d-none" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; margin-top: 8px; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.12); overflow: hidden; max-height: 350px; overflow-y: auto;"></div>
         </div>
         
-        <!-- Mobile Search Button (Triggers Mobile Search Collapse below navbar) -->
-        <button class="btn d-md-none me-2 p-0 position-relative" id="mobileSearchToggleBtn" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #059669; display: flex; align-items: center; justify-content: center;">
-            <i class="bi bi-search" style="font-size: 1.1rem;"></i>
+        <!-- Mobile Search Toggle Button -->
+        <button id="mobileSearchToggleBtn" class="d-flex d-md-none align-items-center justify-content-center border-0 me-1" style="width: 40px; height: 40px; border-radius: 50%; background: #f8fafc; border: 1px solid rgba(0,0,0,0.08) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16,185,129,0.1)'" onmouseout="this.style.background='#f8fafc'">
+            <i class="bi bi-search" style="font-size: 1rem; color: #10b981;"></i>
         </button>
                     
+<!-- Messages Button -->
+                    <a href="/messages" class="d-flex align-items-center justify-content-center text-decoration-none position-relative me-2" 
+                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                       onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
+                       onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#10b981';">
+                        <i class="bi bi-chat-dots-fill" style="color: #10b981; font-size: 1.2rem; transition: color 0.3s;"></i>
+                    </a>
+                    
 <!-- Notification Button (Triggers Dropdown) -->
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" data-bs-toggle="dropdown" aria-expanded="false" role="button" id="notificationDropdown"
+                    <div class="dropdown premium-hover-dropdown">
+                        <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative notification-trigger" id="notificationDropdownTop" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" role="button"
                            style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
                            onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
                            onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#10b981';">
                             <i class="bi bi-bell-fill" style="color: #10b981; font-size: 1.2rem; transition: color 0.3s;"></i>
-                            <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #10b981; color: white !important; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
-                                3
-                            </span>
+                            <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #ef4444; color: #ffffff !important; font-size: 0.75rem; padding: 0.4em 0.6em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; font-weight: 900; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); animation: pulse-red-badge 1.5s infinite;"></span>
                         </a>
                         
                         <!-- Notification Dropdown Menu -->
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg notification-dropdown border-0" aria-labelledby="notificationDropdown" style="border-radius: 16px; min-width: 280px; width: 300px; max-width: 85vw; padding: 0; margin-top: 12px; overflow: hidden; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg notification-dropdown border-0" aria-labelledby="notificationDropdown" style="border-radius: 16px; min-width: 280px; width: 300px; max-width: 85vw; padding: 0; margin-top: 12px; overflow: hidden; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); top: 100% !important; bottom: auto !important; right: 0 !important; left: auto !important; transform: none !important;">
                             <li class="dropdown-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="background: rgba(248, 250, 252, 0.95);">
                                 <h6 class="mb-0 fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b !important;">Notifications</h6>
-                                <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1" style="background: linear-gradient(135deg, #10b981, #059669); color: white !important; font-size: 0.75rem; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">3 New</span>
+                                <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount + ' New'}" class="badge rounded-pill px-2 py-1" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white !important; font-size: 0.75rem; font-weight: 600; box-shadow: 0 2px 8px rgba(239,68,68,0.4);">3 New</span>
                             </li>
                             
                             <li class="p-0">
@@ -48,7 +54,7 @@
                                     </div>
                                     
                                     <!-- Notification Item -->
-                                    <a th:each="notification : ${notifications}" th:href="@{'/api/notifications/click/' + ${notification.id}}" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item" th:style="'transition: all 0.3s ease; background-color: ' + (${notification.read} ? 'transparent' : 'rgba(16, 185, 129, 0.05)') + '; position: relative; overflow: hidden;'" onmouseover="this.style.backgroundColor='rgba(16, 185, 129, 0.08)'; this.style.paddingLeft='1.8rem';" onmouseout="this.style.backgroundColor=this.getAttribute('data-read') === 'true' ? 'transparent' : 'rgba(16, 185, 129, 0.05)'; this.style.paddingLeft='1.5rem';" th:attr="data-read=${notification.read}">
+                                    <a th:each="notification : ${notifications}" th:href="@{'/api/notifications/click/' + ${notification.id}}" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none notification-item flex-shrink-0" th:style="'transition: all 0.3s ease; background-color: ' + (${notification.read} ? 'transparent' : 'rgba(16, 185, 129, 0.05)') + '; position: relative; overflow: hidden; min-height: 80px;'" onmouseover="this.style.backgroundColor='rgba(16, 185, 129, 0.08)'; this.style.paddingLeft='1.8rem';" onmouseout="this.style.backgroundColor=this.getAttribute('data-read') === 'true' ? 'transparent' : 'rgba(16, 185, 129, 0.05)'; this.style.paddingLeft='1.5rem';" th:attr="data-read=${notification.read}">
                                         <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #10b981, #059669); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: top;"></div>
                                         <div class="d-flex w-100 justify-content-between align-items-start">
                                             <div class="d-flex align-items-start">
@@ -72,21 +78,29 @@
                         
                         <style>
                             /* Smooth Dropdown Animation */
+                            /* Smooth Dropdown Animation */
                             @keyframes customDropdownFadeIn {
-                                from {
+                                0% {
                                     opacity: 0;
-                                    transform: translateY(15px);
+                                    transform: perspective(400px) rotateX(-10deg) translateY(15px) scale(0.95);
                                 }
-                                to {
+                                100% {
                                     opacity: 1;
-                                    transform: translateY(0);
+                                    transform: perspective(400px) rotateX(0) translateY(0) scale(1);
                                 }
+                            }
+                            @keyframes pulse-red-badge {
+                                0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                                70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+                                100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
                             }
                             
                             .dropdown-menu.notification-dropdown.show {
-                                animation: customDropdownFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                                animation: customDropdownFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                                display: block;
+                                box-shadow: 0 20px 50px rgba(16, 185, 129, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.1) !important;
                             }
-
+                            
                             .notification-item:hover .accent-bar {
                                 transform: scaleY(1) !important;
                             }
@@ -95,11 +109,11 @@
                             @keyframes fallDownFade {
                                 0% {
                                     opacity: 0;
-                                    transform: translateY(-20px);
+                                    transform: translateY(-15px) scale(0.98);
                                 }
                                 100% {
                                     opacity: 1;
-                                    transform: translateY(0);
+                                    transform: translateY(0) scale(1);
                                 }
                             }
                             
@@ -112,34 +126,45 @@
                             .dropdown-menu.show .notification-item:nth-child(1) { animation-delay: 0.05s; }
                             .dropdown-menu.show .notification-item:nth-child(2) { animation-delay: 0.1s; }
                             .dropdown-menu.show .notification-item:nth-child(3) { animation-delay: 0.15s; }
+                            .dropdown-menu.show .notification-item:nth-child(4) { animation-delay: 0.2s; }
                         </style>
                         <script>
-                            document.addEventListener("DOMContentLoaded", function() {
-                                const notifDropdown = document.getElementById('notificationDropdown');
-                                if(notifDropdown) {
-                                    notifDropdown.addEventListener('show.bs.dropdown', function () {
-                                        const getCsrfToken = () => {
-                                            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
-                                            return match ? match[2] : '';
-                                        };
-                                        fetch('/api/notifications/mark-read', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-XSRF-TOKEN': getCsrfToken()
-                                            }
-                                        }).then(() => {
-                                            // Optionally remove badges or set them to 0 visually
-                                            const badges = document.querySelectorAll('#notificationDropdown .badge, .notification-dropdown .badge');
-                                            badges.forEach(b => b.style.display = 'none');
-                                            const items = document.querySelectorAll('.notification-item');
-                                            items.forEach(i => {
-                                                i.style.backgroundColor = 'transparent';
-                                            });
-                                        }).catch(e => console.error(e));
+                            if (!window.notificationJsInitialized) {
+                                window.notificationJsInitialized = true;
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    const notifDropdowns = document.querySelectorAll('.notification-trigger');
+                                    notifDropdowns.forEach(dropdown => {
+                                        dropdown.addEventListener('show.bs.dropdown', function () {
+                                            const getCsrfToken = () => {
+                                                const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                                                return match ? match[2] : '';
+                                            };
+                                            fetch('/api/notifications/mark-read', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-XSRF-TOKEN': getCsrfToken()
+                                                }
+                                            }).then(() => {
+                                                // Smoothly hide badges
+                                                const badges = document.querySelectorAll('.notification-trigger .badge, .notification-dropdown .badge, .notification-badge');
+                                                badges.forEach(b => {
+                                                    b.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                                                    b.style.opacity = '0';
+                                                    b.style.transform = 'scale(0)';
+                                                    setTimeout(() => b.style.display = 'none', 300);
+                                                });
+                                                const items = document.querySelectorAll('.notification-item');
+                                                items.forEach(i => {
+                                                    i.style.backgroundColor = 'transparent';
+                                                    const dot = i.querySelector('.unread-dot');
+                                                    if(dot) dot.style.display = 'none';
+                                                });
+                                            }).catch(e => console.error(e));
+                                        });
                                     });
-                                }
-                            });
+                                });
+                            }
                         </script>
                     </div>
 
@@ -174,32 +199,36 @@
         </script>
 
         <!-- Profile Dropdown -->
-        <div class="dropdown ms-3" th:if="${session.user != null}">
-            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownTop" data-bs-toggle="dropdown" aria-expanded="false" 
-               style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.6); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+        <div class="dropdown ms-3 premium-hover-dropdown" th:if="${session.user != null}">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdownTop" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" 
+               style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.6); padding: 5px 16px 5px 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8); backdrop-filter: blur(8px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0;"
                onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3), inset 0 2px 5px rgba(255,255,255,1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(16, 185, 129, 0.4)';" 
                onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)'; this.style.transform='none'; this.style.borderColor='rgba(255, 255, 255, 0.6)';">
-                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);">
-                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);">
+                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2 profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3); flex-shrink: 0 !important; cursor: pointer;">
+                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-none d-sm-inline-block me-2 profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2); flex-shrink: 0 !important; cursor: pointer;">
                 <!-- Mobile-only avatar without margin -->
-                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-sm-none" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);">
-                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-sm-none" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);">
+                <img loading="lazy" th:if="${session.user != null and session.user.profilePicture != null}" th:src="${#strings.startsWith(session.user.profilePicture, 'http')} ? ${session.user.profilePicture} : @{'/uploads/' + ${session.user.profilePicture}}" alt="Profile" class="rounded-circle d-sm-none profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3); flex-shrink: 0 !important; cursor: pointer;">
+                <img loading="lazy" th:unless="${session.user != null and session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user != null ? session.user.name : 'Student'} + '&background=10b981&color=fff'" alt="Profile" class="rounded-circle d-sm-none profile-pic-trigger" onclick="event.preventDefault(); event.stopPropagation(); openProfileLightbox(this.src);" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2); flex-shrink: 0 !important; cursor: pointer;">
                 
                 <div class="d-none d-sm-flex flex-column justify-content-center me-2">
                     <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</span>
                     <span class="lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #10b981;">Premium</span>
                 </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15), inset 0 2px 10px rgba(255,255,255,1); border: 1px solid rgba(255,255,255,0.7); animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right;">
-                <li class="px-4 py-3 mb-2" style="background: #ecfdf5; border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2);">
+            <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2 profile-dropdown" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: #ffffff; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.2); transform-origin: top right; z-index: 1050;">
+                <li class="px-4 py-3 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: inset 0 0 10px rgba(255,255,255,0.2);">
                     <p class="mb-0 fw-bold position-relative" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; letter-spacing: -0.3px; color: #064e3b !important;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</p>
-                    <p class="mb-0 fw-bold position-relative" style="font-size: 0.7rem; color: #059669 !important; letter-spacing: 1px; text-transform: uppercase;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'STUDENT'}">STUDENT</p>
+                    <p class="mb-0 fw-bold position-relative" style="font-size: 0.7rem; color: #047857 !important; letter-spacing: 1px; text-transform: uppercase;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'STUDENT'}">STUDENT</p>
                 </li>
                 
                 <style>
                     @keyframes popupAnim {
-                        0% { opacity: 0; transform: scale(0.9) translateY(-10px); }
+                        0% { opacity: 0; transform: scale(0.95) translateY(-10px); }
                         100% { opacity: 1; transform: scale(1) translateY(0); }
+                    }
+                    .dropdown-menu.profile-dropdown.show {
+                        animation: popupAnim 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+                        display: block;
                     }
                     @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
                     .premium-dropdown-item {
@@ -210,11 +239,12 @@
                         align-items: center;
                     }
                     .premium-dropdown-item:hover {
-                        background: linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.05) 100%) !important;
+                        background: linear-gradient(90deg, rgba(16, 185, 129, 0.3) 0%, rgba(16, 185, 129, 0.1) 100%) !important;
                         transform: translateX(8px);
                         color: #047857 !important;
                         font-weight: 700 !important;
                         border-left: 3px solid #10b981;
+                        box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.2);
                     }
                     .premium-dropdown-item:hover .icon-box {
                         transform: scale(1.1);
@@ -368,6 +398,58 @@
 
         });
     </script>
-</div>
+        </div>
+        
+        <!-- Profile Picture Lightbox JS -->
+        <script>
+            function openProfileLightbox(src) {
+                let lightbox = document.getElementById('profileLightbox');
+                if (!lightbox) {
+                    lightbox = document.createElement('div');
+                    lightbox.id = 'profileLightbox';
+                    lightbox.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 99999; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); cursor: zoom-out;';
+                    
+                    const imgContainer = document.createElement('div');
+                    imgContainer.style.cssText = 'position: relative; transform: scale(0.8) translateY(20px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);';
+                    
+                    const img = document.createElement('img');
+                    img.id = 'profileLightboxImg';
+                    img.style.cssText = 'max-width: 85vw; max-height: 85vh; border-radius: 50%; border: 6px solid #fff; box-shadow: 0 25px 60px rgba(16,185,129,0.4); object-fit: cover; aspect-ratio: 1/1; width: 400px; height: 400px; background: #f8fafc;';
+                    
+                    const closeBtn = document.createElement('div');
+                    closeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+                    closeBtn.style.cssText = 'position: absolute; top: -20px; right: -20px; color: #1e293b; font-size: 1.2rem; cursor: pointer; background: #fff; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s, background 0.2s;';
+                    closeBtn.onmouseover = () => { closeBtn.style.transform = 'scale(1.1) rotate(90deg)'; closeBtn.style.background = '#f8fafc'; };
+                    closeBtn.onmouseout = () => { closeBtn.style.transform = 'scale(1) rotate(0deg)'; closeBtn.style.background = '#fff'; };
+                    
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(closeBtn);
+                    lightbox.appendChild(imgContainer);
+                    
+                    lightbox.onclick = function() {
+                        lightbox.style.opacity = '0';
+                        imgContainer.style.transform = 'scale(0.8) translateY(20px)';
+                        setTimeout(() => lightbox.style.display = 'none', 400);
+                    };
+                    
+                    document.body.appendChild(lightbox);
+                }
+                
+                const imgElement = document.getElementById('profileLightboxImg');
+                imgElement.src = src;
+                
+                // If it's a ui-avatars URL, make it high-res for the modal
+                if (src.includes('ui-avatars.com')) {
+                    imgElement.src = src.replace(/&size=\d+/, '') + '&size=500';
+                }
+                
+                lightbox.style.display = 'flex';
+                // Trigger reflow
+                void lightbox.offsetWidth;
+                lightbox.style.opacity = '1';
+                lightbox.children[0].style.transform = 'scale(1) translateY(0)';
+            }
+        </script>
+    </div>
 </body>
 </html>

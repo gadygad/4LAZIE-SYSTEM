@@ -86,16 +86,13 @@
 
     <header class="navbar navbar-custom sticky-top"
         style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
-        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
+        <div class="container-fluid px-1 d-flex justify-content-between align-items-center flex-nowrap">
             <!-- Mobile Menu Toggle Button -->
-            <button class="btn border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar" aria-controls="mobileOffcanvasSidebar" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+            <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar" aria-controls="mobileOffcanvasSidebar" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
                 <i class="bi bi-list fs-4"></i>
             </button>
             <a href="/" class="text-decoration-none d-flex flex-column align-items-start">
-                <span
-                    style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: #0f172a; letter-spacing: -1.5px; line-height: 1;">
-                    4LAZIE
-                </span>
+                <span class="magic-brand-text">4LAZIE</span>
                 <div class="d-none d-md-flex align-items-center position-relative mt-1"
                     style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
                     <!-- Shimmer overlay -->
@@ -196,9 +193,8 @@
     <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <!-- ────────────────────────────────────────── -->
     <div class="page-layout">
-
-        <!-- ── LEFT HERO SIDEBAR ── -->
-        <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
+        <!-- ── LEFT HERO SIDEBAR REMOVED, USING OFFCANVAS ── -->
+        
         <!-- end sidebar -->
 
         <!-- ── MAIN CONTENT (RIGHT) ── -->
@@ -223,7 +219,7 @@
                             <div class="accordion accordion-flush" id="popularNotesAccordion">
 
                                 <!-- Dynamic Popular Notes Loop -->
-                                <div th:each="note, iterStat : ${popularNotes}" class="accordion-item premium-accordion-item"
+                                <div th:each="note, iterStat : ${notes}" class="accordion-item premium-accordion-item"
                                     style="background: transparent; border: none; margin-bottom: 1.25rem;">
                                     <h2 class="accordion-header" th:id="'heading' + ${iterStat.index}">
                                         <button class="accordion-button collapsed" type="button"
@@ -289,7 +285,7 @@
                                 </div>
 
                                 <!-- If you find no notes show a message instead of staying blank -->
-                                <div th:if="${#lists.isEmpty(popularNotes)}" class="text-center p-4">
+                                <div th:if="${#lists.isEmpty(notes)}" class="text-center p-4">
                                     <p class="text-muted" style="font-family: 'Outfit', sans-serif;">No recommended notes available yet.</p>
                                 </div>
                             </div>
@@ -480,12 +476,12 @@
     </script>
 
     <!-- Offcanvas Sidebar for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
-        <div class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
+        <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
             <h5 class="offcanvas-title text-white" id="mobileOffcanvasSidebarLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: -1px;">4LAZIE</h5>
             <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body p-0" style="overflow-x: hidden;">
+        <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body p-0" style="overflow-x: hidden;">
             <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
         </div>
     </div>
@@ -540,6 +536,22 @@
             });
         }
     </script>
+
+
+<!-- Sidebar Global Push Effect -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebars = document.querySelectorAll('.offcanvas');
+    sidebars.forEach(function(sidebar) {
+        sidebar.addEventListener('show.bs.offcanvas', function () {
+            document.body.classList.add('sidebar-is-open');
+        });
+        sidebar.addEventListener('hide.bs.offcanvas', function () {
+            document.body.classList.remove('sidebar-is-open');
+        });
+    });
+});
+</script>
 
 </body>
 

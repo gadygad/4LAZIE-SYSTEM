@@ -145,23 +145,18 @@
             background: rgba(255, 255, 255, 0.95);
         }
 
-        /* Ultra Banner - Light Green */
+        /* Ultra Banner */
         .premium-banner {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-radius: 18px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15);
-            padding: 20px 28px;
+            background: transparent;
+            padding: 10px 0 25px 0;
             position: relative;
-            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .banner-glow {
-            position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.3); filter: blur(90px);
-            top: -50px; left: -50px; opacity: 0.7; pointer-events: none;
+            display: none;
         }
 
         .list-item-row {
@@ -204,53 +199,66 @@
         <div class="ambient-orb ambient-orb-2"></div>
     </div>
 
-    <!-- Premium Header Navbar -->
     <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border-bottom: 1px solid rgba(16, 185, 129, 0.15); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.05); z-index: 1040;">
-        <div class="container d-flex justify-content-between align-items-center">
+        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
             <!-- Brand -->
-            <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
-                <div class="d-flex align-items-center justify-content-center me-2" style="width: 38px; height: 38px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4), inset 0 2px 4px rgba(255,255,255,0.2);">
-                    <i class="bi bi-shield-check text-white" style="font-size: 1.2rem;"></i>
+            <a class="navbar-brand d-flex align-items-center text-decoration-none flex-shrink-1 overflow-hidden me-2" th:href="${session.user != null ? '/dashboard' : '/'}">
+                <div class="d-flex align-items-center justify-content-center me-2 flex-shrink-0" style="width: 34px; height: 34px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35);">
+                    <i class="bi bi-shield-check text-white" style="font-size: 1rem;"></i>
                 </div>
-                <div class="d-flex align-items-center" style="transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.02) translateY(-1px)';" onmouseout="this.style.transform='none';">
-                    <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; color: #1e293b; letter-spacing: -1px; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.05);">4LAZIE</span>
-                    <div class="ms-2 position-relative d-inline-flex align-items-center">
-                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 4px 10px rgba(16, 185, 129, 0.3)); position: relative; z-index: 2; padding-right: 2px;">SUPER ADMIN</span>
-                    </div>
+                <div class="d-flex align-items-center text-nowrap" style="transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.02) translateY(-1px)';" onmouseout="this.style.transform='none';">
+                    <span class="magic-brand-text">4LAZIE</span>
+                    <span class="admin-brand-text ms-1" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ADMIN</span>
                 </div>
             </a>
             
-            <div th:replace="~{fragments/top_actions :: actions}"></div>
+            <div class="flex-shrink-0" th:replace="~{fragments/top_actions :: actions}"></div>
         </div>
         <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.8) 50%, transparent 100%); box-shadow: 0 -2px 15px rgba(16, 185, 129, 0.4);"></div>
     </nav>
+    <style>
+        .admin-brand-text { font-size: 1.6rem; }
+        @media (max-width: 576px) {
+            .admin-brand-text { font-size: 1.15rem; }
+        }
+        @media (min-width: 577px) and (max-width: 768px) {
+            .admin-brand-text { font-size: 1.3rem; }
+        }
+    </style>
+    <style>
+        @media (max-width: 768px) {
+            .container.my-3 { margin-top: 1rem !important; margin-bottom: 1rem !important; }
+            .premium-stat-card { padding: 16px !important; }
+            .premium-list-card { padding: 16px !important; }
+            .premium-banner { padding: 5px 0 15px 0 !important; }
+        }
+    </style>
 
     <!-- Main Content -->
-    <div class="container my-5">
-        <div class="row g-4 position-relative">
+    <div class="container my-3">
+        <div class="row g-3">
             <!-- Sidebar Toggle Button -->
-            <div class="d-flex justify-content-end w-100 position-absolute" style="top: -20px; right: 10px; z-index: 5;">
+            <div class="col-12 d-flex justify-content-end mb-1">
                 <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-4 py-2 shadow" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" style="background: white; color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(16,185,129,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';">
                     <i class="bi bi-grid-fill me-2"></i> Admin Menu
                 </button>
             </div>
 
             <!-- Content Area -->
-            <div class="col-12 mt-4">
+            <div class="col-12 mt-1">
                 <!-- Welcome Banner -->
-                <div class="premium-banner mb-4">
-                    <div class="banner-glow"></div>
+                <div class="premium-banner mb-2">
                     <div style="position: relative; z-index: 1;">
-                        <h2 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; letter-spacing: -0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #ffffff;">System Analytics Overview</h2>
-                        <p class="mb-0" style="opacity: 0.9; max-width: 600px; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.3px; color: #f8fafc;">Here's what's happening across the 4LAZIE community today. Monitor growth and activity.</p>
+                        <h2 class="fw-bolder mb-2" style="font-family: 'Inter', sans-serif; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8;">SYSTEM ANALYTICS OVERVIEW</h2>
+                        <p class="mb-0" style="max-width: 600px; font-size: 0.95rem; font-weight: 500; color: #64748b;">Here's what's happening across the 4LAZIE community today. Monitor growth and activity.</p>
                     </div>
-                    <div class="d-none d-md-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(16,185,129,0.2), inset 0 1px 3px rgba(255,255,255,0.5); position: relative; z-index: 1; transform: rotate(5deg); transition: all 0.5s;" onmouseover="this.style.transform='rotate(0deg) scale(1.1)';" onmouseout="this.style.transform='rotate(5deg) scale(1)';">
-                        <i class="bi bi-bar-chart-fill text-white" style="font-size: 1.3rem;"></i>
+                    <div class="d-none d-md-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(16,185,129,0.1); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 4px 15px rgba(16,185,129,0.1); position: relative; z-index: 1; transform: rotate(5deg); transition: all 0.5s;" onmouseover="this.style.transform='rotate(0deg) scale(1.1)';" onmouseout="this.style.transform='rotate(5deg) scale(1)';">
+                        <i class="bi bi-bar-chart-fill text-success" style="font-size: 1.3rem;"></i>
                     </div>
                 </div>
 
                 <!-- Stats Grid -->
-                <div class="row g-4 mb-5">
+                <div class="row g-3 mb-3">
                     <!-- Total Users -->
                     <div class="col-md-6 col-xl-3">
                         <div class="premium-stat-card">
@@ -310,7 +318,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(16, 185, 129, 0.2);">
                                     <i class="bi bi-graph-up-arrow"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Platform Engagement</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Platform Engagement</h5>
                             </div>
                             <div class="chart-container-wrapper">
                                 <canvas id="engagementChart"></canvas>
@@ -325,7 +333,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(139, 92, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(139, 92, 246, 0.2);">
                                     <i class="bi bi-pie-chart-fill"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Content Types</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Content Types</h5>
                             </div>
                             <div class="chart-container-wrapper d-flex justify-content-center">
                                 <canvas id="contentChart"></canvas>
@@ -343,7 +351,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(59, 130, 246, 0.2);">
                                     <i class="bi bi-person-lines-fill"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Recent Users</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Recent Users</h5>
                             </div>
                             
                             <div class="d-flex flex-column gap-1">
@@ -353,15 +361,15 @@
                                             <i class="bi bi-person-fill"></i>
                                         </div>
                                         <div>
-                                            <div class="fw-bold d-flex align-items-center" style="color: #1e293b; font-size: 0.95rem;">
-                                                <span th:text="${u.name}">User Name</span>
+                                            <div class="fw-bold d-flex align-items-center text-capitalize" style="color: #1e293b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 3px;">
+                                                <span th:text="${#strings.toLowerCase(u.name)}">User Name</span>
                                                 <span th:if="${u.isSuspended}" class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-2" style="font-size: 0.65rem; padding: 0.3em 0.6em; letter-spacing: 0.5px;">SUSPENDED</span>
                                             </div>
                                             <div class="small" style="color: #64748b; font-size: 0.8rem;" th:text="${u.email}">user@email.com</div>
                                         </div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="badge rounded-pill" style="background: rgba(241, 245, 249, 0.8); color: #64748b; font-weight: 600; border: 1px solid #e2e8f0; padding: 0.5em 0.8em;" th:text="${#temporals.format(u.dateJoined, 'MMM dd, yyyy')}">Date</div>
+                                        <div class="badge rounded-pill" style="background: rgba(241, 245, 249, 0.8); color: #64748b; font-weight: 600; border: 1px solid #e2e8f0; padding: 0.5em 0.8em;" th:text="${u.dateJoined != null ? #temporals.format(u.dateJoined, 'MMM dd, yyyy') : 'N/A'}">Date</div>
                                     </div>
                                 </div>
                                 <div th:if="${recentUsers.empty}" class="text-center py-4">
@@ -378,7 +386,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(239, 68, 68, 0.2);">
                                     <i class="bi bi-fire"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Most Popular Notes</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Most Popular Notes</h5>
                             </div>
                             
                             <div class="d-flex flex-column gap-1">
@@ -414,7 +422,7 @@
                                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: #f59e0b; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(245, 158, 11, 0.2);">
                                     <i class="bi bi-activity"></i>
                                 </div>
-                                <h5 class="fw-bolder mb-0" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px;">Recent System Activity</h5>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Recent System Activity</h5>
                             </div>
                             
                             <div class="table-responsive">
@@ -430,13 +438,13 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="log : ${recentLogs}" class="list-item-row">
-                                            <td class="py-3">
+                                            <td class="py-3" style="min-width: 200px;">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1rem; border: 1px solid #e2e8f0;">
+                                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1rem; border: 1px solid #e2e8f0; flex-shrink: 0;">
                                                         <i class="bi bi-person-fill"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bold" style="color: #1e293b; font-size: 0.95rem;" th:text="${log.userName}">Name</div>
+                                                        <div class="fw-bold text-capitalize" style="color: #1e293b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 4px;" th:text="${#strings.toLowerCase(log.userName)}">Name</div>
                                                         <div class="small" style="font-size: 0.75rem; color: #10b981; font-weight: 700; letter-spacing: 0.5px;" th:text="${log.userRole}">ROLE</div>
                                                     </div>
                                                 </div>

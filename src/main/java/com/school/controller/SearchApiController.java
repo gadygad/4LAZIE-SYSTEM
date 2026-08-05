@@ -24,18 +24,22 @@ import java.util.stream.Collectors;
 @RestController
 public class SearchApiController {
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
-    @Autowired
-    private AuthUtil authUtil;
+        private AuthUtil authUtil;
     
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
     
-    @Autowired
-    private MongoTemplate mongoTemplate;
+        private MongoTemplate mongoTemplate;
+
+    public SearchApiController(NoteRepository noteRepository, AuthUtil authUtil, MongoTemplate mongoTemplate) {
+        this.noteRepository = noteRepository;
+        this.authUtil = authUtil;
+        this.mongoTemplate = mongoTemplate;
+    }
+
 
     private static final Logger logger = LoggerFactory.getLogger(SearchApiController.class);
 

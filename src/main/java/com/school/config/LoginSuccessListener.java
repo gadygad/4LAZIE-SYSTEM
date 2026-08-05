@@ -16,14 +16,18 @@ import java.util.Optional;
 @Component
 public class LoginSuccessListener implements ApplicationListener<AuthenticationSuccessEvent> {
 
-    @Autowired
-    private HttpServletRequest request;
+        private HttpServletRequest request;
 
-    @Autowired
-    private EmailService emailService;
+        private EmailService emailService;
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
+
+    public LoginSuccessListener(HttpServletRequest request, EmailService emailService, UserRepository userRepository) {
+        this.request = request;
+        this.emailService = emailService;
+        this.userRepository = userRepository;
+    }
+
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {

@@ -79,8 +79,8 @@
             padding: 20px 0;
         }
         
-        .sidebar-menu::-webkit-scrollbar { width: 4px; }
-        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .sidebar-menu::-webkit-scrollbar { display: none; }
+        .sidebar-menu { scrollbar-width: none; }
 
         .menu-section {
             font-size: 0.75rem;
@@ -379,11 +379,10 @@
         /* CENTER COLUMN (MODULES) */
         .center-col {
             flex: 1;
-            overflow-y: auto;
         }
         
-        .center-col::-webkit-scrollbar { width: 6px; }
-        .center-col::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        .center-col::-webkit-scrollbar { display: none; }
+        .center-col { scrollbar-width: none; }
 
         .module-header-container {
             display: flex;
@@ -565,6 +564,7 @@
         }
         
         .right-col::-webkit-scrollbar { display: none; }
+        .right-col { scrollbar-width: none; }
 
         .navigator-card {
             background: var(--bg-card);
@@ -814,7 +814,6 @@
         @media (max-width: 1250px) {
             .content-area {
                 flex-direction: column;
-                overflow-y: auto;
             }
             .center-col {
                 overflow-y: visible;
@@ -830,7 +829,7 @@
         
         @media (max-width: 991px) {
             body.has-bottom-nav {
-                padding-bottom: 70px !important;
+                padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 95px) !important;
             }
             body {
                 height: auto;

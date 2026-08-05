@@ -9,9 +9,13 @@ import java.security.MessageDigest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class EncryptionUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(EncryptionUtil.class);
 
     @Value("${app.encryption.secret-key:4lazieSecretKeyForEncryption2024}")
     private String injectedSecretKey;
@@ -37,7 +41,7 @@ public class EncryptionUtil {
             byte[] encryptedBytes = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
             return Base64.getUrlEncoder().withoutPadding().encodeToString(encryptedBytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Encryption failed", e);
             return value; // Fallback to raw value
         }
     }

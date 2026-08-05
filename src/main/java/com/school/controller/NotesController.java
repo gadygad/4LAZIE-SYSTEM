@@ -2,15 +2,11 @@ package com.school.controller;
 
 import com.school.model.Note;
 import com.school.model.User;
+import com.school.model.Course;
 import com.school.service.NoteService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import com.school.repository.UserRepository;
 
 import com.school.repository.NoteRepository;
-import com.school.model.Institution;
 import com.school.repository.CourseRepository;
 import com.school.repository.InstitutionRepository;
 import com.school.repository.SubjectRepository;
@@ -26,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -35,7 +30,6 @@ import com.school.service.FileStorageService;
 import com.school.service.PushNotificationService;
 import com.school.service.NotificationService;
 import com.school.service.EmailService;
-import com.cloudinary.Cloudinary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.school.model.Role;
@@ -44,8 +38,7 @@ import com.school.model.Role;
 public class NotesController {
     private static final Logger log = LoggerFactory.getLogger(NotesController.class);
 
-    @Autowired
-    private com.school.util.AuthUtil authUtil;
+        private com.school.util.AuthUtil authUtil;
 
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
@@ -58,39 +51,44 @@ public class NotesController {
     }
 
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
-    @Autowired
-    private NoteService noteService;
+        private NoteService noteService;
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+        private SubjectRepository subjectRepository;
 
-    @Autowired
-    private com.school.repository.ActivityLogRepository activityLogRepository;
+        private com.school.repository.ActivityLogRepository activityLogRepository;
 
-    @Autowired
-    private FileStorageService fileStorageService;
+        private FileStorageService fileStorageService;
 
     @Autowired(required = false)
     private PushNotificationService pushNotificationService;
 
-    @Autowired
-    private NotificationService notificationService;
+        private NotificationService notificationService;
 
-    @Autowired
-    private EmailService emailService;
+        private EmailService emailService;
+
+    public NotesController(com.school.util.AuthUtil authUtil, NoteRepository noteRepository, NoteService noteService, UserRepository userRepository, CourseRepository courseRepository, InstitutionRepository institutionRepository, SubjectRepository subjectRepository, com.school.repository.ActivityLogRepository activityLogRepository, FileStorageService fileStorageService, NotificationService notificationService, EmailService emailService) {
+        this.authUtil = authUtil;
+        this.noteRepository = noteRepository;
+        this.noteService = noteService;
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.institutionRepository = institutionRepository;
+        this.subjectRepository = subjectRepository;
+        this.activityLogRepository = activityLogRepository;
+        this.fileStorageService = fileStorageService;
+        this.notificationService = notificationService;
+        this.emailService = emailService;
+    }
+
 
 
     @GetMapping("/home")
@@ -106,13 +104,13 @@ public class NotesController {
         List<Note> notes;
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
-            notes = noteRepository.searchNotesByProgramAndLevelWithGeneral(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
-                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+            notes = noteRepository.searchNotesByProgramAndLevel(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 3)).getContent().stream()
+                    .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                     .collect(Collectors.toList());
             model.addAttribute("searchQuery", search);
         } else {
-            notes = noteRepository.findByProgramTypeAndLevelNoWithGeneral(program, level).stream()
-                    .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
+            notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level).stream()
+                    .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                     .limit(3)
                     .collect(Collectors.toList());
         }
@@ -135,6 +133,7 @@ public class NotesController {
                               @RequestParam(value = "semester", required = false) Integer semester,
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "search", required = false) String search,
+                              @RequestParam(value = "institution", required = false) String institutionId,
                               @RequestParam(value = "page", defaultValue = "0") int page,
                               HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
@@ -142,10 +141,19 @@ public class NotesController {
         // Enforce course boundaries for students
         if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
             program = loggedInUser.getCourseProgram();
+            if (program == null || program.isEmpty()) program = "DIP_CSE";
         } else if (program == null || program.isEmpty()) {
             // Fallback for admins/guests when program is empty
             program = (loggedInUser != null && loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) 
                       ? loggedInUser.getCourseProgram() : "DIP_CSE";
+        }
+
+        if (institutionId == null || institutionId.isEmpty()) {
+            if (loggedInUser != null && loggedInUser.getInstitution() != null) {
+                institutionId = loggedInUser.getInstitution().getId();
+            } else {
+                institutionId = "1"; // Default to primary institution
+            }
         }
 
         if (level == null) {
@@ -154,38 +162,14 @@ public class NotesController {
         if (semester == null) {
             semester = (loggedInUser != null && loggedInUser.getSemester() != null) ? loggedInUser.getSemester() : 1;
         }
-        org.springframework.data.domain.Page<Note> notesPage;
-        if (level != null && semester != null) {
-            if (category != null && !category.trim().isEmpty()) {
-                if (search != null && !search.trim().isEmpty()) {
-                    String safeSearch = escapeRegex(search.trim());
-                    notesPage = noteRepository.searchNotesByProgramLevelSemesterAndCategoryWithGeneral(program, level, semester, category, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
-                    model.addAttribute("searchQuery", search);
-                } else {
-                    List<Note> list = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(program, level, semester, category);
-                    notesPage = new org.springframework.data.domain.PageImpl<>(list);
-                }
-                model.addAttribute("selectedCategory", category);
-            } else {
-                if (search != null && !search.trim().isEmpty()) {
-                    String safeSearch = escapeRegex(search.trim());
-                    notesPage = noteRepository.searchNotesByProgramLevelAndSemesterWithGeneral(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
-                    model.addAttribute("searchQuery", search);
-                } else {
-                    notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
-                }
-            }
-            model.addAttribute("selectedLevel", level);
-            model.addAttribute("selectedSemester", semester);
-        } else {
-            if (search != null && !search.trim().isEmpty()) {
-                String safeSearch = escapeRegex(search.trim());
-                notesPage = noteRepository.searchNotes(safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
-                model.addAttribute("searchQuery", search);
-            } else {
-                notesPage = noteRepository.findAllByOrderByIdDesc(org.springframework.data.domain.PageRequest.of(page, 50));
-            }
-        }
+        
+        org.springframework.data.domain.Page<Note> notesPage = noteService.fetchFilteredNotes(institutionId, program, level, semester, category, search, page);
+        
+        model.addAttribute("searchQuery", search);
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedLevel", level);
+        model.addAttribute("selectedSemester", semester);
+        model.addAttribute("selectedInstitutionId", institutionId);
         model.addAttribute("notesPage", notesPage);
         model.addAttribute("notes", notesPage.getContent());
         
@@ -203,7 +187,7 @@ public class NotesController {
 
         List<Note> popularNotes;
         if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
-            popularNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 3, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount")));
+            popularNotes = noteService.fetchDashboardNotes(program, "downloadCount", 3);
         } else {
             popularNotes = noteRepository.findTop3ByOrderByDownloadCountDesc();
         }
@@ -292,6 +276,7 @@ public class NotesController {
         // Enforce course boundaries for students
         if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
             program = loggedInUser.getCourseProgram();
+            if (program == null || program.isEmpty()) program = "DIP_CSE";
         } else if ("DIPLOMA".equals(program)) {
             if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
                 program = loggedInUser.getCourseProgram();
@@ -306,10 +291,10 @@ public class NotesController {
         org.springframework.data.domain.Page<Note> notesPage;
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = escapeRegex(search.trim());
-            notesPage = noteRepository.searchNotesByProgramLevelAndSemesterWithGeneral(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
+            notesPage = noteRepository.searchNotesByProgramLevelAndSemester(program, level, semester, safeSearch, org.springframework.data.domain.PageRequest.of(page, 50));
             model.addAttribute("searchQuery", search);
         } else {
-            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
+            notesPage = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(program, level, semester, org.springframework.data.domain.PageRequest.of(page, 50));
         }
 
         List<Note> notes = notesPage.getContent();
@@ -330,11 +315,15 @@ public class NotesController {
         model.addAttribute("selectedProgram", program);
         model.addAttribute("user", loggedInUser);
 
+        List<Course> foundCourses = courseRepository.findByProgramType(program);
+        String fullCourseName = foundCourses.isEmpty() ? program : foundCourses.get(0).getName();
+        model.addAttribute("fullCourseName", fullCourseName);
+
         List<Note> popularNotes;
         List<Note> recentNotes;
         if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
-            popularNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "downloadCount")));
-            recentNotes = noteRepository.findByProgramTypeWithGeneral(program, org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "uploadDate")));
+            popularNotes = noteService.fetchDashboardNotes(program, "downloadCount", 5);
+            recentNotes = noteService.fetchDashboardNotes(program, "uploadDate", 5);
         } else {
             popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
             recentNotes = noteRepository.findTop5ByOrderByUploadDateDesc();
@@ -348,33 +337,75 @@ public class NotesController {
         return "user/dashboard";
     }
 
+    @GetMapping("/recent-materials")
+    public String viewRecentMaterials(
+            @RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            HttpSession session, Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+
+        if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+        } else if ("DIPLOMA".equals(program)) {
+            if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
+                program = loggedInUser.getCourseProgram();
+            } else {
+                program = "DIP_CSE";
+            }
+        }
+        
+        org.springframework.data.domain.Page<Note> notesPage = noteService.fetchRecentMaterialsPaginated(program, page);
+        model.addAttribute("notesPage", notesPage);
+        return "notes/recent_notes";
+    }
+
+    @GetMapping("/popular-materials")
+    public String viewPopularMaterials(
+            @RequestParam(value = "program", required = false, defaultValue = "DIPLOMA") String program,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            HttpSession session, Model model) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) return "redirect:/login";
+
+        if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
+            program = loggedInUser.getCourseProgram();
+        } else if ("DIPLOMA".equals(program)) {
+            if (loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) {
+                program = loggedInUser.getCourseProgram();
+            } else {
+                program = "DIP_CSE";
+            }
+        }
+        
+        org.springframework.data.domain.Page<Note> notesPage = noteService.fetchPopularMaterialsPaginated(program, page);
+        model.addAttribute("notesPage", notesPage);
+        return "notes/popular_notes";
+    }
 
     @GetMapping("/upload")
     public String showUploadPage(HttpSession session, Model model) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
+        if (loggedInUser == null) return "redirect:/login";
+        // SecurityConfig already enforces ADMIN/SUPER_ADMIN access via hasAnyRole
         model.addAttribute("user", loggedInUser);
         model.addAttribute("courses", courseRepository.findAll());
         return "notes/upload";
     }
 
     @PostMapping("/upload")
-    public String uploadNote(@RequestParam("title") String title,
-                             @RequestParam(value = "programType", defaultValue = "DIPLOMA") String programType,
-                             @RequestParam("levelNo") Integer levelNo,
-                             @RequestParam("semesterNo") Integer semesterNo,
-                             @RequestParam(value = "moduleName", required = false) String moduleName,
-                             @RequestParam(value = "moduleCode", required = false) String moduleCode,
-                             @RequestParam(value = "category", required = false) String category,
-                             @RequestParam(value = "unitNumber", required = false) Integer unitNumber,
-                             @RequestParam(value = "academicYear", required = false) String academicYear,
-                             @RequestParam(value = "isGeneral", required = false, defaultValue = "false") Boolean isGeneral,
-                             @RequestParam("file") MultipartFile file,
-                             HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
+    public String uploadNote(@jakarta.validation.Valid @ModelAttribute("noteDTO") com.school.dto.NoteUploadDTO noteDTO,
+                             org.springframework.validation.BindingResult bindingResult,
+                             jakarta.servlet.http.HttpServletRequest request) {
         User loggedInUser = getLoggedInUser();
-        if (loggedInUser == null || !Role.ADMIN.equals(loggedInUser.getRole())) return "redirect:/dashboard";
+        if (loggedInUser == null) return "redirect:/login";
 
-        if (file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
+        if (bindingResult.hasErrors()) {
+            return "redirect:/upload?error=" + java.net.URLEncoder.encode(bindingResult.getAllErrors().get(0).getDefaultMessage(), java.nio.charset.StandardCharsets.UTF_8);
+        }
+
+        MultipartFile file = noteDTO.getFile();
+        if (file == null || file.isEmpty()) return "redirect:/upload?error=Please select a file to upload.";
 
         // Validate File Extension to prevent uploading malicious scripts/executables
         String originalFilename = file.getOriginalFilename();
@@ -392,16 +423,16 @@ public class NotesController {
 
         try {
             Note note = new Note();
-            note.setTitle(title);
-            note.setProgramType(programType);
-            note.setLevelNo(levelNo);
-            note.setSemesterNo(semesterNo);
-            note.setModuleName(moduleName != null && !moduleName.trim().isEmpty() ? moduleName.trim().toUpperCase() : "GENERAL MODULE");
-            note.setModuleCode(moduleCode != null ? moduleCode.trim().toUpperCase() : "");
-            note.setCategory(category == null || category.trim().isEmpty() ? "Note" : category);
-            note.setUnitNumber(unitNumber);
-            note.setAcademicYear(academicYear != null ? academicYear.trim() : null);
-            note.setIsGeneral(isGeneral);
+            note.setTitle(noteDTO.getTitle());
+            note.setProgramType(noteDTO.getProgramType());
+            note.setLevelNo(noteDTO.getLevelNo());
+            note.setSemesterNo(noteDTO.getSemesterNo());
+            note.setModuleName(noteDTO.getModuleName() != null && !noteDTO.getModuleName().trim().isEmpty() ? noteDTO.getModuleName().trim().toUpperCase() : "GENERAL MODULE");
+            note.setModuleCode(noteDTO.getModuleCode() != null ? noteDTO.getModuleCode().trim().toUpperCase() : "");
+            note.setCategory(noteDTO.getCategory() == null || noteDTO.getCategory().trim().isEmpty() ? "Note" : noteDTO.getCategory());
+            note.setUnitNumber(noteDTO.getUnitNumber());
+            note.setAcademicYear(noteDTO.getAcademicYear() != null ? noteDTO.getAcademicYear().trim() : null);
+            note.setIsGeneral(noteDTO.getIsGeneral());
 
             String appUrl = "https://" + request.getServerName();
             if (request.getServerPort() != 80 && request.getServerPort() != 443) {
@@ -495,7 +526,11 @@ public class NotesController {
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
             try {
-                response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
+                String redirectUrl = "/proxy/" + note.getId() + "/" + brandedName;
+                if ("true".equals(force)) {
+                    redirectUrl += "?force=true";
+                }
+                response.sendRedirect(redirectUrl);
                 return;
             } catch (Exception e) {
                 // fall through to text fallback
@@ -540,6 +575,7 @@ public class NotesController {
     @GetMapping("/view/{slug}")
     public void viewNotePage(@PathVariable("slug") String slug, 
                                HttpSession session,
+                               jakarta.servlet.http.HttpServletRequest request,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
         Note note = null;
         if (slug.length() == 24 && slug.matches("^[0-9a-fA-F]+$")) {
@@ -605,6 +641,15 @@ public class NotesController {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
+            
+            String userAgent = request.getHeader("User-Agent");
+            boolean isMobile = userAgent != null && userAgent.toLowerCase().matches(".*(android|webos|iphone|ipad|ipod|blackberry|windows phone).*");
+            
+            if (isMobile && ext.equalsIgnoreCase(".pdf")) {
+                response.sendRedirect("/mobile-viewer/" + note.getId());
+                return;
+            }
+            
             response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
             return;
         }
@@ -621,6 +666,22 @@ public class NotesController {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
         response.getOutputStream().write(fileContent.getBytes());
+    }
+
+    @GetMapping("/mobile-viewer/{id}")
+    public String mobileViewer(@PathVariable("id") String id, Model model) {
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
+            return "redirect:/dashboard";
+        }
+        try {
+            String encodedUrl = java.net.URLEncoder.encode(note.getFileUrl(), "UTF-8");
+            model.addAttribute("googleDocsUrl", "https://docs.google.com/gview?embedded=true&url=" + encodedUrl);
+            model.addAttribute("note", note);
+        } catch (Exception e) {
+            return "redirect:/dashboard";
+        }
+        return "public/mobile_viewer";
     }
 
     @GetMapping("/stream/{slug}")
@@ -685,7 +746,7 @@ public class NotesController {
     }
 
     @GetMapping({"/proxy/{id}", "/proxy/{id}/{filename}"})
-    public ResponseEntity<org.springframework.core.io.Resource> proxyDocument(@PathVariable("id") String id) {
+    public ResponseEntity<org.springframework.core.io.Resource> proxyDocument(@PathVariable("id") String id, @RequestParam(value = "force", required = false) String force) {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -708,10 +769,11 @@ public class NotesController {
                 mediaType = MediaType.IMAGE_PNG;
             }
             
+            String disposition = "true".equals(force) ? "attachment" : "inline";
             org.springframework.core.io.InputStreamResource resource = new org.springframework.core.io.InputStreamResource(connection.getInputStream());
             return ResponseEntity.ok()
                     .contentType(mediaType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
                     .body(resource);
         } catch (Exception e) {
             log.error("Error proxying document", e);

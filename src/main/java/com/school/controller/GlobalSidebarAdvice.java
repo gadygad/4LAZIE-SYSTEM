@@ -14,30 +14,67 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalSidebarAdvice {
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+        private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+        private CourseRepository courseRepository;
 
-    @Autowired
-    private com.school.repository.NotificationRepository notificationRepository;
+        private com.school.repository.NotificationRepository notificationRepository;
 
-    @Autowired
-    private com.school.repository.AcademicCalendarRepository academicCalendarRepository;
+        private com.school.repository.AcademicCalendarRepository academicCalendarRepository;
+
+        private com.school.repository.NoteRepository noteRepository;
+
+    public GlobalSidebarAdvice(InstitutionRepository institutionRepository, CourseRepository courseRepository, com.school.repository.NotificationRepository notificationRepository, com.school.repository.AcademicCalendarRepository academicCalendarRepository, com.school.repository.NoteRepository noteRepository) {
+        this.institutionRepository = institutionRepository;
+        this.courseRepository = courseRepository;
+        this.notificationRepository = notificationRepository;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.noteRepository = noteRepository;
+    }
+
 
     @ModelAttribute
     public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {
+        com.school.model.User user = (com.school.model.User) session.getAttribute("user");
         try {
             Institution currentInstitution = institutionRepository.findById("1").orElse(null);
             
             List<com.school.model.Course> allCourses = courseRepository.findAll();
-            List<com.school.model.Course> diplomaCourses = allCourses.stream()
-                    .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
-                    .collect(Collectors.toList());
-            List<com.school.model.Course> degreeCourses = allCourses.stream()
-                    .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
-                    .collect(Collectors.toList());
+            List<com.school.model.Course> diplomaCourses;
+            List<com.school.model.Course> degreeCourses;
+            
+            if (user != null && user.getRole() == com.school.model.Role.STUDENT) {
+                // Students only see their own course
+                diplomaCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(user.getCourseProgram()) && c.getProgramType().startsWith("DIP_"))
+                        .collect(Collectors.toList());
+                degreeCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(user.getCourseProgram()) && c.getProgramType().startsWith("DEG_"))
+                        .collect(Collectors.toList());
+                
+                // Fetch other universities that have this course
+                List<Institution> allInstitutions = institutionRepository.findAll();
+                List<Institution> otherUniversities = allInstitutions.stream()
+                        .filter(inst -> currentInstitution == null || !inst.getId().equals(currentInstitution.getId()))
+                        .filter(inst -> noteRepository.existsByInstitutionIdAndProgramType(inst.getId(), user.getCourseProgram()))
+                        .collect(Collectors.toList());
+                model.addAttribute("otherUniversities", otherUniversities);
+            } else {
+                // Admin/Guests see all
+                diplomaCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
+                        .collect(Collectors.toList());
+                degreeCourses = allCourses.stream()
+                        .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
+                        .collect(Collectors.toList());
+                
+                // Show all other universities for non-students
+                List<Institution> allInstitutions = institutionRepository.findAll();
+                List<Institution> otherUniversities = allInstitutions.stream()
+                        .filter(inst -> currentInstitution == null || !inst.getId().equals(currentInstitution.getId()))
+                        .collect(Collectors.toList());
+                model.addAttribute("otherUniversities", otherUniversities);
+            }
 
             model.addAttribute("currentInstitution", currentInstitution);
             model.addAttribute("diplomaCourses", diplomaCourses);
@@ -46,10 +83,12 @@ public class GlobalSidebarAdvice {
             model.addAttribute("currentInstitution", null);
             model.addAttribute("diplomaCourses", java.util.Collections.emptyList());
             model.addAttribute("degreeCourses", java.util.Collections.emptyList());
+            model.addAttribute("otherUniversities", java.util.Collections.emptyList());
         }
 
-        com.school.model.User user = (com.school.model.User) session.getAttribute("user");
-        if (user != null) {
+        // Only add notifications from session if GlobalModelAttributes hasn't already set them
+        // (GlobalModelAttributes uses Spring Security auth — more authoritative source)
+        if (user != null && !model.containsAttribute("notifications")) {
             try {
                 List<com.school.model.Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
                 int unreadCount = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
@@ -59,7 +98,7 @@ public class GlobalSidebarAdvice {
                 model.addAttribute("notifications", java.util.Collections.emptyList());
                 model.addAttribute("unreadNotificationCount", 0);
             }
-        } else {
+        } else if (!model.containsAttribute("notifications")) {
             model.addAttribute("notifications", java.util.Collections.emptyList());
             model.addAttribute("unreadNotificationCount", 0);
         }
@@ -73,9 +112,15 @@ public class GlobalSidebarAdvice {
 
             if (calHolder[0] != null) {
                 com.school.model.AcademicCalendar cal = calHolder[0];
-                model.addAttribute("cat1Passed", hasDatePassed(cal.getSem1Cat1Date()) && hasDatePassed(cal.getSem2Cat1Date()));
-                model.addAttribute("cat2Passed", hasDatePassed(cal.getSem1Cat2Date()) && hasDatePassed(cal.getSem2Cat2Date()));
-                model.addAttribute("uePassed", hasDatePassed(cal.getSem1UeDate()) && hasDatePassed(cal.getSem2UeDate()));
+                model.addAttribute("cat1Passed", 
+                    hasDatePassed(cal.getSem1Cat1DegreeDate()) && hasDatePassed(cal.getSem1Cat1DiplomaDate()) && 
+                    hasDatePassed(cal.getSem2Cat1DegreeDate()) && hasDatePassed(cal.getSem2Cat1DiplomaDate()));
+                model.addAttribute("cat2Passed", 
+                    hasDatePassed(cal.getSem1Cat2DegreeDate()) && hasDatePassed(cal.getSem1Cat2DiplomaDate()) && 
+                    hasDatePassed(cal.getSem2Cat2DegreeDate()) && hasDatePassed(cal.getSem2Cat2DiplomaDate()));
+                model.addAttribute("uePassed", 
+                    hasDatePassed(cal.getSem1UeDegreeDate()) && hasDatePassed(cal.getSem1UeDiplomaDate()) && 
+                    hasDatePassed(cal.getSem2UeDegreeDate()) && hasDatePassed(cal.getSem2UeDiplomaDate()));
             } else {
                 model.addAttribute("cat1Passed", false);
                 model.addAttribute("cat2Passed", false);

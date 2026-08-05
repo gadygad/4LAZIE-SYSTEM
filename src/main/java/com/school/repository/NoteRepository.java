@@ -4,10 +4,8 @@ import com.school.model.Note;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Aggregation;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 
-@Repository
 public interface NoteRepository extends MongoRepository<Note, String> {
 
     @Query("{ '$or': [ { 'title': { $regex: ?0, $options: 'i' } }, { 'category': { $regex: ?0, $options: 'i' } } ] }")
@@ -70,7 +68,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByInstitutionIdAndProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String institutionId, String programType, Integer levelNo, Integer semesterNo);
 
+    boolean existsByInstitutionIdAndProgramType(String institutionId, String programType);
+
     boolean existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(String title, String programType, Integer levelNo, Integer semesterNo, String moduleName, Integer unitNumber);
+
 
     List<Note> findByCategoryIgnoreCaseOrderByIdDesc(String category);
 
@@ -100,11 +101,13 @@ public interface NoteRepository extends MongoRepository<Note, String> {
         return (count != null && count.getTotal() != null) ? count.getTotal() : 0L;
     }
 
-    @org.springframework.cache.annotation.Cacheable("popularNotes")
+    @org.springframework.cache.annotation.Cacheable(value = "popularNotes", key = "'top3-' + #category")
     List<Note> findTop3ByCategoryOrderByIdDesc(String category);
     
-    @org.springframework.cache.annotation.Cacheable("popularNotes")
+    @org.springframework.cache.annotation.Cacheable(value = "popularNotes", key = "'top10-' + #category")
     List<Note> findTop10ByCategoryOrderByIdDesc(String category);
+
+
     
     // Fetch latest 10 notes across all categories
     List<Note> findTop10ByOrderByIdDesc();

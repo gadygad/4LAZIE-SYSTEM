@@ -40,6 +40,7 @@ public class User {
 
     // New profile fields
     private String profilePicture;
+    private String coverPhoto;
     private String courseProgram;
     private Integer level;
     private Integer semester;
@@ -49,7 +50,7 @@ public class User {
     private LocalDateTime lastActiveTime;
     private String lastAction;
 
-    @DBRef
+    @DBRef(lazy = true)
     private Institution institution;
 
     private Set<String> savedNotes = new HashSet<>();
@@ -93,6 +94,8 @@ public class User {
     public void setIsPremium(Boolean isPremium) { this.isPremium = isPremium; }
     public String getProfilePicture() { return profilePicture; }
     public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
+    public String getCoverPhoto() { return coverPhoto; }
+    public void setCoverPhoto(String coverPhoto) { this.coverPhoto = coverPhoto; }
     public String getCourseProgram() { return courseProgram; }
     public void setCourseProgram(String courseProgram) { this.courseProgram = courseProgram; }
     public Integer getLevel() { return level; }

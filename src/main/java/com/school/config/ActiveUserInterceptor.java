@@ -18,11 +18,15 @@ import java.time.LocalDateTime;
 @Component
 public class ActiveUserInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Autowired
-    private ActivityLogRepository activityLogRepository;
+        private ActivityLogRepository activityLogRepository;
+
+    public ActiveUserInterceptor(UserRepository userRepository, ActivityLogRepository activityLogRepository) {
+        this.userRepository = userRepository;
+        this.activityLogRepository = activityLogRepository;
+    }
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -36,7 +40,25 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
             }
 
             if (email != null) {
-                userRepository.findByEmail(email).ifPresent(user -> {
+                User user = null;
+                
+                // Primary lookup
+                try {
+                    user = userRepository.findByEmail(email).orElse(null);
+                } catch (Exception e) {
+                    // Silently continue to fallback
+                }
+                
+                // Fallback: case-insensitive
+                if (user == null) {
+                    try {
+                        user = userRepository.findFirstByEmailIgnoreCaseOrNameIgnoreCase(email, email).orElse(null);
+                    } catch (Exception ignored) {
+                        // Silently continue
+                    }
+                }
+                
+                if (user != null) {
                     // Rehydrate HTTP Session if missing (e.g. session expired but Spring Security auth remains)
                     if (request.getSession().getAttribute("user") == null) {
                         request.getSession().setAttribute("user", user);
@@ -49,37 +71,45 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
                     if (!uri.startsWith("/css") && !uri.startsWith("/js") && !uri.startsWith("/images") && !uri.startsWith("/webjars")) {
                         String action = determineAction(method, uri);
                         
-                        // Update User
-                        user.setLastActiveTime(LocalDateTime.now());
-                        user.setLastAction(action);
-                        userRepository.save(user);
-
-                        // Save Activity Log
-                        String ipAddress = request.getHeader("X-Forwarded-For");
-                        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-                            ipAddress = request.getRemoteAddr();
-                        } else {
-                            // If multiple IPs are present in X-Forwarded-For, take the first one
-                            if (ipAddress.contains(",")) {
-                                ipAddress = ipAddress.split(",")[0].trim();
-                            }
+                        try {
+                            // Update User
+                            user.setLastActiveTime(LocalDateTime.now());
+                            user.setLastAction(action);
+                            userRepository.save(user);
+                        } catch (Exception e) {
+                            // Don't let user tracking failures break page loading
                         }
-                        
-                        String rawUserAgent = request.getHeader("User-Agent");
-                        String deviceInfo = parseUserAgent(rawUserAgent);
-                        
-                        ActivityLog log = new ActivityLog(
-                            user.getId(),
-                            user.getName(),
-                            user.getRole() != null ? user.getRole().name() : "STUDENT",
-                            action,
-                            uri,
-                            ipAddress,
-                            deviceInfo
-                        );
-                        activityLogRepository.save(log);
+
+                        try {
+                            // Save Activity Log
+                            String ipAddress = request.getHeader("X-Forwarded-For");
+                            if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+                                ipAddress = request.getRemoteAddr();
+                            } else {
+                                // If multiple IPs are present in X-Forwarded-For, take the first one
+                                if (ipAddress.contains(",")) {
+                                    ipAddress = ipAddress.split(",")[0].trim();
+                                }
+                            }
+                            
+                            String rawUserAgent = request.getHeader("User-Agent");
+                            String deviceInfo = parseUserAgent(rawUserAgent);
+                            
+                            ActivityLog log = new ActivityLog(
+                                user.getId(),
+                                user.getName(),
+                                user.getRole() != null ? user.getRole().name() : "STUDENT",
+                                action,
+                                uri,
+                                ipAddress,
+                                deviceInfo
+                            );
+                            activityLogRepository.save(log);
+                        } catch (Exception e) {
+                            // Don't let activity logging failures break page loading
+                        }
                     }
-                });
+                }
             }
         }
         return true;

@@ -72,19 +72,51 @@
 }
 
 /* ==========================================================================
+   1.5. FLUID SPACING & OVERRIDES (International Standard)
+   ========================================================================== */
+
+/* Fluid Padding Classes */
+.padding-fluid { padding: clamp(16px, 3vw, 32px) !important; }
+.padding-fluid-lg { padding: clamp(20px, 4vw, 40px) !important; }
+.padding-fluid-sm { padding: clamp(12px, 2vw, 24px) !important; }
+
+/* Margins */
+.margin-fluid { margin: clamp(16px, 3vw, 32px) !important; }
+.gap-fluid { gap: clamp(16px, 3vw, 32px) !important; }
+
+/* Global Override for Hardcoded Inline Padding in Legacy Templates 
+   This safely converts rigid 20px/30px padding into fluid, responsive padding 
+   on major container elements. */
+.position-relative[style*="padding: 20px"],
+.center-col[style*="padding: 20px"],
+.main-content [style*="padding: 20px"] {
+    padding: clamp(16px, 3vw, 32px) !important;
+}
+
+.position-relative[style*="padding: 30px"],
+.main-content [style*="padding: 30px"] {
+    padding: clamp(20px, 4vw, 40px) !important;
+}
+
+@media (max-width: 768px) {
+    /* Enforce safe mobile padding globally for structural panels */
+    .glass-panel, .premium-card, .position-relative[style*="padding"] {
+        padding: 16px !important;
+    }
+}
+
+/* ==========================================================================
    2. BASE RESPONSIVE LAYOUT
    ========================================================================== */
 
 /* Prevent horizontal overflow globally */
 html {
-    overflow-x: hidden;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
 }
 
 body {
-    overflow-x: hidden;
     min-width: 320px; /* Minimum supported width */
 }
 
@@ -135,10 +167,17 @@ img, video, iframe, embed, object {
 .main-content {
     flex: 1;
     min-width: 0; /* Prevents flex overflow */
-    overflow-x: hidden;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
+    transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Sidebar Push Effect */
+body.sidebar-open-push .main-content {
+    margin-left: 280px;
+}
+body.sidebar-open-push .offcanvas-backdrop {
+    opacity: 0 !important;
 }
 
 /* ==========================================================================
@@ -531,6 +570,22 @@ select,
         top: auto !important;
         width: 100% !important;
         border-radius: 20px 20px 0 0 !important;
+    }
+    .dropdown-menu.profile-dropdown {
+        position: absolute !important;
+        top: 100% !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: 0 !important;
+        width: 260px !important;
+        border-radius: 24px !important;
+        padding: 8px !important;
+        margin-top: 10px !important;
+        transform: none !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+    .dropdown-menu.profile-dropdown::before {
+        display: none !important;
     }
 }
 

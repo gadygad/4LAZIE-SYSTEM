@@ -15,6 +15,7 @@ public class Subject {
     private String code;
     private Integer semesterNo;
     private Integer levelNo;
+    private Integer credits; // Credit hours for GPA calculation
 
     @DBRef
     private Course course;
@@ -39,6 +40,8 @@ public class Subject {
     public void setSemesterNo(Integer semesterNo) { this.semesterNo = semesterNo; }
     public Integer getLevelNo() { return levelNo; }
     public void setLevelNo(Integer levelNo) { this.levelNo = levelNo; }
+    public Integer getCredits() { return credits; }
+    public void setCredits(Integer credits) { this.credits = credits; }
     public Course getCourse() { return course; }
     public void setCourse(Course course) { this.course = course; }
 }

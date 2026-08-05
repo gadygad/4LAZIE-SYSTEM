@@ -52,14 +52,18 @@ public class HomeController {
         }
     }
 
-    @Autowired
-    private NoteRepository noteRepository;
+        private NoteRepository noteRepository;
 
-    @Autowired
-    private AcademicCalendarRepository academicCalendarRepository;
+        private AcademicCalendarRepository academicCalendarRepository;
 
-    @Autowired
-    private com.school.repository.CourseRepository courseRepository;
+        private com.school.repository.CourseRepository courseRepository;
+
+    public HomeController(NoteRepository noteRepository, AcademicCalendarRepository academicCalendarRepository, com.school.repository.CourseRepository courseRepository) {
+        this.noteRepository = noteRepository;
+        this.academicCalendarRepository = academicCalendarRepository;
+        this.courseRepository = courseRepository;
+    }
+
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session) {
@@ -67,7 +71,9 @@ public class HomeController {
             return "redirect:/dashboard";
         }
         // Fetch the absolute 10 most recent uploads (Public Quick Access)
-        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc();
+        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc().stream()
+                .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
+                .collect(Collectors.toList());
         
         // Fetch distinct module names from database and map to advice
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()
@@ -84,9 +90,15 @@ public class HomeController {
         // Determine if each exam type's dates have ALL passed
         if (calHolder[0] != null) {
             AcademicCalendar cal = calHolder[0];
-            model.addAttribute("cat1Passed", hasDatePassed(cal.getSem1Cat1Date()) && hasDatePassed(cal.getSem2Cat1Date()));
-            model.addAttribute("cat2Passed", hasDatePassed(cal.getSem1Cat2Date()) && hasDatePassed(cal.getSem2Cat2Date()));
-            model.addAttribute("uePassed", hasDatePassed(cal.getSem1UeDate()) && hasDatePassed(cal.getSem2UeDate()));
+            model.addAttribute("cat1Passed", 
+                hasDatePassed(cal.getSem1Cat1DegreeDate()) && hasDatePassed(cal.getSem1Cat1DiplomaDate()) && 
+                hasDatePassed(cal.getSem2Cat1DegreeDate()) && hasDatePassed(cal.getSem2Cat1DiplomaDate()));
+            model.addAttribute("cat2Passed", 
+                hasDatePassed(cal.getSem1Cat2DegreeDate()) && hasDatePassed(cal.getSem1Cat2DiplomaDate()) && 
+                hasDatePassed(cal.getSem2Cat2DegreeDate()) && hasDatePassed(cal.getSem2Cat2DiplomaDate()));
+            model.addAttribute("uePassed", 
+                hasDatePassed(cal.getSem1UeDegreeDate()) && hasDatePassed(cal.getSem1UeDiplomaDate()) && 
+                hasDatePassed(cal.getSem2UeDegreeDate()) && hasDatePassed(cal.getSem2UeDiplomaDate()));
         } else {
             model.addAttribute("cat1Passed", false);
             model.addAttribute("cat2Passed", false);

@@ -8,41 +8,78 @@
                 style="pointer-events: auto; border: 1px solid rgba(16, 185, 129, 0.2); gap: 5px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
 
                 <!-- HOME Button -->
-                <a th:href="${session.user != null ? '/dashboard' : '/'}" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent" 
+                <a th:href="${session.user != null ? '/dashboard' : '/'}" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0" 
                     style="color: #64748b; width: 60px;">
                     <i class="bi bi-house-door-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">HOME</span>
                 </a>
 
+                <!-- Practice Button -->
+                <a href="/quizzes" class="bottom-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0" 
+                    style="color: #10b981; width: 60px;">
+                    <i class="bi bi-book-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
+                    <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">PRACTICE</span>
+                </a>
+
                 <!-- CAT 1 -->
                 <a th:if="${cat1Passed == null || !cat1Passed}" href="#"
-                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
-                    style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
+                    style="color: #64748b; width: 60px;" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                     data-exam-title="CAT 1"
-                    th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat1Date != null ? currentCalendar.sem1Cat1Date : ''}"
-                    th:data-sem2="${currentCalendar != null and currentCalendar.sem2Cat1Date != null ? currentCalendar.sem2Cat1Date : ''}">
+                    th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeDate != null ? currentCalendar.sem1Cat1DegreeDate : ''}"
+                    th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeEndDate != null ? currentCalendar.sem1Cat1DegreeEndDate : ''}"
+                    th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1Cat1DiplomaDate != null ? currentCalendar.sem1Cat1DiplomaDate : ''}"
+                    th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DiplomaEndDate != null ? currentCalendar.sem1Cat1DiplomaEndDate : ''}"
+                    th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1Cat1DegreeUrl : ''}"
+                    th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1Cat1DiplomaUrl : ''}"
+                    th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2Cat1DegreeDate != null ? currentCalendar.sem2Cat1DegreeDate : ''}"
+                    th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2Cat1DegreeEndDate != null ? currentCalendar.sem2Cat1DegreeEndDate : ''}"
+                    th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2Cat1DiplomaDate != null ? currentCalendar.sem2Cat1DiplomaDate : ''}"
+                    th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2Cat1DiplomaEndDate != null ? currentCalendar.sem2Cat1DiplomaEndDate : ''}"
+                    th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat1DegreeUrl : ''}"
+                    th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat1DiplomaUrl : ''}">
                     <i class="bi bi-ui-checks" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 1</span>
                 </a>
 
                 <!-- CAT 2 -->
                 <a th:if="${cat2Passed == null || !cat2Passed}" href="#"
-                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
-                    style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
+                    style="color: #64748b; width: 60px;" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                     data-exam-title="CAT 2"
-                    th:data-sem1="${currentCalendar != null and currentCalendar.sem1Cat2Date != null ? currentCalendar.sem1Cat2Date : ''}"
-                    data-sem2="Monday, July 20, 2026 <span class='d-inline-block rounded-pill fw-medium ms-1' style='background: rgba(241, 245, 249, 0.4); color: #94a3b8; font-size: 10px; padding: 0.2em 0.6em; letter-spacing: 0.3px; border: 1px dashed #cbd5e1; text-transform: uppercase;'>DEGREE ONLY</span>">
+                    th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeDate != null ? currentCalendar.sem1Cat2DegreeDate : ''}"
+                    th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeEndDate != null ? currentCalendar.sem1Cat2DegreeEndDate : ''}"
+                    th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1Cat2DiplomaDate != null ? currentCalendar.sem1Cat2DiplomaDate : ''}"
+                    th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DiplomaEndDate != null ? currentCalendar.sem1Cat2DiplomaEndDate : ''}"
+                    th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1Cat2DegreeUrl : ''}"
+                    th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1Cat2DiplomaUrl : ''}"
+                    th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2Cat2DegreeDate != null ? currentCalendar.sem2Cat2DegreeDate : ''}"
+                    th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2Cat2DegreeEndDate != null ? currentCalendar.sem2Cat2DegreeEndDate : ''}"
+                    th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2Cat2DiplomaDate != null ? currentCalendar.sem2Cat2DiplomaDate : ''}"
+                    th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2Cat2DiplomaEndDate != null ? currentCalendar.sem2Cat2DiplomaEndDate : ''}"
+                    th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat2DegreeUrl : ''}"
+                    th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat2DiplomaUrl : ''}">
                     <i class="bi bi-ui-checks-grid" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">CAT 2</span>
                 </a>
 
                 <!-- UE -->
                 <a th:if="${uePassed == null || !uePassed}" href="#"
-                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent"
-                    style="color: #64748b; width: 60px;" data-bs-toggle="modal" data-bs-target="#examModal"
+                    class="bottom-nav-btn exam-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
+                    style="color: #64748b; width: 60px;" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                     data-exam-title="UE"
-                    th:data-sem1="${currentCalendar != null and currentCalendar.sem1UeDate != null ? currentCalendar.sem1UeDate : ''}"
-                    data-sem2="Friday, July 10, 2026 <span class='d-inline-block rounded-pill fw-medium ms-1' style='background: rgba(241, 245, 249, 0.4); color: #94a3b8; font-size: 10px; padding: 0.2em 0.6em; letter-spacing: 0.3px; border: 1px dashed #cbd5e1; text-transform: uppercase;'>DIPLOMA ONLY</span>">
+                    th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1UeDegreeDate != null ? currentCalendar.sem1UeDegreeDate : ''}"
+                    th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1UeDegreeEndDate != null ? currentCalendar.sem1UeDegreeEndDate : ''}"
+                    th:data-sem1-diploma-date="${currentCalendar != null and currentCalendar.sem1UeDiplomaDate != null ? currentCalendar.sem1UeDiplomaDate : ''}"
+                    th:data-sem1-diploma-end-date="${currentCalendar != null and currentCalendar.sem1UeDiplomaEndDate != null ? currentCalendar.sem1UeDiplomaEndDate : ''}"
+                    th:data-sem1-degree-url="${currentCalendar != null ? currentCalendar.sem1UeDegreeUrl : ''}"
+                    th:data-sem1-diploma-url="${currentCalendar != null ? currentCalendar.sem1UeDiplomaUrl : ''}"
+                    th:data-sem2-degree-date="${currentCalendar != null and currentCalendar.sem2UeDegreeDate != null ? currentCalendar.sem2UeDegreeDate : ''}"
+                    th:data-sem2-degree-end-date="${currentCalendar != null and currentCalendar.sem2UeDegreeEndDate != null ? currentCalendar.sem2UeDegreeEndDate : ''}"
+                    th:data-sem2-diploma-date="${currentCalendar != null and currentCalendar.sem2UeDiplomaDate != null ? currentCalendar.sem2UeDiplomaDate : ''}"
+                    th:data-sem2-diploma-end-date="${currentCalendar != null and currentCalendar.sem2UeDiplomaEndDate != null ? currentCalendar.sem2UeDiplomaEndDate : ''}"
+                    th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2UeDegreeUrl : ''}"
+                    th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2UeDiplomaUrl : ''}">
                     <i class="bi bi-mortarboard-fill" style="font-size: 1.15rem; margin-bottom: 2px;"></i>
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">UE</span>
                 </a>
@@ -51,7 +88,9 @@
         </div>
 
         <style>
-            /* === BOTTOM NAV: DESKTOP === */
+            /* ============================================
+               BOTTOM NAV — DESKTOP (floating pill)
+               ============================================ */
             .custom-mobile-nav-wrapper {
                 margin-bottom: 1.5rem;
             }
@@ -59,35 +98,83 @@
                 min-width: 280px;
             }
 
-            /* === BOTTOM NAV: MOBILE === */
-            @media (max-width: 768px) {
+            /* ============================================
+               BOTTOM NAV — MOBILE (flat fixed bar, Material Design 3 standard)
+               ============================================ */
+            @media (max-width: 991.98px) {
+
+                /* Wrapper: stretch full width, flush to bottom edge */
                 .custom-mobile-nav-wrapper {
-                    margin-bottom: calc(env(safe-area-inset-bottom, 12px) + 16px) !important;
-                    padding-left: calc(env(safe-area-inset-left, 0px) + 20px) !important;
-                    padding-right: calc(env(safe-area-inset-right, 0px) + 20px) !important;
+                    margin-bottom: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
+                    display: block !important;
+                    justify-content: unset !important;
                 }
+
+                /* Inner bar: flat, full-width, NOT a pill */
                 .custom-mobile-nav-inner {
                     width: 100% !important;
-                    border-radius: 24px !important;
-                    padding: 8px 12px !important;
-                    justify-content: space-evenly !important;
+                    border-radius: 20px 20px 0 0 !important;   /* only top corners rounded */
+                    padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+                    justify-content: space-around !important;
                     min-width: unset !important;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(16, 185, 129, 0.05) !important;
+                    gap: 0 !important;
+                    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08), 0 -1px 4px rgba(16, 185, 129, 0.06) !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    border-bottom: none !important;
+                    border-top: 1px solid rgba(16, 185, 129, 0.15) !important;
+                    overflow: visible !important;
+                    background: rgba(255, 255, 255, 0.97) !important;
+                    backdrop-filter: blur(20px) !important;
+                    -webkit-backdrop-filter: blur(20px) !important;
                 }
+
+                /* Each nav item: equal flex share, vertically stacked icon + label */
                 .bottom-nav-btn {
+                    flex: 1 1 0 !important;        /* equal width for all items */
                     width: auto !important;
-                    flex: 1;
+                    min-width: 0 !important;
+                    max-width: none !important;
+                    padding: 8px 4px 6px !important;
+                    border-radius: 0 !important;
+                    border: none !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 3px !important;
                 }
-                
-                /* Prevent page content from being hidden behind fixed bottom nav */
+
+                /* Icon size: clear and readable on mobile */
+                .bottom-nav-btn i {
+                    font-size: 1.4rem !important;
+                    margin-bottom: 0 !important;
+                    line-height: 1 !important;
+                }
+
+                /* Label: always fully visible, never clipped or squeezed */
+                .bottom-nav-btn span {
+                    font-size: 0.62rem !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.3px !important;
+                    text-align: center !important;
+                    white-space: nowrap !important;
+                    line-height: 1.2 !important;
+                    display: block !important;
+                }
+
+                /* Body padding: prevent content going behind nav */
                 body {
-                    /* Increased padding-bottom to account for the floating mobile nav margin-bottom */
-                    padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 95px) !important;
+                    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
                 }
             }
             .bottom-nav-btn {
                 position: relative;
-                overflow: hidden;
                 transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
                 border: 1px solid transparent !important;
                 z-index: 1;
@@ -143,20 +230,94 @@
 
         <script>
             document.querySelectorAll('.exam-nav-btn').forEach(function (btn) {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     var title = this.getAttribute('data-exam-title');
-                    var sem1 = this.getAttribute('data-sem1');
-                    var sem2 = this.getAttribute('data-sem2');
+                    var sem1DegreeDate = this.getAttribute('data-sem1-degree-date');
+                    var sem1DegreeEndDate = this.getAttribute('data-sem1-degree-end-date');
+                    var sem1DiplomaDate = this.getAttribute('data-sem1-diploma-date');
+                    var sem1DiplomaEndDate = this.getAttribute('data-sem1-diploma-end-date');
+                    var sem1DegreeUrl = this.getAttribute('data-sem1-degree-url');
+                    var sem1DiplomaUrl = this.getAttribute('data-sem1-diploma-url');
+                    var sem2DegreeDate = this.getAttribute('data-sem2-degree-date');
+                    var sem2DegreeEndDate = this.getAttribute('data-sem2-degree-end-date');
+                    var sem2DiplomaDate = this.getAttribute('data-sem2-diploma-date');
+                    var sem2DiplomaEndDate = this.getAttribute('data-sem2-diploma-end-date');
+                    var sem2DegreeUrl = this.getAttribute('data-sem2-degree-url');
+                    var sem2DiplomaUrl = this.getAttribute('data-sem2-diploma-url');
+
                     var fullTitle = title === 'UE' ? 'UNIVERSITY EXAMINATIONS (UE)' : title.toUpperCase();
-                    
                     var titleEl = document.getElementById('examModalTitle');
-                    if(titleEl) titleEl.innerHTML = fullTitle;
+                    if(titleEl) titleEl.innerText = fullTitle;
+
+                    var elSem1DegreeDate = document.getElementById('examSem1DegreeDate');
+                    if(elSem1DegreeDate) elSem1DegreeDate.innerText = (sem1DegreeDate && sem1DegreeDate.trim() !== '') ? sem1DegreeDate : 'Not announced';
+                    var elSem1DegreeEndDate = document.getElementById('examSem1DegreeEndDate');
+                    if(elSem1DegreeEndDate) elSem1DegreeEndDate.innerText = (sem1DegreeEndDate && sem1DegreeEndDate.trim() !== '') ? sem1DegreeEndDate : 'Not announced';
                     
-                    var sem1El = document.getElementById('examSem1Date');
-                    if(sem1El) sem1El.innerHTML = sem1 ? sem1 : 'Not announced yet';
+                    var elSem1DiplomaDate = document.getElementById('examSem1DiplomaDate');
+                    if(elSem1DiplomaDate) elSem1DiplomaDate.innerText = (sem1DiplomaDate && sem1DiplomaDate.trim() !== '') ? sem1DiplomaDate : 'Not announced';
+                    var elSem1DiplomaEndDate = document.getElementById('examSem1DiplomaEndDate');
+                    if(elSem1DiplomaEndDate) elSem1DiplomaEndDate.innerText = (sem1DiplomaEndDate && sem1DiplomaEndDate.trim() !== '') ? sem1DiplomaEndDate : 'Not announced';
+
+                    var elSem2DegreeDate = document.getElementById('examSem2DegreeDate');
+                    if(elSem2DegreeDate) elSem2DegreeDate.innerText = (sem2DegreeDate && sem2DegreeDate.trim() !== '') ? sem2DegreeDate : 'Not announced';
+                    var elSem2DegreeEndDate = document.getElementById('examSem2DegreeEndDate');
+                    if(elSem2DegreeEndDate) elSem2DegreeEndDate.innerText = (sem2DegreeEndDate && sem2DegreeEndDate.trim() !== '') ? sem2DegreeEndDate : 'Not announced';
                     
-                    var sem2El = document.getElementById('examSem2Date');
-                    if(sem2El) sem2El.innerHTML = sem2 ? sem2 : 'Not announced yet';
+                    var elSem2DiplomaDate = document.getElementById('examSem2DiplomaDate');
+                    if(elSem2DiplomaDate) elSem2DiplomaDate.innerText = (sem2DiplomaDate && sem2DiplomaDate.trim() !== '') ? sem2DiplomaDate : 'Not announced';
+                    var elSem2DiplomaEndDate = document.getElementById('examSem2DiplomaEndDate');
+                    if(elSem2DiplomaEndDate) elSem2DiplomaEndDate.innerText = (sem2DiplomaEndDate && sem2DiplomaEndDate.trim() !== '') ? sem2DiplomaEndDate : 'Not announced';
+
+                    // Update Timetable Links
+                    var sem1DegEl = document.getElementById('examSem1DegreeLink');
+                    if(sem1DegEl) {
+                        sem1DegEl.style.display = 'block';
+                        if(sem1DegreeUrl && sem1DegreeUrl !== 'null' && sem1DegreeUrl.trim() !== '') {
+                            sem1DegEl.href = sem1DegreeUrl.startsWith('http') ? sem1DegreeUrl : ('/uploads/' + sem1DegreeUrl);
+                            sem1DegEl.onclick = null;
+                        } else { 
+                            sem1DegEl.href = 'javascript:void(0)';
+                            sem1DegEl.onclick = function() { alert('Timetable has not been uploaded yet. Please check back later.'); };
+                        }
+                    }
+
+                    var sem1DipEl = document.getElementById('examSem1DiplomaLink');
+                    if(sem1DipEl) {
+                        sem1DipEl.style.display = 'block';
+                        if(sem1DiplomaUrl && sem1DiplomaUrl !== 'null' && sem1DiplomaUrl.trim() !== '') {
+                            sem1DipEl.href = sem1DiplomaUrl.startsWith('http') ? sem1DiplomaUrl : ('/uploads/' + sem1DiplomaUrl);
+                            sem1DipEl.onclick = null;
+                        } else { 
+                            sem1DipEl.href = 'javascript:void(0)';
+                            sem1DipEl.onclick = function() { alert('Timetable has not been uploaded yet. Please check back later.'); };
+                        }
+                    }
+
+                    var sem2DegEl = document.getElementById('examSem2DegreeLink');
+                    if(sem2DegEl) {
+                        sem2DegEl.style.display = 'block';
+                        if(sem2DegreeUrl && sem2DegreeUrl !== 'null' && sem2DegreeUrl.trim() !== '') {
+                            sem2DegEl.href = sem2DegreeUrl.startsWith('http') ? sem2DegreeUrl : ('/uploads/' + sem2DegreeUrl);
+                            sem2DegEl.onclick = null;
+                        } else { 
+                            sem2DegEl.href = 'javascript:void(0)';
+                            sem2DegEl.onclick = function() { alert('Timetable has not been uploaded yet. Please check back later.'); };
+                        }
+                    }
+
+                    var sem2DipEl = document.getElementById('examSem2DiplomaLink');
+                    if(sem2DipEl) {
+                        sem2DipEl.style.display = 'block';
+                        if(sem2DiplomaUrl && sem2DiplomaUrl !== 'null' && sem2DiplomaUrl.trim() !== '') {
+                            sem2DipEl.href = sem2DiplomaUrl.startsWith('http') ? sem2DiplomaUrl : ('/uploads/' + sem2DiplomaUrl);
+                            sem2DipEl.onclick = null;
+                        } else { 
+                            sem2DipEl.href = 'javascript:void(0)';
+                            sem2DipEl.onclick = function() { alert('Timetable has not been uploaded yet. Please check back later.'); };
+                        }
+                    }
                 });
             });
         </script>

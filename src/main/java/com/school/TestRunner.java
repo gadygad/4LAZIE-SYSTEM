@@ -11,10 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 // @Component
 public class TestRunner implements CommandLineRunner {
-    @Autowired
-    private SubjectRepository subjectRepository;
-    @Autowired
-    private CourseRepository courseRepository;
+        private SubjectRepository subjectRepository;
+        private CourseRepository courseRepository;
+
+    public TestRunner(SubjectRepository subjectRepository, CourseRepository courseRepository) {
+        this.subjectRepository = subjectRepository;
+        this.courseRepository = courseRepository;
+    }
+
 
     @Override
     public void run(String... args) throws Exception {
