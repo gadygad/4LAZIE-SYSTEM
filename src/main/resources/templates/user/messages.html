@@ -758,34 +758,61 @@
                 return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);">${initial}</div>`;
             }
 
-            // Build bubble element
+            // Build bubble element (Slack/Discord style)
             function makeBubble(msg, typeIt) {
                 const isAdmin = !msg.isSelf;
                 const row = document.createElement('div');
-                row.style.cssText = 'display:flex;align-items:flex-end;gap:9px;animation:slideFadeIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;' + (msg.isSelf ? 'flex-direction:row-reverse;' : '');
+                row.id = 'msg-' + msg.id;
+                // Left aligned for everyone, nice spacing + magical slide-in
+                row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;padding:10px 14px;border-radius:12px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);animation:slideFadeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:left center;border-left:3px solid transparent;';
+                
+                // Magical Hover effect
+                row.onmouseover = () => {
+                    row.style.background = isAdmin ? 'linear-gradient(90deg, rgba(16,185,129,0.04), transparent)' : 'linear-gradient(90deg, rgba(59,130,246,0.04), transparent)';
+                    row.style.borderLeftColor = isAdmin ? '#10b981' : '#3b82f6';
+                    row.style.transform = 'translateX(4px)';
+                };
+                row.onmouseout = () => {
+                    row.style.background = 'transparent';
+                    row.style.borderLeftColor = 'transparent';
+                    row.style.transform = 'translateX(0)';
+                };
 
                 const av = document.createElement('div');
                 av.innerHTML = avatarHtml(isAdmin, msg.senderName, msg.senderProfilePicture || (msg.isSelf ? STUDENT_PIC : null));
                 row.appendChild(av.firstElementChild);
 
-                const bub = document.createElement('div');
-                const nameEl = document.createElement('div');
-                nameEl.style.cssText = 'font-size:0.7rem;font-weight:700;opacity:0.6;margin-bottom:3px;letter-spacing:0.3px;';
-                nameEl.textContent = isAdmin ? '4LAZIE' : 'You';
-                const textEl = document.createElement('span');
-                const timeEl = document.createElement('div');
-                timeEl.style.cssText = 'font-size:0.62rem;opacity:0.5;margin-top:5px;text-align:' + (isAdmin ? 'left' : 'right') + ';';
-                timeEl.textContent = msg.time;
+                const contentCol = document.createElement('div');
+                contentCol.style.cssText = 'flex:1;min-width:0;';
 
+                const headerRow = document.createElement('div');
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
+                
+                const nameEl = document.createElement('span');
+                nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
+                nameEl.textContent = isAdmin ? '4LAZIE Admin' : STUDENT_NM;
+                
+                // Add an admin badge if it's admin
                 if (isAdmin) {
-                    bub.style.cssText = 'max-width:65%;padding:11px 15px;font-size:0.88rem;line-height:1.55;word-break:break-word;background:white;border-radius:4px 18px 18px 18px;box-shadow:0 2px 14px rgba(0,0,0,0.06);border:1px solid rgba(16,185,129,0.1);color:#1e293b;';
-                } else {
-                    bub.style.cssText = 'max-width:65%;padding:11px 15px;font-size:0.88rem;line-height:1.55;word-break:break-word;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:18px 4px 18px 18px;box-shadow:0 4px 18px rgba(59,130,246,0.28);color:white;';
+                    const badge = document.createElement('span');
+                    badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:-3px;';
+                    badge.textContent = 'OFFICIAL';
+                    nameEl.appendChild(badge);
                 }
-                bub.appendChild(nameEl);
-                bub.appendChild(textEl);
-                bub.appendChild(timeEl);
-                row.appendChild(bub);
+                
+                const timeEl = document.createElement('span');
+                timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
+                timeEl.textContent = msg.time;
+                
+                headerRow.appendChild(nameEl);
+                headerRow.appendChild(timeEl);
+
+                const textEl = document.createElement('div');
+                textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.55;word-break:break-word;';
+
+                contentCol.appendChild(headerRow);
+                contentCol.appendChild(textEl);
+                row.appendChild(contentCol);
 
                 if (typeIt && isAdmin) {
                     typeQueue.push({ el: textEl, text: msg.messageText || '' });
@@ -819,24 +846,34 @@
             function renderMessages(msgs, isNew) {
                 if (!Array.isArray(msgs) || msgs.length === 0) return;
                 if (emptyEl) emptyEl.style.display = 'none';
-                const start = rendered;
-                for (let i = start; i < msgs.length; i++) {
-                    msgWrap.appendChild(makeBubble(msgs[i], isNew && i >= start));
+                for (let i = 0; i < msgs.length; i++) {
+                    const msg = msgs[i];
+                    if (!document.getElementById('msg-' + msg.id)) {
+                        msgWrap.appendChild(makeBubble(msg, isNew));
+                    }
                 }
-                rendered = msgs.length;
                 if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
             }
 
             function connectSSE() {
-                const es = new EventSource(`/student/chat/${CHAT_ID}/stream`);
-                es.addEventListener('init', e => {
-                    renderMessages(JSON.parse(e.data), false);
-                    sseActive = true;
-                });
-                es.addEventListener('message', e => {
-                    renderMessages(JSON.parse(e.data), true);
-                });
-                es.onerror = () => { es.close(); sseActive = false; setTimeout(fallbackPoll, 2000); };
+                // Fetch history reliably first
+                fetch(`/student/chat/${CHAT_ID}/messages`, { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) renderMessages(d.messages, false);
+
+                        // Then connect SSE for live updates
+                        const es = new EventSource(`/student/chat/${CHAT_ID}/stream`);
+                        es.addEventListener('init', e => {
+                            renderMessages(JSON.parse(e.data), false);
+                            sseActive = true;
+                        });
+                        es.addEventListener('message', e => {
+                            renderMessages(JSON.parse(e.data), true);
+                        });
+                        es.onerror = () => { es.close(); sseActive = false; setTimeout(fallbackPoll, 2000); };
+                    })
+                    .catch(e => console.error("Error fetching history", e));
             }
 
             function fallbackPoll() {
@@ -854,17 +891,25 @@
                 isSending = true;
                 if (sendBtn) sendBtn.disabled = true;
                 if (emptyEl) emptyEl.style.display = 'none';
+                const tempId = 'temp-' + Date.now();
                 msgWrap.appendChild(makeBubble({
+                    id: tempId,
                     isSelf: true, senderName: STUDENT_NM,
                     senderProfilePicture: STUDENT_PIC,
                     messageText: text,
                     time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
                 }, false));
-                rendered++;
                 if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
                 if (input) { input.value = ''; input.style.height = 'auto'; }
                 const fd = new FormData(); fd.append('messageText', text);
                 fetch(`/student/chat/${CHAT_ID}/send`, { method:'POST', body:fd, credentials:'same-origin' })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) {
+                            const el = document.getElementById('msg-' + tempId);
+                            if (el) el.id = 'msg-' + d.id;
+                        }
+                    })
                     .finally(() => { isSending = false; if (sendBtn) sendBtn.disabled = false; if (input) input.focus(); });
             };
 

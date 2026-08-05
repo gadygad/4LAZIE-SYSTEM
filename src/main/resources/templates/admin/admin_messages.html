@@ -99,21 +99,8 @@
         }
         .av-sm img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 
-        .bubble { max-width: 62%; padding: 10px 14px; font-size: 0.875rem; line-height: 1.55; word-break: break-word; }
-        .bubble.admin-b {
-            background: linear-gradient(135deg,#6366f1,#4f46e5);
-            border-radius: 18px 4px 18px 18px;
-            box-shadow: 0 4px 16px rgba(99,102,241,0.25); color: white;
-        }
-        .bubble.student-b {
-            background: white; border-radius: 4px 18px 18px 18px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-            border: 1px solid rgba(16,185,129,0.1); color: #1e293b;
-        }
-        .b-name { font-size:0.68rem;font-weight:700;opacity:0.6;margin-bottom:3px; }
-        .b-time { font-size:0.6rem;opacity:0.45;margin-top:4px; }
-        .bubble.admin-b .b-time { text-align:right; }
-        .bubble.student-b .b-time { text-align:left; }
+        /* Removed old bubble styles */
+        .bubble { max-width: 100%; padding: 0; font-size: 0.9rem; line-height: 1.55; word-break: break-word; }
 
         /* Typing cursor */
         .typing-cursor::after { content:'▋'; animation:blink-c 0.7s step-start infinite; }
@@ -338,48 +325,65 @@
     function makeBubble(msg, isNew) {
         const isAdmin = !!msg.isSelf;
         const row = document.createElement('div');
-        row.className = 'msg-row' + (isAdmin ? ' self' : '');
+        row.id = 'msg-' + msg.id;
+        // Slack/Discord style: always left-aligned, no row-reverse + magical slide
+        row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;padding:10px 14px;border-radius:12px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:left center;border-left:3px solid transparent;';
+        
+        row.onmouseover = () => {
+            row.style.background = isAdmin ? 'linear-gradient(90deg, rgba(99,102,241,0.04), transparent)' : 'linear-gradient(90deg, rgba(16,185,129,0.04), transparent)';
+            row.style.borderLeftColor = isAdmin ? '#6366f1' : '#10b981';
+            row.style.transform = 'translateX(4px)';
+        };
+        row.onmouseout = () => {
+            row.style.background = 'transparent';
+            row.style.borderLeftColor = 'transparent';
+            row.style.transform = 'translateX(0)';
+        };
 
         // Avatar
         const avDiv = document.createElement('div');
         avDiv.className = 'av-sm';
         if (isAdmin) {
-            avDiv.style.cssText = 'background:linear-gradient(135deg,#6366f1,#4f46e5);width:30px;height:30px;';
+            avDiv.style.cssText = 'background:linear-gradient(135deg,#6366f1,#4f46e5);width:34px;height:34px;font-size:0.9rem;';
             avDiv.textContent = 'A';
         } else {
             const pic = msg.senderProfilePicture;
             if (pic) {
                 const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
-                avDiv.style.cssText = 'background:transparent;width:30px;height:30px;';
+                avDiv.style.cssText = 'background:transparent;width:34px;height:34px;';
                 avDiv.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
             } else {
-                avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#059669);width:30px;height:30px;';
+                avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;font-size:0.9rem;';
                 avDiv.textContent = (msg.senderName || 'S').charAt(0).toUpperCase();
             }
         }
         row.appendChild(avDiv);
 
-        // Bubble
-        const bub = document.createElement('div');
-        bub.className = 'bubble ' + (isAdmin ? 'admin-b' : 'student-b');
+        const contentCol = document.createElement('div');
+        contentCol.style.cssText = 'flex:1;min-width:0;';
 
-        const nameEl = document.createElement('div');
-        nameEl.className = 'b-name';
+        const headerRow = document.createElement('div');
+        headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
+        
+        const nameEl = document.createElement('span');
+        nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
         nameEl.textContent = isAdmin ? 'You (Admin)' : (msg.senderName || 'Student');
-
-        const textEl = document.createElement('span');
-
-        const timeEl = document.createElement('div');
-        timeEl.className = 'b-time';
+        
+        const timeEl = document.createElement('span');
+        timeEl.style.cssText = 'font-size:0.72rem;color:#94a3b8;font-weight:500;';
         timeEl.textContent = msg.time || '';
+        
+        headerRow.appendChild(nameEl);
+        headerRow.appendChild(timeEl);
 
-        bub.appendChild(nameEl);
-        bub.appendChild(textEl);
-        bub.appendChild(timeEl);
-        row.appendChild(bub);
+        const textEl = document.createElement('div');
+        textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.55;word-break:break-word;';
+
+        contentCol.appendChild(headerRow);
+        contentCol.appendChild(textEl);
+        row.appendChild(contentCol);
 
         if (!isAdmin && isNew) {
-            // Typing effect for incoming student messages
             typeQueue.push({ el: textEl, text: msg.messageText || '' });
             if (!isTyping) drainQueue();
         } else {
@@ -390,24 +394,33 @@
 
     function renderMessages(msgs, isNew) {
         if (!Array.isArray(msgs) || msgs.length === 0) return;
-        const start = rendered;
-        for (let i = start; i < msgs.length; i++) {
-            msgsEl.appendChild(makeBubble(msgs[i], isNew && i >= start));
+        for (let i = 0; i < msgs.length; i++) {
+            const msg = msgs[i];
+            if (!document.getElementById('msg-' + msg.id)) {
+                msgsEl.appendChild(makeBubble(msg, isNew));
+            }
         }
-        rendered = msgs.length;
         scrollToBottom();
     }
 
     function connectSSE(chatId) {
         if (sseConn) { try { sseConn.close(); } catch(e){} }
         sseActive = false; rendered = 0; typeQueue = []; isTyping = false;
-        if (msgsEl) msgsEl.innerHTML = '';
 
-        const es = new EventSource('/admin/chat/' + chatId + '/stream');
-        sseConn = es;
-        es.addEventListener('init', e => { renderMessages(JSON.parse(e.data), false); sseActive = true; });
-        es.addEventListener('message', e => { renderMessages(JSON.parse(e.data), true); });
-        es.onerror = () => { es.close(); sseActive = false; setTimeout(() => fallbackPoll(chatId), 2000); };
+        // Fetch history reliably first
+        fetch('/admin/chat/' + chatId + '/messages', { credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) renderMessages(d.messages, false);
+                
+                // Then connect SSE for live updates
+                const es = new EventSource('/admin/chat/' + chatId + '/stream');
+                sseConn = es;
+                es.addEventListener('init', e => { renderMessages(JSON.parse(e.data), false); sseActive = true; });
+                es.addEventListener('message', e => { renderMessages(JSON.parse(e.data), true); });
+                es.onerror = () => { es.close(); sseActive = false; setTimeout(() => fallbackPoll(chatId), 2000); };
+            })
+            .catch(e => console.error("Error fetching history", e));
     }
 
     function fallbackPoll(chatId) {
@@ -459,6 +472,7 @@
         if (window.innerWidth <= 768) {
             document.getElementById('adminMsgContainer').classList.add('chat-open');
         }
+        if (msgsEl) msgsEl.innerHTML = ''; // clear before fetch
         connectSSE(chatId);
     };
 
@@ -474,19 +488,27 @@
         const btn = document.getElementById('adminSendBtn');
         if (btn) btn.disabled = true;
 
+        const tempId = 'temp-' + Date.now();
         // Optimistic bubble
         msgsEl.appendChild(makeBubble({
+            id: tempId,
             isSelf: true, senderName: 'Admin',
             messageText: text,
             time: new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})
         }, false));
-        rendered++;
         scrollToBottom();
         if (input) { input.value = ''; input.style.height = 'auto'; }
 
         const fd = new FormData();
         fd.append('messageText', text);
         fetch('/admin/chat/' + currentChatId + '/send', { method:'POST', body:fd, credentials:'same-origin' })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    const el = document.getElementById('msg-' + tempId);
+                    if (el) el.id = 'msg-' + d.id;
+                }
+            })
             .finally(() => {
                 isSending = false;
                 if (btn) btn.disabled = false;
