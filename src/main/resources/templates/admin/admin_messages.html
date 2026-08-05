@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messages | 4LAZIE Admin</title>
+    <title>Direct Messages | 4LAZIE Admin</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/global-premium.css}">
     <link rel="stylesheet" href="/css/mobile-spacing-standards.css">
+
     <style>
-        body { font-family:'Inter',sans-serif; background:#f0fdf4; min-height:100vh; }
+        body { font-family:'Inter',sans-serif; background:#f8fafc; min-height:100vh; color:#1e293b; }
+
         .ambient-bg {
             position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;
             background: radial-gradient(circle at 10% 20%, rgba(16,185,129,0.07), transparent 35%),
-                        radial-gradient(circle at 90% 80%, rgba(99,102,241,0.04), transparent 35%), #f8fffe;
+                        radial-gradient(circle at 90% 80%, rgba(99,102,241,0.04), transparent 35%);
+            background-color: #f8fafc;
         }
 
         /* Two-panel layout */
@@ -25,132 +33,118 @@
             border: 1px solid rgba(255,255,255,0.5);
             border-radius: 24px;
             box-shadow: 0 15px 50px rgba(16,185,129,0.07);
-            height: calc(100vh - 140px);
+            height: calc(100vh - 120px);
             overflow: hidden;
             display: flex;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-top: 16px;
+            margin-bottom: 16px;
         }
         .list-col {
-            width: 340px; flex-shrink: 0;
+            width: 330px; flex-shrink: 0;
             border-right: 1px solid rgba(0,0,0,0.05);
             display: flex; flex-direction: column;
             background: rgba(248,252,250,0.6);
         }
-        .chat-col {
-            flex: 1; display: flex; flex-direction: column; overflow: hidden;
-        }
+        .chat-col { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         /* Inbox item */
         .inbox-item {
-            padding: 14px 18px; cursor: pointer;
+            padding: 13px 16px; cursor: pointer;
             border-bottom: 1px solid rgba(0,0,0,0.03);
-            transition: all 0.25s; display: flex; align-items: center; gap: 13px;
+            transition: all 0.25s; display: flex; align-items: center; gap: 12px;
         }
         .inbox-item:hover { background: rgba(16,185,129,0.05); }
-        .inbox-item.active {
-            background: rgba(16,185,129,0.09);
-            border-left: 3px solid #10b981;
-        }
-        .inbox-item.has-unread { background: rgba(16,185,129,0.06); }
+        .inbox-item.active { background: rgba(16,185,129,0.09); border-left: 3px solid #10b981; }
+        .inbox-item.has-unread { background: rgba(99,102,241,0.04); }
 
-        /* Avatars */
+        /* Avatar ring */
         .av-ring {
-            width: 48px; height: 48px; border-radius: 50%;
+            width: 46px; height: 46px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; font-weight: 800; font-size: 1.1rem;
-            color: white; font-family: 'Outfit', sans-serif;
-            position: relative;
+            flex-shrink: 0; font-weight: 800; font-size: 1rem; color: white;
+            font-family: 'Outfit', sans-serif; position: relative; overflow: hidden;
         }
-        .av-pic { width:100%; height:100%; border-radius:50%; object-fit:cover; }
         .unread-dot {
             position: absolute; bottom: 1px; right: 1px;
             width: 13px; height: 13px; border-radius: 50%;
             background: #6366f1; border: 2px solid white;
             animation: pulse-badge 2s infinite;
         }
-        @keyframes pulse-badge { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0.4)} 50%{box-shadow:0 0 0 6px rgba(99,102,241,0)} }
+        @keyframes pulse-badge { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0.4)} 50%{box-shadow:0 0 0 5px rgba(99,102,241,0)} }
 
-        /* Chat view */
+        /* Chat header */
         .chat-header {
-            padding: 14px 20px;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+            padding: 13px 18px; background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(14px); border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 13px; flex-shrink: 0;
         }
+        /* Messages */
         .chat-messages {
-            flex: 1; overflow-y: auto; padding: 20px;
+            flex: 1; overflow-y: auto; padding: 16px 18px;
             background: radial-gradient(circle at 8% 15%,rgba(16,185,129,0.04),transparent 35%),
-                        radial-gradient(circle at 92% 85%,rgba(99,102,241,0.03),transparent 35%),#f8fffe;
-            display: flex; flex-direction: column; gap: 8px;
+                        radial-gradient(circle at 92% 85%,rgba(99,102,241,0.03),transparent 35%),#f8fafc;
+            display: flex; flex-direction: column; gap: 7px;
         }
-        .chat-messages::-webkit-scrollbar { width: 5px; }
-        .chat-messages::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.18); border-radius: 3px; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.15); border-radius: 2px; }
 
-        .msg-row { display: flex; align-items: flex-end; gap: 9px; animation: popIn 0.3s ease forwards; }
+        .msg-row { display: flex; align-items: flex-end; gap: 8px; animation: popIn 0.3s ease forwards; }
         .msg-row.self { flex-direction: row-reverse; }
         @keyframes popIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
         .av-sm {
-            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.75rem; font-weight: 800; color: white; overflow: hidden;
+            font-size: 0.72rem; font-weight: 800; color: white; overflow: hidden;
         }
         .av-sm img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 
-        .bubble {
-            max-width: 65%; padding: 11px 15px; font-size: 0.88rem;
-            line-height: 1.55; word-break: break-word;
-        }
+        .bubble { max-width: 62%; padding: 10px 14px; font-size: 0.875rem; line-height: 1.55; word-break: break-word; }
         .bubble.admin-b {
             background: linear-gradient(135deg,#6366f1,#4f46e5);
             border-radius: 18px 4px 18px 18px;
-            box-shadow: 0 4px 18px rgba(99,102,241,0.28); color: white;
+            box-shadow: 0 4px 16px rgba(99,102,241,0.25); color: white;
         }
         .bubble.student-b {
-            background: white;
-            border-radius: 4px 18px 18px 18px;
-            box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+            background: white; border-radius: 4px 18px 18px 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
             border: 1px solid rgba(16,185,129,0.1); color: #1e293b;
         }
-        .b-name { font-size:0.7rem;font-weight:700;opacity:0.6;margin-bottom:3px; }
-        .b-time { font-size:0.62rem;opacity:0.5;margin-top:5px; }
+        .b-name { font-size:0.68rem;font-weight:700;opacity:0.6;margin-bottom:3px; }
+        .b-time { font-size:0.6rem;opacity:0.45;margin-top:4px; }
         .bubble.admin-b .b-time { text-align:right; }
         .bubble.student-b .b-time { text-align:left; }
 
         /* Typing cursor */
-        .typing-cursor::after { content:'▋'; animation:blink-c 0.7s step-start infinite; color:inherit; opacity:0.8; }
+        .typing-cursor::after { content:'▋'; animation:blink-c 0.7s step-start infinite; }
         @keyframes blink-c { 50%{opacity:0;} }
 
         /* Input */
         .chat-input-area {
-            background: rgba(255,255,255,0.97); border-top: 1px solid rgba(0,0,0,0.05);
-            padding: 12px 18px 14px; flex-shrink: 0;
+            background: rgba(255,255,255,0.97); border-top: 1px solid rgba(0,0,0,0.04);
+            padding: 10px 16px 12px; flex-shrink: 0;
         }
         .input-shell {
             display: flex; align-items: flex-end; gap: 10px;
-            background: #f8fffe; border: 1.5px solid rgba(99,102,241,0.2);
-            border-radius: 22px; padding: 10px 14px; transition: all 0.3s;
+            background: #f8fffe; border: 1.5px solid rgba(99,102,241,0.18);
+            border-radius: 20px; padding: 9px 12px; transition: all 0.3s;
         }
-        .input-shell:focus-within {
-            border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.1); background: white;
-        }
+        .input-shell:focus-within { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.08); }
         #adminMsgInput {
             flex: 1; border: none; outline: none; background: transparent;
-            font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #1e293b;
-            resize: none; max-height: 120px; min-height: 24px; line-height: 1.5;
+            font-family: 'Inter', sans-serif; font-size: 0.88rem; color: #1e293b;
+            resize: none; max-height: 110px; min-height: 22px; line-height: 1.5;
         }
         #adminMsgInput::placeholder { color: #b0bec5; }
         .send-btn {
-            width: 40px; height: 40px; border-radius: 50%;
+            width: 38px; height: 38px; border-radius: 50%;
             background: linear-gradient(135deg,#6366f1,#4f46e5);
             border: none; color: white; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-            box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
         }
-        .send-btn:hover { transform: scale(1.12) rotate(8deg); box-shadow: 0 6px 20px rgba(99,102,241,0.45); }
+        .send-btn:hover { transform: scale(1.12) rotate(8deg); }
         .send-btn:disabled { background:#e2e8f0; box-shadow:none; transform:none; cursor:not-allowed; }
 
         /* Empty pane */
@@ -161,8 +155,9 @@
         }
 
         @media(max-width:768px) {
+            .msg-container { height: calc(100vh - 140px); border-radius: 16px; }
             .list-col { width:100%; }
-            .chat-col { position:absolute; top:0; left:0; width:100%; height:100%; transform:translateX(100%); transition:transform 0.35s ease; z-index:10; }
+            .chat-col { position:absolute; top:0; left:0; width:100%; height:100%; transform:translateX(100%); transition:transform 0.35s ease; z-index:10; background: #f8fafc; }
             .msg-container.chat-open .list-col { opacity:0; pointer-events:none; }
             .msg-container.chat-open .chat-col { transform:translateX(0); }
         }
@@ -171,47 +166,48 @@
 <body>
 <div class="ambient-bg"></div>
 
-<!-- Navbar -->
-<nav class="navbar sticky-top py-2" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(28px);border-bottom:1px solid rgba(16,185,129,0.15);box-shadow:0 10px 30px rgba(16,185,129,0.05);z-index:1040;">
+<!-- Navbar (same as admin_dashboard) -->
+<nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border-bottom: 1px solid rgba(16, 185, 129, 0.15); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.05); z-index: 1040;">
     <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-        <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="@{/admin/dashboard}">
-            <div style="width:34px;height:34px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;box-shadow:0 6px 15px rgba(16,185,129,0.35);display:flex;align-items:center;justify-content:center;margin-right:10px;">
-                <i class="bi bi-shield-check text-white" style="font-size:1rem;"></i>
+        <a class="navbar-brand d-flex align-items-center text-decoration-none flex-shrink-1 overflow-hidden me-2" th:href="@{/admin/dashboard}">
+            <div class="d-flex align-items-center justify-content-center me-2 flex-shrink-0" style="width: 34px; height: 34px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35);">
+                <i class="bi bi-shield-check text-white" style="font-size: 1rem;"></i>
             </div>
-            <span class="magic-brand-text" style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1.4rem;">4LAZIE</span>
-            <span style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:-0.5px;background:linear-gradient(135deg,#10b981,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-left:4px;">ADMIN</span>
+            <div class="d-flex align-items-center text-nowrap">
+                <span class="magic-brand-text">4LAZIE</span>
+                <span class="ms-1" style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.4rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ADMIN</span>
+            </div>
         </a>
         <div class="flex-shrink-0" th:replace="~{fragments/top_actions :: actions}"></div>
     </div>
-    <div style="position:absolute;bottom:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.8) 50%,transparent);"></div>
+    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.8) 50%, transparent 100%);"></div>
 </nav>
 
-<div class="container-fluid px-2 px-md-4">
+<div class="container-fluid px-2 px-md-4" style="position:relative;">
 <div class="msg-container" id="adminMsgContainer">
 
     <!-- LEFT: Student list -->
     <div class="list-col">
-        <!-- Header -->
-        <div style="padding:18px 20px;border-bottom:1px solid rgba(0,0,0,0.05);background:rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:between;gap:10px;flex-shrink:0;">
-            <div>
-                <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.05rem;color:#1e293b;">
-                    <i class="bi bi-chat-dots-fill me-2" style="color:#10b981;"></i>Student Messages
-                </div>
-                <div th:if="${unreadCount > 0}" style="font-size:0.75rem;color:#6366f1;font-weight:700;margin-top:2px;">
-                    <i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>
-                    <span th:text="${unreadCount}"></span> unread
-                </div>
-                <div th:unless="${unreadCount > 0}" style="font-size:0.75rem;color:#94a3b8;font-weight:600;margin-top:2px;">All caught up ✓</div>
+        <div style="padding:16px 18px;border-bottom:1px solid rgba(0,0,0,0.05);background:rgba(255,255,255,0.8);flex-shrink:0;">
+            <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;color:#1e293b;">
+                <i class="bi bi-chat-dots-fill me-2" style="color:#10b981;"></i>Direct Messages
+            </div>
+            <div th:if="${unreadCount != null and unreadCount > 0}" style="font-size:0.72rem;color:#6366f1;font-weight:700;margin-top:2px;">
+                <i class="bi bi-circle-fill me-1" style="font-size:0.45rem;"></i>
+                <span th:text="${unreadCount}">0</span> unread conversation(s)
+            </div>
+            <div th:if="${unreadCount == null or unreadCount == 0}" style="font-size:0.72rem;color:#94a3b8;font-weight:600;margin-top:2px;">
+                All caught up ✓
             </div>
         </div>
 
-        <!-- Empty -->
-        <div th:if="${chatViews == null or chatViews.isEmpty()}" class="text-center p-5">
-            <div style="width:70px;height:70px;border-radius:50%;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:#10b981;font-size:1.8rem;">
+        <!-- Empty state -->
+        <div th:if="${chatViews == null or chatViews.isEmpty()}" class="text-center p-4">
+            <div style="width:60px;height:60px;border-radius:50%;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;margin:20px auto 12px;color:#10b981;font-size:1.6rem;">
                 <i class="bi bi-inbox-fill"></i>
             </div>
-            <div style="font-weight:700;color:#64748b;font-size:0.95rem;">No conversations yet</div>
-            <div style="font-size:0.8rem;color:#94a3b8;margin-top:5px;">Students will appear here when they message you.</div>
+            <div style="font-weight:700;color:#64748b;font-size:0.9rem;">No conversations yet</div>
+            <div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;">Students will appear here when they message you.</div>
         </div>
 
         <!-- Chat list -->
@@ -220,13 +216,19 @@
                  class="inbox-item"
                  th:classappend="${cv.chat.hasUnreadForAdmin} ? 'has-unread' : ''"
                  th:id="'inbox-' + ${cv.chat.id}"
-                 th:onclick="'openAdminChat(\'' + ${cv.chat.id} + '\')'">
-
-                <!-- Student Avatar -->
-                <div class="av-ring" th:style="${cv.student != null and cv.student.profilePicture != null} ? 'background:transparent;' : 'background:linear-gradient(135deg,#10b981,#059669);'">
+                 th:data-chat-id="${cv.chat.id}"
+                 th:data-student-name="${cv.chat.studentName}"
+                 th:data-student-course="${cv.student != null and cv.student.courseProgram != null ? cv.student.courseProgram : ''}"
+                 th:data-student-pic="${cv.student != null and cv.student.profilePicture != null ? cv.student.profilePicture : ''}"
+                 th:data-student-initial="${cv.student != null ? #strings.substring(cv.student.name,0,1).toUpperCase() : 'S'}"
+                 th:onclick="'openAdminChat(this)'"
+            >
+                <!-- Avatar -->
+                <div class="av-ring"
+                     th:style="${cv.student != null and cv.student.profilePicture != null} ? 'background:transparent;' : 'background:linear-gradient(135deg,#10b981,#059669);'">
                     <img th:if="${cv.student != null and cv.student.profilePicture != null}"
                          th:src="${cv.student.profilePicture.startsWith('http') ? cv.student.profilePicture : '/uploads/' + cv.student.profilePicture}"
-                         class="av-pic" alt="Student">
+                         alt="Student" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
                     <span th:unless="${cv.student != null and cv.student.profilePicture != null}"
                           th:text="${cv.student != null ? #strings.substring(cv.student.name,0,1).toUpperCase() : 'S'}">S</span>
                     <div th:if="${cv.chat.hasUnreadForAdmin}" class="unread-dot"></div>
@@ -234,17 +236,13 @@
 
                 <div style="flex:1;overflow:hidden;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-weight:700;font-size:0.9rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
-                        <small style="font-size:0.7rem;color:#94a3b8;" th:text="${cv.lastMsgTime}">Time</small>
+                        <span style="font-weight:700;font-size:0.88rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
+                        <small style="font-size:0.68rem;color:#94a3b8;flex-shrink:0;margin-left:6px;" th:text="${cv.lastMsgTime}">Time</small>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
-                        <p style="margin:0;font-size:0.8rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;"
-                           th:text="${(cv.lastSenderIsAdmin ? 'You: ' : '') + cv.lastMsg}">Message</p>
-                        <span th:if="${cv.chat.hasUnreadForAdmin}"
-                              style="background:#6366f1;color:white;font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:50px;">New</span>
-                    </div>
+                    <p style="margin:2px 0 0;font-size:0.78rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                       th:text="${(cv.lastSenderIsAdmin ? 'You: ' : '') + cv.lastMsg}">preview</p>
                     <div th:if="${cv.student != null and cv.student.courseProgram != null}"
-                         style="font-size:0.68rem;color:#10b981;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;"
+                         style="font-size:0.65rem;color:#10b981;font-weight:700;margin-top:1px;text-transform:uppercase;letter-spacing:0.4px;"
                          th:text="${cv.student.courseProgram}"></div>
                 </div>
             </div>
@@ -254,28 +252,28 @@
     <!-- RIGHT: Chat panel -->
     <div class="chat-col" id="adminChatCol">
 
-        <!-- Default -->
+        <!-- Default (no selection) -->
         <div id="adminChatDefault" class="empty-pane">
-            <div style="width:80px;height:80px;border-radius:50%;background:rgba(99,102,241,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-                <i class="bi bi-chat-heart-fill" style="font-size:2.2rem;color:#6366f1;"></i>
+            <div style="width:72px;height:72px;border-radius:50%;background:rgba(99,102,241,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+                <i class="bi bi-chat-heart-fill" style="font-size:2rem;color:#6366f1;"></i>
             </div>
-            <div style="font-weight:700;font-size:1rem;color:#475569;margin-bottom:6px;">Select a student</div>
-            <div style="font-size:0.82rem;color:#94a3b8;max-width:240px;line-height:1.5;">Click on a student from the list to open their conversation.</div>
+            <div style="font-weight:700;font-size:0.95rem;color:#475569;margin-bottom:5px;">Select a student</div>
+            <div style="font-size:0.8rem;color:#94a3b8;max-width:220px;line-height:1.5;">Click on a student from the list to open their conversation.</div>
         </div>
 
-        <!-- Active chat (rendered dynamically by JS) -->
-        <div id="adminActiveChatHeader" style="display:none;" class="chat-header">
-            <button class="btn btn-light d-md-none p-2 me-1" onclick="closeAdminChat()" style="border-radius:10px;">
+        <!-- Active chat header (shown by JS) -->
+        <div id="adminActiveChatHeader" class="chat-header" style="display:none;">
+            <button class="btn btn-light d-md-none p-1 me-1" onclick="closeAdminChat()" style="border-radius:8px;">
                 <i class="bi bi-arrow-left fs-5"></i>
             </button>
-            <div id="adminChatAvatar" class="av-sm" style="width:44px;height:44px;font-size:1rem;"></div>
-            <div>
-                <div id="adminChatName" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;color:#1e293b;"></div>
-                <div id="adminChatCourse" style="font-size:0.7rem;color:#10b981;font-weight:700;"></div>
+            <div id="adminChatAvatar" class="av-sm" style="width:42px;height:42px;font-size:0.9rem;background:linear-gradient(135deg,#10b981,#059669);flex-shrink:0;border-radius:50%;"></div>
+            <div style="flex:1;overflow:hidden;">
+                <div id="adminChatName" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+                <div id="adminChatCourse" style="font-size:0.68rem;color:#10b981;font-weight:700;"></div>
             </div>
-            <div class="ms-auto">
-                <span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);color:#4f46e5;padding:4px 12px;border-radius:50px;font-size:0.68rem;font-weight:800;display:flex;align-items:center;gap:5px;">
-                    <span style="width:7px;height:7px;border-radius:50%;background:#6366f1;animation:blink-dot 1.5s ease-in-out infinite;display:inline-block;"></span>
+            <div class="flex-shrink-0">
+                <span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.18);color:#4f46e5;padding:3px 10px;border-radius:50px;font-size:0.65rem;font-weight:800;display:inline-flex;align-items:center;gap:4px;">
+                    <span id="liveIndicator" style="width:6px;height:6px;border-radius:50%;background:#6366f1;animation:blink-dot 1.5s ease-in-out infinite;display:inline-block;"></span>
                     ADMIN
                 </span>
             </div>
@@ -285,21 +283,25 @@
 
         <div id="adminChatInput" class="chat-input-area" style="display:none;">
             <div class="input-shell">
-                <textarea id="adminMsgInput" placeholder="Type a message..." rows="1"></textarea>
+                <textarea id="adminMsgInput" placeholder="Type a message to student..." rows="1"></textarea>
                 <button id="adminSendBtn" class="send-btn" onclick="adminSendMessage()">
-                    <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>
+                    <i class="bi bi-send-fill" style="font-size:0.82rem;"></i>
                 </button>
             </div>
-            <div style="text-align:center;margin-top:5px;font-size:0.64rem;color:#b0bec5;">
-                <i class="bi bi-shield-lock me-1"></i>Admin · Enter to send · Shift+Enter for new line
+            <div style="text-align:center;margin-top:4px;font-size:0.62rem;color:#b0bec5;">
+                <i class="bi bi-shield-lock-fill me-1"></i>Admin · Enter to send · Shift+Enter for new line
             </div>
         </div>
     </div>
+
 </div>
 </div>
 
 <!-- Admin Sidebar -->
 <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='messages')}"></div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -312,77 +314,10 @@
     let typeQueue = [];
     let isTyping = false;
 
-    // Student data cache from server (embedded as JSON per chat)
-    const chatMeta = {};
-    // Populate from list items
-    document.querySelectorAll('.inbox-item').forEach(el => {
-        const id = el.id.replace('inbox-', '');
-        const nameEl = el.querySelector('span[style*="font-weight:700"]');
-        const courseEl = el.querySelector('[style*="text-transform:uppercase"]');
-        const imgEl = el.querySelector('img.av-pic');
-        const initEl = el.querySelector('span[style*="1e293b"]');
-        chatMeta[id] = {
-            name: nameEl ? nameEl.textContent.trim() : 'Student',
-            course: courseEl ? courseEl.textContent.trim() : '',
-            pic: imgEl ? imgEl.src : null,
-            initial: initEl ? initEl.textContent.trim() : 'S'
-        };
-    });
+    const msgsEl = document.getElementById('adminChatMessages');
+    const esc = t => (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 
-    const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-
-    function avatarHtml(isAdmin, name, pic, initial) {
-        if (isAdmin) {
-            return `<div class="av-sm" style="background:linear-gradient(135deg,#6366f1,#4f46e5);width:32px;height:32px;">A</div>`;
-        }
-        if (pic) {
-            return `<div class="av-sm" style="background:transparent;width:32px;height:32px;"><img src="${pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`;
-        }
-        return `<div class="av-sm" style="background:linear-gradient(135deg,#10b981,#059669);width:32px;height:32px;">${initial || (name||'S').charAt(0).toUpperCase()}</div>`;
-    }
-
-    function makeBubble(msg) {
-        const meta = currentChatId ? chatMeta[currentChatId] : {};
-        const isAdmin = msg.isSelf;
-        const row = document.createElement('div');
-        row.className = 'msg-row' + (isAdmin ? ' self' : '');
-
-        const avDiv = document.createElement('div');
-        avDiv.innerHTML = isAdmin
-            ? `<div class="av-sm" style="background:linear-gradient(135deg,#6366f1,#4f46e5);width:32px;height:32px;font-size:0.75rem;">A</div>`
-            : (meta.pic
-                ? `<div class="av-sm" style="background:transparent;width:32px;height:32px;"><img src="${meta.pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
-                : `<div class="av-sm" style="background:linear-gradient(135deg,#10b981,#059669);width:32px;height:32px;">${(meta.initial||'S')}</div>`);
-        row.appendChild(avDiv.firstElementChild);
-
-        const bub = document.createElement('div');
-        bub.className = 'bubble ' + (isAdmin ? 'admin-b' : 'student-b');
-
-        const nameEl = document.createElement('div');
-        nameEl.className = 'b-name';
-        nameEl.textContent = isAdmin ? 'You (Admin)' : (msg.senderName || meta.name || 'Student');
-
-        const textEl = document.createElement('span');
-
-        const timeEl = document.createElement('div');
-        timeEl.className = 'b-time';
-        timeEl.textContent = msg.time;
-
-        bub.appendChild(nameEl);
-        bub.appendChild(textEl);
-        bub.appendChild(timeEl);
-
-        if (!msg.isSelf) {
-            // Incoming student message — typing effect
-            typeQueue.push({ el: textEl, text: msg.messageText || '' });
-            if (!isTyping) drainQueue();
-        } else {
-            textEl.innerHTML = esc(msg.messageText || '');
-        }
-
-        row.appendChild(bub);
-        return row;
-    }
+    function scrollToBottom() { if (msgsEl) setTimeout(() => msgsEl.scrollTop = msgsEl.scrollHeight, 50); }
 
     function drainQueue() {
         if (typeQueue.length === 0) { isTyping = false; return; }
@@ -395,22 +330,69 @@
                 el.innerHTML += esc(text.charAt(i++));
                 scrollToBottom();
                 setTimeout(tick, 28);
-            } else {
-                el.classList.remove('typing-cursor');
-                drainQueue();
-            }
+            } else { el.classList.remove('typing-cursor'); drainQueue(); }
         };
         tick();
     }
 
-    const msgsEl = document.getElementById('adminChatMessages');
-    function scrollToBottom() { if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight; }
+    function makeBubble(msg, isNew) {
+        const isAdmin = !!msg.isSelf;
+        const row = document.createElement('div');
+        row.className = 'msg-row' + (isAdmin ? ' self' : '');
+
+        // Avatar
+        const avDiv = document.createElement('div');
+        avDiv.className = 'av-sm';
+        if (isAdmin) {
+            avDiv.style.cssText = 'background:linear-gradient(135deg,#6366f1,#4f46e5);width:30px;height:30px;';
+            avDiv.textContent = 'A';
+        } else {
+            const pic = msg.senderProfilePicture;
+            if (pic) {
+                const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
+                avDiv.style.cssText = 'background:transparent;width:30px;height:30px;';
+                avDiv.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            } else {
+                avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#059669);width:30px;height:30px;';
+                avDiv.textContent = (msg.senderName || 'S').charAt(0).toUpperCase();
+            }
+        }
+        row.appendChild(avDiv);
+
+        // Bubble
+        const bub = document.createElement('div');
+        bub.className = 'bubble ' + (isAdmin ? 'admin-b' : 'student-b');
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'b-name';
+        nameEl.textContent = isAdmin ? 'You (Admin)' : (msg.senderName || 'Student');
+
+        const textEl = document.createElement('span');
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'b-time';
+        timeEl.textContent = msg.time || '';
+
+        bub.appendChild(nameEl);
+        bub.appendChild(textEl);
+        bub.appendChild(timeEl);
+        row.appendChild(bub);
+
+        if (!isAdmin && isNew) {
+            // Typing effect for incoming student messages
+            typeQueue.push({ el: textEl, text: msg.messageText || '' });
+            if (!isTyping) drainQueue();
+        } else {
+            textEl.innerHTML = esc(msg.messageText || '');
+        }
+        return row;
+    }
 
     function renderMessages(msgs, isNew) {
         if (!Array.isArray(msgs) || msgs.length === 0) return;
         const start = rendered;
         for (let i = start; i < msgs.length; i++) {
-            msgsEl.appendChild(makeBubble(msgs[i]));
+            msgsEl.appendChild(makeBubble(msgs[i], isNew && i >= start));
         }
         rendered = msgs.length;
         scrollToBottom();
@@ -418,82 +400,70 @@
 
     function connectSSE(chatId) {
         if (sseConn) { try { sseConn.close(); } catch(e){} }
-        sseActive = false;
-        rendered = 0;
-        typeQueue = [];
-        isTyping = false;
-
-        // Clear messages area
+        sseActive = false; rendered = 0; typeQueue = []; isTyping = false;
         if (msgsEl) msgsEl.innerHTML = '';
 
-        const es = new EventSource(`/admin/chat/${chatId}/stream`);
+        const es = new EventSource('/admin/chat/' + chatId + '/stream');
         sseConn = es;
-        es.addEventListener('init', e => {
-            renderMessages(JSON.parse(e.data), false);
-            sseActive = true;
-        });
-        es.addEventListener('message', e => {
-            renderMessages(JSON.parse(e.data), true);
-        });
+        es.addEventListener('init', e => { renderMessages(JSON.parse(e.data), false); sseActive = true; });
+        es.addEventListener('message', e => { renderMessages(JSON.parse(e.data), true); });
         es.onerror = () => { es.close(); sseActive = false; setTimeout(() => fallbackPoll(chatId), 2000); };
     }
 
     function fallbackPoll(chatId) {
         if (sseActive || currentChatId !== chatId) return;
-        fetch(`/admin/chat/${chatId}/messages`, { credentials: 'same-origin' })
+        fetch('/admin/chat/' + chatId + '/messages', { credentials: 'same-origin' })
             .then(r => r.json())
             .then(d => { if (d.success) renderMessages(d.messages, true); })
             .catch(() => {})
             .finally(() => setTimeout(() => fallbackPoll(chatId), 2000));
     }
 
-    window.openAdminChat = function(chatId) {
+    window.openAdminChat = function(el) {
+        const chatId      = el.dataset.chatId;
+        const name        = el.dataset.studentName || 'Student';
+        const course      = el.dataset.studentCourse || '';
+        const pic         = el.dataset.studentPic || '';
+        const initial     = el.dataset.studentInitial || 'S';
         currentChatId = chatId;
-        const meta = chatMeta[chatId] || {};
 
-        // Highlight in list
-        document.querySelectorAll('.inbox-item').forEach(el => el.classList.remove('active'));
-        const li = document.getElementById('inbox-' + chatId);
-        if (li) { li.classList.add('active'); const badge = li.querySelector('[style*="background:#6366f1"]'); if(badge && badge.tagName==='SPAN') badge.remove(); const dot = li.querySelector('.unread-dot'); if(dot) dot.remove(); li.classList.remove('has-unread'); }
+        // Highlight
+        document.querySelectorAll('.inbox-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        const dot = el.querySelector('.unread-dot'); if (dot) dot.remove();
+        const badge = el.querySelector('[style*="background:#6366f1"]'); if (badge && badge.tagName==='SPAN') badge.remove();
+        el.classList.remove('has-unread');
 
         // Update header
-        const header = document.getElementById('adminActiveChatHeader');
         const avatarEl = document.getElementById('adminChatAvatar');
-        const nameEl = document.getElementById('adminChatName');
-        const courseEl = document.getElementById('adminChatCourse');
-
         if (avatarEl) {
-            if (meta.pic) {
-                avatarEl.innerHTML = `<img src="${meta.pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            if (pic) {
+                const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
+                avatarEl.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                 avatarEl.style.background = 'transparent';
             } else {
-                avatarEl.textContent = meta.initial || 'S';
+                avatarEl.innerHTML = initial;
                 avatarEl.style.background = 'linear-gradient(135deg,#10b981,#059669)';
             }
         }
-        if (nameEl) nameEl.textContent = meta.name || 'Student';
-        if (courseEl) courseEl.textContent = meta.course ? '📚 ' + meta.course : '';
+        const nameEl2 = document.getElementById('adminChatName');
+        if (nameEl2) nameEl2.textContent = name;
+        const courseEl = document.getElementById('adminChatCourse');
+        if (courseEl) courseEl.textContent = course ? '📚 ' + course.toUpperCase() : '';
 
-        if (header) header.style.display = 'flex';
-        const msgArea = document.getElementById('adminChatMessages');
-        if (msgArea) msgArea.style.display = 'flex';
-        const inputArea = document.getElementById('adminChatInput');
-        if (inputArea) inputArea.style.display = 'block';
+        document.getElementById('adminActiveChatHeader').style.display = 'flex';
+        document.getElementById('adminChatMessages').style.display = 'flex';
+        document.getElementById('adminChatInput').style.display = 'block';
+        document.getElementById('adminChatDefault').style.display = 'none';
 
-        const def = document.getElementById('adminChatDefault');
-        if (def) def.style.display = 'none';
-
-        // Mobile
         if (window.innerWidth <= 768) {
-            document.getElementById('adminMsgContainer')?.classList.add('chat-open');
+            document.getElementById('adminMsgContainer').classList.add('chat-open');
         }
-
-        // Connect SSE
         connectSSE(chatId);
     };
 
     window.closeAdminChat = function() {
-        document.getElementById('adminMsgContainer')?.classList.remove('chat-open');
+        document.getElementById('adminMsgContainer').classList.remove('chat-open');
     };
 
     window.adminSendMessage = function() {
@@ -506,36 +476,40 @@
 
         // Optimistic bubble
         msgsEl.appendChild(makeBubble({
-            isSelf: true, senderName: '4LAZIE Admin',
+            isSelf: true, senderName: 'Admin',
             messageText: text,
-            time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
-        }));
+            time: new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})
+        }, false));
         rendered++;
         scrollToBottom();
         if (input) { input.value = ''; input.style.height = 'auto'; }
 
         const fd = new FormData();
         fd.append('messageText', text);
-        fetch(`/admin/chat/${currentChatId}/send`, { method:'POST', body:fd, credentials:'same-origin' })
-            .finally(() => { isSending = false; if (btn) btn.disabled = false; if (input) input.focus(); });
+        fetch('/admin/chat/' + currentChatId + '/send', { method:'POST', body:fd, credentials:'same-origin' })
+            .finally(() => {
+                isSending = false;
+                if (btn) btn.disabled = false;
+                if (input) input.focus();
+            });
     };
 
-    // Auto-resize + Enter to send
+    // Textarea auto-resize + Enter to send
     const adminInput = document.getElementById('adminMsgInput');
     if (adminInput) {
         adminInput.addEventListener('input', () => {
             adminInput.style.height = 'auto';
-            adminInput.style.height = Math.min(adminInput.scrollHeight, 120) + 'px';
+            adminInput.style.height = Math.min(adminInput.scrollHeight, 110) + 'px';
         });
         adminInput.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.adminSendMessage(); }
         });
     }
 
-    // blink animation
-    const style = document.createElement('style');
-    style.textContent = '@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:0.25}}';
-    document.head.appendChild(style);
+    // CSS animation for live dot
+    const s = document.createElement('style');
+    s.textContent = '@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:0.2}}';
+    document.head.appendChild(s);
 })();
 </script>
 </body>
