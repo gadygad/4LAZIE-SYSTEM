@@ -303,7 +303,7 @@
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-1">
                                 <p class="text-muted mb-0 text-truncate" style="font-size:0.82rem;max-width:160px;"
-                                   th:text="${directChat.messages != null and !directChat.messages.isEmpty() ? directChat.messages[directChat.messages.size()-1].messageText : 'Tap to start chatting'}"></p>
+                                   th:text="${!#lists.isEmpty(directChat.messages) ? directChat.messages[#lists.size(directChat.messages) - 1].messageText : 'Tap to start chatting'}"></p>
                                 <span th:if="${directChatUnread}" class="badge rounded-pill" style="background:#6366f1;font-size:0.65rem;padding:3px 8px;">New</span>
                             </div>
                         </div>
@@ -342,15 +342,24 @@
                             <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
                             <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="text-muted mb-0 text-truncate" style="font-size: 0.85rem; max-width: 70%;" th:text="${msg.status == 'SOLVED' ? 'Reply received' : 'Waiting for magic...'}">Status</p>
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <div class="d-flex align-items-center gap-2" style="max-width: 70%;">
+                                <!-- 4LAZIE avatar if Admin replied -->
+                                <div th:if="${msg.status == 'SOLVED'}" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(16,185,129,0.2);">
+                                    <img src="/images/logo.png" alt="4LAZIE" style="width:12px;height:12px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                                </div>
+                                <p class="text-muted mb-0 text-truncate" style="font-size: 0.85rem;" 
+                                   th:text="${!#lists.isEmpty(msg.messages) ? msg.messages[#lists.size(msg.messages)-1].messageText : (msg.status == 'SOLVED' ? msg.adminReply : (msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Tap to start chatting'))}"></p>
+                            </div>
                             
-                            <!-- Unread Badge -->
-                            <span th:if="${msg.status == 'SOLVED' and !msg.read}" class="badge rounded-pill bg-danger" style="animation: pulse-red-badge 2s infinite;">New</span>
-                            
-                            <!-- Status Icons -->
-                            <i th:if="${msg.status == 'SOLVED' and msg.read}" class="bi bi-check2-all" style="color: #10b981; font-size: 1.1rem;"></i>
-                            <i th:if="${msg.status == 'PENDING'}" class="bi bi-clock-history" style="color: #f59e0b;"></i>
+                            <div class="d-flex align-items-center gap-1">
+                                <!-- Unread Badge -->
+                                <span th:if="${msg.status == 'SOLVED' and !msg.read}" class="badge rounded-pill bg-danger" style="animation: pulse-red-badge 2s infinite;">New</span>
+                                
+                                <!-- Status Icons -->
+                                <i th:if="${msg.status == 'SOLVED' and msg.read}" class="bi bi-check2-all" style="color: #10b981; font-size: 1.1rem;"></i>
+                                <i th:if="${msg.status == 'PENDING'}" class="bi bi-clock-history" style="color: #f59e0b;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
