@@ -315,7 +315,10 @@
         let typeQueue  = [];
         let isTyping   = false;
 
-        const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+        function esc(s) {
+            if (!s) return '';
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\n/g, '<br>');
+        }
 
         // ── Build bubble ───────────────────────
         function makeBubble(msg, typeIt = false) {

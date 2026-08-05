@@ -747,6 +747,11 @@
             }
 
             // Build bubble element (Slack/Discord style)
+            function esc(s) {
+                if (!s) return '';
+                return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
             function makeBubble(msg, typeIt) {
                 const isAdmin = !msg.isSelf;
                 const row = document.createElement('div');
