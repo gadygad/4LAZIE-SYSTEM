@@ -259,22 +259,56 @@
                     
                     <div class="chat-container p-3 rounded-4 bg-white shadow-sm border" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
                         <!-- Legacy message fallback if messages list is empty -->
-                        <div th:if="${req.messages == null or req.messages.isEmpty()}" class="d-flex flex-column align-items-start">
-                            <span class="badge bg-success mb-1">4LAZIE Admin</span>
-                            <div class="p-3 rounded-3" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); max-width: 85%;">
-                                <p class="mb-2" style="font-size: 0.9rem; white-space: pre-wrap;" th:text="${req.adminReply}"></p>
-                                <a th:if="${req.replyPdfUrl != null}" th:href="${req.replyPdfUrl.startsWith('http') ? req.replyPdfUrl : '/uploads/' + req.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #059669;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
+                        <div th:if="${req.messages == null or req.messages.isEmpty()}" class="d-flex justify-content-end mb-4 ms-auto">
+                            <div style="max-width:85%; transform-origin: right center;">
+                                <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
+                                    <span class="fw-bold text-muted" style="font-size:0.8rem;">4LAZIE Admin</span>
+                                </div>
+                                <div class="p-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 15px rgba(16,185,129,0.25); border: 1px solid rgba(255,255,255,0.2); position: relative; overflow: hidden;">
+                                    <p class="mb-2" style="font-size: 0.9rem; white-space: pre-wrap; margin-bottom:0;" th:text="${req.adminReply}"></p>
+                                    <a th:if="${req.replyPdfUrl != null}" th:href="${req.replyPdfUrl.startsWith('http') ? req.replyPdfUrl : '/uploads/' + req.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: white;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Loop through messages -->
-                        <div th:each="msg : ${req.messages}" class="d-flex flex-column" th:classappend="${msg.senderId == 'ADMIN'} ? 'align-items-start' : 'align-items-end'">
-                            <span class="badge mb-1" th:classappend="${msg.senderId == 'ADMIN'} ? 'bg-success' : 'bg-primary'" th:text="${msg.senderName}"></span>
-                            <div class="p-3 rounded-3" th:style="${msg.senderId == 'ADMIN'} ? 'background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); max-width: 85%;' : 'background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); max-width: 85%;'">
-                                <p class="mb-2 chat-message-text" th:classappend="${msg.senderId != 'ADMIN'} ? 'typing-text-admin' : ''" style="font-size: 0.9rem; white-space: pre-wrap;" th:text="${msg.messageText}"></p>
-                                <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #059669;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
-                                <div class="text-end mt-1"><small class="text-muted" style="font-size: 0.7rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></small></div>
-                            </div>
+                        <div th:each="msg : ${req.messages}" class="mb-3">
+                            <th:block th:if="${msg.senderId == 'ADMIN'}">
+                                <!-- Admin Message -->
+                                <div class="d-flex justify-content-end ms-auto">
+                                    <div style="max-width:85%; transform-origin: right center;">
+                                        <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
+                                            <span class="fw-bold text-muted" style="font-size:0.8rem;">4LAZIE Admin</span>
+                                            <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></span>
+                                        </div>
+                                        <div class="p-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 15px rgba(16,185,129,0.25); border: 1px solid rgba(255,255,255,0.2); position: relative; overflow: hidden;">
+                                            <div class="mb-0" style="font-size:0.95rem; line-height:1.5; white-space:pre-wrap;" th:text="${msg.messageText}"></div>
+                                            <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: white;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            
+                            <th:block th:unless="${msg.senderId == 'ADMIN'}">
+                                <!-- Student Message -->
+                                <div class="d-flex justify-content-start me-auto">
+                                    <div class="d-flex gap-3 align-items-end" style="max-width:90%;">
+                                        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(59,130,246,0.25); color:white;">
+                                            <i class="bi bi-person-fill fs-5"></i>
+                                        </div>
+                                        <div style="transform-origin: left center;">
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <span class="fw-bold" style="font-size:0.85rem; color:#1e293b; letter-spacing:0.3px;" th:text="${msg.senderName}">Student</span>
+                                                <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></span>
+                                            </div>
+                                            <div class="p-3" style="background: white; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.04); border-left: 3px solid #3b82f6; position: relative;">
+                                                <div class="chat-message-text" th:classappend="${msg.senderId != 'ADMIN'} ? 'typing-text-admin' : ''" style="font-size:0.95rem; color:#334155; line-height:1.6; white-space:pre-wrap;" th:text="${msg.messageText}"></div>
+                                                <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: #3b82f6;"><i class="bi bi-paperclip"></i> View Attachment</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
                         </div>
                     </div>
                     
@@ -375,11 +409,17 @@
                                 attachmentHtml = `<a href="${url}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #059669;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>`;
                             }
                             newBubble.innerHTML = `
-                                <span class="badge bg-success mb-1">4LAZIE Admin</span>
-                                <div class="p-3 rounded-3" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); max-width: 85%;">
-                                    <p class="mb-2 admin-dynamic-typing-text" style="font-size: 0.9rem; white-space: pre-wrap;"></p>
-                                    ${attachmentHtml}
-                                    <div class="text-end mt-1"><small class="text-muted" style="font-size: 0.7rem;">${data.time}</small></div>
+                                <div class="d-flex justify-content-end ms-auto">
+                                    <div style="max-width:85%; transform-origin: right center;">
+                                        <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
+                                            <span class="fw-bold text-muted" style="font-size:0.8rem;">4LAZIE Admin</span>
+                                            <span class="text-muted" style="font-size:0.75rem;">${data.time}</span>
+                                        </div>
+                                        <div class="p-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 15px rgba(16,185,129,0.25); border: 1px solid rgba(255,255,255,0.2); position: relative; overflow: hidden;">
+                                            <div class="admin-dynamic-typing-text mb-0" style="font-size:0.95rem; line-height:1.5; white-space:pre-wrap;"></div>
+                                            ${attachmentHtml}
+                                        </div>
+                                    </div>
                                 </div>
                             `;
                             // Insert before the form container
