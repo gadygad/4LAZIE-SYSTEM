@@ -1,10 +1,12 @@
 package com.school.controller;
 
 import com.school.model.AssignmentRequest;
+import com.school.model.DirectChat;
 import com.school.model.ChatMessage;
 import com.school.model.User;
 import com.school.repository.UserRepository;
 import com.school.service.AssignmentHelpService;
+import com.school.service.DirectChatService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,9 @@ public class AssignmentHelpController {
     private AssignmentHelpService assignmentHelpService;
 
     @Autowired
+    private DirectChatService directChatService;
+
+    @Autowired
     private UserRepository userRepository;
 
     // --- USER ENDPOINTS ---
@@ -38,9 +43,16 @@ public class AssignmentHelpController {
         if (user == null) {
             return "redirect:/login";
         }
-        
         List<AssignmentRequest> requests = assignmentHelpService.getUserRequests(user.getId());
         model.addAttribute("messages", requests);
+
+        // Fetch this student's direct chat with admin (if any)
+        DirectChat directChat = directChatService.getStudentInbox(user.getId())
+                .stream().findFirst().orElse(null);
+        model.addAttribute("directChat", directChat);
+        if (directChat != null) {
+            model.addAttribute("directChatUnread", directChat.isHasUnreadForStudent());
+        }
         return "user/messages";
     }
 

@@ -269,12 +269,12 @@ public class DirectChatController {
         DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd MMM");
         for (ChatMessage msg : chat.getMessages()) {
             Map<String, Object> m = new HashMap<>();
-            m.put("senderId",    msg.getSenderId());
-            m.put("senderName",  msg.getSenderName());
-            m.put("messageText", msg.getMessageText());
+            m.put("senderId",            msg.getSenderId());
+            m.put("senderName",           msg.getSenderName());
+            m.put("senderProfilePicture", msg.getSenderProfilePicture());
+            m.put("messageText",          msg.getMessageText());
             m.put("time",  msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
             m.put("date",  msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
-            // isSelf from the perspective of each viewer
             boolean isSelf = "ADMIN".equals(viewerIdentifier)
                     ? "ADMIN".equals(msg.getSenderId())
                     : viewerIdentifier.equals(msg.getSenderId());
@@ -282,5 +282,47 @@ public class DirectChatController {
             result.add(m);
         }
         return result;
+    }
+
+    // ─────────────────────────────────────────────
+    //  ADMIN INBOX — GET /admin/messages
+    // ─────────────────────────────────────────────
+
+    /** Admin anaona list ya chats zote — GET /admin/messages */
+    @GetMapping("/admin/messages")
+    public String adminInbox(Model model, HttpSession session) {
+        User admin = (User) session.getAttribute("user");
+        if (admin == null || (!admin.getRole().name().equals("ADMIN") && !admin.getRole().name().equals("SUPER_ADMIN"))) {
+            return "redirect:/login";
+        }
+        // All chats in system (admin sees all student chats)
+        List<DirectChat> allChats = directChatService.getAllChats();
+        long unreadCount = directChatService.getTotalUnreadForAdmin();
+
+        // Enrich with student user objects for profile pictures
+        List<Map<String, Object>> chatViews = new ArrayList<>();
+        for (DirectChat chat : allChats) {
+            Map<String, Object> cv = new HashMap<>();
+            cv.put("chat", chat);
+            User student = userRepository.findById(chat.getStudentId()).orElse(null);
+            cv.put("student", student);
+            // Last message preview
+            if (!chat.getMessages().isEmpty()) {
+                ChatMessage last = chat.getMessages().get(chat.getMessages().size() - 1);
+                cv.put("lastMsg", last.getMessageText());
+                cv.put("lastMsgTime", DateTimeFormatter.ofPattern("hh:mm a").format(last.getTimestamp()));
+                cv.put("lastSenderIsAdmin", "ADMIN".equals(last.getSenderId()));
+            } else {
+                cv.put("lastMsg", "No messages yet");
+                cv.put("lastMsgTime", "");
+                cv.put("lastSenderIsAdmin", false);
+            }
+            chatViews.add(cv);
+        }
+
+        model.addAttribute("chatViews", chatViews);
+        model.addAttribute("unreadCount", unreadCount);
+        model.addAttribute("loggedInUser", admin);
+        return "admin/admin_messages";
     }
 }

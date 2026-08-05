@@ -25,4 +25,10 @@ public interface DirectChatRepository extends MongoRepository<DirectChat, String
 
     // Unread count for student
     long countByStudentIdAndHasUnreadForStudentTrue(String studentId);
+
+    // All chats system-wide sorted by last activity (admin inbox)
+    List<DirectChat> findAllByOrderByLastMessageAtDesc();
+
+    // Total unread chats for admin (any admin)
+    long countByHasUnreadForAdminTrue();
 }

@@ -59,21 +59,29 @@ public class DirectChatService {
         DirectChat chat = directChatRepository.findById(chatId).orElse(null);
         if (chat == null) return null;
 
-        ChatMessage msg = new ChatMessage(senderId, senderName, messageText, null);
+        // Fetch profile picture for this sender
+        String profilePicture = null;
+        boolean senderIsAdmin;
+
+        if ("ADMIN".equals(senderId)) {
+            senderIsAdmin = true;
+            // Admin uses the 4LAZIE logo — no personal picture needed, keep null
+        } else {
+            User sender = userRepository.findById(senderId).orElse(null);
+            senderIsAdmin = sender != null && sender.getRole() != null &&
+                    (sender.getRole().name().equals("ADMIN") || sender.getRole().name().equals("SUPER_ADMIN"));
+            if (sender != null) {
+                profilePicture = sender.getProfilePicture();
+            }
+        }
+
+        ChatMessage msg = new ChatMessage(senderId, senderName, profilePicture, messageText, null);
         chat.getMessages().add(msg);
         chat.setLastMessageAt(LocalDateTime.now());
 
-        boolean senderIsAdmin = "ADMIN".equals(senderId) ||
-                (userRepository.findById(senderId)
-                        .map(u -> u.getRole() != null &&
-                                (u.getRole().name().equals("ADMIN") || u.getRole().name().equals("SUPER_ADMIN")))
-                        .orElse(false));
-
         if (senderIsAdmin) {
-            // Admin ametuma — student ana unread
             chat.setHasUnreadForStudent(true);
         } else {
-            // Student ametuma — admin ana unread
             chat.setHasUnreadForAdmin(true);
         }
 
@@ -118,5 +126,15 @@ public class DirectChatService {
 
     public long getUnreadCountForStudent(String studentId) {
         return directChatRepository.countByStudentIdAndHasUnreadForStudentTrue(studentId);
+    }
+
+    /** Returns ALL chats sorted by latest activity (for admin inbox) */
+    public List<DirectChat> getAllChats() {
+        return directChatRepository.findAllByOrderByLastMessageAtDesc();
+    }
+
+    /** Total unread messages across all students for any admin */
+    public long getTotalUnreadForAdmin() {
+        return directChatRepository.countByHasUnreadForAdminTrue();
     }
 }

@@ -3,8 +3,9 @@ package com.school.model;
 import java.time.LocalDateTime;
 
 public class ChatMessage {
-    private String senderId; // "ADMIN" or user's ID
-    private String senderName; // E.g. "4LAZIE", "John Doe"
+    private String senderId;             // "ADMIN" or user's ID
+    private String senderName;            // E.g. "4LAZIE", "John Doe"
+    private String senderProfilePicture;  // Profile picture URL (null = use initial)
     private String messageText;
     private String attachmentUrl;
     private LocalDateTime timestamp;
@@ -15,6 +16,15 @@ public class ChatMessage {
     public ChatMessage(String senderId, String senderName, String messageText, String attachmentUrl) {
         this.senderId = senderId;
         this.senderName = senderName;
+        this.messageText = messageText;
+        this.attachmentUrl = attachmentUrl;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public ChatMessage(String senderId, String senderName, String senderProfilePicture, String messageText, String attachmentUrl) {
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.senderProfilePicture = senderProfilePicture;
         this.messageText = messageText;
         this.attachmentUrl = attachmentUrl;
         this.timestamp = LocalDateTime.now();
@@ -34,6 +44,14 @@ public class ChatMessage {
 
     public void setSenderName(String senderName) {
         this.senderName = senderName;
+    }
+
+    public String getSenderProfilePicture() {
+        return senderProfilePicture;
+    }
+
+    public void setSenderProfilePicture(String senderProfilePicture) {
+        this.senderProfilePicture = senderProfilePicture;
     }
 
     public String getMessageText() {
