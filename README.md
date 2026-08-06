@@ -111,7 +111,10 @@ Open `.env` and fill in your MongoDB URI, Cloudinary keys, and SMTP credentials.
 
 4LAZIE is built and maintained by a single student with zero funding. I sold my phone to learn how to build this. Every line of code was written on a borrowed laptop, late at night. Today, **I use my food money to buy internet bundles and pay for the domain** just so this platform can remain free for Tanzanian students.
 
-Because 4LAZIE is currently on free hosting, it is sometimes slow. With your help, I can upgrade the servers and make this platform blazing fast and accessible to every university in Tanzania.
+### The 2027 Vision
+I will graduate in **2027**. My ultimate goal is to officially register 4LAZIE as a formal EdTech company and expand this system to serve **every single university and college in Tanzania**. I know it won't be easy, but after everything I have overcome, I know it is possible.
+
+Because 4LAZIE is currently on free hosting, it is sometimes slow. With your help, I can upgrade the servers, fund the company registration, and make this platform blazing fast and accessible nationwide.
 
 **If my story resonates with you, or if 4LAZIE has helped you, please consider supporting this mission:**
 
