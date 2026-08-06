@@ -9,10 +9,36 @@
             flex-direction: column;
             min-height: 100vh;
         }
+
+        /* Premium Mobile Footer Adjustments */
+        @media (max-width: 991px) {
+            .footer-links-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px !important;
+                width: 100%;
+            }
+            .footer-links-grid a {
+                padding: 8px 10px !important;
+                font-size: 0.85rem !important;
+                width: 100%;
+                text-align: center;
+            }
+            .footer-mobile-pb {
+                padding-bottom: 90px !important; /* Extra space for WhatsApp floating button */
+            }
+            .footer-social-dev {
+                flex-direction: column;
+                gap: 15px !important;
+            }
+            .footer-social-dev .dev-divider {
+                display: none;
+            }
+        }
     </style>
     <!-- INTERNATIONAL PREMIUM MINIMALIST FOOTER -->
     <footer th:fragment="footer" style="width: 100%; border-top: 1px solid rgba(16, 185, 129, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10; margin-top: auto;">
-        <div class="container-fluid px-2 px-md-4 px-xl-5 py-3">
+        <div class="container-fluid px-2 px-md-4 px-xl-5 py-4 py-md-3 footer-mobile-pb">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center text-center w-100 gap-3" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
                 <!-- Left: Copyright & Brand -->
@@ -28,21 +54,21 @@
                 </div>
                 
                 <!-- Center: Important Links -->
-                <div class="d-flex flex-wrap justify-content-center gap-3" style="font-weight: 600;">
+                <div class="d-flex flex-wrap justify-content-center gap-3 footer-links-grid" style="font-weight: 600;">
                     <a th:href="@{/about}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">About Us</a>
                     <a th:href="@{/policy}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Privacy Policy</a>
-                    <a href="#" data-bs-toggle="offcanvas" data-bs-target="#termsOffcanvas" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Terms of Service</a>
+                    <a th:href="@{/terms}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Terms of Service</a>
                     <a th:href="@{/contact}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Contact</a>
                 </div>
 
                 <!-- Right: Socials & Developer -->
-                <div class="d-flex align-items-center justify-content-center gap-3">
-                    <div class="d-flex gap-2">
-                        <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s;" onmouseover="this.style.background='#1da1f2'; this.style.color='white'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'"><i class="bi bi-twitter-x" style="font-size: 0.75rem;"></i></a>
-                        <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s;" onmouseover="this.style.background='#0a66c2'; this.style.color='white'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'"><i class="bi bi-linkedin" style="font-size: 0.75rem;"></i></a>
-                        <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s;" onmouseover="this.style.background='#e1306c'; this.style.color='white'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'"><i class="bi bi-instagram" style="font-size: 0.75rem;"></i></a>
+                <div class="d-flex align-items-center justify-content-center gap-3 footer-social-dev">
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='#1da1f2'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'; this.style.transform='none';"><i class="bi bi-twitter-x" style="font-size: 0.85rem;"></i></a>
+                        <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='#0a66c2'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'; this.style.transform='none';"><i class="bi bi-linkedin" style="font-size: 0.85rem;"></i></a>
+                        <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='#e1306c'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'; this.style.transform='none';"><i class="bi bi-instagram" style="font-size: 0.85rem;"></i></a>
                     </div>
-                    <div style="height: 16px; width: 1px; background: #cbd5e1;"></div>
+                    <div class="dev-divider" style="height: 16px; width: 1px; background: #cbd5e1;"></div>
                     <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
                         Developed by 
                         <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #ffffff; font-weight: 800; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 4px 10px; border-radius: 50px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25); letter-spacing: 0.5px; display: inline-block;">

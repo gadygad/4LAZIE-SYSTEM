@@ -503,6 +503,16 @@
             animation: pulse-green 2s infinite;
         }
 
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 90px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.6rem;
+            }
+        }
+
         .whatsapp-float:hover {
             transform: scale(1.1);
             color: white;
@@ -537,55 +547,96 @@
             transform: translateX(0);
         }
 
-        /* FAQ Section CSS */
+        /* PREMIUM FAQ Section CSS */
         .faq-section {
-            margin-top: 50px;
-            margin-bottom: 50px;
+            margin-top: 60px;
+            margin-bottom: 80px;
             animation: magicSlideUp 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            animation-delay: 1.5s;
+            animation-delay: 1.2s;
             opacity: 0;
+            position: relative;
         }
 
         .faq-title {
             text-align: center;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 2rem;
-            color: #0f172a;
-            margin-bottom: 30px;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #0f172a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .faq-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            border-radius: 10px;
         }
 
         .accordion-item {
             border: none;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 15px !important;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 20px !important;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03), inset 0 2px 2px rgba(255,255,255,1);
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .accordion-item:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1), inset 0 2px 2px rgba(255,255,255,1);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .accordion-button {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1.05rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
             color: #1e293b;
             background: transparent;
             box-shadow: none !important;
-            padding: 20px 25px;
+            padding: 22px 30px;
+            transition: all 0.4s ease;
+        }
+
+        .accordion-button::after {
+            background-image: none !important;
+            font-family: "bootstrap-icons";
+            content: "\f4fa"; /* bi-plus-circle-fill */
+            font-size: 1.4rem;
+            color: #3b82f6;
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), color 0.3s ease;
+            transform-origin: center;
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            content: "\f2fe"; /* bi-dash-circle-fill */
+            color: #10b981;
+            transform: rotate(180deg);
         }
 
         .accordion-button:not(.collapsed) {
             color: #10b981;
-            background: rgba(16, 185, 129, 0.05);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(255,255,255,0));
         }
 
         .accordion-body {
-            color: #64748b;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            padding: 0 25px 20px 25px;
+            color: #475569;
+            font-size: 1rem;
+            line-height: 1.8;
+            padding: 0 30px 25px 30px;
+            font-family: 'Inter', sans-serif;
         }
         /* Premium Sidebar Flyout Menu Styles */
         .sidebar-hover-item {
@@ -747,7 +798,7 @@
         <div class="container-fluid px-3 py-2 d-flex justify-content-between align-items-center w-100">
             <!-- Left: Brand & Home -->
             <div class="d-flex align-items-center gap-3">
-                <button class="btn border-0 p-0 text-dark fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar">
+                <button class="btn border-0 p-0 text-dark fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
                     <i class="bi bi-list"></i>
                 </button>
                 <a href="/" class="text-decoration-none text-dark fw-bold fs-5 d-flex align-items-center gap-2" style="font-family: 'Outfit', sans-serif;">
@@ -1054,5 +1105,10 @@
 
     <!-- Footer from Homepage -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
+    
+    <!-- Floating Bottom Nav for Mobile -->
+    <div class="d-md-none">
+        <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
+    </div>
 </body>
 </html>

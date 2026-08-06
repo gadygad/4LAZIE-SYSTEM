@@ -2551,38 +2551,38 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
 
                                         <div onclick="window.location.href='/register'" class="premium-glass-card"
-                                            style="cursor: pointer;">
-                                            <span class="premium-glass-card-text">ASSIGNMENTS</span>
+                                            style="cursor: pointer; max-width: 100%; padding: 22px 25px; margin-bottom: 16px;">
+                                            <span class="premium-glass-card-text" style="font-size: 1.15rem; letter-spacing: 0.5px;">ASSIGNMENTS</span>
                                             <div class="premium-glass-card-icon">
                                                 <i class="bi bi-lock-fill"
-                                                    style="color: #10b981; font-size: 1.1rem;"></i>
+                                                    style="color: #10b981; font-size: 1.3rem;"></i>
                                             </div>
                                         </div>
 
                                         <div onclick="window.location.href='/register'" class="premium-glass-card"
-                                            style="cursor: pointer;">
-                                            <span class="premium-glass-card-text">CAT 1 &amp; CAT 2 PAST PAPERS</span>
+                                            style="cursor: pointer; max-width: 100%; padding: 22px 25px; margin-bottom: 16px;">
+                                            <span class="premium-glass-card-text" style="font-size: 1.15rem; letter-spacing: 0.5px;">CAT 1 &amp; CAT 2 PAST PAPERS</span>
                                             <div class="premium-glass-card-icon">
                                                 <i class="bi bi-lock-fill"
-                                                    style="color: #10b981; font-size: 1.1rem;"></i>
+                                                    style="color: #10b981; font-size: 1.3rem;"></i>
                                             </div>
                                         </div>
 
                                         <div onclick="window.location.href='/register'" class="premium-glass-card"
-                                            style="cursor: pointer;">
-                                            <span class="premium-glass-card-text">UE (UNIVERSITY EXAMS)</span>
+                                            style="cursor: pointer; max-width: 100%; padding: 22px 25px; margin-bottom: 16px;">
+                                            <span class="premium-glass-card-text" style="font-size: 1.15rem; letter-spacing: 0.5px;">UE (UNIVERSITY EXAMS)</span>
                                             <div class="premium-glass-card-icon">
                                                 <i class="bi bi-lock-fill"
-                                                    style="color: #10b981; font-size: 1.1rem;"></i>
+                                                    style="color: #10b981; font-size: 1.3rem;"></i>
                                             </div>
                                         </div>
 
                                         <div onclick="window.location.href='/register'" class="premium-glass-card"
-                                            style="cursor: pointer;">
-                                            <span class="premium-glass-card-text">PROJECTS</span>
+                                            style="cursor: pointer; max-width: 100%; padding: 22px 25px; margin-bottom: 16px;">
+                                            <span class="premium-glass-card-text" style="font-size: 1.15rem; letter-spacing: 0.5px;">PROJECTS</span>
                                             <div class="premium-glass-card-icon">
                                                 <i class="bi bi-lock-fill"
-                                                    style="color: #10b981; font-size: 1.1rem;"></i>
+                                                    style="color: #10b981; font-size: 1.3rem;"></i>
                                             </div>
                                         </div>
 
@@ -2796,33 +2796,25 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                             gap: 15px;
                                             flex-wrap: wrap;    /* allow inputs to wrap on mobile */
                                         }
-                                        /* Mobile: stack GPA banner vertically */
+                                        /* Mobile: Keep GPA banner strictly horizontal (one row) */
                                         @media (max-width: 576px) {
                                             .premium-inline-gpa-banner {
-                                                flex-direction: column;
-                                                align-items: flex-start;
-                                                padding: 14px 16px;
+                                                padding: 8px 10px;
+                                                gap: 6px;
+                                                flex-wrap: nowrap !important;
                                             }
-                                            .gpa-inline-right-section {
-                                                width: 100%;
-                                                flex-direction: column;
-                                                align-items: stretch;
-                                                gap: 10px;
+                                            .gpa-inline-icon-box {
+                                                width: 32px;
+                                                height: 32px;
+                                                font-size: 1rem;
                                             }
-                                            .gpa-inline-inputs-wrapper {
-                                                width: 100%;
-                                                justify-content: space-between;
-                                            }
-                                            .gpa-inline-input {
-                                                width: 100% !important;
-                                                flex: 1;
+                                            .gpa-inline-title, .gpa-inline-subtitle {
+                                                font-size: 0.8rem !important;
                                             }
                                             .gpa-inline-calc-btn {
-                                                width: 100%;
-                                                justify-content: center;
-                                                margin-top: 0 !important;
-                                                height: 40px;
-                                                font-size: 0.9rem;
+                                                padding: 6px 10px !important;
+                                                font-size: 0.75rem !important;
+                                                height: auto !important;
                                             }
                                         }
                                         .gpa-inline-inputs-wrapper {
@@ -2970,37 +2962,20 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                     </style>
                                     
                                     <!-- Left Section (Icon + Titles) -->
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="gpa-inline-icon-box" data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer;">
+                                    <div class="d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer; flex: 1; overflow: hidden; white-space: nowrap;">
+                                        <div class="gpa-inline-icon-box">
                                             <i class="bi bi-calculator"></i>
                                         </div>
-                                        <div data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer;">
-                                            <div class="gpa-inline-title">4LAZIE</div>
-                                            <div class="gpa-inline-subtitle">GPA Calculator</div>
+                                        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow: hidden;">
+                                            <div class="gpa-inline-title" style="font-size: 1.15rem; margin-bottom: 0;">4LAZIE</div>
+                                            <div class="gpa-inline-subtitle text-truncate" style="font-size: 1.15rem; font-weight: 800; color: #475569; margin-bottom: 0;">GPA <span style="color: #1eb53a;">Calculator</span></div>
                                         </div>
                                     </div>
                                     
-                                    <!-- Right Section (Inputs + Button) -->
-                                    <div class="gpa-inline-right-section">
-                                        <!-- Middle Inputs (Static Decor) -->
-                                        <div class="gpa-inline-inputs-wrapper" data-bs-toggle="modal" data-bs-target="#gpaModal" style="cursor:pointer;" title="Click to open Calculator">
-                                            <div class="gpa-inline-input-group">
-                                                <label class="gpa-inline-label">Current GPA</label>
-                                                <input type="text" class="gpa-inline-input" value="3.5" readonly>
-                                            </div>
-                                            <div class="gpa-inline-input-group">
-                                                <label class="gpa-inline-label">Target GPA</label>
-                                                <input type="text" class="gpa-inline-input" value="3.8" readonly>
-                                            </div>
-                                            <div class="gpa-inline-input-group">
-                                                <label class="gpa-inline-label">Credits</label>
-                                                <input type="text" class="gpa-inline-input" value="15" readonly style="width: 55px;">
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Right Button triggers the modal -->
-                                        <button class="gpa-inline-calc-btn" data-bs-toggle="modal" data-bs-target="#gpaModal">
-                                            CALCULATE <i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i>
+                                    <!-- Right Section (Just Calculate Button) -->
+                                    <div class="d-flex align-items-center">
+                                        <button class="gpa-inline-calc-btn" data-bs-toggle="modal" data-bs-target="#gpaModal" style="margin-top: 0; padding: 8px 20px; font-size: 0.95rem; border-radius: 8px; height: auto;">
+                                            CALCULATE <i class="bi bi-chevron-right ms-1" style="font-size: 0.8rem;"></i>
                                         </button>
                                     </div>
                                 </div>

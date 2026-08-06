@@ -9,84 +9,387 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <link rel="stylesheet" th:href="@{/css/global-premium.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            color: var(--text-main);
-            padding-top: 80px;
-            padding-bottom: 50px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #334155;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* Abstract Background Shapes */
+        .bg-shape-1 {
+            position: fixed;
+            top: -10%;
+            left: -10%;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .bg-shape-2 {
+            position: fixed;
+            bottom: -15%;
+            right: -5%;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        @keyframes magicSlideUp {
+            0% { opacity: 0; transform: translateY(50px) scale(0.95); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
         .policy-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            width: 96%;
+            max-width: 1800px;
+            margin: 0 auto 80px auto;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 60px 80px;
+            border-radius: 40px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1), inset 0 2px 2px rgba(255,255,255,1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(25px);
+            animation: magicSlideUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
         }
+
+        /* Magical Aurora/Mesh Background Inside Card */
+        .policy-container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: rgba(252, 209, 22, 0.15); /* Yellow */
+            border-radius: 50%;
+            filter: blur(50px);
+            z-index: -1;
+        }
+        
+        .policy-container::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: rgba(30, 181, 58, 0.15); /* Green */
+            border-radius: 50%;
+            filter: blur(50px);
+            z-index: -1;
+        }
+
         .policy-container h1 {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 30px;
+            font-size: 3rem;
+            margin-bottom: 10px;
             text-align: center;
+            background: linear-gradient(135deg, #0f172a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
+        .last-updated {
+            text-align: center;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 50px;
+            font-size: 0.95rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .policy-section {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255,255,255,0.7);
+            padding: 40px 50px;
+            border-radius: 25px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            transform: translateX(0);
+        }
+
+        .policy-section::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(180deg, #10b981, #3b82f6);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 8px 0 0 8px;
+            opacity: 0.9;
+        }
+
+        .policy-section:hover {
+            transform: translateX(25px) translateY(-5px) scale(1.02);
+            box-shadow: -15px 20px 50px rgba(59, 130, 246, 0.15), 0 0 30px rgba(16, 185, 129, 0.1);
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .policy-section:hover::before {
+            transform: scaleY(1);
+            transform-origin: top;
+        }
+
         .policy-container h2 {
             font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+            font-weight: 800;
+            font-size: 1.4rem;
             color: #1e293b;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
+
+        .policy-container h2::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
         .policy-container p {
             line-height: 1.8;
             color: #475569;
-            margin-bottom: 15px;
+            margin-bottom: 0;
+            font-size: 1.05rem;
         }
+
         .back-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            color: #10b981;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.05rem;
+            font-family: 'Outfit', sans-serif;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
         }
         .back-btn:hover {
-            text-decoration: underline;
+            background: #10b981;
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+        }
+        
+        @media (max-width: 768px) {
+            .policy-container {
+                padding: 30px 20px;
+            }
+            .policy-section {
+                padding: 20px;
+            }
+            .policy-container h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse-green 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 90px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.6rem;
+            }
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .whatsapp-tooltip {
+            position: absolute;
+            right: 75px;
+            background-color: white;
+            color: #1e293b;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .whatsapp-float:hover .whatsapp-tooltip {
+            opacity: 1;
+            transform: translateX(0);
         }
     </style>
     <link rel="stylesheet" href="/css/mobile-spacing-standards.css">
 </head>
 <body>
     
-    <div class="container">
-        <a href="/" class="back-btn">&larr; Back to Home</a>
+    <div class="bg-shape-1"></div>
+    <div class="bg-shape-2"></div>
+    
+    <!-- Navbar from Homepage -->
+    <header class="navbar sticky-top p-0 flex-column w-100" style="background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); z-index: 1040;">
+        <div class="container-fluid px-3 py-2 d-flex justify-content-between align-items-center w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn border-0 p-0 text-dark fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <a href="/" class="text-decoration-none text-dark fw-bold fs-5 d-flex align-items-center gap-2" style="font-family: 'Outfit', sans-serif;">
+                    4LAZIE
+                </a>
+                <div class="d-none d-md-flex align-items-center px-2 py-1" style="border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 50px; background: rgba(59, 130, 246, 0.05);">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: #3b82f6; letter-spacing: 1px;">SMART IN BRAIN</span>
+                </div>
+                <a href="/" class="text-decoration-none fw-bold d-flex align-items-center gap-1 ms-3" style="color: #1e293b; font-family: 'Inter', sans-serif; font-size: 0.95rem;">
+                    <i class="bi bi-house-door-fill"></i> Home
+                </a>
+            </div>
+
+            <div class="d-none d-lg-flex mx-auto align-items-center justify-content-center" style="max-width: 500px; flex: 1;">
+                <div class="search-container position-relative flex-grow-1">
+                    <i class="bi bi-search position-absolute text-muted" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
+                    <input type="text" id="smartSearchInput" class="form-control" placeholder="Search modules, notes, or past papers..." style="padding: 10px 20px 10px 45px; border-radius: 50px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 0.9rem;" onfocus="this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'; this.style.borderColor='#3b82f6';" onblur="this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';">
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <a href="/login" class="btn d-flex align-items-center gap-2" style="border: 1px solid #10b981; color: #10b981; border-radius: 50px; padding: 6px 16px; font-weight: 600; font-size: 0.9rem; background: rgba(16, 185, 129, 0.05); transition: all 0.3s;" onmouseover="this.style.background='#10b981'; this.style.color='white';" onmouseout="this.style.background='rgba(16, 185, 129, 0.05)'; this.style.color='#10b981';">
+                    <i class="bi bi-person-fill"></i> SIGN IN
+                </a>
+            </div>
+        </div>
+        <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+    </header>
+
+    <div class="container-fluid px-4 px-md-5 position-relative mt-4 mb-5" style="z-index: 10;">
         
         <div class="policy-container">
             <h1>Terms of Service</h1>
-            <p>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}">Today</span></p>
+            <p class="last-updated">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}">Today</span></p>
             
-            <h2>1. Acceptance of Terms</h2>
-            <p>By accessing or using 4LAZIE, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the service.</p>
+            <div class="policy-section">
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing or using 4LAZIE, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the service.</p>
+            </div>
             
-            <h2>2. User Accounts</h2>
-            <p>When you create an account with us, you must provide accurate, complete, and current information. Failure to do so constitutes a breach of the Terms.</p>
+            <div class="policy-section">
+                <h2>2. User Accounts</h2>
+                <p>When you create an account with us, you must provide accurate, complete, and current information. Failure to do so constitutes a breach of the Terms.</p>
+            </div>
             
-            <h2>3. Content Ownership</h2>
-            <p>You retain ownership of any materials you submit, but grant us a license to use and distribute it across the platform for educational purposes.</p>
+            <div class="policy-section">
+                <h2>3. Content Ownership</h2>
+                <p>You retain ownership of any materials you submit, but grant us a license to use and distribute it across the platform for educational purposes.</p>
+            </div>
             
-            <h2>4. Prohibited Uses</h2>
-            <p>You agree not to use the service for any unlawful purpose, to upload malicious code, or to harass other users.</p>
+            <div class="policy-section">
+                <h2>4. Prohibited Uses</h2>
+                <p>You agree not to use the service for any unlawful purpose, to upload malicious code, or to harass other users.</p>
+            </div>
             
-            <h2>5. Termination</h2>
-            <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+            <div class="policy-section">
+                <h2>5. Termination</h2>
+                <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+            </div>
             
-            <h2>6. Contact Us</h2>
-            <p>If you have any questions about these Terms, please contact us at support@4lazie.com.</p>
+            <div class="policy-section">
+                <h2>6. Contact Us</h2>
+                <p>If you have any questions about these Terms, please contact us at support@4lazie.com.</p>
+            </div>
         </div>
     </div>
 
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/255766689326" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+        <div class="whatsapp-tooltip">Need help? Chat with us!</div>
+    </a>
+    
+    <!-- Mobile Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
+    
+    <!-- Exam Modal Fragment -->
+    <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
+
+    <!-- Footer from Homepage -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    
+    <!-- Floating Bottom Nav for Mobile -->
+    <div class="d-md-none">
+        <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
