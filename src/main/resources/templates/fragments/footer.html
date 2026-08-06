@@ -74,6 +74,9 @@
                 z-index: -1; /* Keep it behind the text */
                 border-radius: 50px; /* Keep the pill shape intact during slide */
             }
+            .footer-premium-link.active {
+                background: linear-gradient(135deg, #10b981, #059669) !important;
+            }
             .footer-premium-link:hover::before {
                 width: 100%; /* Slide in fully to the right */
             }
@@ -102,10 +105,10 @@
                 
                 <!-- Center: Important Links -->
                 <div class="d-flex flex-nowrap justify-content-center gap-3 footer-links-grid" style="font-weight: 600;">
-                    <a th:href="@{/about}" class="text-decoration-none px-4 py-2 footer-premium-link">About Us</a>
-                    <a th:href="@{/policy}" class="text-decoration-none px-4 py-2 footer-premium-link">Privacy Policy</a>
-                    <a th:href="@{/terms}" class="text-decoration-none px-4 py-2 footer-premium-link">Terms of Service</a>
-                    <a th:href="@{/contact}" class="text-decoration-none px-4 py-2 footer-premium-link">Contact</a>
+                    <a th:href="@{/about}" th:classappend="${#request.getRequestURI() == '/about'} ? 'active' : ''" class="text-decoration-none px-4 py-2 footer-premium-link">About Us</a>
+                    <a th:href="@{/policy}" th:classappend="${#request.getRequestURI() == '/policy'} ? 'active' : ''" class="text-decoration-none px-4 py-2 footer-premium-link">Privacy Policy</a>
+                    <a th:href="@{/terms}" th:classappend="${#request.getRequestURI() == '/terms'} ? 'active' : ''" class="text-decoration-none px-4 py-2 footer-premium-link">Terms of Service</a>
+                    <a th:href="@{/contact}" th:classappend="${#request.getRequestURI() == '/contact'} ? 'active' : ''" class="text-decoration-none px-4 py-2 footer-premium-link">Contact</a>
                 </div>
 
                 <!-- Right: Socials & Developer -->
