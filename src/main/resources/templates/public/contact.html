@@ -54,16 +54,16 @@
             100% { transform: translateY(0) scale(1); }
         }
 
-        /* Advanced 3D Entry Animation */
+        /* Advanced 3D Entry Animation (10x 360 Spins) */
         @keyframes magicSlideUp {
             0% {
                 opacity: 0;
-                transform: translateY(80px) scale(0.95) rotateX(10deg);
-                filter: blur(10px);
+                transform: translateY(80px) scale(0) rotateY(0deg);
+                filter: blur(20px);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) scale(1) rotateX(0deg);
+                transform: translateY(0) scale(1) rotateY(3600deg);
                 filter: blur(0);
             }
         }
@@ -102,8 +102,9 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease;
-            animation: magicSlideUp 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-            transform-origin: center bottom;
+            animation: magicSlideUp 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transform-style: preserve-3d;
+            transform-origin: center center;
             will-change: transform, opacity, filter;
         }
 
