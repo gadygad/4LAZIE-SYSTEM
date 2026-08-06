@@ -35,7 +35,14 @@ In April of this year, I decided to build a project to test my Java skills. Reme
 
 I've always loved humor, so I jokingly called the system **"4LAZIE" (For Lazy)**. The idea was simple: I was too "lazy" to waste hours searching for notes in scattered WhatsApp groups. I wanted a system that did the hard work of organizing materials so I could spend less time searching and more time actually studying.
 
-What started as a personal bank to solve my own problem has now evolved into a full-scale platform to ensure no other student in Tanzania ever has to struggle to find notes again.
+During exams, my classmates started struggling to find notes, just like I used to. I told them, *"Go to 4lazie.com."* That was my "aha" moment. I realized this wasn't just my problem; it was a nationwide problem for Tanzanian students. 
+
+### The Silent Struggle Behind the Screen
+To scale 4LAZIE, I had to learn things that were never taught in class: Cloudinary, MongoDB, SSL/TLS certificates, domain registration, and cloud deployment. I learned all of this through AI (ChatGPT, Antigravity) while simultaneously juggling six heavy, unrelated college subjects. 
+
+It has not been easy. Right now, 4LAZIE runs on free hosting. When my free tier on Railway expired, I had to migrate to Render's free tier, causing the platform to be slow. 
+
+**Behind the code, there are days I feel like giving up.** I have no job. I am a student fighting to survive. I frequently use my food money to buy internet bundles, pay for domains, and keep this platform alive for other students. But every time I look back at where I started, I realize how much I love coding in Java. That passion keeps me going.
 
 ---
 
@@ -102,11 +109,11 @@ Open `.env` and fill in your MongoDB URI, Cloudinary keys, and SMTP credentials.
 
 ## 💚 Support The Dream
 
-4LAZIE is built and maintained by a single student with no funding. I sold my phone to learn how to build this. Every line of code was written on a borrowed laptop, late at night. 
+4LAZIE is built and maintained by a single student with zero funding. I sold my phone to learn how to build this. Every line of code was written on a borrowed laptop, late at night. Today, **I use my food money to buy internet bundles and pay for the domain** just so this platform can remain free for Tanzanian students.
 
-**My ultimate dream is to become a Java Expert in Tanzania and help young people who share the same struggles I went through.**
+Because 4LAZIE is currently on free hosting, it is sometimes slow. With your help, I can upgrade the servers and make this platform blazing fast and accessible to every university in Tanzania.
 
-If my story resonates with you, or if 4LAZIE has helped you, here is how you can support this mission to keep the servers running and expand to all universities in Tanzania:
+**If my story resonates with you, or if 4LAZIE has helped you, please consider supporting this mission:**
 
 ### 💵 Financial Support
 
@@ -115,7 +122,7 @@ If my story resonates with you, or if 4LAZIE has helped you, here is how you can
 | ☕ Ko-fi | *(Link coming soon)* |
 | 📱 M-Pesa Tanzania | **+255 766 689 326** |
 
-Even a small contribution helps cover server hosting costs so the platform can remain free for students who can't afford it.
+Even a small contribution helps cover server hosting costs so I don't have to sacrifice my meals to keep education accessible.
 
 ### 🏆 Grant & Partnership Opportunities
 
