@@ -191,6 +191,7 @@
             filter: blur(70px);
             opacity: 0.35;
             z-index: -1;
+            pointer-events: none;
             animation: magicFloatGlow 12s infinite alternate ease-in-out;
         }
 
@@ -408,11 +409,183 @@
             transform-origin: left;
         }
 
+        /* Custom Select / Glassmorphism Dropdown */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .custom-options.glass-dropdown {
+            position: absolute;
+            display: block;
+            top: 110%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), inset 0 2px 5px rgba(255,255,255,1);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-15px) scaleY(0.9);
+            transform-origin: top;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+            padding: 5px;
+        }
+
+        .custom-select-wrapper.open .custom-options.glass-dropdown {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            transform: translateY(0) scaleY(1);
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger i.bi-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .custom-option {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            color: #475569;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .custom-option:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            transform: translateX(5px);
+            font-weight: 500;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .contact-info { padding: 40px 25px; }
             .contact-form-section { padding: 40px 25px; }
             .info-title { font-size: 1.8rem; }
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse-green 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .whatsapp-tooltip {
+            position: absolute;
+            right: 75px;
+            background-color: white;
+            color: #1e293b;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .whatsapp-float:hover .whatsapp-tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* FAQ Section CSS */
+        .faq-section {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            animation: magicSlideUp 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 1.5s;
+            opacity: 0;
+        }
+
+        .faq-title {
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            color: #0f172a;
+            margin-bottom: 30px;
+        }
+
+        .accordion-item {
+            border: none;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px !important;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .accordion-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #1e293b;
+            background: transparent;
+            box-shadow: none !important;
+            padding: 20px 25px;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .accordion-body {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            padding: 0 25px 20px 25px;
         }
         /* Premium Sidebar Flyout Menu Styles */
         .sidebar-hover-item {
@@ -624,9 +797,9 @@
                             <div class="info-icon" style="background: rgba(30, 181, 58, 0.1); color: #1eb53a;">
                                 <i class="bi bi-geo-alt-fill"></i>
                             </div>
-                            <div class="info-text">
+                            <div class="info-text" style="position: relative; z-index: 20;">
                                 <h5><span style="background-color: #1eb53a; color: white; padding: 2px 10px; border-radius: 5px;">Headquarters</span></h5>
-                                <p class="mt-1">Dar es Salaam</p>
+                                <p class="mt-1"><a href="https://maps.google.com/?q=Dar+es+Salaam" target="_blank" style="text-decoration: none; color: inherit; transition: color 0.3s; position: relative; z-index: 20;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='inherit'">Dar es Salaam</a></p>
                             </div>
                         </div>
 
@@ -634,9 +807,9 @@
                             <div class="info-icon" style="background: rgba(0, 163, 224, 0.1); color: #00a3e0;">
                                 <i class="bi bi-envelope-paper-fill"></i>
                             </div>
-                            <div class="info-text">
+                            <div class="info-text" style="position: relative; z-index: 20;">
                                 <h5><span style="background-color: #00a3e0; color: white; padding: 2px 10px; border-radius: 5px;">Email Address</span></h5>
-                                <p class="mt-1">support@4lazie.com</p>
+                                <p class="mt-1"><a href="mailto:support@4lazie.com" style="text-decoration: none; color: inherit; transition: color 0.3s; position: relative; z-index: 20;" onmouseover="this.style.color='#00a3e0'" onmouseout="this.style.color='inherit'">support@4lazie.com</a></p>
                             </div>
                         </div>
 
@@ -644,9 +817,19 @@
                             <div class="info-icon" style="background: rgba(0, 0, 0, 0.1); color: #000000;">
                                 <i class="bi bi-telephone-fill"></i>
                             </div>
-                            <div class="info-text">
+                            <div class="info-text" style="position: relative; z-index: 20;">
                                 <h5><span style="background-color: #000000; color: white; padding: 2px 10px; border-radius: 5px;">Phone Number</span></h5>
-                                <p class="mt-1">+255766689326</p>
+                                <p class="mt-1"><a href="tel:+255766689326" style="text-decoration: none; color: inherit; transition: color 0.3s; position: relative; z-index: 20;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='inherit'">+255766689326</a></p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3" style="opacity: 0; animation: magicStaggerItem 0.8s cubic-bezier(0.19, 1, 0.22, 1) 1.0s forwards;">
+                            <div class="info-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="info-text" style="position: relative; z-index: 20;">
+                                <h5><span style="background-color: #f59e0b; color: white; padding: 2px 10px; border-radius: 5px;">Business Hours</span></h5>
+                                <p class="mt-1">Mon - Fri, 08:00 AM - 05:00 PM</p>
                             </div>
                         </div>
                     </div>
@@ -654,10 +837,10 @@
 
                 <div class="mt-4 pt-4 border-top" style="border-color: rgba(0,0,0,0.1) !important;">
                     <p class="mb-2" style="font-size: 0.9rem; font-weight: 500; color: #64748b;">Follow Us Online:</p>
-                    <div class="d-flex gap-3">
-                        <a href="#" style="color: #10b981; font-size: 1.3rem; transition: transform 0.3s;"><i class="bi bi-instagram"></i></a>
-                        <a href="#" style="color: #10b981; font-size: 1.3rem; transition: transform 0.3s;"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" style="color: #10b981; font-size: 1.3rem; transition: transform 0.3s;"><i class="bi bi-linkedin"></i></a>
+                    <div class="d-flex gap-3" style="position: relative; z-index: 20;">
+                        <a href="https://instagram.com/4lazie" target="_blank" style="color: #10b981; font-size: 1.3rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="bi bi-instagram"></i></a>
+                        <a href="https://twitter.com/4lazie" target="_blank" style="color: #10b981; font-size: 1.3rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://linkedin.com/company/4lazie" target="_blank" style="color: #10b981; font-size: 1.3rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="bi bi-linkedin"></i></a>
                     </div>
                 </div>
             </div>
@@ -683,9 +866,22 @@
                         <input type="email" class="magic-input" placeholder="e.g. name@example.com" required>
                     </div>
                     
-                    <div class="form-group mb-2" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.8s forwards;">
+                    <div class="form-group mb-2" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.8s forwards; position: relative; z-index: 50;">
                         <label class="magic-label"><i class="bi bi-chat-left-text-fill"></i> Subject</label>
-                        <input type="text" class="magic-input" placeholder="What is this regarding?" required>
+                        <input type="hidden" name="subject" id="subjectHiddenInput" required>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select-trigger magic-input">
+                                <span id="subjectSelectedText" style="color: #94a3b8;">Select a subject...</span>
+                                <i class="bi bi-chevron-down ms-auto" style="color: #10b981; transition: transform 0.3s;"></i>
+                            </div>
+                            <div class="custom-options glass-dropdown">
+                                <div class="custom-option" data-value="Login Issue">Login Issue</div>
+                                <div class="custom-option" data-value="Payment / Premium Issue">Payment / Premium Issue</div>
+                                <div class="custom-option" data-value="Missing Notes / Exam Papers">Missing Notes / Exam Papers</div>
+                                <div class="custom-option" data-value="General Inquiry">General Inquiry</div>
+                                <div class="custom-option" data-value="Feedback / Suggestion">Feedback / Suggestion</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group mb-3" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.9s forwards;">
@@ -700,59 +896,156 @@
             </div>
             
         </div>
+        
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 class="faq-title">Frequently Asked Questions</h2>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            How do I reset my password?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You can easily reset your password by clicking on the "Forgot Password?" link on the login page. An email with a reset link will be sent to your registered email address.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            How can I become a Premium member?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            To become a premium member, go to the "Go Premium" section in your dashboard and follow the payment instructions. Once completed, your account will be upgraded immediately.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            What if I can't find my course notes?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            If you can't find specific notes for your course, please use this contact form and select "Missing Notes / Exam Papers" as the subject. Our team will verify and upload them as soon as possible.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Bootstrap and Magic Form Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const originalContent = btn.innerHTML;
-            
-            // Loading State Magic
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
-            btn.style.opacity = '0.8';
-            btn.style.pointerEvents = 'none';
-            
-            const formData = new FormData(this);
-            
-            fetch('/api/public/contact', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Message Received!';
-                    btn.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
-                    btn.style.boxShadow = '0 10px 20px rgba(14, 165, 233, 0.3)';
-                    btn.style.opacity = '1';
-                    
-                    document.getElementById('contactForm').reset();
-                    
-                    setTimeout(() => {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom Select Magic
+            const wrapper = document.querySelector('.custom-select-wrapper');
+            const trigger = document.querySelector('.custom-select-trigger');
+            const hiddenInput = document.getElementById('subjectHiddenInput');
+            const selectedText = document.getElementById('subjectSelectedText');
+            const options = document.querySelectorAll('.custom-option');
+
+            if(trigger && wrapper) {
+                trigger.addEventListener('click', function() {
+                    wrapper.classList.toggle('open');
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const val = this.getAttribute('data-value');
+                        const text = this.innerText;
+                        
+                        hiddenInput.value = val;
+                        selectedText.innerText = text;
+                        selectedText.style.color = '#1e293b'; // selected color
+                        
+                        wrapper.classList.remove('open');
+                    });
+                });
+
+                // Close when clicking outside
+                window.addEventListener('click', function(e) {
+                    if (!wrapper.contains(e.target)) {
+                        wrapper.classList.remove('open');
+                    }
+                });
+            }
+
+            // Form Submit Logic
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const btn = document.getElementById('submitBtn');
+                const originalContent = btn.innerHTML;
+                
+                // Check if hidden input has a value
+                if (!hiddenInput.value) {
+                    alert('Please select a subject.');
+                    wrapper.classList.add('open');
+                    return;
+                }
+                
+                // Loading State Magic
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+                btn.style.opacity = '0.8';
+                btn.style.pointerEvents = 'none';
+                
+                const formData = new FormData(this);
+                
+                fetch('/api/public/contact', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Message Received!';
+                        btn.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                        btn.style.boxShadow = '0 10px 20px rgba(14, 165, 233, 0.3)';
+                        btn.style.opacity = '1';
+                        
+                        document.getElementById('contactForm').reset();
+                        hiddenInput.value = '';
+                        selectedText.innerText = 'Select a subject...';
+                        selectedText.style.color = '#94a3b8';
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = originalContent;
+                            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                            btn.style.boxShadow = '0 10px 20px rgba(16, 185, 129, 0.3)';
+                            btn.style.pointerEvents = 'auto';
+                        }, 4000);
+                    } else {
+                        alert('Error: ' + data.message);
                         btn.innerHTML = originalContent;
-                        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                        btn.style.boxShadow = '0 10px 20px rgba(16, 185, 129, 0.3)';
+                        btn.style.opacity = '1';
                         btn.style.pointerEvents = 'auto';
-                    }, 4000);
-                } else {
-                    alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
                     btn.innerHTML = originalContent;
                     btn.style.opacity = '1';
                     btn.style.pointerEvents = 'auto';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-                btn.innerHTML = originalContent;
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
+                });
             });
         });
     </script>
+    
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/255766689326" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+        <div class="whatsapp-tooltip">Need help? Chat with us!</div>
+    </a>
+    
     <!-- Mobile Sidebar Fragment -->
     <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
     
