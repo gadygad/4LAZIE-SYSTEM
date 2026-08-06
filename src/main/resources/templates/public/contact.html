@@ -332,11 +332,12 @@
 
         .magic-input {
             width: 100%;
-            padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 2px solid rgba(16, 185, 129, 0.15);
-            border-radius: 12px;
-            font-size: 1rem;
+            padding: 12px 10px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0;
+            font-size: 1.05rem;
             color: #1e293b;
             transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             font-family: inherit;
@@ -344,18 +345,20 @@
 
         .magic-input:focus {
             outline: none;
-            border-color: #10b981;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), 0 10px 20px rgba(0,0,0,0.05);
+            border-bottom-color: #10b981;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
             transform: translateY(-2px);
         }
 
         .magic-input::placeholder {
             color: #94a3b8;
+            font-style: italic;
         }
 
         textarea.magic-input {
-            border-radius: 20px;
+            border-radius: 0;
+            resize: vertical;
         }
 
         .btn-magic-send {
@@ -477,42 +480,29 @@
                 <p class="form-subtitle">Let us know your thoughts, we will get back to you within 24 hours.</p>
                 
                 <form action="#" method="POST" id="contactForm">
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6 form-group" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.5s forwards;">
-                            <label class="magic-label"><i class="bi bi-person-fill"></i> Full Name</label>
-                            <input type="text" class="magic-input" placeholder="e.g. John Doe" required>
-                        </div>
-                        <div class="col-md-6 form-group" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.6s forwards;">
-                            <label class="magic-label"><i class="bi bi-envelope-fill"></i> Email Address</label>
-                            <input type="email" class="magic-input" placeholder="e.g. name@example.com" required>
-                        </div>
+                    <div class="form-group mb-4" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.5s forwards;">
+                        <label class="magic-label"><i class="bi bi-person-fill"></i> Full Name</label>
+                        <input type="text" class="magic-input" placeholder="e.g. John Doe" required>
                     </div>
 
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6 form-group" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.7s forwards;">
-                            <label class="magic-label"><i class="bi bi-telephone-fill"></i> Phone Number <span style="font-weight: 400; font-size: 0.8rem; color: #94a3b8;">(Optional)</span></label>
-                            <input type="tel" class="magic-input" placeholder="e.g. +255 700 000 000">
-                        </div>
-                        <div class="col-md-6 form-group" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.8s forwards;">
-                            <label class="magic-label"><i class="bi bi-list-check"></i> Inquiry Type</label>
-                            <select class="magic-input" required style="cursor: pointer;">
-                                <option value="" disabled selected>Select category...</option>
-                                <option value="general">General Question</option>
-                                <option value="support">Technical Support</option>
-                                <option value="billing">Billing & Payments</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
+                    <div class="form-group mb-4" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.6s forwards;">
+                        <label class="magic-label"><i class="bi bi-telephone-fill"></i> Phone Number</label>
+                        <input type="tel" class="magic-input" placeholder="e.g. +255 700 000 000" required>
+                    </div>
+
+                    <div class="form-group mb-4" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.7s forwards;">
+                        <label class="magic-label"><i class="bi bi-envelope-fill"></i> Email Address</label>
+                        <input type="email" class="magic-input" placeholder="e.g. name@example.com" required>
                     </div>
                     
-                    <div class="form-group mb-4" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.9s forwards;">
+                    <div class="form-group mb-4" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.8s forwards;">
                         <label class="magic-label"><i class="bi bi-chat-left-text-fill"></i> Subject</label>
                         <input type="text" class="magic-input" placeholder="What is this regarding?" required>
                     </div>
                     
-                    <div class="form-group mb-5" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 1.0s forwards;">
+                    <div class="form-group mb-5" style="opacity: 0; animation: magicStaggerItem 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.9s forwards;">
                         <label class="magic-label"><i class="bi bi-pencil-square"></i> Your Message</label>
-                        <textarea class="magic-input" rows="4" placeholder="Write your message here in detail..." required></textarea>
+                        <textarea class="magic-input" rows="3" placeholder="Write your message here in detail..." required></textarea>
                     </div>
                     
                     <button type="submit" class="btn-magic-send" id="submitBtn">
