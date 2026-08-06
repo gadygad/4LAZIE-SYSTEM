@@ -2,63 +2,110 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-    <style>
-        /* Force body to take full height */
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Premium Mobile Footer Adjustments */
-        @media (max-width: 991px) {
-            .footer-links-grid {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px !important;
-                width: 100%;
-            }
-            .footer-links-grid a {
-                padding: 8px 10px !important;
-                font-size: 0.85rem !important;
-                width: 100%;
-                text-align: center;
-            }
-            .footer-mobile-pb {
-                padding-bottom: 90px !important; /* Extra space for WhatsApp floating button */
-            }
-            .footer-social-dev {
-                flex-direction: column;
-                gap: 15px !important;
-            }
-            .footer-social-dev .dev-divider {
-                display: none;
-            }
-        }
-    </style>
     <!-- INTERNATIONAL PREMIUM MINIMALIST FOOTER -->
     <footer th:fragment="footer" style="width: 100%; border-top: 1px solid rgba(16, 185, 129, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10; margin-top: auto;">
+        <style>
+            /* Force body to take full height */
+            body {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            /* Mobile-specific footer adjustments */
+            @media (max-width: 991px) {
+                .footer-mobile-pb {
+                    padding-bottom: 80px !important; /* Make room for floating bottom nav */
+                }
+                .footer-links-grid {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    flex-wrap: wrap !important;
+                    justify-content: center !important;
+                    gap: 6px !important; /* Small gap to fit them side by side */
+                    width: 100%;
+                }
+                .footer-links-grid a {
+                    width: auto !important; 
+                    font-size: 0.75rem !important; /* Smaller font for mobile */
+                    padding: 6px 12px !important; /* Snug padding to fit on one line */
+                    white-space: nowrap;
+                }
+                .footer-social-dev {
+                    flex-direction: row !important;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    gap: 10px !important;
+                }
+                .footer-social-dev .dev-divider {
+                    display: block !important;
+                }
+            }
+            
+            /* Premium Footer Links (Pill Shaped with Left-to-Right Slide) */
+            .footer-premium-link {
+                color: #ffffff !important;
+                background: #0f172a; /* Solid dark navy/black from screenshot */
+                border-radius: 50px; /* Pill shape */
+                padding: 8px 18px !important; /* Snug padding to match text size */
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Soft drop shadow */
+                transition: color 0.4s ease; /* Only text color needs to transition here */
+                position: relative;
+                overflow: hidden;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                letter-spacing: 0.3px;
+                border: none;
+                z-index: 1; /* Keep text above the sliding background */
+                white-space: nowrap; /* Prevent words from stacking */
+                flex-shrink: 0; /* Prevent the button from getting squished */
+            }
+            .footer-premium-link::before {
+                content: '';
+                position: absolute;
+                top: 0; 
+                left: 0; 
+                width: 0%; /* Start with 0 width */
+                height: 100%;
+                background: linear-gradient(135deg, #10b981, #059669); /* Premium Green */
+                transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth slide */
+                z-index: -1; /* Keep it behind the text */
+                border-radius: 50px; /* Keep the pill shape intact during slide */
+            }
+            .footer-premium-link:hover::before {
+                width: 100%; /* Slide in fully to the right */
+            }
+        </style>
         <div class="container-fluid px-2 px-md-4 px-xl-5 py-4 py-md-3 footer-mobile-pb">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center text-center w-100 gap-3" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
-                <!-- Left: Copyright & Brand -->
-                <div class="d-flex align-items-center justify-content-center" style="color: #64748b; font-weight: 500;">
-                    <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 2px 6px rgba(16,185,129,0.2);">
-                        <i class="bi bi-shield-check text-white" style="font-size: 0.75rem;"></i>
+                <!-- Left: Copyright, Brand & WhatsApp (Mobile) -->
+                <div class="d-flex align-items-center justify-content-between w-100 w-lg-auto justify-content-lg-center">
+                    <div class="d-flex align-items-center justify-content-center" style="color: #64748b; font-weight: 500;">
+                        <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 2px 6px rgba(16,185,129,0.2);">
+                            <i class="bi bi-shield-check text-white" style="font-size: 0.75rem;"></i>
+                        </div>
+                        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> 
+                        <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" style="font-weight: 900; color: #0f172a; letter-spacing: 0.5px; text-decoration: none; margin-left: 4px;">
+                            4LAZIE
+                        </a>
+                        <span class="d-none d-sm-inline ms-2" style="font-size: 0.75rem; opacity: 0.8; border-left: 1px solid #cbd5e1; padding-left: 8px;">All rights reserved.</span>
                     </div>
-                    &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> 
-                    <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" style="font-weight: 900; color: #0f172a; letter-spacing: 0.5px; text-decoration: none; margin-left: 4px;">
-                        4LAZIE
+                    
+                    <!-- WhatsApp Icon (Mobile Only - Far Right) -->
+                    <a href="https://wa.me/255766689326" target="_blank" class="d-lg-none text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #25D366; color: white; box-shadow: 0 2px 6px rgba(37,211,102,0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+                        <i class="bi bi-whatsapp" style="font-size: 1.1rem;"></i>
                     </a>
-                    <span class="d-none d-sm-inline ms-2" style="font-size: 0.75rem; opacity: 0.8; border-left: 1px solid #cbd5e1; padding-left: 8px;">All rights reserved.</span>
                 </div>
                 
                 <!-- Center: Important Links -->
-                <div class="d-flex flex-wrap justify-content-center gap-3 footer-links-grid" style="font-weight: 600;">
-                    <a th:href="@{/about}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">About Us</a>
-                    <a th:href="@{/policy}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Privacy Policy</a>
-                    <a th:href="@{/terms}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Terms of Service</a>
-                    <a th:href="@{/contact}" class="text-decoration-none px-3 py-2" style="color: #64748b; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 15px rgba(16, 185, 129, 0.15)'; this.style.color='#10b981'; this.style.borderColor='rgba(16, 185, 129, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 2px rgba(255,255,255,1)'; this.style.color='#64748b'; this.style.borderColor='rgba(16, 185, 129, 0.2)';">Contact</a>
+                <div class="d-flex flex-nowrap justify-content-center gap-3 footer-links-grid" style="font-weight: 600;">
+                    <a th:href="@{/about}" class="text-decoration-none px-4 py-2 footer-premium-link">About Us</a>
+                    <a th:href="@{/policy}" class="text-decoration-none px-4 py-2 footer-premium-link">Privacy Policy</a>
+                    <a th:href="@{/terms}" class="text-decoration-none px-4 py-2 footer-premium-link">Terms of Service</a>
+                    <a th:href="@{/contact}" class="text-decoration-none px-4 py-2 footer-premium-link">Contact</a>
                 </div>
 
                 <!-- Right: Socials & Developer -->
@@ -69,7 +116,7 @@
                         <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='#e1306c'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'; this.style.transform='none';"><i class="bi bi-instagram" style="font-size: 0.85rem;"></i></a>
                     </div>
                     <div class="dev-divider" style="height: 16px; width: 1px; background: #cbd5e1;"></div>
-                    <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
+                    <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; white-space: nowrap;">
                         Developed by 
                         <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #ffffff; font-weight: 800; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 4px 10px; border-radius: 50px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25); letter-spacing: 0.5px; display: inline-block;">
                             mindenlabs

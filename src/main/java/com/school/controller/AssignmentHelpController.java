@@ -156,7 +156,7 @@ public class AssignmentHelpController {
         // Add user map for resolving names
         Map<String, User> userMap = new HashMap<>();
         for (AssignmentRequest req : requestsPage.getContent()) {
-            if (!userMap.containsKey(req.getUserId())) {
+            if (req.getUserId() != null && !userMap.containsKey(req.getUserId())) {
                 userRepository.findById(req.getUserId()).ifPresent(u -> userMap.put(req.getUserId(), u));
             }
         }
