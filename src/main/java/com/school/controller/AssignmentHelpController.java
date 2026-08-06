@@ -35,6 +35,15 @@ public class AssignmentHelpController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private com.school.repository.AssignmentRequestRepository assignmentRequestRepository;
+
+    @Autowired
+    private com.school.repository.PendingActionRepository pendingActionRepository;
+
+    @Autowired
+    private com.school.service.EmailService emailService;
+
     // --- USER ENDPOINTS ---
 
     @GetMapping("/messages")
@@ -104,6 +113,28 @@ public class AssignmentHelpController {
         return ResponseEntity.status(401).body(response);
     }
 
+    @PostMapping("/api/public/contact")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> submitPublicContact(
+            @RequestParam("fullName") String fullName,
+            @RequestParam("email") String email,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("subject") String subject,
+            @RequestParam("message") String message) {
+        
+        Map<String, Object> response = new HashMap<>();
+        try {
+            assignmentHelpService.createPublicContactRequest(fullName, email, phoneNumber, subject, message);
+            response.put("success", true);
+            response.put("message", "Message sent successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to send message: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
     // --- ADMIN ENDPOINTS ---
 
     @GetMapping("/admin/assignments")
@@ -138,6 +169,7 @@ public class AssignmentHelpController {
     public String replyToAssignment(
             @PathVariable String id,
             @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "replyMessage", required = false) String replyMessage,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
             
@@ -149,10 +181,45 @@ public class AssignmentHelpController {
         try {
             AssignmentRequest req = assignmentHelpService.getRequestById(id).orElse(null);
             if (req != null) {
-                User student = userRepository.findById(req.getUserId()).orElse(null);
-                String studentName = (student != null) ? student.getName() : "Mwanafunzi";
-                assignmentHelpService.replyToRequest(id, file, studentName);
-                redirectAttributes.addFlashAttribute("success", "Automated Magic Reply sent successfully!");
+                if (req.isPublicContact()) {
+                    // For public contacts, Admin submits a draft which requires Super Admin approval,
+                    // but Super Admin's reply goes directly.
+                    if (replyMessage == null || replyMessage.trim().isEmpty()) {
+                        redirectAttributes.addFlashAttribute("error", "Reply message cannot be empty.");
+                        return "redirect:/admin/assignments";
+                    }
+                    
+                    req.setAdminReply(replyMessage);
+                    
+                    if ("SUPER_ADMIN".equals(admin.getRole().name())) {
+                        req.setStatus("SOLVED");
+                        req.setSolvedAt(java.time.LocalDateTime.now());
+                        assignmentRequestRepository.save(req);
+                        emailService.sendSupportReplyEmail(req.getEmail(), req.getFullName(), replyMessage, req.getQuestionText());
+                        redirectAttributes.addFlashAttribute("success", "Reply sent directly to user.");
+                    } else {
+                        // Admin: Save as draft
+                        assignmentRequestRepository.save(req);
+                        
+                        // Create Pending Action for Super Admin
+                        com.school.model.PendingAction pendingAction = new com.school.model.PendingAction(
+                            admin.getId(), 
+                            admin.getName(), 
+                            "CONTACT_MESSAGE", 
+                            req.getId(), 
+                            "Reply to: " + req.getFullName() + " (" + req.getEmail() + ")", 
+                            "REPLY"
+                        );
+                        pendingActionRepository.save(pendingAction);
+                        
+                        redirectAttributes.addFlashAttribute("success", "Reply drafted and sent to Super Admin for approval.");
+                    }
+                } else {
+                    User student = userRepository.findById(req.getUserId()).orElse(null);
+                    String studentName = (student != null) ? student.getName() : "Mwanafunzi";
+                    assignmentHelpService.replyToRequest(id, file, studentName);
+                    redirectAttributes.addFlashAttribute("success", "Automated Magic Reply sent successfully!");
+                }
             }
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("error", "Failed to upload reply file.");

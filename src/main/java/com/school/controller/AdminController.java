@@ -60,6 +60,9 @@ public class AdminController {
 
         private com.school.util.AuthUtil authUtil;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.repository.AssignmentRequestRepository assignmentRequestRepository;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -978,12 +981,23 @@ public class AdminController {
             return "redirect:/login";
         }
         List<com.school.model.PendingAction> pendingActions = pendingActionRepository.findByStatusOrderByRequestDateDesc("PENDING");
+        
+        java.util.Map<String, String> draftReplies = new java.util.HashMap<>();
+        for (com.school.model.PendingAction action : pendingActions) {
+            if ("CONTACT_MESSAGE".equals(action.getTargetEntity()) && "REPLY".equals(action.getActionType())) {
+                assignmentRequestRepository.findById(action.getTargetId()).ifPresent(req -> {
+                    draftReplies.put(action.getId(), req.getAdminReply());
+                });
+            }
+        }
+        
         model.addAttribute("pendingActions", pendingActions);
+        model.addAttribute("draftReplies", draftReplies);
         return "admin/admin_approvals";
     }
 
     @PostMapping("/approvals/{id}/approve")
-    public String approveAction(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String approveAction(@PathVariable String id, @RequestParam(value = "editedReply", required = false) String editedReply, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.SUPER_ADMIN) {
             return "redirect:/login";
@@ -991,7 +1005,7 @@ public class AdminController {
         
         com.school.model.PendingAction action = pendingActionRepository.findById(id).orElse(null);
         if (action != null && "PENDING".equals(action.getStatus())) {
-            // Execute actual deletion based on entity type
+            // Execute actual action based on entity type and action type
             try {
                 if ("DELETE".equals(action.getActionType())) {
                     switch (action.getTargetEntity()) {
@@ -1001,6 +1015,17 @@ public class AdminController {
                         case "COURSE": courseRepository.deleteById(action.getTargetId()); break;
                         case "TIMETABLE": timetableRepository.deleteById(action.getTargetId()); break;
                         case "CALENDAR": academicCalendarRepository.deleteById(action.getTargetId()); break;
+                    }
+                } else if ("REPLY".equals(action.getActionType()) && "CONTACT_MESSAGE".equals(action.getTargetEntity())) {
+                    com.school.model.AssignmentRequest request = assignmentRequestRepository.findById(action.getTargetId()).orElse(null);
+                    if (request != null) {
+                        String replyMessage = editedReply != null && !editedReply.trim().isEmpty() ? editedReply : request.getAdminReply();
+                        request.setAdminReply(replyMessage);
+                        request.setStatus("SOLVED");
+                        request.setSolvedAt(java.time.LocalDateTime.now());
+                        assignmentRequestRepository.save(request);
+                        
+                        emailService.sendSupportReplyEmail(request.getEmail(), request.getFullName(), replyMessage, request.getQuestionText());
                     }
                 }
                 action.setStatus("APPROVED");

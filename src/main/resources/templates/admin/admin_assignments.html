@@ -253,7 +253,19 @@
 
                 <!-- Admin Action Area -->
                 <div th:if="${req.status == 'PENDING'}" class="mt-4">
-                    <div class="p-4 bg-white rounded-4 shadow-sm border border-success border-opacity-25">
+                    <div th:if="${req.publicContact}" class="p-4 bg-white rounded-4 shadow-sm border border-primary border-opacity-25">
+                        <h6 class="fw-bold mb-3 text-primary text-center"><i class="bi bi-envelope-at"></i> Reply to Guest Message</h6>
+                        <form th:action="@{'/admin/assignments/reply/' + ${req.id}(_csrf=${_csrf.token})}" method="post">
+                            <div class="mb-3">
+                                <textarea name="replyMessage" class="form-control" rows="4" placeholder="Type your reply here..." required style="border-radius: 10px;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold py-2" style="border-radius: 10px;">
+                                <i class="bi bi-send me-1"></i> Send Reply
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:unless="${req.publicContact}" class="p-4 bg-white rounded-4 shadow-sm border border-success border-opacity-25">
                         <h6 class="fw-bold mb-3 text-success text-center"><i class="bi bi-magic"></i> Send Automated 4LAZIE Reply</h6>
                         <form th:action="@{'/admin/assignments/reply/' + ${req.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data">
                             <div class="mb-3">

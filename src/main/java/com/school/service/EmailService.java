@@ -285,4 +285,39 @@ public class EmailService {
             System.err.println("Failed to send recovery magic link: " + e.getMessage());
         }
     }
+    @Async
+    public void sendSupportReplyEmail(String toEmail, String studentName, String replyMessage, String originalQuestion) {
+        if (mailSender == null) return;
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setTo(toEmail);
+            helper.setSubject("Re: Your Message to 4LAZIE Support");
+            
+            String htmlBody = "<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;\">"
+                    + "<div style=\"text-align: center; padding-bottom: 20px; border-bottom: 2px solid #10b981;\">"
+                    + "<h1 style=\"color: #10b981; font-weight: 800; margin: 0;\">4LAZIE Support</h1>"
+                    + "</div>"
+                    + "<div style=\"padding: 30px 0;\">"
+                    + "<h2 style=\"color: #1e293b; font-size: 20px;\">Hello " + studentName + ",</h2>"
+                    + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Thank you for reaching out to us. Here is our response to your inquiry:</p>"
+                    + "<div style=\"background-color: #ecfdf5; padding: 15px; border-left: 4px solid #10b981; margin: 20px 0; border-radius: 0 8px 8px 0;\">"
+                    + "<p style=\"margin: 0; color: #065f46; font-size: 16px; line-height: 1.6;\">" + replyMessage.replace("\n", "<br>") + "</p>"
+                    + "</div>"
+                    + "<hr style=\"border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;\">"
+                    + "<h3 style=\"color: #64748b; font-size: 14px;\">Your Original Message:</h3>"
+                    + "<p style=\"color: #94a3b8; font-size: 14px; font-style: italic; line-height: 1.5;\">\"" + originalQuestion.replace("\n", "<br>") + "\"</p>"
+                    + "</div>"
+                    + "<div style=\"text-align: center; padding-top: 15px; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0;\">"
+                    + "<p>&copy; " + java.time.Year.now().getValue() + " 4LAZIE Student Community. All rights reserved.</p>"
+                    + "</div>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send support reply email: " + e.getMessage());
+        }
+    }
 }

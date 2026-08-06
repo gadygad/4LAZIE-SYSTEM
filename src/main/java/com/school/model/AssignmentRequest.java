@@ -20,6 +20,12 @@ public class AssignmentRequest {
     // Admin Reply (Legacy)
     private String adminReply;
     private String replyPdfUrl;
+
+    // Public Contact Form Fields
+    private boolean isPublicContact;
+    private String email;
+    private String fullName;
+    private String phoneNumber;
     
     // Chat Thread Messages
     private java.util.List<ChatMessage> messages = new java.util.ArrayList<>();
@@ -148,5 +154,37 @@ public class AssignmentRequest {
 
     public void setMessages(java.util.List<ChatMessage> messages) {
         this.messages = messages;
+    }
+
+    public boolean isPublicContact() {
+        return isPublicContact;
+    }
+
+    public void setPublicContact(boolean publicContact) {
+        isPublicContact = publicContact;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

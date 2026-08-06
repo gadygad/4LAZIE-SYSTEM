@@ -47,6 +47,17 @@ public class AssignmentHelpService {
         return assignmentRequestRepository.save(request);
     }
 
+    public AssignmentRequest createPublicContactRequest(String fullName, String email, String phoneNumber, String subject, String message) {
+        AssignmentRequest request = new AssignmentRequest();
+        request.setPublicContact(true);
+        request.setFullName(fullName);
+        request.setEmail(email);
+        request.setPhoneNumber(phoneNumber);
+        request.setSubjectName("CONTACT: " + subject);
+        request.setQuestionText(message);
+        return assignmentRequestRepository.save(request);
+    }
+
     public List<AssignmentRequest> getUserRequests(String userId) {
         return assignmentRequestRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
