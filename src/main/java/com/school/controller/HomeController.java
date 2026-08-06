@@ -169,4 +169,14 @@ public class HomeController {
     public String policy() {
         return "public/policy";
     }
+
+    @GetMapping("/terms")
+    public String terms() {
+        return "public/terms";
+    }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "public/contact"; // in case they ask for contact too
+    }
 }
