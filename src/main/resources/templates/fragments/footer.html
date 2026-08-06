@@ -20,15 +20,21 @@
                 .footer-links-grid {
                     display: flex !important;
                     flex-direction: row !important;
-                    flex-wrap: wrap !important;
-                    justify-content: center !important;
-                    gap: 6px !important; /* Small gap to fit them side by side */
+                    flex-wrap: nowrap !important;
+                    justify-content: start !important;
+                    gap: 4px !important; 
                     width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                    padding-bottom: 5px;
+                }
+                .footer-links-grid::-webkit-scrollbar {
+                    display: none;
                 }
                 .footer-links-grid a {
                     width: auto !important; 
-                    font-size: 0.75rem !important; /* Smaller font for mobile */
-                    padding: 6px 12px !important; /* Snug padding to fit on one line */
+                    font-size: 0.7rem !important; 
+                    padding: 6px 8px !important; 
                     white-space: nowrap;
                 }
                 .footer-social-dev {
