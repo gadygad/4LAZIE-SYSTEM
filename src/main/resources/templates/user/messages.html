@@ -37,11 +37,11 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 24px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
-            height: calc(100vh - 120px);
+            height: calc(100vh - 96px); /* Adjusted for nav and reduced gaps */
             overflow: hidden;
             display: flex;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-top: 12px;
+            margin-bottom: 12px;
             position: relative;
         }
 
@@ -218,10 +218,15 @@
 
         /* Smooth Sliding for Mobile */
         @media (max-width: 768px) {
+            .container-fluid {
+                padding: 0 !important; /* Remove horizontal gaps on mobile */
+            }
             .messages-container {
-                height: calc(100vh - 160px); /* Account for mobile navs */
-                border-radius: 16px;
-                margin-top: 10px;
+                height: calc(100vh - 60px); /* 60px mobile nav */
+                border-radius: 0; /* Remove border radius for full fit */
+                margin-top: 0;
+                margin-bottom: 0;
+                border: none;
             }
             .list-panel {
                 width: 100%;
