@@ -380,7 +380,7 @@
 
     <div class="contact-wrapper">
         <a href="/" class="back-btn">
-            <i class="bi bi-arrow-left"></i> Rudi Nyumbani
+            <i class="bi bi-arrow-left"></i> Back to Home
         </a>
         
         <div class="glass-card">
@@ -389,20 +389,20 @@
             <div class="contact-info">
                 <div>
                     <h1 class="info-title">Let's Talk!</h1>
-                    <p class="info-subtitle">Tuko hapa kukusaidia. Una swali kuhusu notes, mtihani au unahitaji msaada kwenye mfumo? Tutumie ujumbe!</p>
+                    <p class="info-subtitle">We are here to help you. Have a question about notes, exams, or need help with the system? Send us a message!</p>
                     
                     <div class="info-item">
                         <div class="info-icon"><i class="bi bi-geo-alt-fill"></i></div>
                         <div class="info-text">
-                            <h5>Makao Makuu</h5>
-                            <p>St. John's University, Dodoma</p>
+                            <h5>Headquarters</h5>
+                            <p>Dar es Salaam</p>
                         </div>
                     </div>
                     
                     <div class="info-item">
                         <div class="info-icon"><i class="bi bi-envelope-paper-fill"></i></div>
                         <div class="info-text">
-                            <h5>Barua Pepe</h5>
+                            <h5>Email Address</h5>
                             <p>support@4lazie.com</p>
                         </div>
                     </div>
@@ -410,14 +410,14 @@
                     <div class="info-item">
                         <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
                         <div class="info-text">
-                            <h5>Piga Simu</h5>
-                            <p>+255 700 000 000</p>
+                            <h5>Phone Number</h5>
+                            <p>+255766689326</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4 pt-4 border-top border-light border-opacity-25">
-                    <p class="mb-2" style="font-size: 0.9rem; font-weight: 500;">Tufuatilie Mtandaoni:</p>
+                    <p class="mb-2" style="font-size: 0.9rem; font-weight: 500;">Follow Us Online:</p>
                     <div class="d-flex gap-3">
                         <a href="#" style="color: white; font-size: 1.3rem; transition: transform 0.3s;"><i class="bi bi-instagram"></i></a>
                         <a href="#" style="color: white; font-size: 1.3rem; transition: transform 0.3s;"><i class="bi bi-twitter-x"></i></a>
@@ -428,37 +428,37 @@
 
             <!-- Right Form Panel -->
             <div class="contact-form-section">
-                <h2 class="form-title">Tutumie Ujumbe</h2>
-                <p class="form-subtitle">Tujulishe mawazo yako, tutakujibu ndani ya masaa 24.</p>
+                <h2 class="form-title">Send Us a Message</h2>
+                <p class="form-subtitle">Let us know your thoughts, we will get back to you within 24 hours.</p>
                 
                 <form id="contactForm">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="nameInput" placeholder="Jina Lako" required>
-                                <label for="nameInput">Jina Lako</label>
+                                <input type="text" class="form-control" id="nameInput" placeholder="Your Name" required>
+                                <label for="nameInput">Your Name</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="emailInput" placeholder="Barua Pepe" required>
-                                <label for="emailInput">Barua Pepe</label>
+                                <input type="email" class="form-control" id="emailInput" placeholder="Email Address" required>
+                                <label for="emailInput">Email Address</label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="subjectInput" placeholder="Kichwa cha Habari" required>
-                        <label for="subjectInput">Kichwa cha Habari</label>
+                        <input type="text" class="form-control" id="subjectInput" placeholder="Subject" required>
+                        <label for="subjectInput">Subject</label>
                     </div>
                     
                     <div class="form-floating">
-                        <textarea class="form-control" id="messageInput" placeholder="Ujumbe wako" style="height: 150px" required></textarea>
-                        <label for="messageInput">Ujumbe Wako</label>
+                        <textarea class="form-control" id="messageInput" placeholder="Your Message" style="height: 150px" required></textarea>
+                        <label for="messageInput">Your Message</label>
                     </div>
                     
                     <button type="submit" class="btn-magic-send" id="submitBtn">
-                        <span>Tuma Ujumbe Sasa</span>
+                        <span>Send Message Now</span>
                         <i class="bi bi-send-fill"></i>
                     </button>
                 </form>
@@ -476,13 +476,13 @@
             const originalContent = btn.innerHTML;
             
             // Loading State Magic
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Inatuma...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
             btn.style.opacity = '0.8';
             btn.style.pointerEvents = 'none';
             
             // Simulate Network Request
             setTimeout(() => {
-                btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Ujumbe Umepokelewa!';
+                btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Message Received!';
                 btn.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
                 btn.style.boxShadow = '0 10px 20px rgba(14, 165, 233, 0.3)';
                 btn.style.opacity = '1';
