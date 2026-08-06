@@ -309,11 +309,13 @@
         const input      = document.getElementById('msgInput');
         const sendBtn    = document.getElementById('sendBtn');
 
-        let rendered   = 0;
+        // Track rendered message IDs to avoid duplicates
+        const renderedIds = new Set();
         let isSending  = false;
         let sseActive  = false;
         let typeQueue  = [];
         let isTyping   = false;
+        let pollTimer  = null;
 
         function esc(s) {
             if (!s) return '';
@@ -364,14 +366,14 @@
             
             if (isAdmin) {
                 const badge = document.createElement('span');
-                badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:-3px;';
+                badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:4px;';
                 badge.textContent = 'OFFICIAL';
                 nameEl.appendChild(badge);
             }
             
             const timeEl = document.createElement('span');
             timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
-            timeEl.textContent = msg.time;
+            timeEl.textContent = msg.time || '';
             
             headerRow.appendChild(nameEl);
             headerRow.appendChild(timeEl);
@@ -413,50 +415,66 @@
             tick();
         }
 
-        // ── Render messages ────────────────────
+        // ── Render messages (ID-based dedup) ───
         function renderMessages(msgs, isNew = false) {
             if (!Array.isArray(msgs) || msgs.length === 0) return;
-            emptyEl.style.display = 'none';
-
-            const start = rendered;
-            for (let i = start; i < msgs.length; i++) {
-                msgWrap.appendChild(makeBubble(msgs[i], isNew && i >= start));
+            let added = 0;
+            for (const msg of msgs) {
+                const msgId = msg.id || ('temp-' + Math.random());
+                if (renderedIds.has(msgId)) continue;
+                renderedIds.add(msgId);
+                msgWrap.appendChild(makeBubble(msg, isNew));
+                added++;
             }
-            rendered = msgs.length;
-            scrollBot(isNew);
+            if (added > 0) {
+                emptyEl.style.display = 'none';
+                scrollBot(isNew);
+            } else if (renderedIds.size === 0) {
+                emptyEl.style.display = 'flex';
+            }
         }
 
         function scrollBot(smooth = true) {
             chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
         }
 
+        // ── Fetch history via HTTP (reliable) ─
+        function fetchHistory() {
+            fetch(POLL_URL, { credentials: 'same-origin' })
+                .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(d => { if (d.success && Array.isArray(d.messages)) renderMessages(d.messages, false); })
+                .catch(e => console.log('History fetch failed:', e));
+        }
+
         // ── SSE connection ─────────────────────
         function connectSSE() {
             const es = new EventSource(SSE_URL);
             es.addEventListener('init', e => {
-                renderMessages(JSON.parse(e.data), false);
+                try { renderMessages(JSON.parse(e.data), false); } catch(err){}
                 scrollBot(false);
                 sseActive = true;
             });
             es.addEventListener('message', e => {
-                const msgs = JSON.parse(e.data);
-                renderMessages(msgs, true);
+                try { renderMessages(JSON.parse(e.data), true); } catch(err){}
             });
             es.onerror = () => {
                 es.close();
                 sseActive = false;
-                setTimeout(fallbackPoll, 1500);
+                // Start polling if SSE fails
+                if (!pollTimer) startPolling();
             };
         }
 
         // ── Fallback polling ───────────────────
-        function fallbackPoll() {
-            if (sseActive) return;
-            fetch(POLL_URL, { credentials: 'same-origin' })
-                .then(r => r.json())
-                .then(d => { if (d.success) renderMessages(d.messages, true); })
-                .catch(() => {})
-                .finally(() => setTimeout(fallbackPoll, 1500));
+        function startPolling() {
+            if (pollTimer) return;
+            pollTimer = setInterval(() => {
+                if (sseActive) { clearInterval(pollTimer); pollTimer = null; return; }
+                fetch(POLL_URL, { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => { if (d.success) renderMessages(d.messages, true); })
+                    .catch(() => {});
+            }, 3000);
         }
 
         // ── Send message ───────────────────────
@@ -466,44 +484,37 @@
             isSending = true;
             sendBtn.disabled = true;
 
-            // Optimistic bubble
+            // Optimistic bubble with temp ID
+            const tempId = 'opt-' + Date.now();
             emptyEl.style.display = 'none';
-            msgWrap.appendChild(makeBubble({
+            const optBubble = makeBubble({
+                id: tempId,
                 isSelf: true,
                 senderName: STUDENT_NM,
                 messageText: text,
                 time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
-            }, false));
-            rendered++;
+            }, false);
+            msgWrap.appendChild(optBubble);
+            renderedIds.add(tempId);
             scrollBot(true);
 
             input.value = '';
             input.style.height = 'auto';
 
-            // Get CSRF Token safely (meta tag with cookie fallback)
-            let csrfToken = '';
-            let csrfHeader = 'X-XSRF-TOKEN';
-            const metaToken = document.querySelector('meta[name="_csrf"]');
-            if (metaToken) {
-                csrfToken = metaToken.getAttribute('content');
-                csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-            } else {
-                const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
-                if (match) csrfToken = match[2];
-            }
-
             const fd = new FormData();
             fd.append('messageText', text);
-            fetch(SEND_URL, { 
-                method: 'POST', 
-                body: fd, 
-                headers: {
-                    [csrfHeader]: csrfToken
-                },
-                credentials: 'same-origin' 
-            })
+            fetch(SEND_URL, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(r => r.json())
-                .catch(() => ({ success: false }))
+                .then(d => {
+                    if (d.success && d.id) {
+                        // Update temp bubble ID to real ID
+                        const el = document.getElementById('msg-' + tempId);
+                        if (el) el.id = 'msg-' + d.id;
+                        renderedIds.delete(tempId);
+                        renderedIds.add(d.id);
+                    }
+                })
+                .catch(() => {})
                 .finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
         }
 
@@ -517,9 +528,10 @@
         });
         sendBtn.addEventListener('click', sendMessage);
 
-        // ── Boot ───────────────────────────────
+        // ── Boot: fetch history first, then SSE ─
+        fetchHistory();
         connectSSE();
-        setTimeout(() => scrollBot(false), 300);
+        setTimeout(() => scrollBot(false), 400);
     })();
     </script>
 </body>

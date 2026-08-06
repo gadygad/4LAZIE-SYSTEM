@@ -298,12 +298,14 @@
 <script>
 (() => {
     let currentChatId = null;
-    let rendered = 0;
     let isSending = false;
     let sseConn = null;
     let sseActive = false;
     let typeQueue = [];
     let isTyping = false;
+    let pollTimer = null;
+    // ID-based deduplication — reset when switching chats
+    let renderedIds = new Set();
 
     const msgsEl = document.getElementById('adminChatMessages');
     const esc = t => (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
@@ -398,33 +400,46 @@
 
     function renderMessages(msgs, isNew) {
         if (!Array.isArray(msgs) || msgs.length === 0) return;
-        for (let i = 0; i < msgs.length; i++) {
-            const msg = msgs[i];
-            if (!document.getElementById('msg-' + msg.id)) {
-                msgsEl.appendChild(makeBubble(msg, isNew));
-            }
+        let added = 0;
+        for (const msg of msgs) {
+            const msgId = msg.id;
+            if (!msgId || renderedIds.has(msgId)) continue;
+            renderedIds.add(msgId);
+            msgsEl.appendChild(makeBubble(msg, isNew));
+            added++;
         }
-        scrollToBottom();
+        if (added > 0) scrollToBottom();
     }
 
     function connectSSE(chatId) {
         if (sseConn) { try { sseConn.close(); } catch(e){} }
-        sseActive = false; rendered = 0; typeQueue = []; isTyping = false;
+        sseActive = false; typeQueue = []; isTyping = false;
+        renderedIds = new Set();
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 
-        // Fetch history reliably first
+        // 1. Fetch history immediately via HTTP (most reliable)
         fetch('/admin/chat/' + chatId + '/messages', { credentials: 'same-origin' })
-            .then(r => r.json())
-            .then(d => {
-                if (d.success) renderMessages(d.messages, false);
-                
-                // Then connect SSE for live updates
-                const es = new EventSource('/admin/chat/' + chatId + '/stream');
-                sseConn = es;
-                es.addEventListener('init', e => { renderMessages(JSON.parse(e.data), false); sseActive = true; });
-                es.addEventListener('message', e => { renderMessages(JSON.parse(e.data), true); });
-                es.onerror = () => { es.close(); sseActive = false; setTimeout(() => fallbackPoll(chatId), 2000); };
-            })
-            .catch(e => console.error("Error fetching history", e));
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(d => { if (d.success && Array.isArray(d.messages)) renderMessages(d.messages, false); })
+            .catch(e => console.log('Admin history fetch failed:', e));
+
+        // 2. Connect SSE for live updates
+        const es = new EventSource('/admin/chat/' + chatId + '/stream');
+        sseConn = es;
+        es.addEventListener('init', e => { try { renderMessages(JSON.parse(e.data), false); sseActive = true; } catch(err){} });
+        es.addEventListener('message', e => { try { renderMessages(JSON.parse(e.data), true); } catch(err){} });
+        es.onerror = () => {
+            es.close(); sseActive = false;
+            if (!pollTimer) {
+                pollTimer = setInterval(() => {
+                    if (sseActive || currentChatId !== chatId) { clearInterval(pollTimer); pollTimer = null; return; }
+                    fetch('/admin/chat/' + chatId + '/messages', { credentials: 'same-origin' })
+                        .then(r => r.json())
+                        .then(d => { if (d.success) renderMessages(d.messages, true); })
+                        .catch(() => {});
+                }, 3000);
+            }
+        };
     }
 
     function fallbackPoll(chatId) {
@@ -433,7 +448,7 @@
             .then(r => r.json())
             .then(d => { if (d.success) renderMessages(d.messages, true); })
             .catch(() => {})
-            .finally(() => setTimeout(() => fallbackPoll(chatId), 2000));
+            .finally(() => setTimeout(() => fallbackPoll(chatId), 3000));
     }
 
     window.openAdminChat = function(el) {
