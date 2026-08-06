@@ -414,6 +414,147 @@
             .contact-form-section { padding: 40px 25px; }
             .info-title { font-size: 1.8rem; }
         }
+        /* Premium Sidebar Flyout Menu Styles */
+        .sidebar-hover-item {
+            position: relative;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .sidebar-hover-btn {
+            background: transparent;
+            color: #475569;
+            border-radius: 12px;
+            padding: 12px 18px;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            border: none;
+        }
+
+        .sidebar-hover-btn:hover,
+        .sidebar-hover-item.open-item .sidebar-hover-btn {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02));
+            color: #10b981 !important;
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15), inset 3px 0 0 #10b981;
+            border-radius: 12px;
+        }
+
+        .sidebar-hover-content, .sidebar-hover-item .sidebar-hover-content.collapse {
+            display: block !important;
+            position: relative;
+            width: 100%;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            padding: 0 10px;
+            margin-top: 0;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            pointer-events: none;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .sidebar-hover-content.show,
+        .sidebar-hover-content.collapsing {
+            max-height: 500px !important;
+            opacity: 1 !important;
+            margin-top: 5px !important;
+            padding: 10px !important;
+            border-color: rgba(59, 130, 246, 0.2) !important;
+            pointer-events: auto !important;
+        }
+        
+        .sidebar-hover-item.open-item .sidebar-hover-content {
+            display: block;
+            animation: slideDownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sidebar-hover-content a {
+            display: block;
+            color: #475569 !important;
+            text-decoration: none !important;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-group-btn {
+            background: rgba(255, 255, 255, 0.8);
+            color: #1e293b;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            text-align: left;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .sidebar-hover-content a:hover {
+            color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.1) !important;
+            transform: translateX(4px);
+        }
+
+        .sidebar-hover-btn i.chevron {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-hover-item.open-item .sidebar-hover-btn i.chevron {
+            transform: rotate(90deg);
+            color: #10b981;
+        }
+
+        /* Sidebar Group Styles */
+        .sidebar-group-content {
+            display: none;
+            padding-left: 10px;
+            border-left: 2px dashed rgba(16, 185, 129, 0.2);
+            margin-left: 18px;
+            margin-bottom: 15px;
+            margin-top: 5px;
+        }
+        .sidebar-group.open .sidebar-group-content {
+            display: block;
+            animation: slideDownFade 0.3s ease forwards;
+        }
+        .sidebar-group.open .sidebar-group-btn .group-chevron {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
