@@ -120,9 +120,11 @@ Because 4LAZIE is currently on free hosting, it is sometimes slow. With your hel
 
 ### 💵 Financial Support
 
-| Platform | Link |
-|----------|------|
-| ☕ Ko-fi | *(Link coming soon)* |
+For local supporters in Tanzania, you can easily send your contributions directly via Mobile Money. Every contribution keeps the servers running!
+
+**Vodacom M-Pesa**
+- **Number:** 0756 567 424
+- **Name:** Godfrey Charles Nyagwisi
 
 Even a small contribution helps cover server hosting costs so I don't have to sacrifice my meals to keep education accessible.
 
