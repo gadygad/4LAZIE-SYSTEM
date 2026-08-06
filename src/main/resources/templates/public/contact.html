@@ -416,12 +416,105 @@
     <div class="bg-shape-1"></div>
     <div class="bg-shape-2"></div>
 
+    <!-- Navbar from Homepage -->
+    <header class="navbar navbar-custom sticky-top"
+        style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
+        <div class="container-fluid px-1 d-flex justify-content-between align-items-center flex-nowrap">
+            <a href="/" class="text-decoration-none d-flex flex-column align-items-start ms-2">
+                <span class="magic-brand-text" style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #0f172a;">4LAZIE</span>
+                <div class="d-none d-md-flex align-items-center position-relative mt-1"
+                    style="padding: 4px 12px; border-radius: 50px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); overflow: hidden; cursor: pointer;">
+                    <div
+                        style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;">
+                    </div>
+                    <span
+                        style="font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #0d6efd; display: flex; align-items: center;">
+                        <i class="bi bi-lightning-charge-fill me-1"
+                            style="-webkit-text-fill-color: #0d6efd; font-size: 0.85rem; filter: drop-shadow(0 0 4px rgba(13, 110, 253,0.6));"></i>
+                        SMART IN BRAIN
+                    </span>
+                </div>
+            </a>
+
+            <!-- Search Bar (center) -->
+            <div class="d-none d-md-flex mx-auto align-items-center justify-content-center gap-2"
+                style="max-width: 400px; flex: 1;">
+                <div class="search-container position-relative flex-grow-1">
+                    <i class="bi bi-search position-absolute text-muted"
+                        style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+                    <input type="text" id="smartSearchInput" class="form-control"
+                        placeholder="Search topics, modules, or past papers..."
+                        style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.08); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: #334155;"
+                        onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='#0d6efd';"
+                        onblur="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='rgba(0,0,0,0.08)';">
+                </div>
+                <div class="dropdown position-relative" id="premiumDropdownContainer">
+                    <button type="button" class="btn p-0 border-0 d-flex align-items-center justify-content-center" 
+                        onclick="const m = this.nextElementSibling; if(m.classList.contains('show')){ m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); } else { m.style.display='block'; setTimeout(()=>m.classList.add('show'),10); }" 
+                        onblur="setTimeout(() => { const m = this.nextElementSibling; m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }, 200)" 
+                        title="Explore Options" 
+                        style="font-size: 1.5rem; width: 45px; height: 45px; border-radius: 50%; transition: all 0.3s ease; background: rgba(16,185,129,0.05); color: #10b981;" 
+                        onmouseover="this.style.background='rgba(16,185,129,0.15)'; this.style.transform='scale(1.05)';" 
+                        onmouseout="this.style.background='rgba(16,185,129,0.05)'; this.style.transform='scale(1)';">
+                        <i class="bi bi-grid-fill"></i>
+                    </button>
+                    
+                    <div class="dropdown-menu dropdown-menu-end position-absolute premium-glass-dropdown" 
+                         style="top: 120%; right: 0; min-width: 260px; z-index: 1050; display: none; opacity: 0; transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; box-shadow: 0 15px 35px rgba(16,185,129,0.15); padding: 15px 10px;">
+                        
+                        <style>
+                            .premium-glass-dropdown.show { opacity: 1 !important; transform: translateY(0) !important; }
+                            .premium-dropdown-item { padding: 10px 15px; border-radius: 12px; transition: all 0.3s ease; color: #334155; font-family: 'Outfit', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 5px; }
+                            .premium-dropdown-item:hover { background: rgba(16,185,129,0.1); color: #10b981; transform: translateX(5px); }
+                            .premium-dropdown-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.3s; }
+                            .premium-dropdown-item:hover .premium-dropdown-icon { background: #10b981; color: white !important; transform: rotate(5deg); }
+                            .icon-notes { background: rgba(59,130,246,0.1); color: #3b82f6; }
+                            .icon-papers { background: rgba(16,185,129,0.1); color: #10b981; }
+                            .icon-assignments { background: rgba(245,158,11,0.1); color: #f59e0b; }
+                            .icon-explore { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+                            .icon-request { background: rgba(239,68,68,0.1); color: #ef4444; }
+                        </style>
+
+                        <h6 class="px-3 mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px; color: #94a3b8; font-weight: 700;">Quick Access</h6>
+                        
+                        <a href="/guest-notes?category=Notes" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-notes"><i class="bi bi-journal-text"></i></div>
+                            <span>Lecture Notes</span>
+                        </a>
+                        <a href="/guest-notes?category=Past+Paper" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-papers"><i class="bi bi-file-earmark-check"></i></div>
+                            <span>Past Papers</span>
+                        </a>
+                        <a href="/guest-notes?category=Assignment" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-assignments"><i class="bi bi-pen"></i></div>
+                            <span>Assignments</span>
+                        </a>
+                        
+                        <div class="dropdown-divider my-2" style="border-color: rgba(16,185,129,0.1);"></div>
+                        
+                        <a href="/explore" class="premium-dropdown-item">
+                            <div class="premium-dropdown-icon icon-explore"><i class="bi bi-compass"></i></div>
+                            <span>Explore All</span>
+                        </a>
+                        <a href="mailto:admin@4lazie.com?subject=Request%20a%20Note" class="premium-dropdown-item text-danger">
+                            <div class="premium-dropdown-icon icon-request"><i class="bi bi-chat-left-text"></i></div>
+                            <span style="color: #ef4444;">Request a Note</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center pe-2" style="width: auto;">
+                <a th:href="@{/login}" class="btn fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                    <i class="bi bi-person-fill" style="font-size: 1.1rem; color: #10b981;"></i> <span>Sign In</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
     <div class="contact-wrapper">
-        <a href="/" class="back-btn">
-            <i class="bi bi-arrow-left"></i> Back to Home
-        </a>
         
-        <div class="glass-card">
+        <div class="glass-card mt-4">
             
             <!-- Left Information Panel -->
             <div class="contact-info">
@@ -544,5 +637,8 @@
             }, 1500);
         });
     </script>
+    <!-- Footer from Homepage -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 </body>
 </html>
