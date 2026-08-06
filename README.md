@@ -1,88 +1,107 @@
-# 4LAZIE
+<div align="center">
 
-**4LAZIE** is a student notes platform for technical colleges in Tanzania.  
-Students can find and download notes, past papers, timetables, and the academic calendar in one place — organized by course, level, and semester.
+<img src="https://img.shields.io/badge/Built%20with-Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
+<img src="https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
+<img src="https://img.shields.io/badge/Status-Active%20Development-10b981?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Made%20in-Tanzania%20🇹🇿-000000?style=for-the-badge"/>
 
-Built for **St. Joseph University in Tanzania (SJUIT)** and similar institutions.
-
----
-
-## What problem does it solve?
-
-Many students get study materials from WhatsApp groups, random folders, or scattered links.  
-4LAZIE puts everything in one website so students can:
-
-- Search notes by subject and level
-- Download past papers (CAT, UE, assignments)
-- View class timetables
-- Check exam dates on the academic calendar
+</div>
 
 ---
 
-## Main features
+# 📚 4LAZIE — Smart Student Notes Platform
 
-- **Notes & past papers** — upload, browse, search, and download PDFs
-- **Course-based access** — students only see materials for their program (e.g. DIP_CSE)
-- **Timetables & Academic calendar** — view schedules and CAT/UE dates for each semester
-- **Assignment Help** — students can submit assignments with deadlines and get solutions from admins
-- **Real-time Messaging** — Slack-like live chat between students and admins using Server-Sent Events (SSE) with typing indicators
-- **User accounts & Security** — register with email or Google Sign-In, with email OTP verification
-- **Admin dashboard** — manage users, notes, subjects, assignments, and timetables
-- **Super Admin approvals** — sensitive delete actions need approval
-- **Push notifications** — works as a PWA on mobile (installable, offline support)
-- **Premium section** — optional upgrade area for extra features
+> *One student. One problem. One solution built from scratch.*
+
+**4LAZIE** is a free, open academic platform built specifically for students at technical colleges in Tanzania. It puts everything a student needs — notes, past papers, timetables, and assignment help — in one place, organized by course, level, and semester.
+
+No more hunting through WhatsApp groups. No more scattered downloads. No more paying for materials that should be free.
 
 ---
 
-## Tech stack
+## 🧑‍💻 The Story Behind 4LAZIE
 
-| Part | Technology |
-|------|------------|
-| Backend | Java 17, Spring Boot 3.2 |
-| Database | MongoDB |
-| Frontend | Thymeleaf, HTML, CSS, Bootstrap |
-| Security | Spring Security, BCrypt |
-| File storage | Cloudinary |
-| Email | Gmail SMTP |
-| Login | Email/password + Google OAuth |
-| Deploy | Docker, GitHub Actions |
+I'm **Careen**, a computer science student at **St. Joseph University in Tanzania (SJUIT)**. Like most of my classmates, I spent hours every week trying to find notes on WhatsApp, asking seniors for past papers, or missing exam dates because no one announced them on time.
+
+I couldn't find a solution that worked for Tanzanian students. So I built one.
+
+4LAZIE started as a side project I coded on my own time, with no funding, no team, and no external support — just a laptop, an internet connection, and a need to solve a real problem.
+
+Today, it handles user accounts, file uploads, real-time messaging, push notifications, admin dashboards, and more. And I'm still a student.
 
 ---
 
-## Requirements
+## 🌍 The Problem
 
-Before you run the project, make sure you have:
+Across Tanzania and East Africa:
 
-- **Java 17** or newer
-- **Maven 3.8+**
-- **MongoDB** (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
-- **Cloudinary account** (for file uploads) — [cloudinary.com](https://cloudinary.com)
-- **Gmail App Password** (for sending emails)
-- **Google OAuth Client ID** (optional, for Google Sign-In)
+- 📵 Study materials are shared informally through WhatsApp — unreliable and disorganized
+- 💸 Many students cannot afford paid resources or private tutoring
+- 🏫 Universities lack centralized digital platforms for academic resources
+- ⏰ Exam dates, timetables, and announcements are often communicated too late
+- 📝 Students needing help with assignments have nowhere to turn except expensive tutors
+
+**4LAZIE addresses all of this — for free.**
 
 ---
 
-## How to run locally
+## ✅ What 4LAZIE Does
+
+| Feature | Description |
+|---------|-------------|
+| 📄 **Notes & Past Papers** | Upload, search, and download PDFs by subject, level, and semester |
+| 📅 **Timetables & Calendar** | View class schedules and exam dates per semester |
+| 🆘 **Assignment Help** | Students submit assignments; admins/tutors respond with solutions |
+| 💬 **Real-Time Messaging** | Slack-like live chat using Server-Sent Events (SSE) with typing indicators |
+| 🔔 **Push Notifications** | PWA-capable with offline support and mobile install |
+| 🔐 **Secure Accounts** | Register with email or Google Sign-In + OTP email verification |
+| 🛡️ **Admin Dashboard** | Manage users, notes, subjects, courses, and timetables |
+| 👑 **Super Admin Approvals** | Sensitive delete actions require approval from Super Admin |
+| ⭐ **Premium Section** | Optional upgrade for extended features |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Backend** | Java 17, Spring Boot 3.2 |
+| **Database** | MongoDB |
+| **Frontend** | Thymeleaf, HTML, CSS, Bootstrap 5 |
+| **Security** | Spring Security, BCrypt, Google OAuth |
+| **File Storage** | Cloudinary |
+| **Email** | Gmail SMTP |
+| **Real-time** | Server-Sent Events (SSE) |
+| **Push Notifications** | Web Push API + VAPID |
+| **Deployment** | Docker, GitHub Actions |
+
+---
+
+## 🚀 Getting Started
+
+### Requirements
+
+- Java 17+
+- Maven 3.8+
+- MongoDB (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
+- Cloudinary account — [cloudinary.com](https://cloudinary.com)
+- Gmail App Password
+- Google OAuth Client ID *(optional)*
 
 ### 1. Clone the project
 
 ```bash
-git clone <your-repo-url>
-cd 4LAZIE
+git clone https://github.com/gadygad/4LAZIE-SYSTEM.git
+cd 4LAZIE-SYSTEM
 ```
 
 ### 2. Set up environment variables
-
-Copy the example file:
 
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` and fill in your real values.  
-On your server or hosting platform (Render, Railway, etc.), set the same variables there.
-
-**Important:** Never commit real passwords or API keys to Git.
+Open `.env` and fill in your real values. Never commit real credentials to Git.
 
 ### 3. Run with Maven
 
@@ -90,7 +109,7 @@ On your server or hosting platform (Render, Railway, etc.), set the same variabl
 ./mvnw spring-boot:run
 ```
 
-Or on Windows:
+On Windows:
 
 ```bash
 mvnw.cmd spring-boot:run
@@ -98,21 +117,23 @@ mvnw.cmd spring-boot:run
 
 ### 4. Open in browser
 
-Go to: **http://localhost:8080**
+```
+http://localhost:8080
+```
 
 ---
 
-## Environment variables
+## ⚙️ Environment Variables
 
 | Variable | Description |
 |----------|-------------|
 | `PORT` | Server port (default: `8080`) |
 | `MONGO_URI` | MongoDB connection string |
-| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
-| `ADMIN_EMAIL` | Default admin email (first setup) |
-| `ADMIN_PASSWORD` | Default admin password (first setup) |
+| `ADMIN_EMAIL` | Default admin email |
+| `ADMIN_PASSWORD` | Default admin password |
 | `STUDENT_EMAIL` | Default test student email |
 | `STUDENT_PASSWORD` | Default test student password |
 | `MAIL_USERNAME` | Gmail address for sending emails |
@@ -123,23 +144,23 @@ Go to: **http://localhost:8080**
 | `VAPID_SUBJECT` | e.g. `mailto:admin@yourdomain.com` |
 | `ENCRYPTION_SECRET_KEY` | Secret key for URL encryption |
 
-> **Note:** The app reads `MONGO_URI` (not `MONGO_URL`). Use `MONGO_URI` when deploying.
+> **Note:** Use `MONGO_URI` (not `MONGO_URL`) when deploying.
 
 ---
 
-## User roles
+## 👥 User Roles
 
-| Role | What they can do |
-|------|------------------|
-| **Student** | Browse notes, download files, view timetables, manage profile |
-| **Admin** | Manage notes, users, subjects, courses (based on permissions) |
+| Role | Permissions |
+|------|-------------|
+| **Student** | Browse notes, download files, view timetables, manage profile, submit assignments, chat with admins |
+| **Admin** | Manage notes, users, subjects, courses (based on assigned permissions) |
 | **Super Admin** | Full access + approve delete requests from other admins |
 
-Admin permissions include: `MANAGE_USERS`, `MANAGE_NOTES`, `MANAGE_SUBJECTS`, `MANAGE_COURSES`, `MANAGE_TIMETABLES`, `MANAGE_CALENDAR`.
+Admin permissions: `MANAGE_USERS`, `MANAGE_NOTES`, `MANAGE_SUBJECTS`, `MANAGE_COURSES`, `MANAGE_TIMETABLES`, `MANAGE_CALENDAR`
 
 ---
 
-## Project structure
+## 🗂️ Project Structure
 
 ```
 src/main/java/com/school/
@@ -158,7 +179,7 @@ src/main/resources/
 
 ---
 
-## Run with Docker
+## 🐳 Run with Docker
 
 ```bash
 docker build -t 4lazie .
@@ -167,45 +188,107 @@ docker run -p 8080:8080 --env-file .env 4lazie
 
 ---
 
-## Build for production
-
-```bash
-./mvnw clean package
-java -jar target/school-system-1.0-SNAPSHOT.jar
-```
-
----
-
-## Default pages
+## 📡 Default Pages
 
 | URL | Page |
 |-----|------|
-| `/` or `/home` | Public home page |
+| `/` | Public home page |
 | `/login` | Login |
 | `/register` | Create account |
-| `/dashboard` | Student dashboard (login required) |
+| `/dashboard` | Student dashboard *(login required)* |
 | `/notes` | Browse notes |
 | `/assignments` | Submit and track assignments |
-| `/messages` | Direct chat with Admins |
-| `/upload` | Upload notes (admin only) |
+| `/messages` | Direct chat with admins |
+| `/contact` | Contact page |
+| `/upload` | Upload notes *(admin only)* |
 | `/admin/dashboard` | Admin panel |
 | `/admin/messages` | Admin chat panel |
 
 ---
 
-## Contributing
+## 💚 Support This Project
 
-This is a personal project. If you want to help or report a bug, open an issue or contact the author.
+4LAZIE is built and maintained by a single student with no funding. Every line of code was written in personal time, between classes, late at night — because I believe Tanzanian students deserve better tools.
+
+**If 4LAZIE has helped you — or if you believe in what it's trying to do — here's how you can help:**
+
+### 💵 Financial Support
+
+| Platform | Link |
+|----------|------|
+| ☕ Ko-fi (one-time or monthly) | *coming soon* |
+| 💛 GitHub Sponsors | *coming soon* |
+| 📱 M-Pesa Tanzania | *+255 766 689 326* |
+
+Even a small contribution helps cover:
+- Server & hosting costs
+- Domain renewal
+- Cloudinary storage
+- Development time
 
 ---
 
-## Author
+### 🏆 Grant & Partnership Opportunities
 
-**Careen** — First full-stack project  
-Built with Spring Boot for Tanzanian college students.
+4LAZIE is actively seeking:
+
+- 🌍 **Educational grants** for edtech projects in Sub-Saharan Africa
+- 🤝 **Institutional partnerships** with universities, colleges, or NGOs
+- 💼 **Corporate sponsorships** from tech companies invested in African education
+- 👨‍🏫 **Mentorship** from experienced developers or startup founders
+
+**Relevant grant programs this project qualifies for:**
+
+| Organization | Program | Focus |
+|---|---|---|
+| [Google.org](https://google.org) | Impact Challenge: Africa | Social impact, education tech |
+| [Mastercard Foundation](https://mastercardfdn.org) | Scholars Program | African youth education |
+| [Mozilla Foundation](https://foundation.mozilla.org/grants) | Technology Fund | Open internet & education |
+| [Tony Elumelu Foundation](https://tonyelumelu.com/foundation) | Entrepreneurship Program | African youth entrepreneurs |
+| [African Development Bank](https://afdb.org) | Digital Africa | Digital transformation |
+| USAID | Higher Education Solutions Network | Education in developing countries |
 
 ---
 
-## License
+### 📬 Contact for Partnerships
 
-Private project. All rights reserved.
+If you are an organization, institution, or individual who wants to support or collaborate:
+
+**Email:** support@4lazie.com  
+**Contact Form:** [4lazie.com/contact](https://4lazie.com/contact)  
+**LinkedIn:** *(coming soon)*
+
+---
+
+## 🤝 Contributing
+
+This is currently a solo project. Contributions are welcome in these forms:
+
+- 🐛 **Bug reports** — open a GitHub Issue
+- 💡 **Feature suggestions** — open a Discussion
+- 🔧 **Code contributions** — fork, improve, and submit a Pull Request
+- 📢 **Spread the word** — share with students who need it
+
+---
+
+## 👤 Author
+
+**Careen Godfrey**  
+Computer Science Student — SJUIT, Tanzania 🇹🇿  
+Building 4LAZIE as a first full-stack project to serve students like myself.
+
+> *"I built the platform I wish existed when I started college."*
+
+---
+
+## 📄 License
+
+This project is currently **proprietary**. Usage, redistribution, or copying of source code requires explicit permission from the author.
+
+---
+
+<div align="center">
+
+Made with ❤️ in Tanzania &nbsp;|&nbsp; Built for African students &nbsp;|&nbsp; Powered by Spring Boot
+
+</div>
