@@ -316,46 +316,48 @@
             min-height: 150px;
         }
 
-        /* Magic Send Button */
         .btn-magic-send {
-            background: linear-gradient(135deg, #10b981, #059669);
+            width: fit-content;
+            min-width: 200px;
+            padding: 16px 32px;
+            background: linear-gradient(145deg, #10b981, #059669);
             color: white;
             border: none;
-            border-radius: 16px;
-            padding: 16px 30px;
+            border-radius: 50px;
             font-size: 1.1rem;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            width: 100%;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-            position: relative;
-            overflow: hidden;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .btn-magic-send::after {
+        .btn-magic-send::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            transition: all 0.7s ease;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #000000;
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 50px;
         }
 
         .btn-magic-send:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
             color: white;
         }
-        
-        .btn-magic-send:hover::after {
-            left: 150%;
+
+        .btn-magic-send:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
         }
 
         /* Responsive adjustments */
@@ -379,33 +381,41 @@
         
         <div class="glass-card">
             
-            <!-- Left Info Panel -->
+            <!-- Left Information Panel -->
             <div class="contact-info">
                 <div>
-                    <h1 class="info-title">Let's Talk!</h1>
+                    <h2 class="info-title"><span style="background-color: #fcd116; padding: 5px 15px; border-radius: 8px; color: #000; display: inline-block;">Let's Talk!</span></h2>
                     <p class="info-subtitle">We are here to help you. Have a question about notes, exams, or need help with the system? Send us a message!</p>
-                    
-                    <div class="info-item">
-                        <div class="info-icon"><i class="bi bi-geo-alt-fill"></i></div>
-                        <div class="info-text">
-                            <h5>Headquarters</h5>
-                            <p>Dar es Salaam</p>
+
+                    <div class="d-flex flex-column gap-4">
+                        <div class="d-flex align-items-center gap-3" style="opacity: 0; animation: magicStaggerItem 0.8s cubic-bezier(0.19, 1, 0.22, 1) 0.7s forwards;">
+                            <div class="info-icon" style="background: rgba(30, 181, 58, 0.1); color: #1eb53a;">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="info-text">
+                                <h5>Headquarters</h5>
+                                <p>Dar es Salaam</p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon"><i class="bi bi-envelope-paper-fill"></i></div>
-                        <div class="info-text">
-                            <h5>Email Address</h5>
-                            <p>support@4lazie.com</p>
+
+                        <div class="d-flex align-items-center gap-3" style="opacity: 0; animation: magicStaggerItem 0.8s cubic-bezier(0.19, 1, 0.22, 1) 0.8s forwards;">
+                            <div class="info-icon" style="background: rgba(0, 163, 224, 0.1); color: #00a3e0;">
+                                <i class="bi bi-envelope-paper-fill"></i>
+                            </div>
+                            <div class="info-text">
+                                <h5>Email Address</h5>
+                                <p>support@4lazie.com</p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
-                        <div class="info-text">
-                            <h5>Phone Number</h5>
-                            <p>+255766689326</p>
+
+                        <div class="d-flex align-items-center gap-3" style="opacity: 0; animation: magicStaggerItem 0.8s cubic-bezier(0.19, 1, 0.22, 1) 0.9s forwards;">
+                            <div class="info-icon" style="background: rgba(0, 0, 0, 0.1); color: #000000;">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div class="info-text">
+                                <h5>Phone Number</h5>
+                                <p>+255766689326</p>
+                            </div>
                         </div>
                     </div>
                 </div>
