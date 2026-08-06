@@ -123,7 +123,6 @@ Because 4LAZIE is currently on free hosting, it is sometimes slow. With your hel
 | Platform | Link |
 |----------|------|
 | ☕ Ko-fi | *(Link coming soon)* |
-| 📱 M-Pesa Tanzania | **+255 766 689 326** |
 
 Even a small contribution helps cover server hosting costs so I don't have to sacrifice my meals to keep education accessible.
 
