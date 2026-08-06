@@ -460,24 +460,8 @@
             </div>
         </div>
 
-        <!-- Bottom Row (Dark) -->
-        <div class="w-100 py-2 d-none d-md-block" style="background: #1e293b; border-top: 1px solid rgba(255,255,255,0.05);">
-            <div class="container-fluid px-4">
-                <div class="d-flex justify-content-center gap-5 align-items-center">
-                    <a href="/guest-notes?category=Notes" class="text-decoration-none text-white text-uppercase" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.85';">NOTES</a>
-                    <a href="/guest-notes?category=CAT_1" class="text-decoration-none text-white text-uppercase" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.85';">CAT 1 TIMETABLE</a>
-                    <a href="/guest-notes?category=CAT_2" class="text-decoration-none text-white text-uppercase" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.85';">CAT 2 TIMETABLE</a>
-                    <a href="/guest-notes?category=UE" class="text-decoration-none text-white text-uppercase" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.85';">UE TIMETABLE</a>
-                    <div class="dropdown">
-                        <a href="#" class="text-decoration-none text-white text-uppercase dropdown-toggle" data-bs-toggle="dropdown" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.85';">QUIZZES</a>
-                        <ul class="dropdown-menu shadow" style="border: none; border-radius: 10px; margin-top: 10px;">
-                            <li><a class="dropdown-item" href="/guest-notes?category=Quiz_1" style="font-size: 0.85rem; font-weight: 500;">Quiz 1</a></li>
-                            <li><a class="dropdown-item" href="/guest-notes?category=Quiz_2" style="font-size: 0.85rem; font-weight: 500;">Quiz 2</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Bottom Row (Dark) - Using Homepage Secondary Nav Fragment for Exact Behavior -->
+        <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
     </header>
 
     <div class="contact-wrapper">
@@ -605,8 +589,13 @@
             }, 1500);
         });
     </script>
+    <!-- Mobile Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
+    
+    <!-- Exam Modal Fragment -->
+    <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
+
     <!-- Footer from Homepage -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-
 </body>
 </html>
