@@ -40,9 +40,9 @@ During exams, my classmates started struggling to find notes, just like I used t
 ### The Silent Struggle Behind the Screen
 To scale 4LAZIE, I had to learn things that were never taught in class: Cloudinary, MongoDB, SSL/TLS certificates, domain registration, and cloud deployment. I learned all of this through AI (ChatGPT, Antigravity) while simultaneously juggling six heavy, unrelated college subjects. 
 
-It has not been easy. Right now, 4LAZIE runs on free hosting. When my free tier on Railway expired, I had to migrate to Render's free tier, causing the platform to be slow. 
+**But there is a deeper layer to this struggle.** I am not just a student; I am a father. I have an 11-year-old daughter named **Careen** (which is why my computer's internal profile is named after her). To pay for her 4th-grade education and my own college tuition, I run an informal micro-lending business with a small rotating capital. Whatever little profit I make is split between Careen's school fees, my college fees, and keeping 4LAZIE alive. 
 
-**Behind the code, there are days I feel like giving up.** I have no job. I am a student fighting to survive. I frequently use my food money to buy internet bundles, pay for domains, and keep this platform alive for other students. But every time I look back at where I started, I realize how much I love coding in Java. That passion keeps me going.
+It has not been easy. Right now, 4LAZIE runs on free hosting because my free tier on Railway expired, forcing a migration to Render. **Behind the code, there are days I feel like giving up.** I frequently use my food money to buy internet bundles, pay for domains, and keep this platform alive for other students. But every time I look at my daughter and remember where I started, I realize I cannot quit. That passion keeps me going.
 
 ---
 
@@ -147,7 +147,7 @@ Contributions are heavily welcomed! Whether it's fixing a bug, adding a feature,
 ## 👤 Author
 
 **Godfrey Charles Nyagwisi**  
-Computer Science Student — SJUIT, Tanzania 🇹🇿  
+Computer Science Student, Entrepreneur & Father — SJUIT, Tanzania 🇹🇿  
 
 > *"I didn't just build a system. I built the lifeline I needed when I had nothing."*
 
