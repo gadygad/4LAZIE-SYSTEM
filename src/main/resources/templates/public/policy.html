@@ -10,51 +10,77 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <link rel="stylesheet" th:href="@{/css/global-premium.css}">
-    <style>
+        <style>
+        html { height: 100%; }
         body {
+            margin: 0;
+            padding: 0;
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            color: var(--text-main);
+            background-color: #fdfbf7;
+            background-image: 
+                linear-gradient(90deg, transparent 70px, rgba(239, 68, 68, 0.4) 70px, rgba(239, 68, 68, 0.4) 72px, transparent 72px),
+                linear-gradient(90deg, transparent 76px, rgba(239, 68, 68, 0.4) 76px, rgba(239, 68, 68, 0.4) 78px, transparent 78px),
+                linear-gradient(rgba(56, 189, 248, 0.3) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 32px;
+            background-position: 0 0, 0 0, 0 8px;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.03);
             padding-bottom: 50px;
         }
-        .policy-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        
+        /* Abstract Background Shapes */
+        .bg-shape-1 {
+            position: absolute; top: -10%; left: -10%; width: 40vw; height: 40vw;
+            border-radius: 50%; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            z-index: 0; animation: float 15s ease-in-out infinite;
         }
-        .policy-container h1 {
+        .bg-shape-2 {
+            position: absolute; bottom: -15%; right: -5%; width: 50vw; height: 50vw;
+            border-radius: 50%; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            z-index: 0; animation: float 20s ease-in-out infinite reverse;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), inset 0 2px 2px rgba(255,255,255,1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+
+        .policy-container, .terms-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        .policy-container h1, .terms-container h1 {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            color: var(--primary);
+            color: #10b981;
             margin-bottom: 30px;
             text-align: center;
         }
-        .policy-container h2 {
+        .policy-container h2, .terms-container h2 {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            color: #1e293b;
+            margin-top: 30px; margin-bottom: 15px; font-size: 1.5rem; color: #1e293b;
         }
-        .policy-container p {
-            line-height: 1.8;
-            color: #475569;
-            margin-bottom: 15px;
-        }
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .back-btn:hover {
-            text-decoration: underline;
+        .policy-container p, .terms-container p, .terms-container ul, .policy-container ul {
+            line-height: 1.8; color: #475569; margin-bottom: 15px; font-size: 1.05rem;
         }
     </style>
     <link rel="stylesheet" href="/css/mobile-spacing-standards.css">
@@ -106,6 +132,11 @@
     </script>
 </head>
 <body>
+    <!-- Background Magic Elements -->
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none;">
+        <div class="bg-shape-1"></div>
+        <div class="bg-shape-2"></div>
+    </div>
     
     <!-- Navbar from Homepage -->
     <header class="navbar sticky-top p-0 flex-column w-100" style="background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); z-index: 1040;">
@@ -130,7 +161,7 @@
     
     <div class="container mt-4">
         
-        <div class="policy-container">
+        <div class="policy-container glass-card">
             <h1>Privacy Policy & Terms</h1>
             <p>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}">Today</span></p>
             
