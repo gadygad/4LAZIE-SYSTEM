@@ -28,9 +28,9 @@
         /* About Page Specific Styles */
         .hero-section {
             text-align: center;
-            padding: 30px 15px 10px;
+            padding: 10px 15px 10px !important;
             max-width: 800px;
-            margin: 0 auto;
+            margin: -20px auto 0 !important;
         }
         .hero-title {
             font-family: 'Outfit', sans-serif;
@@ -246,16 +246,18 @@
 <body>
 
     <!-- Shared Public Navbar -->
-    <div class="sticky-top" style="z-index: 1040;">
-        <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
-        <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
-    </div>
+    <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
     
     <style>
     .secondary-nav-strip {
         background-color: #282A35;
         width: 100%;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    main.container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
     </style>
 
