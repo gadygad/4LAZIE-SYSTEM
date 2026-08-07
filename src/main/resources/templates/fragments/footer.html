@@ -96,12 +96,11 @@
                 <!-- Left: Copyright, Brand & WhatsApp (Mobile) -->
                 <div class="d-flex align-items-center justify-content-between w-100 w-lg-auto justify-content-lg-center">
                     <div class="d-flex align-items-center justify-content-center" style="color: #64748b; font-weight: 500;">
-                        <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 2px 6px rgba(16,185,129,0.2);">
-                            <i class="bi bi-shield-check text-white" style="font-size: 0.75rem;"></i>
-                        </div>
-                        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> 
-                        <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" style="font-weight: 900; color: #0f172a; letter-spacing: 0.5px; text-decoration: none; margin-left: 4px;">
-                            4LAZIE
+                        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}" class="me-2">2026</span> 
+                        <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="text-decoration-none">
+                            <div style="background-color: #111111; border: 2px solid #10b981; padding: 2px 8px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);">
+                                <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 0.85rem; letter-spacing: 1.5px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
+                            </div>
                         </a>
                         <span class="d-none d-sm-inline ms-2" style="font-size: 0.75rem; opacity: 0.8; border-left: 1px solid #cbd5e1; padding-left: 8px;">All rights reserved.</span>
                     </div>
