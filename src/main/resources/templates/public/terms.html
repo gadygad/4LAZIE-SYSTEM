@@ -96,40 +96,7 @@
     <div class="bg-shape-2"></div>
     
     <!-- Navbar from Homepage -->
-    <header class="navbar sticky-top p-0 flex-column w-100" style="background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); z-index: 1040;">
-        <div class="container-fluid px-3 py-2 d-flex justify-content-between align-items-center w-100">
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn border-0 p-0 text-dark fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-                <a href="/" class="text-decoration-none d-flex align-items-center">
-                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
-                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
-                    </div>
-                </a>
-                <div class="d-none d-md-flex align-items-center px-2 py-1" style="border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 50px; background: rgba(59, 130, 246, 0.05);">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: #3b82f6; letter-spacing: 1px;">SMART IN BRAIN</span>
-                </div>
-                <a href="/" class="text-decoration-none fw-bold d-flex align-items-center gap-1 ms-3" style="color: #1e293b; font-family: 'Inter', sans-serif; font-size: 0.95rem;">
-                    <i class="bi bi-house-door-fill"></i> Home
-                </a>
-            </div>
-
-            <div class="d-none d-lg-flex mx-auto align-items-center justify-content-center" style="max-width: 500px; flex: 1;">
-                <div class="search-container position-relative flex-grow-1">
-                    <i class="bi bi-search position-absolute text-muted" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
-                    <input type="text" id="smartSearchInput" class="form-control" placeholder="Search modules, notes, or past papers..." style="padding: 10px 20px 10px 45px; border-radius: 50px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 0.9rem;" onfocus="this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'; this.style.borderColor='#3b82f6';" onblur="this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';">
-                </div>
-            </div>
-
-            <div class="d-flex align-items-center">
-                <a href="/login" class="btn d-flex align-items-center gap-2" style="border: 1px solid #10b981; color: #10b981; border-radius: 50px; padding: 6px 16px; font-weight: 600; font-size: 0.9rem; background: rgba(16, 185, 129, 0.05); transition: all 0.3s;" onmouseover="this.style.background='#10b981'; this.style.color='white';" onmouseout="this.style.background='rgba(16, 185, 129, 0.05)'; this.style.color='#10b981';">
-                    <i class="bi bi-person-fill"></i> SIGN IN
-                </a>
-            </div>
-        </div>
-        <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
-    </header>
+        <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
 
     <div class="container-fluid px-4 px-md-5 position-relative mt-4 mb-5" style="z-index: 10;">
         

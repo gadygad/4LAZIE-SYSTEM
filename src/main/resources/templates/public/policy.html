@@ -139,25 +139,7 @@
     </div>
     
     <!-- Navbar from Homepage -->
-    <header class="navbar sticky-top p-0 flex-column w-100" style="background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); z-index: 1040;">
-        <div class="container-fluid px-3 py-2 d-flex justify-content-between align-items-center w-100">
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn border-0 p-0 text-dark fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-                <a href="/" class="text-decoration-none d-flex align-items-center">
-                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
-                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
-                    </div>
-                </a>
-            </div>
-            <div>
-                <a th:href="@{/login}" class="btn rounded-pill px-3 py-1 fw-bold" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.9rem;">
-                    Sign In
-                </a>
-            </div>
-        </div>
-    </header>
+        <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
     
     <div class="container mt-4">
         
