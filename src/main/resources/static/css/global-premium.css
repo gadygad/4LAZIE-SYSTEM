@@ -650,36 +650,17 @@ img[alt="Profile Avatar"]:hover {
     flex-grow: 1;
 }
 
-/* Sidebar Push Effect - Apple Style */
+/* Sidebar Overlay Effect */
 body {
     transition: background-color 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 body.sidebar-is-open {
-    background-color: #e2e8f0; /* Subtle background color behind the scaled content */
-    overflow-x: hidden;
+    overflow: hidden; /* Prevent scrolling when sidebar is open */
 }
 
-body.sidebar-is-open .main-content,
-body.sidebar-is-open .navbar-custom,
-body.sidebar-is-open .premium-guest-navbar {
-    transform: translateX(280px) scale(0.96);
-    border-radius: 20px;
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-    transform-origin: center left;
-    pointer-events: none; /* Disable interactions with content when sidebar is open */
-}
-
-@media (max-width: 991.98px) {
-    body.sidebar-is-open .main-content,
-    body.sidebar-is-open .navbar-custom,
-    body.sidebar-is-open .premium-guest-navbar {
-        transform: translateX(80vw) scale(0.96);
-    }
-}
-
+/* We removed the transform scale/translate to keep the main content fixed in place. */
 .main-content, .navbar-custom, .premium-guest-navbar {
-    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), border-radius 0.5s ease, box-shadow 0.5s ease, margin-left 0.5s;
-    will-change: transform;
+    transition: margin-left 0.5s;
 }
 
 /* Magical Hover Effect for Sidebar items */
