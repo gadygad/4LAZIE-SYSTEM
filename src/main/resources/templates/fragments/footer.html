@@ -321,15 +321,12 @@
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Initialize Lenis
+                // Initialize Lenis with "High-Level Magic" settings
                 const lenis = new Lenis({
-                    duration: 1.2,
-                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
-                    direction: 'vertical',
-                    gestureDirection: 'vertical',
-                    smooth: true,
-                    mouseMultiplier: 1,
-                    smoothTouch: false,
+                    lerp: 0.07, // Snappy but buttery smooth momentum (0.1 is standard, 0.07 is very magical)
+                    smoothWheel: true, // Smooth scrolling on mouse wheel
+                    smoothTouch: false, // Native mobile touch is usually best, but desktop is pure magic
+                    wheelMultiplier: 1.2, // Slightly faster wheel for better responsiveness
                     touchMultiplier: 2,
                     infinite: false,
                 });
