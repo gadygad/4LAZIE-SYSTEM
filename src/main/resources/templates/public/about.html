@@ -245,43 +245,17 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 2px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);">
-        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-            <div class="d-flex align-items-center gap-2">
-                <!-- Hamburger Button for Mobile -->
-                <button class="btn border-0 p-0 text-dark fs-4 me-2 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-                <a href="home.html" th:href="@{/}" class="text-decoration-none d-flex flex-row align-items-center gap-2">
-                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
-                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
-                    </div>
-
-                </a>
-            </div>
-
-            <!-- Premium Nav Links -->
-            <div class="d-none d-md-flex align-items-center gap-4" style="margin-right: 2rem;">
-                <a href="home.html" th:href="@{/}" class="text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; color: #64748b; transition: color 0.3s ease;" onmouseover="this.style.color='#10b981';" onmouseout="this.style.color='#64748b';">
-                    Home
-                </a>
-                <div class="story-link-active">
-                    Our Story
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
-                <a th:href="@{/login}"
-                    class="text-decoration-none d-flex align-items-center justify-content-center fw-bold gap-1"
-                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: all 0.3s ease; font-size: 0.85rem; padding: 6px clamp(10px, 2vw, 16px); height: 36px; line-height: 1; border-radius: 50px;"
-                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.4)';"
-                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)';">
-                    <i class="bi bi-person-fill" style="font-size: 0.95rem; margin-top: -1px;"></i> <span>Sign In</span>
-                </a>
-            </div>
-        </div>
-    </header>
+    <!-- Shared Public Navbar -->
+    <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+    
+    <style>
+    .secondary-nav-strip {
+        background-color: #282A35;
+        width: 100%;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    </style>
 
     <!-- Background Orbs -->
     <div class="bg-orb orb-primary"></div>
