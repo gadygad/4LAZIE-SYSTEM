@@ -317,36 +317,6 @@
                 });
             });
         </script>
-        <!-- Premium Buttery Smooth Scrolling (Lenis) -->
-        <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Initialize Lenis with "High-Level Magic" settings
-                const lenis = new Lenis({
-                    lerp: 0.07, // Snappy but buttery smooth momentum (0.1 is standard, 0.07 is very magical)
-                    smoothWheel: true, // Smooth scrolling on mouse wheel
-                    smoothTouch: false, // Native mobile touch is usually best, but desktop is pure magic
-                    wheelMultiplier: 1.2, // Slightly faster wheel for better responsiveness
-                    touchMultiplier: 2,
-                    infinite: false,
-                });
-
-                function raf(time) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
-
-                requestAnimationFrame(raf);
-                
-                // Integrate Bootstrap Modal/Offcanvas with Lenis (Pause scroll when open)
-                document.querySelectorAll('.modal, .offcanvas').forEach(el => {
-                    el.addEventListener('show.bs.modal', () => lenis.stop());
-                    el.addEventListener('show.bs.offcanvas', () => lenis.stop());
-                    el.addEventListener('hidden.bs.modal', () => lenis.start());
-                    el.addEventListener('hidden.bs.offcanvas', () => lenis.start());
-                });
-            });
-        </script>
     </footer>
 
 </body>
