@@ -371,11 +371,10 @@
         </section>
 
 
-        <!-- The Magic Team Gallery -->
+        <!-- The Magic Team Gallery (Neo-Brutalism Style) -->
         <section class="py-4 position-relative overflow-hidden">
             <div class="text-center mb-5">
-                <span class="fw-bold" style="color: #64748b; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;">The Innovators</span>
-                <h2 class="text-uppercase mb-0 mt-1" style="color: #0f172a; font-weight: 800; font-size: clamp(1.5rem, 4vw, 2rem); font-family: 'Outfit', sans-serif;">THE MINDS BEHIND 4LAZIE</h2>
+                <h2 class="text-uppercase mb-0 mt-1" style="color: #111; font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.5rem); font-family: 'Outfit', sans-serif; letter-spacing: -1px;">THE MINDS BEHIND 4LAZIE</h2>
             </div>
             
             <style>
@@ -385,133 +384,196 @@
                     position: relative;
                     padding: 40px 0 80px 0;
                     display: flex;
-                    /* Fading edges */
-                    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-                    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
                 }
                 .marquee-content {
                     display: flex;
-                    gap: 35px;
-                    /* Total width of 5 items is 5 * (300px + 35px) = 1675px. 
-                       We duplicate them to scroll seamlessly */
-                    animation: scrollLeft 25s linear infinite;
-                    padding-left: 35px;
+                    gap: 30px;
+                    /* Total width of 5 items is 5 * (320px + 30px) = 1750px */
+                    animation: scrollLeft 30s linear infinite;
+                    padding-left: 30px;
                 }
                 .marquee-content:hover {
                     animation-play-state: paused;
                 }
                 .marquee-card {
-                    width: 300px;
-                    height: 380px;
-                    background: #fff;
-                    border: 3px solid #0f172a;
-                    padding: 12px 12px 60px 12px; /* Polaroid bottom space */
-                    box-shadow: 12px 12px 0px rgba(15, 23, 42, 0.15); /* Solid shadow */
+                    width: 320px;
+                    height: 340px;
+                    border: 4px solid #111;
+                    box-shadow: 8px 8px 0px #111;
+                    padding: 30px 25px;
                     flex-shrink: 0;
                     position: relative;
                     cursor: pointer;
-                    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, z-index 0s;
+                    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, z-index 0s;
                     z-index: 1;
+                    display: flex;
+                    flex-direction: column;
                 }
-                .marquee-card img {
+                .marquee-card:hover {
+                    transform: scale(1.05) rotate(0deg) translateY(-10px) !important;
+                    box-shadow: 15px 15px 0px #111;
+                    z-index: 100;
+                }
+                .card-avatar-wrapper {
+                    position: relative;
+                    width: 60px;
+                    height: 60px;
+                    margin-bottom: 25px;
+                }
+                .avatar-bg {
+                    position: absolute;
+                    top: 6px;
+                    left: 6px;
+                    width: 100%;
+                    height: 100%;
+                }
+                .avatar-img {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
-                    border: 2px solid #0f172a;
-                    filter: saturate(1.1);
-                    transition: filter 0.4s ease;
+                    border: 2px solid #111;
+                    z-index: 2;
                 }
-                .marquee-card:hover {
-                    transform: scale(1.1) rotate(0deg) translateY(-15px) !important;
-                    box-shadow: 20px 20px 0px rgba(15, 23, 42, 0.2);
-                    z-index: 100;
-                }
-                .marquee-card:hover img {
-                    filter: saturate(1.2) contrast(1.1);
-                }
-                .marquee-name {
-                    position: absolute;
-                    bottom: 20px;
-                    left: 0;
-                    right: 0;
-                    text-align: center;
+                .card-quote {
                     font-family: 'Outfit', sans-serif;
+                    font-size: 1.15rem;
+                    font-weight: 500;
+                    line-height: 1.5;
+                    flex-grow: 1;
+                }
+                .card-author {
+                    font-family: 'Outfit', sans-serif;
+                    font-size: 0.9rem;
                     font-weight: 800;
-                    color: #0f172a;
-                    font-size: 1.1rem;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
+                    font-style: italic;
                 }
                 
                 @keyframes scrollLeft {
                     0% { transform: translateX(0); }
-                    100% { transform: translateX(-1675px); } /* 5 items * 335px */
+                    100% { transform: translateX(-1750px); }
                 }
                 
                 @media (max-width: 768px) {
                     .marquee-card {
-                        width: 260px;
-                        height: 340px;
-                        padding: 10px 10px 50px 10px;
+                        width: 280px;
+                        height: 320px;
+                        padding: 20px;
                     }
                     .marquee-content {
                         gap: 20px;
-                        /* 5 items * (260+20) = 1400 */
+                        /* 5 items * (280+20) = 1500 */
                         animation: scrollLeftMobile 20s linear infinite;
                         padding-left: 20px;
                     }
                     @keyframes scrollLeftMobile {
                         0% { transform: translateX(0); }
-                        100% { transform: translateX(-1400px); }
+                        100% { transform: translateX(-1500px); }
                     }
                 }
             </style>
             
             <div class="marquee-container">
                 <div class="marquee-content">
-                    <!-- Original 5 Cards -->
-                    <div class="marquee-card" style="transform: rotate(-3deg);">
-                        <img src="/images/team5.jpg" alt="Team Member">
-                        <div class="marquee-name">The Vision</div>
-                    </div>
-                    <div class="marquee-card" style="transform: rotate(2deg);">
-                        <img src="/images/team2.jpg" alt="Team Member">
-                        <div class="marquee-name">Innovation</div>
-                    </div>
-                    <div class="marquee-card" style="transform: rotate(-2deg);">
-                        <img src="/images/team3.jpg" alt="Team Member">
-                        <div class="marquee-name">Strategy</div>
-                    </div>
-                    <div class="marquee-card" style="transform: rotate(4deg);">
-                        <img src="/images/team1.jpg" alt="Team Member">
-                        <div class="marquee-name">Execution</div>
-                    </div>
-                    <div class="marquee-card" style="transform: rotate(-1deg);">
-                        <img src="/images/team4.jpg" alt="Team Member">
-                        <div class="marquee-name">Excellence</div>
+                    
+                    <!-- Card 1 -->
+                    <div class="marquee-card" style="background-color: #1e293b; transform: rotate(-2deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #a3e635;"></div>
+                            <img src="/images/team1.jpg" class="avatar-img" alt="Team 1">
+                        </div>
+                        <p class="card-quote" style="color: #fff;">"I've never seen such a demanding academic environment. We built this to make every minute of studying count."</p>
+                        <div class="card-author" style="color: #a3e635;">&mdash; The Visionary</div>
                     </div>
                     
-                    <!-- Duplicated 5 Cards for Infinite Scroll -->
-                    <div class="marquee-card" style="transform: rotate(-3deg);">
-                        <img src="/images/team5.jpg" alt="Team Member">
-                        <div class="marquee-name">The Vision</div>
+                    <!-- Card 2 -->
+                    <div class="marquee-card" style="background-color: #fee2e2; transform: rotate(3deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #be123c;"></div>
+                            <img src="/images/team5.jpg" class="avatar-img" alt="Team 2">
+                        </div>
+                        <p class="card-quote" style="color: #be123c;">"It started as a simple idea and grew into a magical platform. It's a game changer for all SJUIT students."</p>
+                        <div class="card-author" style="color: #e11d48;">&mdash; Innovation Lead</div>
                     </div>
-                    <div class="marquee-card" style="transform: rotate(2deg);">
-                        <img src="/images/team2.jpg" alt="Team Member">
-                        <div class="marquee-name">Innovation</div>
+                    
+                    <!-- Card 3 -->
+                    <div class="marquee-card" style="background-color: #a855f7; transform: rotate(-1deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #f9a8d4;"></div>
+                            <img src="/images/team2.jpg" class="avatar-img" alt="Team 3">
+                        </div>
+                        <p class="card-quote" style="color: #fff;">"4LAZIE is exactly what came to our minds when we saw students panicking during exam week. Pure clarity."</p>
+                        <div class="card-author" style="color: #f9a8d4;">&mdash; Tech Architect</div>
                     </div>
-                    <div class="marquee-card" style="transform: rotate(-2deg);">
-                        <img src="/images/team3.jpg" alt="Team Member">
-                        <div class="marquee-name">Strategy</div>
+                    
+                    <!-- Card 4 -->
+                    <div class="marquee-card" style="background-color: #0f766e; transform: rotate(2deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #fca5a5;"></div>
+                            <img src="/images/team3.jpg" class="avatar-img" alt="Team 4">
+                        </div>
+                        <p class="card-quote" style="color: #fff;">"I am from a technical background and I wanted every single piece of data to be secure and lightning fast."</p>
+                        <div class="card-author" style="color: #fca5a5;">&mdash; Lead Developer</div>
                     </div>
-                    <div class="marquee-card" style="transform: rotate(4deg);">
-                        <img src="/images/team1.jpg" alt="Team Member">
-                        <div class="marquee-name">Execution</div>
+                    
+                    <!-- Card 5 -->
+                    <div class="marquee-card" style="background-color: #27272a; transform: rotate(-3deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #d6d3d1;"></div>
+                            <img src="/images/team4.jpg" class="avatar-img" alt="Team 5">
+                        </div>
+                        <p class="card-quote" style="color: #e4e4e7;">"We helped students advance their careers by giving them the right study materials exactly when they need them."</p>
+                        <div class="card-author" style="color: #d6d3d1;">&mdash; Product Manager</div>
                     </div>
-                    <div class="marquee-card" style="transform: rotate(-1deg);">
-                        <img src="/images/team4.jpg" alt="Team Member">
-                        <div class="marquee-name">Excellence</div>
+
+                    <!-- Duplicates for Infinite Loop -->
+                    <div class="marquee-card" style="background-color: #1e293b; transform: rotate(-2deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #a3e635;"></div>
+                            <img src="/images/team1.jpg" class="avatar-img" alt="Team 1">
+                        </div>
+                        <p class="card-quote" style="color: #fff;">"I've never seen such a demanding academic environment. We built this to make every minute of studying count."</p>
+                        <div class="card-author" style="color: #a3e635;">&mdash; The Visionary</div>
                     </div>
+                    
+                    <div class="marquee-card" style="background-color: #fee2e2; transform: rotate(3deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #be123c;"></div>
+                            <img src="/images/team5.jpg" class="avatar-img" alt="Team 2">
+                        </div>
+                        <p class="card-quote" style="color: #be123c;">"It started as a simple idea and grew into a magical platform. It's a game changer for all SJUIT students."</p>
+                        <div class="card-author" style="color: #e11d48;">&mdash; Innovation Lead</div>
+                    </div>
+                    
+                    <div class="marquee-card" style="background-color: #a855f7; transform: rotate(-1deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #f9a8d4;"></div>
+                            <img src="/images/team2.jpg" class="avatar-img" alt="Team 3">
+                        </div>
+                        <p class="card-quote" style="color: #fff;">"4LAZIE is exactly what came to our minds when we saw students panicking during exam week. Pure clarity."</p>
+                        <div class="card-author" style="color: #f9a8d4;">&mdash; Tech Architect</div>
+                    </div>
+                    
+                    <div class="marquee-card" style="background-color: #0f766e; transform: rotate(2deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #fca5a5;"></div>
+                            <img src="/images/team3.jpg" class="avatar-img" alt="Team 4">
+                        </div>
+                        <p class="card-quote" style="color: #fff;">"I am from a technical background and I wanted every single piece of data to be secure and lightning fast."</p>
+                        <div class="card-author" style="color: #fca5a5;">&mdash; Lead Developer</div>
+                    </div>
+                    
+                    <div class="marquee-card" style="background-color: #27272a; transform: rotate(-3deg);">
+                        <div class="card-avatar-wrapper">
+                            <div class="avatar-bg" style="background-color: #d6d3d1;"></div>
+                            <img src="/images/team4.jpg" class="avatar-img" alt="Team 5">
+                        </div>
+                        <p class="card-quote" style="color: #e4e4e7;">"We helped students advance their careers by giving them the right study materials exactly when they need them."</p>
+                        <div class="card-author" style="color: #d6d3d1;">&mdash; Product Manager</div>
+                    </div>
+
                 </div>
             </div>
         </section>
