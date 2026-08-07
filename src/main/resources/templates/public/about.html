@@ -405,33 +405,39 @@
                     display: flex;
                     flex-direction: column;
                     cursor: pointer;
-                    /* Internal transition for hover */
                     transition: transform 0.4s ease, box-shadow 0.4s ease;
                 }
                 .swiper-slide-active .neo-card:hover {
                     transform: translateY(-8px);
-                    box-shadow: 0 25px 50px rgba(16, 185, 129, 0.15); /* Soft green shadow */
+                    box-shadow: 0 25px 50px rgba(16, 185, 129, 0.15);
                 }
                 
                 .card-main-img {
                     width: 100%;
-                    height: 300px;
+                    height: 280px;
                     object-fit: cover;
                     border-radius: 14px;
-                    margin-bottom: 15px;
+                    margin-bottom: 12px;
                 }
                 .card-name {
                     font-family: 'Outfit', sans-serif;
                     font-size: 1.15rem;
-                    font-weight: 700;
+                    font-weight: 800;
                     color: #0f172a;
                     text-align: center;
                     letter-spacing: 0.5px;
                 }
+                .card-role {
+                    font-size: 0.85rem;
+                    color: #10b981;
+                    text-align: center;
+                    font-weight: 600;
+                    margin-top: 2px;
+                }
                 
                 /* Custom Navigation Arrows */
                 .swiper-button-next, .swiper-button-prev {
-                    color: #10b981; /* 4Lazie Green */
+                    color: #10b981;
                     background: #fff;
                     border: none;
                     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -463,9 +469,9 @@
                     top: 0;
                     width: 100%;
                     height: 100%;
-                    background-color: rgba(15, 23, 42, 0.85);
-                    backdrop-filter: blur(8px);
-                    -webkit-backdrop-filter: blur(8px);
+                    background-color: rgba(15, 23, 42, 0.92);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
                     opacity: 0;
                     transition: opacity 0.4s ease;
                     justify-content: center;
@@ -478,7 +484,6 @@
                 .lightbox-content-wrapper {
                     position: relative;
                     text-align: center;
-                    /* Inuka juu na kuvutika kwa mvuto (Spring up animation) */
                     transform: translateY(100px) scale(0.8);
                     opacity: 0;
                     transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -489,24 +494,38 @@
                 }
                 .lightbox-img {
                     max-width: 90vw;
-                    max-height: 80vh;
-                    border-radius: 20px;
-                    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+                    max-height: 65vh;
+                    border-radius: 16px;
+                    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
                     border: 4px solid #fff;
                     object-fit: contain;
                 }
                 .lightbox-caption {
-                    margin-top: 15px;
-                    color: #fff;
+                    margin-top: 20px;
+                    color: #10b981;
                     font-family: 'Outfit', sans-serif;
                     font-size: 1.8rem;
-                    font-weight: 800;
-                    letter-spacing: 1.5px;
-                    text-transform: uppercase;
+                    font-weight: 900;
+                    letter-spacing: 1px;
+                }
+                .lightbox-role {
+                    color: #94a3b8;
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    margin-bottom: 15px;
+                }
+                .lightbox-quote {
+                    color: #fff;
+                    font-size: 1.15rem;
+                    font-weight: 300;
+                    font-style: italic;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    line-height: 1.6;
                 }
                 .lightbox-close {
                     position: absolute;
-                    top: 20px;
+                    top: 25px;
                     right: 40px;
                     color: #fff;
                     font-size: 50px;
@@ -516,27 +535,17 @@
                     z-index: 100000;
                 }
                 .lightbox-close:hover {
-                    color: #10b981;
+                    color: #ef4444;
                     transform: rotate(90deg) scale(1.2);
                 }
                 
                 @media (max-width: 768px) {
-                    .swiper-slide {
-                        width: 280px;
-                    }
-                    .neo-card {
-                        height: 340px;
-                    }
-                    .card-main-img {
-                        height: 270px;
-                    }
-                    .lightbox-caption {
-                        font-size: 1.3rem;
-                    }
-                    .lightbox-close {
-                        top: 10px;
-                        right: 20px;
-                    }
+                    .swiper-slide { width: 280px; }
+                    .neo-card { height: 350px; }
+                    .card-main-img { height: 260px; }
+                    .lightbox-caption { font-size: 1.4rem; }
+                    .lightbox-quote { font-size: 1rem; padding: 0 20px; }
+                    .lightbox-close { top: 15px; right: 25px; }
                 }
             </style>
             
@@ -545,41 +554,46 @@
                     
                     <!-- Slide 1 -->
                     <div class="swiper-slide">
-                        <div class="neo-card">
-                            <img src="/images/team1.jpg" class="card-main-img" alt="Team 1">
-                            <div class="card-name">The Visionary</div>
+                        <div class="neo-card" data-quote="Teknolojia inapaswa kurahisisha maisha. Tumejenga 4LAZIE ili kuhakikisha hakuna mwanafunzi wa SJUIT anayepata stress za kutafuta notes.">
+                            <img src="/images/team1.jpg" class="card-main-img" alt="Careen John">
+                            <div class="card-name">Careen John</div>
+                            <div class="card-role">Founder & Visionary</div>
                         </div>
                     </div>
                     
                     <!-- Slide 2 -->
                     <div class="swiper-slide">
-                        <div class="neo-card">
-                            <img src="/images/team5.jpg" class="card-main-img" alt="Team 2">
-                            <div class="card-name">Innovation Lead</div>
+                        <div class="neo-card" data-quote="Kila kipengele cha mfumo huu kimetengenezwa kwa umakini wa hali ya juu ili kuhakikisha spidi, usalama, na ufanisi kwa kila mwanafunzi.">
+                            <img src="/images/team5.jpg" class="card-main-img" alt="David M.">
+                            <div class="card-name">David M.</div>
+                            <div class="card-role">Chief Technology Officer</div>
                         </div>
                     </div>
                     
                     <!-- Slide 3 -->
                     <div class="swiper-slide">
-                        <div class="neo-card">
-                            <img src="/images/team2.jpg" class="card-main-img" alt="Team 3">
-                            <div class="card-name">Tech Architect</div>
+                        <div class="neo-card" data-quote="Lengo letu ni kujenga daraja imara kati ya ugumu wa masomo na urahisi wa upatikanaji wa nyenzo. 4LAZIE ndio hilo daraja.">
+                            <img src="/images/team2.jpg" class="card-main-img" alt="Sarah K.">
+                            <div class="card-name">Sarah K.</div>
+                            <div class="card-role">Head of Product</div>
                         </div>
                     </div>
                     
                     <!-- Slide 4 -->
                     <div class="swiper-slide">
-                        <div class="neo-card">
-                            <img src="/images/team3.jpg" class="card-main-img" alt="Team 4">
-                            <div class="card-name">Lead Developer</div>
+                        <div class="neo-card" data-quote="Tumebadilisha mistari ya kodi (code) kuwa suluhisho halisi. Kujifunza sasa kinakuwa ni kitu cha kufurahisha sana!">
+                            <img src="/images/team3.jpg" class="card-main-img" alt="Brian T.">
+                            <div class="card-name">Brian T.</div>
+                            <div class="card-role">Lead Developer</div>
                         </div>
                     </div>
                     
                     <!-- Slide 5 -->
                     <div class="swiper-slide">
-                        <div class="neo-card">
-                            <img src="/images/team4.jpg" class="card-main-img" alt="Team 5">
-                            <div class="card-name">Product Manager</div>
+                        <div class="neo-card" data-quote="Mafanikio yako ndio furaha yetu. Jukwaa hili lipo kwa ajili ya kukupa nguvu ya kufaulu kwa urahisi zaidi na bila kutumia nguvu nyingi.">
+                            <img src="/images/team4.jpg" class="card-main-img" alt="Grace W.">
+                            <div class="card-name">Grace W.</div>
+                            <div class="card-role">Student Success Manager</div>
                         </div>
                     </div>
 
@@ -596,6 +610,8 @@
                 <div class="lightbox-content-wrapper">
                     <img class="lightbox-img" id="lightboxImg" src="" alt="Zoomed Team Member">
                     <div class="lightbox-caption" id="lightboxCaption"></div>
+                    <div class="lightbox-role" id="lightboxRole"></div>
+                    <div class="lightbox-quote" id="lightboxQuote"></div>
                 </div>
             </div>
             
@@ -611,11 +627,11 @@
                         loop: true,
                         speed: 600,
                         coverflowEffect: {
-                            rotate: 30,       // 3D rotation angle
-                            stretch: 0,       // space between slides
-                            depth: 250,       // Z-depth (how far back side slides go)
-                            modifier: 1,      // multiplier for effect
-                            slideShadows: false, // Turn off swiper shadows
+                            rotate: 30,
+                            stretch: 0,
+                            depth: 250,
+                            modifier: 1,
+                            slideShadows: false,
                         },
                         navigation: {
                             nextEl: '.swiper-button-next',
@@ -627,23 +643,31 @@
                     const lightbox = document.getElementById('magicLightbox');
                     const lightboxImg = document.getElementById('lightboxImg');
                     const lightboxCaption = document.getElementById('lightboxCaption');
+                    const lightboxRole = document.getElementById('lightboxRole');
+                    const lightboxQuote = document.getElementById('lightboxQuote');
                     const closeBtn = document.querySelector('.lightbox-close');
                     
                     document.querySelectorAll('.neo-card').forEach(card => {
                         card.addEventListener('click', function() {
+                            // Extract details from card
                             const imgSrc = this.querySelector('img').src;
                             const name = this.querySelector('.card-name').innerText;
+                            const role = this.querySelector('.card-role').innerText;
+                            const quote = this.getAttribute('data-quote');
                             
+                            // Populate Lightbox
                             lightboxImg.src = imgSrc;
                             lightboxCaption.innerText = name;
+                            lightboxRole.innerText = role;
+                            lightboxQuote.innerText = `"${quote}"`;
                             
+                            // Show Lightbox with animation
                             lightbox.style.display = 'flex';
-                            // Tiny delay to allow display: flex to apply before adding opacity class
                             setTimeout(() => {
                                 lightbox.classList.add('show');
                             }, 10);
                             
-                            document.body.style.overflow = 'hidden'; // prevent background scrolling
+                            document.body.style.overflow = 'hidden'; 
                         });
                     });
                     
@@ -652,12 +676,12 @@
                         setTimeout(() => {
                             lightbox.style.display = 'none';
                             document.body.style.overflow = 'auto';
-                        }, 400); // Wait for transition
+                        }, 400);
                     }
                     
                     closeBtn.addEventListener('click', closeLightbox);
                     lightbox.addEventListener('click', function(e) {
-                        if (e.target === lightbox) {
+                        if (e.target === lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
                             closeLightbox();
                         }
                     });
