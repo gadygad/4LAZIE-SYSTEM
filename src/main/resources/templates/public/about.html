@@ -371,6 +371,102 @@
         </section>
 
 
+        <!-- The Magic Team Gallery -->
+        <section class="py-4 position-relative">
+            <div class="text-center mb-4">
+                <span class="fw-bold" style="color: #64748b; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;">The Innovators</span>
+                <h2 class="text-uppercase mb-0 mt-1" style="color: #0f172a; font-weight: 800; font-size: clamp(1.5rem, 4vw, 2rem); font-family: 'Outfit', sans-serif;">THE MINDS BEHIND 4LAZIE</h2>
+            </div>
+            
+            <style>
+                .magic-gallery {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-rows: 250px 250px;
+                    gap: 15px;
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    padding: 0 15px;
+                }
+                .magic-card {
+                    border-radius: 20px;
+                    overflow: hidden;
+                    position: relative;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+                    cursor: pointer;
+                    background: #fff;
+                }
+                .magic-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+                    z-index: 10;
+                }
+                .magic-card img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 0.7s ease, filter 0.5s ease;
+                    filter: saturate(1.1) contrast(1.05);
+                }
+                .magic-card:hover img {
+                    transform: scale(1.08) rotate(1deg);
+                }
+                .magic-card::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(to top, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0) 50%);
+                    opacity: 0;
+                    transition: opacity 0.4s ease;
+                }
+                .magic-card:hover::after {
+                    opacity: 1;
+                }
+                
+                /* Layout logic for 5 photos */
+                .magic-card:nth-child(1) { grid-column: 1 / 3; grid-row: 1 / 3; } /* Large left */
+                .magic-card:nth-child(2) { grid-column: 3 / 4; grid-row: 1 / 2; }
+                .magic-card:nth-child(3) { grid-column: 4 / 5; grid-row: 1 / 2; }
+                .magic-card:nth-child(4) { grid-column: 3 / 4; grid-row: 2 / 3; }
+                .magic-card:nth-child(5) { grid-column: 4 / 5; grid-row: 2 / 3; }
+                
+                @media (max-width: 768px) {
+                    .magic-gallery {
+                        grid-template-columns: 1fr;
+                        grid-auto-rows: 250px;
+                    }
+                    .magic-card:nth-child(1),
+                    .magic-card:nth-child(2),
+                    .magic-card:nth-child(3),
+                    .magic-card:nth-child(4),
+                    .magic-card:nth-child(5) {
+                        grid-column: 1 / -1;
+                        grid-row: auto;
+                    }
+                }
+            </style>
+            
+            <div class="magic-gallery">
+                <!-- Group photo as the main feature -->
+                <div class="magic-card">
+                    <img src="/images/team5.jpg" alt="4LAZIE Team">
+                </div>
+                <div class="magic-card">
+                    <img src="/images/team2.jpg" alt="Team Member">
+                </div>
+                <div class="magic-card">
+                    <img src="/images/team3.jpg" alt="Team Member">
+                </div>
+                <div class="magic-card">
+                    <img src="/images/team1.jpg" alt="Team Member">
+                </div>
+                <div class="magic-card">
+                    <img src="/images/team4.jpg" alt="Team Member">
+                </div>
+            </div>
+        </section>
+
         <!-- Advice for Students (Modern Premium) -->
         <section class="py-2 py-md-4 position-relative overflow-hidden">
             <!-- Background Orbs -->
