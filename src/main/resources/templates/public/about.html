@@ -397,60 +397,61 @@
                 .neo-card {
                     width: 100%;
                     height: 380px;
-                    border: 4px solid #111;
-                    box-shadow: 12px 12px 0px #111;
-                    padding: 15px 15px 10px 15px;
+                    border-radius: 20px;
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+                    padding: 10px;
                     background-color: #fff;
+                    border: 1px solid rgba(0,0,0,0.03);
                     display: flex;
                     flex-direction: column;
                     cursor: pointer;
                     /* Internal transition for hover */
-                    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+                    transition: transform 0.4s ease, box-shadow 0.4s ease;
                 }
                 .swiper-slide-active .neo-card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: 20px 20px 0px #111;
+                    transform: translateY(-8px);
+                    box-shadow: 0 25px 50px rgba(16, 185, 129, 0.15); /* Soft green shadow */
                 }
                 
                 .card-main-img {
                     width: 100%;
-                    height: 290px;
+                    height: 300px;
                     object-fit: cover;
-                    border: 3px solid #111;
-                    margin-bottom: 12px;
+                    border-radius: 14px;
+                    margin-bottom: 15px;
                 }
                 .card-name {
                     font-family: 'Outfit', sans-serif;
-                    font-size: 1.25rem;
-                    font-weight: 900;
-                    color: #111;
+                    font-size: 1.15rem;
+                    font-weight: 700;
+                    color: #0f172a;
                     text-align: center;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
+                    letter-spacing: 0.5px;
                 }
                 
                 /* Custom Navigation Arrows */
                 .swiper-button-next, .swiper-button-prev {
-                    color: #111;
+                    color: #10b981; /* 4Lazie Green */
                     background: #fff;
-                    border: 3px solid #111;
-                    box-shadow: 4px 4px 0px #111;
+                    border: none;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
                     width: 50px;
                     height: 50px;
                     border-radius: 50%;
-                    transition: all 0.2s ease;
+                    transition: all 0.3s ease;
                 }
                 .swiper-button-next:after, .swiper-button-prev:after {
                     font-size: 1.2rem;
                     font-weight: bold;
                 }
                 .swiper-button-next:hover, .swiper-button-prev:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 6px 6px 0px #111;
+                    transform: translateY(-3px) scale(1.05);
+                    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+                    color: #059669;
                 }
                 .swiper-button-next:active, .swiper-button-prev:active {
-                    transform: translateY(2px) translateX(2px);
-                    box-shadow: 0px 0px 0px #111;
+                    transform: translateY(1px);
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 }
                 
                 @media (max-width: 768px) {
@@ -459,10 +460,9 @@
                     }
                     .neo-card {
                         height: 340px;
-                        padding: 12px 12px 10px 12px;
                     }
                     .card-main-img {
-                        height: 260px;
+                        height: 270px;
                     }
                 }
             </style>
@@ -472,7 +472,7 @@
                     
                     <!-- Slide 1 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" style="background-color: #fef08a;">
+                        <div class="neo-card">
                             <img src="/images/team1.jpg" class="card-main-img" alt="Team 1">
                             <div class="card-name">The Visionary</div>
                         </div>
@@ -480,7 +480,7 @@
                     
                     <!-- Slide 2 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" style="background-color: #fbcfe8;">
+                        <div class="neo-card">
                             <img src="/images/team5.jpg" class="card-main-img" alt="Team 2">
                             <div class="card-name">Innovation Lead</div>
                         </div>
@@ -488,7 +488,7 @@
                     
                     <!-- Slide 3 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" style="background-color: #bae6fd;">
+                        <div class="neo-card">
                             <img src="/images/team2.jpg" class="card-main-img" alt="Team 3">
                             <div class="card-name">Tech Architect</div>
                         </div>
@@ -496,7 +496,7 @@
                     
                     <!-- Slide 4 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" style="background-color: #bbf7d0;">
+                        <div class="neo-card">
                             <img src="/images/team3.jpg" class="card-main-img" alt="Team 4">
                             <div class="card-name">Lead Developer</div>
                         </div>
@@ -504,7 +504,7 @@
                     
                     <!-- Slide 5 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" style="background-color: #e9d5ff;">
+                        <div class="neo-card">
                             <img src="/images/team4.jpg" class="card-main-img" alt="Team 5">
                             <div class="card-name">Product Manager</div>
                         </div>
@@ -533,16 +533,13 @@
                             stretch: 0,       // space between slides
                             depth: 250,       // Z-depth (how far back side slides go)
                             modifier: 1,      // multiplier for effect
-                            slideShadows: false, // Turn off swiper shadows so our neo-brutalism shadows shine
+                            slideShadows: false, // Turn off swiper shadows
                         },
                         navigation: {
                             nextEl: '.swiper-button-next',
                             prevEl: '.swiper-button-prev',
-                        },
-                        autoplay: {
-                            delay: 3500,
-                            disableOnInteraction: false,
                         }
+                        // Removed autoplay as requested so user controls the sliding
                     });
                 });
             </script>
