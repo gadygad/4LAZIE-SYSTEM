@@ -371,60 +371,53 @@
         </section>
 
 
-        <!-- The Magic Team Gallery (Neo-Brutalism Style) -->
-        <section class="py-4 position-relative overflow-hidden">
+        <!-- The Magic Team Gallery (Neo-Brutalism Style & Swiper 3D) -->
+        <section class="py-5 position-relative overflow-hidden">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+            
             <div class="text-center mb-5">
                 <h2 class="text-uppercase mb-0 mt-1" style="color: #111; font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.5rem); font-family: 'Outfit', sans-serif; letter-spacing: -1px;">THE MINDS BEHIND 4LAZIE</h2>
             </div>
             
             <style>
-                .marquee-container {
+                .team-swiper {
                     width: 100%;
-                    overflow: hidden;
-                    position: relative;
-                    padding: 40px 0 80px 0;
-                    display: flex;
+                    padding-top: 30px;
+                    padding-bottom: 80px; /* Space for shadow and buttons */
                 }
-                .marquee-content {
-                    display: flex;
-                    gap: 30px;
-                    /* Total width of 5 items is 5 * (320px + 30px) = 1750px */
-                    animation: scrollLeft 30s linear infinite;
-                    padding-left: 30px;
-                }
-                .marquee-content:hover {
-                    animation-play-state: paused;
-                }
-                .marquee-card {
+                .swiper-slide {
                     width: 320px;
+                    /* Center items will pop up via swiper coverflow */
+                    transition: filter 0.4s ease;
+                }
+                .swiper-slide:not(.swiper-slide-active) {
+                    filter: blur(2px) grayscale(40%);
+                }
+                
+                .neo-card {
+                    width: 100%;
                     height: 380px;
                     border: 4px solid #111;
-                    box-shadow: 8px 8px 0px #111;
+                    box-shadow: 12px 12px 0px #111;
                     padding: 15px 15px 10px 15px;
-                    flex-shrink: 0;
-                    position: relative;
-                    cursor: pointer;
-                    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, z-index 0s;
-                    z-index: 1;
+                    background-color: #fff;
                     display: flex;
                     flex-direction: column;
+                    cursor: pointer;
+                    /* Internal transition for hover */
+                    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
                 }
-                .marquee-card:hover {
-                    transform: scale(1.05) rotate(0deg) translateY(-10px) !important;
-                    box-shadow: 15px 15px 0px #111;
-                    z-index: 100;
+                .swiper-slide-active .neo-card:hover {
+                    transform: translateY(-10px);
+                    box-shadow: 20px 20px 0px #111;
                 }
+                
                 .card-main-img {
                     width: 100%;
                     height: 290px;
                     object-fit: cover;
                     border: 3px solid #111;
                     margin-bottom: 12px;
-                    filter: saturate(1.1);
-                    transition: filter 0.3s ease;
-                }
-                .marquee-card:hover .card-main-img {
-                    filter: saturate(1.2) contrast(1.1);
                 }
                 .card-name {
                     font-family: 'Outfit', sans-serif;
@@ -436,94 +429,123 @@
                     letter-spacing: 1px;
                 }
                 
-                @keyframes scrollLeft {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-1750px); }
+                /* Custom Navigation Arrows */
+                .swiper-button-next, .swiper-button-prev {
+                    color: #111;
+                    background: #fff;
+                    border: 3px solid #111;
+                    box-shadow: 4px 4px 0px #111;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    transition: all 0.2s ease;
+                }
+                .swiper-button-next:after, .swiper-button-prev:after {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                }
+                .swiper-button-next:hover, .swiper-button-prev:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 6px 6px 0px #111;
+                }
+                .swiper-button-next:active, .swiper-button-prev:active {
+                    transform: translateY(2px) translateX(2px);
+                    box-shadow: 0px 0px 0px #111;
                 }
                 
                 @media (max-width: 768px) {
-                    .marquee-card {
+                    .swiper-slide {
                         width: 280px;
+                    }
+                    .neo-card {
                         height: 340px;
                         padding: 12px 12px 10px 12px;
                     }
                     .card-main-img {
                         height: 260px;
                     }
-                    .marquee-content {
-                        gap: 20px;
-                        /* 5 items * (280+20) = 1500 */
-                        animation: scrollLeftMobile 20s linear infinite;
-                        padding-left: 20px;
-                    }
-                    @keyframes scrollLeftMobile {
-                        0% { transform: translateX(0); }
-                        100% { transform: translateX(-1500px); }
-                    }
                 }
             </style>
             
-            <div class="marquee-container">
-                <div class="marquee-content">
+            <div class="swiper team-swiper">
+                <div class="swiper-wrapper">
                     
-                    <!-- Card 1 -->
-                    <div class="marquee-card" style="background-color: #fef08a; transform: rotate(-2deg);">
-                        <img src="/images/team1.jpg" class="card-main-img" alt="Team 1">
-                        <div class="card-name">The Visionary</div>
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="neo-card" style="background-color: #fef08a;">
+                            <img src="/images/team1.jpg" class="card-main-img" alt="Team 1">
+                            <div class="card-name">The Visionary</div>
+                        </div>
                     </div>
                     
-                    <!-- Card 2 -->
-                    <div class="marquee-card" style="background-color: #fbcfe8; transform: rotate(3deg);">
-                        <img src="/images/team5.jpg" class="card-main-img" alt="Team 2">
-                        <div class="card-name">Innovation Lead</div>
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide">
+                        <div class="neo-card" style="background-color: #fbcfe8;">
+                            <img src="/images/team5.jpg" class="card-main-img" alt="Team 2">
+                            <div class="card-name">Innovation Lead</div>
+                        </div>
                     </div>
                     
-                    <!-- Card 3 -->
-                    <div class="marquee-card" style="background-color: #bae6fd; transform: rotate(-1deg);">
-                        <img src="/images/team2.jpg" class="card-main-img" alt="Team 3">
-                        <div class="card-name">Tech Architect</div>
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide">
+                        <div class="neo-card" style="background-color: #bae6fd;">
+                            <img src="/images/team2.jpg" class="card-main-img" alt="Team 3">
+                            <div class="card-name">Tech Architect</div>
+                        </div>
                     </div>
                     
-                    <!-- Card 4 -->
-                    <div class="marquee-card" style="background-color: #bbf7d0; transform: rotate(2deg);">
-                        <img src="/images/team3.jpg" class="card-main-img" alt="Team 4">
-                        <div class="card-name">Lead Developer</div>
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide">
+                        <div class="neo-card" style="background-color: #bbf7d0;">
+                            <img src="/images/team3.jpg" class="card-main-img" alt="Team 4">
+                            <div class="card-name">Lead Developer</div>
+                        </div>
                     </div>
                     
-                    <!-- Card 5 -->
-                    <div class="marquee-card" style="background-color: #e9d5ff; transform: rotate(-3deg);">
-                        <img src="/images/team4.jpg" class="card-main-img" alt="Team 5">
-                        <div class="card-name">Product Manager</div>
-                    </div>
-
-                    <!-- Duplicates for Infinite Loop -->
-                    <div class="marquee-card" style="background-color: #fef08a; transform: rotate(-2deg);">
-                        <img src="/images/team1.jpg" class="card-main-img" alt="Team 1">
-                        <div class="card-name">The Visionary</div>
-                    </div>
-                    
-                    <div class="marquee-card" style="background-color: #fbcfe8; transform: rotate(3deg);">
-                        <img src="/images/team5.jpg" class="card-main-img" alt="Team 2">
-                        <div class="card-name">Innovation Lead</div>
-                    </div>
-                    
-                    <div class="marquee-card" style="background-color: #bae6fd; transform: rotate(-1deg);">
-                        <img src="/images/team2.jpg" class="card-main-img" alt="Team 3">
-                        <div class="card-name">Tech Architect</div>
-                    </div>
-                    
-                    <div class="marquee-card" style="background-color: #bbf7d0; transform: rotate(2deg);">
-                        <img src="/images/team3.jpg" class="card-main-img" alt="Team 4">
-                        <div class="card-name">Lead Developer</div>
-                    </div>
-                    
-                    <div class="marquee-card" style="background-color: #e9d5ff; transform: rotate(-3deg);">
-                        <img src="/images/team4.jpg" class="card-main-img" alt="Team 5">
-                        <div class="card-name">Product Manager</div>
+                    <!-- Slide 5 -->
+                    <div class="swiper-slide">
+                        <div class="neo-card" style="background-color: #e9d5ff;">
+                            <img src="/images/team4.jpg" class="card-main-img" alt="Team 5">
+                            <div class="card-name">Product Manager</div>
+                        </div>
                     </div>
 
                 </div>
+                
+                <!-- Swiper Navigation -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
             </div>
+            
+            <!-- Swiper JS Script -->
+            <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const swiper = new Swiper('.team-swiper', {
+                        effect: 'coverflow',
+                        grabCursor: true,
+                        centeredSlides: true,
+                        slidesPerView: 'auto',
+                        loop: true,
+                        speed: 600,
+                        coverflowEffect: {
+                            rotate: 30,       // 3D rotation angle
+                            stretch: 0,       // space between slides
+                            depth: 250,       // Z-depth (how far back side slides go)
+                            modifier: 1,      // multiplier for effect
+                            slideShadows: false, // Turn off swiper shadows so our neo-brutalism shadows shine
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        autoplay: {
+                            delay: 3500,
+                            disableOnInteraction: false,
+                        }
+                    });
+                });
+            </script>
         </section>
 
         <!-- Advice for Students (Modern Premium) -->
