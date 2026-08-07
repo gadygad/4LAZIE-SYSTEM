@@ -24,13 +24,9 @@
             background-size: 100% 100%, 100% 100%, 100% 32px;
             background-position: 0 0, 0 0, 0 8px;
             color: #334155;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             position: relative;
             overflow-x: hidden;
             box-shadow: inset 0 0 100px rgba(0,0,0,0.03);
-            padding-bottom: 50px;
         }
         
         /* Abstract Background Shapes */
@@ -138,54 +134,56 @@
         <div class="bg-shape-2"></div>
     </div>
     
-    <!-- Navbar from Homepage -->
+    <div class="d-flex flex-column min-vh-100">
+        <!-- Navbar from Homepage -->
         <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
     
-    <div class="container mt-4">
+        <div class="container mt-4 flex-grow-1">
+            <div class="policy-container glass-card">
+                <h1>Privacy Policy & Terms</h1>
+                <p>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}">Today</span></p>
+                
+                <h2>1. Introduction</h2>
+                <p>Welcome to 4LAZIE ("we", "us", or "our"). By visiting or using our platform, you agree to our Terms and Privacy Policy. Our goal is to provide an excellent and accessible platform for student resources.</p>
+                
+                <h2>2. Information We Collect</h2>
+                <p>We may collect personal information such as your name, email address, and academic details when you register for an account. We also collect data on how you interact with our platform to improve our services and provide relevant notes and past papers.</p>
+                
+                <h2>3. How We Use Your Information</h2>
+                <p>The information we collect is used to:</p>
+                <ul>
+                    <li>Provide, operate, and maintain our platform.</li>
+                    <li>Enhance your experience (e.g., showing courses and materials relevant to you).</li>
+                    <li>Communicate with you regarding updates or support.</li>
+                </ul>
+                
+                <h2>4. User Content</h2>
+                <p>Notes, comments, or any documents you upload remain your property, but by uploading, you grant us a license to display and share them with other 4LAZIE students in accordance with our platform's rules.</p>
+                
+                <h2>5. Fair Use</h2>
+                <p>The resources available on 4LAZIE, including past papers and notes, are strictly for academic purposes. Misuse or any attempt to compromise our platform will result in immediate account termination.</p>
+                
+                <h2>6. Changes to This Policy</h2>
+                <p>We may update this policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+                
+                <h2>7. Contact Us</h2>
+                <p>If you have any questions about this Privacy Policy, please contact the 4LAZIE support team at support@4lazie.com.</p>
+            </div>
+        </div>
+
+        <!-- Mobile Sidebar Fragment -->
+        <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
+
+        <!-- Footer from Homepage -->
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
         
-        <div class="policy-container glass-card">
-            <h1>Privacy Policy & Terms</h1>
-            <p>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}">Today</span></p>
-            
-            <h2>1. Introduction</h2>
-            <p>Welcome to 4LAZIE ("we", "us", or "our"). By visiting or using our platform, you agree to our Terms and Privacy Policy. Our goal is to provide an excellent and accessible platform for student resources.</p>
-            
-            <h2>2. Information We Collect</h2>
-            <p>We may collect personal information such as your name, email address, and academic details when you register for an account. We also collect data on how you interact with our platform to improve our services and provide relevant notes and past papers.</p>
-            
-            <h2>3. How We Use Your Information</h2>
-            <p>The information we collect is used to:</p>
-            <ul>
-                <li>Provide, operate, and maintain our platform.</li>
-                <li>Enhance your experience (e.g., showing courses and materials relevant to you).</li>
-                <li>Communicate with you regarding updates or support.</li>
-            </ul>
-            
-            <h2>4. User Content</h2>
-            <p>Notes, comments, or any documents you upload remain your property, but by uploading, you grant us a license to display and share them with other 4LAZIE students in accordance with our platform's rules.</p>
-            
-            <h2>5. Fair Use</h2>
-            <p>The resources available on 4LAZIE, including past papers and notes, are strictly for academic purposes. Misuse or any attempt to compromise our platform will result in immediate account termination.</p>
-            
-            <h2>6. Changes to This Policy</h2>
-            <p>We may update this policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
-            
-            <h2>7. Contact Us</h2>
-            <p>If you have any questions about this Privacy Policy, please contact the 4LAZIE support team at support@4lazie.com.</p>
+        <!-- Floating Bottom Nav for Mobile -->
+        <div class="d-md-none">
+            <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
         </div>
     </div>
 
-    <!-- Mobile Sidebar Fragment -->
-    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
-
-    <!-- Footer from Homepage -->
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-    
-    <!-- Floating Bottom Nav for Mobile -->
-    <div class="d-md-none">
-        <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div th:replace="~{fragments/search_script :: script}"></div>
 </body>
 </html>

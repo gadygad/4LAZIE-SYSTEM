@@ -42,31 +42,78 @@
                                 }
                             </style>
                         </div>
-                        <div class="d-flex align-items-center mt-1"
-                            style="font-family: 'Inter', sans-serif; font-size: 0.55rem; font-weight: 600; color: #64748b; letter-spacing: 0.3px; white-space: nowrap;">
-                            <i class="bi bi-clock-history me-1" style="color: #3b82f6; font-size: 0.6rem;"></i>
-                            <span id="navLiveTime" style="color: #0f172a; font-weight: 700;">00:00:00</span>
-                            <span class="mx-1" style="color: #cbd5e1;">|</span>
-                            <span id="navLiveDate">Jan 01, 2024</span>
+                        <div class="d-flex align-items-center gap-1 mt-1" style="white-space: nowrap;">
+                            <div class="mini-time-box d-flex align-items-center justify-content-center rounded-2">
+                                <span id="nav-hrs" style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; color: #0f172a; line-height: 1;">00</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; animation: blink-colon 1s infinite; margin-top: -2px;">:</span>
+                            <div class="mini-time-box d-flex align-items-center justify-content-center rounded-2">
+                                <span id="nav-mins" style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; color: #0f172a; line-height: 1;">00</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; animation: blink-colon 1s infinite; margin-top: -2px;">:</span>
+                            <div class="mini-time-box d-flex align-items-center justify-content-center rounded-2">
+                                <span id="nav-secs" style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; color: #0f172a; line-height: 1;">00</span>
+                            </div>
+                            <span class="mx-1" style="color: #cbd5e1; font-size: 0.8rem;">|</span>
+                            <span id="navLiveDate" style="font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; color: #64748b;">Jan 01, 2024</span>
                         </div>
+                        <style>
+                            @keyframes blink-colon {
+                                0%, 100% { opacity: 1; }
+                                50% { opacity: 0.3; }
+                            }
+                            .mini-time-box {
+                                width: 22px; 
+                                height: 22px; 
+                                background: rgba(255, 255, 255, 0.95); 
+                                border: 1px solid rgba(16, 185, 129, 0.3);
+                                box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15), inset 0 0 4px rgba(255,255,255,0.6);
+                                position: relative;
+                                overflow: hidden;
+                            }
+                            .mini-time-box::after {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: -100%;
+                                width: 50%;
+                                height: 100%;
+                                background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+                                transform: skewX(-25deg);
+                                animation: mini-shine 4s infinite;
+                            }
+                            @keyframes mini-shine {
+                                0% { left: -100%; }
+                                20% { left: 200%; }
+                                100% { left: 200%; }
+                            }
+                        </style>
                     </div>
                 </a>
 
                 <script>
                     function updateNavLiveClock() {
                         const now = new Date();
-                        // 24-hour format
-                        const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                        // Date format: 25 Jun 2026
-                        const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
-                        const timeEl = document.getElementById('navLiveTime');
+                        const hEl = document.getElementById('nav-hrs');
+                        const mEl = document.getElementById('nav-mins');
+                        const sEl = document.getElementById('nav-secs');
                         const dateEl = document.getElementById('navLiveDate');
+                        
+                        if (hEl && mEl && sEl) {
+                            hEl.textContent = String(now.getHours()).padStart(2, '0');
+                            mEl.textContent = String(now.getMinutes()).padStart(2, '0');
+                            sEl.textContent = String(now.getSeconds()).padStart(2, '0');
+                        }
+                        
+                        const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        if (dateEl) {
+                            dateEl.textContent = dateStr;
+                        }
+
+                        // Also update sidebar clock if it exists
+                        const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         const sideTimeEl = document.getElementById('sidebarLiveTime');
                         const sideDateEl = document.getElementById('sidebarLiveDate');
-
-                        if (timeEl) timeEl.innerText = timeStr;
-                        if (dateEl) dateEl.innerText = dateStr;
                         if (sideTimeEl) sideTimeEl.innerText = timeStr;
                         if (sideDateEl) sideDateEl.innerText = dateStr;
                     }
