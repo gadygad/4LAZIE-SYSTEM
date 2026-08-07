@@ -63,6 +63,9 @@ public class AdminController {
         @org.springframework.beans.factory.annotation.Autowired
         private com.school.repository.AssignmentRequestRepository assignmentRequestRepository;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.service.TeamMemberService teamMemberService;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -1052,6 +1055,84 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("success", "Action rejected.");
         }
         return "redirect:/admin/approvals";
+    }
+
+    // ============ ADMIN TEAM MEMBERS MANAGEMENT ============
+
+    @GetMapping("/team-members")
+    public String listTeamMembers(HttpSession session, Model model) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        
+        List<com.school.model.TeamMember> teamMembers = teamMemberService.getAllTeamMembers();
+        model.addAttribute("teamMembers", teamMembers);
+        return "admin/admin_team_members";
+    }
+
+    @PostMapping("/team-members/add")
+    public String addTeamMember(@ModelAttribute com.school.model.TeamMember teamMember,
+                                @RequestParam(value = "image", required = false) MultipartFile image,
+                                RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        try {
+            teamMemberService.saveTeamMember(teamMember, image);
+            redirectAttributes.addFlashAttribute("success", "Team member added successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error adding team member: " + e.getMessage());
+        }
+        return "redirect:/admin/team-members";
+    }
+
+    @PostMapping("/team-members/{id}/edit")
+    public String editTeamMember(@PathVariable String id,
+                                 @ModelAttribute com.school.model.TeamMember updatedMember,
+                                 @RequestParam(value = "image", required = false) MultipartFile image,
+                                 RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        try {
+            com.school.model.TeamMember existing = teamMemberService.getTeamMemberById(id);
+            if (existing != null) {
+                existing.setName(updatedMember.getName());
+                existing.setRole(updatedMember.getRole());
+                existing.setQuote(updatedMember.getQuote());
+                existing.setDisplayOrder(updatedMember.getDisplayOrder());
+                teamMemberService.saveTeamMember(existing, image);
+                redirectAttributes.addFlashAttribute("success", "Team member updated successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating team member: " + e.getMessage());
+        }
+        return "redirect:/admin/team-members";
+    }
+
+    @PostMapping("/team-members/{id}/delete")
+    public String deleteTeamMember(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        teamMemberService.deleteTeamMember(id);
+        redirectAttributes.addFlashAttribute("success", "Team member deleted successfully!");
+        return "redirect:/admin/team-members";
+    }
+
+    @PostMapping("/team-members/{id}/toggle-status")
+    public String toggleTeamMemberStatus(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        teamMemberService.toggleStatus(id);
+        redirectAttributes.addFlashAttribute("success", "Status changed successfully!");
+        return "redirect:/admin/team-members";
     }
 
 }

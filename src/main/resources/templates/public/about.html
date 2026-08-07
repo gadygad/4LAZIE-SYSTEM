@@ -554,46 +554,36 @@
                     
                     <!-- Slide 1 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" data-quote="Teknolojia inapaswa kurahisisha maisha. Tumejenga 4LAZIE ili kuhakikisha hakuna mwanafunzi wa SJUIT anayepata stress za kutafuta notes.">
-                            <img src="/images/team1.jpg" class="card-main-img" alt="Careen John">
-                            <div class="card-name">Careen John</div>
-                            <div class="card-role">Founder & Visionary</div>
+                        <div class="neo-card" data-quote="Technology should simplify life. We built 4LAZIE to ensure no SJUIT student stresses over finding study materials.">
+                            <img src="/images/team1.jpg" class="card-main-img" alt="Founder & Visionary" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
                         </div>
                     </div>
                     
                     <!-- Slide 2 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" data-quote="Kila kipengele cha mfumo huu kimetengenezwa kwa umakini wa hali ya juu ili kuhakikisha spidi, usalama, na ufanisi kwa kila mwanafunzi.">
-                            <img src="/images/team5.jpg" class="card-main-img" alt="David M.">
-                            <div class="card-name">David M.</div>
-                            <div class="card-role">Chief Technology Officer</div>
+                        <div class="neo-card" data-quote="Every feature in this platform is carefully crafted to guarantee speed, security, and efficiency for every student.">
+                            <img src="/images/team5.jpg" class="card-main-img" alt="Chief Technology Officer" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
                         </div>
                     </div>
                     
                     <!-- Slide 3 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" data-quote="Lengo letu ni kujenga daraja imara kati ya ugumu wa masomo na urahisi wa upatikanaji wa nyenzo. 4LAZIE ndio hilo daraja.">
-                            <img src="/images/team2.jpg" class="card-main-img" alt="Sarah K.">
-                            <div class="card-name">Sarah K.</div>
-                            <div class="card-role">Head of Product</div>
+                        <div class="neo-card" data-quote="Our goal is to build a strong bridge between academic difficulty and the ease of accessing resources. 4LAZIE is that bridge.">
+                            <img src="/images/team2.jpg" class="card-main-img" alt="Head of Product" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
                         </div>
                     </div>
                     
                     <!-- Slide 4 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" data-quote="Tumebadilisha mistari ya kodi (code) kuwa suluhisho halisi. Kujifunza sasa kinakuwa ni kitu cha kufurahisha sana!">
-                            <img src="/images/team3.jpg" class="card-main-img" alt="Brian T.">
-                            <div class="card-name">Brian T.</div>
-                            <div class="card-role">Lead Developer</div>
+                        <div class="neo-card" data-quote="We've transformed lines of code into a real solution. Learning is now a highly enjoyable experience!">
+                            <img src="/images/team3.jpg" class="card-main-img" alt="Lead Developer" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
                         </div>
                     </div>
                     
                     <!-- Slide 5 -->
                     <div class="swiper-slide">
-                        <div class="neo-card" data-quote="Mafanikio yako ndio furaha yetu. Jukwaa hili lipo kwa ajili ya kukupa nguvu ya kufaulu kwa urahisi zaidi na bila kutumia nguvu nyingi.">
-                            <img src="/images/team4.jpg" class="card-main-img" alt="Grace W.">
-                            <div class="card-name">Grace W.</div>
-                            <div class="card-role">Student Success Manager</div>
+                        <div class="neo-card" data-quote="Your success is our joy. This platform exists to empower you to succeed easier and with much less effort.">
+                            <img src="/images/team4.jpg" class="card-main-img" alt="Student Success Manager" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
                         </div>
                     </div>
 
@@ -609,8 +599,6 @@
                 <span class="lightbox-close">&times;</span>
                 <div class="lightbox-content-wrapper">
                     <img class="lightbox-img" id="lightboxImg" src="" alt="Zoomed Team Member">
-                    <div class="lightbox-caption" id="lightboxCaption"></div>
-                    <div class="lightbox-role" id="lightboxRole"></div>
                     <div class="lightbox-quote" id="lightboxQuote"></div>
                 </div>
             </div>
@@ -642,8 +630,6 @@
                     // Lightbox Magic
                     const lightbox = document.getElementById('magicLightbox');
                     const lightboxImg = document.getElementById('lightboxImg');
-                    const lightboxCaption = document.getElementById('lightboxCaption');
-                    const lightboxRole = document.getElementById('lightboxRole');
                     const lightboxQuote = document.getElementById('lightboxQuote');
                     const closeBtn = document.querySelector('.lightbox-close');
                     
@@ -651,14 +637,10 @@
                         card.addEventListener('click', function() {
                             // Extract details from card
                             const imgSrc = this.querySelector('img').src;
-                            const name = this.querySelector('.card-name').innerText;
-                            const role = this.querySelector('.card-role').innerText;
                             const quote = this.getAttribute('data-quote');
                             
                             // Populate Lightbox
                             lightboxImg.src = imgSrc;
-                            lightboxCaption.innerText = name;
-                            lightboxRole.innerText = role;
                             lightboxQuote.innerText = `"${quote}"`;
                             
                             // Show Lightbox with animation

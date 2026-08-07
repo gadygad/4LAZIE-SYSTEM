@@ -142,6 +142,9 @@ public class HomeController {
         }
     }
 
+    @Autowired
+    private com.school.service.TeamMemberService teamMemberService;
+
     @GetMapping("/init")
     @org.springframework.web.bind.annotation.ResponseBody
     public String init() {
@@ -149,7 +152,9 @@ public class HomeController {
     }
 
     @GetMapping("/about")
-    public String about() {
+    public String about(Model model) {
+        List<com.school.model.TeamMember> teamMembers = teamMemberService.getActiveTeamMembers();
+        model.addAttribute("teamMembers", teamMembers);
         return "public/about";
     }
 
