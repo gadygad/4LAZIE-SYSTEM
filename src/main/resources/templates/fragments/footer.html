@@ -317,6 +317,28 @@
                 });
             });
         </script>
+
+        <!-- Magical Scroll Animations (AOS) - No Scroll Hijacking, Zero Delay -->
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Auto-add magic animations to cards and sections
+                document.querySelectorAll('.glass-card, .premium-card, .course-card, .modules-container > div, section, .fade-in-up-mobile').forEach(function(el, index) {
+                    if(!el.hasAttribute('data-aos')) {
+                        el.setAttribute('data-aos', 'fade-up');
+                        el.setAttribute('data-aos-delay', (index % 3) * 100); // Stagger effect
+                    }
+                });
+                
+                AOS.init({
+                    duration: 800, // Smooth transition
+                    easing: 'ease-out-cubic', // Premium easing
+                    once: true, // Animate only once on scroll down
+                    offset: 30, // Trigger early
+                });
+            });
+        </script>
     </footer>
 
 </body>
