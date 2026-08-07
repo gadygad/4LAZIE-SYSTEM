@@ -132,12 +132,11 @@
 </head>
 <body class="has-bottom-nav">
 
-    <!-- Back Navigation -->
-    <div class="container mt-3">
-        <a href="/profile" class="text-decoration-none text-secondary d-inline-flex align-items-center gap-2 fw-semibold" style="transition: color 0.3s;">
-            Back to Profile
-        </a>
-    </div>
+    <!-- Header Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <!-- Mobile Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
     <!-- Header -->
     <div class="header-card text-center">
@@ -271,6 +270,7 @@
             .catch(err => console.error(err));
         }
     </script>
+    <div th:replace="~{fragments/search_script :: script}"></div>
 </body>
 </html>
 
