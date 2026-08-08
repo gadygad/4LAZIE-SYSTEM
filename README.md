@@ -65,12 +65,13 @@ Across Tanzania and East Africa:
 | 📅 **Timetables & Calendar** | View class schedules and exam dates per semester |
 | 🆘 **Assignment Help** | Students submit assignments; admins/tutors respond with solutions |
 | 💬 **Real-Time Messaging** | Slack-like live chat using Server-Sent Events (SSE) with typing indicators |
+| 📊 **Live Analytics** | Real-time active visitors tracking via WebSocket/SSE |
 | 🔔 **Push Notifications** | PWA-capable with offline support and mobile install |
 | 🔐 **Secure Accounts** | Register with email or Google Sign-In + OTP email verification |
 | 🛡️ **Admin Dashboard** | Manage users, notes, subjects, courses, and timetables |
 | 💻 **Device Management** | View all active logged-in devices and remotely log them out |
 | 🚨 **Advanced Security** | Email alerts on password change with emergency lockdown / account suspension link |
-| ✨ **Premium UI/UX** | 3D Hover Cards, Animated Empty States, Glassmorphism Profiles with Social Links, and highly responsive micro-animations |
+| ✨ **Premium UI/UX** | 3D Hover Cards, Animated Empty States, Glassmorphism Profiles, and highly responsive micro-animations |
 
 ---
 
