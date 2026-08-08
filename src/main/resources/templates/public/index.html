@@ -8,6 +8,8 @@
     <meta name="theme-color" content="#10b981">
     <link rel="apple-touch-icon" href="/images/logo.png">
 
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}" />
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4LAZIE - Student Community</title>
@@ -83,6 +85,8 @@
 </head>
 
 <body>
+    <!-- SEO Primary Heading -->
+    <h1 class="visually-hidden">4LAZIE - Premium Student Portal</h1>
 
     <header class="navbar navbar-custom sticky-top"
         style="border-bottom: 2px solid rgba(203, 213, 225, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
@@ -139,18 +143,7 @@
                     <div class="dropdown-menu dropdown-menu-end position-absolute premium-glass-dropdown" 
                          style="top: 120%; right: 0; min-width: 260px; z-index: 1050; display: none; opacity: 0; transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; box-shadow: 0 15px 35px rgba(16,185,129,0.15); padding: 15px 10px;">
                         
-                        <style>
-                            .premium-glass-dropdown.show { opacity: 1 !important; transform: translateY(0) !important; }
-                            .premium-dropdown-item { padding: 10px 15px; border-radius: 12px; transition: all 0.3s ease; color: #334155; font-family: 'Outfit', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 5px; }
-                            .premium-dropdown-item:hover { background: rgba(16,185,129,0.1); color: #10b981; transform: translateX(5px); }
-                            .premium-dropdown-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.3s; }
-                            .premium-dropdown-item:hover .premium-dropdown-icon { background: #10b981; color: white !important; transform: rotate(5deg); }
-                            .icon-notes { background: rgba(59,130,246,0.1); color: #3b82f6; }
-                            .icon-papers { background: rgba(16,185,129,0.1); color: #10b981; }
-                            .icon-assignments { background: rgba(245,158,11,0.1); color: #f59e0b; }
-                            .icon-explore { background: rgba(139,92,246,0.1); color: #8b5cf6; }
-                            .icon-request { background: rgba(239,68,68,0.1); color: #ef4444; }
-                        </style>
+                        
 
                         <h6 class="px-3 mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px; color: #94a3b8; font-weight: 700;">Quick Access</h6>
                         
@@ -389,10 +382,12 @@
                                             <i class="bi bi-file-earmark-pdf text-primary fs-5"></i>
                                         </div>
                                         <div class="overflow-hidden">
-                                            <h6 class="mb-1 fw-bold text-dark text-truncate" style="font-family: 'Outfit', sans-serif;">${note.title}</h6>
-                                            <p class="mb-0 text-muted small text-truncate"><i class="bi bi-book"></i> ${note.subjectName}</p>
+                                            <h6 class="mb-1 fw-bold text-dark text-truncate search-title-el" style="font-family: 'Outfit', sans-serif;"></h6>
+                                            <p class="mb-0 text-muted small text-truncate search-subj-el"><i class="bi bi-book"></i> <span></span></p>
                                         </div>
                                     `;
+                                    item.querySelector('.search-title-el').textContent = note.title;
+                                    item.querySelector('.search-subj-el span').textContent = note.subjectName;
                                     results.appendChild(item);
                                 });
                             } else {
@@ -518,9 +513,14 @@
                                             userVisibleOnly: true,
                                             applicationServerKey: applicationServerKey
                                         }).then(subscription => {
+                                            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content || '';
+                                            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+                                            const headers = { 'Content-Type': 'application/json' };
+                                            if (csrfToken) headers[csrfHeader] = csrfToken;
+
                                             fetch('/api/notifications/subscribe', {
                                                 method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
+                                                headers: headers,
                                                 body: JSON.stringify(subscription)
                                             }).then(res => res.json())
                                               .then(resData => console.log('Push subscription saved:', resData))
