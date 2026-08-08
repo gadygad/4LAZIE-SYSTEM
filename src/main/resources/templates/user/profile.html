@@ -140,51 +140,7 @@
             });
         </script>
         
-        <style>
-            .profile-cover {
-                width: calc(100% + 2rem);
-                margin-left: -1rem;
-                margin-right: -1rem;
-                margin-top: -1.5rem;
-                height: 250px;
-                background-image: linear-gradient(to bottom, rgba(16, 185, 129, 0.2), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1200&auto=format&fit=crop');
-                background-size: cover;
-                background-position: center;
-                border-bottom-left-radius: 40px;
-                border-bottom-right-radius: 40px;
-                position: relative;
-                animation: coverFadeIn 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-                box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15);
-                z-index: 1;
-            }
-            .profile-cover::after {
-                content: '';
-                position: absolute;
-                bottom: -2px; left: 0; right: 0;
-                height: 100px;
-                background: linear-gradient(to top, #f8fafc, transparent);
-                pointer-events: none;
-            }
-            @keyframes coverFadeIn {
-                0% { opacity: 0; transform: translateY(-30px) scale(1.05); }
-                100% { opacity: 1; transform: translateY(0) scale(1); }
-            }
-            .profile-avatar-container {
-                margin-top: -100px !important; 
-                z-index: 5;
-                position: relative;
-                animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            @keyframes avatarPop {
-                to { opacity: 1; transform: scale(1); }
-            }
-            @keyframes quickSavePulse {
-                0%, 100% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
-                50% { box-shadow: 0 4px 25px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.3); }
-            }
-        </style>
+        
         
         <!-- View Mode -->
         <div th:if="${!editMode}" class="px-3 py-4 position-relative">
@@ -286,46 +242,7 @@
             <div class="mt-2 mb-3">
                 <h6 class="fw-bold mb-2 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #94a3b8; font-size: 0.75rem; letter-spacing: 1px;">your activity</h6>
                 
-                <style>
-                    .activity-item {
-                        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-                        background: transparent;
-                        padding: 0.6rem 0.5rem;
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .activity-item::before {
-                        content: '';
-                        position: absolute;
-                        top: 0; left: 0; width: 4px; height: 100%;
-                        background: #10b981;
-                        transform: scaleY(0);
-                        transition: transform 0.3s ease;
-                        border-radius: 4px;
-                    }
-                    .activity-item:hover {
-                        background: linear-gradient(90deg, rgba(16, 185, 129, 0.05) 0%, rgba(255,255,255,0) 100%);
-                        padding-left: 1.25rem !important;
-                    }
-                    .activity-item:hover::before {
-                        transform: scaleY(0.7);
-                    }
-                    .activity-item .activity-icon {
-                        transition: all 0.3s ease;
-                    }
-                    .activity-item:hover .activity-icon {
-                        transform: scale(1.15);
-                        color: #059669 !important;
-                    }
-                    .activity-item .bi-chevron-right {
-                        transition: transform 0.3s ease;
-                    }
-                    .activity-item:hover .bi-chevron-right {
-                        transform: translateX(5px);
-                        color: #10b981 !important;
-                        opacity: 1 !important;
-                    }
-                </style>
+                
                 <div class="d-flex flex-column gap-1">
                     <a href="/profile/downloads" class="activity-item d-flex align-items-center justify-content-between text-decoration-none rounded-3">
                         <div class="d-flex align-items-center">
@@ -361,68 +278,7 @@
                 <a href="/profile" class="btn-close" aria-label="Close"></a>
             </div>
 
-            <style>
-                .premium-input {
-                    border: none !important;
-                    border-bottom: 2px solid #e2e8f0 !important;
-                    border-radius: 0 !important;
-                    padding: 6px 0 !important;
-                    background: transparent !important;
-                    font-size: 1.05rem !important;
-                    color: #0f172a !important;
-                    font-weight: 600 !important;
-                    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-                    box-shadow: none !important;
-                }
-                .premium-input:hover {
-                    border-bottom-color: #cbd5e1 !important;
-                    background: linear-gradient(90deg, rgba(16, 185, 129, 0.04) 0%, rgba(255,255,255,0) 100%) !important;
-                    padding-left: 10px !important;
-                }
-                .premium-input:focus {
-                    border-bottom-color: #10b981 !important;
-                    background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(255,255,255,0) 100%) !important;
-                    padding-left: 12px !important;
-                    outline: none !important;
-                    box-shadow: none !important;
-                }
-                .premium-label {
-                    color: #10b981;
-                    letter-spacing: 1px;
-                    font-size: 0.75rem;
-                    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), color 0.3s ease;
-                }
-                .position-relative:hover .premium-label {
-                    transform: translateX(4px);
-                    color: #059669;
-                }
-                .position-relative:focus-within .premium-label {
-                    transform: translateX(6px);
-                    color: #10b981;
-                    font-weight: 800 !important;
-                }
-                .custom-select-dropdown {
-                    animation: customDropdownFadeIn 0.2s ease-out forwards;
-                    background: #ffffff;
-                    border: 1px solid rgba(0,0,0,0.05) !important;
-                }
-                .custom-select-item {
-                    transition: all 0.2s;
-                    color: #334155;
-                }
-                .custom-select-item:hover, .custom-select-item:focus {
-                    background: rgba(16, 185, 129, 0.08);
-                    color: #10b981;
-                    transform: translateX(4px);
-                }
-                .custom-select-item.active {
-                    background: #10b981;
-                    color: #ffffff;
-                }
-                .dropdown-toggle::after {
-                    display: none;
-                }
-            </style>
+            
             <form th:action="@{|/profile?_csrf=${_csrf.token}|}" method="post" enctype="multipart/form-data">
                 <!-- Premium Cover Photo Edit -->
                 <div class="profile-cover mb-4" id="editCoverPhoto" style="position: relative;">
