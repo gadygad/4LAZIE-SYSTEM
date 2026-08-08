@@ -70,7 +70,7 @@ Across Tanzania and East Africa:
 | 🛡️ **Admin Dashboard** | Manage users, notes, subjects, courses, and timetables |
 | 💻 **Device Management** | View all active logged-in devices and remotely log them out |
 | 🚨 **Advanced Security** | Email alerts on password change with emergency lockdown / account suspension link |
-| ✨ **Premium UI/UX** | Glassmorphism, micro-animations, and a highly responsive, modern interface |
+| ✨ **Premium UI/UX** | 3D Hover Cards, Animated Empty States, Glassmorphism Profiles with Social Links, and highly responsive micro-animations |
 
 ---
 
