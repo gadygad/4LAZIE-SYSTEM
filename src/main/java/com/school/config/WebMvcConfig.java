@@ -14,6 +14,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @org.springframework.beans.factory.annotation.Autowired
     private ActiveUserInterceptor activeUserInterceptor;
+    
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("siteVisitInterceptor")
+    private org.springframework.web.servlet.HandlerInterceptor siteVisitInterceptor;
 
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
@@ -26,5 +30,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
         registry.addInterceptor(activeUserInterceptor);
+        registry.addInterceptor(siteVisitInterceptor);
     }
 }

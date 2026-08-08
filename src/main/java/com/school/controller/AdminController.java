@@ -71,8 +71,10 @@ public class AdminController {
     }
 
         private com.school.service.AdminService adminService;
+        
+        private com.school.repository.SiteVisitRepository siteVisitRepository;
 
-    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.service.EmailService emailService, PasswordEncoder passwordEncoder, com.school.repository.PendingActionRepository pendingActionRepository, com.school.repository.ActivityLogRepository activityLogRepository, com.school.util.AuthUtil authUtil, com.school.service.AdminService adminService) {
+    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.service.EmailService emailService, PasswordEncoder passwordEncoder, com.school.repository.PendingActionRepository pendingActionRepository, com.school.repository.ActivityLogRepository activityLogRepository, com.school.util.AuthUtil authUtil, com.school.service.AdminService adminService, com.school.repository.SiteVisitRepository siteVisitRepository) {
         this.userRepository = userRepository;
         this.noteRepository = noteRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
@@ -88,6 +90,7 @@ public class AdminController {
         this.activityLogRepository = activityLogRepository;
         this.authUtil = authUtil;
         this.adminService = adminService;
+        this.siteVisitRepository = siteVisitRepository;
     }
 
 
@@ -112,7 +115,14 @@ public class AdminController {
         long totalUsers = 0;
         long totalNotes = 0;
         Long totalDownloads = 0L;
-        Long totalViews = 0L;
+        
+        // Analytics Defaults
+        Long totalUniqueVisitors = 0L;
+        Long guestVisitors = 0L;
+        Long registeredVisitors = 0L;
+        Long mobileVisitors = 0L;
+        Long desktopVisitors = 0L;
+
         List<User> recentUsers = java.util.Collections.emptyList();
         List<Note> popularNotes = java.util.Collections.emptyList();
         List<com.school.model.ActivityLog> recentLogs = java.util.Collections.emptyList();
@@ -132,11 +142,27 @@ public class AdminController {
         } catch (Exception e) {
             log.warn("Failed to get download count: {}", e.getMessage(), e);
         }
+        
+        // Fetch Site Analytics
         try {
-            totalViews = noteRepository.getTotalViewCount();
+            totalUniqueVisitors = siteVisitRepository.countTotalUniqueVisitors();
+            if (totalUniqueVisitors == null) totalUniqueVisitors = 0L;
+            
+            guestVisitors = siteVisitRepository.countGuestVisitors();
+            if (guestVisitors == null) guestVisitors = 0L;
+            
+            registeredVisitors = siteVisitRepository.countRegisteredVisitors();
+            if (registeredVisitors == null) registeredVisitors = 0L;
+            
+            mobileVisitors = siteVisitRepository.countMobileVisitors();
+            if (mobileVisitors == null) mobileVisitors = 0L;
+            
+            desktopVisitors = siteVisitRepository.countDesktopVisitors();
+            if (desktopVisitors == null) desktopVisitors = 0L;
         } catch (Exception e) {
-            log.warn("Failed to get view count: {}", e.getMessage(), e);
+            log.warn("Failed to get site analytics: {}", e.getMessage(), e);
         }
+        
         try {
             recentUsers = userRepository.findTop5ByOrderByDateJoinedDesc();
         } catch (Exception e) {
@@ -156,14 +182,20 @@ public class AdminController {
             log.warn("Failed to get activity logs: {}", e.getMessage(), e);
         }
         
-        log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, Views: {}, RecentUsers: {}, PopularNotes: {}, Logs: {}",
-                totalUsers, totalNotes, totalDownloads, totalViews, 
-                recentUsers.size(), popularNotes.size(), recentLogs.size());
+        log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, UniqueVisitors: {}",
+                totalUsers, totalNotes, totalDownloads, totalUniqueVisitors);
         
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalNotes", totalNotes);
         model.addAttribute("totalDownloads", totalDownloads != null ? totalDownloads : 0L);
-        model.addAttribute("totalViews", totalViews != null ? totalViews : 0L);
+        
+        // Pass Analytics to view
+        model.addAttribute("totalUniqueVisitors", totalUniqueVisitors);
+        model.addAttribute("guestVisitors", guestVisitors);
+        model.addAttribute("registeredVisitors", registeredVisitors);
+        model.addAttribute("mobileVisitors", mobileVisitors);
+        model.addAttribute("desktopVisitors", desktopVisitors);
+        
         model.addAttribute("recentUsers", recentUsers);
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("recentLogs", recentLogs);

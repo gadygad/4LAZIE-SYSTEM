@@ -30,6 +30,14 @@
     <link rel="stylesheet" th:href="@{/css/dashboard-layout.css?v=1}">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <style>
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+    </style>
 </head>
 <body>
 
@@ -122,19 +130,59 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Total Views -->
+                    <!-- Unique Visitors -->
                     <div class="col-md-6 col-xl-3">
                         <div class="premium-stat-card">
                             <div class="stat-icon-wrapper" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                                <i class="bi bi-eye-fill"></i>
+                                <i class="bi bi-fingerprint"></i>
                             </div>
                             <div>
-                                <p class="stat-label">Total Views</p>
-                                <h3 class="stat-value" th:text="${totalViews}">0</h3>
+                                <p class="stat-label">Unique Visitors</p>
+                                <h3 class="stat-value" th:text="${totalUniqueVisitors}">0</h3>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Unique Visitor Analytics (NEW) -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="premium-list-card p-4" style="background: linear-gradient(145deg, #ffffff, #f8fafc); border-left: 4px solid #8b5cf6; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                            <div class="d-flex align-items-center mb-3">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(139, 92, 246, 0.1); display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 1.1rem; margin-right: 12px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                                    <i class="bi bi-radar"></i>
+                                </div>
+                                <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.75rem !important; letter-spacing: 1.5px;">Live Visitor Tracking</h5>
+                                <span class="badge bg-success ms-3 rounded-pill" style="animation: pulse 2s infinite; font-size: 0.65rem; padding: 0.4em 0.8em; letter-spacing: 1px;">LIVE</span>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-3 col-6">
+                                    <div class="p-3 rounded" style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-incognito me-1"></i> Guest Visitors</div>
+                                        <h4 class="mb-0 fw-bolder" style="color: #8b5cf6;" th:text="${guestVisitors}">0</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="p-3 rounded" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-person-check-fill me-1"></i> Registered</div>
+                                        <h4 class="mb-0 fw-bolder" style="color: #10b981;" th:text="${registeredVisitors}">0</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="p-3 rounded" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-phone me-1"></i> Mobile Devices</div>
+                                        <h4 class="mb-0 fw-bolder" style="color: #3b82f6;" th:text="${mobileVisitors}">0</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="p-3 rounded" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-laptop me-1"></i> Desktop</div>
+                                        <h4 class="mb-0 fw-bolder" style="color: #f59e0b;" th:text="${desktopVisitors}">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 <!-- Charts Section (NEW) -->
                 <div class="row g-4 mb-5">
