@@ -25,6 +25,13 @@ public class SiteVisit {
     
     private boolean registeredUser; // True if they have a logged in session
     
+    // Deep Tracing fields
+    private String userId;
+    private String userName;
+    private String userRole;
+    private String courseName;
+    private String institutionName;
+
     private LocalDateTime timestamp;
 
     public SiteVisit() {
@@ -105,6 +112,46 @@ public class SiteVisit {
 
     public void setRegisteredUser(boolean registeredUser) {
         this.registeredUser = registeredUser;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getInstitutionName() {
+        return institutionName;
+    }
+
+    public void setInstitutionName(String institutionName) {
+        this.institutionName = institutionName;
     }
 
     public LocalDateTime getTimestamp() {

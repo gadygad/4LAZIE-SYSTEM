@@ -122,6 +122,8 @@ public class AdminController {
         Long registeredVisitors = 0L;
         Long mobileVisitors = 0L;
         Long desktopVisitors = 0L;
+        Long guestViews = 0L;
+        Long guestDownloads = 0L;
 
         List<User> recentUsers = java.util.Collections.emptyList();
         List<Note> popularNotes = java.util.Collections.emptyList();
@@ -150,6 +152,12 @@ public class AdminController {
             
             guestVisitors = siteVisitRepository.countGuestVisitors();
             if (guestVisitors == null) guestVisitors = 0L;
+            
+            guestViews = siteVisitRepository.countGuestViews();
+            if (guestViews == null) guestViews = 0L;
+            
+            guestDownloads = siteVisitRepository.countGuestDownloads();
+            if (guestDownloads == null) guestDownloads = 0L;
             
             registeredVisitors = siteVisitRepository.countRegisteredVisitors();
             if (registeredVisitors == null) registeredVisitors = 0L;
@@ -192,6 +200,8 @@ public class AdminController {
         // Pass Analytics to view
         model.addAttribute("totalUniqueVisitors", totalUniqueVisitors);
         model.addAttribute("guestVisitors", guestVisitors);
+        model.addAttribute("guestViews", guestViews);
+        model.addAttribute("guestDownloads", guestDownloads);
         model.addAttribute("registeredVisitors", registeredVisitors);
         model.addAttribute("mobileVisitors", mobileVisitors);
         model.addAttribute("desktopVisitors", desktopVisitors);

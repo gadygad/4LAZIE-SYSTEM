@@ -43,4 +43,22 @@ public interface SiteVisitRepository extends MongoRepository<SiteVisit, String> 
             "{ '$count': 'desktopVisitors' }"
     })
     Long countDesktopVisitors();
+
+    @Aggregation(pipeline = {
+            "{ '$match': { 'registeredUser': false, 'visitedUrl': { '$regex': '^/view/', '$options': 'i' } } }",
+            "{ '$count': 'guestViews' }"
+    })
+    Long countGuestViews();
+
+    @Aggregation(pipeline = {
+            "{ '$match': { 'registeredUser': false, 'visitedUrl': { '$regex': '^/download/', '$options': 'i' } } }",
+            "{ '$count': 'guestDownloads' }"
+    })
+    Long countGuestDownloads();
+
+    List<SiteVisit> findTop20ByTimestampAfterOrderByTimestampDesc(java.time.LocalDateTime timestamp);
+
+    List<SiteVisit> findTop20ByVisitedUrlContainingIgnoreCaseAndTimestampAfterOrderByTimestampDesc(String urlPart, java.time.LocalDateTime timestamp);
+
+    List<SiteVisit> findTop20ByUserNameContainingIgnoreCaseAndTimestampAfterOrderByTimestampDesc(String userName, java.time.LocalDateTime timestamp);
 }

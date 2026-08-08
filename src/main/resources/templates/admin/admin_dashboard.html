@@ -37,6 +37,101 @@
             70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
+        
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        body { 
+            background: linear-gradient(135deg, #f0f4ff 0%, #eef2ff 100%); 
+        }
+
+        .premium-stat-card, .premium-list-card, .hover-lift {
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .premium-stat-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-20deg);
+            transition: all 0.7s ease;
+        }
+        .premium-stat-card:hover::before {
+            left: 150%;
+        }
+
+        .premium-stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.12);
+            border-color: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .premium-stat-card .stat-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.7), 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .premium-stat-card .stat-label {
+            font-family: 'Inter', sans-serif;
+            color: #64748b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .premium-stat-card .stat-value {
+            font-family: 'Outfit', sans-serif;
+            color: #0f172a;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 0;
+            line-height: 1;
+        }
+        .premium-list-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .hover-lift {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.6) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.7) !important;
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +191,7 @@
                 <div class="row g-3 mb-3">
                     <!-- Total Users -->
                     <div class="col-md-6 col-xl-3">
-                        <div class="premium-stat-card">
+                        <div class="premium-stat-card" data-bs-toggle="offcanvas" data-bs-target="#liveUsersOffcanvas" style="cursor: pointer;" title="Live Analytics: Total Users">
                             <div class="stat-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
                                 <i class="bi bi-people-fill"></i>
                             </div>
@@ -108,7 +203,7 @@
                     </div>
                     <!-- Total Notes -->
                     <div class="col-md-6 col-xl-3">
-                        <div class="premium-stat-card">
+                        <div class="premium-stat-card" data-bs-toggle="offcanvas" data-bs-target="#liveNotesOffcanvas" style="cursor: pointer;" title="Live Analytics: Note Views">
                             <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
                                 <i class="bi bi-file-earmark-text-fill"></i>
                             </div>
@@ -120,7 +215,7 @@
                     </div>
                     <!-- Total Downloads -->
                     <div class="col-md-6 col-xl-3">
-                        <div class="premium-stat-card">
+                        <div class="premium-stat-card" data-bs-toggle="offcanvas" data-bs-target="#liveDownloadsOffcanvas" style="cursor: pointer;" title="Live Analytics: Downloads">
                             <div class="stat-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
                                 <i class="bi bi-cloud-arrow-down-fill"></i>
                             </div>
@@ -132,7 +227,7 @@
                     </div>
                     <!-- Unique Visitors -->
                     <div class="col-md-6 col-xl-3">
-                        <div class="premium-stat-card">
+                        <div class="premium-stat-card" data-bs-toggle="offcanvas" data-bs-target="#liveVisitorsOffcanvas" style="cursor: pointer;" title="Live Analytics: Traffic & Devices">
                             <div class="stat-icon-wrapper" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
                                 <i class="bi bi-fingerprint"></i>
                             </div>
@@ -156,28 +251,40 @@
                                 <span class="badge bg-success ms-3 rounded-pill" style="animation: pulse 2s infinite; font-size: 0.65rem; padding: 0.4em 0.8em; letter-spacing: 1px;">LIVE</span>
                             </div>
                             <div class="row g-3">
-                                <div class="col-md-3 col-6">
-                                    <div class="p-3 rounded" style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.15);">
-                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-incognito me-1"></i> Guest Visitors</div>
+                                <div class="col-md-2 col-6">
+                                    <div class="p-3 rounded h-100 hover-lift" style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-incognito me-1"></i> Guests</div>
                                         <h4 class="mb-0 fw-bolder" style="color: #8b5cf6;" th:text="${guestVisitors}">0</h4>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <div class="p-3 rounded" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15);">
+                                <div class="col-md-2 col-6">
+                                    <div class="p-3 rounded h-100 hover-lift" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15);">
                                         <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-person-check-fill me-1"></i> Registered</div>
                                         <h4 class="mb-0 fw-bolder" style="color: #10b981;" th:text="${registeredVisitors}">0</h4>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <div class="p-3 rounded" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15);">
-                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-phone me-1"></i> Mobile Devices</div>
+                                <div class="col-md-2 col-6">
+                                    <div class="p-3 rounded h-100 hover-lift" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-eye me-1"></i> Guest Views</div>
+                                        <h4 class="mb-0 fw-bolder" style="color: #ef4444;" th:text="${guestViews}">0</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-6">
+                                    <div class="p-3 rounded h-100 hover-lift" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-download me-1"></i> Guest Dloads</div>
+                                        <h4 class="mb-0 fw-bolder" style="color: #f59e0b;" th:text="${guestDownloads}">0</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-6">
+                                    <div class="p-3 rounded h-100 hover-lift" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15);">
+                                        <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-phone me-1"></i> Mobile</div>
                                         <h4 class="mb-0 fw-bolder" style="color: #3b82f6;" th:text="${mobileVisitors}">0</h4>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <div class="p-3 rounded" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15);">
+                                <div class="col-md-2 col-6">
+                                    <div class="p-3 rounded h-100 hover-lift" style="background: rgba(100, 116, 139, 0.05); border: 1px solid rgba(100, 116, 139, 0.15);">
                                         <div class="text-muted small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"><i class="bi bi-laptop me-1"></i> Desktop</div>
-                                        <h4 class="mb-0 fw-bolder" style="color: #f59e0b;" th:text="${desktopVisitors}">0</h4>
+                                        <h4 class="mb-0 fw-bolder" style="color: #64748b;" th:text="${desktopVisitors}">0</h4>
                                     </div>
                                 </div>
                             </div>
@@ -349,6 +456,103 @@
 
             </div>
 
+            <!-- ================= LIVE TRACING OFFCANVAS PANELS ================= -->
+            
+            <style>
+                .glass-offcanvas {
+                    background: rgba(236, 253, 245, 0.95) !important;
+                    backdrop-filter: blur(25px) !important;
+                    -webkit-backdrop-filter: blur(25px) !important;
+                    border-left: 2px solid rgba(16, 185, 129, 0.5) !important;
+                    width: 450px !important;
+                    box-shadow: -10px 0 40px rgba(0,0,0,0.15) !important;
+                }
+                .glass-offcanvas .offcanvas-header h5 {
+                    color: #064e3b !important;
+                    font-weight: 800 !important;
+                }
+                .live-log-item {
+                    animation: slideUpFade 0.4s ease-out both;
+                    background: #ffffff !important;
+                    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+                    border-left: 5px solid #10b981 !important;
+                    border-radius: 12px !important;
+                    padding: 15px !important;
+                    margin-bottom: 12px !important;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+                    color: #000000 !important;
+                }
+                .live-log-item .text-muted, .live-log-item .text-secondary {
+                    color: #334155 !important;
+                    font-weight: 600 !important;
+                }
+                .live-log-item .text-dark {
+                    color: #000000 !important;
+                    font-weight: 700 !important;
+                }
+                .blinking-dot {
+                    width: 10px; height: 10px; border-radius: 50%;
+                    background-color: #ef4444; display: inline-block;
+                    animation: pulse-red 1.5s infinite;
+                }
+                @keyframes pulse-red {
+                    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                }
+            </style>
+
+            <!-- 1. Live Users -->
+            <div class="offcanvas offcanvas-end glass-offcanvas" tabindex="-1" id="liveUsersOffcanvas">
+                <div class="offcanvas-header border-bottom border-light flex-column align-items-start pb-2">
+                    <div class="d-flex justify-content-between w-100 mb-3">
+                        <h5 class="fw-bolder mb-0 text-primary"><span class="blinking-dot me-2"></span> LIVE USERS</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                    </div>
+                    <!-- Live Search Engine -->
+                    <div class="w-100 position-relative">
+                        <i class="bi bi-search position-absolute top-50 translate-middle-y text-primary" style="left: 12px; font-weight: bold;"></i>
+                        <input type="text" id="liveUsersSearchBox" class="form-control form-control-sm border-primary" style="padding-left: 35px; border-radius: 20px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #1e293b; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);" placeholder="Search by name... (Live)" autocomplete="off">
+                    </div>
+                </div>
+                <div class="offcanvas-body p-4" id="liveUsersBody">
+                    <div class="text-center text-muted mt-5"><div class="spinner-border spinner-border-sm me-2"></div> Connecting to Live Stream...</div>
+                </div>
+            </div>
+
+            <!-- 2. Live Notes Views -->
+            <div class="offcanvas offcanvas-end glass-offcanvas" tabindex="-1" id="liveNotesOffcanvas">
+                <div class="offcanvas-header border-bottom border-light">
+                    <h5 class="fw-bolder mb-0 text-success"><span class="blinking-dot me-2"></span> LIVE NOTE VIEWS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body p-4" id="liveNotesBody">
+                    <div class="text-center text-muted mt-5"><div class="spinner-border spinner-border-sm me-2"></div> Connecting to Live Stream...</div>
+                </div>
+            </div>
+
+            <!-- 3. Live Downloads -->
+            <div class="offcanvas offcanvas-end glass-offcanvas" tabindex="-1" id="liveDownloadsOffcanvas">
+                <div class="offcanvas-header border-bottom border-light">
+                    <h5 class="fw-bolder mb-0 text-warning"><span class="blinking-dot me-2"></span> LIVE DOWNLOADS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body p-4" id="liveDownloadsBody">
+                    <div class="text-center text-muted mt-5"><div class="spinner-border spinner-border-sm me-2"></div> Connecting to Live Stream...</div>
+                </div>
+            </div>
+
+            <!-- 4. Unique Visitors -->
+            <div class="offcanvas offcanvas-end glass-offcanvas" tabindex="-1" id="liveVisitorsOffcanvas">
+                <div class="offcanvas-header border-bottom border-light">
+                    <h5 class="fw-bolder mb-0" style="color: #8b5cf6;"><span class="blinking-dot me-2"></span> LIVE TRAFFIC & DEVICES</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body p-4" id="liveVisitorsBody">
+                    <div class="text-center text-muted mt-5"><div class="spinner-border spinner-border-sm me-2"></div> Connecting to Live Stream...</div>
+                </div>
+            </div>
+
             <!-- Offcanvas Admin Sidebar -->
             <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='analytics')}"></div>
         </div>
@@ -360,7 +564,190 @@
     </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+
+    <!-- LIVE TRACING AJAX POLLING SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let activePollingInterval = null;
+            function formatTime(isoString) {
+                if(!isoString) return 'Just now';
+                const date = new Date(isoString);
+                return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            }
+            // -----------------------------------------
+            // LIVE STREAMING / POLLING SYSTEM WITH SEARCH
+            // -----------------------------------------
+            let currentSearchTerm = '';
+
+            // Setup search listener
+            const searchBox = document.getElementById('liveUsersSearchBox');
+            if (searchBox) {
+                searchBox.addEventListener('input', (e) => {
+                    currentSearchTerm = e.target.value.trim();
+                    // Trigger an immediate fetch when they type
+                    if (activePollingInterval) {
+                        fetchLiveStream('/admin/api/live/users', 'liveUsersBody', renderUser);
+                    }
+                });
+            }
+
+            function fetchLiveStream(endpointUrl, containerId, renderFunction) {
+                let finalUrl = endpointUrl;
+                if (endpointUrl === '/admin/api/live/users' && currentSearchTerm !== '') {
+                    finalUrl += '?search=' + encodeURIComponent(currentSearchTerm);
+                }
+
+                fetch(finalUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const container = document.getElementById(containerId);
+                        if(data.length === 0) {
+                            container.innerHTML = '<div class="text-center text-muted mt-5 p-4 rounded-4" style="background: rgba(0,0,0,0.02);"><i class="bi bi-inbox fs-1 mb-3 d-block"></i> No live activity in the last 15 minutes.</div>';
+                            return;
+                        }
+                        
+                        let htmlStr = '';
+                        data.forEach(item => {
+                            htmlStr += renderFunction(item);
+                        });
+                        container.innerHTML = htmlStr;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching live data:', error);
+                    });
+            }
+
+            function startPolling(endpointUrl, containerId, renderFunction) {
+                // Fetch immediately
+                fetchLiveStream(endpointUrl, containerId, renderFunction);
+                // Then fetch every 1.5 seconds
+                activePollingInterval = setInterval(() => {
+                    fetchLiveStream(endpointUrl, containerId, renderFunction);
+                }, 1500);
+            }
+
+            function stopPolling() {
+                if (activePollingInterval) {
+                    clearInterval(activePollingInterval);
+                    activePollingInterval = null;
+                }
+            }
+
+            // Render Functions
+            const renderUserIdentity = (visit) => {
+                if (visit.registeredUser && visit.userName) {
+                    const roleBadge = visit.userRole ? `<span class="badge ms-2" style="background-color: #10b981; color: white; font-size: 0.65rem; border-radius: 4px; padding: 3px 6px;">${visit.userRole}</span>` : '';
+                    return `
+                        <div class="mb-2 p-2 rounded" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: inset 0 2px 10px rgba(255,255,255,0.5), 0 2px 5px rgba(0,0,0,0.02);">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle fs-3 me-2" style="color: #047857 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"></i>
+                                <div style="flex-grow: 1;">
+                                    <div class="d-flex align-items-center">
+                                        <a href="/admin/users/${visit.userId}/profile" style="color: #065f46 !important; font-weight: 800; font-size: 0.95rem; text-decoration: none; border-bottom: 2px solid #059669; transition: all 0.2s; cursor: pointer;">
+                                            ${visit.userName}
+                                        </a>
+                                        ${roleBadge}
+                                    </div>
+                                    <div class="mt-1" style="font-size: 0.75rem; font-weight: 600; color: #334155 !important;">
+                                        <i class="bi bi-mortarboard-fill" style="color: #0f766e;"></i> ${visit.courseName || 'No Course'} 
+                                        <span class="mx-1" style="color: #10b981;">•</span> 
+                                        <i class="bi bi-building-fill" style="color: #0f766e;"></i> ${visit.institutionName || 'No Institution'}
+                                    </div>
+                                </div>
+                                <a href="/admin/users/${visit.userId}/profile" class="btn btn-sm btn-light border-0" style="background: rgba(255,255,255,0.6); color: #047857;" title="View Profile">
+                                    <i class="bi bi-box-arrow-up-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                return '';
+            };
+
+            const renderUser = (visit) => `
+                <div class="live-log-item">
+                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light">
+                        <strong class="text-dark"><i class="bi bi-globe me-1 text-primary"></i> ${visit.ipAddress || 'Unknown IP'}</strong>
+                        <span class="badge ${visit.registeredUser ? 'bg-success' : 'bg-secondary'}">${visit.registeredUser ? 'Registered' : 'Guest'}</span>
+                    </div>
+                    ${renderUserIdentity(visit)}
+                    <div class="small text-secondary mb-2 mt-2"><i class="bi bi-compass"></i> Path: <strong class="text-dark">${visit.visitedUrl}</strong></div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span><i class="bi ${visit.deviceType === 'Mobile' ? 'bi-phone' : 'bi-laptop'}"></i> ${visit.deviceType} / ${visit.browser}</span>
+                        <span><i class="bi bi-clock"></i> ${formatTime(visit.timestamp)}</span>
+                    </div>
+                </div>
+            `;
+
+            const renderNoteView = (visit) => `
+                <div class="live-log-item">
+                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light">
+                        <strong class="text-success"><i class="bi bi-book me-1"></i> Note View</strong>
+                        <span class="small fw-bold text-muted">${formatTime(visit.timestamp)}</span>
+                    </div>
+                    ${renderUserIdentity(visit)}
+                    <div class="small text-dark mb-2 text-truncate" style="max-width:300px;">Path: <span class="fw-medium">${visit.visitedUrl}</span></div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span><i class="bi bi-hdd-network"></i> IP: ${visit.ipAddress}</span>
+                        <span class="badge bg-light text-dark border">${visit.browser}</span>
+                    </div>
+                </div>
+            `;
+
+            const renderDownload = (visit) => `
+                <div class="live-log-item" style="border-left-color: #f59e0b;">
+                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light">
+                        <strong class="text-warning"><i class="bi bi-download me-1"></i> Resource Downloaded</strong>
+                        <span class="small fw-bold text-muted">${formatTime(visit.timestamp)}</span>
+                    </div>
+                    ${renderUserIdentity(visit)}
+                    <div class="small text-dark mb-2 text-truncate fw-bold" style="max-width:300px; font-family: monospace;">${visit.visitedUrl}</div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span><i class="bi bi-shield-check"></i> IP: ${visit.ipAddress}</span>
+                        <span>${visit.os}</span>
+                    </div>
+                </div>
+            `;
+
+            const renderVisitor = (visit) => `
+                <div class="live-log-item" style="border-left-color: #8b5cf6;">
+                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light">
+                        <strong style="color: #8b5cf6;"><i class="bi bi-radar me-1"></i> Endpoint Hit</strong>
+                        <span class="small fw-bold text-muted">${formatTime(visit.timestamp)}</span>
+                    </div>
+                    ${renderUserIdentity(visit)}
+                    <div class="small text-muted mb-2 mt-2">OS: <strong class="text-dark">${visit.os}</strong> | Browser: <strong class="text-dark">${visit.browser}</strong></div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span><i class="bi bi-diagram-3"></i> IP: ${visit.ipAddress}</span>
+                        <span class="badge ${visit.deviceType === 'Mobile' ? 'bg-primary' : 'bg-info text-dark'}">${visit.deviceType}</span>
+                    </div>
+                </div>
+            `;
+
+            // Offcanvas Event Listeners
+            const modals = [
+                { id: 'liveUsersOffcanvas', api: '/admin/api/live/users', renderer: renderUser, bodyId: 'liveUsersBody' },
+                { id: 'liveNotesOffcanvas', api: '/admin/api/live/notes', renderer: renderNoteView, bodyId: 'liveNotesBody' },
+                { id: 'liveDownloadsOffcanvas', api: '/admin/api/live/downloads', renderer: renderDownload, bodyId: 'liveDownloadsBody' },
+                { id: 'liveVisitorsOffcanvas', api: '/admin/api/live/visitors', renderer: renderVisitor, bodyId: 'liveVisitorsBody' }
+            ];
+
+            modals.forEach(modalConfig => {
+                const offcanvasElement = document.getElementById(modalConfig.id);
+                if(offcanvasElement) {
+                    offcanvasElement.addEventListener('show.bs.offcanvas', function () {
+                        document.getElementById(modalConfig.bodyId).innerHTML = '<div class="text-center text-muted mt-5"><div class="spinner-border spinner-border-sm me-2"></div> Initializing Live Stream...</div>';
+                        startPolling(modalConfig.api, modalConfig.bodyId, modalConfig.renderer);
+                    });
+                    offcanvasElement.addEventListener('hidden.bs.offcanvas', function () {
+                        stopPolling();
+                        document.getElementById(modalConfig.bodyId).innerHTML = '<div class="text-center text-muted mt-5">Stream Paused.</div>';
+                    });
+                }
+            });
+        });
+    </script>
 
     <!-- Chart.js Initialization -->
     <script>

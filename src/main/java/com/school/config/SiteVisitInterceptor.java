@@ -1,7 +1,9 @@
 package com.school.config;
 
 import com.school.model.SiteVisit;
+import com.school.model.User;
 import com.school.repository.SiteVisitRepository;
+import com.school.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,9 +21,11 @@ import java.util.concurrent.CompletableFuture;
 public class SiteVisitInterceptor implements HandlerInterceptor {
 
     private final SiteVisitRepository siteVisitRepository;
+    private final UserRepository userRepository;
 
-    public SiteVisitInterceptor(SiteVisitRepository siteVisitRepository) {
+    public SiteVisitInterceptor(SiteVisitRepository siteVisitRepository, UserRepository userRepository) {
         this.siteVisitRepository = siteVisitRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -50,18 +55,46 @@ public class SiteVisitInterceptor implements HandlerInterceptor {
         String deviceType = determineDeviceType(rawUserAgent);
         String browser = determineBrowser(rawUserAgent);
         String os = determineOS(rawUserAgent);
-        boolean isRegisteredUser = isUserLoggedIn();
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isRegisteredUser = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
+        
+        String userId = null;
+        String userName = null;
+        String userRole = null;
+        String courseName = null;
+        String institutionName = null;
+        
+        if (isRegisteredUser) {
+            String email = auth.getName();
+            Optional<User> userOpt = userRepository.findByEmail(email);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                userId = user.getId();
+                userName = user.getName();
+                userRole = user.getRole() != null ? user.getRole().name() : "STUDENT";
+                courseName = user.getCourseProgram();
+                if (user.getInstitution() != null) {
+                    institutionName = user.getInstitution().getShortName() != null ? user.getInstitution().getShortName() : user.getInstitution().getName();
+                }
+            }
+        }
 
         // Save asynchronously to ensure zero impact on page load times ("uchawi wa kiwango cha juu")
-        saveVisitAsync(visitorId, ipAddress, deviceType, browser, os, uri, isRegisteredUser);
+        saveVisitAsync(visitorId, ipAddress, deviceType, browser, os, uri, isRegisteredUser, userId, userName, userRole, courseName, institutionName);
 
         return true;
     }
 
     @Async
-    public void saveVisitAsync(String visitorId, String ipAddress, String deviceType, String browser, String os, String uri, boolean isRegisteredUser) {
+    public void saveVisitAsync(String visitorId, String ipAddress, String deviceType, String browser, String os, String uri, boolean isRegisteredUser, String userId, String userName, String userRole, String courseName, String institutionName) {
         try {
             SiteVisit visit = new SiteVisit(visitorId, ipAddress, deviceType, browser, os, uri, isRegisteredUser);
+            visit.setUserId(userId);
+            visit.setUserName(userName);
+            visit.setUserRole(userRole);
+            visit.setCourseName(courseName);
+            visit.setInstitutionName(institutionName);
             siteVisitRepository.save(visit);
         } catch (Exception e) {
             // Ignore exceptions to not break the app if MongoDB has a hiccup

@@ -1,21 +1,17 @@
-const CACHE_NAME = '4lazie-cache-v4';
+// Service Worker v10 - Network-First for all dynamic content
+const CACHE_NAME = '4lazie-cache-v10';
 const OFFLINE_URL = '/offline.html';
 
-const urlsToCache = [
-  '/',
+// Only cache truly static rarely-changing assets
+const urlsToPreCache = [
   OFFLINE_URL,
-  '/css/global-premium.css',
-  '/css/dashboard-premium.css',
-  '/css/premium-theme.css',
-  '/images/logo.png',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800;900&display=swap'
+  '/images/logo.png'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+      .then(cache => cache.addAll(urlsToPreCache))
       .then(() => self.skipWaiting())
   );
 });
@@ -25,7 +21,9 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
+          // Delete ALL old caches
           if (cacheName !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -37,23 +35,22 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url);
 
-  // For Cloudinary files, PDFs, or /download endpoint, use Cache-First, fallback to Network
-  if (requestUrl.pathname.includes('/download/') || requestUrl.hostname.includes('res.cloudinary.com') || requestUrl.pathname.endsWith('.pdf')) {
+  // For Cloudinary files, PDFs, or /download endpoint, use Cache-First
+  if (
+    requestUrl.pathname.includes('/download/') ||
+    requestUrl.hostname.includes('res.cloudinary.com') ||
+    requestUrl.pathname.endsWith('.pdf')
+  ) {
     event.respondWith(
       caches.match(event.request).then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+        if (cachedResponse) return cachedResponse;
         return fetch(event.request).then(networkResponse => {
           if (networkResponse && networkResponse.status === 200) {
             const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, responseToCache);
-            });
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
           }
           return networkResponse;
         }).catch(() => {
-          // If offline and not in cache, let it fail silently or return a default offline document if suitable
           return new Response('Offline: Resource not cached.', { status: 503, statusText: 'Service Unavailable' });
         });
       })
@@ -61,50 +58,63 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (event.request.mode === 'navigate') {
-    // Page navigations -> Network First, fallback to cache, then offline.html
+  // For JS, CSS, HTML (application pages), and API calls - ALWAYS Network First
+  // This ensures users always get the latest code updates
+  if (
+    requestUrl.pathname.endsWith('.js') ||
+    requestUrl.pathname.endsWith('.css') ||
+    event.request.mode === 'navigate' ||
+    requestUrl.pathname.startsWith('/api/')
+  ) {
     event.respondWith(
       fetch(event.request).then(networkResponse => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
-        }
         return networkResponse;
       }).catch(() => {
         return caches.match(event.request).then(cachedResponse => {
-          if (cachedResponse) {
-            return cachedResponse;
+          if (cachedResponse) return cachedResponse;
+          if (event.request.mode === 'navigate') {
+            return caches.match(OFFLINE_URL);
           }
-          return caches.match(OFFLINE_URL);
+          return new Response('', { status: 503 });
         });
       })
     );
-  } else {
-    // Static assets -> Cache First, fallback to Network with dynamic caching
-    event.respondWith(
-      caches.match(event.request)
-        .then(cachedResponse => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          return fetch(event.request).then(networkResponse => {
-            // Do not cache non-GET requests or partial responses
-            if (!networkResponse || networkResponse.status !== 200 || event.request.method !== 'GET') {
-              return networkResponse;
-            }
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, responseToCache);
-            });
-            return networkResponse;
-          });
-        })
-    );
+    return;
   }
-});
 
+  // For images - Cache First with network fallback
+  if (
+    requestUrl.pathname.endsWith('.png') ||
+    requestUrl.pathname.endsWith('.jpg') ||
+    requestUrl.pathname.endsWith('.jpeg') ||
+    requestUrl.pathname.endsWith('.svg') ||
+    requestUrl.pathname.endsWith('.webp') ||
+    requestUrl.pathname.endsWith('.ico')
+  ) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) return cachedResponse;
+        return fetch(event.request).then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+          }
+          return networkResponse;
+        });
+      })
+    );
+    return;
+  }
+
+  // Default: Network First, fallback to cache
+  event.respondWith(
+    fetch(event.request).then(networkResponse => {
+      return networkResponse;
+    }).catch(() => {
+      return caches.match(event.request);
+    })
+  );
+});
 
 self.addEventListener('push', event => {
   let data = {};
@@ -122,9 +132,7 @@ self.addEventListener('push', event => {
     badge: '/images/logo.png',
     data: { url: data.url || '/' }
   };
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener('notificationclick', event => {

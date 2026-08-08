@@ -270,7 +270,20 @@
             let mobileSidebarEl = document.getElementById('mobileSidebar');
             if (mobileSidebarEl && document.body.classList.contains('sidebar-is-open')) {
                 if (!mobileSidebarEl.contains(event.target) && !event.target.closest('[data-bs-toggle="offcanvas"]')) {
-                    try { let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl) || new bootstrap.Offcanvas(mobileSidebarEl); bsOffcanvas.hide(); } catch (e) { console.error("Offcanvas close error:", e); }
+                    try {
+                        if (window.bootstrap && window.bootstrap.Offcanvas) {
+                            let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl) || new bootstrap.Offcanvas(mobileSidebarEl);
+                            bsOffcanvas.hide();
+                        } else {
+                            // Fallback: manual close
+                            mobileSidebarEl.classList.remove('show');
+                            mobileSidebarEl.style.transform = 'translateX(-100%)';
+                            document.body.style.overflow = '';
+                            document.body.classList.remove('sidebar-is-open');
+                            const backdrop = document.getElementById('offcanvasManualBackdrop');
+                            if (backdrop) backdrop.remove();
+                        }
+                    } catch (e) { console.warn("Offcanvas close error:", e); }
                 }
             }
         });
