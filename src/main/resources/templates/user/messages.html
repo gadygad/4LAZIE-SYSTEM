@@ -1093,19 +1093,7 @@
         });
     </script>
     <script>
-        document.addEventListener("click", function(e) {
-            const toggleEl = e.target.closest('[data-bs-toggle="dropdown"]');
-            if (toggleEl) {
-                e.preventDefault();
-                e.stopPropagation();
-                try {
-                    const dropdown = bootstrap.Dropdown.getInstance(toggleEl) || new bootstrap.Dropdown(toggleEl);
-                    dropdown.toggle();
-                } catch (err) {
-                    console.error("Dropdown error:", err);
-                }
-            }
-        });
+        // Custom dropdown handler removed to allow native Bootstrap 5 initialization.
     </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script></body>
 </html>

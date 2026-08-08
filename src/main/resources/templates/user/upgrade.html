@@ -65,15 +65,11 @@
 </head>
 <body class="bg-light">
 
-    <!-- Header Navbar -->
-    <nav class="navbar navbar-dark navbar-custom sticky-top py-1">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" th:href="${session.user != null ? '/dashboard' : '/'}">
-                <span class="brand-font fs-3 fw-bold"><i class="bi bi-journal-text text-dark me-2"></i>4LAZIE</span>
-            </a>
-            <div th:replace="~{fragments/top_actions :: actions}"></div>
-        </div>
-    </nav>
+    <!-- Insert Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
     <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
     <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>

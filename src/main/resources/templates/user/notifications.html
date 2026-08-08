@@ -118,33 +118,13 @@
 
 <body>
     <div class="page-layout">
-        <!-- Offcanvas Sidebar for Mobile -->
-        <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
-            <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <h5 class="offcanvas-title text-white" id="mobileOffcanvasSidebarLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: -1px;">4LAZIE</h5>
-                <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body p-0" style="overflow-x: hidden;">
-                <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-            </div>
-        </div>
+        <!-- Insert Navbar -->
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        
+        <!-- Mobile Sidebar -->
+        <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
         <div class="main-content flex-grow-1">
-            <!-- Header Navigation -->
-            <nav class="navbar navbar-light navbar-custom sticky-top py-1" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020; border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);">
-                <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-                    <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar" aria-controls="mobileOffcanvasSidebar" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-                        <i class="bi bi-list fs-4"></i>
-                    </button>
-                    <a class="navbar-brand d-flex align-items-center" th:href="${session.user != null ? '/dashboard' : '/'}" style="text-decoration: none;">
-                        <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
-                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
-                    </div>
-                    </a>
-                    
-                    <div th:replace="~{fragments/top_actions :: actions}"></div>
-                </div>
-            </nav>
 
             <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
             <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
