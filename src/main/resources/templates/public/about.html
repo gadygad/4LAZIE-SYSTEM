@@ -292,10 +292,10 @@
                                 It was exam week at SJUIT. Students were panicking, spending hours frantically scrolling through WhatsApp groups trying to find that one specific PDF for Server Administration. Some files were corrupted, others were mixed up with memes and personal chats. The chaos was overwhelming.
                             </p>
                             <p class="story-paragraph">
-                                We realized a fundamental truth: <strong>Brilliant minds shouldn't waste their energy hunting for study materials.</strong>
+                                I realized a fundamental truth: <strong>Brilliant minds shouldn't waste their energy hunting for study materials.</strong>
                             </p>
                             <p class="story-paragraph mb-0">
-                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. We created this platform to bridge the gap between academic chaos and pure clarity. We do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignmentsâ€”so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
+                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. I created this platform to bridge the gap between academic chaos and pure clarity. I do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignmentsâ€”so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
                                 Because true intelligence is knowing how to find things effortlessly. <em style="color: #b48608; font-weight: 600;">Smart in the Brain, Lazy in the Search.</em>
                             </p>
                         </div>
@@ -304,7 +304,7 @@
                             <div style="position: relative; width: 100%; height: 300px; display: flex; align-items: center; justify-content: center;">
                                 <div style="width: 240px; height: 240px; background: linear-gradient(135deg, rgba(249, 217, 118, 0.2), rgba(224, 170, 62, 0.15)); border-radius: 40px; transform: rotate(-10deg); position: absolute;"></div>
                                 <div style="width: 240px; height: 240px; background: white; border: 1px solid rgba(224, 170, 62, 0.3); border-radius: 40px; transform: rotate(5deg); position: absolute; box-shadow: 0 15px 40px rgba(0,0,0,0.05); padding: 8px;">
-                                    <img src="/images/st-joseph.jpg" alt="Students" style="width: 100%; height: 100%; object-fit: cover; border-radius: 32px;">
+                                    <img src="/images/CHUO.jpg" alt="Students" style="width: 100%; height: 100%; object-fit: cover; border-radius: 32px;">
                                 </div>
                             </div>
                         </div>
@@ -376,7 +376,7 @@
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
             
             <div class="text-center mb-5">
-                <h2 class="text-uppercase mb-0 mt-1" style="color: #111; font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.5rem); font-family: 'Outfit', sans-serif; letter-spacing: -1px;">THE MINDS BEHIND 4LAZIE</h2>
+                <h2 class="text-uppercase mb-0 mt-1" style="color: #111; font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.5rem); font-family: 'Outfit', sans-serif; letter-spacing: -1px;">THE 4LAZIE COMMUNITY</h2>
             </div>
             
             <style>
@@ -474,8 +474,10 @@
                     -webkit-backdrop-filter: blur(10px);
                     opacity: 0;
                     transition: opacity 0.4s ease;
-                    justify-content: center;
                     align-items: center;
+                    overflow-y: auto;
+                    padding: 40px 0;
+                    box-sizing: border-box;
                 }
                 .magic-lightbox.show {
                     display: flex;
@@ -487,18 +489,23 @@
                     transform: translateY(100px) scale(0.8);
                     opacity: 0;
                     transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    margin: auto;
                 }
                 .magic-lightbox.show .lightbox-content-wrapper {
                     transform: translateY(0) scale(1);
                     opacity: 1;
                 }
                 .lightbox-img {
-                    max-width: 90vw;
-                    max-height: 65vh;
-                    border-radius: 16px;
-                    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-                    border: 4px solid #fff;
+                    max-width: 95vw;
+                    max-height: 75vh;
                     object-fit: contain;
+                    border-radius: 8px;
+                    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
                 }
                 .lightbox-caption {
                     margin-top: 20px;
@@ -517,14 +524,16 @@
                 .lightbox-quote {
                     color: #fff;
                     font-size: 1.15rem;
-                    font-weight: 300;
+                    font-weight: 400;
                     font-style: italic;
                     max-width: 600px;
-                    margin: 0 auto;
+                    margin: 20px auto 0;
+                    padding: 0 20px;
+                    text-align: center;
                     line-height: 1.6;
                 }
                 .lightbox-close {
-                    position: absolute;
+                    position: fixed;
                     top: 25px;
                     right: 40px;
                     color: #fff;
@@ -544,7 +553,7 @@
                     .neo-card { height: 350px; }
                     .card-main-img { height: 260px; }
                     .lightbox-caption { font-size: 1.4rem; }
-                    .lightbox-quote { font-size: 1rem; padding: 0 20px; }
+                    .lightbox-quote { font-size: 1rem; padding: 0 10px; }
                     .lightbox-close { top: 15px; right: 25px; }
                 }
             </style>
@@ -602,6 +611,8 @@
                     
                     // Lightbox Magic
                     const lightbox = document.getElementById('magicLightbox');
+                    document.body.appendChild(lightbox);
+                    
                     const lightboxImg = document.getElementById('lightboxImg');
                     const lightboxQuote = document.getElementById('lightboxQuote');
                     const closeBtn = document.querySelector('.lightbox-close');
@@ -655,7 +666,7 @@
                 <div style="font-family: 'Outfit', sans-serif; font-size: 10rem; font-weight: 900; color: rgba(16, 185, 129, 0.1); line-height: 0; position: absolute; top: 70px; left: 0px; user-select: none; z-index: 0;">"</div>
                 
                 <h2 class="text-center text-uppercase mb-2" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: clamp(1.2rem, 4vw, 2rem); color: #0f172a; letter-spacing: -0.5px; position: relative; z-index: 2;">
-                    A MESSAGE FROM THE FOUNDERS
+                    A MESSAGE FROM THE FOUNDER
                 </h2>
                 
                 <div class="position-relative mx-auto" style="max-width: 750px; z-index: 2; padding: 10px 15px 30px;">
@@ -664,7 +675,7 @@
                         "University is not just about passing exams; it's about building your capacity to solve real-world problems. Don't just memorize to passâ€”<span style="font-style: normal; font-weight: 300; color: #94a3b8; border-bottom: 1px solid rgba(148, 163, 184, 0.4); padding-bottom: 2px;">understand to innovate</span>.
                     </p>
                     <p style="font-family: 'Outfit', sans-serif; font-style: italic; font-size: 1.35rem; line-height: 1.9; color: #334155; font-weight: 300; margin-bottom: 15px; text-align: center;">
-                        We built 4LAZIE to handle the friction of searching, so you can spend your time building your skills, networking, and creating the future. Stay focused, stay smart, and remember:"
+                        I built 4LAZIE to handle the friction of searching, so you can spend your time building your skills, networking, and creating the future. Stay focused, stay smart, and remember:"
                     </p>
                     <div class="text-center mt-2" style="margin-bottom: -15px;">
                         <span style="font-family: 'Outfit', sans-serif; font-size: clamp(0.75rem, 2.5vw, 1.05rem); color: #0f172a; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">Your brain is your greatest asset. Use it wisely.</span>
@@ -677,7 +688,7 @@
         <section class="py-1 text-center mb-3">
             <div class="d-inline-flex flex-column align-items-center p-4 mx-auto" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; max-width: 700px; width: 100%;">
                 <h5 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Special Acknowledgement</h5>
-                <p style="color: #64748b; margin-bottom: 15px; font-size: 1.05rem;">We extend our deepest gratitude for the immense support, guidance, and technological inspiration from:</p>
+                <p style="color: #64748b; margin-bottom: 15px; font-size: 1.05rem;">I extend my deepest gratitude for the immense support, guidance, and technological inspiration from:</p>
                 <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3 mt-1">
                     <div class="d-inline-flex align-items-center gap-2" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.15rem; color: #0f172a;">
                         <i class="bi bi-mortarboard-fill" style="color: #059669;"></i> SJUIT
