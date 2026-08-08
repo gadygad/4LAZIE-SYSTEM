@@ -68,6 +68,9 @@ Across Tanzania and East Africa:
 | 🔔 **Push Notifications** | PWA-capable with offline support and mobile install |
 | 🔐 **Secure Accounts** | Register with email or Google Sign-In + OTP email verification |
 | 🛡️ **Admin Dashboard** | Manage users, notes, subjects, courses, and timetables |
+| 💻 **Device Management** | View all active logged-in devices and remotely log them out |
+| 🚨 **Advanced Security** | Email alerts on password change with emergency lockdown / account suspension link |
+| ✨ **Premium UI/UX** | Glassmorphism, micro-animations, and a highly responsive, modern interface |
 
 ---
 

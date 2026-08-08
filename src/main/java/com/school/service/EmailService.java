@@ -188,6 +188,48 @@ public class EmailService {
     }
 
     @Async
+    public void sendPasswordChangeAlert(String to, String userName, String deviceDetails, String securityToken, String appUrl) {
+        if (mailSender == null) return;
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setTo(to);
+            helper.setSubject("Security Alert: Your Password Was Changed - 4LAZIE");
+            
+            String secureLink = appUrl + "/secure-account?token=" + securityToken;
+            
+            String htmlBody = "<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;\">"
+                    + "<div style=\"text-align: center; padding-bottom: 20px; border-bottom: 2px solid #10b981;\">"
+                    + "<h1 style=\"color: #10b981; font-weight: 800; margin: 0;\">4LAZIE</h1>"
+                    + "</div>"
+                    + "<div style=\"padding: 30px 0; text-align: center;\">"
+                    + "<h2 style=\"color: #1e293b; font-size: 22px;\">Password Changed Successfully</h2>"
+                    + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">Hello " + userName + ", the password for your 4LAZIE account was recently changed.</p>"
+                    + "<div style=\"background-color: #f1f5f9; padding: 15px; border-radius: 6px; margin: 15px 0; text-align: left;\">"
+                    + "<p style=\"margin: 0; color: #334155;\"><strong>Device Details:</strong> " + deviceDetails + "</p>"
+                    + "<p style=\"margin: 5px 0 0 0; color: #334155;\"><strong>Time:</strong> " + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")) + "</p>"
+                    + "</div>"
+                    + "<p style=\"color: #475569; font-size: 16px; line-height: 1.6;\">If you made this change, you can safely ignore this email.</p>"
+                    + "<div style=\"margin-top: 30px; padding-top: 20px; border-top: 1px dashed #cbd5e1;\">"
+                    + "<h3 style=\"color: #ef4444; margin-bottom: 10px;\">Didn't change your password?</h3>"
+                    + "<p style=\"color: #64748b; font-size: 14px; margin-bottom: 20px;\">Click the button below immediately to secure your account and log out of all devices.</p>"
+                    + "<a href=\"" + secureLink + "\" style=\"background-color: #ef4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 15px; display: inline-block;\">SECURE MY ACCOUNT</a>"
+                    + "</div>"
+                    + "</div>"
+                    + "<div style=\"text-align: center; padding-top: 20px; color: #94a3b8; font-size: 12px;\">"
+                    + "<p>&copy; " + java.time.Year.now().getValue() + " 4LAZIE Student Community. All rights reserved.</p>"
+                    + "</div>"
+                    + "</div>";
+                    
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send password change alert email: " + e.getMessage());
+        }
+    }
+
+    @Async
     public void sendWarningEmail(String to, String userName, String warningMessage) {
         if (mailSender == null) return;
         try {

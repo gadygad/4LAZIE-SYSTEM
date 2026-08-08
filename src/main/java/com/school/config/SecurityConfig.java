@@ -23,6 +23,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public org.springframework.security.core.session.SessionRegistry sessionRegistry() {
+        return new org.springframework.security.core.session.SessionRegistryImpl();
+    }
+
+    @Bean
+    public org.springframework.security.web.session.HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new org.springframework.security.web.session.HttpSessionEventPublisher();
+    }
+
         private CustomAuthenticationSuccessHandler successHandler;
 
     public SecurityConfig(CustomAuthenticationSuccessHandler successHandler) {
@@ -61,6 +71,10 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/api/**", "/admin/assignments/reply/**", "/admin/assignments/chat/**",
                         "/admin/chat/**", "/student/chat/**")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            )
+            .sessionManagement(session -> session
+                .maximumSessions(-1)
+                .sessionRegistry(sessionRegistry())
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())

@@ -20,6 +20,15 @@
             <i class="bi bi-search" style="font-size: 1rem; color: #10b981;"></i>
         </button>
                     
+<!-- Home Button -->
+                    <a th:href="${session.user != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')} ? '/admin/dashboard' : '/dashboard'" 
+                       class="d-flex align-items-center justify-content-center text-decoration-none position-relative me-2" 
+                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                       onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'; this.querySelector('i').style.color='#10b981';" 
+                       onmouseout="this.style.boxShadow='0 4px 15px rgba(0, 0, 0, 0.05)'; this.style.transform='none'; this.style.borderColor='rgba(0, 0, 0, 0.1)'; this.querySelector('i').style.color='#000000';">
+                        <i class="bi bi-house-door-fill" style="color: #000000; font-size: 1.2rem; transition: color 0.3s;"></i>
+                    </a>
+                    
 <!-- Messages Button -->
                     <a href="/messages" class="d-flex align-items-center justify-content-center text-decoration-none position-relative me-2" 
                        style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
@@ -77,16 +86,20 @@
                         </ul>
                         
                         <style>
-                            /* Smooth Dropdown Animation */
-                            /* Smooth Dropdown Animation */
-                            @keyframes customDropdownFadeIn {
+                            /* Premium Smooth Dropdown Animation */
+                            @keyframes premiumDropdownGlow {
                                 0% {
                                     opacity: 0;
-                                    transform: perspective(400px) rotateX(-10deg) translateY(15px) scale(0.95);
+                                    transform: perspective(1000px) rotateX(-15deg) translateY(-20px) scale(0.95);
+                                    box-shadow: 0 0 0 rgba(16, 185, 129, 0);
+                                }
+                                60% {
+                                    transform: perspective(1000px) rotateX(5deg) translateY(5px) scale(1.02);
                                 }
                                 100% {
                                     opacity: 1;
-                                    transform: perspective(400px) rotateX(0) translateY(0) scale(1);
+                                    transform: perspective(1000px) rotateX(0) translateY(0) scale(1);
+                                    box-shadow: 0 20px 50px rgba(16, 185, 129, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.1);
                                 }
                             }
                             @keyframes pulse-red-badge {
@@ -95,9 +108,12 @@
                                 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
                             }
                             
-                            .dropdown-menu.notification-dropdown.show {
-                                animation: customDropdownFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                            /* Unified class for both dropdowns */
+                            .dropdown-menu.notification-dropdown.show,
+                            .dropdown-menu.profile-dropdown.show {
                                 display: block;
+                                transform-origin: top center;
+                                animation: premiumDropdownGlow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
                                 box-shadow: 0 20px 50px rgba(16, 185, 129, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.1) !important;
                             }
                             
@@ -123,10 +139,10 @@
                                 opacity: 0; /* start hidden */
                             }
                             
-                            .dropdown-menu.show .notification-item:nth-child(1) { animation-delay: 0.05s; }
-                            .dropdown-menu.show .notification-item:nth-child(2) { animation-delay: 0.1s; }
-                            .dropdown-menu.show .notification-item:nth-child(3) { animation-delay: 0.15s; }
-                            .dropdown-menu.show .notification-item:nth-child(4) { animation-delay: 0.2s; }
+                            .dropdown-menu.show .notification-item:nth-child(1) { animation-delay: 0.1s; }
+                            .dropdown-menu.show .notification-item:nth-child(2) { animation-delay: 0.15s; }
+                            .dropdown-menu.show .notification-item:nth-child(3) { animation-delay: 0.2s; }
+                            .dropdown-menu.show .notification-item:nth-child(4) { animation-delay: 0.25s; }
                         </style>
                         <script>
                             if (!window.notificationJsInitialized) {
@@ -222,14 +238,7 @@
                 </li>
                 
                 <style>
-                    @keyframes popupAnim {
-                        0% { opacity: 0; transform: scale(0.95) translateY(-10px); }
-                        100% { opacity: 1; transform: scale(1) translateY(0); }
-                    }
-                    .dropdown-menu.profile-dropdown.show {
-                        animation: popupAnim 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-                        display: block;
-                    }
+                    /* Removed old popupAnim since we use the unified premiumDropdownGlow now */
                     @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
                     .premium-dropdown-item {
                         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
