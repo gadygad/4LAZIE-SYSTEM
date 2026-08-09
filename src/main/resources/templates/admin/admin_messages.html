@@ -502,7 +502,7 @@
             
             // If already rendered, update its status
             if (msgId && renderedIds.has(msgId)) {
-                if (isAdmin) {
+                if (msg.isSelf) {
                     const existingEl = document.getElementById('msg-' + msgId);
                     if (existingEl) {
                         const statusSpan = existingEl.querySelector('.msg-status-text');
