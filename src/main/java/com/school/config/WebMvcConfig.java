@@ -19,6 +19,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @org.springframework.beans.factory.annotation.Qualifier("siteVisitInterceptor")
     private org.springframework.web.servlet.HandlerInterceptor siteVisitInterceptor;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private RateLimitInterceptor rateLimitInterceptor;
+
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Serve files from the "uploads" folder located at the project root.
@@ -31,5 +34,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
         registry.addInterceptor(activeUserInterceptor);
         registry.addInterceptor(siteVisitInterceptor);
+        
+        // Register Rate Limiting for critical endpoints (Notes views and downloads)
+        registry.addInterceptor(rateLimitInterceptor)
+                .addPathPatterns("/download/**", "/view/**", "/proxy/**");
     }
 }

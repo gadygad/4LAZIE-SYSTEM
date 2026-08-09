@@ -11,6 +11,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${note.title} + ' - 4LAZIE Notes Viewer'">4LAZIE Viewer</title>
+
+    <!-- Dynamic Open Graph (OG) Tags for Premium Sharing -->
+    <meta property="og:title" th:content="${note.title} + ' | 4LAZIE Premium Notes'">
+    <meta property="og:description" th:content="'Get instant access to ' + ${note.title} + '. Download premium past papers and notes for free on 4LAZIE!'">
+    <meta property="og:image" content="https://res.cloudinary.com/dvfpt58an/image/upload/v1731671981/Flazie_g8hps0.jpg">
+    <meta property="og:url" th:content="${'https://4lazie.com/view/' + (note.encryptedSlug != null ? note.encryptedSlug : note.id)}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="4LAZIE Student Community">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" th:content="${note.title}">
+    <meta name="twitter:description" th:content="'Download ' + ${note.title} + ' absolutely free on 4LAZIE.'">
+    <meta name="twitter:image" content="https://res.cloudinary.com/dvfpt58an/image/upload/v1731671981/Flazie_g8hps0.jpg">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -96,6 +110,11 @@
 
         <!-- Action Buttons -->
         <div class="d-flex gap-2 align-items-center flex-shrink-0">
+            <!-- Share Button (NEW) -->
+            <button class="d-flex align-items-center justify-content-center" onclick="shareNote()" title="Share Note" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #e0f2fe; color: #0284c7; transition: all 0.3s; box-shadow: 0 2px 5px rgba(2, 132, 199, 0.1);">
+                <i class="bi bi-share-fill fs-6"></i>
+            </button>
+            
             <!-- Save/Bookmark Button -->
             <button th:if="${user != null}" class="save-btn d-flex align-items-center justify-content-center" th:data-id="${note.id}" th:classappend="${user.savedNotes != null and user.savedNotes.contains(note.id) ? 'saved' : ''}" onclick="toggleSaveNote(this, this.getAttribute('data-id'))" title="Save for later" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #f1f5f9; color: #64748b; transition: all 0.3s;">
                 <i class="bi fs-5" th:classappend="${user.savedNotes != null and user.savedNotes.contains(note.id) ? 'bi-bookmark-fill text-success' : 'bi-bookmark'}"></i>
@@ -277,6 +296,27 @@
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+        }
+
+        // Web Share API implementation for native sharing
+        function shareNote() {
+            const currentUrl = window.location.href;
+            const title = document.title;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: 'Check out this awesome academic resource on 4LAZIE:',
+                    url: currentUrl
+                }).catch(err => {
+                    console.log('Share dismissed or failed');
+                });
+            } else {
+                // Fallback for desktop browsers without Web Share API
+                navigator.clipboard.writeText(currentUrl)
+                    .then(() => showPremiumToast('Link copied to clipboard!', 'success'))
+                    .catch(err => showPremiumToast('Failed to copy link', 'info'));
+            }
         }
     </script>
 </body>
