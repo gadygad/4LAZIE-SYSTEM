@@ -533,19 +533,10 @@
         if (!text || !currentChatId || isSending) return;
         isSending = true;
         if (sendBtn) sendBtn.disabled = true;
-
-        const tempId = 'temp-' + Date.now();
-        // Optimistic bubble
-        msgsEl.appendChild(makeBubble({
-            id: tempId,
-            isSelf: true, senderName: 'Admin',
-            messageText: text,
-            time: new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})
-        }, false));
-        scrollToBottom();
+        // Clear input immediately for responsiveness
         if (input) { input.value = ''; input.style.height = 'auto'; }
 
-        // Get CSRF Token safely (meta tag with cookie fallback)
+        // Get CSRF Token
         let csrfToken = '';
         let csrfHeader = 'X-XSRF-TOKEN';
         const metaToken = document.querySelector('meta[name="_csrf"]');
@@ -559,24 +550,19 @@
 
         const fd = new FormData();
         fd.append('messageText', text);
+        // POST → MongoDB → SSE pushes back → renderMessages() shows once (no duplicate)
         fetch('/admin/chat/' + currentChatId + '/send', { 
             method:'POST', 
             body:fd, 
             headers: { [csrfHeader]: csrfToken },
             credentials:'same-origin' 
         })
-            .then(r => r.json())
-            .then(d => {
-                if (d.success) {
-                    const el = document.getElementById('msg-' + tempId);
-                    if (el) el.id = 'msg-' + d.id;
-                }
-            })
-            .finally(() => {
-                isSending = false;
-                if (sendBtn) sendBtn.disabled = false;
-                if (input) input.focus();
-            });
+        .catch(e => console.error('Admin send error:', e))
+        .finally(() => {
+            isSending = false;
+            if (sendBtn) sendBtn.disabled = false;
+            if (input) input.focus();
+        });
     };
 
     // Textarea auto-resize + Enter to send
