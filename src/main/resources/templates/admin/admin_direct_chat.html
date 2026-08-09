@@ -19,13 +19,13 @@
             --surface:     #131929;
             --surface2:    #1a2236;
             --border:      rgba(255,255,255,0.07);
-            --sent-from:   #7c3aed;
+            --sent-from:   #10b981;
             --sent-to:     #06b6d4;
             --recv-bg:     rgba(255,255,255,0.07);
             --recv-border: rgba(255,255,255,0.10);
             --text:        #e2e8f0;
             --muted:       #64748b;
-            --accent:      #7c3aed;
+            --accent:      #10b981;
         }
 
         body {
@@ -43,7 +43,7 @@
             content: '';
             position: fixed; inset: 0; z-index: -1;
             background:
-                radial-gradient(ellipse 60% 40% at 10% 0%,   rgba(124,58,237,0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 10% 0%,   rgba(16,185,129,0.15), transparent),
                 radial-gradient(ellipse 50% 35% at 90% 100%, rgba(6,182,212,0.12),  transparent);
             pointer-events: none;
         }
@@ -80,9 +80,9 @@
             flex-shrink: 0;
         }
         .back-btn:hover {
-            background: rgba(124,58,237,0.2);
+            background: rgba(16,185,129,0.2);
             border-color: var(--sent-from);
-            color: #a78bfa;
+            color: #6ee7b7;
             transform: translateX(-2px);
         }
 
@@ -92,7 +92,7 @@
             display: flex; align-items: center; justify-content: center;
             font-family: 'Outfit', sans-serif; font-weight: 900;
             font-size: 1rem; color: white; flex-shrink: 0;
-            box-shadow: 0 0 0 2px rgba(124,58,237,0.4), 0 4px 16px rgba(124,58,237,0.3);
+            box-shadow: 0 0 0 2px rgba(16,185,129,0.4), 0 4px 16px rgba(16,185,129,0.3);
             position: relative;
         }
         .nav-avatar .online-dot {
@@ -139,7 +139,7 @@
         }
         .chat-body::-webkit-scrollbar { width: 4px; }
         .chat-body::-webkit-scrollbar-track { background: transparent; }
-        .chat-body::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 2px; }
+        .chat-body::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
 
         /* Date separator */
         .date-sep { text-align: center; margin: 16px 0 8px; }
@@ -198,7 +198,7 @@
             font-size: 0.67rem; font-weight: 700;
             color: var(--muted); padding: 0 4px; letter-spacing: 0.3px;
         }
-        .msg-row.self .msg-label { color: #a78bfa; }
+        .msg-row.self .msg-label { color: #6ee7b7; }
 
         /* Bubble */
         .bubble {
@@ -226,7 +226,7 @@
             background: linear-gradient(135deg, var(--sent-from) 0%, var(--sent-to) 100%);
             border-radius: 18px 4px 18px 18px;
             color: #ffffff;
-            box-shadow: 0 6px 24px rgba(124,58,237,0.45);
+            box-shadow: 0 6px 24px rgba(16,185,129,0.45);
             border: none;
         }
         .bubble.sent::before {
@@ -275,8 +275,8 @@
         }
         .empty-icon {
             width: 80px; height: 80px; border-radius: 50%;
-            background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1));
-            border: 1px solid rgba(124,58,237,0.25);
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1));
+            border: 1px solid rgba(16,185,129,0.25);
             display: flex; align-items: center; justify-content: center;
         }
         .empty-wrap p { font-size: 0.82rem; color: var(--muted); max-width: 220px; line-height: 1.6; }
@@ -292,13 +292,13 @@
         .input-shell {
             display: flex; align-items: flex-end; gap: 10px;
             background: var(--surface2);
-            border: 1.5px solid rgba(124,58,237,0.2);
+            border: 1.5px solid rgba(16,185,129,0.2);
             border-radius: 22px; padding: 10px 14px;
             transition: all 0.3s ease;
         }
         .input-shell:focus-within {
             border-color: var(--sent-from);
-            box-shadow: 0 0 0 4px rgba(124,58,237,0.12), 0 4px 24px rgba(124,58,237,0.15);
+            box-shadow: 0 0 0 4px rgba(16,185,129,0.12), 0 4px 24px rgba(16,185,129,0.15);
         }
         #msgInput {
             flex: 1; border: none; outline: none;
@@ -316,9 +316,9 @@
             cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
                         box-shadow 0.3s ease;
-            box-shadow: 0 4px 16px rgba(124,58,237,0.5);
+            box-shadow: 0 4px 16px rgba(16,185,129,0.5);
         }
-        .send-btn:hover { transform: scale(1.14) rotate(10deg); box-shadow: 0 6px 24px rgba(124,58,237,0.65); }
+        .send-btn:hover { transform: scale(1.14) rotate(10deg); box-shadow: 0 6px 24px rgba(16,185,129,0.65); }
         .send-btn:active { transform: scale(0.9); }
         .send-btn:disabled { background: var(--surface2); box-shadow: none; transform: none; cursor: not-allowed; }
         .input-hint {
@@ -358,17 +358,17 @@
 
         <div class="empty-wrap" id="emptyEl">
             <div class="empty-icon">
-                <i class="bi bi-chat-heart-fill" style="font-size:2rem; background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i>
+                <i class="bi bi-chat-heart-fill" style="font-size:2rem; background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i>
             </div>
             <strong style="color:#e2e8f0; font-family:'Outfit',sans-serif;">Start the conversation</strong>
-            <p>Send a message to connect directly with <strong th:text="${student != null ? student.name : chat.studentName}" style="color:#a78bfa;">this student</strong>.</p>
+            <p>Send a message to connect directly with <strong th:text="${student != null ? student.name : chat.studentName}" style="color:#6ee7b7;">this student</strong>.</p>
         </div>
 
         <div id="msgWrap"></div>
 
         <!-- Typing indicator -->
         <div class="msg-row typing-row" id="typingIndicator">
-            <div class="av-xs" style="background:linear-gradient(135deg,#06b6d4,#7c3aed);">S</div>
+            <div class="av-xs" style="background:linear-gradient(135deg,#06b6d4,#10b981);">S</div>
             <div class="dot-bub">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
@@ -416,14 +416,14 @@
 
         function avatarHtml(isSelf, name, pic) {
             if (isSelf) {
-                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.7rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(124,58,237,0.4);">Y</div>`;
+                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.7rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(16,185,129,0.4);">Y</div>`;
             }
             if (pic) {
                 const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
                 return `<div style="width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(6,182,212,0.3);"><img src="${src}" style="width:100%;height:100%;object-fit:cover;"></div>`;
             }
             const ini = (name || 'S').charAt(0).toUpperCase();
-            return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(6,182,212,0.3);">${ini}</div>`;
+            return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#10b981);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(6,182,212,0.3);">${ini}</div>`;
         }
 
         function makeBubble(msg, typeIt = false) {
