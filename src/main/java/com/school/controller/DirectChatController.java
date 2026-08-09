@@ -148,7 +148,7 @@ public class DirectChatController {
             return "redirect:/login";
         }
         DirectChat chat = directChatService.startOrGetChat(admin.getId(), studentId);
-        return "redirect:/admin/chat/" + chat.getId();
+        return "redirect:/admin/messages";
     }
 
     /** Admin anaangalia chat page — GET /admin/chat/{chatId} */
@@ -158,16 +158,7 @@ public class DirectChatController {
         if (admin == null || (!admin.getRole().name().equals("ADMIN") && !admin.getRole().name().equals("SUPER_ADMIN"))) {
             return "redirect:/login";
         }
-        DirectChat chat = directChatService.getChatById(chatId);
-        if (chat == null) return "redirect:/admin/users";
-        directChatService.markReadForAdmin(chatId);
-        // Ensure the read status is broadcasted to the student if they are online
-        notifyChat(chatId, directChatService.getChatById(chatId));
-        User student = userRepository.findById(chat.getStudentId()).orElse(null);
-        model.addAttribute("chat", chat);
-        model.addAttribute("student", student);
-        model.addAttribute("loggedInUser", admin);
-        return "admin/admin_direct_chat";
+        return "redirect:/admin/messages";
     }
 
     /** SSE stream for admin — GET /admin/chat/{chatId}/stream */
@@ -263,7 +254,7 @@ public class DirectChatController {
         if (admin == null) return "redirect:/messages?noAdmin=true";
 
         DirectChat chat = directChatService.startOrGetChat(admin.getId(), student.getId());
-        return "redirect:/student/chat/" + chat.getId();
+        return "redirect:/messages";
     }
 
     /** Student anaangalia chat — GET /student/chat/{chatId} */
@@ -271,12 +262,7 @@ public class DirectChatController {
     public String studentChatPage(@PathVariable String chatId, Model model, HttpSession session) {
         User student = (User) session.getAttribute("user");
         if (student == null) return "redirect:/login";
-        DirectChat chat = directChatService.getChatById(chatId);
-        if (chat == null || !chat.getStudentId().equals(student.getId())) return "redirect:/messages";
-        directChatService.markReadForStudent(chatId);
-        model.addAttribute("chat", chat);
-        model.addAttribute("loggedInUser", student);
-        return "student/student_chat";
+        return "redirect:/messages";
     }
 
     /** SSE stream for student — GET /student/chat/{chatId}/stream */
