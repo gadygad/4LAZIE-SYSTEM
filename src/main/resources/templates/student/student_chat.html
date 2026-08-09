@@ -70,8 +70,8 @@
             text-decoration: none; transition: all 0.25s ease; flex-shrink: 0;
         }
         .back-btn:hover {
-            background: rgba(16,185,129,0.18); border-color: var(--sent-from);
-            color: #6ee7b7; transform: translateX(-2px);
+            background: rgba(31,41,55,0.18); border-color: var(--sent-from);
+            color: #1f2937; transform: translateX(-2px);
         }
 
         .nav-avatar {
@@ -248,7 +248,9 @@
         .empty-wrap {
             flex:1; display:flex; flex-direction:column;
             align-items:center; justify-content:center;
-            text-align:center; padding:40px; gap:12px;
+            background: linear-gradient(135deg, rgba(31,41,55,0.15), rgba(0,0,0,0.1));
+            border-radius: 12px; margin: 20px; padding: 40px 20px;
+            text-align:center; gap:12px;
         }
         .empty-icon {
             width:80px; height:80px; border-radius:50%;
@@ -274,7 +276,7 @@
         }
         .input-shell:focus-within {
             border-color: var(--sent-from);
-            box-shadow: 0 0 0 4px rgba(16,185,129,0.12), 0 4px 24px rgba(16,185,129,0.15);
+            box-shadow: 0 0 0 4px rgba(31,41,55,0.12), 0 4px 24px rgba(31,41,55,0.15);
         }
         #msgInput {
             flex:1; border:none; outline:none; background:transparent;
@@ -328,7 +330,7 @@
 
         <div class="empty-wrap" id="emptyEl">
             <div class="empty-icon">
-                <i class="bi bi-chat-dots-fill" style="font-size:2rem; background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i>
+                <i class="bi bi-chat-dots-fill" style="font-size:2rem; background:linear-gradient(135deg,var(--sent-from),var(--sent-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i>
             </div>
             <strong style="color:#e2e8f0; font-family:'Outfit',sans-serif;">Chat with 4LAZIE</strong>
             <p>Type a message below to start a conversation with our admin team.</p>
@@ -338,7 +340,7 @@
 
         <!-- Typing indicator (admin is typing) -->
         <div class="msg-row typing-row" id="typingDots">
-            <div class="av-xs" style="background:linear-gradient(135deg,#10b981,#06b6d4);">
+            <div class="av-xs" style="background:linear-gradient(135deg,var(--sent-from),var(--sent-to));">
                 <img src="/images/logo.png" alt="4LAZIE" style="width:18px;height:18px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
             </div>
             <div class="dot-bub">
@@ -403,12 +405,12 @@
         // ── Avatar HTML ─────────────────────────────────────────────────────
         function avatarHtml(isAdmin) {
             if (isAdmin) {
-                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 2px rgba(16,185,129,0.4);overflow:hidden;">
+                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--sent-from),var(--sent-to));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 2px rgba(0,0,0,0.1);overflow:hidden;">
                     <img src="/images/logo.png" alt="4LAZIE" style="width:18px;height:18px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                 </div>`;
             }
             const ini = (STUDENT_NM || 'Y').charAt(0).toUpperCase();
-            return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#059669,#0891b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(16,185,129,0.3);">${ini}</div>`;
+            return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--sent-from),var(--sent-to));display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(0,0,0,0.1);">${ini}</div>`;
         }
 
         // ── Build message bubble ─────────────────────────────────────────────
