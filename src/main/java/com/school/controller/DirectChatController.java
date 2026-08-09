@@ -358,4 +358,54 @@ public class DirectChatController {
         model.addAttribute("loggedInUser", admin);
         return "admin/admin_messages";
     }
+
+    // ─────────────────────────────────────────────
+    //  API ENDPOINTS FOR ADMIN SEARCH
+    // ─────────────────────────────────────────────
+
+    @GetMapping("/api/chat/search-students")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> searchStudents(@RequestParam("q") String query, HttpSession session) {
+        User admin = (User) session.getAttribute("user");
+        if (admin == null || (!admin.getRole().name().equals("ADMIN") && !admin.getRole().name().equals("SUPER_ADMIN"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        List<User> students = userRepository.findByNameContainingIgnoreCase(query);
+        List<Map<String, Object>> result = students.stream()
+            .filter(u -> u.getRole() != null && u.getRole().name().equals("STUDENT"))
+            .limit(10)
+            .map(u -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", u.getId());
+                map.put("name", u.getName());
+                map.put("profilePicture", u.getProfilePicture());
+                map.put("courseProgram", u.getCourseProgram());
+                return map;
+            })
+            .collect(java.util.stream.Collectors.toList());
+            
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/api/chat/start/{studentId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> apiStartChat(@PathVariable String studentId, HttpSession session) {
+        User admin = (User) session.getAttribute("user");
+        if (admin == null || (!admin.getRole().name().equals("ADMIN") && !admin.getRole().name().equals("SUPER_ADMIN"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        DirectChat chat = directChatService.startOrGetChat(admin.getId(), studentId);
+        User student = userRepository.findById(studentId).orElse(null);
+        
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("chatId", chat.getId());
+        if (student != null) {
+            resp.put("studentName", student.getName());
+            resp.put("studentCourse", student.getCourseProgram());
+            resp.put("studentPic", student.getProfilePicture());
+        }
+        return ResponseEntity.ok(resp);
+    }
 }

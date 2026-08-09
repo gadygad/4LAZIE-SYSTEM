@@ -14,6 +14,9 @@ public interface UserRepository extends MongoRepository<User, String> {
     
     java.util.List<User> findTop5ByOrderByDateJoinedDesc();
     
+    java.util.List<User> findByNameContainingIgnoreCase(String name);
+    java.util.List<User> findByRole(com.school.model.Role role);
+    
     long countByRole(com.school.model.Role role);
     long countByLastActiveTimeAfter(java.time.LocalDateTime time);
     java.util.List<User> findByLastActiveTimeAfterOrderByLastActiveTimeDesc(java.time.LocalDateTime time);

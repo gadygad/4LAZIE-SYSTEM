@@ -220,6 +220,19 @@
             <div th:if="${unreadCount == null or unreadCount == 0}" style="font-size:0.72rem;color:#94a3b8;font-weight:600;margin-top:2px;">
                 All caught up ✓
             </div>
+
+            <!-- Sleek Search Bar -->
+            <div style="margin-top: 14px; position: relative;">
+                <i class="bi bi-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.85rem; pointer-events: none;"></i>
+                <input type="text" id="studentSearchInput" placeholder="Search to start chat..." autocomplete="off"
+                       style="width: 100%; padding: 10px 14px 10px 38px; border-radius: 20px; border: 1.5px solid rgba(16,185,129,0.2); background: #f8fafc; font-size: 0.85rem; color: #1e293b; outline: none; transition: all 0.3s; font-family: 'Inter', sans-serif;">
+                <div id="searchSpinner" class="spinner-border spinner-border-sm text-success" role="status" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); display:none; width: 14px; height: 14px; border-width: 0.15em;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <!-- Dropdown -->
+                <div id="searchResults" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); margin-top: 8px; z-index: 1000; max-height: 280px; overflow-y: auto; padding: 8px 0;">
+                </div>
+            </div>
         </div>
 
         <!-- Empty state -->
@@ -639,6 +652,135 @@
     s.textContent = '@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:0.2}}';
     document.head.appendChild(s);
 })();
+    // Real-time Student Search Magic
+    const searchInput = document.getElementById('studentSearchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchSpinner = document.getElementById('searchSpinner');
+    let searchTimeout = null;
+
+    searchInput.addEventListener('focus', function() {
+        this.style.borderColor = '#10b981';
+        this.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.1)';
+        if(this.value.trim().length > 0) {
+            searchResults.style.display = 'block';
+        }
+    });
+
+    searchInput.addEventListener('blur', function() {
+        this.style.borderColor = 'rgba(16,185,129,0.2)';
+        this.style.boxShadow = 'none';
+        // Delay hiding dropdown so clicks can register
+        setTimeout(() => { searchResults.style.display = 'none'; }, 200);
+    });
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        if(query.length === 0) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        if(searchTimeout) clearTimeout(searchTimeout);
+        searchSpinner.style.display = 'block';
+
+        searchTimeout = setTimeout(() => {
+            fetch(`/api/chat/search-students?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    searchSpinner.style.display = 'none';
+                    searchResults.innerHTML = '';
+                    if(data.length === 0) {
+                        searchResults.innerHTML = '<div style="padding:12px 16px;text-align:center;font-size:0.8rem;color:#94a3b8;">No students found</div>';
+                    } else {
+                        data.forEach(student => {
+                            const initial = student.name.charAt(0).toUpperCase();
+                            const pic = student.profilePicture ? (student.profilePicture.startsWith('http') ? student.profilePicture : '/uploads/' + student.profilePicture) : null;
+                            const course = student.courseProgram || 'Student';
+                            
+                            const item = document.createElement('div');
+                            item.style.cssText = 'padding: 10px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s;';
+                            item.onmouseover = () => item.style.background = 'rgba(16,185,129,0.06)';
+                            item.onmouseout = () => item.style.background = 'transparent';
+                            item.onclick = () => initChatFromSearch(student.id, student.name, pic, course);
+
+                            const avHTML = pic 
+                                ? `<img src="${pic}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`
+                                : `<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;">${initial}</div>`;
+                            
+                            item.innerHTML = `
+                                ${avHTML}
+                                <div style="flex:1;overflow:hidden;">
+                                    <div style="font-size:0.85rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${student.name}</div>
+                                    <div style="font-size:0.65rem;color:#64748b;">${course}</div>
+                                </div>
+                            `;
+                            searchResults.appendChild(item);
+                        });
+                    }
+                    searchResults.style.display = 'block';
+                })
+                .catch(err => {
+                    console.error("Search error:", err);
+                    searchSpinner.style.display = 'none';
+                });
+        }, 300); // 300ms debounce
+    });
+
+    function initChatFromSearch(studentId, name, pic, course) {
+        // We call the start chat API which returns the chatId
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch(`/api/chat/start/${studentId}`, {
+            method: 'POST',
+            headers: { [header]: token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const chatId = data.chatId;
+            let existingItem = document.getElementById('inbox-' + chatId);
+            
+            if (existingItem) {
+                // Chat already in list, just click it
+                existingItem.click();
+            } else {
+                // Create a new inbox item dynamically
+                const listContainer = document.querySelector('.list-col .overflow-auto');
+                const initial = data.studentName.charAt(0).toUpperCase();
+                const actualPic = data.studentPic ? (data.studentPic.startsWith('http') ? data.studentPic : '/uploads/' + data.studentPic) : null;
+                
+                const avStyle = actualPic ? 'background:transparent;' : 'background:linear-gradient(135deg,#10b981,#059669);';
+                const avContent = actualPic ? `<img src="${actualPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : `<span>${initial}</span>`;
+
+                const newItemHTML = `
+                    <div class="inbox-item" id="inbox-${chatId}" 
+                         data-chat-id="${chatId}" 
+                         data-student-name="${data.studentName}"
+                         data-student-course="${data.studentCourse || ''}"
+                         data-student-pic="${data.studentPic || ''}"
+                         data-student-initial="${initial}"
+                         onclick="openAdminChat(this)">
+                        <div class="av-ring" style="${avStyle}">${avContent}</div>
+                        <div style="flex:1;overflow:hidden;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-weight:700;font-size:0.88rem;color:#1e293b;">${data.studentName}</span>
+                                <small style="font-size:0.68rem;color:#94a3b8;flex-shrink:0;margin-left:6px;">Now</small>
+                            </div>
+                            <p style="margin:2px 0 0;font-size:0.78rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Started new chat</p>
+                        </div>
+                    </div>
+                `;
+                // Append to top of list
+                listContainer.insertAdjacentHTML('afterbegin', newItemHTML);
+                // Click it
+                document.getElementById('inbox-' + chatId).click();
+            }
+            searchInput.value = '';
+            searchResults.style.display = 'none';
+        })
+        .catch(err => console.error("Error starting chat:", err));
+    }
+
 </script>
 </body>
 </html>
