@@ -775,14 +775,14 @@
                 const row = document.createElement('div');
                 row.id = 'msg-' + msg.id;
                 
-                const anim = isNew ? (msg.isSelf ? 'animation:slideFadeInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : 'animation:slideFadeInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;') : '';
+                const anim = isNew ? (msg.isSelf ? 'animation:slideFadeInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : 'animation:slideFadeInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;') : '';
                 
                 if (msg.isSelf) {
-                    // Right aligned for sender (Student)
-                    row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;${anim}`;
-                } else {
-                    // Left aligned for receiver (Admin)
+                    // Left aligned for sender
                     row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;margin-right:auto;${anim}`;
+                } else {
+                    // Right aligned for receiver
+                    row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;${anim}`;
                 }
 
                 const av = document.createElement('div');
@@ -790,10 +790,10 @@
                 row.appendChild(av.firstElementChild);
 
                 const contentCol = document.createElement('div');
-                contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+                contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (msg.isSelf ? 'align-items:flex-start;' : 'align-items:flex-end;');
 
                 const headerRow = document.createElement('div');
-                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? '' : 'justify-content:flex-end;');
                 
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
@@ -812,18 +812,18 @@
                 timeEl.textContent = msg.time;
                 
                 if (msg.isSelf) {
-                    headerRow.appendChild(timeEl);
                     headerRow.appendChild(nameEl);
+                    headerRow.appendChild(timeEl);
                 } else {
-                    headerRow.appendChild(nameEl);
                     headerRow.appendChild(timeEl);
+                    headerRow.appendChild(nameEl);
                 }
 
                 const textEl = document.createElement('div');
                 if (msg.isSelf) {
-                    textEl.style.cssText = 'font-size:0.95rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#3b82f6,#2563eb);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(59,130,246,0.25);';
+                    textEl.style.cssText = 'font-size:0.95rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#3b82f6,#2563eb);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(59,130,246,0.25);';
                 } else {
-                    textEl.style.cssText = 'font-size:0.95rem;color:#334155;line-height:1.5;word-break:break-word;background:#ffffff;padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.03);';
+                    textEl.style.cssText = 'font-size:0.95rem;color:#334155;line-height:1.5;word-break:break-word;background:#ffffff;padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.03);';
                 }
 
                 contentCol.appendChild(headerRow);
