@@ -94,6 +94,11 @@ public class DirectChatService {
     public void markReadForAdmin(String chatId) {
         directChatRepository.findById(chatId).ifPresent(chat -> {
             chat.setHasUnreadForAdmin(false);
+            if (chat.getMessages() != null) {
+                chat.getMessages().forEach(m -> {
+                    if (!"ADMIN".equals(m.getSenderId())) m.setRead(true);
+                });
+            }
             directChatRepository.save(chat);
         });
     }
@@ -104,6 +109,11 @@ public class DirectChatService {
     public void markReadForStudent(String chatId) {
         directChatRepository.findById(chatId).ifPresent(chat -> {
             chat.setHasUnreadForStudent(false);
+            if (chat.getMessages() != null) {
+                chat.getMessages().forEach(m -> {
+                    if ("ADMIN".equals(m.getSenderId())) m.setRead(true);
+                });
+            }
             directChatRepository.save(chat);
         });
     }

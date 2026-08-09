@@ -11,6 +11,7 @@ public class ChatMessage {
     private String messageText;
     private String attachmentUrl;
     private LocalDateTime timestamp;
+    private boolean isRead = false;
 
     public ChatMessage() {
     }
@@ -86,5 +87,13 @@ public class ChatMessage {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

@@ -267,13 +267,13 @@
 
                 <div style="flex:1;overflow:hidden;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-weight:700;font-size:0.88rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
-                        <small style="font-size:0.68rem;color:#94a3b8;flex-shrink:0;margin-left:6px;" th:text="${cv.lastMsgTime}">Time</small>
+                        <span style="font-weight:700;font-size:1.05rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
+                        <small style="font-size:0.8rem;color:#94a3b8;flex-shrink:0;margin-left:6px;" th:text="${cv.lastMsgTime}">Time</small>
                     </div>
-                    <p style="margin:2px 0 0;font-size:0.78rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                    <p style="margin:4px 0 0;font-size:0.9rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
                        th:text="${(cv.lastSenderIsAdmin ? 'You: ' : '') + cv.lastMsg}">preview</p>
                     <div th:if="${cv.student != null and cv.student.courseProgram != null}"
-                         style="font-size:0.65rem;color:#10b981;font-weight:700;margin-top:1px;text-transform:uppercase;letter-spacing:0.4px;"
+                         style="font-size:0.75rem;color:#10b981;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:0.4px;"
                          th:text="${cv.student.courseProgram}"></div>
                 </div>
             </div>
@@ -443,8 +443,20 @@
         nameEl.textContent = isAdmin ? ADMIN_NAME : (msg.senderName || 'Student');
         
         const timeEl = document.createElement('span');
-        timeEl.style.cssText = 'font-size:0.72rem;color:#94a3b8;font-weight:500;';
-        timeEl.textContent = msg.time || '';
+        timeEl.style.cssText = 'font-size:0.72rem;color:#94a3b8;font-weight:500;display:flex;align-items:center;gap:4px;';
+        if (isAdmin) {
+            let statusHtml = '';
+            if (msg.status === 'Read') {
+                statusHtml = '<span style="color:#059669;font-weight:700;">Read</span>';
+            } else if (msg.status === 'Delivered') {
+                statusHtml = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+            } else {
+                statusHtml = '<span style="color:#94a3b8;font-weight:500;">Sent</span>';
+            }
+            timeEl.innerHTML = (msg.time || '') + ' · ' + statusHtml;
+        } else {
+            timeEl.textContent = msg.time || '';
+        }
         
         if (isAdmin) { // Sender (Left)
             headerRow.appendChild(nameEl);
@@ -756,10 +768,10 @@
                         <div class="av-ring" style="${avStyle}">${avContent}</div>
                         <div style="flex:1;overflow:hidden;">
                             <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <span style="font-weight:700;font-size:0.88rem;color:#1e293b;">${data.studentName}</span>
-                                <small style="font-size:0.68rem;color:#94a3b8;flex-shrink:0;margin-left:6px;">Now</small>
+                                <span style="font-weight:700;font-size:1.05rem;color:#1e293b;">${data.studentName}</span>
+                                <small style="font-size:0.8rem;color:#94a3b8;flex-shrink:0;margin-left:6px;">Now</small>
                             </div>
-                            <p style="margin:2px 0 0;font-size:0.78rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Started new chat</p>
+                            <p style="margin:4px 0 0;font-size:0.9rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Started new chat</p>
                         </div>
                     </div>
                 `;

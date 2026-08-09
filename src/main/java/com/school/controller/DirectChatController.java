@@ -28,8 +28,15 @@ public class DirectChatController {
     @Autowired
     private DirectChatService directChatService;
 
-    @Autowired
     private UserRepository userRepository;
+    
+    private static UserRepository userRepoStatic;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        DirectChatController.userRepoStatic = userRepository;
+    }
 
     // ─────────────────────────────────────────────
     //  SSE Emitter Registry — chatId → list of emitters
@@ -81,6 +88,34 @@ public class DirectChatController {
                     ? "ADMIN".equals(msg.getSenderId())
                     : viewerIdentifier.equals(msg.getSenderId());
             m.put("isSelf", isSelf);
+            
+            // Calculate message status: Sent, Delivered, or Read
+            String status = "Sent";
+            if (msg.isRead()) {
+                status = "Read";
+            } else {
+                // Check if recipient is online
+                String recipientId = isSelf ? ( "ADMIN".equals(viewerIdentifier) ? chat.getStudentId() : "ADMIN" ) : viewerIdentifier;
+                if ("ADMIN".equals(recipientId)) {
+                    // Assuming admin is generally online if any admin is online, or we just default to Delivered if active in last 5 mins.
+                    // For simplicity, we can check any user with ROLE_ADMIN, but here we just check if ADMIN has an active emitter globally?
+                    // Actually, if recipient is ADMIN, we can check if "ADMIN" is in emitterViewers as a rough proxy.
+                    if (emitterViewers.containsValue("ADMIN")) {
+                        status = "Delivered";
+                    }
+                } else {
+                    if (userRepoStatic != null) {
+                        User student = userRepoStatic.findById(recipientId).orElse(null);
+                        if (student != null && student.getLastActiveTime() != null) {
+                            if (student.getLastActiveTime().isAfter(LocalDateTime.now().minusMinutes(5))) {
+                                status = "Delivered";
+                            }
+                        }
+                    }
+                }
+            }
+            m.put("status", status);
+            
             result.add(m);
         }
         return result;
