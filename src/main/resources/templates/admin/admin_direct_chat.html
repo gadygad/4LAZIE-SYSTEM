@@ -402,11 +402,15 @@
     </div>
 
     <input type="hidden" id="CHAT_ID" th:value="${chat.id}">
+    <input type="hidden" id="ADMIN_NAME" th:value="${loggedInUser.name}">
+    <input type="hidden" id="ADMIN_PIC" th:value="${loggedInUser.profilePicture != null ? loggedInUser.profilePicture : ''}">
 
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script>
     (() => {
         const CHAT_ID  = document.getElementById('CHAT_ID').value;
+        const ADMIN_NAME = document.getElementById('ADMIN_NAME').value || 'Admin';
+        const ADMIN_PIC  = document.getElementById('ADMIN_PIC').value;
         const SSE_URL  = `/admin/chat/${CHAT_ID}/stream`;
         const SEND_URL = `/admin/chat/${CHAT_ID}/send`;
         const POLL_URL = `/admin/chat/${CHAT_ID}/messages`;
@@ -429,7 +433,12 @@
 
         function avatarHtml(isSelf, name, pic) {
             if (isSelf) {
-                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.7rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(16,185,129,0.4);">Y</div>`;
+                if (ADMIN_PIC) {
+                    const src = ADMIN_PIC.startsWith('http') ? ADMIN_PIC : '/uploads/' + ADMIN_PIC;
+                    return `<div style="width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.3);"><img src="${src}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+                }
+                const ini = ADMIN_NAME.charAt(0).toUpperCase();
+                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.7rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(16,185,129,0.4);">${ini}</div>`;
             }
             if (pic) {
                 const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
@@ -455,7 +464,7 @@
 
             const label = document.createElement('span');
             label.className = 'msg-label';
-            label.textContent = isSelf ? 'You (Admin)' : (msg.senderName || 'Student');
+            label.textContent = isSelf ? ADMIN_NAME : (msg.senderName || 'Student');
             col.appendChild(label);
 
             const bubble = document.createElement('div');

@@ -300,6 +300,9 @@
             </div>
         </div>
 
+        <input type="hidden" id="ADMIN_NAME" th:value="${loggedInUser.name}">
+        <input type="hidden" id="ADMIN_PIC" th:value="${loggedInUser.profilePicture != null ? loggedInUser.profilePicture : ''}">
+
         <div id="adminChatMessages" class="chat-messages" style="display:none;"></div>
 
         <div id="adminChatInput" class="chat-input-area" style="display:none;">
@@ -382,20 +385,30 @@
         const row = document.createElement('div');
         row.id = 'msg-' + msg.id;
         
+        const ADMIN_NAME = document.getElementById('ADMIN_NAME').value || 'Admin';
+        const ADMIN_PIC = document.getElementById('ADMIN_PIC').value;
+        
         const anim = isNew ? (isAdmin ? 'animation:slideFadeInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : 'animation:slideFadeInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;') : '';
 
-        if (isAdmin) { // Admin sending (Me)
+        // Admin(Self) = Left, Student = Right
+        if (isAdmin) { // Sender (Left)
+            row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;flex-direction:row;margin-right:auto;${anim}`;
+        } else { // Receiver (Right)
             row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;${anim}`;
-        } else { // Student sending (Them)
-            row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;margin-right:auto;${anim}`;
         }
 
         // Avatar
         const avDiv = document.createElement('div');
         avDiv.className = 'av-sm';
         if (isAdmin) {
-            avDiv.style.cssText = 'background:linear-gradient(135deg,#6366f1,#4f46e5);width:34px;height:34px;font-size:0.9rem;';
-            avDiv.textContent = 'A';
+            if (ADMIN_PIC) {
+                const src = ADMIN_PIC.startsWith('http') ? ADMIN_PIC : '/uploads/' + ADMIN_PIC;
+                avDiv.style.cssText = 'background:transparent;width:34px;height:34px;';
+                avDiv.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            } else {
+                avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#06b6d4);width:34px;height:34px;font-size:0.9rem;';
+                avDiv.textContent = ADMIN_NAME.charAt(0).toUpperCase();
+            }
         } else {
             const pic = msg.senderProfilePicture;
             if (pic) {
@@ -403,39 +416,39 @@
                 avDiv.style.cssText = 'background:transparent;width:34px;height:34px;';
                 avDiv.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
             } else {
-                avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;font-size:0.9rem;';
+                avDiv.style.cssText = 'background:linear-gradient(135deg,#059669,#0891b2);width:34px;height:34px;font-size:0.9rem;';
                 avDiv.textContent = (msg.senderName || 'S').charAt(0).toUpperCase();
             }
         }
         row.appendChild(avDiv);
 
         const contentCol = document.createElement('div');
-        contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (isAdmin ? 'align-items:flex-end;' : 'align-items:flex-start;');
+        contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (isAdmin ? 'align-items:flex-start;' : 'align-items:flex-end;');
 
         const headerRow = document.createElement('div');
-        headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (isAdmin ? 'justify-content:flex-end;' : '');
+        headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (!isAdmin ? 'justify-content:flex-end;' : '');
         
         const nameEl = document.createElement('span');
         nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
-        nameEl.textContent = isAdmin ? 'You (Admin)' : (msg.senderName || 'Student');
+        nameEl.textContent = isAdmin ? ADMIN_NAME : (msg.senderName || 'Student');
         
         const timeEl = document.createElement('span');
         timeEl.style.cssText = 'font-size:0.72rem;color:#94a3b8;font-weight:500;';
         timeEl.textContent = msg.time || '';
         
-        if (isAdmin) {
-            headerRow.appendChild(timeEl);
-            headerRow.appendChild(nameEl);
-        } else {
+        if (isAdmin) { // Sender (Left)
             headerRow.appendChild(nameEl);
             headerRow.appendChild(timeEl);
+        } else { // Receiver (Right)
+            headerRow.appendChild(timeEl);
+            headerRow.appendChild(nameEl);
         }
 
         const textEl = document.createElement('div');
         if (isAdmin) {
-            textEl.style.cssText = 'font-size:0.95rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(16,185,129,0.3),inset 0 1px 0 rgba(255,255,255,0.2);text-shadow:0 1px 2px rgba(0,0,0,0.1);';
+            textEl.style.cssText = 'font-size:0.95rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(16,185,129,0.3),inset 0 1px 0 rgba(255,255,255,0.2);text-shadow:0 1px 2px rgba(0,0,0,0.1);';
         } else {
-            textEl.style.cssText = 'font-size:0.95rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);';
+            textEl.style.cssText = 'font-size:0.95rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);';
         }
 
         contentCol.appendChild(headerRow);
