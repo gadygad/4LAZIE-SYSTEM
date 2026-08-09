@@ -104,53 +104,99 @@
             padding: 4px 14px; border-radius: 50px; text-transform: uppercase;
         }
 
-        /* Bubbles */
+        /* ── BUBBLE ROW: self=right, other=left ── */
         .msg-row {
-            display: flex; align-items: flex-end; gap: 9px;
-            animation: msgIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 3px 0;
+            /* other/incoming slides from left */
+            opacity: 0;
+            transform: translateX(-28px) scale(0.96);
+            animation: slideInLeft 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes msgIn {
-            from { opacity:0; transform:translateY(10px) scale(0.97); }
-            to   { opacity:1; transform:translateY(0) scale(1); }
+        .msg-row.self {
+            flex-direction: row-reverse;
+            /* self/outgoing slides from right */
+            transform: translateX(28px) scale(0.96);
+            animation: slideInRight 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        .msg-row.self { flex-direction: row-reverse; }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-28px) scale(0.96); }
+            to   { opacity: 1; transform: translateX(0)     scale(1); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(28px)  scale(0.96); }
+            to   { opacity: 1; transform: translateX(0)     scale(1); }
+        }
 
+        /* Avatar */
         .av-small {
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0; overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
         }
         .av-admin-sm {
             background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 3px 10px rgba(16,185,129,0.25);
         }
         .av-admin-sm img { width: 20px; height: 20px; border-radius: 50%; object-fit: contain; background: white; padding: 1px; }
         .av-student-sm { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .av-student-sm i { color: white; font-size: 0.85rem; }
 
-        .bubble {
-            max-width: 65%; padding: 11px 15px; font-size: 0.88rem;
-            line-height: 1.55; word-break: break-word;
+        /* Bubble content wrapper */
+        .msg-content {
+            display: flex;
+            flex-direction: column;
+            max-width: 68%;
+            gap: 3px;
         }
-        /* Admin bubble (incoming) — green left */
+        .msg-row.self .msg-content { align-items: flex-end; }
+        .msg-row:not(.self) .msg-content { align-items: flex-start; }
+
+        /* Sender name */
+        .msg-name {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #94a3b8;
+            padding: 0 6px;
+        }
+        .msg-row.self .msg-name { color: #60a5fa; }
+
+        /* Actual bubble */
+        .bubble {
+            padding: 10px 16px;
+            line-height: 1.6;
+            font-size: 0.875rem;
+            word-break: break-word;
+            transition: transform 0.18s ease;
+        }
+        .bubble:hover { transform: scale(1.015); }
+
+        /* Admin message (left) — white */
         .bubble.admin-bub {
-            background: white;
-            border-radius: 4px 18px 18px 18px;
-            box-shadow: 0 2px 14px rgba(0,0,0,0.06);
-            border: 1px solid rgba(16,185,129,0.1);
+            background: #ffffff;
+            border-radius: 4px 20px 20px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            border: 1px solid rgba(16,185,129,0.12);
             color: #1e293b;
         }
-        /* Student bubble (self) — blue right */
+        /* Student's own message (right) — blue gradient */
         .bubble.student-bub {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-radius: 18px 4px 18px 18px;
-            box-shadow: 0 4px 18px rgba(59,130,246,0.3);
-            color: white;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 20px 4px 20px 20px;
+            box-shadow: 0 6px 22px rgba(59,130,246,0.38);
+            color: #ffffff;
         }
-        .b-name { font-size:0.7rem; font-weight:700; opacity:0.65; margin-bottom:3px; letter-spacing:0.3px; }
-        .b-time { font-size:0.62rem; opacity:0.55; margin-top:5px; display:block; }
-        .bubble.admin-bub .b-time { text-align:left; }
-        .bubble.student-bub .b-time { text-align:right; }
+        .b-name { display: none; } /* replaced by msg-name above */
+        .b-time {
+            font-size: 0.6rem;
+            opacity: 0.55;
+            margin-top: 4px;
+            display: block;
+        }
+        .bubble.admin-bub .b-time { text-align: left; }
+        .bubble.student-bub .b-time { text-align: right; }
 
         /* Typing cursor effect */
         .typing-cursor::after {
@@ -332,66 +378,46 @@
             return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);">${initial}</div>`;
         }
 
-        // ── Build bubble ───────────────────────
+        // ── Build bubble (self=right, other=left) ───
         function makeBubble(msg, typeIt = false) {
             const isAdmin = !msg.isSelf;
+
             const row = document.createElement('div');
+            row.className = 'msg-row' + (msg.isSelf ? ' self' : '');
             row.id = 'msg-' + msg.id;
-            row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;padding:10px 14px;border-radius:12px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);animation:msgIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:left center;border-left:3px solid transparent;';
-            
-            row.onmouseover = () => {
-                row.style.background = isAdmin ? 'linear-gradient(90deg, rgba(16,185,129,0.04), transparent)' : 'linear-gradient(90deg, rgba(59,130,246,0.04), transparent)';
-                row.style.borderLeftColor = isAdmin ? '#10b981' : '#3b82f6';
-                row.style.transform = 'translateX(4px)';
-            };
-            row.onmouseout = () => {
-                row.style.background = 'transparent';
-                row.style.borderLeftColor = 'transparent';
-                row.style.transform = 'translateX(0)';
-            };
 
-            const av = document.createElement('div');
-            av.innerHTML = avatarHtml(isAdmin, isAdmin ? '4LAZIE' : 'You');
-            row.appendChild(av.firstElementChild);
+            const avWrap = document.createElement('div');
+            avWrap.innerHTML = avatarHtml(isAdmin, isAdmin ? '4LAZIE' : 'You');
+            row.appendChild(avWrap.firstElementChild);
 
-            const contentCol = document.createElement('div');
-            contentCol.style.cssText = 'flex:1;min-width:0;';
+            const content = document.createElement('div');
+            content.className = 'msg-content';
 
-            const headerRow = document.createElement('div');
-            headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
-            
             const nameEl = document.createElement('span');
-            nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
-            nameEl.textContent = isAdmin ? '4LAZIE' : 'You';
-            
-            if (isAdmin) {
-                const badge = document.createElement('span');
-                badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:4px;';
-                badge.textContent = 'OFFICIAL';
-                nameEl.appendChild(badge);
-            }
-            
-            const timeEl = document.createElement('span');
-            timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
-            timeEl.textContent = msg.time || '';
-            
-            headerRow.appendChild(nameEl);
-            headerRow.appendChild(timeEl);
+            nameEl.className = 'msg-name';
+            nameEl.textContent = isAdmin ? '4LAZIE Admin' : 'You';
+            content.appendChild(nameEl);
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble ' + (isAdmin ? 'admin-bub' : 'student-bub');
 
             const textEl = document.createElement('div');
-            textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.55;word-break:break-word;';
+            const timeEl = document.createElement('span');
+            timeEl.className = 'b-time';
+            timeEl.textContent = msg.time || '';
 
-            contentCol.appendChild(headerRow);
-            contentCol.appendChild(textEl);
-            row.appendChild(contentCol);
+            bubble.appendChild(textEl);
+            bubble.appendChild(timeEl);
+            content.appendChild(bubble);
+            row.appendChild(content);
 
             if (typeIt && isAdmin) {
-                // Typing animation for admin messages
                 typeQueue.push({ el: textEl, text: msg.messageText || '' });
                 if (!isTyping) drainQueue();
             } else {
                 textEl.innerHTML = esc(msg.messageText || '');
             }
+
             return row;
         }
 
@@ -484,20 +510,6 @@
             isSending = true;
             sendBtn.disabled = true;
 
-            // Optimistic bubble with temp ID
-            const tempId = 'opt-' + Date.now();
-            emptyEl.style.display = 'none';
-            const optBubble = makeBubble({
-                id: tempId,
-                isSelf: true,
-                senderName: STUDENT_NM,
-                messageText: text,
-                time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
-            }, false);
-            msgWrap.appendChild(optBubble);
-            renderedIds.add(tempId);
-            scrollBot(true);
-
             input.value = '';
             input.style.height = 'auto';
 
@@ -505,15 +517,6 @@
             fd.append('messageText', text);
             fetch(SEND_URL, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(r => r.json())
-                .then(d => {
-                    if (d.success && d.id) {
-                        // Update temp bubble ID to real ID
-                        const el = document.getElementById('msg-' + tempId);
-                        if (el) el.id = 'msg-' + d.id;
-                        renderedIds.delete(tempId);
-                        renderedIds.add(d.id);
-                    }
-                })
                 .catch(() => {})
                 .finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
         }
