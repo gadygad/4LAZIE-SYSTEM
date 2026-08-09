@@ -3,6 +3,7 @@ package com.school.config;
 import com.school.model.User;
 import com.school.repository.UserRepository;
 import com.school.service.NotificationService;
+import com.school.service.DirectChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,9 +23,12 @@ public class GlobalModelAttributes {
     
         private UserRepository userRepository;
 
-    public GlobalModelAttributes(NotificationService notificationService, UserRepository userRepository) {
+        private DirectChatService directChatService;
+
+    public GlobalModelAttributes(NotificationService notificationService, UserRepository userRepository, DirectChatService directChatService) {
         this.notificationService = notificationService;
         this.userRepository = userRepository;
+        this.directChatService = directChatService;
     }
 
 
@@ -64,10 +68,19 @@ public class GlobalModelAttributes {
                         java.util.List<com.school.model.Notification> recentNotifs = allNotifs.stream().limit(10).toList();
                         model.addAttribute("notifications", recentNotifs);
                         model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
+                        
+                        // Add DirectChat unread counts globally
+                        if (user.getRole() != null && (user.getRole().name().equals("ADMIN") || user.getRole().name().equals("SUPER_ADMIN"))) {
+                            model.addAttribute("totalUnreadAdmin", directChatService.getUnreadCountForAdmin(user.getId()));
+                        } else {
+                            model.addAttribute("totalUnreadStudent", directChatService.getUnreadCountForStudent(user.getId()));
+                        }
                     } catch (Exception e) {
                         log.warn("Failed to load notifications for user '{}': {}", email, e.getMessage());
                         model.addAttribute("notifications", java.util.Collections.emptyList());
                         model.addAttribute("unreadNotificationCount", 0);
+                        model.addAttribute("totalUnreadAdmin", 0);
+                        model.addAttribute("totalUnreadStudent", 0);
                     }
                 }
             } catch (Exception e) {

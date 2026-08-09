@@ -224,6 +224,11 @@
             align-items: center;
         }
 
+        /* Improved Font Sizes for Desktop */
+        .inbox-name { font-size: 1.15rem; font-weight: 700; color: #1e293b; }
+        .inbox-time { font-size: 0.9rem; color: #94a3b8; }
+        .inbox-msg-preview { font-size: 1rem; color: #64748b; margin: 0; }
+
         /* Smooth Sliding for Mobile */
         @media (max-width: 768px) {
             .container-fluid {
@@ -249,6 +254,11 @@
                 width: 100%;
                 transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             }
+            
+            /* Increase font sizes on mobile for better readability */
+            .inbox-name { font-size: 1.25rem !important; }
+            .inbox-time { font-size: 0.95rem !important; }
+            .inbox-msg-preview { font-size: 1.1rem !important; }
             .chat-panel {
                 position: absolute;
                 top: 0;
@@ -325,11 +335,11 @@
 
                         <div class="flex-grow-1 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold" style="font-size:1.05rem;color:#1e293b;">4LAZIE Admin</span>
-                                <small class="text-muted" style="font-size:0.8rem;" th:text="${directChat.lastMessageAt != null ? #temporals.format(directChat.lastMessageAt,'dd MMM') : ''}"></small>
+                                <span class="inbox-name">4LAZIE Admin</span>
+                                <small class="inbox-time" th:text="${directChat.lastMessageAt != null ? #temporals.format(directChat.lastMessageAt,'dd MMM') : ''}"></small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-1">
-                                <p class="text-muted mb-0 text-truncate" style="font-size:0.9rem;max-width:160px;"
+                                <p class="inbox-msg-preview text-truncate" style="max-width:160px;"
                                    th:text="${!#lists.isEmpty(directChat.messages) ? directChat.messages[#lists.size(directChat.messages) - 1].messageText : 'Tap to start chatting'}"></p>
                                 <span th:if="${directChatUnread}" class="badge rounded-pill" style="background:#6366f1;font-size:0.65rem;padding:3px 8px;">New</span>
                             </div>
@@ -365,9 +375,9 @@
 
                     <!-- List Items -->
                     <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 1.05rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
-                            <small class="text-muted" style="font-size: 0.8rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="inbox-name text-truncate" style="text-transform: uppercase;" th:text="${msg.subjectName}">Subject</span>
+                            <small class="inbox-time" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-1">
                             <div class="d-flex align-items-center gap-2" style="max-width: 70%;">
@@ -375,7 +385,7 @@
                                 <div th:if="${msg.status == 'SOLVED'}" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(16,185,129,0.2);">
                                     <img src="/images/logo.png" alt="4LAZIE" style="width:12px;height:12px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                 </div>
-                                <p class="text-muted mb-0 text-truncate" style="font-size: 0.9rem;" 
+                                <p class="inbox-msg-preview text-truncate" 
                                    th:text="${!#lists.isEmpty(msg.messages) ? msg.messages[#lists.size(msg.messages)-1].messageText : (msg.status == 'SOLVED' ? msg.adminReply : (msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Tap to start chatting'))}"></p>
                             </div>
                             
@@ -795,7 +805,7 @@
                 headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
                 
                 const nameEl = document.createElement('span');
-                nameEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#0f172a;letter-spacing:-0.2px;';
+                nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;';
                 nameEl.textContent = isAdmin ? '4LAZIE Admin' : STUDENT_NM;
                 
                 // Add an admin badge if it's admin
@@ -807,7 +817,7 @@
                 }
                 
                 const timeEl = document.createElement('span');
-                timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
+                timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;';
                 timeEl.textContent = msg.time || '';
                 
                 if (msg.isSelf) {
@@ -820,9 +830,9 @@
 
                 const textEl = document.createElement('div');
                 if (msg.isSelf) {
-                    textEl.style.cssText = 'font-size:0.95rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);';
+                    textEl.style.cssText = 'font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);';
                 } else {
-                    textEl.style.cssText = 'font-size:0.95rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);';
+                    textEl.style.cssText = 'font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);';
                 }
 
                 contentCol.appendChild(headerRow);
@@ -833,7 +843,8 @@
 
         if (msg.isSelf) {
             const statusRow = document.createElement('div');
-            statusRow.style.cssText = 'font-size:0.75rem;margin-top:4px;display:flex;align-items:center;gap:4px;';
+            statusRow.className = 'msg-status-text';
+            statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;';
             if (msg.status === 'Read') {
                 statusRow.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
             } else if (msg.status === 'Delivered') {
@@ -851,7 +862,22 @@
                 if (emptyEl) emptyEl.style.display = 'none';
                 for (let i = 0; i < msgs.length; i++) {
                     const msg = msgs[i];
-                    if (!document.getElementById('msg-' + msg.id)) {
+                    
+                    const existingEl = document.getElementById('msg-' + msg.id);
+                    if (existingEl) {
+                        if (msg.isSelf) {
+                            const statusSpan = existingEl.querySelector('.msg-status-text');
+                            if (statusSpan && msg.status) {
+                                if (msg.status === 'Read') {
+                                    statusSpan.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                                } else if (msg.status === 'Delivered') {
+                                    statusSpan.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                                } else {
+                                    statusSpan.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                                }
+                            }
+                        }
+                    } else {
                         if (msg.isSelf) {
                             const tempEl = document.querySelector('.temp-msg');
                             if (tempEl) {

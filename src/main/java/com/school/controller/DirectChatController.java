@@ -161,6 +161,8 @@ public class DirectChatController {
         DirectChat chat = directChatService.getChatById(chatId);
         if (chat == null) return "redirect:/admin/users";
         directChatService.markReadForAdmin(chatId);
+        // Ensure the read status is broadcasted to the student if they are online
+        notifyChat(chatId, directChatService.getChatById(chatId));
         User student = userRepository.findById(chat.getStudentId()).orElse(null);
         model.addAttribute("chat", chat);
         model.addAttribute("student", student);
@@ -230,8 +232,12 @@ public class DirectChatController {
         User admin = (User) session.getAttribute("user");
         if (admin == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp); }
         DirectChat chat = directChatService.getChatById(chatId);
-        if (chat == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp); }
+        if (chat == null) {
+            resp.put("success", false); return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
+        }
         directChatService.markReadForAdmin(chatId);
+        // Broadcast the updated read status to the Student if they are online
+        notifyChat(chatId, directChatService.getChatById(chatId));
         List<Map<String, Object>> msgs = buildMessageList(chat, "ADMIN");
         resp.put("success", true);
         resp.put("messages", msgs);
@@ -339,6 +345,8 @@ public class DirectChatController {
             resp.put("success", false); return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
         }
         directChatService.markReadForStudent(chatId);
+        // Broadcast the updated read status to the Admin if they are online
+        notifyChat(chatId, directChatService.getChatById(chatId));
         List<Map<String, Object>> msgs = buildMessageList(chat, student.getId());
         resp.put("success", true);
         resp.put("messages", msgs);

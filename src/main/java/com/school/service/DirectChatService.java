@@ -21,6 +21,9 @@ public class DirectChatService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PushNotificationService pushNotificationService;
+
     /**
      * Admin anaanzisha chat na mwanafunzi.
      * Kama chat tayari ipo, inairejesha ile ile (no duplicate).
@@ -81,8 +84,15 @@ public class DirectChatService {
 
         if (senderIsAdmin) {
             chat.setHasUnreadForStudent(true);
+            // Push Notification to Student
+            pushNotificationService.sendToUser(chat.getStudentId(), "New Message from Admin", senderName + ": " + messageText, "/messages");
         } else {
             chat.setHasUnreadForAdmin(true);
+            // Push Notification to all Admins
+            java.util.List<User> admins = userRepository.findByRole(com.school.model.Role.ADMIN);
+            java.util.List<User> superAdmins = userRepository.findByRole(com.school.model.Role.SUPER_ADMIN);
+            admins.forEach(a -> pushNotificationService.sendToUser(a.getId(), "New Message from " + senderName, messageText, "/admin/messages"));
+            superAdmins.forEach(sa -> pushNotificationService.sendToUser(sa.getId(), "New Message from " + senderName, messageText, "/admin/messages"));
         }
 
         return directChatRepository.save(chat);
