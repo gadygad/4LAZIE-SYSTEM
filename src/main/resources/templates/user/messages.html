@@ -506,7 +506,7 @@
                                 <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
                                     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
                                         <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
-                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">YOU</span>
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${#strings.toUpperCase(session.user.name)}">NAME</span>
                                     </div>
                                     <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
                                         <!-- Avatar -->
@@ -586,7 +586,7 @@
                                             <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
                                                 <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
                                                     <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
-                                                    <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">YOU</span>
+                                                    <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${#strings.toUpperCase(session.user.name)}">NAME</span>
                                                 </div>
                                                 <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
                                                     <!-- Avatar -->
@@ -815,8 +815,8 @@
                 headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
                 
                 const nameEl = document.createElement('span');
-                nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;';
-                nameEl.textContent = msg.isSelf ? 'You' : '4LAZIE Admin';
+                nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;';
+                nameEl.textContent = msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN';
                 
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;';
@@ -1078,7 +1078,7 @@
                                 <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
                                     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
                                         <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;">${data.time}</span>
-                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">YOU</span>
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">${document.getElementById('DC_STUDENT_NAME') ? document.getElementById('DC_STUDENT_NAME').value.toUpperCase() : 'STUDENT'}</span>
                                     </div>
                                     <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
                                         <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;">${initial}</div>
