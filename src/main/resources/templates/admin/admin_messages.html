@@ -97,14 +97,12 @@
         .msg-row.self { flex-direction: row-reverse; }
         @keyframes popIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes slideFadeInRight {
-            0% { opacity: 0; transform: translateX(40px) scale(0.9); }
-            60% { opacity: 1; transform: translateX(-5px) scale(1.02); }
-            100% { opacity: 1; transform: translateX(0) scale(1); }
+            0% { opacity: 0; transform: translate(30px, 20px) scale(0.8); }
+            100% { opacity: 1; transform: translate(0, 0) scale(1); }
         }
         @keyframes slideFadeInLeft {
-            0% { opacity: 0; transform: translateX(-40px) scale(0.9); }
-            60% { opacity: 1; transform: translateX(5px) scale(1.02); }
-            100% { opacity: 1; transform: translateX(0) scale(1); }
+            0% { opacity: 0; transform: translate(-30px, 20px) scale(0.8); }
+            100% { opacity: 1; transform: translate(0, 0) scale(1); }
         }
 
         .av-sm {
@@ -357,7 +355,11 @@
     const msgsEl = document.getElementById('adminChatMessages');
     const esc = t => (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 
-    function scrollToBottom() { if (msgsEl) setTimeout(() => msgsEl.scrollTop = msgsEl.scrollHeight, 50); }
+    function scrollToBottom(smooth = false) {
+        if (!msgsEl) return;
+        if (smooth) msgsEl.scrollTo({ top: msgsEl.scrollHeight, behavior: 'smooth' });
+        else msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
 
     function drainQueue() {
         if (typeQueue.length === 0) { isTyping = false; return; }
@@ -380,10 +382,12 @@
         const row = document.createElement('div');
         row.id = 'msg-' + msg.id;
         
+        const anim = isNew ? (isAdmin ? 'animation:slideFadeInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : 'animation:slideFadeInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;') : '';
+
         if (isAdmin) { // Admin sending
-            row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);animation:slideFadeInRight 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;';
+            row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;${anim}`;
         } else { // Student sending
-            row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);animation:slideFadeInLeft 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;transform-origin:left bottom;margin-right:auto;';
+            row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;margin-right:auto;${anim}`;
         }
 
         // Avatar
@@ -463,7 +467,7 @@
             msgsEl.appendChild(makeBubble(msg, isNew));
             added++;
         }
-        if (added > 0) scrollToBottom();
+        if (added > 0) scrollToBottom(isNew);
     }
 
     function connectSSE(chatId) {
@@ -571,7 +575,7 @@
         }, true);
         bubble.classList.add('temp-msg');
         msgsEl.appendChild(bubble);
-        scrollToBottom();
+        scrollToBottom(true);
 
         // Clear input immediately for responsiveness
         if (input) { input.value = ''; input.style.height = 'auto'; }
