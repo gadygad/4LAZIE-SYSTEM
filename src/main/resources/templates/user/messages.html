@@ -775,14 +775,6 @@
             const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 
             // Build avatar HTML — profile pic or coloured initial
-            function avatarHtml(isAdmin, name, pic) {
-                if (isAdmin) {
-                    return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.25);">
-                              <img src="/images/logo.png" alt="4LAZIE" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
-                            </div>`;
-                }
-                if (pic) {
-                    const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
             function makeBubble(msg, isNew) {
                 const isAdmin = !msg.isSelf;
                 const row = document.createElement('div');
