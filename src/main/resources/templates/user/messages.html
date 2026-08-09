@@ -228,6 +228,11 @@
         .inbox-name { font-size: 1.15rem; font-weight: 700; color: #1e293b; }
         .inbox-time { font-size: 0.9rem; color: #94a3b8; }
         .inbox-msg-preview { font-size: 1rem; color: #64748b; margin: 0; }
+        
+        .has-unread .inbox-msg-preview {
+            font-weight: 800 !important;
+            color: #000000 !important;
+        }
 
         /* Smooth Sliding for Mobile */
         @media (max-width: 768px) {
@@ -325,6 +330,7 @@
                     <div th:if="${directChat != null}"
                          id="list-item-direct"
                          class="msg-list-item d-flex align-items-center gap-3"
+                         th:classappend="${directChatUnread} ? 'has-unread' : ''"
                          onclick="openDirectChat()"
                          style="border-left: 3px solid rgba(99,102,241,0.4); background: rgba(99,102,241,0.04);">
 
@@ -374,7 +380,7 @@
                     </div>
 
                     <!-- List Items -->
-                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
+                    <div th:each="msg : ${messages}" class="msg-list-item" th:classappend="${msg.status == 'SOLVED' and !msg.read} ? 'has-unread' : ''" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="inbox-name text-truncate" style="text-transform: uppercase;" th:text="${msg.subjectName}">Subject</span>
                             <small class="inbox-time" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
@@ -660,6 +666,7 @@
                     }).then(() => {
                         // Remove badge and update icon visually
                         badge.remove();
+                        listItem.classList.remove('has-unread');
                         const iconContainer = listItem.querySelector('.bi-check2-all');
                         if(iconContainer) iconContainer.style.color = '#10b981';
                     }).catch(e => console.error("Error updating read status", e));
@@ -1017,8 +1024,12 @@
             const chatBody = document.getElementById('directChatBody');
             if (chatBody) setTimeout(() => chatBody.scrollTop = chatBody.scrollHeight, 100);
 
-            // Remove unread badge from list item
-            if (li) { const badge = li.querySelector('.badge'); if (badge) badge.remove(); }
+            // Remove unread badge and unread styling from list item
+            if (li) { 
+                const badge = li.querySelector('.badge'); 
+                if (badge) badge.remove(); 
+                li.classList.remove('has-unread');
+            }
         };
 
 
