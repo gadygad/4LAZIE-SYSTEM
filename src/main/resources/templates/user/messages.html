@@ -325,11 +325,11 @@
 
                         <div class="flex-grow-1 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold" style="font-size:0.9rem;color:#1e293b;">4LAZIE Admin</span>
-                                <small class="text-muted" style="font-size:0.72rem;" th:text="${directChat.lastMessageAt != null ? #temporals.format(directChat.lastMessageAt,'dd MMM') : ''}"></small>
+                                <span class="fw-bold" style="font-size:1.05rem;color:#1e293b;">4LAZIE Admin</span>
+                                <small class="text-muted" style="font-size:0.8rem;" th:text="${directChat.lastMessageAt != null ? #temporals.format(directChat.lastMessageAt,'dd MMM') : ''}"></small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-1">
-                                <p class="text-muted mb-0 text-truncate" style="font-size:0.82rem;max-width:160px;"
+                                <p class="text-muted mb-0 text-truncate" style="font-size:0.9rem;max-width:160px;"
                                    th:text="${!#lists.isEmpty(directChat.messages) ? directChat.messages[#lists.size(directChat.messages) - 1].messageText : 'Tap to start chatting'}"></p>
                                 <span th:if="${directChatUnread}" class="badge rounded-pill" style="background:#6366f1;font-size:0.65rem;padding:3px 8px;">New</span>
                             </div>
@@ -366,8 +366,8 @@
                     <!-- List Items -->
                     <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
                         <div class="d-flex justify-content-between align-items-start mb-1">
-                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
-                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
+                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 1.05rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
+                            <small class="text-muted" style="font-size: 0.8rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-1">
                             <div class="d-flex align-items-center gap-2" style="max-width: 70%;">
@@ -375,7 +375,7 @@
                                 <div th:if="${msg.status == 'SOLVED'}" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(16,185,129,0.2);">
                                     <img src="/images/logo.png" alt="4LAZIE" style="width:12px;height:12px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                 </div>
-                                <p class="text-muted mb-0 text-truncate" style="font-size: 0.85rem;" 
+                                <p class="text-muted mb-0 text-truncate" style="font-size: 0.9rem;" 
                                    th:text="${!#lists.isEmpty(msg.messages) ? msg.messages[#lists.size(msg.messages)-1].messageText : (msg.status == 'SOLVED' ? msg.adminReply : (msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Tap to start chatting'))}"></p>
                             </div>
                             
