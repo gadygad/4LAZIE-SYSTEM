@@ -179,6 +179,12 @@
             .chat-col { position:absolute; top:0; left:0; width:100%; height:100%; transform:translateX(100%); transition:transform 0.35s ease; z-index:10; background: #f8fafc; }
             .msg-container.chat-open .list-col { opacity:0; pointer-events:none; }
             .msg-container.chat-open .chat-col { transform:translateX(0); }
+            
+            /* Increase font sizes on mobile for better readability */
+            .inbox-name { font-size: 1.2rem !important; }
+            .inbox-time { font-size: 0.95rem !important; }
+            .inbox-msg-preview { font-size: 1.05rem !important; }
+            .inbox-course { font-size: 0.85rem !important; }
         }
     </style>
 </head>
@@ -267,12 +273,12 @@
 
                 <div style="flex:1;overflow:hidden;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-weight:700;font-size:1.05rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
-                        <small style="font-size:0.8rem;color:#94a3b8;flex-shrink:0;margin-left:6px;" th:text="${cv.lastMsgTime}">Time</small>
+                        <span class="inbox-name" style="font-weight:700;font-size:1.05rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
+                        <small class="inbox-time" style="font-size:0.8rem;color:#94a3b8;flex-shrink:0;margin-left:6px;" th:text="${cv.lastMsgTime}">Time</small>
                     </div>
-                    <p style="margin:4px 0 0;font-size:0.9rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                    <p class="inbox-msg-preview" style="margin:4px 0 0;font-size:0.9rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
                        th:text="${(cv.lastSenderIsAdmin ? 'You: ' : '') + cv.lastMsg}">preview</p>
-                    <div th:if="${cv.student != null and cv.student.courseProgram != null}"
+                    <div class="inbox-course" th:if="${cv.student != null and cv.student.courseProgram != null}"
                          style="font-size:0.75rem;color:#10b981;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:0.4px;"
                          th:text="${cv.student.courseProgram}"></div>
                 </div>
