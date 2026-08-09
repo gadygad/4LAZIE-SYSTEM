@@ -71,7 +71,7 @@ public class GlobalModelAttributes {
                         
                         // Add DirectChat unread counts globally
                         if (user.getRole() != null && (user.getRole().name().equals("ADMIN") || user.getRole().name().equals("SUPER_ADMIN"))) {
-                            model.addAttribute("totalUnreadAdmin", directChatService.getUnreadCountForAdmin(user.getId()));
+                            model.addAttribute("totalUnreadAdmin", directChatService.getTotalUnreadForAdmin());
                         } else {
                             model.addAttribute("totalUnreadStudent", directChatService.getUnreadCountForStudent(user.getId()));
                         }

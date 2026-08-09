@@ -36,6 +36,8 @@
                        onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
                        onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#10b981';">
                         <i class="bi bi-chat-dots-fill" style="color: #10b981; font-size: 1.2rem; transition: color 0.3s;"></i>
+                        <span th:if="${totalUnreadStudent != null and totalUnreadStudent > 0}" th:text="${totalUnreadStudent}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #ef4444; color: #ffffff !important; font-size: 0.75rem; padding: 0.4em 0.6em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; font-weight: 900; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); animation: pulse-red-badge 1.5s infinite;"></span>
+                        <span th:if="${totalUnreadAdmin != null and totalUnreadAdmin > 0}" th:text="${totalUnreadAdmin}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #ef4444; color: #ffffff !important; font-size: 0.75rem; padding: 0.4em 0.6em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; font-weight: 900; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); animation: pulse-red-badge 1.5s infinite;"></span>
                     </a>
                     
 <!-- Notification Button (Triggers Dropdown) -->
