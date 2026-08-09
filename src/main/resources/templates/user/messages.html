@@ -605,6 +605,11 @@
                                                                 <i class="bi bi-paperclip"></i> View attached file
                                                             </a>
                                                         </div>
+                                                        <!-- Status ticks -->
+                                                        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8;">
+                                                            <small th:text="${chat.read ? 'Read' : 'Delivered'}" style="font-size: 0.7rem; margin-right: 4px;"></small>
+                                                            <i th:class="${chat.read ? 'bi bi-check2-all text-info' : 'bi bi-check2-all'}" style="font-size: 1rem;"></i>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

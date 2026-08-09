@@ -104,11 +104,25 @@ public class AssignmentHelpController {
         User user = (User) session.getAttribute("user");
         
         if (user != null) {
-            assignmentHelpService.markAsRead(id);
+            assignmentHelpService.markAsRead(id, user.getId());
             response.put("success", true);
             return ResponseEntity.ok(response);
         }
         
+        response.put("success", false);
+        return ResponseEntity.status(401).body(response);
+    }
+
+    @PostMapping("/api/assignments/admin-read/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> markAsReadAdmin(@PathVariable String id, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        User admin = (User) session.getAttribute("user");
+        if (admin != null && (admin.getRole().name().equals("ADMIN") || admin.getRole().name().equals("SUPER_ADMIN"))) {
+            assignmentHelpService.markAsRead(id, "ADMIN");
+            response.put("success", true);
+            return ResponseEntity.ok(response);
+        }
         response.put("success", false);
         return ResponseEntity.status(401).body(response);
     }

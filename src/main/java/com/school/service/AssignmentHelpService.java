@@ -79,13 +79,25 @@ public class AssignmentHelpService {
         return assignmentRequestRepository.findById(id);
     }
 
-    public void markAsRead(String id) {
+    public void markAsRead(String id, String viewerIdentifier) {
         Optional<AssignmentRequest> requestOpt = assignmentRequestRepository.findById(id);
         if (requestOpt.isPresent()) {
             AssignmentRequest req = requestOpt.get();
+            boolean changed = false;
             if (!req.isRead()) {
                 req.setRead(true);
                 req.setReadAt(LocalDateTime.now());
+                changed = true;
+            }
+            if (req.getMessages() != null) {
+                for (ChatMessage msg : req.getMessages()) {
+                    if (viewerIdentifier != null && !viewerIdentifier.equals(msg.getSenderId()) && !msg.isRead()) {
+                        msg.setRead(true);
+                        changed = true;
+                    }
+                }
+            }
+            if (changed) {
                 assignmentRequestRepository.save(req);
             }
         }
