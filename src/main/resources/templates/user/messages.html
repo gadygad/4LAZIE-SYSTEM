@@ -503,18 +503,22 @@
                             
                             <!-- Initial Request Bubble (Student) -->
                             <div class="d-flex justify-content-end mb-4 ms-auto">
-                                <div style="max-width:85%; transform-origin: right center; text-align: right;">
-                                    <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
-                                        <span class="fw-bold text-muted" style="font-size:0.8rem;" th:text="${session.user.name}">You</span>
-                                        <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:00 AM</span>
+                                <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
+                                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
+                                        <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">YOU</span>
                                     </div>
-                                    <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                        <div style="font-size:0.95rem; color:#334155; line-height:1.5; white-space:pre-wrap; position: relative; z-index: 1;" th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
+                                    <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
+                                        <!-- Avatar -->
+                                        <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
                                         
-                                        <div th:if="${msg.attachmentUrl != null}" class="mt-2 text-end">
-                                            <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #3b82f6;">
-                                                <i class="bi bi-paperclip"></i> View my attachment
-                                            </a>
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                            <div th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
+                                            <div th:if="${msg.attachmentUrl != null}" class="mt-2 text-end">
+                                                <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
+                                                    <i class="bi bi-paperclip"></i> View Attachment
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -522,20 +526,19 @@
 
                             <!-- Fallback for Legacy Admin Reply -->
                             <div th:if="${msg.status == 'SOLVED' and (msg.messages == null or msg.messages.isEmpty())}" class="d-flex justify-content-start mb-4 me-auto">
-                                <div class="d-flex gap-3 align-items-end" style="max-width:90%;">
-                                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.25);">
-                                        <img src="/images/logo.png" alt="4LAZIE" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                                <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-start;">
+                                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">4LAZIE ADMIN</span>
+                                        <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
                                     </div>
-                                    <div style="transform-origin: left center;">
-                                        <div class="d-flex align-items-center gap-2 mb-1">
-                                            <span class="fw-bold" style="font-size:0.85rem; color:#1e293b; letter-spacing:0.3px;">4LAZIE Admin</span>
-                                            <i class="bi bi-patch-check-fill text-success" style="font-size: 0.8rem;"></i>
-                                            <span class="badge" style="background: rgba(16,185,129,0.1); color: #059669; font-size:0.65rem; padding: 2px 6px;">Support</span>
-                                            <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:05 AM</span>
+                                    <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:left bottom;flex-direction:row;">
+                                        <!-- Avatar -->
+                                        <div style="background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(16,185,129,0.25);flex-shrink:0;">
+                                            <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                         </div>
-                                        <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                            <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:0.95rem; color:#334155; line-height:1.6; white-space:pre-wrap;" th:text="${msg.adminReply}">Admin reply</div>
-                                            
+                                        
+                                        <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                            <div th:text="${msg.adminReply}">Admin reply</div>
                                             <div th:if="${msg.replyPdfUrl != null}" class="mt-2 text-start">
                                                 <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
                                                     <i class="bi bi-file-earmark-pdf"></i> View Attachment
@@ -553,20 +556,19 @@
                                     <th:block th:if="${chat.senderId == 'ADMIN'}">
                                         <!-- Admin Message -->
                                         <div class="d-flex justify-content-start me-auto">
-                                            <div class="d-flex gap-3 align-items-end" style="max-width:90%;">
-                                                <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.25);">
-                                                    <img src="/images/logo.png" alt="4LAZIE" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                                            <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-start;">
+                                                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
+                                                    <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${chat.senderName != null ? #strings.toUpperCase(chat.senderName) : '4LAZIE ADMIN'}">4LAZIE ADMIN</span>
+                                                    <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
                                                 </div>
-                                                <div style="transform-origin: left center;">
-                                                    <div class="d-flex align-items-center gap-2 mb-1">
-                                                        <span class="fw-bold" style="font-size:0.85rem; color:#1e293b; letter-spacing:0.3px;" th:text="${chat.senderName != null ? chat.senderName : '4LAZIE Admin'}">4LAZIE Admin</span>
-                                                        <i class="bi bi-patch-check-fill text-success" style="font-size: 0.8rem;"></i>
-                                                        <span class="badge" style="background: rgba(16,185,129,0.1); color: #059669; font-size:0.65rem; padding: 2px 6px;">Support</span>
-                                                        <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
+                                                <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:left bottom;flex-direction:row;">
+                                                    <!-- Avatar -->
+                                                    <div style="background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(16,185,129,0.25);flex-shrink:0;">
+                                                        <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                                     </div>
-                                                    <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                                        <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:0.95rem; color:#334155; line-height:1.6; white-space:pre-wrap;" th:text="${chat.messageText}">Message</div>
-                                                        
+                                                    
+                                                    <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                                        <div th:text="${chat.messageText}">Message</div>
                                                         <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-start">
                                                             <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
                                                                 <i class="bi bi-file-earmark-pdf"></i> View Attachment
@@ -581,18 +583,22 @@
                                     <th:block th:unless="${chat.senderId == 'ADMIN'}">
                                         <!-- Student Message -->
                                         <div class="d-flex justify-content-end ms-auto">
-                                            <div style="max-width:85%; transform-origin: right center; text-align: right;">
-                                                <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
-                                                    <span class="fw-bold text-muted" style="font-size:0.8rem;" th:text="${session.user.name}">You</span>
-                                                    <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
+                                            <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
+                                                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
+                                                    <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
+                                                    <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">YOU</span>
                                                 </div>
-                                                <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                                    <div style="font-size:0.95rem; color:#334155; line-height:1.5; white-space:pre-wrap; position: relative; z-index: 1;" th:text="${chat.messageText}">Message</div>
+                                                <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
+                                                    <!-- Avatar -->
+                                                    <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
                                                     
-                                                    <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-end">
-                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #3b82f6;">
-                                                            <i class="bi bi-paperclip"></i> View attached file
-                                                        </a>
+                                                    <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                                        <div th:text="${chat.messageText}">Message</div>
+                                                        <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-end">
+                                                            <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
+                                                                <i class="bi bi-paperclip"></i> View attached file
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -770,33 +776,37 @@
                 }
                 if (pic) {
                     const src = pic.startsWith('http') ? pic : '/uploads/' + pic;
-                    return `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(59,130,246,0.2);">
-                              <img src="${src}" alt="${name}" style="width:100%;height:100%;object-fit:cover;">
-                            </div>`;
-                }
-                const initial = (name || 'U').charAt(0).toUpperCase();
-                return `<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);">${initial}</div>`;
-            }
-
-
             function makeBubble(msg, isNew) {
                 const isAdmin = !msg.isSelf;
                 const row = document.createElement('div');
                 row.id = 'msg-' + msg.id;
                 
                 const anim = isNew ? (msg.isSelf ? 'animation:slideFadeInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : 'animation:slideFadeInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;') : '';
-                
-                if (msg.isSelf) {
-                    // Right aligned for sender (Me)
+
+                // Student(Self) = Right, Admin = Left
+                if (msg.isSelf) { // Sender (Right)
                     row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;${anim}`;
-                } else {
-                    // Left aligned for receiver (Them)
-                    row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;margin-right:auto;${anim}`;
+                } else { // Receiver (Left)
+                    row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;flex-direction:row;margin-right:auto;${anim}`;
                 }
 
-                const av = document.createElement('div');
-                av.innerHTML = avatarHtml(isAdmin, msg.senderName, msg.senderProfilePicture || (msg.isSelf ? STUDENT_PIC : null));
-                row.appendChild(av.firstElementChild);
+                // Avatar
+                const avDiv = document.createElement('div');
+                avDiv.className = 'av-sm';
+                if (!msg.isSelf) { // Admin Avatar
+                    avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(16,185,129,0.25);flex-shrink:0;';
+                    avDiv.innerHTML = `<img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">`;
+                } else { // Student Avatar
+                    if (STUDENT_PIC) {
+                        const src = STUDENT_PIC.startsWith('http') ? STUDENT_PIC : '/uploads/' + STUDENT_PIC;
+                        avDiv.style.cssText = 'background:transparent;width:34px;height:34px;border-radius:50%;overflow:hidden;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;';
+                        avDiv.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+                    } else {
+                        avDiv.style.cssText = 'background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;';
+                        avDiv.textContent = STUDENT_NM.charAt(0).toUpperCase();
+                    }
+                }
+                row.appendChild(avDiv);
 
                 const contentCol = document.createElement('div');
                 contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
@@ -806,24 +816,16 @@
                 
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;';
-                nameEl.textContent = isAdmin ? '4LAZIE Admin' : STUDENT_NM;
-                
-                // Add an admin badge if it's admin
-                if (isAdmin) {
-                    const badge = document.createElement('span');
-                    badge.style.cssText = 'background:rgba(16,185,129,0.1);color:#059669;padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:800;vertical-align:middle;margin-left:-3px;';
-                    badge.textContent = 'OFFICIAL';
-                    nameEl.appendChild(badge);
-                }
+                nameEl.textContent = msg.isSelf ? 'You' : '4LAZIE Admin';
                 
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;';
                 timeEl.textContent = msg.time || '';
                 
-                if (msg.isSelf) {
+                if (msg.isSelf) { // Sender (Right)
                     headerRow.appendChild(timeEl);
                     headerRow.appendChild(nameEl);
-                } else {
+                } else { // Receiver (Left)
                     headerRow.appendChild(nameEl);
                     headerRow.appendChild(timeEl);
                 }
@@ -839,23 +841,23 @@
                 contentCol.appendChild(textEl);
                 row.appendChild(contentCol);
 
-        textEl.innerHTML = esc(msg.messageText || '');
+                textEl.innerHTML = esc(msg.messageText || '');
 
-        if (msg.isSelf) {
-            const statusRow = document.createElement('div');
-            statusRow.className = 'msg-status-text';
-            statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;';
-            if (msg.status === 'Read') {
-                statusRow.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
-            } else if (msg.status === 'Delivered') {
-                statusRow.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
-            } else {
-                statusRow.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                if (msg.isSelf) {
+                    const statusRow = document.createElement('div');
+                    statusRow.className = 'msg-status-text';
+                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;';
+                    if (msg.status === 'Read') {
+                        statusRow.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                    } else if (msg.status === 'Delivered') {
+                        statusRow.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                    } else {
+                        statusRow.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                    }
+                    contentCol.appendChild(statusRow);
+                }
+                return row;
             }
-            contentCol.appendChild(statusRow);
-        }
-        return row;
-    }
 
             function renderMessages(msgs, isNew) {
                 if (!Array.isArray(msgs) || msgs.length === 0) return;
@@ -1065,29 +1067,26 @@
                                 attachmentHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-decoration-none d-inline-flex align-items-center" style="background: rgba(16,185,129,0.1); color: #059669; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 500;"><i class="bi bi-file-earmark-pdf me-2 fs-6"></i>View File</a></div>`;
                             }
                             
-                            // Build new chat bubble (Threaded Style)
+                            // Build new chat bubble matching the new layout
                             const newBubble = document.createElement('div');
-                            newBubble.className = 'chat-thread-item chat-bubble-student';
-                            const profilePicHtml = data.profilePicture 
-                                ? `<img src="${data.profilePicture.startsWith('http') ? data.profilePicture : '/uploads/' + data.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
-                                : `<i class="bi bi-person-fill fs-5"></i>`;
+                            newBubble.className = 'd-flex justify-content-end ms-auto mb-4';
+                            
+                            // For avatar we use 'U' or maybe first char of name (we don't have session in JS but 'U' is fine for student fallback)
+                            const initial = 'U';
                             
                             newBubble.innerHTML = `
-                                <div class="thread-line"></div>
-                                <div class="chat-avatar" style="color: #3b82f6;">
-                                    ${profilePicHtml}
-                                    <div class="status-dot" style="background-color: #10b981;"></div>
-                                </div>
-                                <div class="chat-bubble-content">
-                                    <div class="d-flex align-items-center mb-1 gap-2">
-                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;">You</span>
-                                        <i class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
-                                        <small class="text-muted" style="font-size: 0.75rem;">${data.time}</small>
+                                <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
+                                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
+                                        <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;">${data.time}</span>
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">YOU</span>
                                     </div>
-                                    <p class="mb-2 dynamic-typing-text" style="font-size: 0.95rem; color: #334155; line-height: 1.6; white-space: pre-wrap;"></p>
-                                    ${attachmentHtml}
-                                    
-                                    <div class="mt-2 d-flex gap-2">
+                                    <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
+                                        <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;">${initial}</div>
+                                        
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                            <div class="dynamic-typing-text"></div>
+                                            ${attachmentHtml}
+                                        </div>
                                     </div>
                                 </div>
                             `;
