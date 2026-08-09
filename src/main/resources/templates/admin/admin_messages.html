@@ -442,12 +442,7 @@
         contentCol.appendChild(textEl);
         row.appendChild(contentCol);
 
-        if (!isAdmin && isNew) {
-            typeQueue.push({ el: textEl, text: msg.messageText || '' });
-            if (!isTyping) drainQueue();
-        } else {
-            textEl.innerHTML = esc(msg.messageText || '');
-        }
+        textEl.innerHTML = esc(msg.messageText || '');
         return row;
     }
 
@@ -457,6 +452,17 @@
         for (const msg of msgs) {
             const msgId = msg.id;
             if (!msgId || renderedIds.has(msgId)) continue;
+            
+            if (msg.isSelf) {
+                const tempEl = document.querySelector('.temp-msg');
+                if (tempEl) {
+                    tempEl.id = 'msg-' + msgId;
+                    tempEl.classList.remove('temp-msg');
+                    renderedIds.add(msgId);
+                    continue;
+                }
+            }
+            
             renderedIds.add(msgId);
             msgsEl.appendChild(makeBubble(msg, isNew));
             added++;
@@ -559,6 +565,18 @@
         if (!text || !currentChatId || isSending) return;
         isSending = true;
         if (sendBtn) sendBtn.disabled = true;
+
+        const tempId = 'temp-' + Date.now();
+        const bubble = makeBubble({
+            id: tempId,
+            isSelf: true, senderName: 'Admin',
+            messageText: text,
+            time: new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})
+        }, false);
+        bubble.classList.add('temp-msg');
+        msgsEl.appendChild(bubble);
+        scrollToBottom();
+
         // Clear input immediately for responsiveness
         if (input) { input.value = ''; input.style.height = 'auto'; }
 

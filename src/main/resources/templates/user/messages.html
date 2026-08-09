@@ -835,34 +835,9 @@
                 contentCol.appendChild(textEl);
                 row.appendChild(contentCol);
 
-                if (typeIt && isAdmin) {
-                    typeQueue.push({ el: textEl, text: msg.messageText || '' });
-                    if (!isTyping) drainQueue();
-                } else {
-                    textEl.innerHTML = esc(msg.messageText || '');
-                }
-                return row;
-            }
-
-            // Typing queue
-            function drainQueue() {
-                if (typeQueue.length === 0) { isTyping = false; return; }
-                isTyping = true;
-                const { el, text } = typeQueue.shift();
-                el.classList.add('typing-cursor');
-                let i = 0;
-                const tick = () => {
-                    if (i < text.length) {
-                        el.innerHTML += esc(text.charAt(i++));
-                        if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
-                        setTimeout(tick, 28);
-                    } else {
-                        el.classList.remove('typing-cursor');
-                        drainQueue();
-                    }
-                };
-                tick();
-            }
+        textEl.innerHTML = esc(msg.messageText || '');
+        return row;
+    }
 
             function renderMessages(msgs, isNew) {
                 if (!Array.isArray(msgs) || msgs.length === 0) return;
@@ -870,6 +845,14 @@
                 for (let i = 0; i < msgs.length; i++) {
                     const msg = msgs[i];
                     if (!document.getElementById('msg-' + msg.id)) {
+                        if (msg.isSelf) {
+                            const tempEl = document.querySelector('.temp-msg');
+                            if (tempEl) {
+                                tempEl.id = 'msg-' + msg.id;
+                                tempEl.classList.remove('temp-msg');
+                                continue;
+                            }
+                        }
                         msgWrap.appendChild(makeBubble(msg, isNew));
                     }
                 }
@@ -911,6 +894,20 @@
                 if (!text || isSending) return;
                 isSending = true;
                 if (sendBtn) sendBtn.disabled = true;
+                if (emptyEl) emptyEl.style.display = 'none';
+                
+                const tempId = 'temp-' + Date.now();
+                const bubble = makeBubble({
+                    id: tempId,
+                    isSelf: true, senderName: STUDENT_NM,
+                    senderProfilePicture: STUDENT_PIC,
+                    messageText: text,
+                    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
+                }, false);
+                bubble.classList.add('temp-msg');
+                msgWrap.appendChild(bubble);
+                if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+
                 // Clear input immediately for responsiveness
                 if (input) { input.value = ''; input.style.height = 'auto'; }
 
