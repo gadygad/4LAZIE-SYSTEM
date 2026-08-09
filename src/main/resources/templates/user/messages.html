@@ -808,21 +808,8 @@
                 }
                 
                 const timeEl = document.createElement('span');
-                timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;display:flex;align-items:center;gap:4px;';
-                
-                if (msg.isSelf) {
-                    let statusHtml = '';
-                    if (msg.status === 'Read') {
-                        statusHtml = '<span style="color:#059669;font-weight:700;">Read</span>';
-                    } else if (msg.status === 'Delivered') {
-                        statusHtml = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
-                    } else {
-                        statusHtml = '<span style="color:#94a3b8;font-weight:500;">Sent</span>';
-                    }
-                    timeEl.innerHTML = (msg.time || '') + ' · ' + statusHtml;
-                } else {
-                    timeEl.textContent = msg.time || '';
-                }
+                timeEl.style.cssText = 'font-size:0.7rem;color:#94a3b8;font-weight:500;';
+                timeEl.textContent = msg.time || '';
                 
                 if (msg.isSelf) {
                     headerRow.appendChild(timeEl);
@@ -844,6 +831,19 @@
                 row.appendChild(contentCol);
 
         textEl.innerHTML = esc(msg.messageText || '');
+
+        if (msg.isSelf) {
+            const statusRow = document.createElement('div');
+            statusRow.style.cssText = 'font-size:0.75rem;margin-top:4px;display:flex;align-items:center;gap:4px;';
+            if (msg.status === 'Read') {
+                statusRow.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+            } else if (msg.status === 'Delivered') {
+                statusRow.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+            } else {
+                statusRow.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+            }
+            contentCol.appendChild(statusRow);
+        }
         return row;
     }
 
