@@ -406,7 +406,7 @@
         row.appendChild(avDiv);
 
         const contentCol = document.createElement('div');
-        contentCol.style.cssText = 'flex:1;min-width:0;';
+        contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (isAdmin ? 'align-items:flex-end;' : 'align-items:flex-start;');
 
         const headerRow = document.createElement('div');
         headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (isAdmin ? 'justify-content:flex-end;' : '');
