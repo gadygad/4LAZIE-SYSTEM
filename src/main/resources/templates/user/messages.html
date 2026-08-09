@@ -884,19 +884,10 @@
                 if (!text || isSending) return;
                 isSending = true;
                 if (sendBtn) sendBtn.disabled = true;
-                if (emptyEl) emptyEl.style.display = 'none';
-                const tempId = 'temp-' + Date.now();
-                msgWrap.appendChild(makeBubble({
-                    id: tempId,
-                    isSelf: true, senderName: STUDENT_NM,
-                    senderProfilePicture: STUDENT_PIC,
-                    messageText: text,
-                    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
-                }, false));
-                if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+                // Clear input immediately for responsiveness
                 if (input) { input.value = ''; input.style.height = 'auto'; }
-                
-                // Get CSRF Token safely (meta tag with cookie fallback)
+
+                // Get CSRF Token
                 let csrfToken = '';
                 let csrfHeader = 'X-XSRF-TOKEN';
                 const metaToken = document.querySelector('meta[name="_csrf"]');
@@ -909,21 +900,14 @@
                 }
 
                 const fd = new FormData(); fd.append('messageText', text);
+                // POST to backend → saved to MongoDB → SSE pushes back → renderMessages() shows it
+                // NO optimistic UI here — SSE is sole source of truth to prevent duplication
                 fetch(`/student/chat/${CHAT_ID}/send`, { 
                     method:'POST', 
                     body:fd, 
                     headers: { [csrfHeader]: csrfToken },
                     credentials:'same-origin' 
                 })
-                    .then(r => r.json())
-                    .then(d => {
-                        if (d.success) {
-                            const el = document.getElementById('msg-' + tempId);
-                            if (el) el.id = 'msg-' + d.id;
-                        } else {
-                            console.error("Message send failed server-side");
-                        }
-                    })
                     .catch(e => console.error("Message send error", e))
                     .finally(() => { isSending = false; if (sendBtn) sendBtn.disabled = false; if (input) input.focus(); });
             };
