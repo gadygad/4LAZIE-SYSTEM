@@ -54,21 +54,23 @@ public class DirectChatController {
      * Admin sees messages from ADMIN perspective, student sees from their own ID perspective.
      */
     private static void notifyChat(String chatId, DirectChat updatedChat) {
-        List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
-        List<SseEmitter> dead = new ArrayList<>();
-        for (SseEmitter emitter : emitters) {
-            String viewer = emitterViewers.getOrDefault(emitter, "ADMIN");
-            try {
-                List<Map<String, Object>> payload = buildMessageListStatic(updatedChat, viewer);
-                emitter.send(SseEmitter.event().name("message").data(payload, MediaType.APPLICATION_JSON));
-            } catch (IOException e) {
-                dead.add(emitter);
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
+            List<SseEmitter> dead = new ArrayList<>();
+            for (SseEmitter emitter : emitters) {
+                String viewer = emitterViewers.getOrDefault(emitter, "ADMIN");
+                try {
+                    List<Map<String, Object>> payload = buildMessageListStatic(updatedChat, viewer);
+                    emitter.send(SseEmitter.event().name("message").data(payload, MediaType.APPLICATION_JSON));
+                } catch (Exception e) {
+                    dead.add(emitter);
+                }
             }
-        }
-        for (SseEmitter d : dead) {
-            emitters.remove(d);
-            emitterViewers.remove(d);
-        }
+            for (SseEmitter d : dead) {
+                emitters.remove(d);
+                emitterViewers.remove(d);
+            }
+        });
     }
 
     /** Static helper usable from notifyChat static context */
@@ -122,17 +124,52 @@ public class DirectChatController {
         return result;
     }
 
+    private static void broadcastPresence(String chatId) {
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
+            boolean adminOnline = false;
+            boolean studentOnline = false;
+            for (SseEmitter emitter : emitters) {
+                String role = emitterViewers.get(emitter);
+                if ("ADMIN".equals(role)) adminOnline = true;
+                else if (role != null) studentOnline = true; // Anyone else is a student
+            }
+
+            Map<String, Object> presenceData = new HashMap<>();
+            presenceData.put("adminOnline", adminOnline);
+            presenceData.put("studentOnline", studentOnline);
+
+            List<SseEmitter> dead = new ArrayList<>();
+            for (SseEmitter emitter : emitters) {
+                try {
+                    emitter.send(SseEmitter.event().name("presence").data(presenceData, MediaType.APPLICATION_JSON));
+                } catch (Exception e) {
+                    dead.add(emitter);
+                }
+            }
+            for (SseEmitter d : dead) {
+                emitters.remove(d);
+                emitterViewers.remove(d);
+            }
+        });
+    }
+
     /** Helper to register emitter with viewer identifier and handle cleanup */
     private static void registerEmitter(String chatId, SseEmitter emitter, String viewerIdentifier) {
         chatEmitters.computeIfAbsent(chatId, k -> new CopyOnWriteArrayList<>()).add(emitter);
         emitterViewers.put(emitter, viewerIdentifier);
+        
+        broadcastPresence(chatId); // Broadcast immediately on connect
+        
         emitter.onCompletion(() -> {
             chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter);
             emitterViewers.remove(emitter);
+            broadcastPresence(chatId); // Broadcast on disconnect
         });
         emitter.onTimeout(() -> {
             chatEmitters.getOrDefault(chatId, Collections.emptyList()).remove(emitter);
             emitterViewers.remove(emitter);
+            broadcastPresence(chatId); // Broadcast on disconnect
         });
     }
 

@@ -284,15 +284,15 @@
         }
         
         /* Typing Effect CSS */
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 1s step-start infinite;
-            color: #10b981;
-            font-weight: bold;
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        .typing-bubble { display: inline-flex; gap: 4px; align-items: center; justify-content: center; }
+        .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: typingBounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -322,6 +322,13 @@
                             <i class="bi bi-pencil-square" style="font-size: 1.1rem;"></i>
                         </button>
                     </form>
+                </div>
+                
+                <div style="padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); background: rgba(255,255,255,0.6);">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.95rem;"></i>
+                        <input type="text" placeholder="Search to start chat..." style="width: 100%; padding: 10px 14px 10px 42px; border-radius: 50px; border: 1.5px solid rgba(0,0,0,0.05); background: #f1f5f9; font-size: 0.9rem; color: #334155; outline: none; transition: all 0.3s;" onfocus="this.style.borderColor='rgba(16,185,129,0.4)'; this.style.background='#ffffff'; this.style.boxShadow='0 2px 10px rgba(16,185,129,0.1)';" onblur="this.style.borderColor='rgba(0,0,0,0.05)'; this.style.background='#f1f5f9'; this.style.boxShadow='none';">
+                    </div>
                 </div>
 
                 <div class="overflow-auto flex-grow-1" style="scrollbar-width: thin;">
@@ -422,21 +429,22 @@
                     <!-- Header -->
                     <div class="p-3 px-md-4 border-bottom d-flex align-items-center gap-3"
                          style="background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);flex-shrink:0;">
-                        <button class="btn btn-light d-md-none me-1 p-2" onclick="closeChat()" style="border-radius:10px;">
-                            <i class="bi bi-arrow-left fs-5"></i>
+                        <button class="btn btn-light d-md-none me-1 p-0 d-flex align-items-center justify-content-center" onclick="closeChat()" style="border-radius:50%; width:38px; height:38px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); color:#10b981; transition:all 0.25s;">
+                            <i class="bi bi-arrow-left" style="font-size:1.1rem; stroke-width: 1.5;"></i>
                         </button>
                         <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(16,185,129,0.3);flex-shrink:0;">
                             <img src="/images/logo.png" alt="4LAZIE" style="width:24px;height:24px;border-radius:50%;object-fit:contain;background:white;padding:2px;">
                         </div>
-                        <div>
-                            <div class="fw-bold" style="font-family:'Outfit',sans-serif;font-size:1rem;color:#1e293b;">4LAZIE Admin</div>
-                            <div style="font-size:0.72rem;color:#10b981;font-weight:700;"><i class="bi bi-shield-check me-1"></i>Official Support · Live</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="fw-bold" style="font-family:'Outfit',sans-serif;font-size:1.35rem;color:#1e293b;letter-spacing:-0.2px;">4LAZIE ADMIN</div>
+                            <div class="header-online-status" style="font-size:0.85rem;color:#10b981;font-weight:600;display:flex;align-items:center;gap:4px;transition:all 0.3s ease;">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online
+                            </div>
                         </div>
                         <div class="ms-auto">
-                            <span style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:#059669;padding:4px 12px;border-radius:50px;font-size:0.68rem;font-weight:700;display:flex;align-items:center;gap:5px;">
-                                <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;animation:blink 1.5s ease-in-out infinite;"></span>
-                                LIVE
-                            </span>
+                            <button class="btn btn-light p-2" style="border-radius:50%; background:transparent; border:none; color:#64748b;">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -509,7 +517,7 @@
                             
                             <!-- Initial Request Bubble (Student) -->
                             <div class="d-flex justify-content-end mb-4 ms-auto">
-                                <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
+                                <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-end;">
                                     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
                                         <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
                                         <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${#strings.toUpperCase(session.user.name)}">NAME</span>
@@ -518,7 +526,7 @@
                                         <!-- Avatar -->
                                         <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
                                         
-                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
                                             <div th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
                                             <div th:if="${msg.attachmentUrl != null}" class="mt-2 text-end">
                                                 <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
@@ -532,7 +540,7 @@
 
                             <!-- Fallback for Legacy Admin Reply -->
                             <div th:if="${msg.status == 'SOLVED' and (msg.messages == null or msg.messages.isEmpty())}" class="d-flex justify-content-start mb-4 me-auto">
-                                <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-start;">
+                                <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-start;">
                                     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
                                         <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">4LAZIE ADMIN</span>
                                         <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
@@ -543,7 +551,7 @@
                                             <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                         </div>
                                         
-                                        <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                        <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
                                             <div th:text="${msg.adminReply}">Admin reply</div>
                                             <div th:if="${msg.replyPdfUrl != null}" class="mt-2 text-start">
                                                 <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
@@ -562,7 +570,7 @@
                                     <th:block th:if="${chat.senderId == 'ADMIN'}">
                                         <!-- Admin Message -->
                                         <div class="d-flex justify-content-start me-auto">
-                                            <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-start;">
+                                            <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-start;">
                                                 <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
                                                     <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${chat.senderName != null ? #strings.toUpperCase(chat.senderName) : '4LAZIE ADMIN'}">4LAZIE ADMIN</span>
                                                     <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
@@ -573,7 +581,7 @@
                                                         <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                                     </div>
                                                     
-                                                    <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                                    <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
                                                         <div th:text="${chat.messageText}">Message</div>
                                                         <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-start">
                                                             <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
@@ -589,7 +597,7 @@
                                     <th:block th:unless="${chat.senderId == 'ADMIN'}">
                                         <!-- Student Message -->
                                         <div class="d-flex justify-content-end ms-auto">
-                                            <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
+                                            <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-end;">
                                                 <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
                                                     <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
                                                     <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${#strings.toUpperCase(session.user.name)}">NAME</span>
@@ -598,19 +606,19 @@
                                                     <!-- Avatar -->
                                                     <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
                                                     
-                                                    <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                                    <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
                                                         <div th:text="${chat.messageText}">Message</div>
                                                         <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-end">
                                                             <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
                                                                 <i class="bi bi-paperclip"></i> View attached file
                                                             </a>
-                                                        </div>
-                                                        <!-- Status ticks -->
-                                                        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8;">
-                                                            <small th:text="${chat.read ? 'Read' : 'Delivered'}" style="font-size: 0.7rem; margin-right: 4px;"></small>
-                                                            <i th:class="${chat.read ? 'bi bi-check2-all text-info' : 'bi bi-check2-all'}" style="font-size: 1rem;"></i>
-                                                        </div>
                                                     </div>
+                                                </div>
+                                                <!-- Status ticks -->
+                                                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8; margin-right: 46px;">
+                                                    <small th:text="${chat.read ? 'Read' : 'Delivered'}" style="font-size: 0.7rem; margin-right: 4px; color: #64748b; font-weight: 500;"></small>
+                                                    <i th:class="${chat.read ? 'bi bi-check2-all text-info' : 'bi bi-check2-all'}" style="font-size: 1rem; color: #64748b;"></i>
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -626,17 +634,14 @@
                         <form th:action="@{'/api/assignments/chat/' + ${msg.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data" class="chat-reply-form">
                             <!-- Using standard POST with redirect/reload for simplicity, but JS fetch is better. We will use JS fetch in the script below. -->
                             <div class="chat-input-wrapper d-flex align-items-end gap-2">
-                                <textarea name="messageText" class="form-control form-control-lg auto-resize-textarea" rows="1" placeholder="Type a message to 4LAZIE..." required style="border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); background: rgba(248, 250, 252, 0.8); resize: none; overflow-y: hidden; padding-top: 12px; padding-bottom: 12px;"></textarea>
-                                <button type="submit" class="btn fw-bold px-3 py-2" style="background: transparent; color: #dc2626; border: none; font-size: 1.1rem; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Send
-                                </button>
-                            </div>
-                            <!-- Attachment button hidden, but can be toggled -->
-                            <div class="mt-2 text-start ms-2">
-                                <label class="btn btn-sm btn-light rounded-pill" style="color: #64748b; font-weight: 500; font-size: 0.8rem; border: 1px solid #e2e8f0; cursor: pointer;">
-                                    <i class="bi bi-paperclip me-1"></i> Attach file
-                                    <input type="file" name="file" style="display: none;" onchange="this.parentElement.innerHTML = '<i class=\'bi bi-file-earmark-check text-success me-1\'></i> File selected';">
+                                <label class="btn mb-0 p-2 d-flex align-items-center justify-content-center" style="color: #64748b; background: rgba(241, 245, 249, 0.8); border-radius: 50%; cursor: pointer; width: 45px; height: 45px; flex-shrink: 0;" title="Attach file">
+                                    <i class="bi bi-paperclip fs-5"></i>
+                                    <input type="file" name="file" style="display: none;" onchange="this.parentElement.style.color = '#10b981'; this.parentElement.style.background = 'rgba(16,185,129,0.1)';">
                                 </label>
+                                <textarea name="messageText" class="form-control form-control-lg auto-resize-textarea" rows="1" placeholder="Type a message to 4LAZIE..." required style="border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); background: rgba(248, 250, 252, 0.8); resize: none; overflow-y: hidden; padding-top: 12px; padding-bottom: 12px;" onkeydown="if(event.keyCode == 13 && !event.shiftKey) { event.preventDefault(); this.form.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); }"></textarea>
+                                <button type="submit" class="btn d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border: none; border-radius: 50%; width: 48px; height: 48px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(15,23,42,0.3); transition: all 0.3s ease; padding: 0;" onmouseover="this.style.transform='scale(1.1) translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(15,23,42,0.5)';" onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 4px 15px rgba(15,23,42,0.3)';">
+                                    <i class="bi bi-send-fill" style="font-size: 1.2rem; margin-right: 2px;"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -721,23 +726,18 @@
                         
                         const typingElement = typingElements[index];
                         const text = typingElement.innerHTML; // get original HTML/text
-                        typingElement.innerHTML = ''; // clear it
-                        typingElement.classList.add('typing-cursor');
                         typingElement.setAttribute('data-typed', 'true');
                         
-                        let i = 0;
-                        function typeWriter() {
-                            if (i < text.length) {
-                                typingElement.innerHTML += text.charAt(i);
-                                i++;
-                                if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                                setTimeout(typeWriter, 50); // Slower typing speed
-                            } else {
-                                typingElement.classList.remove('typing-cursor');
-                                setTimeout(() => typeNextElement(index + 1), 300);
-                            }
-                        }
-                        setTimeout(typeWriter, 50);
+                        typingElement.innerHTML = '<div class="typing-bubble" style="padding:4px 0;"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+                        if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                        
+                        setTimeout(() => {
+                            typingElement.innerHTML = text;
+                            const bubble = typingElement.closest('.mb-4') || typingElement.closest('.mb-3');
+                            if (bubble) bubble.style.animation = 'slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                            if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                            setTimeout(() => typeNextElement(index + 1), 300);
+                        }, 1200);
                     }
                     
                     if (typingElements.length > 0) {
@@ -813,7 +813,7 @@
                 row.appendChild(avDiv);
 
                 const contentCol = document.createElement('div');
-                contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+                contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
 
                 const headerRow = document.createElement('div');
                 headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
@@ -836,9 +836,9 @@
 
                 const textEl = document.createElement('div');
                 if (msg.isSelf) {
-                    textEl.style.cssText = 'font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);';
+                    textEl.style.cssText = 'font-size:1.1rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:12px 18px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,0.15);';
                 } else {
-                    textEl.style.cssText = 'font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);';
+                    textEl.style.cssText = 'font-size:1.1rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:12px 18px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
                 }
 
                 contentCol.appendChild(headerRow);
@@ -889,6 +889,12 @@
                             if (tempEl) {
                                 tempEl.id = 'msg-' + msg.id;
                                 tempEl.classList.remove('temp-msg');
+                                const statusSpan = tempEl.querySelector('.msg-status-text');
+                                if (statusSpan && msg.status) {
+                                    if (msg.status === 'Read') statusSpan.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                                    else if (msg.status === 'Delivered') statusSpan.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                                    else statusSpan.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                                }
                                 continue;
                             }
                         }
@@ -919,6 +925,19 @@
                         });
                         es.addEventListener('message', e => {
                             renderMessages(JSON.parse(e.data), true);
+                        });
+                        es.addEventListener('presence', e => {
+                            const data = JSON.parse(e.data);
+                            const statusDiv = document.querySelector('.header-online-status');
+                            if (statusDiv) {
+                                if (data.adminOnline) {
+                                    statusDiv.style.color = '#10b981';
+                                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
+                                } else {
+                                    statusDiv.style.color = '#94a3b8';
+                                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+                                }
+                            }
                         });
                         es.onerror = () => { es.close(); sseActive = false; setTimeout(fallbackPoll, 2000); };
                     })
@@ -979,6 +998,14 @@
                 })
                     .catch(e => console.error("Message send error", e))
                     .finally(() => { isSending = false; if (sendBtn) sendBtn.disabled = false; if (input) input.focus(); });
+                    
+                // Fallback to ensure isSending resets even if fetch completely hangs
+                setTimeout(() => {
+                    if (isSending) {
+                        isSending = false;
+                        if (sendBtn) sendBtn.disabled = false;
+                    }
+                }, 4000);
             };
 
             // Auto-resize + Enter to send
@@ -1083,7 +1110,7 @@
                             const initial = 'U';
                             
                             newBubble.innerHTML = `
-                                <div style="display:flex;flex-direction:column;max-width:85%;align-items:flex-end;">
+                                <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-end;">
                                     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
                                         <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;">${data.time}</span>
                                         <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">${document.getElementById('DC_STUDENT_NAME') ? document.getElementById('DC_STUDENT_NAME').value.toUpperCase() : 'STUDENT'}</span>
@@ -1091,10 +1118,14 @@
                                     <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
                                         <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;">${initial}</div>
                                         
-                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
                                             <div class="dynamic-typing-text"></div>
                                             ${attachmentHtml}
                                         </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8; margin-right: 46px;">
+                                        <small style="font-size: 0.7rem; margin-right: 4px; color: #64748b; font-weight: 500;">Delivered</small>
+                                        <i class="bi bi-check2-all" style="font-size: 1rem; color: #64748b;"></i>
                                     </div>
                                 </div>
                             `;
@@ -1110,21 +1141,16 @@
                             // Apply Typing Effect to the sent message
                             const msgText = data.messageText;
                             const textElem = newBubble.querySelector('.dynamic-typing-text');
-                            textElem.classList.add('typing-cursor');
-                            let charIndex = 0;
                             const scrollArea = document.getElementById(chatContainerId);
                             
-                            function typeNewMessage() {
-                                if (charIndex < msgText.length) {
-                                    textElem.innerHTML += msgText.charAt(charIndex);
-                                    charIndex++;
-                                    if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
-                                    setTimeout(typeNewMessage, 100);
-                                } else {
-                                    textElem.classList.remove('typing-cursor');
-                                }
-                            }
-                            typeNewMessage();
+                            textElem.innerHTML = '<div class="typing-bubble" style="padding:4px 0;"><div class="typing-dot" style="background:#ffffff;"></div><div class="typing-dot" style="background:#ffffff;"></div><div class="typing-dot" style="background:#ffffff;"></div></div>';
+                            if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+                            
+                            setTimeout(() => {
+                                textElem.innerHTML = msgText;
+                                newBubble.style.animation = 'slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                                if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+                            }, 1200);
                             
                             this.reset();
                             const textarea = this.querySelector('textarea');

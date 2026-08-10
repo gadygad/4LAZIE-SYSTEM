@@ -50,13 +50,15 @@
         .chat-container::-webkit-scrollbar { width: 5px; }
         .chat-container::-webkit-scrollbar-track { background: transparent; }
         .chat-container::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.25); border-radius: 10px; }
-        /* Typing cursor animation */
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 0.7s infinite;
-            color: #10b981;
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        .typing-bubble { display: inline-flex; gap: 4px; align-items: center; justify-content: center; }
+        .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: typingBounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -261,7 +263,7 @@
                             <div class="mb-3">
                                 <textarea name="replyMessage" class="form-control" rows="4" placeholder="Type your reply here..." required style="border-radius: 10px;"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 fw-bold py-2" style="border-radius: 10px;">
+                            <button type="submit" class="btn btn-dark w-100 fw-bold py-2" style="border-radius: 10px; background-color: #000000; border: none; color: white;">
                                 <i class="bi bi-send me-1"></i> Send Reply
                             </button>
                         </form>
@@ -288,7 +290,7 @@
                     <div class="chat-container p-3 rounded-4 bg-white shadow-sm border" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
                         <!-- Legacy message fallback if messages list is empty -->
                         <div th:if="${req.messages == null or req.messages.isEmpty()}" class="d-flex justify-content-end mb-4 ms-auto">
-                            <div style="max-width:85%; transform-origin: right center; text-align: right;">
+                            <div style="max-width:min(85%, 450px); transform-origin: right center; text-align: right;">
                                 <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
                                     <span class="fw-bold text-muted" style="font-size:0.8rem;">4LAZIE Admin</span>
                                 </div>
@@ -304,19 +306,19 @@
                             <th:block th:if="${msg.senderId == 'ADMIN'}">
                                 <!-- Admin Message -->
                                 <div class="d-flex justify-content-end ms-auto">
-                                    <div style="max-width:85%; transform-origin: right center; text-align: right;">
+                                    <div style="max-width:min(85%, 450px); transform-origin: right center; text-align: right;">
                                         <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
-                                            <span class="fw-bold text-muted" style="font-size:0.8rem;">4LAZIE Admin</span>
                                             <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></span>
+                                            <span class="fw-bold text-muted" style="font-size:0.8rem; text-transform:uppercase;">4LAZIE Admin</span>
                                         </div>
-                                        <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                            <div class="mb-0" style="font-size:0.95rem; color:#334155; line-height:1.5; white-space:pre-wrap;" th:text="${msg.messageText}"></div>
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                            <div class="mb-0" style="white-space:pre-wrap;" th:text="${msg.messageText}"></div>
                                             <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: #10b981;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
-                                            <!-- Status ticks -->
-                                            <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8;">
-                                                <small th:text="${msg.read ? 'Read' : 'Delivered'}" style="font-size: 0.7rem; margin-right: 4px;"></small>
-                                                <i th:class="${msg.read ? 'bi bi-check2-all text-info' : 'bi bi-check2-all'}" style="font-size: 1rem;"></i>
-                                            </div>
+                                        </div>
+                                        <!-- Status ticks -->
+                                        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8;">
+                                            <small th:text="${msg.read ? 'Read' : 'Delivered'}" style="font-size: 0.7rem; margin-right: 4px; color: #64748b; font-weight: 500;"></small>
+                                            <i th:class="${msg.read ? 'bi bi-check2-all text-info' : 'bi bi-check2-all'}" style="font-size: 1rem; color: #64748b;"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -325,17 +327,17 @@
                             <th:block th:unless="${msg.senderId == 'ADMIN'}">
                                 <!-- Student Message -->
                                 <div class="d-flex justify-content-start me-auto">
-                                    <div class="d-flex gap-3 align-items-end" style="max-width:90%;">
+                                    <div class="d-flex gap-2 align-items-end" style="max-width:90%;">
                                         <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(59,130,246,0.25); color:white;">
-                                            <i class="bi bi-person-fill fs-5"></i>
+                                            <i class="bi bi-person-fill fs-6"></i>
                                         </div>
-                                        <div style="transform-origin: left center;">
+                                        <div style="transform-origin: left center; max-width:min(85%, 450px);">
                                             <div class="d-flex align-items-center gap-2 mb-1">
-                                                <span class="fw-bold" style="font-size:0.85rem; color:#1e293b; letter-spacing:0.3px;" th:text="${msg.senderName}">Student</span>
+                                                <span class="fw-bold" style="font-size:0.85rem; color:#1e293b; letter-spacing:0.3px; text-transform:uppercase;" th:text="${msg.senderName}">Student</span>
                                                 <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></span>
                                             </div>
-                                            <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                                <div class="chat-message-text" th:classappend="${msg.senderId != 'ADMIN'} ? 'typing-text-admin' : ''" style="font-size:0.95rem; color:#334155; line-height:1.6; white-space:pre-wrap;" th:text="${msg.messageText}"></div>
+                                            <div style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                                <div class="chat-message-text" th:classappend="${msg.senderId != 'ADMIN'} ? 'typing-text-admin' : ''" style="white-space:pre-wrap;" th:text="${msg.messageText}"></div>
                                                 <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: #3b82f6;"><i class="bi bi-paperclip"></i> View Attachment</a>
                                             </div>
                                         </div>
@@ -349,11 +351,14 @@
                     <div class="mt-3 p-3 rounded-4 bg-white shadow-sm border">
                         <form th:action="@{'/admin/assignments/chat/' + ${req.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data" class="admin-chat-form">
                             <div class="d-flex align-items-end gap-2">
-                                <textarea name="messageText" class="form-control auto-resize-textarea" rows="2" placeholder="Type a reply..." required style="border-radius: 16px; resize: none; overflow-y: hidden;"></textarea>
-                                <button class="btn fw-bold px-3 py-2" type="submit" style="background: transparent; color: #10b981; border: none; font-size: 1.1rem; flex-shrink: 0;"><i class="bi bi-send-fill"></i></button>
-                            </div>
-                            <div class="mt-2">
-                                <input type="file" name="file" class="form-control form-control-sm" style="border-radius: 8px;">
+                                <label class="btn mb-0 p-2 d-flex align-items-center justify-content-center" style="color: #64748b; background: rgba(241, 245, 249, 0.8); border-radius: 50%; cursor: pointer; width: 45px; height: 45px; flex-shrink: 0;" title="Attach file">
+                                    <i class="bi bi-paperclip fs-5"></i>
+                                    <input type="file" name="file" style="display: none;" onchange="this.parentElement.style.color = '#10b981'; this.parentElement.style.background = 'rgba(16,185,129,0.1)';">
+                                </label>
+                                <textarea name="messageText" class="form-control auto-resize-textarea" rows="1" placeholder="Type a reply..." required style="border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); background: rgba(248, 250, 252, 0.8); resize: none; overflow-y: hidden; padding-top: 12px; padding-bottom: 12px;" onkeydown="if(event.keyCode == 13 && !event.shiftKey) { event.preventDefault(); this.form.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); }"></textarea>
+                                <button type="submit" class="btn d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border: none; border-radius: 50%; width: 48px; height: 48px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(15,23,42,0.3); transition: all 0.3s ease; padding: 0;" onmouseover="this.style.transform='scale(1.1) translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(15,23,42,0.5)';" onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 4px 15px rgba(15,23,42,0.3)';">
+                                    <i class="bi bi-send-fill" style="font-size: 1.2rem; margin-right: 2px;"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -378,24 +383,20 @@
                 
                 const el = typingElements[index];
                 const text = el.innerHTML;
-                el.innerHTML = '';
-                el.classList.add('typing-cursor');
                 el.setAttribute('data-typed', 'true');
-                let i = 0;
                 
-                function typeWriter() {
-                    if (i < text.length) {
-                        el.innerHTML += text.charAt(i);
-                        i++;
-                        const chatContainer = el.closest('.chat-container');
-                        if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
-                        setTimeout(typeWriter, 100); // 100ms
-                    } else {
-                        el.classList.remove('typing-cursor');
-                        setTimeout(() => typeNextElement(index + 1), 300); // Wait 300ms before next message
-                    }
-                }
-                setTimeout(typeWriter, 100);
+                el.innerHTML = '<div class="typing-bubble" style="padding:4px 0;"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+                
+                const chatContainer = el.closest('.chat-container');
+                if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                setTimeout(() => {
+                    el.innerHTML = text;
+                    const bubble = el.closest('.mb-3') || el.closest('.mb-4');
+                    if (bubble) bubble.style.animation = 'slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                    setTimeout(() => typeNextElement(index + 1), 300);
+                }, 1200);
             }
             
             if (typingElements.length > 0) {
@@ -433,9 +434,9 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const chatContainer = this.closest('.chat-container');
+                            const chatContainer = this.closest('.offcanvas-body') ? this.closest('.offcanvas-body').querySelector('.chat-container') : null;
                             const newBubble = document.createElement('div');
-                            newBubble.className = 'd-flex flex-column align-items-start mb-3';
+                            newBubble.className = 'w-100 mb-3';
                             let attachmentHtml = '';
                             if (data.attachmentUrl) {
                                 const url = data.attachmentUrl.startsWith('http') ? data.attachmentUrl : '/uploads/' + data.attachmentUrl;
@@ -443,42 +444,37 @@
                             }
                             newBubble.innerHTML = `
                                 <div class="d-flex justify-content-end ms-auto">
-                                    <div style="max-width:85%; transform-origin: right center; text-align: right;">
+                                    <div style="max-width:min(85%, 450px); transform-origin: right center; text-align: right;">
                                         <div class="d-flex align-items-end justify-content-end gap-2 mb-1">
-                                            <span class="fw-bold text-muted" style="font-size:0.8rem;">4LAZIE Admin</span>
                                             <span class="text-muted" style="font-size:0.75rem;">${data.time}</span>
+                                            <span class="fw-bold text-muted" style="font-size:0.8rem; text-transform:uppercase;">4LAZIE Admin</span>
                                         </div>
-                                        <div class="p-2" style="position: relative; transition: all 0.3s ease;">
-                                            <div class="admin-dynamic-typing-text mb-0" style="font-size:0.95rem; color:#334155; line-height:1.5; white-space:pre-wrap;"></div>
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                            <div class="admin-dynamic-typing-text mb-0" style="white-space:pre-wrap;"></div>
                                             ${attachmentHtml}
-                                            <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8;">
-                                                <small style="font-size: 0.7rem; margin-right: 4px;">Delivered</small>
-                                                <i class="bi bi-check2-all" style="font-size: 1rem;"></i>
-                                            </div>
+                                        </div>
+                                        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8;">
+                                            <small style="font-size: 0.7rem; margin-right: 4px; color: #64748b; font-weight: 500;">Delivered</small>
+                                            <i class="bi bi-check2-all" style="font-size: 1rem; color: #64748b;"></i>
                                         </div>
                                     </div>
                                 </div>
                             `;
-                            // Insert before the form container
-                            this.parentElement.parentElement.insertBefore(newBubble, this.parentElement);
+                            // Insert into chat container
+                            if (chatContainer) chatContainer.appendChild(newBubble);
 
                             // Apply Typing Effect
                             const msgText = data.messageText;
                             const textElem = newBubble.querySelector('.admin-dynamic-typing-text');
-                            textElem.classList.add('typing-cursor');
-                            let charIndex = 0;
                             
-                            function typeNewMessage() {
-                                if (charIndex < msgText.length) {
-                                    textElem.innerHTML += msgText.charAt(charIndex);
-                                    charIndex++;
-                                    if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
-                                    setTimeout(typeNewMessage, 100);
-                                } else {
-                                    textElem.classList.remove('typing-cursor');
-                                }
-                            }
-                            typeNewMessage();
+                            textElem.innerHTML = '<div class="typing-bubble" style="padding:4px 0;"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+                            if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                            
+                            setTimeout(() => {
+                                textElem.innerHTML = msgText;
+                                newBubble.style.animation = 'slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                                if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                            }, 1200);
 
                             this.reset();
                             const textarea = this.querySelector('textarea');

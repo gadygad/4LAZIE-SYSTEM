@@ -306,8 +306,8 @@
             transition: all 0.3s ease;
         }
         .input-shell:focus-within {
-            border-color: var(--sent-from);
-            box-shadow: 0 0 0 4px rgba(16,185,129,0.12), 0 4px 24px rgba(16,185,129,0.15);
+            border-color: #1e293b;
+            box-shadow: 0 0 0 4px rgba(30,41,59,0.15), 0 4px 24px rgba(30,41,59,0.2);
         }
         #msgInput {
             flex: 1; border: none; outline: none;
@@ -318,16 +318,15 @@
         }
         #msgInput::placeholder { color: var(--muted); }
         .send-btn {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--sent-from), var(--sent-to));
-            border: none; color: white; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
-                        box-shadow 0.3s ease;
-            box-shadow: 0 4px 16px rgba(16,185,129,0.5);
+            width:40px; height:40px; border-radius:50%;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border:none; color:white; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.5);
         }
-        .send-btn:hover { transform: scale(1.14) rotate(10deg); box-shadow: 0 6px 24px rgba(16,185,129,0.65); }
+        .send-btn:hover { transform: scale(1.14) rotate(10deg); box-shadow: 0 6px 24px rgba(15,23,42,0.7); }
         .send-btn:active { transform: scale(0.9); }
         .send-btn:disabled { background: var(--surface2); box-shadow: none; transform: none; cursor: not-allowed; }
         .input-hint {

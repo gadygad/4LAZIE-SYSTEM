@@ -129,7 +129,7 @@
             background: #f8fffe; border: 1.5px solid rgba(99,102,241,0.18);
             border-radius: 20px; padding: 9px 12px; transition: all 0.3s;
         }
-        .input-shell:focus-within { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.08); }
+        .input-shell:focus-within { border-color: #1e293b; box-shadow: 0 0 0 4px rgba(30,41,59,0.15); }
         #adminMsgInput {
             flex: 1; border: none; outline: none; background: transparent;
             font-family: 'Inter', sans-serif; font-size: 0.88rem; color: #1e293b;
@@ -138,11 +138,11 @@
         #adminMsgInput::placeholder { color: #b0bec5; }
         .send-btn {
             width: 38px; height: 38px; border-radius: 50%;
-            background: linear-gradient(135deg,#6366f1,#4f46e5);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: none; color: white; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+            box-shadow: 0 4px 12px rgba(15,23,42,0.3);
         }
         .send-btn:hover { transform: scale(1.12) rotate(8deg); }
         .send-btn:disabled { background:#e2e8f0; box-shadow:none; transform:none; cursor:not-allowed; }
@@ -304,21 +304,21 @@
             <div style="font-size:0.8rem;color:#94a3b8;max-width:220px;line-height:1.5;">Click on a student from the list to open their conversation.</div>
         </div>
 
-        <!-- Active chat header (shown by JS) -->
-        <div id="adminActiveChatHeader" class="chat-header" style="display:none;">
-            <button class="btn btn-light d-md-none p-1 me-1" onclick="closeAdminChat()" style="border-radius:8px;">
-                <i class="bi bi-arrow-left fs-5"></i>
+        <div id="adminActiveChatHeader" class="chat-header" style="display:none; padding:12px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(24px); position:sticky; top:0; z-index:10;">
+            <button class="btn btn-light d-md-none p-0 me-1 d-flex align-items-center justify-content-center" onclick="closeAdminChat()" style="border-radius:50%; width:38px; height:38px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); color:#10b981; transition:all 0.25s;">
+                <i class="bi bi-arrow-left" style="font-size:1.1rem; stroke-width: 1.5;"></i>
             </button>
-            <div id="adminChatAvatar" class="av-sm" style="width:42px;height:42px;font-size:0.9rem;background:linear-gradient(135deg,#10b981,#059669);flex-shrink:0;border-radius:50%;"></div>
-            <div style="flex:1;overflow:hidden;">
-                <div id="adminChatName" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-                <div id="adminChatCourse" style="font-size:0.68rem;color:#10b981;font-weight:700;"></div>
+            <div id="adminChatAvatar" class="av-sm" style="width:42px;height:42px;font-size:1rem;background:linear-gradient(135deg,#10b981,#059669);flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;"></div>
+            <div style="flex:1;overflow:hidden;display:flex;align-items:center;gap:12px;">
+                <div id="adminChatName" style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1.35rem;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;"></div>
+                <div class="header-online-status" style="font-size:0.85rem;color:#10b981;font-weight:600;display:flex;align-items:center;gap:4px;transition:all 0.3s ease;">
+                    <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online
+                </div>
             </div>
             <div class="flex-shrink-0">
-                <span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.18);color:#4f46e5;padding:3px 10px;border-radius:50px;font-size:0.65rem;font-weight:800;display:inline-flex;align-items:center;gap:4px;">
-                    <span id="liveIndicator" style="width:6px;height:6px;border-radius:50%;background:#6366f1;animation:blink-dot 1.5s ease-in-out infinite;display:inline-block;"></span>
-                    ADMIN
-                </span>
+                <button class="btn btn-light p-2" style="border-radius:50%; background:transparent; border:none; color:#64748b;">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
             </div>
         </div>
 
@@ -444,7 +444,7 @@
         row.appendChild(avDiv);
 
         const contentCol = document.createElement('div');
-        contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:85%;' + (isAdmin ? 'align-items:flex-start;' : 'align-items:flex-end;');
+        contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (isAdmin ? 'align-items:flex-start;' : 'align-items:flex-end;');
 
         const headerRow = document.createElement('div');
         headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (!isAdmin ? 'justify-content:flex-end;' : '');
@@ -466,10 +466,10 @@
         }
 
         const textEl = document.createElement('div');
-        if (isAdmin) {
-            textEl.style.cssText = 'font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);';
+        if (msg.isSelf) {
+            textEl.style.cssText = 'font-size:1.1rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:12px 18px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,0.15);';
         } else {
-            textEl.style.cssText = 'font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);';
+            textEl.style.cssText = 'font-size:1.1rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:12px 18px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
         }
 
         contentCol.appendChild(headerRow);
@@ -523,9 +523,15 @@
             if (msg.isSelf) {
                 const tempEl = document.querySelector('.temp-msg');
                 if (tempEl) {
-                    tempEl.id = 'msg-' + msgId;
+                    tempEl.id = 'msg-' + msg.id;
                     tempEl.classList.remove('temp-msg');
-                    renderedIds.add(msgId);
+                    renderedIds.add(msg.id);
+                    const statusSpan = tempEl.querySelector('.msg-status-text');
+                    if (statusSpan && msg.status) {
+                        if (msg.status === 'Read') statusSpan.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                        else if (msg.status === 'Delivered') statusSpan.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                        else statusSpan.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                    }
                     continue;
                 }
             }
@@ -554,6 +560,21 @@
         sseConn = es;
         es.addEventListener('init', e => { try { renderMessages(JSON.parse(e.data), false); sseActive = true; } catch(err){} });
         es.addEventListener('message', e => { try { renderMessages(JSON.parse(e.data), true); } catch(err){} });
+        es.addEventListener('presence', e => {
+            try {
+                const data = JSON.parse(e.data);
+                const statusDiv = document.querySelector('.header-online-status');
+                if (statusDiv) {
+                    if (data.studentOnline) {
+                        statusDiv.style.color = '#10b981';
+                        statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
+                    } else {
+                        statusDiv.style.color = '#94a3b8';
+                        statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+                    }
+                }
+            } catch(err){}
+        });
         es.onerror = () => {
             es.close(); sseActive = false;
             if (!pollTimer) {
@@ -604,12 +625,14 @@
                 avatarEl.style.background = 'linear-gradient(135deg,#10b981,#059669)';
             }
         }
-        const nameEl2 = document.getElementById('adminChatName');
-        if (nameEl2) nameEl2.textContent = name;
-        const courseEl = document.getElementById('adminChatCourse');
-        if (courseEl) courseEl.textContent = course ? '📚 ' + course.toUpperCase() : '';
-
-        document.getElementById('adminActiveChatHeader').style.display = 'flex';
+        document.getElementById('adminChatName').textContent = name;
+        
+        document.getElementById('adminChatDefault').style.display = 'none';
+        
+        // Show active chat header using flex display to preserve the layout
+        const headerEl = document.getElementById('adminActiveChatHeader');
+        headerEl.style.setProperty('display', 'flex', 'important');
+        
         document.getElementById('adminChatMessages').style.display = 'flex';
         document.getElementById('adminChatInput').style.display = 'block';
         document.getElementById('adminChatDefault').style.display = 'none';
@@ -674,6 +697,14 @@
             if (sendBtn) sendBtn.disabled = false;
             if (input) input.focus();
         });
+
+        // Fallback to ensure isSending resets even if fetch completely hangs
+        setTimeout(() => {
+            if (isSending) {
+                isSending = false;
+                if (sendBtn) sendBtn.disabled = false;
+            }
+        }, 4000);
     };
 
     // Textarea auto-resize + Enter to send
