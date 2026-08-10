@@ -64,7 +64,7 @@ Across Tanzania and East Africa:
 | 📄 **Notes & Past Papers** | Upload, search, and download PDFs by subject, level, and semester |
 | 📅 **Timetables & Calendar** | View class schedules and exam dates per semester |
 | 🆘 **Assignment Help** | Students submit assignments; admins/tutors respond with solutions |
-| 💬 **Real-Time Messaging** | Slack-like live chat using Server-Sent Events (SSE) with typing indicators |
+| 💬 **Real-Time Messaging** | Slack-like live chat using Server-Sent Events (SSE) with slide-up animations and real-time typing indicators |
 | 📊 **Live Analytics** | Real-time active visitors tracking via WebSocket/SSE |
 | 🔔 **Push Notifications** | PWA-capable with offline support and mobile install |
 | 🔐 **Secure Accounts** | Register with email or Google Sign-In + OTP email verification |
