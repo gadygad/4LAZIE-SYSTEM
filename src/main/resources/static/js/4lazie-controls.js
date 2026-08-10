@@ -14,29 +14,10 @@
     // ================================================================
 
     // ================================================================
-    // 2. MOBILE SEARCH TOGGLE
+    // 2. MOBILE SEARCH TOGGLE (Removed - handled inline in top_actions.html)
     // ================================================================
     const mobileSearchBtn = document.getElementById('mobileSearchToggleBtn');
     const mobileSearchCollapse = document.getElementById('mobileSearchCollapseGlobal');
-    const globalMobileSearchInput = document.getElementById('globalMobileSearch');
-
-    if (mobileSearchBtn && mobileSearchCollapse) {
-      // Remove any existing onclick from our old fix
-      mobileSearchBtn.removeAttribute('onclick');
-
-      mobileSearchBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const isOpen = mobileSearchCollapse.classList.contains('show');
-        if (isOpen) {
-          mobileSearchCollapse.classList.remove('show');
-          mobileSearchBtn.innerHTML = '<i class="bi bi-search" style="font-size:1rem;color:#10b981;"></i>';
-        } else {
-          mobileSearchCollapse.classList.add('show');
-          mobileSearchBtn.innerHTML = '<i class="bi bi-x-lg" style="font-size:1.1rem;color:#10b981;"></i>';
-          setTimeout(() => { if (globalMobileSearchInput) globalMobileSearchInput.focus(); }, 150);
-        }
-      });
-    }
 
     // ================================================================
     // 3. CLOSE MOBILE SEARCH ON OUTSIDE CLICK
