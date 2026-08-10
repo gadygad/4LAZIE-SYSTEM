@@ -142,24 +142,20 @@
             flex-direction: row;
             margin-right: auto;
             margin-left: 0;
-            transform: translateX(-32px) scale(0.95);
-            animation: slideInL 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+            transform: translateY(20px) scale(0.95);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         /* Receiver (RIGHT) */
         .msg-row:not(.self) {
             flex-direction: row-reverse;
             margin-left: auto;
             margin-right: 0;
-            transform: translateX(32px) scale(0.95);
-            animation: slideInR 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+            transform: translateY(20px) scale(0.95);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes slideInL {
-            from { opacity:0; transform: translateX(-32px) scale(0.95); }
-            to   { opacity:1; transform: translateX(0)     scale(1); }
-        }
-        @keyframes slideInR {
-            from { opacity:0; transform: translateX(32px)  scale(0.95); }
-            to   { opacity:1; transform: translateX(0)     scale(1); }
+        @keyframes slideUp {
+            from { opacity:0; transform: translateY(20px) scale(0.95); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
         }
 
         .av-xs {
@@ -343,8 +339,11 @@
             <div class="av-xs" style="background:linear-gradient(135deg,var(--sent-from),var(--sent-to));">
                 <img src="/images/logo.png" alt="4LAZIE" style="width:18px;height:18px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
             </div>
-            <div class="dot-bub">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="msg-col" style="align-items: flex-end;">
+                <span class="msg-label">4LAZIE Admin is typing...</span>
+                <div class="dot-bub">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -482,18 +481,43 @@
         // ── Render messages (ID-deduplication prevents duplicates) ───────────
         function renderMessages(msgs, isNew = false) {
             if (!Array.isArray(msgs) || !msgs.length) return;
-            let added = 0;
-            for (const msg of msgs) {
+            
+            const processNext = (i, added) => {
+                if (i >= msgs.length) {
+                    if (added > 0) {
+                        emptyEl.style.display = 'none';
+                        scrollBot(isNew);
+                    }
+                    return;
+                }
+                const msg = msgs[i];
                 const msgId = msg.id || ('tmp-' + Math.random());
-                if (renderedIds.has(msgId)) continue;
+                
+                if (renderedIds.has(msgId)) {
+                    processNext(i + 1, added);
+                    return;
+                }
                 renderedIds.add(msgId);
-                msgWrap.appendChild(makeBubble(msg, isNew));
-                added++;
-            }
-            if (added > 0) {
-                emptyEl.style.display = 'none';
-                scrollBot(isNew);
-            }
+                
+                if (isNew && !msg.isSelf) {
+                    // Show typing indicator
+                    const typingEl = document.getElementById('typingDots');
+                    typingEl.classList.add('show');
+                    scrollBot(true);
+                    
+                    setTimeout(() => {
+                        typingEl.classList.remove('show');
+                        msgWrap.appendChild(makeBubble(msg, false));
+                        scrollBot(true);
+                        processNext(i + 1, added + 1);
+                    }, 1200); // 1.2s fake typing delay
+                } else {
+                    msgWrap.appendChild(makeBubble(msg, false));
+                    processNext(i + 1, added + 1);
+                }
+            };
+            
+            processNext(0, 0);
         }
 
         function scrollBot(smooth = true) {

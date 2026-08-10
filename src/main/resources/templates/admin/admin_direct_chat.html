@@ -163,24 +163,20 @@
             flex-direction: row;
             margin-right: auto;
             margin-left: 0;
-            transform: translateX(-32px) scale(0.95);
-            animation: slideInL 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+            transform: translateY(20px) scale(0.95);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         /* Receiver (RIGHT) */
         .msg-row:not(.self) {
             flex-direction: row-reverse;
             margin-left: auto;
             margin-right: 0;
-            transform: translateX(32px) scale(0.95);
-            animation: slideInR 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+            transform: translateY(20px) scale(0.95);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes slideInL {
-            from { opacity:0; transform: translateX(-32px) scale(0.95); }
-            to   { opacity:1; transform: translateX(0)     scale(1); }
-        }
-        @keyframes slideInR {
-            from { opacity:0; transform: translateX(32px)  scale(0.95); }
-            to   { opacity:1; transform: translateX(0)     scale(1); }
+        @keyframes slideUp {
+            from { opacity:0; transform: translateY(20px) scale(0.95); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
         }
 
         /* Avatar small */
@@ -381,9 +377,14 @@
 
         <!-- Typing indicator -->
         <div class="msg-row typing-row" id="typingIndicator">
-            <div class="av-xs" style="background:linear-gradient(135deg,#06b6d4,#10b981);">S</div>
-            <div class="dot-bub">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="av-xs" style="background:linear-gradient(135deg,#06b6d4,#10b981);">
+                <span th:text="${student != null ? #strings.substring(student.name,0,1).toUpperCase() : #strings.substring(chat.studentName,0,1).toUpperCase()}">S</span>
+            </div>
+            <div class="msg-col" style="align-items: flex-end;">
+                <span class="msg-label" th:text="(${student != null ? student.name : chat.studentName}) + ' is typing...'">Student is typing...</span>
+                <div class="dot-bub">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -513,11 +514,33 @@
             if (!Array.isArray(msgs) || !msgs.length) return;
             emptyEl.style.display = 'none';
             const start = rendered;
-            for (let i = start; i < msgs.length; i++) {
-                msgWrap.appendChild(makeBubble(msgs[i], isNew && i >= start));
-            }
-            rendered = msgs.length;
-            scrollBot(isNew);
+            
+            const processNext = (i) => {
+                if (i >= msgs.length) {
+                    rendered = msgs.length;
+                    return;
+                }
+                const msg = msgs[i];
+                if (isNew && !msg.isSelf) {
+                    // Show typing indicator
+                    const typingEl = document.getElementById('typingIndicator');
+                    typingEl.classList.add('show');
+                    scrollBot(true);
+                    
+                    setTimeout(() => {
+                        typingEl.classList.remove('show');
+                        msgWrap.appendChild(makeBubble(msg, false));
+                        scrollBot(true);
+                        processNext(i + 1);
+                    }, 1200); // 1.2s fake typing delay
+                } else {
+                    msgWrap.appendChild(makeBubble(msg, false));
+                    scrollBot(isNew);
+                    processNext(i + 1);
+                }
+            };
+            
+            processNext(start);
         }
 
         function scrollBot(smooth = true) {
