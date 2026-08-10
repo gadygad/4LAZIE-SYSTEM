@@ -13,6 +13,10 @@ public class ChatMessage {
     private LocalDateTime timestamp;
     private boolean isRead = false;
 
+    private String replyToMessageId;
+    private String replyToSenderName;
+    private String replyToMessageText;
+
     public ChatMessage() {
     }
 
@@ -95,5 +99,29 @@ public class ChatMessage {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public String getReplyToMessageId() {
+        return replyToMessageId;
+    }
+
+    public void setReplyToMessageId(String replyToMessageId) {
+        this.replyToMessageId = replyToMessageId;
+    }
+
+    public String getReplyToSenderName() {
+        return replyToSenderName;
+    }
+
+    public void setReplyToSenderName(String replyToSenderName) {
+        this.replyToSenderName = replyToSenderName;
+    }
+
+    public String getReplyToMessageText() {
+        return replyToMessageText;
+    }
+
+    public void setReplyToMessageText(String replyToMessageText) {
+        this.replyToMessageText = replyToMessageText;
     }
 }

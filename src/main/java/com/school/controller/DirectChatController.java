@@ -85,6 +85,9 @@ public class DirectChatController {
             m.put("senderName",           msg.getSenderName());
             m.put("senderProfilePicture", msg.getSenderProfilePicture());
             m.put("messageText",          msg.getMessageText());
+            m.put("replyToMessageId",     msg.getReplyToMessageId());
+            m.put("replyToSenderName",    msg.getReplyToSenderName());
+            m.put("replyToMessageText",   msg.getReplyToMessageText());
             m.put("time",  msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
             m.put("date",  msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
             boolean isSelf = "ADMIN".equals(viewerIdentifier)
@@ -226,6 +229,9 @@ public class DirectChatController {
     public ResponseEntity<Map<String, Object>> adminSend(
             @PathVariable String chatId,
             @RequestParam("messageText") String messageText,
+            @RequestParam(value = "replyToMessageId", required = false) String replyToMessageId,
+            @RequestParam(value = "replyToSenderName", required = false) String replyToSenderName,
+            @RequestParam(value = "replyToMessageText", required = false) String replyToMessageText,
             HttpSession session) {
 
         Map<String, Object> resp = new HashMap<>();
@@ -238,7 +244,7 @@ public class DirectChatController {
             resp.put("success", false);
             return ResponseEntity.badRequest().body(resp);
         }
-        DirectChat chat = directChatService.sendMessage(chatId, "ADMIN", "4LAZIE Admin", messageText.trim());
+        DirectChat chat = directChatService.sendMessage(chatId, "ADMIN", "4LAZIE Admin", messageText.trim(), replyToMessageId, replyToSenderName, replyToMessageText);
         if (chat == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp); }
 
         // Push personalized SSE to every listener (admin sees isSelf=true, student sees isSelf=false)
@@ -330,6 +336,9 @@ public class DirectChatController {
     public ResponseEntity<Map<String, Object>> studentSend(
             @PathVariable String chatId,
             @RequestParam("messageText") String messageText,
+            @RequestParam(value = "replyToMessageId", required = false) String replyToMessageId,
+            @RequestParam(value = "replyToSenderName", required = false) String replyToSenderName,
+            @RequestParam(value = "replyToMessageText", required = false) String replyToMessageText,
             HttpSession session) {
 
         Map<String, Object> resp = new HashMap<>();
@@ -342,7 +351,7 @@ public class DirectChatController {
         if (messageText == null || messageText.trim().isEmpty()) {
             resp.put("success", false); return ResponseEntity.badRequest().body(resp);
         }
-        DirectChat updated = directChatService.sendMessage(chatId, student.getId(), student.getName(), messageText.trim());
+        DirectChat updated = directChatService.sendMessage(chatId, student.getId(), student.getName(), messageText.trim(), replyToMessageId, replyToSenderName, replyToMessageText);
         if (updated == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp); }
 
         // Push personalized SSE to every listener (student sees isSelf=true, admin sees isSelf=false)

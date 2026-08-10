@@ -58,7 +58,7 @@ public class DirectChatService {
      * Tuma message — inaweza kuwa admin au student.
      * senderId: "ADMIN" au user's ID
      */
-    public DirectChat sendMessage(String chatId, String senderId, String senderName, String messageText) {
+    public DirectChat sendMessage(String chatId, String senderId, String senderName, String messageText, String replyToMessageId, String replyToSenderName, String replyToMessageText) {
         DirectChat chat = directChatRepository.findById(chatId).orElse(null);
         if (chat == null) return null;
 
@@ -79,6 +79,9 @@ public class DirectChatService {
         }
 
         ChatMessage msg = new ChatMessage(senderId, senderName, profilePicture, messageText, null);
+        msg.setReplyToMessageId(replyToMessageId);
+        msg.setReplyToSenderName(replyToSenderName);
+        msg.setReplyToMessageText(replyToMessageText);
         chat.getMessages().add(msg);
         chat.setLastMessageAt(LocalDateTime.now());
 

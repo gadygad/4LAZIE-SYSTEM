@@ -148,7 +148,7 @@ public class AssignmentHelpService {
         return null;
     }
     
-    public AssignmentRequest addChatMessage(String id, String senderId, String senderName, String messageText, MultipartFile file) throws IOException {
+    public AssignmentRequest addChatMessage(String id, String senderId, String senderName, String messageText, MultipartFile file, String replyToMessageId, String replyToSenderName, String replyToMessageText) throws IOException {
         Optional<AssignmentRequest> requestOpt = assignmentRequestRepository.findById(id);
         if (requestOpt.isPresent()) {
             AssignmentRequest req = requestOpt.get();
@@ -159,6 +159,9 @@ public class AssignmentHelpService {
             }
             
             ChatMessage chatMessage = new ChatMessage(senderId, senderName, messageText, fileUrl);
+            chatMessage.setReplyToMessageId(replyToMessageId);
+            chatMessage.setReplyToSenderName(replyToSenderName);
+            chatMessage.setReplyToMessageText(replyToMessageText);
             
             if (req.getMessages() == null) {
                 req.setMessages(new java.util.ArrayList<>());

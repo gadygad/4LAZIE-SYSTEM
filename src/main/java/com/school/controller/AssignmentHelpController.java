@@ -248,6 +248,9 @@ public class AssignmentHelpController {
             @PathVariable String id,
             @RequestParam("messageText") String messageText,
             @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "replyToMessageId", required = false) String replyToMessageId,
+            @RequestParam(value = "replyToSenderName", required = false) String replyToSenderName,
+            @RequestParam(value = "replyToMessageText", required = false) String replyToMessageText,
             HttpSession session) {
         
         Map<String, Object> response = new HashMap<>();
@@ -258,7 +261,7 @@ public class AssignmentHelpController {
         }
         
         try {
-            AssignmentRequest req = assignmentHelpService.addChatMessage(id, user.getId(), user.getName(), messageText, file);
+            AssignmentRequest req = assignmentHelpService.addChatMessage(id, user.getId(), user.getName(), messageText, file, replyToMessageId, replyToSenderName, replyToMessageText);
             if (req != null && req.getMessages() != null && !req.getMessages().isEmpty()) {
                 ChatMessage lastMsg = req.getMessages().get(req.getMessages().size() - 1);
                 response.put("success", true);
@@ -281,6 +284,9 @@ public class AssignmentHelpController {
             @PathVariable String id,
             @RequestParam("messageText") String messageText,
             @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "replyToMessageId", required = false) String replyToMessageId,
+            @RequestParam(value = "replyToSenderName", required = false) String replyToSenderName,
+            @RequestParam(value = "replyToMessageText", required = false) String replyToMessageText,
             HttpSession session) {
             
         Map<String, Object> response = new HashMap<>();
@@ -292,7 +298,7 @@ public class AssignmentHelpController {
         }
 
         try {
-            AssignmentRequest req = assignmentHelpService.addChatMessage(id, "ADMIN", "4LAZIE", messageText, file);
+            AssignmentRequest req = assignmentHelpService.addChatMessage(id, "ADMIN", "4LAZIE", messageText, file, replyToMessageId, replyToSenderName, replyToMessageText);
             if (req != null && req.getMessages() != null && !req.getMessages().isEmpty()) {
                 ChatMessage lastMsg = req.getMessages().get(req.getMessages().size() - 1);
                 response.put("success", true);
