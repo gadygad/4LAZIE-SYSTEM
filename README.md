@@ -72,6 +72,7 @@ Across Tanzania and East Africa:
 | 💻 **Device Management** | View all active logged-in devices and remotely log them out |
 | 🚨 **Advanced Security** | Email alerts on password change with emergency lockdown / account suspension link |
 | ✨ **Premium UI/UX** | 3D Hover Cards, Animated Empty States, Glassmorphism Profiles, and highly responsive micro-animations |
+| 📱 **Mobile Optimized** | Full Dynamic Viewport (`100dvh`), Safe-Area insets (Notch support), smooth native touch scrolling, and 44px accessible touch targets |
 
 ---
 
