@@ -279,9 +279,9 @@
                 </div>
 
                 <div style="flex:1;overflow:hidden;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span class="inbox-name" style="font-weight:700;font-size:1.35rem;color:#1e293b;" th:text="${cv.chat.studentName}">Student</span>
-                        <small class="inbox-time" style="font-size:0.9rem;color:#94a3b8;flex-shrink:0;margin-left:6px;" th:text="${cv.lastMsgTime}">Time</small>
+                    <div style="display:flex;justify-content:space-between;align-items:center; width: 100%;">
+                        <span class="inbox-name" style="font-weight:700;font-size:1.35rem;color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 70%;" th:text="${cv.chat.studentName}">Student</span>
+                        <small class="inbox-time" style="font-size:0.9rem;color:#94a3b8;flex-shrink:0;margin-left:6px; white-space:nowrap;" th:text="${cv.lastMsgTime}">Time</small>
                     </div>
                     <p class="inbox-msg-preview" style="margin:4px 0 0;font-size:1.15rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
                        th:text="${(cv.lastSenderIsAdmin ? 'You: ' : '') + cv.lastMsg}">preview</p>
