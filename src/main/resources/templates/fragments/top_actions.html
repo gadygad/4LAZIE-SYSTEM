@@ -317,22 +317,6 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ====== FAST SEARCH FUNCTIONALITY (Navbar) ======
-            const mobileSearchToggleBtn = document.getElementById('mobileSearchToggleBtn');
-            const mobileSearchCollapseGlobal = document.getElementById('mobileSearchCollapseGlobal');
-            
-            if (mobileSearchToggleBtn && mobileSearchCollapseGlobal) {
-                mobileSearchToggleBtn.addEventListener('click', () => {
-                    if (mobileSearchCollapseGlobal.classList.contains('show')) {
-                        mobileSearchCollapseGlobal.classList.remove('show');
-                        mobileSearchToggleBtn.innerHTML = '<i class="bi bi-search" style="font-size: 1.1rem;"></i>';
-                    } else {
-                        mobileSearchCollapseGlobal.classList.add('show');
-                        mobileSearchToggleBtn.innerHTML = '<i class="bi bi-x" style="font-size: 1.5rem;"></i>';
-                        setTimeout(() => document.getElementById('globalMobileSearch').focus(), 100);
-                    }
-                });
-            }
 
             function initGlobalSearch(inputId, resultsId) {
                 const input = document.getElementById(inputId);

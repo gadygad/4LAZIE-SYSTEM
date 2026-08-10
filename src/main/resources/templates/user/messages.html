@@ -26,7 +26,7 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 100dvh;
         }
 
         /* Glassmorphism Container */
@@ -37,7 +37,7 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 24px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
-            height: calc(100vh - 96px); /* Adjusted for nav and reduced gaps */
+            height: calc(100dvh - 96px); /* Adjusted for nav and reduced gaps */
             overflow: hidden;
             display: flex;
             margin-top: 12px;
@@ -201,6 +201,7 @@
         .chat-body-container {
             background: #f8fafc;
             position: relative;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Background Mesh Gradient for Glassmorphism */
@@ -240,7 +241,7 @@
                 padding: 0 !important; /* Remove horizontal gaps on mobile */
             }
             .messages-container {
-                height: calc(100vh - 60px); /* 60px mobile nav */
+                height: calc(100dvh - 60px); /* 60px mobile nav */
                 border-radius: 0; /* Remove border radius for full fit */
                 margin-top: 0;
                 margin-bottom: 0;
@@ -464,12 +465,12 @@
                     </div>
 
                     <!-- Input Area -->
-                    <div style="background:rgba(255,255,255,0.95);border-top:1px solid rgba(16,185,129,0.08);padding:12px 18px 14px;flex-shrink:0;">
-                        <div id="directInputShell" style="display:flex;align-items:flex-end;gap:10px;background:#f8fafc;border:1.5px solid rgba(16,185,129,0.2);border-radius:22px;padding:10px 14px;transition:all 0.3s;">
+                    <div style="background:rgba(255,255,255,0.95);border-top:1px solid rgba(16,185,129,0.08);padding:12px 18px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;">
+                        <div id="directInputShell" style="display:flex;align-items:flex-end;gap:10px;background:#f8fafc;border:1.5px solid rgba(16,185,129,0.2);border-radius:24px;padding:10px 14px;transition:all 0.3s;">
                             <textarea id="directMsgInput" rows="1" placeholder="Message 4LAZIE Admin..."
-                                      style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.9rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
+                                      style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.95rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
                             <button id="directSendBtn" onclick="sendDirectMessage()"
-                                    style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 14px rgba(16,185,129,0.35);"
+                                    style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 14px rgba(16,185,129,0.35);"
                                     onmouseover="this.style.transform='scale(1.12) rotate(8deg)';"
                                     onmouseout="this.style.transform='none';">
                                 <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>

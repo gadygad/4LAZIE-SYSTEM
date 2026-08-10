@@ -20,7 +20,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <style>
-        body { font-family:'Inter',sans-serif; background:#f8fafc; min-height:100vh; color:#1e293b; }
+        body { font-family:'Inter',sans-serif; background:#f8fafc; min-height:100dvh; color:#1e293b; }
 
         .ambient-bg {
             position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;
@@ -31,7 +31,7 @@
 
         /* Two-panel layout */
         .msg-container {
-            height: calc(100vh - 96px); /* Desktop fit */
+            height: calc(100dvh - 96px); /* Desktop fit */
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -89,6 +89,7 @@
             background: radial-gradient(circle at 8% 15%,rgba(16,185,129,0.04),transparent 35%),
                         radial-gradient(circle at 92% 85%,rgba(99,102,241,0.03),transparent 35%),#f8fafc;
             display: flex; flex-direction: column; gap: 7px;
+            -webkit-overflow-scrolling: touch;
         }
         .chat-messages::-webkit-scrollbar { width: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.15); border-radius: 2px; }
@@ -122,12 +123,12 @@
         /* Input */
         .chat-input-area {
             background: rgba(255,255,255,0.97); border-top: 1px solid rgba(0,0,0,0.04);
-            padding: 10px 16px 12px; flex-shrink: 0;
+            padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); flex-shrink: 0;
         }
         .input-shell {
             display: flex; align-items: flex-end; gap: 10px;
             background: #f8fffe; border: 1.5px solid rgba(99,102,241,0.18);
-            border-radius: 20px; padding: 9px 12px; transition: all 0.3s;
+            border-radius: 24px; padding: 11px 14px; transition: all 0.3s;
         }
         .input-shell:focus-within { border-color: #1e293b; box-shadow: 0 0 0 4px rgba(30,41,59,0.15); }
         #adminMsgInput {
@@ -137,7 +138,7 @@
         }
         #adminMsgInput::placeholder { color: #b0bec5; }
         .send-btn {
-            width: 38px; height: 38px; border-radius: 50%;
+            width: 44px; height: 44px; border-radius: 50%;
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: none; color: white; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
@@ -165,7 +166,7 @@
                 padding: 0 !important; /* Remove horizontal padding on mobile */
             }
             .msg-container { 
-                height: calc(100vh - 60px); 
+                height: calc(100dvh - 60px); 
                 border-radius: 0; 
                 margin-top: 0; 
                 margin-bottom: 0;
@@ -349,21 +350,7 @@
 
 
 <script src="/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("click", function(e) {
-        const toggleEl = e.target.closest('[data-bs-toggle="dropdown"]');
-        if (toggleEl) {
-            e.preventDefault();
-            e.stopPropagation();
-            try {
-                const dropdown = bootstrap.Dropdown.getInstance(toggleEl) || new bootstrap.Dropdown(toggleEl);
-                dropdown.toggle();
-            } catch (err) {
-                console.error("Dropdown error:", err);
-            }
-        }
-    });
-</script>
+<!-- Custom dropdown handler removed to allow native Bootstrap 5 initialization. -->
 <script>
 (() => {
     let currentChatId = null;
