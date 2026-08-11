@@ -234,14 +234,23 @@
         .cancel-reply-btn { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; }
         .cancel-reply-btn:hover { color: #ef4444; }
 
+        /* Default quoted msg (for light bubbles) */
         .quoted-msg {
-            background: rgba(0,0,0,0.05); border-left: 3px solid rgba(0,0,0,0.2);
-            padding: 6px 10px; border-radius: 6px; margin-bottom: 6px;
+            background: rgba(0,0,0,0.04); border-left: 3px solid #10b981;
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;
             cursor: pointer; transition: background 0.2s;
         }
         .quoted-msg:hover { background: rgba(0,0,0,0.08); }
-        .quoted-msg-name { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; display: block; }
-        .quoted-msg-text { font-size: 0.8rem; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        .quoted-msg-name { font-size: 0.75rem; font-weight: 800; color: #10b981; margin-bottom: 3px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .quoted-msg-text { font-size: 0.85rem; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; font-style: italic; }
+
+        /* Dark bubble (admin's own message) quoted msg */
+        .msg-row.admin .quoted-msg {
+            background: rgba(255,255,255,0.1); border-left: 3px solid #34d399;
+        }
+        .msg-row.admin .quoted-msg:hover { background: rgba(255,255,255,0.15); }
+        .msg-row.admin .quoted-msg-name { color: #34d399; }
+        .msg-row.admin .quoted-msg-text { color: rgba(255,255,255,0.9); }
         
         /* Mobile Context Menu for Long Press */
         .mobile-context-menu {
