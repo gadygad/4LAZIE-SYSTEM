@@ -297,23 +297,15 @@
         /* --- Reply Feature Styles --- */
         .msg-row { position: relative; }
         
-        .reply-btn {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            width: 30px; height: 30px; border-radius: 50%;
-            background: #ffffff; color: #64748b;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; opacity: 0; transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;
-            z-index: 10;
+        .reply-link {
+            font-size: 0.85rem; color: #10b981; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;
+            opacity: 0; transition: opacity 0.25s; margin-top: 4px;
         }
-        .msg-row:hover .reply-btn { opacity: 1; }
-        .msg-row.student .reply-btn { left: -40px; }
-        .msg-row.admin .reply-btn { right: -40px; }
-        
-        .reply-btn:hover { background: #f8fafc; color: #6366f1; transform: translateY(-50%) scale(1.1); }
+        .msg-row:hover .reply-link { opacity: 1; }
+        .reply-link:hover { text-decoration: underline; }
         
         @media (max-width: 768px) {
-            .reply-btn { display: none !important; }
+            .reply-link { opacity: 1 !important; display: inline-flex !important; }
             .msg-bubble { transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
             .msg-bubble.swiping { transition: none; }
         }
@@ -936,12 +928,13 @@
                 contentCol.appendChild(headerRow);
                 contentCol.appendChild(textEl);
                 
-                // Add Reply Button (Desktop hover)
-                const replyBtn = document.createElement('button');
-                replyBtn.className = 'reply-btn';
-                replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i>';
-                replyBtn.onclick = () => initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
-                contentCol.appendChild(replyBtn);
+                // Add Reply Link
+                const replyLink = document.createElement('div');
+                replyLink.className = 'reply-link';
+                replyLink.style.justifyContent = msg.isSelf ? 'flex-end' : 'flex-start';
+                replyLink.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
+                replyLink.onclick = () => initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
+                contentCol.appendChild(replyLink);
 
                 // Double Click to Reply
                 textEl.ondblclick = () => initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
