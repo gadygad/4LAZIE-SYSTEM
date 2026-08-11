@@ -44,6 +44,9 @@ public class AssignmentHelpController {
     @Autowired
     private com.school.service.EmailService emailService;
 
+    @Autowired
+    private com.school.service.PushNotificationService pushNotificationService;
+
     // --- USER ENDPOINTS ---
 
     @GetMapping("/messages")
@@ -232,6 +235,11 @@ public class AssignmentHelpController {
                     User student = userRepository.findById(req.getUserId()).orElse(null);
                     String studentName = (student != null) ? student.getName() : "Mwanafunzi";
                     assignmentHelpService.replyToRequest(id, file, studentName);
+                    
+                    if (pushNotificationService != null && req.getUserId() != null) {
+                        pushNotificationService.sendToUser(req.getUserId(), "Assignment Reply", "Admin amejibu assignment yako ya " + req.getSubjectName(), "/messages");
+                    }
+                    
                     redirectAttributes.addFlashAttribute("success", "Automated Magic Reply sent successfully!");
                 }
             }
@@ -305,6 +313,10 @@ public class AssignmentHelpController {
                 response.put("messageText", lastMsg.getMessageText());
                 response.put("time", java.time.format.DateTimeFormatter.ofPattern("hh:mm a").format(lastMsg.getTimestamp()));
                 response.put("attachmentUrl", lastMsg.getAttachmentUrl());
+                
+                if (pushNotificationService != null && req.getUserId() != null) {
+                    pushNotificationService.sendToUser(req.getUserId(), "New Message", "Admin ametuma ujumbe kwenye assignment yako ya " + req.getSubjectName(), "/messages");
+                }
             } else {
                 response.put("success", false);
             }

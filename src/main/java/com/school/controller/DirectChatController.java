@@ -29,6 +29,9 @@ public class DirectChatController {
     @Autowired
     private DirectChatService directChatService;
 
+    @Autowired
+    private com.school.service.PushNotificationService pushNotificationService;
+
     private UserRepository userRepository;
     
     private static UserRepository userRepoStatic;
@@ -247,6 +250,9 @@ public class DirectChatController {
         DirectChat chat = directChatService.sendMessage(chatId, "ADMIN", "4LAZIE Admin", messageText.trim(), replyToMessageId, replyToSenderName, replyToMessageText);
         if (chat == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp); }
 
+        // Send Push Notification to Student
+        pushNotificationService.sendToUser(chat.getStudentId(), "Ujumbe Mpya Kutoka Kwa Admin", messageText.trim(), "/messages");
+
         // Push personalized SSE to every listener (admin sees isSelf=true, student sees isSelf=false)
         notifyChat(chatId, chat);
 
@@ -353,6 +359,14 @@ public class DirectChatController {
         }
         DirectChat updated = directChatService.sendMessage(chatId, student.getId(), student.getName(), messageText.trim(), replyToMessageId, replyToSenderName, replyToMessageText);
         if (updated == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp); }
+
+        // Send Push Notification to all Admins
+        List<User> admins = userRepository.findAll().stream()
+            .filter(u -> u.getRole() != null && (u.getRole().name().equals("ADMIN") || u.getRole().name().equals("SUPER_ADMIN")))
+            .toList();
+        for (User a : admins) {
+            pushNotificationService.sendToUser(a.getId(), "Ujumbe Mpya Kutoka Kwa " + student.getName(), messageText.trim(), "/admin/messages");
+        }
 
         // Push personalized SSE to every listener (student sees isSelf=true, admin sees isSelf=false)
         notifyChat(chatId, updated);

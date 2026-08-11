@@ -441,6 +441,12 @@ public class NotesController {
 
             noteService.uploadAndSaveNote(note, file, loggedInUser, appUrl);
             
+            if (pushNotificationService != null) {
+                String title = "New Material Uploaded!";
+                String body = note.getTitle() + " has been added to " + (note.getModuleName() != null ? note.getModuleName() : note.getProgramType());
+                pushNotificationService.sendToAllSubscribers(title, body, "/dashboard");
+            }
+            
         } catch (IOException e) {
             return "redirect:/upload?error=Upload failed: " + e.getMessage();
         }
