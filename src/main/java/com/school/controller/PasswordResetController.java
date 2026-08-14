@@ -50,7 +50,8 @@ public class PasswordResetController {
                                         HttpServletRequest request,
                                         RedirectAttributes redirectAttributes) {
         
-        Optional<User> userOpt = userRepository.findByEmail(email);
+        String cleanEmail = email != null ? email.trim() : "";
+        Optional<User> userOpt = userRepository.findByEmail(cleanEmail);
 
         if (userOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "No account found with that email address.");
