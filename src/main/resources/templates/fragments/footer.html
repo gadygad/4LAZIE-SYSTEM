@@ -88,7 +88,7 @@
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center text-center w-100 gap-3" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
                 <!-- Left: Copyright, Brand -->
-                <div class="d-flex align-items-center justify-content-center w-100 w-lg-auto">
+                <div class="d-flex align-items-center justify-content-center w-100 w-lg-auto order-3 order-lg-1 mt-3 mt-lg-0">
                     <div class="d-flex align-items-center justify-content-center" style="color: #64748b; font-weight: 500;">
                         &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}" class="me-2">2026</span> 
                         <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="text-decoration-none">
@@ -106,7 +106,7 @@
                 </a>
                 
                 <!-- Center: Important Links -->
-                <div class="d-flex flex-nowrap justify-content-center gap-3 footer-links-grid" style="font-weight: 600;">
+                <div class="d-flex flex-nowrap justify-content-center gap-3 footer-links-grid order-1 order-lg-2" style="font-weight: 600;">
                     <a th:href="@{/about}" class="text-decoration-none px-4 py-2 footer-premium-link">About Us</a>
                     <a th:href="@{/policy}" class="text-decoration-none px-4 py-2 footer-premium-link">Privacy Policy</a>
                     <a th:href="@{/terms}" class="text-decoration-none px-4 py-2 footer-premium-link">Terms of Service</a>
@@ -126,7 +126,7 @@
                 </script>
 
                 <!-- Right: Socials & Developer -->
-                <div class="d-flex align-items-center justify-content-center gap-3 footer-social-dev">
+                <div class="d-flex align-items-center justify-content-center gap-3 footer-social-dev order-2 order-lg-3">
                     <div class="d-flex gap-3">
                         <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='#1da1f2'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'; this.style.transform='none';"><i class="bi bi-twitter-x" style="font-size: 0.85rem;"></i></a>
                         <a href="#" class="text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: #64748b; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='#0a66c2'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'; this.style.transform='none';"><i class="bi bi-linkedin" style="font-size: 0.85rem;"></i></a>
