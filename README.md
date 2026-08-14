@@ -1,7 +1,11 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/Built%20with-Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
-<img src="https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
+<img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
+<img src="https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=Thymeleaf&logoColor=white"/>
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white"/>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
+<br>
 <img src="https://img.shields.io/badge/Status-Active%20Development-10b981?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Made%20in-Tanzania%20🇹🇿-000000?style=for-the-badge"/>
 
@@ -82,12 +86,15 @@ I learned all of this through late-night YouTube tutorials and relentless practi
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Java 17, Spring Boot 3.2 |
+| **Backend** | Java 17, Spring Boot 3.2.5 |
 | **Database** | MongoDB |
-| **Frontend** | Thymeleaf, HTML, CSS, Bootstrap 5, Vanilla JS |
+| **Frontend** | Thymeleaf, HTML, CSS, Bootstrap 5.3.3, Vanilla JS |
 | **Security** | Spring Security, BCrypt, Google OAuth |
 | **File Storage** | Cloudinary |
 | **Real-time** | Server-Sent Events (SSE) |
+
+### ⚙️ Internal Tools
+- **Data Processing:** Python and Node.js (`pdf-parse`) scripts located in the `scripts/` directory are used internally for database seeding, data extraction, and PDF processing.
 
 ---
 
