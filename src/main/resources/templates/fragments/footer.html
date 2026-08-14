@@ -86,6 +86,10 @@
                 <!-- Left: Copyright, Brand -->
                 <div class="d-flex align-items-center justify-content-center w-100 w-lg-auto order-3 order-lg-1">
                     <div class="d-flex align-items-center justify-content-center flex-nowrap gap-2 gap-md-3" style="color: #64748b; font-weight: 500; white-space: nowrap;">
+                        <!-- Mobile inline WhatsApp icon -->
+                        <a href="https://wa.me/255766689326" target="_blank" class="d-lg-none text-decoration-none d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: white; box-shadow: 0 2px 5px rgba(37,211,102,0.4);">
+                            <i class="bi bi-whatsapp" style="font-size: 1.1rem;"></i>
+                        </a>
                         <span>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span></span>
                         <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="text-decoration-none">
                             <div style="background-color: #111111; border: 2px solid #10b981; padding: 2px 6px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);">
@@ -96,8 +100,8 @@
                     </div>
                 </div>
                 
-                <!-- WhatsApp Floating Icon (Fixed bottom left to not conflict with assignment help) -->
-                <a href="https://wa.me/255766689326" target="_blank" class="text-decoration-none d-flex align-items-center justify-content-center" style="position: fixed; bottom: 65px; left: 16px; z-index: 1040; width: 46px; height: 46px; border-radius: 50%; background: #25D366; color: white; box-shadow: 0 4px 15px rgba(37,211,102,0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+                <!-- WhatsApp Floating Icon (Fixed bottom left to not conflict with assignment help, visible only on desktop) -->
+                <a href="https://wa.me/255766689326" target="_blank" class="d-none d-lg-flex text-decoration-none align-items-center justify-content-center" style="position: fixed; bottom: 65px; left: 16px; z-index: 1040; width: 46px; height: 46px; border-radius: 50%; background: #25D366; color: white; box-shadow: 0 4px 15px rgba(37,211,102,0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
                     <i class="bi bi-whatsapp" style="font-size: 1.5rem;"></i>
                 </a>
                 
