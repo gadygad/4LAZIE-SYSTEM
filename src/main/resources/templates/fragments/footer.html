@@ -24,7 +24,6 @@
                     justify-content: center !important;
                     gap: 8px !important; 
                     width: 100%;
-                    padding-bottom: 5px;
                 }
                 .footer-links-grid a {
                     width: auto !important; 
@@ -39,7 +38,6 @@
                     align-items: center;
                     gap: 12px !important;
                     width: 100%;
-                    padding-top: 10px;
                 }
             }
             
@@ -83,18 +81,18 @@
             }
         </style>
         <div class="container-fluid px-2 px-md-4 px-xl-5 py-4 py-md-3 footer-mobile-pb">
-            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center text-center w-100 gap-3" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center text-center w-100 gap-4 gap-lg-3" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
                 <!-- Left: Copyright, Brand -->
-                <div class="d-flex align-items-center justify-content-center w-100 w-lg-auto order-3 order-lg-1 mt-3 mt-lg-0">
-                    <div class="d-flex align-items-center justify-content-center flex-nowrap" style="color: #64748b; font-weight: 500; white-space: nowrap;">
-                        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}" class="me-1 me-md-2">2026</span> 
-                        <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="text-decoration-none mx-1">
+                <div class="d-flex align-items-center justify-content-center w-100 w-lg-auto order-3 order-lg-1">
+                    <div class="d-flex align-items-center justify-content-center flex-nowrap gap-2 gap-md-3" style="color: #64748b; font-weight: 500; white-space: nowrap;">
+                        <span>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span></span>
+                        <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="text-decoration-none">
                             <div style="background-color: #111111; border: 2px solid #10b981; padding: 2px 6px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);">
                                 <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 0.75rem; letter-spacing: 1px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
                             </div>
                         </a>
-                        <span class="ms-1 ms-md-2" style="font-size: 0.75rem; opacity: 0.8; border-left: 1px solid #cbd5e1; padding-left: 8px;">All rights reserved.</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8; border-left: 1px solid #cbd5e1; padding-left: 8px;">All rights reserved.</span>
                     </div>
                 </div>
                 
