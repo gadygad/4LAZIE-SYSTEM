@@ -20,26 +20,20 @@
                 .footer-links-grid {
                     display: flex !important;
                     flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    justify-content: start !important;
-                    gap: 4px !important; 
+                    flex-wrap: wrap !important;
+                    justify-content: center !important;
+                    gap: 8px !important; 
                     width: 100%;
-                    overflow-x: auto;
-                    -webkit-overflow-scrolling: touch;
                     padding-bottom: 5px;
-                }
-                .footer-links-grid::-webkit-scrollbar {
-                    display: none;
                 }
                 .footer-links-grid a {
                     width: auto !important; 
-                    font-size: 0.7rem !important; 
-                    padding: 6px 8px !important; 
+                    font-size: 0.75rem !important; 
+                    padding: 8px 12px !important; 
                     white-space: nowrap;
                 }
                 .footer-social-dev {
-                    flex-direction: row !important;
-                    flex-wrap: wrap !important;
+                    flex-direction: column !important;
                     justify-content: center;
                     align-items: center;
                     gap: 12px !important;
@@ -93,8 +87,8 @@
         <div class="container-fluid px-2 px-md-4 px-xl-5 py-4 py-md-3 footer-mobile-pb">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center text-center w-100 gap-3" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
-                <!-- Left: Copyright, Brand & WhatsApp (Mobile) -->
-                <div class="d-flex align-items-center justify-content-between w-100 w-lg-auto justify-content-lg-center">
+                <!-- Left: Copyright, Brand -->
+                <div class="d-flex align-items-center justify-content-center w-100 w-lg-auto">
                     <div class="d-flex align-items-center justify-content-center" style="color: #64748b; font-weight: 500;">
                         &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}" class="me-2">2026</span> 
                         <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="text-decoration-none">
@@ -104,12 +98,12 @@
                         </a>
                         <span class="d-none d-sm-inline ms-2" style="font-size: 0.75rem; opacity: 0.8; border-left: 1px solid #cbd5e1; padding-left: 8px;">All rights reserved.</span>
                     </div>
-                    
-                    <!-- WhatsApp Icon (Mobile Only - Far Right) -->
-                    <a href="https://wa.me/255766689326" target="_blank" class="d-lg-none text-decoration-none d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; background: #25D366; color: white; box-shadow: 0 2px 6px rgba(37,211,102,0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
-                        <i class="bi bi-whatsapp" style="font-size: 1.1rem;"></i>
-                    </a>
                 </div>
+                
+                <!-- WhatsApp Floating Icon (Fixed bottom left to not conflict with assignment help) -->
+                <a href="https://wa.me/255766689326" target="_blank" class="text-decoration-none d-flex align-items-center justify-content-center" style="position: fixed; bottom: 85px; left: 20px; z-index: 1040; width: 44px; height: 44px; border-radius: 50%; background: #25D366; color: white; box-shadow: 0 4px 15px rgba(37,211,102,0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+                    <i class="bi bi-whatsapp" style="font-size: 1.4rem;"></i>
+                </a>
                 
                 <!-- Center: Important Links -->
                 <div class="d-flex flex-nowrap justify-content-center gap-3 footer-links-grid" style="font-weight: 600;">
