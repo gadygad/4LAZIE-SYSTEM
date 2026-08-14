@@ -32,7 +32,7 @@
                     
 <!-- Home Button -->
                     <a th:href="${session.user != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')} ? '/admin/dashboard' : '/dashboard'" 
-                       class="d-flex align-items-center justify-content-center text-decoration-none position-relative me-2 top-action-btn home-btn" 
+                       class="d-none d-md-flex align-items-center justify-content-center text-decoration-none position-relative top-action-btn home-btn" 
                        style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
                         <i class="bi bi-house-door-fill" style="color: #000000; font-size: 1.2rem; transition: color 0.3s;"></i>
                     </a>
