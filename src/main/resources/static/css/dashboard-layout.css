@@ -354,6 +354,8 @@
     opacity: 0;
     transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
 }
 .apple-note-card:hover {
     transform: perspective(1000px) rotateX(4deg) rotateY(-4deg) scale(1.02) translateY(-4px);
@@ -429,9 +431,10 @@
 }
 .apple-note-actions {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 8px;
     margin-left: auto;
+    position: relative;
+    z-index: 2;
 }
 .apple-btn-read {
     display: inline-flex;

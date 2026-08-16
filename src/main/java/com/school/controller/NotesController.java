@@ -783,7 +783,11 @@ public class NotesController {
                     .body(resource);
         } catch (Exception e) {
             log.error("Error proxying document", e);
-            return ResponseEntity.internalServerError().build();
+            String errHtml = "<html><head><style>body{background:#0f172a;color:#f8fafc;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;}</style></head><body><h2>Document Fetch Error</h2><p>Unable to fetch the PDF from the remote server. The file might be missing or the repository is private.</p><br><a href='/dashboard' style='color:#3b82f6;text-decoration:none;'>Return to Dashboard</a></body></html>";
+            org.springframework.core.io.ByteArrayResource errRes = new org.springframework.core.io.ByteArrayResource(errHtml.getBytes());
+            return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(errRes);
         }
     }
     @PostMapping("/save-note/{id}")
