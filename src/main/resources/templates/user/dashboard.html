@@ -74,6 +74,9 @@
       }]
     }
     </script>
+    <link rel="stylesheet" th:href="@{/css/dashboard-layout.css?v=1}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body class="has-bottom-nav">
@@ -93,13 +96,9 @@
                     <!-- Brand -->
                     <a class="navbar-brand d-flex align-items-center text-decoration-none"
                         th:href="${session.user != null ? '/dashboard' : '/'}">
-                        <div class="d-flex align-items-center justify-content-center me-2"
-                            style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
-                            <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
+                        <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; margin-right: 8px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                            <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
                         </div>
-                        <span class="fs-4 fw-bold"
-                            style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.5px;">4LAZIE
-                            <span class="d-none d-sm-inline" style="color: #10b981;">NOTES</span></span>
                     </a>
 
                 </div>
@@ -115,6 +114,9 @@
 
     <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
     <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
+
+    <!-- Mobile Sidebar -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
     <!-- PAGE LAYOUT CONTAINER -->
     <div class="page-layout">
@@ -134,25 +136,7 @@
             <div
                 style="position: absolute; top: 40%; right: 20%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0) 70%); border-radius: 50%; filter: blur(30px); animation: float 12s ease-in-out infinite 2s;">
             </div>
-            <style>
-                @keyframes float {
-                    0% {
-                        transform: translate(0, 0) rotate(0deg);
-                    }
-
-                    33% {
-                        transform: translate(30px, -50px) rotate(10deg);
-                    }
-
-                    66% {
-                        transform: translate(-20px, 20px) rotate(-5deg);
-                    }
-
-                    100% {
-                        transform: translate(0, 0) rotate(0deg);
-                    }
-                }
-            </style>
+            
 
             <!-- CENTER COLUMN (DASHBOARD OVERVIEW) -->
             <div class="center-col position-relative z-1"
@@ -160,120 +144,7 @@
 
 
                 <!-- CUSTOM CSS FOR GLASSMORPHISM & ANIMATIONS -->
-                <style>
-                    .glass-stat-card {
-                        background: rgba(255, 255, 255, 0.7);
-                        backdrop-filter: blur(16px);
-                        -webkit-backdrop-filter: blur(16px);
-                        border: 1px solid rgba(255, 255, 255, 0.8);
-                        border-radius: 16px;
-                        box-shadow: 0 4px 24px rgba(16, 185, 129, 0.08);
-                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                        position: relative;
-                        overflow: hidden;
-                        cursor: pointer;
-                    }
-
-                    .glass-stat-card:hover {
-                        transform: translateY(-8px) scale(1.02);
-                        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.2);
-                        background: rgba(255, 255, 255, 0.9);
-                        border-color: rgba(16, 185, 129, 0.3);
-                    }
-
-                    .glass-stat-card:active {
-                        transform: translateY(-2px) scale(0.98);
-                    }
-
-                    .glass-stat-card::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
-                        z-index: 0;
-                    }
-
-                    .glass-stat-card>* {
-                        position: relative;
-                        z-index: 1;
-                    }
-
-                    .icon-container-premium {
-                        width: 55px;
-                        height: 55px;
-                        border-radius: 16px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
-                        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8);
-                        color: #10b981;
-                        transition: all 0.3s ease;
-                    }
-
-                    .glass-stat-card:hover .icon-container-premium {
-                        background: linear-gradient(135deg, #10b981, #059669);
-                        color: #fff;
-                        transform: rotate(5deg) scale(1.1);
-                        box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
-                    }
-
-                    /* Table Glass Styling */
-                    .glass-table-container {
-                        background: rgba(255, 255, 255, 0.6);
-                        backdrop-filter: blur(12px);
-                        -webkit-backdrop-filter: blur(12px);
-                        border: 1px solid rgba(255, 255, 255, 0.6);
-                        border-radius: 16px;
-                        padding: 1.25rem;
-                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
-                        transition: transform 0.3s ease;
-                    }
-
-                    .glass-table-container:hover {
-                        transform: translateY(-4px);
-                        box-shadow: 0 12px 40px rgba(16, 185, 129, 0.1);
-                    }
-
-                    .premium-table {
-                        border-collapse: separate;
-                        border-spacing: 0 8px;
-                    }
-
-                    .premium-table th {
-                        border-bottom: none;
-                        text-transform: uppercase;
-                        font-size: 0.75rem;
-                        letter-spacing: 1px;
-                        color: #64748b;
-                        padding-bottom: 10px;
-                    }
-
-                    .premium-table td {
-                        background: rgba(255, 255, 255, 0.8);
-                        border: none;
-                        padding: 12px 15px;
-                        transition: all 0.2s ease;
-                    }
-
-                    .premium-table tr:hover td {
-                        background: #fff;
-                        box-shadow: 0 2px 10px rgba(16, 185, 129, 0.08);
-                    }
-
-                    .premium-table td:first-child {
-                        border-top-left-radius: 10px;
-                        border-bottom-left-radius: 10px;
-                    }
-
-                    .premium-table td:last-child {
-                        border-top-right-radius: 10px;
-                        border-bottom-right-radius: 10px;
-                    }
-                </style>
+                
 
 
 
@@ -282,99 +153,10 @@
 
                 <!-- WELCOME HERO SECTION -->
                 <div class="welcome-hero mb-4 position-relative" style="padding: 1rem 0; margin-top: 1rem;">
-                    <style>
-                        .welcome-hero-content {
-                            display: flex;
-                            flex-direction: column;
-                            gap: 0.5rem;
-                        }
+                    
 
-                        .welcome-subtitle {
-                            font-family: 'Inter', sans-serif;
-                            font-size: 0.8rem;
-                            font-weight: 700;
-                            letter-spacing: 3px;
-                            color: #666666;
-                            text-transform: uppercase;
-                            transition: all 0.4s ease;
-                            cursor: default;
-                        }
-
-                        .welcome-subtitle:hover {
-                            color: #000000;
-                            letter-spacing: 5px;
-                        }
-
-                        .welcome-name {
-                            font-family: 'Outfit', sans-serif;
-                            font-size: clamp(1.8rem, 4vw, 2.5rem);
-                            font-weight: 900;
-                            color: #000000;
-                            line-height: 1.1;
-                            letter-spacing: -2px;
-                            margin: 0;
-                            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-                            cursor: default;
-                        }
-
-                        .welcome-name:hover {
-                            transform: translateY(-2px) scale(1.01);
-                            text-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-                        }
-
-                        .welcome-course {
-                            font-family: 'Outfit', sans-serif;
-                            font-size: clamp(1.1rem, 3vw, 1.4rem);
-                            font-weight: 800;
-                            color: #333333;
-                            text-transform: uppercase;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            max-width: 100%;
-                            transition: all 0.4s ease;
-                            letter-spacing: 1px;
-                            cursor: default;
-                        }
-
-                        .welcome-course:hover {
-                            color: #000000;
-                            padding-left: 8px;
-                        }
-
-                        .welcome-meta {
-                            font-family: 'Inter', sans-serif;
-                            font-size: 0.95rem;
-                            font-weight: 600;
-                            color: #666666;
-                            display: flex;
-                            align-items: center;
-                            gap: 15px;
-                            transition: all 0.4s ease;
-                            margin-top: 5px;
-                            letter-spacing: 1px;
-                            cursor: default;
-                        }
-
-                        .welcome-meta:hover {
-                            color: #000000;
-                        }
-
-                        .meta-dot {
-                            color: #cccccc;
-                            font-size: 1.5rem;
-                            line-height: 0;
-                        }
-
-                        @media (max-width: 768px) {
-                            .welcome-hero {
-                                padding: 1.75rem !important;
-                            }
-                        }
-                    </style>
-
-                    <div class="row align-items-center position-relative z-1">
-                        <div class="col-12">
+                    <div class="row m-0 align-items-center position-relative z-1">
+                        <div class="col-12 px-0">
                             <div class="welcome-hero-content">
                                 <div class="welcome-subtitle">WELCOME BACK</div>
                                 <h1 class="welcome-name"
@@ -392,138 +174,7 @@
                 <div th:replace="~{fragments/sjuit_components :: premium_sidebar}"></div>
 
                 <!-- Premium Interactive Study Hub Banner -->
-                <style>
-                    .premium-study-hub {
-                        position: relative;
-                        width: 100%;
-                        max-width: 100%;
-                        background: #ffffff;
-                        border-radius: 20px;
-                        padding: 24px;
-                        text-align: center;
-                        overflow: hidden;
-                        cursor: pointer;
-                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-                        border: 2px solid #000000;
-                        text-decoration: none !important;
-                        display: block;
-                        margin-bottom: 24px;
-                    }
-                    .premium-study-hub:hover {
-                        transform: translateY(-8px) scale(1.02);
-                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-                        border-color: #000000;
-                    }
-                    .study-hub-content {
-                        position: relative;
-                        z-index: 1;
-                    }
-                    .study-hub-title {
-                        font-family: 'Outfit', sans-serif;
-                        font-size: 1.4rem;
-                        font-weight: 800;
-                        color: #000000;
-                        margin-bottom: 8px;
-                        letter-spacing: 1px;
-                        text-transform: uppercase;
-                    }
-                    .study-hub-subtitle {
-                        font-size: 0.85rem;
-                        color: #333333;
-                        margin-bottom: 16px;
-                        font-weight: 500;
-                    }
-                    .study-badge {
-                        font-size: 0.75rem;
-                        font-weight: 700;
-                        padding: 8px 16px;
-                        border-radius: 50px;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 6px;
-                        text-decoration: none !important;
-                        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-                        border: none;
-                    }
-                    
-                    /* Permanent Soft Background Colors */
-                    .badge-tz-green { background: #e6f7ec; color: #1eb53a !important; }
-                    .badge-tz-blue { background: #e0f6fc; color: #00a3dd !important; }
-                    .badge-tz-yellow { background: #fffbe6; color: #d4a000 !important; }
-                    .badge-tz-black { background: #f1f5f9; color: #0f172a !important; }
-                    .badge-tz-flag { background: #f0fdf4; color: #1eb53a !important; }
-                    
-                    /* Hover States */
-                    .study-badge:hover {
-                        transform: translateY(-3px) scale(1.05);
-                    }
-                    .badge-tz-green:hover { background: #1eb53a; color: #ffffff !important; box-shadow: 0 8px 20px rgba(30, 181, 58, 0.4); }
-                    .badge-tz-blue:hover { background: #00a3dd; color: #ffffff !important; box-shadow: 0 8px 20px rgba(0, 163, 221, 0.4); }
-                    .badge-tz-yellow:hover { background: #fcd116; color: #000000 !important; box-shadow: 0 8px 20px rgba(252, 209, 22, 0.5); }
-                    .badge-tz-black:hover { background: #0f172a; color: #ffffff !important; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.4); }
-                    .badge-tz-flag:hover { 
-                        background: linear-gradient(135deg, #1eb53a 20%, #fcd116 35%, #0f172a 50%, #fcd116 65%, #00a3dd 80%); 
-                        color: #ffffff !important;
-                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
-                        background-size: 200% 200%;
-                        animation: gradient-move 3s ease infinite;
-                    }
-                    
-                    @keyframes gradient-move {
-                        0% { background-position: 0% 50%; }
-                        50% { background-position: 100% 50%; }
-                        100% { background-position: 0% 50%; }
-                    }
-                    
-                    .study-badge:hover i {
-                        animation: pulse-icon 1s infinite;
-                    }
-                    
-                    @keyframes pulse-icon {
-                        0% { transform: scale(1); }
-                        50% { transform: scale(1.2); }
-                        100% { transform: scale(1); }
-                    }
-                    .study-badges-container {
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: center;
-                        gap: 8px;
-                        margin-bottom: 20px;
-                    }
-                    .study-hub-btn {
-                        background: linear-gradient(135deg, #10b981, #059669);
-                        color: white !important;
-                        border: none;
-                        padding: 10px 24px;
-                        border-radius: 50px;
-                        font-weight: 700;
-                        font-size: 0.95rem;
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 8px;
-                        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-                        transition: all 0.3s ease;
-                        cursor: pointer;
-                    }
-                    .study-hub-btn:hover {
-                        background: linear-gradient(135deg, #1eb53a 20%, #fcd116 35%, #000000 50%, #fcd116 65%, #00a3dd 80%);
-                        background-size: 200% 200%;
-                        animation: gradient-move 3s ease infinite;
-                        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-                        transform: scale(1.05);
-                    }
-                    .study-hub-btn i {
-                        transition: transform 0.3s ease;
-                    }
-                    .study-hub-btn:hover i {
-                        transform: translateX(4px);
-                    }
-                </style>
+                
 
                 <div class="premium-study-hub mt-2" onclick="window.location.href='/quizzes'">
                     <div class="study-hub-content">
@@ -546,269 +197,7 @@
                 <!-- End Premium Interactive Study Hub Banner -->
 
                 <!-- Side-by-Side Recent & Popular Notes Section (Premium Compact Grid) -->
-                <style>
-                    .dashboard-notes-list {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 12px;
-                        /* Fixed: Reduced from 32px to 12px */
-                    }
-
-                    /* ═══ Apple-Style Green Note Cards ═══ */
-                    .apple-note-card {
-                        display: flex;
-                        align-items: center;
-                        width: 100%;
-                        padding: 18px 20px;
-                        min-height: 80px;
-                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(5, 150, 105, 0.03) 100%);
-                        border: 1px solid rgba(16, 185, 129, 0.12);
-                        border-radius: 12px;
-                        cursor: pointer;
-                        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-                        position: relative;
-                        overflow: hidden;
-                        text-decoration: none !important;
-                        gap: 12px;
-                    }
-
-                    .apple-note-card::before {
-                        content: '';
-                        position: absolute;
-                        inset: 0;
-                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(52, 211, 153, 0.04));
-                        opacity: 0;
-                        transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-                        border-radius: inherit;
-                    }
-
-                    .apple-note-card:hover {
-                        transform: translateY(-2px) scale(1.008);
-                        border-color: rgba(16, 185, 129, 0.35);
-                        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.12), 0 4px 10px rgba(16, 185, 129, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-                    }
-
-                    .apple-note-card:hover::before {
-                        opacity: 1;
-                    }
-
-                    .apple-note-icon {
-                        width: 32px;
-                        height: 32px;
-                        min-width: 32px;
-                        border-radius: 8px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background: rgba(16, 185, 129, 0.12);
-                        color: #10b981;
-                        font-size: 0.9rem;
-                        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-                    }
-
-                    .apple-note-card:hover .apple-note-icon {
-                        background: linear-gradient(135deg, #10b981, #059669);
-                        color: white;
-                        transform: scale(1.1) rotate(5deg);
-                        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-                    }
-
-                    .apple-note-info {
-                        flex-grow: 1;
-                        min-width: 0;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 3px;
-                    }
-
-                    .apple-note-title {
-                        font-family: 'Outfit', sans-serif;
-                        font-size: 0.85rem;
-                        font-weight: 700;
-                        color: #0f172a;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        margin: 0;
-                    }
-
-                    .apple-note-meta {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        flex-wrap: wrap;
-                    }
-
-                    .apple-note-tag {
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 4px;
-                        padding: 2px 6px;
-                        background: rgba(16, 185, 129, 0.08);
-                        border: 1px solid rgba(16, 185, 129, 0.15);
-                        border-radius: 4px;
-                        font-size: 0.55rem;
-                        font-weight: 700;
-                        color: #059669;
-                        letter-spacing: 0.5px;
-                    }
-
-                    .apple-note-stat {
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 4px;
-                        font-size: 0.6rem;
-                        color: #64748b;
-                        font-weight: 600;
-                    }
-
-                    .apple-note-actions {
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        margin-left: auto;
-                    }
-
-                    .apple-btn-read {
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 4px;
-                        background: linear-gradient(135deg, #10b981, #059669);
-                        color: white !important;
-                        border: none;
-                        border-radius: 100px;
-                        padding: 4px 10px;
-                        font-size: 0.6rem;
-                        font-weight: 700;
-                        font-family: 'Inter', sans-serif;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                        text-decoration: none;
-                        transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-                        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
-                    }
-
-                    .apple-btn-read:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35);
-                    }
-
-                    .apple-btn-dl {
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 4px;
-                        background: transparent;
-                        color: #10b981 !important;
-                        border: 1px solid rgba(16, 185, 129, 0.2);
-                        border-radius: 100px;
-                        padding: 4px 10px;
-                        font-size: 0.6rem;
-                        font-weight: 700;
-                        font-family: 'Inter', sans-serif;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                        text-decoration: none;
-                        transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-                        cursor: pointer;
-                    }
-
-                    .apple-btn-dl:hover {
-                        transform: scale(1.06);
-                        background: rgba(16, 185, 129, 0.14);
-                        border-color: rgba(16, 185, 129, 0.35);
-                        color: #047857 !important;
-                    }
-
-                    .apple-note-module {
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 4px;
-                        padding: 2px 6px;
-                        background: rgba(245, 158, 11, 0.08);
-                        border: 1px solid rgba(245, 158, 11, 0.15);
-                        border-radius: 4px;
-                        font-size: 0.55rem;
-                        font-weight: 700;
-                        color: #d97706;
-                        letter-spacing: 0.5px;
-                        text-transform: uppercase;
-                        max-width: 120px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-
-                    @media (max-width: 768px) {
-                        .apple-note-card {
-                            padding: 10px 12px;
-                            gap: 8px;
-                            flex-direction: column;
-                            align-items: flex-start;
-                        }
-
-                        .apple-note-icon {
-                            width: 28px;
-                            height: 28px;
-                            min-width: 28px;
-                            font-size: 0.75rem;
-                        }
-
-                        .apple-note-info {
-                            width: 100%;
-                            gap: 6px;
-                        }
-
-                        .apple-note-title {
-                            font-size: 0.8rem;
-                            white-space: normal;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            -webkit-box-orient: vertical;
-                        }
-
-                        .apple-note-meta {
-                            gap: 6px;
-                            flex-wrap: wrap;
-                        }
-
-                        .apple-note-tag {
-                            font-size: 0.55rem;
-                            padding: 2px 6px;
-                        }
-
-                        .apple-note-stat {
-                            display: flex;
-                        }
-
-                        .apple-note-actions {
-                            margin-left: 0;
-                            width: 100%;
-                            justify-content: flex-end;
-                            margin-top: 4px;
-                        }
-
-                        .apple-btn-read {
-                            padding: 5px 12px;
-                            font-size: 0.65rem;
-                        }
-
-                        .apple-btn-dl {
-                            padding: 5px 12px;
-                            font-size: 0.65rem;
-                        }
-
-                        .apple-note-module {
-                            max-width: 100%;
-                            font-size: 0.55rem;
-                        }
-
-                        .dashboard-notes-list {
-                            gap: 12px !important;
-                        }
-                    }
-                </style>
+                
 
                 <div class="row g-4 mb-4">
                     <!-- Recently Added (Left Column) -->
@@ -942,55 +331,7 @@
                     </div>
                 </div>
 
-                <style>
-                    /* Hover Effects */
-                    .premium-list-item:hover {
-                        transform: translateY(-3px);
-                        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15) !important;
-                        border-color: rgba(16, 185, 129, 0.5) !important;
-                        background: linear-gradient(90deg, #ffffff 0%, rgba(16, 185, 129, 0.05) 100%) !important;
-                    }
-
-                    .premium-list-item:hover .green-accent {
-                        transform: scaleY(1) !important;
-                    }
-
-                    .premium-list-item:hover .premium-text-hover {
-                        color: #10b981 !important;
-                    }
-
-                    .section-header-premium {
-                        font-family: 'Outfit', sans-serif;
-                        text-transform: uppercase;
-                        position: relative;
-                        display: inline-block;
-                        padding-bottom: 5px;
-                        transition: all 0.3s ease;
-                        cursor: default;
-                    }
-
-                    .section-header-premium::after {
-                        content: '';
-                        position: absolute;
-                        left: 0;
-                        bottom: -2px;
-                        height: 3px;
-                        width: 0;
-                        background: linear-gradient(90deg, #10b981, #34d399);
-                        border-radius: 3px;
-                        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-                    }
-
-                    .section-header-premium:hover {
-                        color: #10b981 !important;
-                        text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-                        border-bottom-color: transparent !important;
-                    }
-
-                    .section-header-premium:hover::after {
-                        width: 100%;
-                    }
-                </style>
+                
 
             </div>
 
@@ -999,7 +340,7 @@
         </div>
     </div>
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
 
     <!-- Mobile Bottom Navigation -->
     <div th:replace="~{fragments/bottom_nav :: nav('home')}"></div>
@@ -1122,9 +463,14 @@
                                             userVisibleOnly: true,
                                             applicationServerKey: applicationServerKey
                                         }).then(subscription => {
+                                            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+                                            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
                                             fetch('/api/notifications/subscribe', {
                                                 method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
+                                                headers: { 
+                                                    'Content-Type': 'application/json',
+                                                    [csrfHeader]: csrfToken
+                                                },
                                                 body: JSON.stringify(subscription)
                                             }).then(res => res.json())
                                                 .then(resData => console.log('Push subscription saved:', resData))

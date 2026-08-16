@@ -137,10 +137,10 @@
                 /* Each nav item: equal flex share, vertically stacked icon + label */
                 .bottom-nav-btn {
                     flex: 1 1 0 !important;        /* equal width for all items */
-                    width: auto !important;
+                    width: 20% !important;
                     min-width: 0 !important;
                     max-width: none !important;
-                    padding: 8px 4px 6px !important;
+                    padding: 8px 1px 6px !important;
                     border-radius: 0 !important;
                     border: none !important;
                     display: flex !important;
@@ -148,20 +148,21 @@
                     align-items: center !important;
                     justify-content: center !important;
                     gap: 3px !important;
+                    flex-shrink: 1 !important;     /* ensure it can shrink */
                 }
 
                 /* Icon size: clear and readable on mobile */
                 .bottom-nav-btn i {
-                    font-size: 1.4rem !important;
+                    font-size: 1.25rem !important;
                     margin-bottom: 0 !important;
                     line-height: 1 !important;
                 }
 
                 /* Label: always fully visible, never clipped or squeezed */
                 .bottom-nav-btn span {
-                    font-size: 0.62rem !important;
+                    font-size: 0.55rem !important;
                     font-weight: 700 !important;
-                    letter-spacing: 0.3px !important;
+                    letter-spacing: 0 !important;
                     text-align: center !important;
                     white-space: nowrap !important;
                     line-height: 1.2 !important;

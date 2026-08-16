@@ -1,0 +1,316 @@
+<header th:fragment="public_navbar" class="navbar navbar-custom py-2 sticky-top"
+        style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(203, 213, 225, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); z-index: 1050; position: sticky; top: 0;">
+        <div class="container-fluid px-0 pe-1 d-flex justify-content-between align-items-center flex-nowrap">
+
+            <!-- Left side: Hamburger + Logo -->
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn p-0 d-flex align-items-center justify-content-center rounded-0 border-start-0 border-top-0 border-bottom-0" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar"
+                    style="width: 44px; height: 44px; background: rgba(248, 250, 252, 0.8); border: 1px solid rgba(226, 232, 240, 0.8); color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s ease;"
+                    onmouseover="this.style.background='#f1f5f9';"
+                    onmouseout="this.style.background='rgba(248, 250, 252, 0.8)';">
+                    <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+                </button>
+
+                <a href="home.html" th:href="@{/}"
+                    class="text-decoration-none d-flex flex-row align-items-center gap-2 ms-1 ms-sm-0 me-auto">
+                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
+                    </div>
+                    <div class="d-none d-sm-flex flex-column justify-content-center">
+                        <div class="d-flex align-items-center position-relative mt-0"
+                            style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3); overflow: hidden; width: fit-content;">
+                            <div
+                                style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;">
+                            </div>
+                            <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #0d6efd; display: flex; align-items: center; white-space: nowrap;">
+                                SMART IN BRAIN
+                            </span>
+                            <style>
+                                @keyframes shimmer-glow {
+                                    0% {
+                                        left: -100%;
+                                    }
+
+                                    20% {
+                                        left: 200%;
+                                    }
+
+                                    100% {
+                                        left: 200%;
+                                    }
+                                }
+                            </style>
+                        </div>
+                        <div class="d-flex align-items-center gap-1 mt-1" style="white-space: nowrap;">
+                            <div class="mini-time-box d-flex align-items-center justify-content-center rounded-2">
+                                <span id="nav-hrs" style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; color: #0f172a; line-height: 1;">00</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; animation: blink-colon 1s infinite; margin-top: -2px;">:</span>
+                            <div class="mini-time-box d-flex align-items-center justify-content-center rounded-2">
+                                <span id="nav-mins" style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; color: #0f172a; line-height: 1;">00</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; animation: blink-colon 1s infinite; margin-top: -2px;">:</span>
+                            <div class="mini-time-box d-flex align-items-center justify-content-center rounded-2">
+                                <span id="nav-secs" style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; color: #0f172a; line-height: 1;">00</span>
+                            </div>
+                            <span class="mx-1" style="color: #cbd5e1; font-size: 0.8rem;">|</span>
+                            <span id="navLiveDate" style="font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; color: #64748b;">Jan 01, 2024</span>
+                        </div>
+                        <style>
+                            @keyframes blink-colon {
+                                0%, 100% { opacity: 1; }
+                                50% { opacity: 0.3; }
+                            }
+                            .mini-time-box {
+                                width: 22px; 
+                                height: 22px; 
+                                background: rgba(255, 255, 255, 0.95); 
+                                border: 1px solid rgba(16, 185, 129, 0.3);
+                                box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15), inset 0 0 4px rgba(255,255,255,0.6);
+                                position: relative;
+                                overflow: hidden;
+                            }
+                            .mini-time-box::after {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: -100%;
+                                width: 50%;
+                                height: 100%;
+                                background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+                                transform: skewX(-25deg);
+                                animation: mini-shine 4s infinite;
+                            }
+                            @keyframes mini-shine {
+                                0% { left: -100%; }
+                                20% { left: 200%; }
+                                100% { left: 200%; }
+                            }
+                        </style>
+                    </div>
+                </a>
+
+                <script>
+                    function updateNavLiveClock() {
+                        const now = new Date();
+                        const hEl = document.getElementById('nav-hrs');
+                        const mEl = document.getElementById('nav-mins');
+                        const sEl = document.getElementById('nav-secs');
+                        const dateEl = document.getElementById('navLiveDate');
+                        
+                        if (hEl && mEl && sEl) {
+                            hEl.textContent = String(now.getHours()).padStart(2, '0');
+                            mEl.textContent = String(now.getMinutes()).padStart(2, '0');
+                            sEl.textContent = String(now.getSeconds()).padStart(2, '0');
+                        }
+                        
+                        const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        if (dateEl) {
+                            dateEl.textContent = dateStr;
+                        }
+
+                        // Also update sidebar clock if it exists
+                        const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        const sideTimeEl = document.getElementById('sidebarLiveTime');
+                        const sideDateEl = document.getElementById('sidebarLiveDate');
+                        if (sideTimeEl) sideTimeEl.innerText = timeStr;
+                        if (sideDateEl) sideDateEl.innerText = dateStr;
+                    }
+                    setInterval(updateNavLiveClock, 1000);
+                    updateNavLiveClock();
+                </script>
+            </div>
+
+            <!-- Premium Nav Links -->
+            <div class="d-none d-md-flex align-items-center gap-4"
+                style="margin-left: 4rem !important; margin-right: 2rem;">
+
+                <style>
+                    /* Desktop Mega Dropdown Styles */
+                    .desktop-dropdown {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        height: 100%;
+                        padding: 10px 0;
+                    }
+
+                    .desktop-dropdown-toggle {
+                        font-family: 'Outfit', sans-serif;
+                        font-weight: 600;
+                        font-size: 0.95rem;
+                        color: #64748b;
+                        text-decoration: none;
+                        transition: color 0.3s ease;
+                        cursor: default;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                    }
+
+                    .desktop-dropdown:hover .desktop-dropdown-toggle {
+                        color: #0f172a;
+                    }
+
+                    .desktop-dropdown-menu {
+                        position: absolute;
+                        top: 100%;
+                        left: -20px;
+                        width: 340px;
+                        background: #ffffff;
+                        border-radius: 16px;
+                        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
+                        padding: 15px;
+                        opacity: 0;
+                        visibility: hidden;
+                        transform: translateY(10px) scale(0.98);
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                        z-index: 1050;
+                    }
+
+                    .desktop-dropdown:hover .desktop-dropdown-menu {
+                        opacity: 1;
+                        visibility: visible;
+                        transform: translateY(0) scale(1);
+                    }
+
+                    .desktop-course-item {
+                        position: relative;
+                        margin-bottom: 5px;
+                        border-radius: 10px;
+                        transition: background 0.2s ease;
+                    }
+
+                    .desktop-course-item:hover {
+                        background: #f8fafc;
+                    }
+
+                    .desktop-course-btn {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 10px 14px;
+                        width: 100%;
+                        text-decoration: none;
+                        color: inherit;
+                        border: none;
+                        background: transparent;
+                    }
+
+                    .desktop-course-submenu {
+                        position: absolute;
+                        top: 0;
+                        left: 100%;
+                        width: 200px;
+                        background: #ffffff;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.03);
+                        padding: 12px;
+                        opacity: 0;
+                        visibility: hidden;
+                        transform: translateX(10px);
+                        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                        z-index: 1060;
+                        margin-left: 5px;
+                    }
+
+                    .desktop-course-item:hover .desktop-course-submenu {
+                        opacity: 1;
+                        visibility: visible;
+                        transform: translateX(0);
+                    }
+
+                    .desktop-course-submenu a {
+                        display: block;
+                        padding: 8px 12px;
+                        color: #475569;
+                        text-decoration: none;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        border-radius: 8px;
+                        transition: all 0.2s ease;
+                    }
+
+                    .desktop-course-submenu a:hover {
+                        color: #2563eb;
+                        background: #eff6ff;
+                        transform: translateX(4px);
+                    }
+                </style>
+
+            </div>
+
+            <!-- Search Bar (center) -->
+            <div class="d-none d-md-flex mx-auto align-items-center justify-content-center gap-2"
+                style="max-width: 400px; flex: 1;">
+                <div class="search-container position-relative flex-grow-1">
+                    <i class="bi bi-search position-absolute text-muted"
+                        style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+                    <input type="text" id="smartSearchInput" class="form-control"
+                        placeholder="Search topics, modules, or past papers..."
+                        style="padding: 10px 20px 10px 50px; border-radius: 100px; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0,0,0,0.03); backdrop-filter: blur(10px); font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease; color: var(--text-dark);"
+                        onfocus="this.style.boxShadow='0 8px 30px rgba(59,130,246,0.15)'; this.style.borderColor='var(--primary)';"
+                        onblur="setTimeout(()=>{document.getElementById('desktopSearchResults').classList.add('d-none')}, 400); this.style.boxShadow='0 4px 20px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border-subtle)';"
+                        autocomplete="off">
+                    <!-- Search Results Dropdown -->
+                    <div id="desktopSearchResults" class="d-none" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; margin-top: 8px; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.12); overflow: hidden; max-height: 350px; overflow-y: auto;"></div>
+                    <!-- Ctrl+K Shortcut Hint -->
+
+                </div>
+
+            </div>
+
+            <script>
+
+                // Ctrl+K Shortcut
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        document.getElementById('smartSearchInput').focus();
+                    }
+                });
+            </script>
+
+            <div class="d-flex justify-content-end align-items-center gap-2 gap-md-3" style="width: auto;">
+
+                <!-- Story Pill -->
+                <a href="about.html" th:href="@{/about}" class="magic-auth-btn">
+                    Story
+                </a>
+
+                <!-- Login Button -->
+                <a th:href="@{/login}" class="magic-auth-btn gap-1">
+                    <i class="bi bi-person-fill" style="font-size: 1rem; margin-top: -1px;"></i> <span>Login</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Premium Mobile Search Bar -->
+        <div class="d-md-none container mt-2 mb-1 px-3">
+            <div class="search-container position-relative w-100">
+                <i class="bi bi-search position-absolute text-muted"
+                    style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; color: #059669 !important; z-index: 5;"></i>
+                <input type="text" id="mobileSmartSearchInput" class="form-control"
+                    placeholder="Search modules, notes..."
+                    style="padding: 10px 16px 10px 42px !important; border-radius: 100px; border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(255, 255, 255, 0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.03); font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; color: #1e293b;"
+                    onfocus="this.style.boxShadow='0 8px 25px rgba(16, 185, 129,0.15)'; this.style.borderColor='#059669'; this.style.background='#ffffff';"
+                    onblur="setTimeout(()=>{document.getElementById('mobileSearchResults').classList.add('d-none')}, 400); this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)'; this.style.borderColor='rgba(16, 185, 129, 0.3)';"
+                    autocomplete="off">
+                <!-- Mobile Search Results Dropdown -->
+                <div id="mobileSearchResults" class="d-none" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; margin-top: 8px; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.12); overflow: hidden; max-height: 300px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </header>
+
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+    </div>
+
+    <style>
+    .secondary-nav-strip {
+        background-color: #282A35;
+        width: 100%;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    </style>
+

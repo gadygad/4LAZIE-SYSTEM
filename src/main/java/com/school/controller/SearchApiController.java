@@ -10,6 +10,8 @@ import com.school.util.AuthUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.Cache;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,22 +35,40 @@ public class SearchApiController {
     }
     
         private MongoTemplate mongoTemplate;
+        private CacheManager cacheManager;
 
-    public SearchApiController(NoteRepository noteRepository, AuthUtil authUtil, MongoTemplate mongoTemplate) {
+    public SearchApiController(NoteRepository noteRepository, AuthUtil authUtil, MongoTemplate mongoTemplate, CacheManager cacheManager) {
         this.noteRepository = noteRepository;
         this.authUtil = authUtil;
         this.mongoTemplate = mongoTemplate;
+        this.cacheManager = cacheManager;
     }
 
 
     private static final Logger logger = LoggerFactory.getLogger(SearchApiController.class);
 
     @GetMapping("/api/search")
-    @Cacheable(value = "searchResults", key = "#query")
     public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query) {
+        User loggedInUser = getLoggedInUser();
+        
+        // Secure Cache Key based on user context
+        String cacheKey = query.trim().toLowerCase();
+        if (loggedInUser != null) {
+            cacheKey += "-" + loggedInUser.getRole() + "-" + (loggedInUser.getCourseProgram() != null ? loggedInUser.getCourseProgram() : "");
+        } else {
+            cacheKey += "-guest";
+        }
+        
+        Cache cache = cacheManager.getCache("searchResults");
+        if (cache != null) {
+            Map<String, Object> cachedResponse = cache.get(cacheKey, Map.class);
+            if (cachedResponse != null) {
+                return ResponseEntity.ok(cachedResponse);
+            }
+        }
+
         org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(query.trim(), org.springframework.data.domain.PageRequest.of(0, 50));
         List<Note> allMatches = matchesPage.getContent();
-        User loggedInUser = getLoggedInUser();
         List<Note> topResults = allMatches.stream()
                 .filter(n -> n != null && (loggedInUser != null || Boolean.TRUE.equals(n.getIsPublic())))
                 .filter(n -> {
@@ -74,6 +94,10 @@ public class SearchApiController {
         Map<String, Object> response = new HashMap<>();
         response.put("results", results);
         response.put("totalMatches", matchesPage.getTotalElements());
+
+        if (cache != null) {
+            cache.put(cacheKey, response);
+        }
 
         return ResponseEntity.ok(response);
     }

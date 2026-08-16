@@ -60,13 +60,21 @@ public class AdminController {
 
         private com.school.util.AuthUtil authUtil;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.repository.AssignmentRequestRepository assignmentRequestRepository;
+
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.service.TeamMemberService teamMemberService;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
 
         private com.school.service.AdminService adminService;
+        
+        private com.school.repository.SiteVisitRepository siteVisitRepository;
 
-    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.service.EmailService emailService, PasswordEncoder passwordEncoder, com.school.repository.PendingActionRepository pendingActionRepository, com.school.repository.ActivityLogRepository activityLogRepository, com.school.util.AuthUtil authUtil, com.school.service.AdminService adminService) {
+    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.service.EmailService emailService, PasswordEncoder passwordEncoder, com.school.repository.PendingActionRepository pendingActionRepository, com.school.repository.ActivityLogRepository activityLogRepository, com.school.util.AuthUtil authUtil, com.school.service.AdminService adminService, com.school.repository.SiteVisitRepository siteVisitRepository) {
         this.userRepository = userRepository;
         this.noteRepository = noteRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
@@ -82,6 +90,7 @@ public class AdminController {
         this.activityLogRepository = activityLogRepository;
         this.authUtil = authUtil;
         this.adminService = adminService;
+        this.siteVisitRepository = siteVisitRepository;
     }
 
 
@@ -106,7 +115,16 @@ public class AdminController {
         long totalUsers = 0;
         long totalNotes = 0;
         Long totalDownloads = 0L;
-        Long totalViews = 0L;
+        
+        // Analytics Defaults
+        Long totalUniqueVisitors = 0L;
+        Long guestVisitors = 0L;
+        Long registeredVisitors = 0L;
+        Long mobileVisitors = 0L;
+        Long desktopVisitors = 0L;
+        Long guestViews = 0L;
+        Long guestDownloads = 0L;
+
         List<User> recentUsers = java.util.Collections.emptyList();
         List<Note> popularNotes = java.util.Collections.emptyList();
         List<com.school.model.ActivityLog> recentLogs = java.util.Collections.emptyList();
@@ -126,11 +144,33 @@ public class AdminController {
         } catch (Exception e) {
             log.warn("Failed to get download count: {}", e.getMessage(), e);
         }
+        
+        // Fetch Site Analytics
         try {
-            totalViews = noteRepository.getTotalViewCount();
+            totalUniqueVisitors = siteVisitRepository.countTotalUniqueVisitors();
+            if (totalUniqueVisitors == null) totalUniqueVisitors = 0L;
+            
+            guestVisitors = siteVisitRepository.countGuestVisitors();
+            if (guestVisitors == null) guestVisitors = 0L;
+            
+            guestViews = siteVisitRepository.countGuestViews();
+            if (guestViews == null) guestViews = 0L;
+            
+            guestDownloads = siteVisitRepository.countGuestDownloads();
+            if (guestDownloads == null) guestDownloads = 0L;
+            
+            registeredVisitors = siteVisitRepository.countRegisteredVisitors();
+            if (registeredVisitors == null) registeredVisitors = 0L;
+            
+            mobileVisitors = siteVisitRepository.countMobileVisitors();
+            if (mobileVisitors == null) mobileVisitors = 0L;
+            
+            desktopVisitors = siteVisitRepository.countDesktopVisitors();
+            if (desktopVisitors == null) desktopVisitors = 0L;
         } catch (Exception e) {
-            log.warn("Failed to get view count: {}", e.getMessage(), e);
+            log.warn("Failed to get site analytics: {}", e.getMessage(), e);
         }
+        
         try {
             recentUsers = userRepository.findTop5ByOrderByDateJoinedDesc();
         } catch (Exception e) {
@@ -150,14 +190,22 @@ public class AdminController {
             log.warn("Failed to get activity logs: {}", e.getMessage(), e);
         }
         
-        log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, Views: {}, RecentUsers: {}, PopularNotes: {}, Logs: {}",
-                totalUsers, totalNotes, totalDownloads, totalViews, 
-                recentUsers.size(), popularNotes.size(), recentLogs.size());
+        log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, UniqueVisitors: {}",
+                totalUsers, totalNotes, totalDownloads, totalUniqueVisitors);
         
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalNotes", totalNotes);
         model.addAttribute("totalDownloads", totalDownloads != null ? totalDownloads : 0L);
-        model.addAttribute("totalViews", totalViews != null ? totalViews : 0L);
+        
+        // Pass Analytics to view
+        model.addAttribute("totalUniqueVisitors", totalUniqueVisitors);
+        model.addAttribute("guestVisitors", guestVisitors);
+        model.addAttribute("guestViews", guestViews);
+        model.addAttribute("guestDownloads", guestDownloads);
+        model.addAttribute("registeredVisitors", registeredVisitors);
+        model.addAttribute("mobileVisitors", mobileVisitors);
+        model.addAttribute("desktopVisitors", desktopVisitors);
+        
         model.addAttribute("recentUsers", recentUsers);
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("recentLogs", recentLogs);
@@ -190,6 +238,21 @@ public class AdminController {
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         return "admin/admin_users";
+    }
+
+    @GetMapping("/users/{id}/profile")
+    public String viewUserProfile(@PathVariable String id, HttpSession session, Model model) {
+        User admin = getLoggedInUser();
+        if (!adminService.hasPermission(admin, "MANAGE_USERS")) {
+            return "redirect:/login";
+        }
+        User profileUser = userRepository.findById(id).orElse(null);
+        if (profileUser == null) {
+            return "redirect:/admin/users";
+        }
+        model.addAttribute("loggedInUser", admin);
+        model.addAttribute("profileUser", profileUser);
+        return "admin/admin_user_profile";
     }
 
     @PostMapping("/users/{id}/delete")
@@ -963,12 +1026,23 @@ public class AdminController {
             return "redirect:/login";
         }
         List<com.school.model.PendingAction> pendingActions = pendingActionRepository.findByStatusOrderByRequestDateDesc("PENDING");
+        
+        java.util.Map<String, String> draftReplies = new java.util.HashMap<>();
+        for (com.school.model.PendingAction action : pendingActions) {
+            if ("CONTACT_MESSAGE".equals(action.getTargetEntity()) && "REPLY".equals(action.getActionType())) {
+                assignmentRequestRepository.findById(action.getTargetId()).ifPresent(req -> {
+                    draftReplies.put(action.getId(), req.getAdminReply());
+                });
+            }
+        }
+        
         model.addAttribute("pendingActions", pendingActions);
+        model.addAttribute("draftReplies", draftReplies);
         return "admin/admin_approvals";
     }
 
     @PostMapping("/approvals/{id}/approve")
-    public String approveAction(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String approveAction(@PathVariable String id, @RequestParam(value = "editedReply", required = false) String editedReply, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.SUPER_ADMIN) {
             return "redirect:/login";
@@ -976,7 +1050,7 @@ public class AdminController {
         
         com.school.model.PendingAction action = pendingActionRepository.findById(id).orElse(null);
         if (action != null && "PENDING".equals(action.getStatus())) {
-            // Execute actual deletion based on entity type
+            // Execute actual action based on entity type and action type
             try {
                 if ("DELETE".equals(action.getActionType())) {
                     switch (action.getTargetEntity()) {
@@ -986,6 +1060,17 @@ public class AdminController {
                         case "COURSE": courseRepository.deleteById(action.getTargetId()); break;
                         case "TIMETABLE": timetableRepository.deleteById(action.getTargetId()); break;
                         case "CALENDAR": academicCalendarRepository.deleteById(action.getTargetId()); break;
+                    }
+                } else if ("REPLY".equals(action.getActionType()) && "CONTACT_MESSAGE".equals(action.getTargetEntity())) {
+                    com.school.model.AssignmentRequest request = assignmentRequestRepository.findById(action.getTargetId()).orElse(null);
+                    if (request != null) {
+                        String replyMessage = editedReply != null && !editedReply.trim().isEmpty() ? editedReply : request.getAdminReply();
+                        request.setAdminReply(replyMessage);
+                        request.setStatus("SOLVED");
+                        request.setSolvedAt(java.time.LocalDateTime.now());
+                        assignmentRequestRepository.save(request);
+                        
+                        emailService.sendSupportReplyEmail(request.getEmail(), request.getFullName(), replyMessage, request.getQuestionText());
                     }
                 }
                 action.setStatus("APPROVED");
@@ -1012,6 +1097,84 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("success", "Action rejected.");
         }
         return "redirect:/admin/approvals";
+    }
+
+    // ============ ADMIN TEAM MEMBERS MANAGEMENT ============
+
+    @GetMapping("/team-members")
+    public String listTeamMembers(HttpSession session, Model model) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        
+        List<com.school.model.TeamMember> teamMembers = teamMemberService.getAllTeamMembers();
+        model.addAttribute("teamMembers", teamMembers);
+        return "admin/admin_team_members";
+    }
+
+    @PostMapping("/team-members/add")
+    public String addTeamMember(@ModelAttribute com.school.model.TeamMember teamMember,
+                                @RequestParam(value = "image", required = false) MultipartFile image,
+                                RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        try {
+            teamMemberService.saveTeamMember(teamMember, image);
+            redirectAttributes.addFlashAttribute("success", "Team member added successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error adding team member: " + e.getMessage());
+        }
+        return "redirect:/admin/team-members";
+    }
+
+    @PostMapping("/team-members/{id}/edit")
+    public String editTeamMember(@PathVariable String id,
+                                 @ModelAttribute com.school.model.TeamMember updatedMember,
+                                 @RequestParam(value = "image", required = false) MultipartFile image,
+                                 RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        try {
+            com.school.model.TeamMember existing = teamMemberService.getTeamMemberById(id);
+            if (existing != null) {
+                existing.setName(updatedMember.getName());
+                existing.setRole(updatedMember.getRole());
+                existing.setQuote(updatedMember.getQuote());
+                existing.setDisplayOrder(updatedMember.getDisplayOrder());
+                teamMemberService.saveTeamMember(existing, image);
+                redirectAttributes.addFlashAttribute("success", "Team member updated successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating team member: " + e.getMessage());
+        }
+        return "redirect:/admin/team-members";
+    }
+
+    @PostMapping("/team-members/{id}/delete")
+    public String deleteTeamMember(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        teamMemberService.deleteTeamMember(id);
+        redirectAttributes.addFlashAttribute("success", "Team member deleted successfully!");
+        return "redirect:/admin/team-members";
+    }
+
+    @PostMapping("/team-members/{id}/toggle-status")
+    public String toggleTeamMemberStatus(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        teamMemberService.toggleStatus(id);
+        redirectAttributes.addFlashAttribute("success", "Status changed successfully!");
+        return "redirect:/admin/team-members";
     }
 
 }

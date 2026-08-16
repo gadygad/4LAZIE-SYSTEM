@@ -630,8 +630,11 @@
                                                                 </div>
                                                             </div>
                                                         </th:block>
-                                                        <div th:if="${#lists.isEmpty(unitNotes)}" class="text-start py-2" style="color:#94a3b8; font-size: 0.85rem; font-style: italic;">
-                                                            No notes uploaded yet for this unit.
+                                                        <div th:if="${#lists.isEmpty(unitNotes)}" class="py-1">
+                                                            <div th:replace="~{fragments/empty_states :: premium_empty_mini(
+                                                                icon='bi-journal-x',
+                                                                message='No notes uploaded yet for this unit.'
+                                                            )}"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1328,12 +1331,12 @@
     </script>
 </div>
 
-<div th:fragment="secondary_nav">
+<div th:fragment="secondary_nav" class="w-100 m-0 p-0" style="align-self: stretch;">
     <!-- Secondary Dark Navigation Strip (W3Schools Style) -->
-    <div class="secondary-nav-strip d-none d-md-block">
+    <div class="secondary-nav-strip d-none d-md-block w-100 m-0 p-0">
         <div class="container-fluid px-4 d-flex align-items-center justify-content-center gap-1">
-            <a href="#" class="exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">NOTES</a>
-            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
+            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">NOTES</a>
+            <a href="#" class="exam-nav-btn position-relative" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                 data-exam-title="CAT 1"
                 th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeDate != null ? currentCalendar.sem1Cat1DegreeDate : ''}"
                 th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat1DegreeEndDate != null ? currentCalendar.sem1Cat1DegreeEndDate : ''}"
@@ -1348,7 +1351,7 @@
                 th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat1DegreeUrl : ''}"
                 th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat1DiplomaUrl : ''}">CAT 1 TIMETABLE</a>
             
-            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
+            <a href="#" class="exam-nav-btn position-relative" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                 data-exam-title="CAT 2"
                 th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeDate != null ? currentCalendar.sem1Cat2DegreeDate : ''}"
                 th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1Cat2DegreeEndDate != null ? currentCalendar.sem1Cat2DegreeEndDate : ''}"
@@ -1363,7 +1366,7 @@
                 th:data-sem2-degree-url="${currentCalendar != null ? currentCalendar.sem2Cat2DegreeUrl : ''}"
                 th:data-sem2-diploma-url="${currentCalendar != null ? currentCalendar.sem2Cat2DiplomaUrl : ''}">CAT 2 TIMETABLE</a>
                 
-            <a href="#" class="exam-nav-btn position-relative exam-glow-hover" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
+            <a href="#" class="exam-nav-btn position-relative" data-bs-toggle="offcanvas" data-bs-target="#examModal" aria-controls="examModal"
                 data-exam-title="UE"
                 th:data-sem1-degree-date="${currentCalendar != null and currentCalendar.sem1UeDegreeDate != null ? currentCalendar.sem1UeDegreeDate : ''}"
                 th:data-sem1-degree-end-date="${currentCalendar != null and currentCalendar.sem1UeDegreeEndDate != null ? currentCalendar.sem1UeDegreeEndDate : ''}"
@@ -1410,32 +1413,7 @@
         color: #10b981;
     }
     
-    /* Magical Glow Effect for Exam Links */
-    .exam-glow-hover {
-        overflow: hidden;
-        z-index: 1;
-        border-radius: 4px;
-    }
-    .exam-glow-hover::before {
-        content: '';
-        position: absolute;
-        top: 0; left: -100%;
-        width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent);
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        z-index: -1;
-    }
-    .exam-glow-hover:hover::before {
-        left: 100%;
-        transition: left 0.5s ease-in-out;
-    }
-    .exam-glow-hover:hover {
-        background-color: #052e16 !important;
-        color: #34d399 !important;
-        box-shadow: 0 0 20px rgba(16,185,129,0.6), inset 0 0 10px rgba(16,185,129,0.3);
-        transform: translateY(-1px) scale(1.02);
-        text-shadow: 0 0 10px rgba(52,211,153,0.8);
-    }
+    /* Magical Glow Effect removed to simplify the hover */
 
     /* Magical Dropdown for QUIZZES */
     .nav-dropdown-container {

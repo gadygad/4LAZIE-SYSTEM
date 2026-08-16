@@ -47,6 +47,17 @@ public class AssignmentHelpService {
         return assignmentRequestRepository.save(request);
     }
 
+    public AssignmentRequest createPublicContactRequest(String fullName, String email, String phoneNumber, String subject, String message) {
+        AssignmentRequest request = new AssignmentRequest();
+        request.setPublicContact(true);
+        request.setFullName(fullName);
+        request.setEmail(email);
+        request.setPhoneNumber(phoneNumber);
+        request.setSubjectName("CONTACT: " + subject);
+        request.setQuestionText(message);
+        return assignmentRequestRepository.save(request);
+    }
+
     public List<AssignmentRequest> getUserRequests(String userId) {
         return assignmentRequestRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
@@ -55,17 +66,38 @@ public class AssignmentHelpService {
         return assignmentRequestRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    public org.springframework.data.domain.Page<AssignmentRequest> getAdminRequestsPaginated(String status, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        if (status == null || status.isEmpty() || status.equalsIgnoreCase("ALL")) {
+            return assignmentRequestRepository.findAllByOrderByCreatedAtDesc(pageable);
+        } else {
+            return assignmentRequestRepository.findByStatusOrderByCreatedAtDesc(status.toUpperCase(), pageable);
+        }
+    }
+
     public Optional<AssignmentRequest> getRequestById(String id) {
         return assignmentRequestRepository.findById(id);
     }
 
-    public void markAsRead(String id) {
+    public void markAsRead(String id, String viewerIdentifier) {
         Optional<AssignmentRequest> requestOpt = assignmentRequestRepository.findById(id);
         if (requestOpt.isPresent()) {
             AssignmentRequest req = requestOpt.get();
+            boolean changed = false;
             if (!req.isRead()) {
                 req.setRead(true);
                 req.setReadAt(LocalDateTime.now());
+                changed = true;
+            }
+            if (req.getMessages() != null) {
+                for (ChatMessage msg : req.getMessages()) {
+                    if (viewerIdentifier != null && !viewerIdentifier.equals(msg.getSenderId()) && !msg.isRead()) {
+                        msg.setRead(true);
+                        changed = true;
+                    }
+                }
+            }
+            if (changed) {
                 assignmentRequestRepository.save(req);
             }
         }
@@ -82,11 +114,12 @@ public class AssignmentHelpService {
             }
             
             // Generate automated 4LAZIE identity reply
-            String automatedReply = "Hey " + studentName + "! 👋\n\n" +
-                    "Tumepokea swali lako la " + req.getSubjectName() + " na tumelifanyia Magic! 🪄\n" +
-                    "Wataalamu wetu wamelisolve kwa usahihi wa asilimia 100%.\n\n" +
-                    "Tumeambatisha PDF hapo chini yenye majibu yote yaliyochambuliwa step-by-step ili iwe rahisi kwako kuelewa. Ipakue (Download) na uipitie.\n\n" +
-                    "Study Smart, Not Hard! 🚀\n— The 4LAZIE Team";
+            String automatedReply = "Habari " + studentName + "! 👋\n\n" +
+                    "Asante sana kwa kutuamini na kututumia swali lako la " + req.getSubjectName() + ". Tunathamini sana juhudi zako katika masomo.\n\n" +
+                    "Timu yetu ya wataalamu imelifanyia kazi swali hili kwa umakini na weledi mkubwa ili kuhakikisha unapata majibu sahihi kwa asilimia 100%.\n\n" +
+                    "Tumeambatisha faili la PDF hapo chini lenye majibu yaliyochambuliwa hatua kwa hatua (step-by-step) ili kurahisisha uelewa wako. Tafadhali lipakue (Download) na ulipitie kwa wakati wako.\n\n" +
+                    "Tupo hapa kwa ajili yako muda wowote utakapohitaji msaada zaidi. Tunakutakia mafanikio mema katika masomo yako! 🎓\n\n" +
+                    "— Kwa heshima kutoka 4LAZIE Team";
             
             ChatMessage initialMessage = new ChatMessage("ADMIN", "4LAZIE", automatedReply, fileUrl);
             
@@ -115,7 +148,7 @@ public class AssignmentHelpService {
         return null;
     }
     
-    public AssignmentRequest addChatMessage(String id, String senderId, String senderName, String messageText, MultipartFile file) throws IOException {
+    public AssignmentRequest addChatMessage(String id, String senderId, String senderName, String messageText, MultipartFile file, String replyToMessageId, String replyToSenderName, String replyToMessageText) throws IOException {
         Optional<AssignmentRequest> requestOpt = assignmentRequestRepository.findById(id);
         if (requestOpt.isPresent()) {
             AssignmentRequest req = requestOpt.get();
@@ -126,6 +159,9 @@ public class AssignmentHelpService {
             }
             
             ChatMessage chatMessage = new ChatMessage(senderId, senderName, messageText, fileUrl);
+            chatMessage.setReplyToMessageId(replyToMessageId);
+            chatMessage.setReplyToSenderName(replyToSenderName);
+            chatMessage.setReplyToMessageText(replyToMessageText);
             
             if (req.getMessages() == null) {
                 req.setMessages(new java.util.ArrayList<>());

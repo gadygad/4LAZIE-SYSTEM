@@ -28,9 +28,12 @@
         /* About Page Specific Styles */
         .hero-section {
             text-align: center;
-            padding: clamp(10px, 5vw, 60px) 15px clamp(10px, 3vw, 30px);
+            padding: 10px 15px 10px !important;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            display: block !important;
         }
         .hero-title {
             font-family: 'Outfit', sans-serif;
@@ -51,7 +54,8 @@
             font-size: 1.2rem;
             color: #475569;
             line-height: 1.6;
-            margin-bottom: 0;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
             font-weight: 400;
         }
         .story-card {
@@ -242,40 +246,26 @@
       }]
     }
     </script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <header class="navbar navbar-custom sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 2px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);">
-        <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-            <div class="d-flex align-items-center gap-2">
-                <a href="home.html" th:href="@{/}" class="text-decoration-none d-flex flex-row align-items-center gap-2">
-                    <span class="magic-brand-text">4LAZIE</span>
-
-                </a>
-            </div>
-
-            <!-- Premium Nav Links -->
-            <div class="d-none d-md-flex align-items-center gap-4" style="margin-right: 2rem;">
-                <a href="home.html" th:href="@{/}" class="text-decoration-none" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; color: #64748b; transition: color 0.3s ease;" onmouseover="this.style.color='#10b981';" onmouseout="this.style.color='#64748b';">
-                    Home
-                </a>
-                <div class="story-link-active">
-                    Our Story
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-end align-items-center" style="width: auto;">
-                <a th:href="@{/login}"
-                    class="text-decoration-none d-flex align-items-center justify-content-center fw-bold gap-1"
-                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: all 0.3s ease; font-size: 0.85rem; padding: 6px clamp(10px, 2vw, 16px); height: 36px; line-height: 1; border-radius: 50px;"
-                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.4)';"
-                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)';">
-                    <i class="bi bi-person-fill" style="font-size: 0.95rem; margin-top: -1px;"></i> <span>Sign In</span>
-                </a>
-            </div>
-        </div>
-    </header>
+    <!-- Shared Public Navbar -->
+    <div th:replace="~{fragments/public_navbar :: public_navbar}"></div>
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+    
+    <style>
+    .secondary-nav-strip {
+        background-color: #282A35;
+        width: 100%;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    main.container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    </style>
 
     <!-- Background Orbs -->
     <div class="bg-orb orb-primary"></div>
@@ -286,28 +276,28 @@
         
         <!-- Hero Section -->
         <section class="hero-section">
-            <div class="mb-3">
+            <div class="mb-1">
                 <span class="fw-bold" style="color: #64748b; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;">THE ORIGIN OF EXCELLENCE</span>
             </div>
-            <h1 class="hero-title text-uppercase" style="color: #0f172a; font-size: clamp(0.7rem, 2vw, 1.2rem); font-weight: 600; letter-spacing: -0.5px; line-height: 0.8;">THE STORY BEHIND <br>THE SMART BRAIN.</h1>
+            <h1 class="hero-title text-uppercase" style="color: #0f172a; font-size: clamp(0.7rem, 3.5vw, 1.2rem); font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; word-wrap: break-word;">THE STORY BEHIND THE SMART BRAIN.</h1>
             <p class="hero-subtitle">Born out of the frustration of endless WhatsApp scrolling, built to be the ultimate centralized academic archive for ambitious students.</p>
         </section>
 
         <!-- The True Origin Story -->
-        <section class="row justify-content-center mb-2 mt-3">
+        <section class="row justify-content-center mb-2 mt-0">
             <div class="col-lg-9">
                 <div class="story-card">
                     <div class="row align-items-center">
                         <div class="col-md-7">
-                            <h2 class="story-heading text-uppercase" style="color: #0f172a; font-size: clamp(0.7rem, 2vw, 1rem); font-weight: 600; letter-spacing: -0.5px; margin-bottom: 0.5rem; line-height: 0.8;">IT STARTED WITH A <br>SIMPLE FRUSTRATION.</h2>
+                            <h2 class="story-heading text-uppercase" style="color: #0f172a; font-size: clamp(0.6rem, 3vw, 1rem); font-weight: 900; letter-spacing: -0.5px; margin-bottom: 0.5rem; line-height: 1.2; word-wrap: break-word;">IT STARTED WITH A SIMPLE FRUSTRATION.</h2>
                             <p class="story-paragraph">
                                 It was exam week at SJUIT. Students were panicking, spending hours frantically scrolling through WhatsApp groups trying to find that one specific PDF for Server Administration. Some files were corrupted, others were mixed up with memes and personal chats. The chaos was overwhelming.
                             </p>
                             <p class="story-paragraph">
-                                We realized a fundamental truth: <strong>Brilliant minds shouldn't waste their energy hunting for study materials.</strong>
+                                I realized a fundamental truth: <strong>Brilliant minds shouldn't waste their energy hunting for study materials.</strong>
                             </p>
                             <p class="story-paragraph mb-0">
-                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. We created this platform to bridge the gap between academic chaos and pure clarity. We do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignmentsâ€”so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
+                                Thus, <strong style="color: #0f172a;">4LAZIE</strong> was born. I created this platform to bridge the gap between academic chaos and pure clarity. I do the heavy lifting of finding, verifying, and organizing notes, past papers, and assignmentsâ€”so you can dedicate 100% of your brainpower to actually learning and acing your exams. <br><br>
                                 Because true intelligence is knowing how to find things effortlessly. <em style="color: #b48608; font-weight: 600;">Smart in the Brain, Lazy in the Search.</em>
                             </p>
                         </div>
@@ -315,10 +305,8 @@
                             <!-- Artistic composition instead of an image -->
                             <div style="position: relative; width: 100%; height: 300px; display: flex; align-items: center; justify-content: center;">
                                 <div style="width: 240px; height: 240px; background: linear-gradient(135deg, rgba(249, 217, 118, 0.2), rgba(224, 170, 62, 0.15)); border-radius: 40px; transform: rotate(-10deg); position: absolute;"></div>
-                                <div style="width: 240px; height: 240px; background: white; border: 1px solid rgba(224, 170, 62, 0.3); border-radius: 40px; transform: rotate(5deg); position: absolute; box-shadow: 0 15px 40px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px;">
-                                    <i class="bi bi-mortarboard-fill" style="font-size: 4.5rem; color: #e0aa3e; margin-bottom: 15px;"></i>
-                                    <h4 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #0f172a; font-size: 1.3rem;">Est. 2024</h4>
-                                    <p style="color: #64748b; font-size: 0.85rem; font-weight: 500; margin: 0;">SJUIT Â· Tanzania</p>
+                                <div style="width: 240px; height: 240px; background: white; border: 1px solid rgba(224, 170, 62, 0.3); border-radius: 40px; transform: rotate(5deg); position: absolute; box-shadow: 0 15px 40px rgba(0,0,0,0.05); padding: 8px;">
+                                    <img src="/images/CHUO.jpg" alt="Students" style="width: 100%; height: 100%; object-fit: cover; border-radius: 32px;">
                                 </div>
                             </div>
                         </div>
@@ -385,6 +373,290 @@
         </section>
 
 
+        <!-- The Magic Team Gallery (Neo-Brutalism Style & Swiper 3D) -->
+        <section class="py-5 position-relative overflow-hidden">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+            
+            <div class="text-center mb-5">
+                <h2 class="text-uppercase mb-0 mt-1" style="color: #111; font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.5rem); font-family: 'Outfit', sans-serif; letter-spacing: -1px;">THE 4LAZIE COMMUNITY</h2>
+            </div>
+            
+            <style>
+                .team-swiper {
+                    width: 100%;
+                    padding-top: 30px;
+                    padding-bottom: 80px; /* Space for shadow and buttons */
+                }
+                .swiper-slide {
+                    width: 320px;
+                    /* Center items will pop up via swiper coverflow */
+                    transition: filter 0.4s ease;
+                }
+                .swiper-slide:not(.swiper-slide-active) {
+                    filter: blur(2px) grayscale(40%);
+                }
+                
+                .neo-card {
+                    width: 100%;
+                    height: 380px;
+                    border-radius: 20px;
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+                    padding: 10px;
+                    background-color: #fff;
+                    border: 1px solid rgba(0,0,0,0.03);
+                    display: flex;
+                    flex-direction: column;
+                    cursor: pointer;
+                    transition: transform 0.4s ease, box-shadow 0.4s ease;
+                }
+                .swiper-slide-active .neo-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 25px 50px rgba(16, 185, 129, 0.15);
+                }
+                
+                .card-main-img {
+                    width: 100%;
+                    height: 280px;
+                    object-fit: cover;
+                    border-radius: 14px;
+                    margin-bottom: 12px;
+                }
+                .card-name {
+                    font-family: 'Outfit', sans-serif;
+                    font-size: 1.15rem;
+                    font-weight: 800;
+                    color: #0f172a;
+                    text-align: center;
+                    letter-spacing: 0.5px;
+                }
+                .card-role {
+                    font-size: 0.85rem;
+                    color: #10b981;
+                    text-align: center;
+                    font-weight: 600;
+                    margin-top: 2px;
+                }
+                
+                /* Custom Navigation Arrows */
+                .swiper-button-next, .swiper-button-prev {
+                    color: #10b981;
+                    background: #fff;
+                    border: none;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                }
+                .swiper-button-next:after, .swiper-button-prev:after {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                }
+                .swiper-button-next:hover, .swiper-button-prev:hover {
+                    transform: translateY(-3px) scale(1.05);
+                    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+                    color: #059669;
+                }
+                .swiper-button-next:active, .swiper-button-prev:active {
+                    transform: translateY(1px);
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                }
+                
+                /* Magic Lightbox Styles */
+                .magic-lightbox {
+                    display: none;
+                    position: fixed;
+                    z-index: 99999;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(15, 23, 42, 0.92);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    opacity: 0;
+                    transition: opacity 0.4s ease;
+                    align-items: center;
+                    overflow-y: auto;
+                    padding: 40px 0;
+                    box-sizing: border-box;
+                }
+                .magic-lightbox.show {
+                    display: flex;
+                    opacity: 1;
+                }
+                .lightbox-content-wrapper {
+                    position: relative;
+                    text-align: center;
+                    transform: translateY(100px) scale(0.8);
+                    opacity: 0;
+                    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    margin: auto;
+                }
+                .magic-lightbox.show .lightbox-content-wrapper {
+                    transform: translateY(0) scale(1);
+                    opacity: 1;
+                }
+                .lightbox-img {
+                    max-width: 95vw;
+                    max-height: 75vh;
+                    object-fit: contain;
+                    border-radius: 8px;
+                    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+                }
+                .lightbox-caption {
+                    margin-top: 20px;
+                    color: #10b981;
+                    font-family: 'Outfit', sans-serif;
+                    font-size: 1.8rem;
+                    font-weight: 900;
+                    letter-spacing: 1px;
+                }
+                .lightbox-role {
+                    color: #94a3b8;
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    margin-bottom: 15px;
+                }
+                .lightbox-quote {
+                    color: #fff;
+                    font-size: 1.15rem;
+                    font-weight: 400;
+                    font-style: italic;
+                    max-width: 600px;
+                    margin: 20px auto 0;
+                    padding: 0 20px;
+                    text-align: center;
+                    line-height: 1.6;
+                }
+                .lightbox-close {
+                    position: fixed;
+                    top: 25px;
+                    right: 40px;
+                    color: #fff;
+                    font-size: 50px;
+                    font-weight: 300;
+                    cursor: pointer;
+                    transition: transform 0.4s ease, color 0.4s ease;
+                    z-index: 100000;
+                }
+                .lightbox-close:hover {
+                    color: #ef4444;
+                    transform: rotate(90deg) scale(1.2);
+                }
+                
+                @media (max-width: 768px) {
+                    .swiper-slide { width: 280px; }
+                    .neo-card { height: 350px; }
+                    .card-main-img { height: 260px; }
+                    .lightbox-caption { font-size: 1.4rem; }
+                    .lightbox-quote { font-size: 1rem; padding: 0 10px; }
+                    .lightbox-close { top: 15px; right: 25px; }
+                }
+            </style>
+            
+            <div class="swiper team-swiper">
+                <div class="swiper-wrapper">
+                    
+                    <!-- Dynamic Slides from Database -->
+                    <div class="swiper-slide" th:each="member : ${teamMembers}">
+                        <div class="neo-card" th:data-quote="${member.quote}">
+                            <img th:if="${member.imagePath != null}" th:src="${member.imagePath}" class="card-main-img" alt="Team Member" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
+                            <img th:unless="${member.imagePath != null}" src="/images/team1.jpg" class="card-main-img" alt="Team Member placeholder" style="height: 100%; object-fit: cover; border-radius: 14px; margin-bottom: 0;">
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- Swiper Navigation -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+            
+            <!-- Magic Lightbox Overlay -->
+            <div id="magicLightbox" class="magic-lightbox">
+                <span class="lightbox-close">&times;</span>
+                <div class="lightbox-content-wrapper">
+                    <img class="lightbox-img" id="lightboxImg" src="" alt="Zoomed Team Member">
+                    <div class="lightbox-quote" id="lightboxQuote"></div>
+                </div>
+            </div>
+            
+            <!-- Swiper JS Script -->
+            <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const swiper = new Swiper('.team-swiper', {
+                        effect: 'coverflow',
+                        grabCursor: true,
+                        centeredSlides: true,
+                        slidesPerView: 'auto',
+                        loop: true,
+                        speed: 600,
+                        coverflowEffect: {
+                            rotate: 30,
+                            stretch: 0,
+                            depth: 250,
+                            modifier: 1,
+                            slideShadows: false,
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        }
+                    });
+                    
+                    // Lightbox Magic
+                    const lightbox = document.getElementById('magicLightbox');
+                    document.body.appendChild(lightbox);
+                    
+                    const lightboxImg = document.getElementById('lightboxImg');
+                    const lightboxQuote = document.getElementById('lightboxQuote');
+                    const closeBtn = document.querySelector('.lightbox-close');
+                    
+                    document.querySelectorAll('.neo-card').forEach(card => {
+                        card.addEventListener('click', function() {
+                            // Extract details from card
+                            const imgSrc = this.querySelector('img').src;
+                            const quote = this.getAttribute('data-quote');
+                            
+                            // Populate Lightbox
+                            lightboxImg.src = imgSrc;
+                            lightboxQuote.innerText = `"${quote}"`;
+                            
+                            // Show Lightbox with animation
+                            lightbox.style.display = 'flex';
+                            setTimeout(() => {
+                                lightbox.classList.add('show');
+                            }, 10);
+                            
+                            document.body.style.overflow = 'hidden'; 
+                        });
+                    });
+                    
+                    function closeLightbox() {
+                        lightbox.classList.remove('show');
+                        setTimeout(() => {
+                            lightbox.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                        }, 400);
+                    }
+                    
+                    closeBtn.addEventListener('click', closeLightbox);
+                    lightbox.addEventListener('click', function(e) {
+                        if (e.target === lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
+                            closeLightbox();
+                        }
+                    });
+                });
+            </script>
+        </section>
+
         <!-- Advice for Students (Modern Premium) -->
         <section class="py-2 py-md-4 position-relative overflow-hidden">
             <!-- Background Orbs -->
@@ -396,7 +668,7 @@
                 <div style="font-family: 'Outfit', sans-serif; font-size: 10rem; font-weight: 900; color: rgba(16, 185, 129, 0.1); line-height: 0; position: absolute; top: 70px; left: 0px; user-select: none; z-index: 0;">"</div>
                 
                 <h2 class="text-center text-uppercase mb-2" style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: clamp(1.2rem, 4vw, 2rem); color: #0f172a; letter-spacing: -0.5px; position: relative; z-index: 2;">
-                    A MESSAGE FROM THE FOUNDERS
+                    A MESSAGE FROM THE FOUNDER
                 </h2>
                 
                 <div class="position-relative mx-auto" style="max-width: 750px; z-index: 2; padding: 10px 15px 30px;">
@@ -405,10 +677,10 @@
                         "University is not just about passing exams; it's about building your capacity to solve real-world problems. Don't just memorize to passâ€”<span style="font-style: normal; font-weight: 300; color: #94a3b8; border-bottom: 1px solid rgba(148, 163, 184, 0.4); padding-bottom: 2px;">understand to innovate</span>.
                     </p>
                     <p style="font-family: 'Outfit', sans-serif; font-style: italic; font-size: 1.35rem; line-height: 1.9; color: #334155; font-weight: 300; margin-bottom: 15px; text-align: center;">
-                        We built 4LAZIE to handle the friction of searching, so you can spend your time building your skills, networking, and creating the future. Stay focused, stay smart, and remember:"
+                        I built 4LAZIE to handle the friction of searching, so you can spend your time building your skills, networking, and creating the future. Stay focused, stay smart, and remember:"
                     </p>
                     <div class="text-center mt-2" style="margin-bottom: -15px;">
-                        <span style="font-family: 'Outfit', sans-serif; font-size: clamp(0.75rem, 2.5vw, 1.05rem); color: #0f172a; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">Your brain is your greatest asset. Use it wisely.</span>
+                        <span style="font-family: 'Outfit', sans-serif; font-size: clamp(0.75rem, 2.5vw, 1.05rem); color: #0f172a; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: normal; word-wrap: break-word;">Your brain is your greatest asset. Use it wisely.</span>
                     </div>
                 </div>
             </div>
@@ -418,7 +690,7 @@
         <section class="py-1 text-center mb-3">
             <div class="d-inline-flex flex-column align-items-center p-4 mx-auto" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; max-width: 700px; width: 100%;">
                 <h5 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Special Acknowledgement</h5>
-                <p style="color: #64748b; margin-bottom: 15px; font-size: 1.05rem;">We extend our deepest gratitude for the immense support, guidance, and technological inspiration from:</p>
+                <p style="color: #64748b; margin-bottom: 15px; font-size: 1.05rem;">I extend my deepest gratitude for the immense support, guidance, and technological inspiration from:</p>
                 <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3 mt-1">
                     <div class="d-inline-flex align-items-center gap-2" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.15rem; color: #0f172a;">
                         <i class="bi bi-mortarboard-fill" style="color: #059669;"></i> SJUIT
@@ -480,7 +752,11 @@
     <div th:replace="~{fragments/bottom_nav :: nav('story')}"></div>
 
     <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Search Script (enables navbar search bar) -->
+    <div th:replace="~{fragments/search_script :: script}"></div>
+
     
     <!-- Count Up Animation Script -->
     <script>
@@ -574,6 +850,9 @@
             });
         }
     </script>
+
+    <!-- Mobile Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
 </body>
 </html>

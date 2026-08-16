@@ -42,6 +42,14 @@ public class UserController {
         this.fileStorageService = fileStorageService;
     }
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private org.springframework.security.core.session.SessionRegistry sessionRegistry;
+
+    @Autowired
+    private com.school.service.EmailService emailService;
 
     @GetMapping("/explore")
     public String getExplorePage() {
@@ -77,6 +85,18 @@ public class UserController {
         } catch (Exception ignored) { }
         model.addAttribute("coverPhoto", coverPhoto);
         
+        // Retrieve active sessions
+        java.util.List<org.springframework.security.core.session.SessionInformation> activeSessions = new java.util.ArrayList<>();
+        for (Object principal : sessionRegistry.getAllPrincipals()) {
+            if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                org.springframework.security.core.userdetails.UserDetails userDetails = (org.springframework.security.core.userdetails.UserDetails) principal;
+                if (userDetails.getUsername().equals(user.getEmail())) {
+                    activeSessions.addAll(sessionRegistry.getAllSessions(principal, false));
+                }
+            }
+        }
+        model.addAttribute("activeSessions", activeSessions);
+        
         // Self-heal: If user has no institution, assign default SJUIT
         if (user.getInstitution() == null) {
             com.school.model.Institution sjuit = new com.school.model.Institution();
@@ -95,7 +115,7 @@ public class UserController {
     @PostMapping("/profile")
     public String updateProfile(@jakarta.validation.Valid @ModelAttribute("formUser") com.school.dto.UserProfileUpdateDTO formUser,
                              org.springframework.validation.BindingResult bindingResult,
-                             HttpSession session, Model model) {
+                             HttpSession session, Model model, jakarta.servlet.http.HttpServletRequest request) {
 
         User sessionUser = getLoggedInUser();
         if (sessionUser == null) {
@@ -152,8 +172,41 @@ public class UserController {
             }
         }
         
+        // Handle password change
+        if (formUser.getNewPassword() != null && !formUser.getNewPassword().trim().isEmpty()) {
+            if (formUser.getCurrentPassword() == null || !passwordEncoder.matches(formUser.getCurrentPassword(), sessionUser.getPassword())) {
+                model.addAttribute("error", "Current password is incorrect.");
+                model.addAttribute("user", sessionUser);
+                model.addAttribute("editMode", true);
+                return "user/profile";
+            }
+            if (!formUser.getNewPassword().equals(formUser.getConfirmPassword())) {
+                model.addAttribute("error", "New passwords do not match.");
+                model.addAttribute("user", sessionUser);
+                model.addAttribute("editMode", true);
+                return "user/profile";
+            }
+            sessionUser.setPassword(passwordEncoder.encode(formUser.getNewPassword()));
+            
+            // Generate security token and send email alert
+            String securityToken = java.util.UUID.randomUUID().toString();
+            sessionUser.setSecurityToken(securityToken);
+            String deviceDetails = request.getHeader("User-Agent");
+            String ipAddress = request.getRemoteAddr();
+            String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            emailService.sendPasswordChangeAlert(sessionUser.getEmail(), sessionUser.getName(), deviceDetails + " (IP: " + ipAddress + ")", securityToken, appUrl);
+        }
+
         sessionUser.setLevel(formUser.getLevel());
         sessionUser.setSemester(formUser.getSemester());
+        sessionUser.setBio(formUser.getBio());
+        sessionUser.setGithubLink(formUser.getGithubLink());
+        sessionUser.setLinkedinLink(formUser.getLinkedinLink());
+        sessionUser.setTwitterLink(formUser.getTwitterLink());
+        sessionUser.setFacebookLink(formUser.getFacebookLink());
+        sessionUser.setInstagramLink(formUser.getInstagramLink());
+        sessionUser.setTelegramLink(formUser.getTelegramLink());
+        sessionUser.setYoutubeLink(formUser.getYoutubeLink());
         // Save changes
         userRepository.save(sessionUser);
         // Update session attribute
@@ -226,5 +279,53 @@ public class UserController {
         model.addAttribute("pageTitle", "Download History");
         model.addAttribute("pageIcon", "bi-cloud-arrow-down-fill");
         return "user/my_notes";
+    }
+
+    @PostMapping("/profile/sessions/revoke")
+    public String revokeSession(@RequestParam("sessionId") String sessionId, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        org.springframework.security.core.session.SessionInformation sessionInformation = sessionRegistry.getSessionInformation(sessionId);
+        if (sessionInformation != null) {
+            sessionInformation.expireNow();
+            redirectAttributes.addFlashAttribute("success", "Device logged out successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Could not find active session for this device.");
+        }
+        return "redirect:/profile?edit=true";
+    }
+
+    @GetMapping("/secure-account")
+    public String secureAccount(@RequestParam("token") String token, Model model, jakarta.servlet.http.HttpServletRequest request) {
+        Optional<User> userOpt = userRepository.findBySecurityToken(token);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // Suspend account to protect it
+            user.setIsSuspended(true);
+            user.setSecurityToken(null); // invalidate token
+            userRepository.save(user);
+            
+            // Invalidate all sessions globally
+            for (Object principal : sessionRegistry.getAllPrincipals()) {
+                if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                    org.springframework.security.core.userdetails.UserDetails userDetails = (org.springframework.security.core.userdetails.UserDetails) principal;
+                    if (userDetails.getUsername().equals(user.getEmail())) {
+                        java.util.List<org.springframework.security.core.session.SessionInformation> sessions = sessionRegistry.getAllSessions(principal, false);
+                        for (org.springframework.security.core.session.SessionInformation sessionInfo : sessions) {
+                            sessionInfo.expireNow();
+                        }
+                    }
+                }
+            }
+            
+            // Invalidate current session if the attacker is clicking it (or the victim is logged in)
+            HttpSession currentSession = request.getSession(false);
+            if (currentSession != null) {
+                currentSession.invalidate();
+            }
+            
+            model.addAttribute("error", "Account Secured Successfully! All active devices have been logged out, and your account is temporarily locked. Please contact support or reset your password to regain access.");
+            return "auth/login"; 
+        }
+        model.addAttribute("error", "Invalid or expired security token.");
+        return "auth/login";
     }
 }

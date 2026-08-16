@@ -50,7 +50,8 @@ public class PasswordResetController {
                                         HttpServletRequest request,
                                         RedirectAttributes redirectAttributes) {
         
-        Optional<User> userOpt = userRepository.findByEmail(email);
+        String cleanEmail = email != null ? email.trim() : "";
+        Optional<User> userOpt = userRepository.findByEmail(cleanEmail);
 
         if (userOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "No account found with that email address.");
@@ -83,12 +84,31 @@ public class PasswordResetController {
     public String processVerifyOtp(@RequestParam("email") String email,
                                    @RequestParam("otp") String otp,
                                    RedirectAttributes redirectAttributes) {
-        Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(otp);
-        if (tokenOpt.isEmpty() || tokenOpt.get().isExpired() || !tokenOpt.get().getUser().getEmail().equals(email)) {
+        String cleanOtp = otp != null ? otp.trim() : "";
+        String cleanEmail = email != null ? email.trim() : "";
+        
+        Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(cleanOtp);
+        
+        if (tokenOpt.isEmpty()) {
+            System.out.println("OTP Verification Failed: Token not found -> " + cleanOtp);
             redirectAttributes.addFlashAttribute("error", "The OTP is invalid or has expired. Please request a new one.");
-            return "redirect:/verify-otp?email=" + email;
+            return "redirect:/verify-otp?email=" + cleanEmail;
         }
-        return "redirect:/reset-password?token=" + otp;
+        
+        PasswordResetToken token = tokenOpt.get();
+        if (token.isExpired()) {
+            System.out.println("OTP Verification Failed: Token expired -> " + cleanOtp);
+            redirectAttributes.addFlashAttribute("error", "The OTP has expired. Please request a new one.");
+            return "redirect:/verify-otp?email=" + cleanEmail;
+        }
+        
+        if (!token.getUser().getEmail().equalsIgnoreCase(cleanEmail)) {
+            System.out.println("OTP Verification Failed: Email mismatch -> Expected: " + token.getUser().getEmail() + ", Got: " + cleanEmail);
+            redirectAttributes.addFlashAttribute("error", "The OTP is invalid for this email.");
+            return "redirect:/verify-otp?email=" + cleanEmail;
+        }
+        
+        return "redirect:/reset-password?token=" + cleanOtp;
     }
 
     @GetMapping("/reset-password")

@@ -40,4 +40,46 @@ public class UserProfileUpdateDTO {
 
     public MultipartFile getCoverPhotoFile() { return coverPhotoFile; }
     public void setCoverPhotoFile(MultipartFile coverPhotoFile) { this.coverPhotoFile = coverPhotoFile; }
+
+    @Size(max = 250, message = "Bio cannot exceed 250 characters")
+    private String bio;
+    private String githubLink;
+    private String linkedinLink;
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+    public String getGithubLink() { return githubLink; }
+    public void setGithubLink(String githubLink) { this.githubLink = githubLink; }
+    public String getLinkedinLink() { return linkedinLink; }
+    public void setLinkedinLink(String linkedinLink) { this.linkedinLink = linkedinLink; }
+    
+    private String twitterLink;
+    private String facebookLink;
+    private String instagramLink;
+    private String telegramLink;
+    private String youtubeLink;
+
+    public String getTwitterLink() { return twitterLink; }
+    public void setTwitterLink(String twitterLink) { this.twitterLink = twitterLink; }
+    public String getFacebookLink() { return facebookLink; }
+    public void setFacebookLink(String facebookLink) { this.facebookLink = facebookLink; }
+    public String getInstagramLink() { return instagramLink; }
+    public void setInstagramLink(String instagramLink) { this.instagramLink = instagramLink; }
+    public String getTelegramLink() { return telegramLink; }
+    public void setTelegramLink(String telegramLink) { this.telegramLink = telegramLink; }
+    public String getYoutubeLink() { return youtubeLink; }
+    public void setYoutubeLink(String youtubeLink) { this.youtubeLink = youtubeLink; }
+
+    private String currentPassword;
+    private String newPassword;
+    private String confirmPassword;
+
+    public String getCurrentPassword() { return currentPassword; }
+    public void setCurrentPassword(String currentPassword) { this.currentPassword = currentPassword; }
+
+    public String getNewPassword() { return newPassword; }
+    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+
+    public String getConfirmPassword() { return confirmPassword; }
+    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
 }

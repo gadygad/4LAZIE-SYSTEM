@@ -21,51 +21,148 @@
     <link rel="stylesheet" th:href="@{/css/global-premium.css}">
 
     <style>
-        body { background: #f8fafc; font-family: 'Inter', sans-serif; }
+        body { background: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* Magical Header */
         .page-header {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);
             color: white;
-            padding: 3rem 0 2rem;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
+            padding: 4rem 0 3rem;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
             margin-bottom: -40px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 50%);
+            animation: rotateBg 20s linear infinite;
+            z-index: -1;
+        }
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glassmorphism Notification Cards */
         .noti-card {
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
             padding: 20px;
             margin-bottom: 15px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             color: inherit;
             display: flex;
             align-items: flex-start;
             gap: 15px;
+            
+            /* CSS Animation instead of JS */
+            opacity: 0;
+            animation: slideUpFade 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Stagger the animations for up to 10 cards */
+        .noti-card:nth-child(1) { animation-delay: 0.1s; }
+        .noti-card:nth-child(2) { animation-delay: 0.2s; }
+        .noti-card:nth-child(3) { animation-delay: 0.3s; }
+        .noti-card:nth-child(4) { animation-delay: 0.4s; }
+        .noti-card:nth-child(5) { animation-delay: 0.5s; }
+        .noti-card:nth-child(6) { animation-delay: 0.6s; }
+        .noti-card:nth-child(7) { animation-delay: 0.7s; }
+        .noti-card:nth-child(8) { animation-delay: 0.8s; }
+        .noti-card:nth-child(9) { animation-delay: 0.9s; }
+        .noti-card:nth-child(10) { animation-delay: 1.0s; }
+        .noti-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-20deg);
+            transition: all 0.6s ease;
         }
         .noti-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.1);
+            transform: translateY(-5px) scale(1.02) !important;
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .noti-card:hover::after {
+            left: 200%;
         }
         .noti-card.unread {
-            background: rgba(16, 185, 129, 0.03);
-            border-left: 4px solid #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(255, 255, 255, 0.8) 100%);
+            border-left: 5px solid #10b981;
         }
+        .noti-card.unread:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        /* Animated Icons */
         .noti-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
-        .noti-icon.info { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        .noti-icon.success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .noti-icon.warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-        .noti-icon.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .noti-card:hover .noti-icon {
+            transform: scale(1.15) rotate(8deg);
+        }
+        .noti-icon.info { background: rgba(59, 130, 246, 0.1); color: #3b82f6; box-shadow: 0 4px 15px rgba(59,130,246,0.2); }
+        .noti-icon.success { background: rgba(16, 185, 129, 0.1); color: #10b981; box-shadow: 0 4px 15px rgba(16,185,129,0.2); }
+        .noti-icon.warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; box-shadow: 0 4px 15px rgba(245,158,11,0.2); }
+        .noti-icon.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; box-shadow: 0 4px 15px rgba(239,68,68,0.2); }
+        
+        .noti-title-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            color: #0f172a !important; /* Force dark text for readability */
+            transition: color 0.3s ease;
+        }
+        .noti-card:hover .noti-title-text {
+            color: #10b981 !important;
+        }
+        
+        .noti-desc-text {
+            font-size: 0.95rem; 
+            line-height: 1.5;
+            color: #475569 !important; /* Dark slate for description */
+        }
+        
+        .noti-time-text {
+            color: #64748b !important;
+        }
     </style>
     <link rel="stylesheet" href="/css/mobile-spacing-standards.css">
 
@@ -114,38 +211,18 @@
       }]
     }
     </script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>
-    <div class="page-layout">
-        <!-- Offcanvas Sidebar for Mobile -->
-        <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas offcanvas-start" tabindex="-1" id="mobileOffcanvasSidebar" aria-labelledby="mobileOffcanvasSidebarLabel" style="width: 300px; background: linear-gradient(180deg, #1c1f30 0%, #26293d 100%); z-index: 1055;">
-            <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <h5 class="offcanvas-title text-white" id="mobileOffcanvasSidebarLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: -1px;">4LAZIE</h5>
-                <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div data-bs-scroll="true" data-bs-backdrop="false" class="offcanvas-body p-0" style="overflow-x: hidden;">
-                <aside th:replace="~{fragments/sjuit_components :: sidebar}"></aside>
-            </div>
-        </div>
+    <!-- Navbars & Sidebar (Outside of main flow) -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
+    <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
+    <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
 
-        <div class="main-content flex-grow-1">
-            <!-- Header Navigation -->
-            <nav class="navbar navbar-light navbar-custom sticky-top py-1" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1020; border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);">
-                <div class="container d-flex justify-content-between align-items-center flex-nowrap">
-                    <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvasSidebar" aria-controls="mobileOffcanvasSidebar" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-                        <i class="bi bi-list fs-4"></i>
-                    </button>
-                    <a class="navbar-brand d-flex align-items-center" th:href="${session.user != null ? '/dashboard' : '/'}" style="text-decoration: none;">
-                        <span class="magic-brand-text">4LAZIE</span>
-                    </a>
-                    
-                    <div th:replace="~{fragments/navbar_actions :: actions}"></div>
-                </div>
-            </nav>
-
-            <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
-            <div th:replace="~{fragments/sjuit_components :: calendar_modals}"></div>
+    <div class="main-content" style="padding-top: 10px;">
 
             <div class="page-header shadow-sm">
                 <div class="container text-center position-relative z-1">
@@ -172,15 +249,15 @@
 
                 <div th:if="${not #lists.isEmpty(notifications)}">
                     <a th:each="noti : ${notifications}" th:href="@{'/api/notifications/click/' + ${noti.id}}" class="noti-card" th:classappend="${!noti.read} ? 'unread' : ''">
-                        <div class="noti-icon" th:classappend="${noti.type == 'DOWNLOAD' ? 'success' : (noti.type == 'UPLOAD' ? 'info' : 'warning')}">
-                            <i th:class="${noti.type == 'DOWNLOAD' ? 'bi bi-download' : (noti.type == 'UPLOAD' ? 'bi bi-upload' : 'bi bi-bell-fill')}"></i>
+                        <div class="noti-icon" th:classappend="${#strings.containsIgnoreCase(noti.title, 'Download') ? 'success' : (#strings.containsIgnoreCase(noti.title, 'Upload') ? 'info' : 'warning')}">
+                            <i th:class="${#strings.containsIgnoreCase(noti.title, 'Download') ? 'bi bi-download' : (#strings.containsIgnoreCase(noti.title, 'Upload') ? 'bi bi-upload' : 'bi bi-bell-fill')}"></i>
                         </div>
                         <div class="flex-grow-1">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <h6 class="fw-bold mb-0 text-dark" th:text="${noti.title}">Notification Title</h6>
-                                <small class="text-muted" th:text="${#temporals.format(noti.createdAt, 'dd MMM, HH:mm')}">Just now</small>
+                                <h6 class="fw-bold mb-0 noti-title-text" th:text="${noti.title}">Notification Title</h6>
+                                <small class="noti-time-text" th:text="${#temporals.format(noti.createdAt, 'dd MMM, HH:mm')}">Just now</small>
                             </div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.95rem; line-height: 1.5;" th:text="${noti.message}">Notification message content goes here.</p>
+                            <p class="mb-0 noti-desc-text" th:text="${noti.message}">Notification message content goes here.</p>
                         </div>
                         <div th:if="${!noti.read}" class="align-self-center ms-2">
                             <span class="badge bg-success rounded-pill" style="width: 10px; height: 10px; padding: 0;">&nbsp;</span>
@@ -189,16 +266,20 @@
                 </div>
             </div>
 
-            <div th:replace="~{fragments/bottom_nav :: bottomNav}"></div>
+            <div th:replace="~{fragments/bottom_nav :: nav('notifications')}"></div>
         </div>
-    </div>
 
     <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
     <script>
         function markAllRead() {
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
             fetch('/api/notifications/mark-read', {
                 method: 'POST',
+                headers: {
+                    [csrfHeader]: csrfToken
+                }
             }).then(response => {
                 if(response.ok) {
                     window.location.reload();

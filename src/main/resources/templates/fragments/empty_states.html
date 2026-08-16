@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <!-- Generic Premium Empty State -->
+    <div th:fragment="premium_empty(icon, title, description, actionUrl, actionText)" 
+         class="text-center py-5 px-3 premium-empty-state" 
+         style="background: linear-gradient(145deg, rgba(255,255,255,0.7), rgba(248,250,252,0.9)); border: 1px solid rgba(16,185,129,0.1); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+        
+        <style>
+            @keyframes float-icon {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+                100% { transform: translateY(0px); }
+            }
+            @keyframes pulse-glow {
+                0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+                70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            }
+            .empty-icon-wrapper {
+                width: 90px;
+                height: 90px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.2));
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px auto;
+                animation: float-icon 3s ease-in-out infinite, pulse-glow 2.5s infinite;
+                border: 2px solid rgba(255,255,255,0.8);
+            }
+            .empty-icon-wrapper i {
+                font-size: 2.5rem;
+                color: #10b981;
+                background: -webkit-linear-gradient(45deg, #10b981, #047857);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .empty-title {
+                font-family: 'Outfit', sans-serif;
+                font-weight: 700;
+                color: #0f172a;
+                font-size: 1.4rem;
+                letter-spacing: -0.5px;
+                margin-bottom: 8px;
+            }
+            .empty-desc {
+                color: #64748b;
+                font-size: 0.95rem;
+                max-width: 400px;
+                margin: 0 auto 24px auto;
+                line-height: 1.6;
+            }
+            .empty-btn {
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white !important;
+                border: none;
+                padding: 10px 24px;
+                border-radius: 50px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .empty-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            }
+        </style>
+
+        <div class="empty-icon-wrapper">
+            <i th:class="${'bi ' + icon}"></i>
+        </div>
+        
+        <h4 class="empty-title" th:text="${title}">No Data Found</h4>
+        <p class="empty-desc" th:text="${description}">We couldn't find anything here right now.</p>
+        
+        <a th:if="${actionUrl != null and actionText != null}" th:href="${actionUrl}" class="empty-btn">
+            <i class="bi bi-arrow-right-circle"></i>
+            <span th:text="${actionText}">Action</span>
+        </a>
+    </div>
+
+    <!-- Mini Premium Empty State (For Accordions/Dropdowns) -->
+    <div th:fragment="premium_empty_mini(icon, message)" 
+         class="d-flex align-items-center p-3 my-2" 
+         style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.03), rgba(248, 250, 252, 0.5)); border: 1px dashed rgba(16, 185, 129, 0.2); border-radius: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+            <i th:class="${'bi ' + icon}" style="color: #10b981; font-size: 1.2rem;"></i>
+        </div>
+        <div>
+            <span style="color: #64748b; font-size: 0.85rem; font-weight: 500;" th:text="${message}">No data available.</span>
+        </div>
+    </div>
+
+</body>
+</html>

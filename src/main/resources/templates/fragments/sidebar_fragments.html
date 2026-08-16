@@ -18,10 +18,11 @@
                 <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
                     <i class="bi bi-chat-dots-fill text-white" style="font-size: 1.1rem;"></i>
                 </div>
-                <div class="d-flex flex-column text-start">
+                <div class="d-flex flex-column text-start flex-grow-1">
                     <span style="font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; color: #1e293b;">MY MESSAGES</span>
                     <span style="font-size: 0.7rem; color: #64748b; font-weight: 400;">Assignment Help Replies</span>
                 </div>
+                <span th:if="${totalUnreadStudent != null and totalUnreadStudent > 0}" class="badge rounded-pill bg-danger ms-auto" th:text="${totalUnreadStudent}"></span>
             </a>
             
             <!-- DIPLOMA PROGRAMMES GROUP -->
@@ -197,7 +198,9 @@
         <h5 class="text-white fw-bold m-0" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="magic-brand-text">4LAZIE</span>
+                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 4px 10px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
+                    </div>
                     <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3); overflow: hidden; width: fit-content;">
                         <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
                         <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #0d6efd; display: flex; align-items: center; white-space: nowrap;">
@@ -224,7 +227,9 @@
         <h5 class="offcanvas-title text-dark fw-bold d-flex flex-column" id="mobileSidebarLabel" style="font-family: 'Outfit', sans-serif;">
             <a href="/" th:href="@{/}" class="text-decoration-none d-flex flex-column gap-1">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="magic-brand-text">4LAZIE</span>
+                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 4px 10px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                        <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
+                    </div>
                     <div class="d-flex align-items-center position-relative mt-0" style="padding: 2px 8px; border-radius: 50px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3); overflow: hidden; width: fit-content;">
                         <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); animation: shimmer-glow 3s infinite;"></div>
                         <span style="font-size: 0.5rem; font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #0d6efd; display: flex; align-items: center; white-space: nowrap;">
@@ -266,7 +271,20 @@
             let mobileSidebarEl = document.getElementById('mobileSidebar');
             if (mobileSidebarEl && document.body.classList.contains('sidebar-is-open')) {
                 if (!mobileSidebarEl.contains(event.target) && !event.target.closest('[data-bs-toggle="offcanvas"]')) {
-                    try { let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl) || new bootstrap.Offcanvas(mobileSidebarEl); bsOffcanvas.hide(); } catch (e) { console.error("Offcanvas close error:", e); }
+                    try {
+                        if (window.bootstrap && window.bootstrap.Offcanvas) {
+                            let bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebarEl) || new bootstrap.Offcanvas(mobileSidebarEl);
+                            bsOffcanvas.hide();
+                        } else {
+                            // Fallback: manual close
+                            mobileSidebarEl.classList.remove('show');
+                            mobileSidebarEl.style.transform = 'translateX(-100%)';
+                            document.body.style.overflow = '';
+                            document.body.classList.remove('sidebar-is-open');
+                            const backdrop = document.getElementById('offcanvasManualBackdrop');
+                            if (backdrop) backdrop.remove();
+                        }
+                    } catch (e) { console.warn("Offcanvas close error:", e); }
                 }
             }
         });

@@ -41,7 +41,7 @@
 /* Base Reset */
 html {
     margin: 0; padding: 0; min-height: 100vh;
-    /* IMPORTANT: overflow must NOT be hidden on <html> â€” breaks position:fixed */
+    /* IMPORTANT: overflow must NOT be hidden on <html> — breaks position:fixed */
     overflow: visible;
 }
 
@@ -50,11 +50,11 @@ body {
     font-family: 'Outfit', sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
-    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
@@ -639,46 +639,55 @@ img[alt="Profile Avatar"]:hover {
 
 
 
-/* Push footer to bottom by forcing the element above it to grow */
-.main-content > *:nth-last-child(2) {
-    flex-grow: 1;
+/* ============================================================
+   STICKY FOOTER - Universally keeps footer at the bottom
+   ============================================================ */
+
+/* Force body to flex column on ALL pages (overrides page-specific styles) */
+body {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
 }
 
-/* Push footer to bottom in dashboard */
+/* Any direct wrapper div that is a flex column and min-vh-100 should stretch */
+.d-flex.flex-column.min-vh-100 {
+    flex: 1 !important;
+}
+
+/* Public pages: the main content wrapper should grow */
+main,
+.main-content,
+.container-fluid.flex-grow-1,
+[class*="flex-grow-1"],
+.page-layout > .main-content {
+    flex: 1 1 auto;
+}
+
+/* Footer should NOT grow - just sit at the bottom */
+footer,
+.footer-wrapper {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* Push footer to bottom in dashboard layouts */
 .center-col > *:nth-last-child(2) {
     flex-grow: 1;
 }
 
-/* Sidebar Push Effect - Apple Style */
+
+/* Sidebar Overlay Effect */
 body {
     transition: background-color 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 body.sidebar-is-open {
-    background-color: #e2e8f0; /* Subtle background color behind the scaled content */
-    overflow-x: hidden;
+    overflow: hidden; /* Prevent scrolling when sidebar is open */
 }
 
-body.sidebar-is-open .main-content,
-body.sidebar-is-open .navbar-custom,
-body.sidebar-is-open .premium-guest-navbar {
-    transform: translateX(280px) scale(0.96);
-    border-radius: 20px;
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-    transform-origin: center left;
-    pointer-events: none; /* Disable interactions with content when sidebar is open */
-}
-
-@media (max-width: 991.98px) {
-    body.sidebar-is-open .main-content,
-    body.sidebar-is-open .navbar-custom,
-    body.sidebar-is-open .premium-guest-navbar {
-        transform: translateX(80vw) scale(0.96);
-    }
-}
-
+/* We removed the transform scale/translate to keep the main content fixed in place. */
 .main-content, .navbar-custom, .premium-guest-navbar {
-    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), border-radius 0.5s ease, box-shadow 0.5s ease, margin-left 0.5s;
-    will-change: transform;
+    transition: margin-left 0.5s;
 }
 
 /* Magical Hover Effect for Sidebar items */
@@ -766,5 +775,75 @@ body.sidebar-is-open .premium-guest-navbar {
     to {
         background-position: 200% center;
     }
+}
+
+/* Floating WhatsApp Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25d366;
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    animation: pulse-green 2s infinite;
+}
+
+@media (max-width: 768px) {
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1.5rem;
+    }
+}
+@media (max-width: 991px) {
+    .whatsapp-float {
+        display: none !important;
+    }
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    color: white;
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.whatsapp-tooltip {
+    position: absolute;
+    right: 75px;
+    background-color: white;
+    color: #1e293b;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.whatsapp-float:hover .whatsapp-tooltip {
+    opacity: 1;
+    transform: translateX(0);
 }
 

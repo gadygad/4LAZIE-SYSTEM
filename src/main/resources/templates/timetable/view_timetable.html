@@ -282,6 +282,8 @@
       }]
     }
     </script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body class="has-bottom-nav">
     <div th:replace="~{fragments/sjuit_components :: secondary_nav}"></div>
@@ -451,7 +453,7 @@
     </div> <!-- End of timetable-main-container -->
 
     <!-- Bootstrap 5 JS (required for offcanvas/modal to work correctly) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
     <!-- FLOATING BOTTOM NAV BAR (Included globally) -->
     <div th:replace="~{fragments/bottom_nav :: nav('timetable')}"></div>
 </body>

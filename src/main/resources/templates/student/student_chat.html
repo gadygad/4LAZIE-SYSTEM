@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat with 4LAZIE Admin | My Messages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:         #f8fafc;
+            --surface:    #ffffff;
+            --surface2:   #f1f5f9;
+            --border:     rgba(0,0,0,0.08);
+            --sent-from:   #1f2937;
+            --sent-to:     #000000;
+            --recv-bg:    rgba(255,255,255,0.95);
+            --recv-border:rgba(0,0,0,0.04);
+            --text:       #334155;
+            --muted:      #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            height: 100dvh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        /* Ambient background glow */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: -1;
+            background:
+                radial-gradient(ellipse 60% 40% at 10% 0%,   rgba(16,185,129,0.12), transparent),
+                radial-gradient(ellipse 50% 35% at 90% 100%, rgba(6,182,212,0.10),  transparent);
+            pointer-events: none;
+        }
+
+        /* ══ NAVBAR ═══════════════════════════════════════ */
+        .chat-nav {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0; position: relative; z-index: 10;
+        }
+        .chat-nav::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--sent-from) 40%, var(--sent-to) 60%, transparent);
+            opacity: 0.7;
+        }
+
+        .back-btn {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(0,0,0,0.03);
+            border: 1px solid var(--border); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: all 0.25s ease; flex-shrink: 0;
+        }
+        .back-btn:hover {
+            background: rgba(31,41,55,0.18); border-color: var(--sent-from);
+            color: #1f2937; transform: translateX(-2px);
+        }
+
+        .nav-avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--sent-from), var(--sent-to));
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; position: relative;
+            box-shadow: 0 0 0 2px rgba(16,185,129,0.4), 0 4px 16px rgba(16,185,129,0.3);
+            overflow: hidden;
+        }
+        .nav-avatar img { width: 26px; height: 26px; border-radius: 50%; object-fit: contain; background: white; padding: 2px; }
+        .nav-online {
+            position: absolute; bottom: 1px; right: 1px;
+            width: 11px; height: 11px; border-radius: 50%;
+            background: #22c55e; border: 2px solid var(--bg);
+            animation: pulse-g 2s ease-in-out infinite;
+        }
+        @keyframes pulse-g {
+            0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+            50%      { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+        }
+
+        .nav-info { flex: 1; min-width: 0; }
+        .nav-info h6 {
+            font-family: 'Outfit', sans-serif; font-weight: 800;
+            font-size: 0.95rem; color: #0f172a; margin: 0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .nav-info small { font-size: 0.68rem; color: #22c55e; font-weight: 600; letter-spacing: 0.3px; }
+
+        .nav-badge {
+            background: linear-gradient(135deg, var(--sent-from), var(--sent-to));
+            color: white; padding: 4px 14px; border-radius: 50px;
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 5px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: blink-d 1.4s ease-in-out infinite; }
+        @keyframes blink-d { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+        /* ══ CHAT BODY ════════════════════════════════════ */
+        .chat-body {
+            flex: 1; overflow-y: auto;
+            padding: 18px 16px;
+            display: flex; flex-direction: column; gap: 2px;
+            background: var(--bg);
+        }
+        .chat-body::-webkit-scrollbar { width: 4px; }
+        .chat-body::-webkit-scrollbar-track { background: transparent; }
+        .chat-body::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
+
+        /* Date sep */
+        .date-sep { text-align: center; margin: 16px 0 8px; }
+        .date-sep span {
+            background: rgba(0,0,0,0.03); color: var(--muted);
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 1.2px;
+            padding: 4px 14px; border-radius: 50px; text-transform: uppercase;
+            border: 1px solid var(--border);
+        }
+
+        /* ── Message Row ── */
+        .msg-row {
+            display: flex; align-items: flex-end; gap: 10px; padding: 2px 0;
+            opacity: 0;
+        }
+        /* Sender (LEFT) */
+        .msg-row.self {
+            flex-direction: row;
+            margin-right: auto;
+            margin-left: 0;
+            transform: translateY(20px) scale(0.95);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        /* Receiver (RIGHT) */
+        .msg-row:not(.self) {
+            flex-direction: row-reverse;
+            margin-left: auto;
+            margin-right: 0;
+            transform: translateY(20px) scale(0.95);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity:0; transform: translateY(20px) scale(0.95); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
+        }
+
+        .av-xs {
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif; font-weight: 900;
+            font-size: 0.72rem; color: white; flex-shrink: 0; overflow: hidden;
+        }
+        .av-xs img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Content column */
+        .msg-col {
+            display: flex; flex-direction: column; max-width: 72%; gap: 4px;
+        }
+        /* Sender is left */
+        .msg-row.self .msg-col { align-items: flex-start; }
+        /* Receiver is right */
+        .msg-row:not(.self) .msg-col { align-items: flex-end; }
+
+        .msg-label {
+            font-size: 0.67rem; font-weight: 700;
+            color: var(--muted); padding: 0 4px; letter-spacing: 0.3px;
+        }
+        .msg-row.self .msg-label { color: #6ee7b7; }
+
+        .bubble {
+            padding: 10px 16px;
+            font-size: 0.875rem; line-height: 1.65;
+            word-break: break-word; position: relative;
+            transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+            cursor: default;
+        }
+        .bubble:hover { transform: scale(1.018); }
+
+        /* Received (right) */
+        .bubble.recv {
+            background: var(--recv-bg);
+            border: 1px solid var(--recv-border);
+            border-radius: 18px 18px 4px 18px; /* Tail bottom-right */
+            color: var(--text);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+        }
+        /* Sent (left) */
+        .bubble.sent {
+            background: linear-gradient(135deg, var(--sent-from) 0%, var(--sent-to) 100%);
+            border-radius: 18px 18px 18px 4px; /* Tail bottom-left */
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            border: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .bubble.sent::before {
+            content: '';
+            position: absolute; inset: 0; border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+            pointer-events: none;
+        }
+
+        .b-time { font-size: 0.6rem; opacity: 0.6; display: block; margin-top: 4px; }
+        /* Sender is left */
+        .bubble.sent .b-time { text-align: left; opacity: 0.8; }
+        /* Receiver is right */
+        .bubble.recv .b-time { text-align: right; color: var(--muted); }
+
+        /* Typing cursor */
+        .typing-cursor::after {
+            content: '▋'; animation: blink-c 0.7s step-start infinite; opacity:0.8;
+        }
+        @keyframes blink-c { 50% { opacity: 0; } }
+
+        /* Typing dots */
+        .typing-row { display: none; }
+        .typing-row.show { display: flex; }
+        .dot-bub {
+            background: var(--recv-bg); border: 1px solid var(--recv-border);
+            border-radius: 18px; padding: 12px 16px;
+            display: flex; gap: 5px; align-items: center; backdrop-filter: blur(8px);
+        }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: dotB 1.2s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.15s; }
+        .dot:nth-child(3) { animation-delay: 0.30s; }
+        @keyframes dotB { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-7px)} }
+
+        /* Empty state */
+        .empty-wrap {
+            flex:1; display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            background: linear-gradient(135deg, rgba(31,41,55,0.15), rgba(0,0,0,0.1));
+            border-radius: 12px; margin: 20px; padding: 40px 20px;
+            text-align:center; gap:12px;
+        }
+        .empty-icon {
+            width:80px; height:80px; border-radius:50%;
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1));
+            border: 1px solid rgba(16,185,129,0.25);
+            display:flex; align-items:center; justify-content:center;
+        }
+        .empty-wrap p { font-size:0.82rem; color:var(--muted); max-width:220px; line-height:1.6; }
+
+        /* ══ INPUT AREA ════════════════════════════════ */
+        .input-area {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            padding: 12px 16px 16px;
+            flex-shrink: 0;
+        }
+        .input-shell {
+            display:flex; align-items:flex-end; gap:10px;
+            background: var(--surface2);
+            border: 1.5px solid rgba(16,185,129,0.2);
+            border-radius: 22px; padding: 10px 14px; transition: all 0.3s;
+        }
+        .input-shell:focus-within {
+            border-color: #1e293b;
+            box-shadow: 0 0 0 4px rgba(30,41,59,0.15), 0 4px 24px rgba(30,41,59,0.2);
+        }
+        #msgInput {
+            flex:1; border:none; outline:none; background:transparent;
+            font-family:'Inter',sans-serif; font-size:0.9rem;
+            color:var(--text); resize:none; max-height:120px; min-height:24px; line-height:1.5;
+        }
+        #msgInput::placeholder { color: var(--muted); }
+        .send-btn {
+            width:40px; height:40px; border-radius:50%;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border:none; color:white; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.5);
+        }
+        .send-btn:hover { transform: scale(1.14) rotate(10deg); box-shadow: 0 6px 24px rgba(15,23,42,0.7); }
+        .send-btn:active { transform: scale(0.9); }
+        .send-btn:disabled { background: var(--surface2); box-shadow:none; transform:none; cursor:not-allowed; }
+        .input-hint { text-align:center; margin-top:6px; font-size:0.62rem; color:#334155; letter-spacing:0.3px; }
+
+        @media (max-width: 576px) { .msg-col { max-width: 82%; } }
+    </style>
+</head>
+<body>
+
+    <!-- ══ NAVBAR ══ -->
+    <div class="chat-nav">
+        <a href="/messages" class="back-btn">
+            <i class="bi bi-arrow-left" style="font-size:0.9rem;"></i>
+        </a>
+
+        <div class="nav-avatar">
+            <img src="/images/logo.png" alt="4LAZIE">
+            <div class="nav-online"></div>
+        </div>
+
+        <div class="nav-info">
+            <h6>4LAZIE Admin</h6>
+            <small><i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Active now</small>
+        </div>
+
+        <div class="nav-badge">
+            <div class="live-dot"></div>
+            <i class="bi bi-shield-check"></i> LIVE
+        </div>
+    </div>
+
+    <!-- ══ CHAT BODY ══ -->
+    <div class="chat-body" id="chatBodyArea">
+
+        <div class="empty-wrap" id="emptyEl">
+            <div class="empty-icon">
+                <i class="bi bi-chat-dots-fill" style="font-size:2rem; background:linear-gradient(135deg,var(--sent-from),var(--sent-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i>
+            </div>
+            <strong style="color:#e2e8f0; font-family:'Outfit',sans-serif;">Chat with 4LAZIE</strong>
+            <p>Type a message below to start a conversation with our admin team.</p>
+        </div>
+
+        <div id="msgWrap"></div>
+
+        <!-- Typing indicator (admin is typing) -->
+        <div class="msg-row typing-row" id="typingDots">
+            <div class="av-xs" style="background:linear-gradient(135deg,var(--sent-from),var(--sent-to));">
+                <img src="/images/logo.png" alt="4LAZIE" style="width:18px;height:18px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+            </div>
+            <div class="msg-col" style="align-items: flex-end;">
+                <span class="msg-label">4LAZIE Admin is typing...</span>
+                <div class="dot-bub">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ INPUT ══ -->
+    <div class="input-area">
+        <div class="input-shell">
+            <textarea id="msgInput" placeholder="Message 4LAZIE Admin..." rows="1"></textarea>
+            <button class="send-btn" id="sendBtn">
+                <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>
+            </button>
+        </div>
+        <div class="input-hint">
+            <i class="bi bi-lock-fill"></i> Private conversation &bull; Enter to send &bull; Shift+Enter for new line
+        </div>
+    </div>
+
+    <!-- Hidden data from backend (Thymeleaf) -->
+    <input type="hidden" id="CHAT_ID"     th:value="${chat.id}">
+    <input type="hidden" id="STUDENT_ID"  th:value="${loggedInUser.id}">
+    <input type="hidden" id="STUDENT_NAME" th:value="${loggedInUser.name}">
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script>
+    (() => {
+        // ── Data from Backend (Thymeleaf) ───────────────────────────────────
+        const CHAT_ID    = document.getElementById('CHAT_ID').value;
+        const STUDENT_ID = document.getElementById('STUDENT_ID').value;
+        const STUDENT_NM = document.getElementById('STUDENT_NAME').value;
+
+        // ── Backend API Endpoints ───────────────────────────────────────────
+        //   GET  /student/chat/{chatId}/stream   → SSE live updates
+        //   POST /student/chat/{chatId}/send     → Send message → stored in MongoDB
+        //   GET  /student/chat/{chatId}/messages → Fallback poll (all messages from DB)
+        const SSE_URL  = `/student/chat/${CHAT_ID}/stream`;
+        const SEND_URL = `/student/chat/${CHAT_ID}/send`;
+        const POLL_URL = `/student/chat/${CHAT_ID}/messages`;
+
+        const chatArea = document.getElementById('chatBodyArea');
+        const msgWrap  = document.getElementById('msgWrap');
+        const emptyEl  = document.getElementById('emptyEl');
+        const input    = document.getElementById('msgInput');
+        const sendBtn  = document.getElementById('sendBtn');
+
+        // Track rendered message IDs to avoid duplicates
+        const renderedIds = new Set();
+        let isSending = false;
+        let sseActive = false;
+        let typeQueue = [];
+        let isTyping  = false;
+        let pollTimer = null;
+
+        // ── Sanitize output ─────────────────────────────────────────────────
+        const esc = s => String(s || '')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+        // ── Avatar HTML ─────────────────────────────────────────────────────
+        function avatarHtml(isAdmin) {
+            if (isAdmin) {
+                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--sent-from),var(--sent-to));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 2px rgba(0,0,0,0.1);overflow:hidden;">
+                    <img src="/images/logo.png" alt="4LAZIE" style="width:18px;height:18px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                </div>`;
+            }
+            const ini = (STUDENT_NM || 'Y').charAt(0).toUpperCase();
+            return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--sent-from),var(--sent-to));display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;box-shadow:0 0 0 2px rgba(0,0,0,0.1);">${ini}</div>`;
+        }
+
+        // ── Build message bubble ─────────────────────────────────────────────
+        //    msg.isSelf  = true  → student's own message → RIGHT (sent)
+        //    msg.isSelf  = false → admin's message       → LEFT  (recv)
+        function makeBubble(msg, typeIt = false) {
+            const isAdmin = !msg.isSelf;
+
+            const row = document.createElement('div');
+            row.className = 'msg-row' + (msg.isSelf ? ' self' : '');
+            row.id = 'msg-' + msg.id;
+
+            const avW = document.createElement('div');
+            avW.innerHTML = avatarHtml(isAdmin);
+            row.appendChild(avW.firstElementChild);
+
+            const col = document.createElement('div');
+            col.className = 'msg-col';
+
+            const label = document.createElement('span');
+            label.className = 'msg-label';
+            label.textContent = isAdmin ? '4LAZIE Admin' : 'You';
+            col.appendChild(label);
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble ' + (msg.isSelf ? 'sent' : 'recv');
+
+            const textEl = document.createElement('div');
+            const timeEl = document.createElement('span');
+            timeEl.className = 'b-time';
+            timeEl.textContent = msg.time || '';
+
+            bubble.appendChild(textEl);
+            bubble.appendChild(timeEl);
+            col.appendChild(bubble);
+            row.appendChild(col);
+
+            if (typeIt && isAdmin) {
+                // Typing effect for admin's incoming messages
+                typeQueue.push({ el: textEl, text: msg.messageText || '' });
+                if (!isTyping) drainQueue();
+            } else {
+                textEl.innerHTML = esc(msg.messageText || '');
+            }
+
+            return row;
+        }
+
+        // ── Typing animation drain ───────────────────────────────────────────
+        function drainQueue() {
+            if (!typeQueue.length) { isTyping = false; return; }
+            isTyping = true;
+            const { el, text } = typeQueue.shift();
+            el.classList.add('typing-cursor');
+            let i = 0;
+            const tick = () => {
+                if (i < text.length) {
+                    el.innerHTML += esc(text.charAt(i++));
+                    scrollBot(false);
+                    setTimeout(tick, 22);
+                } else {
+                    el.classList.remove('typing-cursor');
+                    drainQueue();
+                }
+            };
+            tick();
+        }
+
+        // ── Render messages (ID-deduplication prevents duplicates) ───────────
+        function renderMessages(msgs, isNew = false) {
+            if (!Array.isArray(msgs) || !msgs.length) return;
+            
+            const processNext = (i, added) => {
+                if (i >= msgs.length) {
+                    if (added > 0) {
+                        emptyEl.style.display = 'none';
+                        scrollBot(isNew);
+                    }
+                    return;
+                }
+                const msg = msgs[i];
+                const msgId = msg.id || ('tmp-' + Math.random());
+                
+                if (renderedIds.has(msgId)) {
+                    processNext(i + 1, added);
+                    return;
+                }
+                renderedIds.add(msgId);
+                
+                if (isNew && !msg.isSelf) {
+                    // Show typing indicator
+                    const typingEl = document.getElementById('typingDots');
+                    typingEl.classList.add('show');
+                    scrollBot(true);
+                    
+                    setTimeout(() => {
+                        typingEl.classList.remove('show');
+                        msgWrap.appendChild(makeBubble(msg, false));
+                        scrollBot(true);
+                        processNext(i + 1, added + 1);
+                    }, 1200); // 1.2s fake typing delay
+                } else {
+                    msgWrap.appendChild(makeBubble(msg, false));
+                    processNext(i + 1, added + 1);
+                }
+            };
+            
+            processNext(0, 0);
+        }
+
+        function scrollBot(smooth = true) {
+            chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+        }
+
+        // ── 1. Load history from Database via HTTP ───────────────────────────
+        function fetchHistory() {
+            fetch(POLL_URL, { credentials: 'same-origin' })
+                .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(d => { if (d.success && Array.isArray(d.messages)) renderMessages(d.messages, false); })
+                .catch(e => console.warn('History fetch failed:', e));
+        }
+
+        // ── 2. SSE Live Stream — real-time messages pushed from Backend ──────
+        function connectSSE() {
+            const es = new EventSource(SSE_URL);
+            // Initial load of current messages from DB
+            es.addEventListener('init', e => {
+                try { renderMessages(JSON.parse(e.data), false); } catch(err){}
+                scrollBot(false);
+                sseActive = true;
+            });
+            // Live incoming messages (admin → student push)
+            es.addEventListener('message', e => {
+                try { renderMessages(JSON.parse(e.data), true); } catch(err){}
+            });
+            es.onerror = () => {
+                es.close();
+                sseActive = false;
+                // Fallback to polling if SSE fails
+                if (!pollTimer) startPolling();
+            };
+        }
+
+        // ── 3. Fallback polling every 3s if SSE is unavailable ───────────────
+        function startPolling() {
+            if (pollTimer) return;
+            pollTimer = setInterval(() => {
+                if (sseActive) { clearInterval(pollTimer); pollTimer = null; return; }
+                fetch(POLL_URL, { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => { if (d.success) renderMessages(d.messages, true); })
+                    .catch(() => {});
+            }, 3000);
+        }
+
+        // ── 4. Send message → Backend → Stored in MongoDB → SSE pushes to admin ─
+        function sendMessage() {
+            const text = input.value.trim();
+            if (!text || isSending) return;
+            isSending = true; sendBtn.disabled = true;
+            input.value = ''; input.style.height = 'auto';
+
+            const fd = new FormData();
+            fd.append('messageText', text);
+            // POST to /student/chat/{chatId}/send
+            // Backend: DirectChatController.studentSend() → DirectChatService.sendMessage() → MongoDB save → notifyChat() via SSE
+            fetch(SEND_URL, { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then(r => r.json())
+                .catch(() => {})
+                .finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
+        }
+
+        // ── Auto-resize textarea ─────────────────────────────────────────────
+        input.addEventListener('input', () => {
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+        });
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        sendBtn.addEventListener('click', sendMessage);
+
+        // ── Boot: load history first, then connect SSE ───────────────────────
+        fetchHistory();
+        connectSSE();
+        setTimeout(() => scrollBot(false), 400);
+    })();
+    </script>
+</body>
+</html>

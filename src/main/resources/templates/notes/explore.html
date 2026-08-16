@@ -241,6 +241,8 @@
       }]
     }
     </script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>
@@ -328,7 +330,7 @@
 
             <!-- Request a Note -->
             <div class="col-12 col-md-6 col-lg-4">
-                <a href="mailto:admin@4lazie.com?subject=Request%20a%20Note" class="glass-card card-request">
+                <a href="mailto:support@4lazie.com?subject=Request%20a%20Note" class="glass-card card-request">
                     <div class="icon-box">
                         <i class="bi bi-chat-left-text"></i>
                     </div>
@@ -341,7 +343,7 @@
     </section>
 
     <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
     
     <script>
         // Optional: Add simple fade-in animation on load

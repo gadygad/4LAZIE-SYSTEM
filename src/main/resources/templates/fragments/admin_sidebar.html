@@ -97,8 +97,15 @@
                 <a href="/admin/users" class="sidebar-nav-item" th:classappend="${activePage == 'users' ? 'active' : ''}">
                     <i class="bi bi-people-fill"></i>USERS MANAGEMENT
                 </a>
+                <a href="/admin/team-members" class="sidebar-nav-item" th:classappend="${activePage == 'team-members' ? 'active' : ''}">
+                    <i class="bi bi-person-vcard-fill"></i>TEAM MEMBERS
+                </a>
                 <a href="/admin/assignments" class="sidebar-nav-item" th:classappend="${activePage == 'assignments' ? 'active' : ''}">
                     <i class="bi bi-question-circle-fill"></i>ASSIGNMENT REQUESTS
+                </a>
+                <a href="/admin/messages" class="sidebar-nav-item" th:classappend="${activePage == 'messages' ? 'active' : ''}">
+                    <i class="bi bi-chat-dots-fill"></i>DIRECT MESSAGES
+                    <span th:if="${totalUnreadAdmin != null and totalUnreadAdmin > 0}" class="badge rounded-pill bg-danger ms-auto" th:text="${totalUnreadAdmin}"></span>
                 </a>
 
                 <p class="text-uppercase fw-bold mb-3 mt-4 ms-2" style="font-size: 0.7rem; color: #94a3b8; letter-spacing: 1px;">Academic Setup</p>

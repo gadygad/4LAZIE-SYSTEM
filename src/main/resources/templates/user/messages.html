@@ -15,6 +15,10 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#10b981">
 
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <style>
         body {
             background-color: #f8fafc;
@@ -22,7 +26,7 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 100dvh;
         }
 
         /* Glassmorphism Container */
@@ -33,16 +37,17 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 24px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
-            height: calc(100vh - 120px);
+            height: calc(100dvh - 96px); /* Adjusted for nav and reduced gaps */
             overflow: hidden;
             display: flex;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+            position: relative;
         }
 
         /* Left Panel (List) */
         .list-panel {
-            width: 350px;
+            width: 450px;
             border-right: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
@@ -184,10 +189,19 @@
             0% { opacity: 0; transform: translateY(15px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+        @keyframes slideFadeInRight {
+            0% { opacity: 0; transform: translate(30px, 20px) scale(0.8); }
+            100% { opacity: 1; transform: translate(0, 0) scale(1); }
+        }
+        @keyframes slideFadeInLeft {
+            0% { opacity: 0; transform: translate(-30px, 20px) scale(0.8); }
+            100% { opacity: 1; transform: translate(0, 0) scale(1); }
+        }
         
         .chat-body-container {
             background: #f8fafc;
             position: relative;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Background Mesh Gradient for Glassmorphism */
@@ -211,17 +225,46 @@
             align-items: center;
         }
 
+        /* Inbox items styling */
+        .inbox-name { font-size: 1.4rem; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 75%; display: inline-block; }
+        .inbox-time { font-size: 0.95rem; color: #94a3b8; }
+        .inbox-msg-preview { font-size: 1.2rem; color: #64748b; margin: 0; }
+        
+        .has-unread .inbox-msg-preview {
+            font-weight: 800 !important;
+            color: #000000 !important;
+        }
+
         /* Smooth Sliding for Mobile */
         @media (max-width: 768px) {
+            .container-fluid {
+                padding: 0 !important; /* Remove horizontal gaps on mobile */
+            }
             .messages-container {
-                height: calc(100vh - 160px); /* Account for mobile navs */
-                border-radius: 16px;
-                margin-top: 10px;
+                height: calc(100dvh - 60px); /* 60px mobile nav */
+                border-radius: 0; /* Remove border radius for full fit */
+                margin-top: 0;
+                margin-bottom: 0;
+                border: none;
+            }
+            [id^="msg-"] {
+                max-width: 95% !important;
+                padding: 8px 10px !important;
+                gap: 8px !important;
+            }
+            [id^="msg-"] > div:first-child {
+                width: 28px !important;
+                height: 28px !important;
             }
             .list-panel {
                 width: 100%;
                 transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             }
+            
+            /* Increase font sizes on mobile for better readability */
+            .inbox-name { font-size: 1.2rem !important; }
+            .inbox-time { font-size: 0.9rem !important; }
+            .inbox-msg-preview { font-size: 1.0rem !important; }
             .chat-panel {
                 position: absolute;
                 top: 0;
@@ -242,15 +285,66 @@
         }
         
         /* Typing Effect CSS */
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 1s step-start infinite;
-            color: #10b981;
-            font-weight: bold;
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes blink {
-            50% { opacity: 0; }
+        .typing-bubble { display: inline-flex; gap: 4px; align-items: center; justify-content: center; }
+        .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: typingBounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        /* --- Reply Feature Styles --- */
+        .msg-row { position: relative; }
+        
+        .reply-link-btn {
+            font-size: 0.75rem; color: #10b981; font-weight: 600; cursor: pointer; display: none; align-items: center; gap: 2px;
+            background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 10px; transition: all 0.2s; white-space: nowrap;
         }
+        .reply-link-btn:hover { background: rgba(16, 185, 129, 0.2); }
+        .msg-row:hover .reply-link-btn { display: inline-flex; }
+        @media (max-width: 768px) {
+            .reply-link-btn { display: inline-flex !important; }
+        }
+        @media (max-width: 768px) {
+            .msg-bubble { transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+            .msg-bubble.swiping { transition: none; }
+        }
+
+        .reply-context-box {
+            display: none; padding: 12px 15px;
+            background: #f8fafc; border-left: 4px solid #6366f1;
+            border-top: 1px solid #e2e8f0;
+            justify-content: space-between; align-items: center;
+            animation: slideUpContext 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        @keyframes slideUpContext {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reply-context-content { flex: 1; overflow: hidden; }
+        .reply-context-name { font-size: 0.85rem; font-weight: 700; color: #6366f1; margin-bottom: 2px; }
+        .reply-context-text { font-size: 0.85rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        .cancel-reply-btn { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; }
+        .cancel-reply-btn:hover { color: #ef4444; }
+
+        /* Default quoted msg (for light bubbles) */
+        .quoted-msg {
+            background: rgba(0,0,0,0.04); border-left: 3px solid #10b981;
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .quoted-msg:hover { background: rgba(0,0,0,0.08); }
+        .quoted-msg-name { font-size: 0.75rem; font-weight: 800; color: #10b981; margin-bottom: 3px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .quoted-msg-text { font-size: 0.85rem; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; font-style: italic; }
+
+        /* Dark bubble quoted msg */
+        .msg-row.student .quoted-msg, .chat-thread-item .quoted-msg {
+            background: rgba(255,255,255,0.1); border-left: 3px solid #34d399;
+        }
+        .msg-row.student .quoted-msg:hover, .chat-thread-item .quoted-msg:hover { background: rgba(255,255,255,0.15); }
+        .msg-row.student .quoted-msg-name, .chat-thread-item .quoted-msg-name { color: #34d399; }
+        .msg-row.student .quoted-msg-text, .chat-thread-item .quoted-msg-text { color: rgba(255,255,255,0.9); }
     </style>
 </head>
 <body>
@@ -267,38 +361,107 @@
             
             <!-- LEFT PANEL: LIST -->
             <div class="list-panel">
-                <div class="p-4 border-bottom" style="background: rgba(255,255,255,0.8);">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.8);">
                     <h4 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #1e293b;">
                         <i class="bi bi-chat-left-dots-fill me-2" style="color: #10b981;"></i> My Messages
                     </h4>
+                    <form th:action="@{/student/chat/start}" method="post" style="margin:0;">
+                        <button type="submit" class="btn btn-sm shadow-sm" id="newChatBtn"
+                                style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                                title="New Chat with Admin"
+                                onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.4)';"
+                                onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                            <i class="bi bi-pencil-square" style="font-size: 1.1rem;"></i>
+                        </button>
+                    </form>
                 </div>
                 
+                <div style="padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); background: rgba(255,255,255,0.6);">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.95rem;"></i>
+                        <input type="text" placeholder="Search to start chat..." style="width: 100%; padding: 10px 14px 10px 42px; border-radius: 50px; border: 1.5px solid rgba(0,0,0,0.05); background: #f1f5f9; font-size: 0.9rem; color: #334155; outline: none; transition: all 0.3s;" onfocus="this.style.borderColor='rgba(16,185,129,0.4)'; this.style.background='#ffffff'; this.style.boxShadow='0 2px 10px rgba(16,185,129,0.1)';" onblur="this.style.borderColor='rgba(0,0,0,0.05)'; this.style.background='#f1f5f9'; this.style.boxShadow='none';">
+                    </div>
+                </div>
+
                 <div class="overflow-auto flex-grow-1" style="scrollbar-width: thin;">
-                    <!-- DEBUG -->
-                    <!-- Empty State -->
+
+                    <!-- ① DIRECT CHAT pinned at top -->
+                    <div th:if="${directChat != null}"
+                         id="list-item-direct"
+                         class="msg-list-item d-flex align-items-center gap-3"
+                         th:classappend="${directChatUnread} ? 'has-unread' : ''"
+                         onclick="openDirectChat()"
+                         style="border-left: 3px solid rgba(99,102,241,0.4); background: rgba(99,102,241,0.04);">
+
+                        <!-- Admin avatar -->
+                        <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(16,185,129,0.25);">
+                            <img src="/images/logo.png" alt="4LAZIE" style="width:26px;height:26px;border-radius:50%;object-fit:contain;background:white;padding:2px;">
+                        </div>
+
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="inbox-name">4LAZIE Admin</span>
+                                <small class="inbox-time" th:text="${directChat.lastMessageAt != null ? #temporals.format(directChat.lastMessageAt,'dd MMM') : ''}"></small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <p class="inbox-msg-preview text-truncate" style="max-width:160px;"
+                                   th:text="${!#lists.isEmpty(directChat.messages) ? directChat.messages[#lists.size(directChat.messages) - 1].messageText : 'Tap to start chatting'}"></p>
+                                <span th:if="${directChatUnread}" class="badge rounded-pill" style="background:#6366f1;font-size:0.65rem;padding:3px 8px;">New</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New chat button if no chat yet -->
+                    <div th:unless="${directChat != null}"
+                         style="padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.03);">
+                        <form th:action="@{/student/chat/start}" method="post">
+                            <button type="submit"
+                                    style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(99,102,241,0.35);background:rgba(99,102,241,0.04);color:#6366f1;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;"
+                                    onmouseover="this.style.background='rgba(99,102,241,0.1)';this.style.borderColor='rgba(99,102,241,0.6)';"
+                                    onmouseout="this.style.background='rgba(99,102,241,0.04)';this.style.borderColor='rgba(99,102,241,0.35)';">
+                                <i class="bi bi-chat-dots-fill"></i> Chat with 4LAZIE Admin
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Divider -->
+                    <div th:if="${messages != null and !messages.isEmpty()}" style="padding:8px 18px;">
+                        <div style="font-size:0.68rem;font-weight:800;letter-spacing:1.2px;color:#94a3b8;text-transform:uppercase;">Assignment Messages</div>
+                    </div>
+
+                    <!-- Empty State for assignment messages only -->
                     <div th:if="${messages == null or #lists.isEmpty(messages)}" class="text-center p-5">
                         <div class="mb-3" style="width: 80px; height: 80px; background: rgba(16,185,129,0.1); border-radius: 50%; display: flex; align-items:center; justify-content:center; margin: 0 auto; color: #10b981; font-size: 2rem;">
                             <i class="bi bi-inbox-fill"></i>
                         </div>
-                        <h5 class="fw-bold" style="color: #475569;">No Messages Yet</h5>
-                        <p class="text-muted" style="font-size: 0.9rem;">Ask 4LAZIE for assignment help and your replies will appear here.</p>
+                        <h5 class="fw-bold" style="color: #475569;">No Assignments Yet</h5>
+                        <p class="text-muted" style="font-size: 0.9rem;">Ask 4LAZIE for assignment help and replies will appear here.</p>
                     </div>
 
                     <!-- List Items -->
-                    <div th:each="msg : ${messages}" class="msg-list-item" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.95rem; color: #0f172a;" th:text="${msg.subjectName}">Subject</h6>
-                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
-                        </div>
+                    <div th:each="msg : ${messages}" class="msg-list-item" th:classappend="${msg.status == 'SOLVED' and !msg.read} ? 'has-unread' : ''" th:data-id="${msg.id}" onclick="openChat(this.getAttribute('data-id'))" th:id="'list-item-' + ${msg.id}">
                         <div class="d-flex justify-content-between align-items-center">
-                            <p class="text-muted mb-0 text-truncate" style="font-size: 0.85rem; max-width: 70%;" th:text="${msg.status == 'SOLVED' ? 'Reply received' : 'Waiting for magic...'}">Status</p>
+                            <span class="inbox-name text-truncate" style="text-transform: uppercase;" th:text="${msg.subjectName}">Subject</span>
+                            <small class="inbox-time" th:text="${#temporals.format(msg.createdAt, 'dd MMM')}">Date</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <div class="d-flex align-items-center gap-2" style="max-width: 70%;">
+                                <!-- 4LAZIE avatar if Admin replied -->
+                                <div th:if="${msg.status == 'SOLVED'}" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(16,185,129,0.2);">
+                                    <img src="/images/logo.png" alt="4LAZIE" style="width:12px;height:12px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                                </div>
+                                <p class="inbox-msg-preview text-truncate" 
+                                   th:text="${!#lists.isEmpty(msg.messages) ? msg.messages[#lists.size(msg.messages)-1].messageText : (msg.status == 'SOLVED' ? msg.adminReply : (msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Tap to start chatting'))}"></p>
+                            </div>
                             
-                            <!-- Unread Badge -->
-                            <span th:if="${msg.status == 'SOLVED' and !msg.read}" class="badge rounded-pill bg-danger" style="animation: pulse-red-badge 2s infinite;">New</span>
-                            
-                            <!-- Status Icons -->
-                            <i th:if="${msg.status == 'SOLVED' and msg.read}" class="bi bi-check2-all" style="color: #10b981; font-size: 1.1rem;"></i>
-                            <i th:if="${msg.status == 'PENDING'}" class="bi bi-clock-history" style="color: #f59e0b;"></i>
+                            <div class="d-flex align-items-center gap-1">
+                                <!-- Unread Badge -->
+                                <span th:if="${msg.status == 'SOLVED' and !msg.read}" class="badge rounded-pill bg-danger" style="animation: pulse-red-badge 2s infinite;">New</span>
+                                
+                                <!-- Status Icons -->
+                                <i th:if="${msg.status == 'SOLVED' and msg.read}" class="bi bi-check2-all" style="color: #10b981; font-size: 1.1rem;"></i>
+                                <i th:if="${msg.status == 'PENDING'}" class="bi bi-clock-history" style="color: #f59e0b;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -307,10 +470,100 @@
             <!-- RIGHT PANEL: CHAT -->
             <div class="chat-panel" id="chatPanel">
                 <!-- Default State -->
-                <div id="chatDefault" class="d-flex flex-column align-items-center justify-content-center h-100" style="background: #f8fafc;">
-                    <i class="bi bi-chat-square-heart text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
-                    <h5 class="fw-bold mt-3 text-muted">Select a message to read</h5>
+                <div id="chatDefault" class="d-flex flex-column align-items-center justify-content-center h-100" style="background: url('data:image/svg+xml;utf8,<svg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M54.627 0l1.218 1.218-28.845 28.845L-1.845 1.218 1.845-1.218l25.155 25.155L54.627 0zM26.92 60L-1.925 31.155 1.925 28.845 28.845 55.765 57.69 26.92l2.31 2.31L29.23 60h-2.31z\' fill=\'%2310b981\' fill-opacity=\'0.03\' fill-rule=\'evenodd\'/></svg>') #f8fafc; background-size: 100px;">
+                    <div style="background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);border-radius:24px;padding:40px;box-shadow:0 10px 40px rgba(0,0,0,0.05);max-width:450px;width:90%;border:1px solid rgba(255,255,255,0.5);text-align:center;">
+                        <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.2));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                            <i class="bi bi-chat-quote-fill" style="font-size:2.5rem;color:#10b981; filter: drop-shadow(0 4px 6px rgba(16,185,129,0.3));"></i>
+                        </div>
+                        <div style="font-weight:900;font-size:1.8rem;color:#0f172a;margin-bottom:10px;font-family:'Outfit',sans-serif;">Welcome, <span th:text="${loggedInUser.name}">Student</span>!</div>
+                        <div style="font-size:0.95rem;color:#64748b;line-height:1.6;margin-bottom:15px;">Select a conversation from the list to read messages or start a new chat with the admin.</div>
+                        
+                        <div style="display:inline-flex;align-items:center;gap:8px;background:#f1f5f9;padding:8px 16px;border-radius:20px;font-size:0.85rem;font-weight:700;color:#334155;margin:15px 0;">
+                            <i class="bi bi-shield-lock-fill" style="color:#10b981;font-size:1.1rem;"></i> 
+                            Your messages are secure
+                        </div>
+
+                        <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                            <button class="btn" style="background:#10b981;color:white;border-radius:12px;font-weight:600;padding:10px 20px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(16,185,129,0.2);" onclick="const btn = document.querySelector('.chat-thread-item'); if(btn) btn.click(); else alert('No messages yet!');">
+                                <i class="bi bi-envelope-open-fill"></i> View Latest
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- ① DIRECT CHAT INLINE PANEL (SSE real-time) -->
+                <div th:if="${directChat != null}" id="chat-view-direct" class="chat-view d-none flex-column h-100" style="overflow:hidden;">
+
+                    <!-- Header -->
+                    <div class="p-3 px-md-4 border-bottom d-flex align-items-center gap-3"
+                         style="background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);flex-shrink:0;">
+                        <button class="btn btn-light d-md-none me-1 p-0 d-flex align-items-center justify-content-center" onclick="closeChat()" style="border-radius:50%; width:38px; height:38px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); color:#10b981; transition:all 0.25s;">
+                            <i class="bi bi-arrow-left" style="font-size:1.1rem; stroke-width: 1.5;"></i>
+                        </button>
+                        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(16,185,129,0.3);flex-shrink:0;">
+                            <img src="/images/logo.png" alt="4LAZIE" style="width:24px;height:24px;border-radius:50%;object-fit:contain;background:white;padding:2px;">
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="fw-bold" style="font-family:'Outfit',sans-serif;font-size:1.35rem;color:#1e293b;letter-spacing:-0.2px;">4LAZIE ADMIN</div>
+                            <div class="header-online-status" style="font-size:0.85rem;color:#10b981;font-weight:600;display:flex;align-items:center;gap:4px;transition:all 0.3s ease;">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online
+                            </div>
+                        </div>
+                        <div class="ms-auto">
+                            <button class="btn btn-light p-2" style="border-radius:50%; background:transparent; border:none; color:#64748b;">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div id="directChatBody" style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:6px;
+                         background:radial-gradient(circle at 8% 15%,rgba(16,185,129,0.04),transparent 35%),radial-gradient(circle at 92% 85%,rgba(99,102,241,0.03),transparent 35%),#f8fafc;">
+
+                        <div id="directChatEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8;text-align:center;padding:40px;">
+                            <div style="width:72px;height:72px;border-radius:50%;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+                                <i class="bi bi-chat-dots-fill" style="font-size:1.8rem;color:#10b981;"></i>
+                            </div>
+                            <div style="font-weight:700;font-size:0.95rem;color:#475569;margin-bottom:5px;">Chat with 4LAZIE</div>
+                            <div style="font-size:0.8rem;max-width:220px;line-height:1.5;">Send a message to start a conversation with our support team.</div>
+                        </div>
+
+                        <div id="directMsgWrap"></div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div style="background:rgba(255,255,255,0.95);border-top:1px solid rgba(16,185,129,0.08);padding:12px 18px calc(14px + env(safe-area-inset-bottom));flex-shrink:0; display:flex; flex-direction:column;">
+                        <div id="replyContextBox" class="reply-context-box" style="border-radius: 20px 20px 0 0; margin-bottom: -15px; padding-bottom: 25px;">
+                            <div class="reply-context-content">
+                                <div id="replyContextName" class="reply-context-name"></div>
+                                <div id="replyContextText" class="reply-context-text"></div>
+                            </div>
+                            <button type="button" class="cancel-reply-btn" onclick="cancelReply()">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </button>
+                        </div>
+                        <div id="directInputShell" style="display:flex;align-items:flex-end;gap:10px;background:#f8fafc;border:1.5px solid rgba(16,185,129,0.2);border-radius:24px;padding:10px 14px;transition:all 0.3s; position:relative; z-index:2;">
+                            <textarea id="directMsgInput" rows="1" placeholder="Message 4LAZIE Admin..."
+                                      style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.95rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
+                            <button type="button" id="directSendBtn" onclick="sendDirectMessage()"
+                                    style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 14px rgba(16,185,129,0.35);"
+                                    onmouseover="this.style.transform='scale(1.12) rotate(8deg)';"
+                                    onmouseout="this.style.transform='none';">
+                                <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>
+                            </button>
+                        </div>
+                        <div style="text-align:center;margin-top:5px;font-size:0.64rem;color:#b0bec5;">
+                            <i class="bi bi-lock-fill me-1"></i>Private · Enter to send · Shift+Enter for new line
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden inputs for JS -->
+                <input type="hidden" id="DC_CHAT_ID" th:value="${directChat != null ? directChat.id : ''}">
+                <input type="hidden" id="DC_STUDENT_ID" th:value="${session.user != null ? session.user.id : ''}">
+                <input type="hidden" id="DC_STUDENT_NAME" th:value="${session.user != null ? session.user.name : ''}">
+                <input type="hidden" id="DC_STUDENT_PIC" th:value="${session.user != null and session.user.profilePicture != null ? session.user.profilePicture : ''}">
+
 
                 <!-- Chat Views (Hidden by default, shown via JS) -->
                 <div th:each="msg : ${messages}" th:id="'chat-view-' + ${msg.id}" class="chat-view d-none flex-column h-100">
@@ -340,128 +593,114 @@
                         <div class="chat-thread-container">
                             
                             <!-- Initial Request Bubble (Student) -->
-                            <div class="chat-thread-item chat-bubble-student">
-                                <div class="thread-line"></div>
-                                <div class="chat-avatar" style="color: #3b82f6;">
-                                    <i th:if="${session.user.profilePicture == null}" class="bi bi-person-fill fs-5"></i>
-                                    <img th:if="${session.user.profilePicture != null}" th:src="${session.user.profilePicture.startsWith('http') ? session.user.profilePicture : '/uploads/' + session.user.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                                    <div class="status-dot" style="background-color: #10b981;"></div>
-                                </div>
-                                <div class="chat-bubble-content">
-                                    <div class="d-flex align-items-center mb-1 gap-2">
-                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;" th:text="${session.user.name}">You</span>
-                                        <i class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
-                                        <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:00 AM</small>
+                            <div class="d-flex justify-content-end mb-4 ms-auto">
+                                <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-end;">
+                                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
+                                        <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${#strings.toUpperCase(session.user.name)}">NAME</span>
                                     </div>
-                                    <p class="mb-2" style="font-size: 0.95rem; color: #334155; line-height: 1.6;" th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</p>
-                                    
-                                    <div th:if="${msg.attachmentUrl != null}" class="mt-3 p-3 rounded-3" style="background: rgba(0,0,0,0.02); border: 1px dashed rgba(0,0,0,0.1);">
-                                        <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2" style="color: #64748b; font-weight: 600; font-size: 0.85rem;">
-                                            <i class="bi bi-paperclip fs-5"></i> View my attachment
-                                        </a>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="mt-2 d-flex gap-2">
+                                    <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
+                                        <!-- Avatar -->
+                                        <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
+                                        
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                            <div th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
+                                            <div th:if="${msg.attachmentUrl != null}" class="mt-2 text-end">
+                                                <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
+                                                    <i class="bi bi-paperclip"></i> View Attachment
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Fallback for Legacy Admin Reply -->
-                            <div th:if="${msg.status == 'SOLVED' and (msg.messages == null or msg.messages.isEmpty())}" class="chat-thread-item chat-bubble-admin">
-                                <div class="thread-line"></div>
-                                <div class="chat-avatar" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
-                                    <img src="/images/logo.png" alt="4LAZIE" style="width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: white; padding: 2px;">
-                                    <div class="status-dot" style="background-color: #10b981;"></div>
-                                </div>
-                                <div class="chat-bubble-content">
-                                    <div class="d-flex align-items-center mb-1 gap-2">
-                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;">4LAZIE</span>
-                                        <i class="bi bi-patch-check-fill text-success" style="font-size: 0.8rem;"></i>
-                                        <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(msg.createdAt, 'dd MMM, hh:mm a')}">10:05 AM</small>
+                            <div th:if="${msg.status == 'SOLVED' and (msg.messages == null or msg.messages.isEmpty())}" class="d-flex justify-content-start mb-4 me-auto">
+                                <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-start;">
+                                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">4LAZIE ADMIN</span>
+                                        <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(msg.createdAt, 'hh:mm a')}">Time</span>
                                     </div>
-                                    <p class="mb-0" th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; color: #334155;" th:text="${msg.adminReply}">Admin reply</p>
-                                    
-                                    <div th:if="${msg.replyPdfUrl != null}" class="pdf-card mt-3">
-                                        <i class="bi bi-file-earmark-pdf-fill fs-2 me-3" style="color: #ef4444;"></i>
-                                        <div class="flex-grow-1">
-                                            <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Magic_Solution.pdf</h6>
-                                            <div class="d-flex gap-2 mt-2">
-                                                <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="btn btn-sm text-white fw-bold" style="background: #10b981; border-radius: 8px;">
-                                                    <i class="bi bi-eye"></i> View File
-                                                </a>
-                                                <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" download class="btn btn-sm fw-bold" style="background: rgba(16,185,129,0.1); color: #059669; border-radius: 8px;">
-                                                    <i class="bi bi-download"></i> Download
+                                    <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:left bottom;flex-direction:row;">
+                                        <!-- Avatar -->
+                                        <div style="background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(16,185,129,0.25);flex-shrink:0;">
+                                            <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                                        </div>
+                                        
+                                        <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                            <div th:text="${msg.adminReply}">Admin reply</div>
+                                            <div th:if="${msg.replyPdfUrl != null}" class="mt-2 text-start">
+                                                <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
+                                                    <i class="bi bi-file-earmark-pdf"></i> View Attachment
                                                 </a>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="mt-3 d-flex gap-2">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Chat Messages Thread -->
                             <th:block th:if="${msg.messages != null and !msg.messages.isEmpty()}">
-                                <div th:each="chat, iterStat : ${msg.messages}" class="chat-thread-item" th:classappend="${chat.senderId == 'ADMIN'} ? 'chat-bubble-admin' : 'chat-bubble-student'">
-                                    <div class="thread-line"></div>
+                                <div th:each="chat, iterStat : ${msg.messages}" class="mb-4">
                                     
-                                    <!-- Avatar -->
                                     <th:block th:if="${chat.senderId == 'ADMIN'}">
-                                        <div class="chat-avatar" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
-                                            <img src="/images/logo.png" alt="4LAZIE" style="width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: white; padding: 2px;">
-                                            <div class="status-dot" style="background-color: #10b981;"></div>
-                                        </div>
-                                    </th:block>
-                                    <th:block th:unless="${chat.senderId == 'ADMIN'}">
-                                        <div class="chat-avatar" style="color: #3b82f6;">
-                                            <i th:if="${session.user.profilePicture == null}" class="bi bi-person-fill fs-5"></i>
-                                            <img th:if="${session.user.profilePicture != null}" th:src="${session.user.profilePicture.startsWith('http') ? session.user.profilePicture : '/uploads/' + session.user.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                                            <div class="status-dot" style="background-color: #10b981;"></div>
+                                        <!-- Admin Message -->
+                                        <div class="d-flex justify-content-start me-auto">
+                                            <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-start;">
+                                                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">
+                                                    <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${chat.senderName != null ? #strings.toUpperCase(chat.senderName) : '4LAZIE ADMIN'}">4LAZIE ADMIN</span>
+                                                    <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
+                                                </div>
+                                                <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:left bottom;flex-direction:row;">
+                                                    <!-- Avatar -->
+                                                    <div style="background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(16,185,129,0.25);flex-shrink:0;">
+                                                        <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
+                                                    </div>
+                                                    
+                                                    <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                                        <div th:text="${chat.messageText}">Message</div>
+                                                        <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-start">
+                                                            <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
+                                                                <i class="bi bi-file-earmark-pdf"></i> View Attachment
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </th:block>
 
-                                    <!-- Content -->
-                                    <div class="chat-bubble-content">
-                                        <div class="d-flex align-items-center mb-1 gap-2">
-                                            <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;" th:text="${chat.senderId == 'ADMIN' ? '4LAZIE' : session.user.name}">Name</span>
-                                            <i th:if="${chat.senderId == 'ADMIN'}" class="bi bi-patch-check-fill text-success" style="font-size: 0.8rem;"></i>
-                                            <i th:unless="${chat.senderId == 'ADMIN'}" class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
-                                            <small class="text-muted" style="font-size: 0.75rem;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</small>
-                                        </div>
-                                        
-                                        <!-- Note: Typing effect applied only if unread -->
-                                        <p class="mb-2" th:classappend="${!msg.read and chat.senderId == 'ADMIN' and iterStat.last} ? 'typing-text' : ''" style="font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; color: #334155;" th:text="${chat.messageText}">Message</p>
-                                        
-                                        <div th:if="${chat.attachmentUrl != null}" th:classappend="${chat.senderId == 'ADMIN'} ? 'pdf-card mt-3' : 'mt-3 p-3 rounded-3'" th:style="${chat.senderId != 'ADMIN'} ? 'background: rgba(0,0,0,0.02); border: 1px dashed rgba(0,0,0,0.1);' : ''">
-                                            <th:block th:if="${chat.senderId == 'ADMIN'}">
-                                                <i class="bi bi-file-earmark-pdf-fill fs-2 me-3" style="color: #ef4444;"></i>
-                                                <div class="flex-grow-1">
-                                                    <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Magic_Solution.pdf</h6>
-                                                    <div class="d-flex gap-2 mt-2">
-                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="btn btn-sm text-white fw-bold" style="background: #10b981; border-radius: 8px;">
-                                                            <i class="bi bi-eye"></i> View File
-                                                        </a>
-                                                        <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" download class="btn btn-sm fw-bold" style="background: rgba(16,185,129,0.1); color: #059669; border-radius: 8px;">
-                                                            <i class="bi bi-download"></i> Download
-                                                        </a>
+                                    <th:block th:unless="${chat.senderId == 'ADMIN'}">
+                                        <!-- Student Message -->
+                                        <div class="d-flex justify-content-end ms-auto">
+                                            <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-end;">
+                                                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
+                                                    <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;" th:text="${#temporals.format(chat.timestamp, 'hh:mm a')}">Time</span>
+                                                    <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;" th:text="${#strings.toUpperCase(session.user.name)}">NAME</span>
+                                                </div>
+                                                <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
+                                                    <!-- Avatar -->
+                                                    <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
+                                                    
+                                                    <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                                        <div th:text="${chat.messageText}">Message</div>
+                                                        <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-end">
+                                                            <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
+                                                                <i class="bi bi-paperclip"></i> View attached file
+                                                            </a>
                                                     </div>
                                                 </div>
-                                            </th:block>
-                                            
-                                            <th:block th:unless="${chat.senderId == 'ADMIN'}">
-                                                <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none d-flex align-items-center gap-2" style="color: #64748b; font-weight: 600; font-size: 0.85rem;">
-                                                    <i class="bi bi-paperclip fs-5"></i> View attached file
-                                                </a>
-                                            </th:block>
+                                                <!-- Status ticks -->
+                                                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8; margin-right: 46px;">
+                                                    <small th:text="${chat.read ? 'Read' : 'Delivered'}" style="font-size: 0.7rem; margin-right: 4px; color: #64748b; font-weight: 500;"></small>
+                                                    <i th:class="${chat.read ? 'bi bi-check2-all text-info' : 'bi bi-check2-all'}" style="font-size: 1rem; color: #64748b;"></i>
+                                                </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        
-                                        <!-- Action Buttons -->
-                                        <div class="mt-3 d-flex gap-2">
-                                        </div>
-                                    </div>
+                                    </th:block>
+
                                 </div>
                             </th:block>
                         </div>
@@ -472,17 +711,14 @@
                         <form th:action="@{'/api/assignments/chat/' + ${msg.id}(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data" class="chat-reply-form">
                             <!-- Using standard POST with redirect/reload for simplicity, but JS fetch is better. We will use JS fetch in the script below. -->
                             <div class="chat-input-wrapper d-flex align-items-end gap-2">
-                                <textarea name="messageText" class="form-control form-control-lg auto-resize-textarea" rows="1" placeholder="Type a message to 4LAZIE..." required style="border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); background: rgba(248, 250, 252, 0.8); resize: none; overflow-y: hidden; padding-top: 12px; padding-bottom: 12px;"></textarea>
-                                <button type="submit" class="btn fw-bold px-3 py-2" style="background: transparent; color: #dc2626; border: none; font-size: 1.1rem; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Send
-                                </button>
-                            </div>
-                            <!-- Attachment button hidden, but can be toggled -->
-                            <div class="mt-2 text-start ms-2">
-                                <label class="btn btn-sm btn-light rounded-pill" style="color: #64748b; font-weight: 500; font-size: 0.8rem; border: 1px solid #e2e8f0; cursor: pointer;">
-                                    <i class="bi bi-paperclip me-1"></i> Attach file
-                                    <input type="file" name="file" style="display: none;" onchange="this.parentElement.innerHTML = '<i class=\'bi bi-file-earmark-check text-success me-1\'></i> File selected';">
+                                <label class="btn mb-0 p-2 d-flex align-items-center justify-content-center" style="color: #64748b; background: rgba(241, 245, 249, 0.8); border-radius: 50%; cursor: pointer; width: 45px; height: 45px; flex-shrink: 0;" title="Attach file">
+                                    <i class="bi bi-paperclip fs-5"></i>
+                                    <input type="file" name="file" style="display: none;" onchange="this.parentElement.style.color = '#10b981'; this.parentElement.style.background = 'rgba(16,185,129,0.1)';">
                                 </label>
+                                <textarea name="messageText" class="form-control form-control-lg auto-resize-textarea" rows="1" placeholder="Type a message to 4LAZIE..." required style="border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); background: rgba(248, 250, 252, 0.8); resize: none; overflow-y: hidden; padding-top: 12px; padding-bottom: 12px;" onkeydown="if(event.keyCode == 13 && !event.shiftKey) { event.preventDefault(); this.form.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true})); }"></textarea>
+                                <button type="submit" class="btn d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border: none; border-radius: 50%; width: 48px; height: 48px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(15,23,42,0.3); transition: all 0.3s ease; padding: 0;" onmouseover="this.style.transform='scale(1.1) translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(15,23,42,0.5)';" onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 4px 15px rgba(15,23,42,0.3)';">
+                                    <i class="bi bi-send-fill" style="font-size: 1.2rem; margin-right: 2px;"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -492,8 +728,7 @@
         </div>
     </div>
 
-    <!-- Insert Footer -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
+
 
     <script>
         function openChat(id) {
@@ -518,6 +753,7 @@
                     }).then(() => {
                         // Remove badge and update icon visually
                         badge.remove();
+                        listItem.classList.remove('has-unread');
                         const iconContainer = listItem.querySelector('.bi-check2-all');
                         if(iconContainer) iconContainer.style.color = '#10b981';
                     }).catch(e => console.error("Error updating read status", e));
@@ -567,23 +803,18 @@
                         
                         const typingElement = typingElements[index];
                         const text = typingElement.innerHTML; // get original HTML/text
-                        typingElement.innerHTML = ''; // clear it
-                        typingElement.classList.add('typing-cursor');
                         typingElement.setAttribute('data-typed', 'true');
                         
-                        let i = 0;
-                        function typeWriter() {
-                            if (i < text.length) {
-                                typingElement.innerHTML += text.charAt(i);
-                                i++;
-                                if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                                setTimeout(typeWriter, 50); // Slower typing speed
-                            } else {
-                                typingElement.classList.remove('typing-cursor');
-                                setTimeout(() => typeNextElement(index + 1), 300);
-                            }
-                        }
-                        setTimeout(typeWriter, 50);
+                        typingElement.innerHTML = '<div class="typing-bubble" style="padding:4px 0;"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+                        if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                        
+                        setTimeout(() => {
+                            typingElement.innerHTML = text;
+                            const bubble = typingElement.closest('.mb-4') || typingElement.closest('.mb-3');
+                            if (bubble) bubble.style.animation = 'slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                            if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                            setTimeout(() => typeNextElement(index + 1), 300);
+                        }, 1200);
                     }
                     
                     if (typingElements.length > 0) {
@@ -600,6 +831,424 @@
             const container = document.getElementById('messagesContainer');
             if (container) container.classList.remove('chat-active');
         }
+
+        // ═══════════════════════════════════════════════════
+        //  DIRECT CHAT ENGINE (SSE + typing effect)
+        // ═══════════════════════════════════════════════════
+        (() => {
+            const CHAT_ID    = document.getElementById('DC_CHAT_ID')?.value || '';
+            const STUDENT_ID = document.getElementById('DC_STUDENT_ID')?.value || '';
+            const STUDENT_NM = document.getElementById('DC_STUDENT_NAME')?.value || '';
+            const STUDENT_PIC= document.getElementById('DC_STUDENT_PIC')?.value || '';
+            if (!CHAT_ID) return; // no chat — student hasn't started one yet
+
+            const chatBody  = document.getElementById('directChatBody');
+            const msgWrap   = document.getElementById('directMsgWrap');
+            const emptyEl   = document.getElementById('directChatEmpty');
+            const input     = document.getElementById('directMsgInput');
+            const sendBtn   = document.getElementById('directSendBtn');
+
+            let rendered   = 0;
+            let isSending  = false;
+            let sseActive  = false;
+            let typeQueue  = [];
+            let isTyping   = false;
+
+            const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+            // Build avatar HTML — profile pic or coloured initial
+            function makeBubble(msg, isNew) {
+                const row = document.createElement('div');
+                row.id = 'msg-' + msg.id;
+                row.className = 'msg-row ' + (msg.isSelf ? 'student' : 'admin');
+                
+                const anim = isNew ? (msg.isSelf ? 'animation:slideFadeInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : 'animation:slideFadeInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;') : '';
+
+                if (msg.isSelf) { // Sender (Right)
+                    row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:right bottom;flex-direction:row-reverse;margin-left:auto;${anim}`;
+                } else { // Receiver (Left)
+                    row.style.cssText = `display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;transform-origin:left bottom;flex-direction:row;margin-right:auto;${anim}`;
+                }
+
+                // Avatar
+                const avDiv = document.createElement('div');
+                avDiv.className = 'av-sm';
+                if (!msg.isSelf) { // Admin Avatar
+                    avDiv.style.cssText = 'background:linear-gradient(135deg,#10b981,#059669);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(16,185,129,0.25);flex-shrink:0;';
+                    avDiv.innerHTML = `<img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">`;
+                } else { // Student Avatar
+                    if (STUDENT_PIC) {
+                        const src = STUDENT_PIC.startsWith('http') ? STUDENT_PIC : '/uploads/' + STUDENT_PIC;
+                        avDiv.style.cssText = 'background:transparent;width:34px;height:34px;border-radius:50%;overflow:hidden;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;';
+                        avDiv.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+                    } else {
+                        avDiv.style.cssText = 'background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;';
+                        avDiv.textContent = STUDENT_NM.charAt(0).toUpperCase();
+                    }
+                }
+                row.appendChild(avDiv);
+
+                const contentCol = document.createElement('div');
+                contentCol.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+
+                const headerRow = document.createElement('div');
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
+                
+                const nameEl = document.createElement('span');
+                nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
+                nameEl.textContent = msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN';
+                
+                const timeEl = document.createElement('span');
+                timeEl.style.cssText = 'font-size: 0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
+                timeEl.textContent = msg.time || '';
+                
+                const replyBtn = document.createElement('span');
+                replyBtn.className = 'reply-link-btn';
+                replyBtn.style.cssText = 'color:#10b981;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;';
+                replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
+                replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText); };
+                
+                if (msg.isSelf) { // Sender (Right)
+                    headerRow.appendChild(timeEl);
+                    headerRow.appendChild(nameEl);
+                } else { // Receiver (Left)
+                    headerRow.appendChild(nameEl);
+                    headerRow.appendChild(timeEl);
+                }
+
+                const textEl = document.createElement('div');
+                textEl.className = 'msg-bubble';
+                if (msg.isSelf) {
+                    textEl.style.cssText = 'font-size:1.1rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:12px 18px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,0.15);';
+                } else {
+                    textEl.style.cssText = 'font-size:1.1rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:12px 18px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
+                }
+
+                // Render Quoted Message if it exists
+                if (msg.replyToMessageId) {
+                    const quotedDiv = document.createElement('div');
+                    quotedDiv.className = 'quoted-msg';
+                    quotedDiv.onclick = (e) => {
+                        e.stopPropagation();
+                        const target = document.getElementById('msg-' + msg.replyToMessageId);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            target.style.transition = 'background 0.5s';
+                            const oldBg = target.style.background;
+                            target.style.background = 'rgba(99, 102, 241, 0.2)';
+                            setTimeout(() => target.style.background = oldBg, 1500);
+                        }
+                    };
+                    quotedDiv.innerHTML = `<span class="quoted-msg-name">${esc(msg.replyToSenderName || '')}</span>
+                                           <span class="quoted-msg-text">${esc(msg.replyToMessageText || '')}</span>`;
+                    textEl.appendChild(quotedDiv);
+                }
+
+                const msgSpan = document.createElement('span');
+                msgSpan.innerHTML = esc(msg.messageText || '');
+                textEl.appendChild(msgSpan);
+
+                contentCol.appendChild(headerRow);
+                contentCol.appendChild(textEl);
+                
+                const replyWrapper = document.createElement('div');
+                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;' + (msg.isSelf ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
+                replyWrapper.appendChild(replyBtn);
+                contentCol.appendChild(replyWrapper);
+                
+                // Double Click to Reply
+                textEl.ondblclick = () => initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
+
+                // Touch Swipe & Long Press for Mobile
+                let touchStartX = 0;
+                let touchCurrentX = 0;
+                let pressTimer = null;
+                let isSwiping = false;
+
+                textEl.addEventListener('touchstart', (e) => {
+                    touchStartX = e.touches[0].clientX;
+                    isSwiping = false;
+                    textEl.classList.add('swiping');
+                    
+                    // Long press logic
+                    pressTimer = setTimeout(() => {
+                        if (!isSwiping) {
+                            initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
+                        }
+                    }, 600);
+                }, {passive: true});
+
+                textEl.addEventListener('touchmove', (e) => {
+                    touchCurrentX = e.touches[0].clientX;
+                    const diffX = touchCurrentX - touchStartX;
+                    
+                    if (Math.abs(diffX) > 10) {
+                        isSwiping = true;
+                        clearTimeout(pressTimer);
+                    }
+                    
+                    if (diffX < 0 && diffX > -80) { // Swipe left
+                        textEl.style.transform = `translateX(${diffX}px)`;
+                    }
+                }, {passive: true});
+
+                textEl.addEventListener('touchend', (e) => {
+                    clearTimeout(pressTimer);
+                    textEl.classList.remove('swiping');
+                    textEl.style.transform = '';
+                    
+                    const diffX = touchCurrentX - touchStartX;
+                    if (isSwiping && diffX < -50) { // Swipe threshold met (left)
+                        initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
+                    }
+                }, {passive: true});
+
+                row.appendChild(contentCol);
+
+                if (msg.isSelf) {
+                    const statusRow = document.createElement('div');
+                    statusRow.className = 'msg-status-text';
+                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;';
+                    if (msg.status === 'Read') {
+                        statusRow.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                    } else if (msg.status === 'Delivered') {
+                        statusRow.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                    } else {
+                        statusRow.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                    }
+                    contentCol.appendChild(statusRow);
+                }
+                return row;
+            }
+
+            function renderMessages(msgs, isNew) {
+                if (!Array.isArray(msgs) || msgs.length === 0) return;
+                if (emptyEl) emptyEl.style.display = 'none';
+                for (let i = 0; i < msgs.length; i++) {
+                    const msg = msgs[i];
+                    
+                    const existingEl = document.getElementById('msg-' + msg.id);
+                    if (existingEl) {
+                        if (msg.isSelf) {
+                            const statusSpan = existingEl.querySelector('.msg-status-text');
+                            if (statusSpan && msg.status) {
+                                if (msg.status === 'Read') {
+                                    statusSpan.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                                } else if (msg.status === 'Delivered') {
+                                    statusSpan.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                                } else {
+                                    statusSpan.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                                }
+                            }
+                        }
+                    } else {
+                        if (msg.isSelf) {
+                            const tempEl = document.querySelector('.temp-msg');
+                            if (tempEl) {
+                                tempEl.id = 'msg-' + msg.id;
+                                tempEl.classList.remove('temp-msg');
+                                const statusSpan = tempEl.querySelector('.msg-status-text');
+                                if (statusSpan && msg.status) {
+                                    if (msg.status === 'Read') statusSpan.innerHTML = '<span style="color:#059669;font-weight:700;">Read</span>';
+                                    else if (msg.status === 'Delivered') statusSpan.innerHTML = '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                                    else statusSpan.innerHTML = '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+                                }
+                                continue;
+                            }
+                        }
+                        msgWrap.appendChild(makeBubble(msg, isNew));
+                    }
+                }
+                if (chatBody) {
+                    if (isNew) {
+                        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+                    } else {
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }
+                }
+            }
+
+            function connectSSE() {
+                // Fetch history reliably first
+                fetch(`/student/chat/${CHAT_ID}/messages`, { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) renderMessages(d.messages, false);
+
+                        // Then connect SSE for live updates
+                        const es = new EventSource(`/student/chat/${CHAT_ID}/stream`);
+                        es.addEventListener('init', e => {
+                            renderMessages(JSON.parse(e.data), false);
+                            sseActive = true;
+                        });
+                        es.addEventListener('message', e => {
+                            renderMessages(JSON.parse(e.data), true);
+                        });
+                        es.addEventListener('presence', e => {
+                            const data = JSON.parse(e.data);
+                            const statusDiv = document.querySelector('.header-online-status');
+                            if (statusDiv) {
+                                if (data.adminOnline) {
+                                    statusDiv.style.color = '#10b981';
+                                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
+                                } else {
+                                    statusDiv.style.color = '#94a3b8';
+                                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+                                }
+                            }
+                        });
+                        es.onerror = () => { es.close(); sseActive = false; setTimeout(fallbackPoll, 2000); };
+                    })
+                    .catch(e => console.error("Error fetching history", e));
+            }
+
+            // Reply State
+            let replyState = {
+                messageId: null,
+                senderName: null,
+                messageText: null
+            };
+
+            window.initReply = function(messageId, senderName, messageText) {
+                replyState = { messageId, senderName, messageText };
+                document.getElementById('replyContextName').innerText = senderName;
+                document.getElementById('replyContextText').innerText = messageText;
+                document.getElementById('replyContextBox').style.display = 'flex';
+                if (input) input.focus();
+            };
+
+            window.cancelReply = function() {
+                replyState = { messageId: null, senderName: null, messageText: null };
+                document.getElementById('replyContextBox').style.display = 'none';
+                if (input) input.focus();
+            };
+
+            function fallbackPoll() {
+                if (sseActive) return;
+                fetch(`/student/chat/${CHAT_ID}/messages`, { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => { if (d.success) renderMessages(d.messages, true); })
+                    .catch(() => {})
+                    .finally(() => setTimeout(fallbackPoll, 2000));
+            }
+
+            window.sendDirectMessage = function() {
+                const text = input ? input.value.trim() : '';
+                if (!text || isSending) return;
+                isSending = true;
+                if (sendBtn) sendBtn.disabled = true;
+                if (emptyEl) emptyEl.style.display = 'none';
+                
+                const tempId = 'temp-' + Date.now();
+                const bubbleParams = {
+                    id: tempId,
+                    isSelf: true, senderName: STUDENT_NM,
+                    senderProfilePicture: STUDENT_PIC,
+                    messageText: text,
+                    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
+                };
+                if (replyState.messageId) {
+                    bubbleParams.replyToMessageId = replyState.messageId;
+                    bubbleParams.replyToSenderName = replyState.senderName;
+                    bubbleParams.replyToMessageText = replyState.messageText;
+                }
+                const bubble = makeBubble(bubbleParams, true);
+                bubble.classList.add('temp-msg');
+                msgWrap.appendChild(bubble);
+                if (chatBody) chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+
+                // Clear input immediately for responsiveness
+                if (input) { input.value = ''; input.style.height = 'auto'; }
+
+                // Get CSRF Token
+                let csrfToken = '';
+                let csrfHeader = 'X-XSRF-TOKEN';
+                const metaToken = document.querySelector('meta[name="_csrf"]');
+                if (metaToken) {
+                    csrfToken = metaToken.getAttribute('content');
+                    csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                } else {
+                    const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+                    if (match) csrfToken = match[2];
+                }
+
+                const fd = new FormData(); fd.append('messageText', text);
+                if (replyState.messageId) {
+                    fd.append('replyToMessageId', replyState.messageId);
+                    fd.append('replyToSenderName', replyState.senderName);
+                    fd.append('replyToMessageText', replyState.messageText);
+                }
+                
+                cancelReply(); // Reset UI immediately
+
+                // POST to backend → saved to MongoDB → SSE pushes back → renderMessages() shows it
+                // NO optimistic UI here — SSE is sole source of truth to prevent duplication
+                fetch(`/student/chat/${CHAT_ID}/send`, { 
+                    method:'POST', 
+                    body:fd, 
+                    headers: { [csrfHeader]: csrfToken },
+                    credentials:'same-origin' 
+                })
+                    .catch(e => console.error("Message send error", e))
+                    .finally(() => { isSending = false; if (sendBtn) sendBtn.disabled = false; if (input) input.focus(); });
+                    
+                // Fallback to ensure isSending resets even if fetch completely hangs
+                setTimeout(() => {
+                    if (isSending) {
+                        isSending = false;
+                        if (sendBtn) sendBtn.disabled = false;
+                    }
+                }, 4000);
+            };
+
+            // Auto-resize + Enter to send
+            if (input) {
+                input.addEventListener('input', () => {
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+                    const shell = document.getElementById('directInputShell');
+                    if (shell) { shell.style.borderColor = '#10b981'; shell.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.1)'; }
+                });
+                input.addEventListener('blur', () => {
+                    const shell = document.getElementById('directInputShell');
+                    if (shell) { shell.style.borderColor = 'rgba(16,185,129,0.2)'; shell.style.boxShadow = 'none'; }
+                });
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendDirectMessage(); }
+                });
+            }
+
+            connectSSE();
+        })();
+
+        // Open direct chat in the right panel
+        window.openDirectChat = function() {
+            document.querySelectorAll('.msg-list-item').forEach(el => el.classList.remove('active'));
+            const li = document.getElementById('list-item-direct');
+            if (li) li.classList.add('active');
+
+            const chatDefault = document.getElementById('chatDefault');
+            if (chatDefault) { chatDefault.classList.add('d-none'); chatDefault.classList.remove('d-flex'); }
+            document.querySelectorAll('.chat-view').forEach(el => { el.classList.add('d-none'); el.classList.remove('d-flex'); });
+
+            const view = document.getElementById('chat-view-direct');
+            if (view) { view.classList.remove('d-none'); view.classList.add('d-flex'); }
+
+            if (window.innerWidth <= 768) {
+                const container = document.getElementById('messagesContainer');
+                if (container) container.classList.add('chat-active');
+            }
+            const chatBody = document.getElementById('directChatBody');
+            if (chatBody) setTimeout(() => chatBody.scrollTop = chatBody.scrollHeight, 100);
+
+            // Remove unread badge and unread styling from list item
+            if (li) { 
+                const badge = li.querySelector('.badge'); 
+                if (badge) badge.remove(); 
+                li.classList.remove('has-unread');
+            }
+        };
+
 
         // AJAX Chat Submission
         document.addEventListener('DOMContentLoaded', function() {
@@ -646,29 +1295,30 @@
                                 attachmentHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-decoration-none d-inline-flex align-items-center" style="background: rgba(16,185,129,0.1); color: #059669; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 500;"><i class="bi bi-file-earmark-pdf me-2 fs-6"></i>View File</a></div>`;
                             }
                             
-                            // Build new chat bubble (Threaded Style)
+                            // Build new chat bubble matching the new layout
                             const newBubble = document.createElement('div');
-                            newBubble.className = 'chat-thread-item chat-bubble-student';
-                            const profilePicHtml = data.profilePicture 
-                                ? `<img src="${data.profilePicture.startsWith('http') ? data.profilePicture : '/uploads/' + data.profilePicture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
-                                : `<i class="bi bi-person-fill fs-5"></i>`;
+                            newBubble.className = 'd-flex justify-content-end ms-auto mb-4';
+                            
+                            // For avatar we use 'U' or maybe first char of name (we don't have session in JS but 'U' is fine for student fallback)
+                            const initial = 'U';
                             
                             newBubble.innerHTML = `
-                                <div class="thread-line"></div>
-                                <div class="chat-avatar" style="color: #3b82f6;">
-                                    ${profilePicHtml}
-                                    <div class="status-dot" style="background-color: #10b981;"></div>
-                                </div>
-                                <div class="chat-bubble-content">
-                                    <div class="d-flex align-items-center mb-1 gap-2">
-                                        <span class="fw-bold" style="font-size: 0.95rem; color: #1e293b;">You</span>
-                                        <i class="bi bi-patch-check-fill text-primary" style="font-size: 0.8rem;"></i>
-                                        <small class="text-muted" style="font-size: 0.75rem;">${data.time}</small>
+                                <div style="display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-end;">
+                                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;justify-content:flex-end;">
+                                        <span style="font-size:0.8rem;color:#94a3b8;font-weight:500;">${data.time}</span>
+                                        <span style="font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;text-transform:uppercase;">${document.getElementById('DC_STUDENT_NAME') ? document.getElementById('DC_STUDENT_NAME').value.toUpperCase() : 'STUDENT'}</span>
                                     </div>
-                                    <p class="mb-2 dynamic-typing-text" style="font-size: 0.95rem; color: #334155; line-height: 1.6; white-space: pre-wrap;"></p>
-                                    ${attachmentHtml}
-                                    
-                                    <div class="mt-2 d-flex gap-2">
+                                    <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
+                                        <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;">${initial}</div>
+                                        
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                            <div class="dynamic-typing-text"></div>
+                                            ${attachmentHtml}
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; opacity: 0.8; margin-right: 46px;">
+                                        <small style="font-size: 0.7rem; margin-right: 4px; color: #64748b; font-weight: 500;">Delivered</small>
+                                        <i class="bi bi-check2-all" style="font-size: 1rem; color: #64748b;"></i>
                                     </div>
                                 </div>
                             `;
@@ -684,21 +1334,16 @@
                             // Apply Typing Effect to the sent message
                             const msgText = data.messageText;
                             const textElem = newBubble.querySelector('.dynamic-typing-text');
-                            textElem.classList.add('typing-cursor');
-                            let charIndex = 0;
                             const scrollArea = document.getElementById(chatContainerId);
                             
-                            function typeNewMessage() {
-                                if (charIndex < msgText.length) {
-                                    textElem.innerHTML += msgText.charAt(charIndex);
-                                    charIndex++;
-                                    if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
-                                    setTimeout(typeNewMessage, 100);
-                                } else {
-                                    textElem.classList.remove('typing-cursor');
-                                }
-                            }
-                            typeNewMessage();
+                            textElem.innerHTML = '<div class="typing-bubble" style="padding:4px 0;"><div class="typing-dot" style="background:#ffffff;"></div><div class="typing-dot" style="background:#ffffff;"></div><div class="typing-dot" style="background:#ffffff;"></div></div>';
+                            if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+                            
+                            setTimeout(() => {
+                                textElem.innerHTML = msgText;
+                                newBubble.style.animation = 'slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                                if(scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+                            }, 1200);
                             
                             this.reset();
                             const textarea = this.querySelector('textarea');
@@ -720,5 +1365,11 @@
             });
         });
     </script>
-<script>document.addEventListener("click", function(e) { if(e.target.closest("[data-bs-toggle=\"dropdown\"]")) { console.log("Dropdown toggle clicked!", e.target); try { var dropdown = new bootstrap.Dropdown(e.target.closest("[data-bs-toggle=\"dropdown\"]")); dropdown.toggle(); } catch(err) { alert("Bootstrap error: " + err.message); } } });</script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script></body>
+    <script>
+        // Custom dropdown handler removed to allow native Bootstrap 5 initialization.
+    </script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<!-- Push Notifications -->
+<script src="/js/push-manager.js"></script>
+</body>
 </html>

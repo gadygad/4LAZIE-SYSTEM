@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import com.school.util.EncryptionUtil;
 import java.time.LocalDateTime;
 
@@ -13,6 +14,7 @@ public class Note {
     @Id
     private String id;
 
+    @TextIndexed(weight = 2)
     private String title;
 
     @Indexed
@@ -28,6 +30,7 @@ public class Note {
     private String moduleCode;
 
     @Indexed
+    @TextIndexed(weight = 1)
     private String category; // Note, Past Paper, Assignment, Video Tutorial
 
     private String filename;

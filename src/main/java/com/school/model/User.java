@@ -45,6 +45,17 @@ public class User {
     private Integer level;
     private Integer semester;
     private Integer year;
+    
+    // Bio and Social Links
+    @Size(max = 250, message = "Bio cannot exceed 250 characters")
+    private String bio;
+    private String githubLink;
+    private String linkedinLink;
+    private String twitterLink;
+    private String facebookLink;
+    private String instagramLink;
+    private String telegramLink;
+    private String youtubeLink;
     private LocalDateTime dateJoined;
     private LocalDateTime lastLoginTime;
     private LocalDateTime lastActiveTime;
@@ -58,6 +69,7 @@ public class User {
 
     private Boolean isVerified = true;
     private String verificationToken;
+    private String securityToken;
     private LocalDateTime tokenExpiryDate;
 
     private Boolean isSuspended = false;
@@ -104,6 +116,22 @@ public class User {
     public void setSemester(Integer semester) { this.semester = semester; }
     public Integer getYear() { return year; }
     public void setYear(Integer year) { this.year = year; }
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+    public String getGithubLink() { return githubLink; }
+    public void setGithubLink(String githubLink) { this.githubLink = githubLink; }
+    public String getLinkedinLink() { return linkedinLink; }
+    public void setLinkedinLink(String linkedinLink) { this.linkedinLink = linkedinLink; }
+    public String getTwitterLink() { return twitterLink; }
+    public void setTwitterLink(String twitterLink) { this.twitterLink = twitterLink; }
+    public String getFacebookLink() { return facebookLink; }
+    public void setFacebookLink(String facebookLink) { this.facebookLink = facebookLink; }
+    public String getInstagramLink() { return instagramLink; }
+    public void setInstagramLink(String instagramLink) { this.instagramLink = instagramLink; }
+    public String getTelegramLink() { return telegramLink; }
+    public void setTelegramLink(String telegramLink) { this.telegramLink = telegramLink; }
+    public String getYoutubeLink() { return youtubeLink; }
+    public void setYoutubeLink(String youtubeLink) { this.youtubeLink = youtubeLink; }
     public LocalDateTime getDateJoined() { return dateJoined; }
     public void setDateJoined(LocalDateTime dateJoined) { this.dateJoined = dateJoined; }
     public LocalDateTime getLastLoginTime() { return lastLoginTime; }
@@ -122,6 +150,8 @@ public class User {
     public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
     public String getVerificationToken() { return verificationToken; }
     public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
+    public String getSecurityToken() { return securityToken; }
+    public void setSecurityToken(String securityToken) { this.securityToken = securityToken; }
     public LocalDateTime getTokenExpiryDate() { return tokenExpiryDate; }
     public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) { this.tokenExpiryDate = tokenExpiryDate; }
     public Boolean getIsSuspended() { return isSuspended; }
