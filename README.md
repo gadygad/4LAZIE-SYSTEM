@@ -30,6 +30,7 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 - **Admin dashboard** — manage users, notes, subjects, courses, and timetables
 - **Super Admin approvals** — sensitive delete actions need approval
 - **Push notifications** — works as a PWA on mobile (installable, offline support)
+- **Exam Generator Hub** — built-in tools for admins to generate beautiful PDF past papers (UE, CATs) for multiple universities
 - **Premium section** — optional upgrade area for extra features
 
 ---
