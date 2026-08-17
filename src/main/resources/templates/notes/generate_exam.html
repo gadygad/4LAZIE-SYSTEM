@@ -16,7 +16,10 @@
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <!-- HTML2PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2canvas (standalone) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF (standalone) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         /* Background Effects */
         body {
@@ -975,6 +978,68 @@
             newBlock.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
         }
 
+        
+        function calculatePDFLayout() {
+            const element = document.getElementById('exam-pdf-template');
+            const origDisplay = element.style.display;
+            const origPosition = element.style.position;
+            const origZIndex = element.style.zIndex;
+            
+            element.style.display = 'block';
+            element.style.position = 'absolute';
+            element.style.zIndex = '-9999';
+            element.style.paddingBottom = '0px';
+
+            const exactA4Height = element.offsetWidth * (297 / 210); 
+            element.style.minHeight = exactA4Height + 'px'; 
+            void element.offsetHeight;
+            
+            const itemsToCheck = element.querySelectorAll('.pdf-q-item, .pdf-part-header');
+            itemsToCheck.forEach(item => item.style.marginTop = '0px');
+            
+            let hasBreaks = true;
+            let loopCount = 0;
+            while (hasBreaks && loopCount < 50) {
+                hasBreaks = false;
+                loopCount++;
+                const templateTop = element.getBoundingClientRect().top;
+                for (let j = 0; j < itemsToCheck.length; j++) {
+                    const item = itemsToCheck[j];
+                    const rect = item.getBoundingClientRect();
+                    const startY = rect.top - templateTop;
+                    const endY = rect.bottom - templateTop;
+                    const pageBoundary = Math.ceil(endY / exactA4Height) * exactA4Height - exactA4Height;
+                    
+                    if (startY < pageBoundary && endY > pageBoundary) {
+                        if ((endY - startY) > exactA4Height) continue;
+                        const currentMargin = parseFloat(window.getComputedStyle(item).marginTop) || 0;
+                        const pushAmount = pageBoundary - startY + 2;
+                        item.style.marginTop = (currentMargin + pushAmount) + 'px';
+                        hasBreaks = true;
+                        break; 
+                    }
+                }
+            }
+
+            void element.offsetHeight;
+            const contentHeight = element.scrollHeight;
+            let pagesRequired = Math.ceil(contentHeight / exactA4Height);
+            
+            const availableSpace = (pagesRequired * exactA4Height) - contentHeight;
+            if (availableSpace < 85) {
+                pagesRequired++;
+            }
+            
+            const requiredHeight = pagesRequired * exactA4Height;
+            element.style.minHeight = requiredHeight + 'px';
+            
+            element.style.display = origDisplay;
+            element.style.position = origPosition;
+            element.style.zIndex = origZIndex;
+            
+            return requiredHeight;
+        }
+
         function prepareTemplateData() {
             // Populate hidden template header
             document.querySelector('#exam-pdf-template #pdf-program').innerText = document.getElementById('mProgram').value.toUpperCase();
@@ -1015,7 +1080,7 @@
             ['GENERAL', 'PART A', 'PART B', 'PART C'].forEach(partName => {
                 if(grouped[partName] && grouped[partName].length > 0) {
                     if (partName !== 'GENERAL') {
-                        finalHtml += `<p style="font-weight:bold; font-size: 13pt; margin-top: 20px;">${partName}</p>`;
+                        finalHtml += `<p class="pdf-part-header" style="font-weight:bold; font-size: 13pt; margin-top: 20px;">${partName}</p>`;
                     } else {
                         finalHtml += `<div style="margin-top: 10px;"></div>`;
                     }
@@ -1026,7 +1091,7 @@
                     grouped[partName].forEach(q => {
                         let contentHtml = q.content.replace(/\n/g, '<br>');
                         finalHtml += `
-                            <div style="margin-bottom: 12px; display: flex; page-break-inside: avoid;">
+                            <div class="pdf-q-item" style="margin-bottom: 12px; display: flex; page-break-inside: avoid;">
                                 <div style="min-width: 30px; font-weight: bold;">${q.number}.</div>
                                 <div>${contentHtml}</div>
                             </div>
@@ -1041,95 +1106,146 @@
         function previewPDF() {
             // First, update the hidden template with current form data
             prepareTemplateData();
+                const requiredHeight = calculatePDFLayout();
             
             // Copy the HTML of the hidden template into the preview modal container
             const templateHtml = document.getElementById('exam-pdf-template').innerHTML;
             document.getElementById('preview-container').innerHTML = templateHtml;
+                const previewContainer = document.getElementById('preview-container');
+                previewContainer.style.minHeight = requiredHeight + 'px';
+                previewContainer.style.position = 'relative';
         }
 
-        
-        
-        async 
         async function generatePDF() {
-            // Ensure template has latest data
-            prepareTemplateData();
-
-            let element = document.getElementById('exam-pdf-template');
-            let mCode = document.getElementById('mCode').value;
-
-            element.style.display = 'block';
-            element.style.position = 'absolute';
-            element.style.top = '0';
-            element.style.left = '0';
-            element.style.zIndex = '-9999';
-
-            // Reset minHeight before calculation
-            element.style.minHeight = '297mm';
-
-            const a4Ratio = 297 / 210;
-            const pageHpx = element.offsetWidth * a4Ratio;
-            const currentHeight = element.offsetHeight;
-
-            if (currentHeight > pageHpx) {
-                const totalPages = Math.ceil(currentHeight / pageHpx);
-                element.style.minHeight = (totalPages * pageHpx) + 'px';
-            }
-
             try {
+                // 1. Get required elements
+                const btn = document.querySelector('button[onclick="generatePDF()"]');
+                const element = document.getElementById('exam-pdf-template');
+                const mCodeInput = document.getElementById('mCode');
+                const mCode = (mCodeInput && mCodeInput.value) ? mCodeInput.value : 'EXAM';
+                
+                // 2. Setup button loading state
+                const originalBtnHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Generating...';
+                btn.disabled = true;
+
+                // 3. Update DOM content with form data
+                prepareTemplateData();
+
+                // 4. Force element to be visible but off-screen
+                element.style.display = 'block';
+                element.style.position = 'absolute';
+                element.style.top = '0';
+                element.style.left = '0';
+                element.style.zIndex = '-9999';
+                element.style.paddingBottom = '0px'; // Reset padding to accurately measure content height
+
+                calculatePDFLayout();
+
+                // 5. Save scroll position and jump to top to prevent html2canvas clipping bug
+                const originalScrollY = window.scrollY;
+                window.scrollTo(0, 0);
+
+                // Crucial: Wait for browser to actually paint the element on the screen
+                void element.offsetHeight; // Force layout calc
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // 6. Capture the element as an image
                 const canvas = await html2canvas(element, {
-                    scale: 2, // REDUCED FROM 4 TO 2 TO SAVE MB
+                    scale: 2, // Reduced from 4 to 2 for smaller file size but still sharp
                     useCORS: true,
                     letterRendering: true,
-                    backgroundColor: '#b2d8ba'
+                    backgroundColor: '#b2d8ba',
+                    scrollY: 0,
+                    scrollX: 0,
+                    x: 0,
+                    y: 0,
+                    windowWidth: element.scrollWidth,
+                    windowHeight: element.scrollHeight
                 });
 
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+                // Restore scroll position immediately after capture
+                window.scrollTo(0, originalScrollY);
 
+                // 7. Initialize jsPDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait', 
+                    compress: true 
+                });
+                
+                // 8. Calculate dimensions for A4 slicing
                 const pageW = pdf.internal.pageSize.getWidth();
                 const pageH = pdf.internal.pageSize.getHeight();
-
                 const canvasW = canvas.width;
                 const canvasH = canvas.height;
-                const ratio = canvasW / pageW;       // canvas pixels per mm
-                const pageHpx_canvas = pageH * ratio; // page height in canvas pixels
-                const totalPages = Math.ceil(canvasH / pageHpx_canvas);
-
+                const ratio = canvasW / pageW;
+                const pageHpx = pageH * ratio;
+                
+                // Add a small 10px tolerance to avoid generating an extra blank page for a sub-pixel sliver
+                const totalPages = Math.ceil((canvasH - 10) / pageHpx);
+                
+                // 9. Loop through pages and slice the canvas
                 for (let page = 0; page < totalPages; page++) {
                     if (page > 0) pdf.addPage();
-
-                    // Paint green background on this page
-                    pdf.setFillColor(178, 216, 186);  // #b2d8ba
+                    
+                    // Paint the background green for the entire A4 page
+                    pdf.setFillColor(178, 216, 186); // #b2d8ba
                     pdf.rect(0, 0, pageW, pageH, 'F');
-
-                    // Slice the canvas for this page
-                    const srcY = page * pageHpx_canvas;
-                    const srcH = Math.min(pageHpx_canvas, canvasH - srcY);
-
+                    
+                    const srcY = page * pageHpx;
+                    const srcH = Math.min(pageHpx, canvasH - srcY);
+                    
+                    // Create a temporary canvas for this specific slice
                     const sliceCanvas = document.createElement('canvas');
                     sliceCanvas.width = canvasW;
                     sliceCanvas.height = srcH;
                     const ctx = sliceCanvas.getContext('2d');
+                    
+                    // Draw the background and the content slice
                     ctx.fillStyle = '#b2d8ba';
                     ctx.fillRect(0, 0, canvasW, srcH);
                     ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
-
-                    const sliceImg = sliceCanvas.toDataURL('image/jpeg', 0.75); // COMPRESSED TO 0.75
+                    
+                    // Add the slice to the PDF with 75% quality to significantly reduce MBs
+                    const sliceImg = sliceCanvas.toDataURL('image/jpeg', 0.75);
                     const sliceHmm = (srcH / ratio);
                     pdf.addImage(sliceImg, 'JPEG', 0, 0, pageW, sliceHmm);
                 }
-
-                pdf.save(`${mCode}_Exam.pdf`);
-            } catch (err) {
-                console.error("Error generating PDF: ", err);
-                alert("Error generating PDF.");
-            } finally {
+                
+                // 10. Save the PDF file
+                let finalFileName = `${mCode}_Exam.pdf`;
+                pdf.save(finalFileName);
+                
+                // 11. Hide the element again
                 element.style.display = 'none';
                 element.style.position = 'static';
+
+                // 12. Restore button state
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+                
+            } catch (error) {
+                console.error("PDF Generation Error:", error);
+                alert("Kuna tatizo limetokea wakati wa kutengeneza PDF. Tafadhali jaribu tena.");
+                
+                // Always restore button if error occurs
+                const btn = document.querySelector('button[onclick="generatePDF()"]');
+                if(btn) {
+                    btn.innerHTML = '<i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF';
+                    btn.disabled = false;
+                }
+                
+                // Always hide template if error occurs
+                const element = document.getElementById('exam-pdf-template');
+                if(element) {
+                    element.style.display = 'none';
+                    element.style.position = 'static';
+                }
             }
         }
-
-
 
     </script>
 </body>
