@@ -1453,17 +1453,22 @@
         }
 
         
+        
         async function generatePDF() {
             let element = document.getElementById('exam-pdf-template');
             let mCode = document.getElementById('mCode').value;
             let btn = document.querySelector('button[onclick="generatePDF()"]');
-
+            
+            if(!btn) {
+               btn = { innerHTML: '', disabled: false }; // fallback for generate_exam.html
+            }
+            
             let originalBtnHtml = btn.innerHTML;
             btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Generating PDFs...';
             btn.disabled = true;
 
             // Get base program and extras
-            let baseProgram = document.getElementById('mProgram').value.toUpperCase();
+            let baseProgram = document.getElementById('mProgram') ? document.getElementById('mProgram').value.toUpperCase() : "GENERAL";
             let programs = [baseProgram];
 
             document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
@@ -1475,13 +1480,17 @@
             try {
                 for (let i = 0; i < programs.length; i++) {
                     let prog = programs[i];
+                    // Update DOM for this specific program
                     prepareTemplateData(prog);
 
                     element.style.display = 'block';
+                    element.style.position = 'absolute';
+                    element.style.top = '0';
+                    element.style.left = '0';
+                    element.style.zIndex = '-9999';
 
                     // Reset minHeight before calculation
                     element.style.minHeight = '297mm';
-
                     // Force the exam theme to be an exact multiple of A4 height
                     const a4Ratio = 297 / 210;
                     const pageHpx = element.offsetWidth * a4Ratio;
@@ -1492,49 +1501,69 @@
                         element.style.minHeight = (totalPages * pageHpx) + 'px';
                     }
 
+                    // Ensure unique filename
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
                     // Use html2canvas + jsPDF directly so we can paint background on every page
                     const canvas = await html2canvas(element, {
-                        scale: 2,
+                        scale: 2, // REDUCED FROM 4 TO 2 TO SAVE MB
                         useCORS: true,
                         letterRendering: true,
-                        windowWidth: element.scrollWidth,
-                        windowHeight: element.scrollHeight
+                        backgroundColor: '#b2d8ba'
                     });
-                    
-                    // Use 0.75 quality to keep MB low!
-                    const imgData = canvas.toDataURL('image/jpeg', 0.75);
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    let heightLeft = pdfHeight;
-                    let position = 0;
 
-                    // Add first page
-                    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
-                    heightLeft -= pdf.internal.pageSize.getHeight();
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
 
-                    // Add subsequent pages if content overflows
-                    while (heightLeft >= 0) {
-                        position = heightLeft - pdfHeight;
-                        pdf.addPage();
-                        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
-                        heightLeft -= pdf.internal.pageSize.getHeight();
+                    const pageW = pdf.internal.pageSize.getWidth();
+                    const pageH = pdf.internal.pageSize.getHeight();
+
+                    const canvasW = canvas.width;
+                    const canvasH = canvas.height;
+                    const ratio = canvasW / pageW;       // canvas pixels per mm
+                    const pageHpx_canvas = pageH * ratio; // page height in canvas pixels
+                    const totalPages = Math.ceil(canvasH / pageHpx_canvas);
+
+                    for (let page = 0; page < totalPages; page++) {
+                        if (page > 0) pdf.addPage();
+
+                        // Paint green background on this page
+                        pdf.setFillColor(178, 216, 186);  // #b2d8ba
+                        pdf.rect(0, 0, pageW, pageH, 'F');
+
+                        // Slice the canvas for this page
+                        const srcY = page * pageHpx_canvas;
+                        const srcH = Math.min(pageHpx_canvas, canvasH - srcY);
+
+                        const sliceCanvas = document.createElement('canvas');
+                        sliceCanvas.width = canvasW;
+                        sliceCanvas.height = srcH;
+                        const ctx = sliceCanvas.getContext('2d');
+                        ctx.fillStyle = '#b2d8ba';
+                        ctx.fillRect(0, 0, canvasW, srcH);
+                        ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
+
+                        const sliceImg = sliceCanvas.toDataURL('image/jpeg', 0.75); // COMPRESSED TO 0.75
+                        const sliceHmm = (srcH / ratio);
+                        pdf.addImage(sliceImg, 'JPEG', 0, 0, pageW, sliceHmm);
                     }
 
                     pdf.save(`${mCode}_${safeProgName}_Exam.pdf`);
                     element.style.display = 'none';
+                    element.style.position = 'static';
                 }
             } catch (err) {
                 console.error("Error generating multiple PDFs: ", err);
                 alert("Error during PDF generation.");
             } finally {
-                btn.innerHTML = originalBtnHtml;
-                btn.disabled = false;
+                if (btn && btn.innerHTML) {
+                    btn.innerHTML = originalBtnHtml;
+                    btn.disabled = false;
+                }
                 // Restore preview data back to the base program just in case
                 prepareTemplateData();
             }
         }
+
 
     </script>
 </body>

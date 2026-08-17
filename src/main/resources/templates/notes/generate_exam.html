@@ -1048,13 +1048,20 @@
         }
 
         
+        
+        async 
         async function generatePDF() {
             // Ensure template has latest data
             prepareTemplateData();
 
             let element = document.getElementById('exam-pdf-template');
-            element.style.display = 'block';
             let mCode = document.getElementById('mCode').value;
+
+            element.style.display = 'block';
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.left = '0';
+            element.style.zIndex = '-9999';
 
             // Reset minHeight before calculation
             element.style.minHeight = '297mm';
@@ -1070,29 +1077,46 @@
 
             try {
                 const canvas = await html2canvas(element, {
-                    scale: 2,
+                    scale: 2, // REDUCED FROM 4 TO 2 TO SAVE MB
                     useCORS: true,
                     letterRendering: true,
-                    windowWidth: element.scrollWidth,
-                    windowHeight: element.scrollHeight
+                    backgroundColor: '#b2d8ba'
                 });
-                
-                // Use 0.75 quality to keep MB low!
-                const imgData = canvas.toDataURL('image/jpeg', 0.75);
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                let heightLeft = pdfHeight;
-                let position = 0;
 
-                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
-                heightLeft -= pdf.internal.pageSize.getHeight();
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
 
-                while (heightLeft >= 0) {
-                    position = heightLeft - pdfHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
-                    heightLeft -= pdf.internal.pageSize.getHeight();
+                const pageW = pdf.internal.pageSize.getWidth();
+                const pageH = pdf.internal.pageSize.getHeight();
+
+                const canvasW = canvas.width;
+                const canvasH = canvas.height;
+                const ratio = canvasW / pageW;       // canvas pixels per mm
+                const pageHpx_canvas = pageH * ratio; // page height in canvas pixels
+                const totalPages = Math.ceil(canvasH / pageHpx_canvas);
+
+                for (let page = 0; page < totalPages; page++) {
+                    if (page > 0) pdf.addPage();
+
+                    // Paint green background on this page
+                    pdf.setFillColor(178, 216, 186);  // #b2d8ba
+                    pdf.rect(0, 0, pageW, pageH, 'F');
+
+                    // Slice the canvas for this page
+                    const srcY = page * pageHpx_canvas;
+                    const srcH = Math.min(pageHpx_canvas, canvasH - srcY);
+
+                    const sliceCanvas = document.createElement('canvas');
+                    sliceCanvas.width = canvasW;
+                    sliceCanvas.height = srcH;
+                    const ctx = sliceCanvas.getContext('2d');
+                    ctx.fillStyle = '#b2d8ba';
+                    ctx.fillRect(0, 0, canvasW, srcH);
+                    ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
+
+                    const sliceImg = sliceCanvas.toDataURL('image/jpeg', 0.75); // COMPRESSED TO 0.75
+                    const sliceHmm = (srcH / ratio);
+                    pdf.addImage(sliceImg, 'JPEG', 0, 0, pageW, sliceHmm);
                 }
 
                 pdf.save(`${mCode}_Exam.pdf`);
@@ -1101,8 +1125,11 @@
                 alert("Error generating PDF.");
             } finally {
                 element.style.display = 'none';
+                element.style.position = 'static';
             }
         }
+
+
 
     </script>
 </body>
