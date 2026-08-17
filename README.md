@@ -199,7 +199,7 @@ This is a personal project. If you want to help or report a bug, open an issue o
 
 ## Author
 
-**Careen** — First full-stack project  
+**Godfrey Charles Nyagwisi** — Founder & Developer  
 Built with Spring Boot for Tanzanian college students.
 
 ---
