@@ -393,10 +393,10 @@
         }
 
         .exam-theme {
-            width: 794px !important;
-            min-width: 794px !important;
-            max-width: 794px !important;
-            min-height: 1122px;
+            display: flex;
+            flex-direction: column;
+            width: 210mm;
+            min-height: 297mm;
             background: #b2d8ba;
             color: #111;
             font-size: 13pt;
@@ -698,8 +698,7 @@
     <div class="container my-4">
         <div class="exam-generator-card position-relative z-1">
             <div class="text-center mb-4">
-                <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #065f46;">SJUIT Diploma UE Generator
-                </h2>
+                <h2 class="fw-bolder mb-1 text-uppercase" style="font-family: 'Outfit'; color: #065f46; font-size: clamp(1.4rem, 4vw, 1.8rem);">SJUIT Diploma UE Generator</h2>
                 <p class="text-muted small">This template is strictly configured for St. Joseph University (SJUIT)
                     Diploma University Examinations.</p>
             </div>
@@ -1630,6 +1629,20 @@
                     element.style.top = '0';
                     element.style.left = '0';
                     element.style.zIndex = '-9999';
+
+                    // Reset minHeight before calculation
+                    element.style.minHeight = '297mm';
+                    
+                    // Force the exam theme to be an exact multiple of A4 height
+                    // so the footer aligns perfectly at the bottom of the last page
+                    const a4Ratio = 297 / 210;
+                    const pageHpx = element.offsetWidth * a4Ratio;
+                    const currentHeight = element.offsetHeight;
+                    
+                    if (currentHeight > pageHpx) {
+                        const totalPages = Math.ceil(currentHeight / pageHpx);
+                        element.style.minHeight = (totalPages * pageHpx) + 'px';
+                    }
 
                     // Ensure unique filename
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);

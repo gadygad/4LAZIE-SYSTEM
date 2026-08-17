@@ -243,6 +243,9 @@
                                     <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="apple-btn-read">
                                         <i class="bi bi-eye"></i> READ
                                     </a>
+                                    <button type="button" th:data-title="${note.title}" th:data-slug="${note.encryptedSlug}" onclick="const t = this.getAttribute('data-title'); const u = window.location.origin + '/view/' + this.getAttribute('data-slug'); if(navigator.share){navigator.share({title: t, url: u});} else {navigator.clipboard.writeText(u); alert('Link copied to clipboard!');}" class="apple-btn-dl mx-1" style="background: rgba(14, 165, 233, 0.1); color: #0284c7; border: none;" onmouseover="this.style.background='#0284c7'; this.style.color='#fff';" onmouseout="this.style.background='rgba(14, 165, 233, 0.1)'; this.style.color='#0284c7';">
+                                        <i class="bi bi-share-fill"></i> SHARE
+                                    </button>
                                     <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="apple-btn-dl">
                                         <i class="bi bi-cloud-arrow-down"></i> DOWNLOAD
                                     </a>
@@ -308,6 +311,9 @@
                                     <a th:href="@{'/view/' + ${note.encryptedSlug}}" class="apple-btn-read">
                                         <i class="bi bi-eye"></i> READ
                                     </a>
+                                    <button type="button" th:data-title="${note.title}" th:data-slug="${note.encryptedSlug}" onclick="const t = this.getAttribute('data-title'); const u = window.location.origin + '/view/' + this.getAttribute('data-slug'); if(navigator.share){navigator.share({title: t, url: u});} else {navigator.clipboard.writeText(u); alert('Link copied to clipboard!');}" class="apple-btn-dl mx-1" style="background: rgba(14, 165, 233, 0.1); color: #0284c7; border: none;" onmouseover="this.style.background='#0284c7'; this.style.color='#fff';" onmouseout="this.style.background='rgba(14, 165, 233, 0.1)'; this.style.color='#0284c7';">
+                                        <i class="bi bi-share-fill"></i> SHARE
+                                    </button>
                                     <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="apple-btn-dl">
                                         <i class="bi bi-cloud-arrow-down"></i> DOWNLOAD
                                     </a>

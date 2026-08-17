@@ -305,6 +305,8 @@
         }
 
         .exam-theme {
+            display: flex;
+            flex-direction: column;
             width: 210mm;
             min-height: 297mm;
             background: #b2d8ba;
@@ -443,7 +445,7 @@
     <div class="container my-4">
         <div class="exam-generator-card position-relative z-1">
             <div class="text-center mb-4">
-                <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #065f46;">Create Exam Paper</h2>
+                <h2 class="fw-bolder mb-1 text-uppercase" style="font-family: 'Outfit'; color: #065f46; font-size: clamp(1.4rem, 4vw, 1.8rem);">Create Exam Paper</h2>
                 <p class="text-muted small">Design beautiful, standard-compliant exam PDFs directly from the platform.</p>
             </div>
 
@@ -1213,6 +1215,20 @@
                     prepareTemplateData(prog);
 
                     element.style.display = 'block';
+
+                    // Reset minHeight before calculation
+                    element.style.minHeight = '297mm';
+                    
+                    // Force the exam theme to be an exact multiple of A4 height
+                    // so the footer aligns perfectly at the bottom of the last page
+                    const a4Ratio = 297 / 210;
+                    const pageHpx = element.offsetWidth * a4Ratio;
+                    const currentHeight = element.offsetHeight;
+                    
+                    if (currentHeight > pageHpx) {
+                        const totalPages = Math.ceil(currentHeight / pageHpx);
+                        element.style.minHeight = (totalPages * pageHpx) + 'px';
+                    }
 
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
                     // Use html2canvas + jsPDF directly so we can paint background on every page
