@@ -191,6 +191,18 @@ java -jar target/school-system-1.0-SNAPSHOT.jar
 
 ---
 
+## API Documentation
+
+This project uses **Swagger (OpenAPI)** for interactive API documentation.  
+Once the application is running, you can view and test all available APIs (endpoints, request/response formats) directly in your browser.
+
+- **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **OpenAPI JSON:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+This is especially useful if you plan to build a mobile application in the future!
+
+---
+
 ## Contributing
 
 This is a personal project. If you want to help or report a bug, open an issue or contact the author.
