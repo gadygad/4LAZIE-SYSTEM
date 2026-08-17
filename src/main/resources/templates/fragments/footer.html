@@ -124,13 +124,21 @@
             .footer-premium-link:hover::before {
                 width: 100%; /* Slide in fully to the right */
             }
+            
+            @media (max-width: 576px) {
+                .footer-premium-link {
+                    font-size: 10px !important;
+                    padding: 6px 8px !important;
+                    letter-spacing: 0px;
+                }
+            }
         </style>
 
         <div class="container-fluid px-2 px-md-4 px-xl-5 py-3">
             <div class="d-flex flex-column flex-xl-row justify-content-between align-items-center text-center text-xl-start w-100" style="font-family: 'Outfit', sans-serif; font-size: 13px; letter-spacing: 0.5px;">
                 
                 <!-- Copyright Section -->
-                <div class="mb-3 mb-xl-0 d-flex align-items-center justify-content-center">
+                <div class="mb-3 mb-xl-0 d-flex align-items-center justify-content-center order-3 order-xl-1">
                     <span style="color: #64748b; font-weight: 600;">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span></span> 
                     <a th:href="@{${session.user != null} ? '/dashboard' : '/'}" class="mx-3" style="background: #111827; color: white; padding: 4px 10px; border-radius: 4px; border-bottom: 3px solid #10b981; font-weight: 900; letter-spacing: 1px; text-decoration: none; display: inline-block;">
                         4LAZIE
@@ -139,7 +147,7 @@
                 </div>
 
                 <!-- Navigation Pills -->
-                <div class="d-flex flex-wrap justify-content-center gap-2 mb-3 mb-xl-0">
+                <div class="d-flex flex-nowrap justify-content-center gap-1 gap-md-2 mb-3 mb-xl-0 order-1 order-xl-2">
                     <a href="/about" class="footer-premium-link">About Us</a>
                     <a href="/policy" class="footer-premium-link">Privacy Policy</a>
                     <a href="/terms" class="footer-premium-link">Terms of Service</a>
@@ -147,17 +155,16 @@
                 </div>
                 
                 <!-- Social & Developer Section -->
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+                <div class="d-flex flex-row align-items-center justify-content-center gap-3 order-2 order-xl-3 mb-4 mb-xl-0">
                     <!-- Social Icons -->
-                    <div class="d-flex gap-2 pe-md-3 border-end-md" style="border-color: #e2e8f0 !important;">
+                    <div class="d-flex gap-2">
                         <a href="#" style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'"><i class="bi bi-twitter-x"></i></a>
                         <a href="#" style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0a66c2'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'"><i class="bi bi-linkedin"></i></a>
                         <a href="#" style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#e1306c'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b'"><i class="bi bi-instagram"></i></a>
                     </div>
 
                     <!-- Developer -->
-                    <span style="color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                        Developed by 
+                    <span style="display: flex; align-items: center;">
                         <a href="https://www.mindenlabs.com" target="_blank" class="text-decoration-none" style="color: #ffffff; font-weight: 700; transition: all 0.3s; background: #3b82f6; padding: 6px 16px; border-radius: 20px; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
                             mindenlabs
                         </a>
