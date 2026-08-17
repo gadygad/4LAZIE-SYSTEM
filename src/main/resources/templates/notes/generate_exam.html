@@ -1053,30 +1053,20 @@
 
             // Make template visible momentarily for html2pdf
             let element = document.getElementById('exam-pdf-template');
-            
-            // Create a clone wrapper to avoid viewport clipping issues and flash
-            let wrapper = document.createElement('div');
-            wrapper.style.position = 'absolute';
-            wrapper.style.left = '-9999px';
-            wrapper.style.top = window.scrollY + 'px';
-            
-            let clone = element.cloneNode(true);
-            clone.style.display = 'block';
-            wrapper.appendChild(clone);
-            document.body.appendChild(wrapper);
+            element.style.display = 'block';
 
             let opt = {
                 margin:       0,
                 filename:     document.getElementById('mCode').value + '_Exam.pdf',
                 image:        { type: 'jpeg', quality: 0.75 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: clone.scrollWidth, windowHeight: clone.scrollHeight },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
                 pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
             // Generate
-            html2pdf().set(opt).from(clone).save().then(() => {
-                document.body.removeChild(wrapper); // hide again
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.style.display = 'none'; // hide again
             });
         }
     </script>
