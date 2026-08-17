@@ -1047,35 +1047,63 @@
             document.getElementById('preview-container').innerHTML = templateHtml;
         }
 
-        function generatePDF() {
+        
+        async function generatePDF() {
             // Ensure template has latest data
             prepareTemplateData();
 
-            // Make template visible momentarily for html2pdf
             let element = document.getElementById('exam-pdf-template');
-            
-            // Force to top left to prevent html2canvas blank page from scroll clipping
             element.style.display = 'block';
-            element.style.position = 'absolute';
-            element.style.top = '0';
-            element.style.left = '0';
-            element.style.zIndex = '9999';
+            let mCode = document.getElementById('mCode').value;
 
-            let opt = {
-                margin:       0,
-                filename:     document.getElementById('mCode').value + '_Exam.pdf',
-                image:        { type: 'jpeg', quality: 0.75 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-            };
+            // Reset minHeight before calculation
+            element.style.minHeight = '297mm';
 
-            // Generate
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.style.display = 'none'; // hide again
-                element.style.position = 'static';
-            });
+            const a4Ratio = 297 / 210;
+            const pageHpx = element.offsetWidth * a4Ratio;
+            const currentHeight = element.offsetHeight;
+
+            if (currentHeight > pageHpx) {
+                const totalPages = Math.ceil(currentHeight / pageHpx);
+                element.style.minHeight = (totalPages * pageHpx) + 'px';
+            }
+
+            try {
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    windowWidth: element.scrollWidth,
+                    windowHeight: element.scrollHeight
+                });
+                
+                // Use 0.75 quality to keep MB low!
+                const imgData = canvas.toDataURL('image/jpeg', 0.75);
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                let heightLeft = pdfHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
+                heightLeft -= pdf.internal.pageSize.getHeight();
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - pdfHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
+                    heightLeft -= pdf.internal.pageSize.getHeight();
+                }
+
+                pdf.save(`${mCode}_Exam.pdf`);
+            } catch (err) {
+                console.error("Error generating PDF: ", err);
+                alert("Error generating PDF.");
+            } finally {
+                element.style.display = 'none';
+            }
         }
+
     </script>
 </body>
 </html>

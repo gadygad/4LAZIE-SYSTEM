@@ -1452,11 +1452,12 @@
             }
         }
 
+        
         async function generatePDF() {
             let element = document.getElementById('exam-pdf-template');
             let mCode = document.getElementById('mCode').value;
             let btn = document.querySelector('button[onclick="generatePDF()"]');
-            
+
             let originalBtnHtml = btn.innerHTML;
             btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Generating PDFs...';
             btn.disabled = true;
@@ -1464,7 +1465,7 @@
             // Get base program and extras
             let baseProgram = document.getElementById('mProgram').value.toUpperCase();
             let programs = [baseProgram];
-            
+
             document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
                 if (cb.value !== baseProgram) {
                     programs.push(cb.value);
@@ -1474,31 +1475,55 @@
             try {
                 for (let i = 0; i < programs.length; i++) {
                     let prog = programs[i];
-                    // Update DOM for this specific program
                     prepareTemplateData(prog);
-                    
-                    // Force to top left to prevent html2canvas blank page from scroll clipping
+
                     element.style.display = 'block';
-                    element.style.position = 'absolute';
-                    element.style.top = '0';
-                    element.style.left = '0';
-                    element.style.zIndex = '9999';
 
-                    // Ensure unique filename
+                    // Reset minHeight before calculation
+                    element.style.minHeight = '297mm';
+
+                    // Force the exam theme to be an exact multiple of A4 height
+                    const a4Ratio = 297 / 210;
+                    const pageHpx = element.offsetWidth * a4Ratio;
+                    const currentHeight = element.offsetHeight;
+
+                    if (currentHeight > pageHpx) {
+                        const totalPages = Math.ceil(currentHeight / pageHpx);
+                        element.style.minHeight = (totalPages * pageHpx) + 'px';
+                    }
+
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
-                    let opt = {
-                        margin:       0,
-                        filename:     `${mCode}_${safeProgName}_Exam.pdf`,
-                        image:        { type: 'jpeg', quality: 0.75 },
-                        html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-                        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-                    };
-
-                    await html2pdf().set(opt).from(element).save();
+                    // Use html2canvas + jsPDF directly so we can paint background on every page
+                    const canvas = await html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        letterRendering: true,
+                        windowWidth: element.scrollWidth,
+                        windowHeight: element.scrollHeight
+                    });
                     
+                    // Use 0.75 quality to keep MB low!
+                    const imgData = canvas.toDataURL('image/jpeg', 0.75);
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    let heightLeft = pdfHeight;
+                    let position = 0;
+
+                    // Add first page
+                    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
+                    heightLeft -= pdf.internal.pageSize.getHeight();
+
+                    // Add subsequent pages if content overflows
+                    while (heightLeft >= 0) {
+                        position = heightLeft - pdfHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight, undefined, 'FAST');
+                        heightLeft -= pdf.internal.pageSize.getHeight();
+                    }
+
+                    pdf.save(`${mCode}_${safeProgName}_Exam.pdf`);
                     element.style.display = 'none';
-                    element.style.position = 'static';
                 }
             } catch (err) {
                 console.error("Error generating multiple PDFs: ", err);
@@ -1510,6 +1535,7 @@
                 prepareTemplateData();
             }
         }
+
     </script>
 </body>
 </html>
