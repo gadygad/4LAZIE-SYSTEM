@@ -521,7 +521,7 @@
                             </div>
                             <div class="col-md-6" id="ntaLevelContainer">
                                 <label class="form-label fw-bold text-success small">NTA Level</label>
-                                <select id="mNtaLevel" class="form-select form-select-lg shadow-sm border-0">
+                                <select id="mNtaLevel" class="form-select form-select-lg shadow-sm border-0" onchange="updateModuleList()">
                                     <option value="4">NTA Level 4 (Basic Technician)</option>
                                     <option value="5">NTA Level 5 (Technician)</option>
                                     <option value="6">NTA Level 6 (Ordinary Diploma)</option>
@@ -990,9 +990,19 @@
             
             // Determine semester number (SEM: I -> 1, SEM: II -> 2)
             const semNo = selectedSemester.includes('I') && !selectedSemester.includes('II') ? 1 : 2;
-            
-            // Filter subjects by semester
-            const filteredSubjects = course.subjects.filter(s => s.semesterNo === semNo);
+
+            const level = document.getElementById('mLevel').value;
+            let ntaLevel = null;
+            if (level === 'DIPLOMA') {
+                ntaLevel = parseInt(document.getElementById('mNtaLevel').value);
+            }
+
+            // Filter subjects by semester and level
+            const filteredSubjects = course.subjects.filter(s => {
+                if (s.semesterNo !== semNo) return false;
+                if (ntaLevel && s.levelNo && s.levelNo !== ntaLevel) return false;
+                return true;
+            });
             
             if (filteredSubjects.length === 0) {
                 moduleSelect.innerHTML = '<option value="">-- No Modules Found --</option>';
