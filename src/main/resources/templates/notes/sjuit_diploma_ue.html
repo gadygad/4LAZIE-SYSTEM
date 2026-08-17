@@ -614,57 +614,7 @@
                         </div>
                         
                         <div id="questions-container" class="d-flex flex-column gap-3 mb-4">
-                            <!-- Default first question -->
-                            <div class="question-block p-3 border-0 rounded position-relative shadow-sm" style="background: rgba(255,255,255,0.9);">
-                                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
-                                <div class="row g-2 mb-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-secondary">Part / Section</label>
-                                        <select class="form-select form-select-sm q-part border-0 bg-light" onchange="updateQuestionNumbers(this)">
-                                            <option value="GENERAL">GENERAL / NO PART</option>
-                                            <option value="PART A">PART A</option>
-                                            <option value="PART B">PART B</option>
-                                            <option value="PART C">PART C</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-secondary">Question Number</label>
-                                        <select class="form-select form-select-sm q-number border-0 bg-light">
-                                            <option value="1">Question 1</option>
-                                            <option value="2">Question 2</option>
-                                            <option value="3">Question 3</option>
-                                            <option value="4">Question 4</option>
-                                            <option value="5">Question 5</option>
-                                            <option value="6">Question 6</option>
-                                            <option value="7">Question 7</option>
-                                            <option value="8">Question 8</option>
-                                            <option value="9">Question 9</option>
-                                            <option value="10">Question 10</option>
-                                            <option value="11">Question 11</option>
-                                            <option value="12">Question 12</option>
-                                            <option value="13">Question 13</option>
-                                            <option value="14">Question 14</option>
-                                            <option value="15">Question 15</option>
-                                            <option value="16">Question 16</option>
-                                            <option value="17">Question 17</option>
-                                            <option value="18">Question 18</option>
-                                            <option value="19">Question 19</option>
-                                            <option value="20">Question 20</option>
-                                            <option value="21">Question 21</option>
-                                            <option value="22">Question 22</option>
-                                            <option value="23">Question 23</option>
-                                            <option value="24">Question 24</option>
-                                            <option value="25">Question 25</option>
-                                            <option value="26">Question 26</option>
-                                            <option value="27">Question 27</option>
-                                            <option value="28">Question 28</option>
-                                            <option value="29">Question 29</option>
-                                            <option value="30">Question 30</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <textarea class="form-control q-content border-0 bg-light" rows="3" placeholder="Type the question content here..."></textarea>
-                            </div>
+                            <!-- Blocks will be generated automatically by JS -->
                         </div>
 
                         <div class="d-flex flex-column flex-md-row justify-content-between mt-4 pt-3 border-top align-items-md-center gap-3">
@@ -1117,7 +1067,7 @@
             });
         }
 
-        function updateQuestionNumbers(partSelect) {
+        function updateQuestionNumbers(partSelect, resetValue = true) {
             const numSelect = partSelect.closest('.question-block').querySelector('.q-number');
             const partValue = partSelect.value;
             let start = 1;
@@ -1138,7 +1088,9 @@
             }
             numSelect.innerHTML = optionsHtml;
             
-            if (prevValue >= start && prevValue <= end) {
+            if (!resetValue && prevValue) {
+                numSelect.value = prevValue;
+            } else if (prevValue >= start && prevValue <= end) {
                 numSelect.value = prevValue;
             } else {
                 numSelect.value = start;
@@ -1209,6 +1161,49 @@
             newBlock.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
         }
 
+        function generateDefaultBlocks() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            for(let i=1; i<=30; i++) {
+                let part = 'PART A';
+                if (i > 10 && i <= 20) part = 'PART B';
+                if (i > 20) part = 'PART C';
+                
+                const blockHtml = `
+                <div class="question-block p-3 border rounded bg-light position-relative mt-3">
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Part / Section</label>
+                            <select class="form-select form-select-sm q-part border-0 bg-light" onchange="updateQuestionNumbers(this)">
+                                <option value="PART A" ${part === 'PART A' ? 'selected' : ''}>PART A</option>
+                                <option value="PART B" ${part === 'PART B' ? 'selected' : ''}>PART B</option>
+                                <option value="PART C" ${part === 'PART C' ? 'selected' : ''}>PART C</option>
+                                <option value="GENERAL">GENERAL / NO PART</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Question Number</label>
+                            <select class="form-select form-select-sm q-number border-0 bg-light">
+                                <option value="${i}" selected>Question ${i}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <textarea class="form-control q-content border-0 bg-light" rows="3" placeholder="Type the question content here..."></textarea>
+                </div>
+                `;
+                container.insertAdjacentHTML('beforeend', blockHtml);
+            }
+            
+            // Initialize custom dropdowns and options list for all blocks
+            container.querySelectorAll('select.q-part').forEach(select => {
+                updateQuestionNumbers(select, false); // pass false to avoid overwriting existing value
+            });
+        }
+        
+        window.addEventListener('DOMContentLoaded', generateDefaultBlocks);
+
         function prepareTemplateData(overrideProgramName) {
             // Populate hidden template header
             let programName = overrideProgramName || document.getElementById('mProgram').value.toUpperCase();
@@ -1275,11 +1270,11 @@
                             marksText = "(10 &times; 2 = 20 MARKS)";
                             instructionText = "(Answer all questions)";
                         } else if (partName === 'PART B') {
-                            marksText = "(5 &times; 8 = 40 MARKS)";
-                            instructionText = "(Answer any FIVE questions)";
+                            marksText = "(5 &times; 4 = 20 MARKS)";
+                            instructionText = "(Answer any five)";
                         } else if (partName === 'PART C') {
-                            marksText = "(2 &times; 20 = 40 MARKS)";
-                            instructionText = "(Answer any TWO questions)";
+                            marksText = "(5 &times; 12 = 60 MARKS)";
+                            instructionText = "(Answer any five)";
                         }
 
                         finalHtml += `
