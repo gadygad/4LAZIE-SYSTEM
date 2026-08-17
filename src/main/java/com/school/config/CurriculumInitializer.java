@@ -85,6 +85,7 @@ public class CurriculumInitializer {
             seedCourse(courseRepository, "DIPLOMA IN MECHANICAL ENGINEERING", "DIP_ME", "Diploma in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 3, "Level", 4);
             seedCourse(courseRepository, "DIPLOMA IN MECHATRONICS ENGINEERING", "DIP_MTE", "Diploma in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 3, "Level", 4);
             seedCourse(courseRepository, "DIPLOMA IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DIP_EEE", "Diploma in EEE", "Electrical & Electronics", "bi-lightning-charge-fill", "#d97706", "rgba(251, 191, 36, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, "DIPLOMA IN ELECTRONICS AND COMMUNICATION ENGINEERING", "DIP_ECE", "Diploma in ECE", "Electronics & Comm.", "bi-broadcast", "#06b6d4", "rgba(6, 182, 212, 0.1)", 3, "Level", 4);
 
             // Seed Degrees
             seedCourse(courseRepository, "DEGREE IN INFORMATION TECHNOLOGY", "DEG_IT", "Degree in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 4, "Year", 1);
@@ -94,6 +95,7 @@ public class CurriculumInitializer {
             seedCourse(courseRepository, "DEGREE IN MECHANICAL ENGINEERING", "DEG_ME", "Degree in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 4, "Year", 1);
             seedCourse(courseRepository, "DEGREE IN MECHATRONICS ENGINEERING", "DEG_MTE", "Degree in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 4, "Year", 1);
             seedCourse(courseRepository, "DEGREE IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DEG_EEE", "Degree in EEE", "Electrical & Electronics", "bi-lightning-charge-fill", "#d97706", "rgba(251, 191, 36, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, "BACHELOR DEGREE IN ELECTRONICS AND COMMUNICATION ENGINEERING", "DEG_ECE", "Degree in ECE", "Electronics & Comm.", "bi-broadcast", "#06b6d4", "rgba(6, 182, 212, 0.1)", 4, "Year", 1);
 
             Course diplomaCSE = courseRepository.findByProgramType("DIP_CSE").get(0);
             Course diplomaIT = courseRepository.findByProgramType("DIP_IT").get(0);

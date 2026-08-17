@@ -265,6 +265,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                         else if (progUpper.contains("ELECTRICAL")) u.setCourseProgram(type + "EEE");
                         else if (progUpper.contains("MECHANICAL")) u.setCourseProgram(type + "ME");
                         else if (progUpper.contains("MECHATRONICS")) u.setCourseProgram(type + "MTE");
+                        else if (progUpper.contains("ELECTRONICS AND COMMUNICATION")) u.setCourseProgram(type + "ECE");
                         else u.setCourseProgram(type + "IT"); // default fallback
                         modified = true;
                     }
