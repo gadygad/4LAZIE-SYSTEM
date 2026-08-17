@@ -13,13 +13,10 @@
     <!-- Premium Global CSS -->
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
-    <link rel="stylesheet" th:href="@{/css/mobile-spacing-standards.css}">
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <!-- HTML2PDF and jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- HTML2PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Background Effects */
         body {
@@ -305,8 +302,6 @@
         }
 
         .exam-theme {
-            display: flex;
-            flex-direction: column;
             width: 210mm;
             min-height: 297mm;
             background: #b2d8ba;
@@ -314,7 +309,7 @@
             font-size: 13pt;
             line-height: 1.7;
             font-family: 'Times New Roman', Times, serif;
-            position: relative;
+            flex-direction: column;
         }
 
         .exam-theme::before {
@@ -344,15 +339,14 @@
         }
 
         .exam-theme .logo-badge {
-            background-color: #111111;
-            border: 3px solid #10b981;
-            padding: 6px 12px;
-            display: inline-block;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 900;
-            font-size: 22px;
-            color: #ffffff;
-            letter-spacing: 2px;
+            background: linear-gradient(180deg, #222 0%, #050505 100%);
+            border: 2px solid #10b981;
+            padding: 6px 14px;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900; font-size: 22px;
+            color: #ffffff; letter-spacing: 1.5px;
         }
 
         .exam-theme .header-right { text-align: right; font-family: 'Inter', sans-serif; }
@@ -445,7 +439,7 @@
     <div class="container my-4">
         <div class="exam-generator-card position-relative z-1">
             <div class="text-center mb-4">
-                <h2 class="fw-bolder mb-1 text-uppercase" style="font-family: 'Outfit'; color: #065f46; font-size: clamp(1.4rem, 4vw, 1.8rem);">Create Exam Paper</h2>
+                <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #065f46;">Create Exam Paper</h2>
                 <p class="text-muted small">Design beautiful, standard-compliant exam PDFs directly from the platform.</p>
             </div>
 
@@ -476,6 +470,7 @@
                                 <select id="mLevel" class="form-select form-select-lg shadow-sm border-0" onchange="updateProgramList()">
                                     <option value="">-- Select Level --</option>
                                     <option value="DIPLOMA">Diploma</option>
+                                    <option value="DEGREE">Bachelor's Degree</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -492,28 +487,11 @@
                                 </select>
                             </div>
                             
-                            <div class="col-md-6" id="ntaLevelContainer" style="display: none;">
-                                <label class="form-label fw-bold text-success small">NTA Level</label>
-                                <select id="mNtaLevel" class="form-select form-select-lg shadow-sm border-0" onchange="updateModuleList()">
-                                    <option value="4">NTA Level 4 (Basic Technician)</option>
-                                    <option value="5">NTA Level 5 (Technician)</option>
-                                    <option value="6">NTA Level 6 (Ordinary Diploma)</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-12 mt-2">
+                            <div class="col-md-12">
                                 <label class="form-label fw-bold text-success small">Select Module/Subject</label>
                                 <select id="mModuleSelect" class="form-select form-select-lg shadow-sm border-0" onchange="autoFillModule()">
                                     <option value="">-- First Select Program & Semester --</option>
                                 </select>
-                            </div>
-                            
-                            <div class="col-md-12 mt-3">
-                                <label class="form-label fw-bold text-success small">Select Extra Courses for PDF Copies (Optional)</label>
-                                <div id="mExtraProgramsContainer" class="border rounded p-2 shadow-sm" style="max-height: 140px; overflow-y: auto; background: #f8fafc; border-color: #e2e8f0 !important;">
-                                    <div class="text-muted small fst-italic">Select a program level first to see available courses...</div>
-                                </div>
-                                <div class="form-text small" style="color: #059669;"><i class="bi bi-info-circle"></i> Multiple PDFs will be generated automatically for each course selected.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-success small">Academic Year</label>
@@ -542,19 +520,22 @@
                                 <label class="form-label fw-bold text-success small">Module Name</label>
                                 <input type="text" id="mName" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. Basic Concepts of Computers" required>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Exam Type</label>
                                 <select id="mType" class="form-select form-select-lg shadow-sm border-0">
                                     <option value="UNIVERSITY EXAMINATIONS">UNIVERSITY EXAMINATIONS (UE)</option>
+                                    <option value="CONTINUOUS ASSESSMENT TEST 1">CONTINUOUS ASSESSMENT TEST 1 (CAT 1)</option>
+                                    <option value="CONTINUOUS ASSESSMENT TEST 2">CONTINUOUS ASSESSMENT TEST 2 (CAT 2)</option>
+                                    <option value="ASSIGNMENT">ASSIGNMENT</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Exam Session / Date</label>
                                 <input type="text" id="mDate" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. FEBRUARY 2025" required>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Time Allowed</label>
-                                <input type="text" id="mTime" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. 2:30 HOURS" value="2:30 HOURS" required>
+                                <input type="text" id="mTime" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. 2:30 HOURS" required>
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-bold text-success small">Exam Instructions (SJUIT Standard)</label>
@@ -581,17 +562,43 @@
                         </div>
                         
                         <div id="questions-container" class="d-flex flex-column gap-3 mb-4">
-                            <!-- Questions will be dynamically loaded here by initQuestions() -->
+                            <!-- Default first question -->
+                            <div class="question-block p-3 border-0 rounded position-relative shadow-sm" style="background: rgba(255,255,255,0.9);">
+                                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-secondary">Part / Section</label>
+                                        <select class="form-select form-select-sm q-part border-0 bg-light">
+                                            <option value="GENERAL">GENERAL / NO PART</option>
+                                            <option value="PART A">PART A</option>
+                                            <option value="PART B">PART B</option>
+                                            <option value="PART C">PART C</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-secondary">Question Number</label>
+                                        <select class="form-select form-select-sm q-number border-0 bg-light">
+                                            <option value="1">Question 1</option>
+                                            <option value="2">Question 2</option>
+                                            <option value="3">Question 3</option>
+                                            <option value="4">Question 4</option>
+                                            <option value="5">Question 5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <textarea class="form-control q-content border-0 bg-light" rows="3" placeholder="Type the question content here..."></textarea>
+                            </div>
                         </div>
 
-                        <div class="d-flex flex-wrap justify-content-between mt-4 pt-3 border-top align-items-center gap-2">
-                            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" onclick="prevStep(2)"><i class="bi bi-arrow-left me-1"></i> Previous</button>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-primary rounded-pill px-3" onclick="previewPDF()" data-bs-toggle="modal" data-bs-target="#previewModal">
-                                    <i class="bi bi-eye-fill me-1"></i> Live Preview
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top align-items-center">
+                            <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-4" onclick="prevStep(2)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
+                            
+                            <div>
+                                <button type="button" class="btn btn-outline-primary btn-lg px-4 rounded-pill shadow-sm me-2" onclick="previewPDF()" data-bs-toggle="modal" data-bs-target="#previewModal">
+                                    <i class="bi bi-eye-fill me-2"></i> Live Preview
                                 </button>
-                                <button type="button" class="btn btn-success rounded-pill px-3 shadow" onclick="generatePDF()">
-                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Generate PDF
+                                <button type="button" class="btn btn-success btn-lg px-4 rounded-pill shadow" onclick="generatePDF()">
+                                    <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
                                 </button>
                             </div>
                         </div>
@@ -686,19 +693,16 @@
 
       </div><!-- end content -->
 
-        <!-- BOTTOM SECTION -->
-        <div style="margin-top: 0; width: 100%;" id="pdf-footer-section">
-        <div class="footer-bar">
-          <div style="font-size: 8.5pt; font-weight: 800; color: #0a5c34;">
-            <span style="background: #111; border: 2px solid #10b981; border-radius: 3px; padding: 2.5px 7px; font-size: 10px; font-weight: 900; color: #fff;">4LAZIE</span>
-            Built out of necessity. Built by a student. Built for students.
-          </div>
-          <div style="font-size: 7.5pt; color: #555; font-weight: 500;">Digitized for students, by students.</div>
+      <div class="footer-bar">
+        <div style="font-size: 8.5pt; font-weight: 800; color: #0a5c34;">
+          <span style="background: #111; border: 2px solid #10b981; border-radius: 3px; padding: 2.5px 7px; font-size: 10px; font-weight: 900; color: #fff;">4LAZIE</span>
+          Built out of necessity. Built by a student. Built for students.
         </div>
+        <div style="font-size: 7.5pt; color: #555; font-weight: 500;">Digitized for students, by students.</div>
+      </div>
 
-        <div class="copyright-banner">
-          @4LAZIE STUDENT COMMUNITY FORUM.ALL RIGHTS RESERVED
-        </div>
+      <div class="copyright-banner">
+        &copy; 2025 4LAZIE SYSTEM. ALL RIGHTS RESERVED.
       </div>
     </div>
 
@@ -799,14 +803,6 @@
             const level = document.getElementById('mLevel').value;
             const programSelect = document.getElementById('mProgram');
             const moduleSelect = document.getElementById('mModuleSelect');
-            const ntaContainer = document.getElementById('ntaLevelContainer');
-
-            if (level === 'DIPLOMA') {
-                ntaContainer.style.display = 'block';
-                initCustomSelect(document.getElementById('mNtaLevel'));
-            } else {
-                ntaContainer.style.display = 'none';
-            }
 
             if (!level) {
                 programSelect.innerHTML = '<option value="">-- Select Program --</option>';
@@ -848,32 +844,12 @@
                 currentCourses = [];
             }
 
-            const extraContainer = document.getElementById('mExtraProgramsContainer');
-            if (extraContainer) {
-                extraContainer.innerHTML = '';
-                if (currentCourses.length === 0) {
-                    extraContainer.innerHTML = '<div class="text-muted small fst-italic">No courses available.</div>';
-                }
-            }
-
             currentCourses.forEach((course, index) => {
                 const opt = document.createElement('option');
                 opt.value = course.name.toUpperCase();
                 opt.dataset.index = index; // Store index to retrieve subjects
                 opt.textContent = course.name;
                 programSelect.appendChild(opt);
-
-                if (extraContainer) {
-                    const checkDiv = document.createElement('div');
-                    checkDiv.className = 'form-check mb-1';
-                    checkDiv.innerHTML = `
-                        <input class="form-check-input extra-course-cb" type="checkbox" value="${course.name.toUpperCase()}" id="cb_${index}" style="cursor:pointer;">
-                        <label class="form-check-label small text-secondary" for="cb_${index}" style="cursor:pointer; user-select:none;">
-                            ${course.name}
-                        </label>
-                    `;
-                    extraContainer.appendChild(checkDiv);
-                }
             });
             
             // Add event listener to mProgram's custom select trigger
@@ -907,21 +883,9 @@
             
             // Determine semester number (SEM: I -> 1, SEM: II -> 2)
             const semNo = selectedSemester.includes('I') && !selectedSemester.includes('II') ? 1 : 2;
-
-            // Determine NTA level filter if diploma
-            const level = document.getElementById('mLevel').value;
-            let ntaLevel = null;
-            if (level === 'DIPLOMA') {
-                ntaLevel = parseInt(document.getElementById('mNtaLevel').value);
-            }
-
-            // Filter subjects by semester
-            let filteredSubjects = course.subjects.filter(s => s.semesterNo === semNo);
             
-            // Further filter by NTA level if applicable
-            if (ntaLevel && !isNaN(ntaLevel)) {
-                filteredSubjects = filteredSubjects.filter(s => s.levelNo === ntaLevel);
-            }
+            // Filter subjects by semester
+            const filteredSubjects = course.subjects.filter(s => s.semesterNo === semNo);
             
             if (filteredSubjects.length === 0) {
                 moduleSelect.innerHTML = '<option value="">-- No Modules Found --</option>';
@@ -935,20 +899,6 @@
             }
             
             initCustomSelect(moduleSelect);
-            
-            // Hide/disable the checkbox for the currently selected program
-            const cbs = document.querySelectorAll('.extra-course-cb');
-            cbs.forEach(cb => {
-                const label = document.querySelector(`label[for="${cb.id}"]`);
-                if (cb.value === selectedProgramName) {
-                    cb.checked = false;
-                    cb.disabled = true;
-                    if(label) label.style.textDecoration = 'line-through';
-                } else {
-                    cb.disabled = false;
-                    if(label) label.style.textDecoration = 'none';
-                }
-            });
         }
         
         function autoFillModule() {
@@ -1010,81 +960,53 @@
             });
         }
 
-        function addQuestionBlock(part = 'GENERAL', num = 1) {
+        let questionCount = 1;
+        function addQuestionBlock() {
             const container = document.getElementById('questions-container');
-            
-            let optionsHtml = '';
-            for (let i = 1; i <= 40; i++) {
-                optionsHtml += `<option value="${i}" ${i === num ? 'selected' : ''}>Question ${i}</option>`;
-            }
-            
             const blockHtml = `
-                <div class="question-block p-2 p-md-3 border-0 rounded position-relative shadow-sm" style="background: rgba(255,255,255,0.9);">
+                <div class="question-block p-3 border rounded bg-light position-relative mt-3">
                     <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
                     <div class="row g-2 mb-2">
-                        <div class="col-6">
-                            <label class="form-label small fw-bold text-secondary mb-1" style="font-size:0.72rem;">Part / Section</label>
-                            <select class="form-select form-select-sm q-part border-0 bg-light">
-                                <option value="GENERAL" ${part === 'GENERAL' ? 'selected' : ''}>GENERAL</option>
-                                <option value="PART A" ${part === 'PART A' ? 'selected' : ''}>PART A</option>
-                                <option value="PART B" ${part === 'PART B' ? 'selected' : ''}>PART B</option>
-                                <option value="PART C" ${part === 'PART C' ? 'selected' : ''}>PART C</option>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Part / Section</label>
+                            <select class="form-select form-select-sm q-part">
+                                <option value="GENERAL">GENERAL / NO PART</option>
+                                <option value="PART A">PART A</option>
+                                <option value="PART B">PART B</option>
+                                <option value="PART C">PART C</option>
                             </select>
                         </div>
-                        <div class="col-6">
-                            <label class="form-label small fw-bold text-secondary mb-1" style="font-size:0.72rem;">Q. Number</label>
-                            <select class="form-select form-select-sm q-number border-0 bg-light">
-                                ${optionsHtml}
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Question Number</label>
+                            <select class="form-select form-select-sm q-number">
+                                <option value="1">Question 1</option>
+                                <option value="2">Question 2</option>
+                                <option value="3">Question 3</option>
+                                <option value="4">Question 4</option>
+                                <option value="5">Question 5</option>
+                                <option value="6">Question 6</option>
+                                <option value="7">Question 7</option>
+                                <option value="8">Question 8</option>
+                                <option value="9">Question 9</option>
+                                <option value="10">Question 10</option>
                             </select>
                         </div>
                     </div>
-                    <textarea class="form-control q-content border-0 bg-light" rows="2" placeholder="Type question here..."></textarea>
+                    <textarea class="form-control q-content" rows="3" placeholder="Type the question content here..."></textarea>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', blockHtml);
+            const newBlock = container.lastElementChild;
+            newBlock.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
         }
 
-        function initQuestions() {
-            // Add 10 questions for PART A (1 to 10)
-            for (let i = 1; i <= 10; i++) addQuestionBlock('PART A', i);
-            // Add 10 questions for PART B (11 to 20)
-            for (let i = 11; i <= 20; i++) addQuestionBlock('PART B', i);
-            // Add 10 questions for PART C (21 to 30)
-            for (let i = 21; i <= 30; i++) addQuestionBlock('PART C', i);
-        }
-
-        // Initialize questions on load
-        document.addEventListener('DOMContentLoaded', () => {
-            initQuestions();
-        });
-
-        function prepareTemplateData(programOverride) {
+        function prepareTemplateData() {
             // Populate hidden template header
-            let progName = programOverride ? programOverride : document.getElementById('mProgram').value.toUpperCase();
-            const level = document.getElementById('mLevel').value;
-
-            if (level === 'DIPLOMA') {
-                const ntaLevel = document.getElementById('mNtaLevel').value;
-                let certPrefix = "DIPLOMA IN";
-                if (ntaLevel === "4") certPrefix = "BASIC TECHNICIAN CERTIFICATE IN";
-                else if (ntaLevel === "5") certPrefix = "TECHNICIAN CERTIFICATE IN";
-                else if (ntaLevel === "6") certPrefix = "ORDINARY DIPLOMA IN";
-
-                if (progName.startsWith('DIPLOMA IN')) {
-                    progName = progName.replace('DIPLOMA IN', certPrefix);
-                } else if (!progName.startsWith('BASIC') && !progName.startsWith('TECHNICIAN') && !progName.startsWith('ORDINARY')) {
-                    progName = certPrefix + ' ' + progName;
-                }
-                if (!progName.includes('(NTA')) {
-                    progName += ` (NTA ${ntaLevel})`;
-                }
-            }
-
-            document.getElementById('pdf-program').innerText = progName;
+            document.getElementById('pdf-program').innerText = document.getElementById('mProgram').value.toUpperCase();
             document.getElementById('pdf-module-code').innerText = document.getElementById('mCode').value.toUpperCase() + ': ' + document.getElementById('mName').value.toUpperCase();
             document.getElementById('pdf-time').innerText = document.getElementById('mTime').value.toUpperCase();
             document.getElementById('pdf-instructions').innerText = document.getElementById('mInstructions').value;
-
+            
             // New fields
             document.getElementById('pdf-semester').innerText = document.getElementById('mSemester').value.toUpperCase();
             document.getElementById('pdf-year').innerText = "ACADEMIC YEAR: " + document.getElementById('mAcademicYear').value;
@@ -1094,7 +1016,7 @@
             document.getElementById('pdf-exam-type-date').innerHTML = examType + "<br><strong>" + examDate + "</strong>";
             
             // Build the body content from the structured builder
-            let blocks = document.querySelectorAll('#questions-container .question-block');
+            let blocks = document.querySelectorAll('.question-block');
             let questionsData = [];
             
             blocks.forEach(block => {
@@ -1118,29 +1040,7 @@
             ['GENERAL', 'PART A', 'PART B', 'PART C'].forEach(partName => {
                 if(grouped[partName] && grouped[partName].length > 0) {
                     if (partName !== 'GENERAL') {
-                        let headerText = '';
-                        let subText = '';
-                        if (partName === 'PART A') {
-                            headerText = 'PART &ndash; A &nbsp;(10 &times; 2 = 20 MARKS)';
-                            subText = '(Answer all questions)';
-                        } else if (partName === 'PART B') {
-                            headerText = 'PART &ndash; B &nbsp;(5 &times; 4 = 20 MARKS)';
-                            subText = '(Answer any five)';
-                        } else if (partName === 'PART C') {
-                            headerText = 'PART &ndash; C &nbsp;(5 &times; 12 = 60 MARKS)';
-                            subText = '(Answer any five)';
-                        } else {
-                            headerText = partName;
-                        }
-                        
-                        finalHtml += `
-                            <div style="border: 1px solid #111; text-align: center; padding: 6px 0; margin: 25px 0 5px 0;">
-                                <strong style="font-size: 13pt;">${headerText}</strong>
-                            </div>
-                            <div style="text-align: center; margin-bottom: 15px;">
-                                <i style="font-size: 11pt; color: #222;">${subText}</i>
-                            </div>
-                        `;
+                        finalHtml += `<p style="font-weight:bold; font-size: 13pt; margin-top: 20px;">${partName}</p>`;
                     } else {
                         finalHtml += `<div style="margin-top: 10px;"></div>`;
                     }
@@ -1151,9 +1051,9 @@
                     grouped[partName].forEach(q => {
                         let contentHtml = q.content.replace(/\n/g, '<br>');
                         finalHtml += `
-                            <div style="margin-bottom: 12px; page-break-inside: avoid; position: relative; padding-left: 35px; min-height: 24px;">
-                                <div style="position: absolute; left: 0; top: 0; font-weight: bold; width: 30px; text-align: right;">${q.number}.</div>
-                                <div style="color: #111; word-wrap: break-word;">${contentHtml}</div>
+                            <div style="margin-bottom: 12px; display: flex; page-break-inside: avoid;">
+                                <div style="min-width: 30px; font-weight: bold;">${q.number}.</div>
+                                <div>${contentHtml}</div>
                             </div>
                         `;
                     });
@@ -1161,18 +1061,6 @@
             });
             
             document.getElementById('pdf-content-body').innerHTML = finalHtml;
-            
-            // Set green background explicitly on all content areas so every page carries the same color.
-            const bgColor = '#b2d8ba';
-            const contentDiv = document.querySelector('#exam-pdf-template .content');
-            if (contentDiv) {
-                contentDiv.style.minHeight = '';
-                contentDiv.style.background = bgColor;
-            }
-            const contentBody = document.getElementById('pdf-content-body');
-            if (contentBody) contentBody.style.background = bgColor;
-            const footerSection = document.getElementById('pdf-footer-section');
-            if (footerSection) footerSection.style.background = bgColor;
         }
 
         function previewPDF() {
@@ -1181,104 +1069,30 @@
             
             // Copy the HTML of the hidden template into the preview modal container
             const templateHtml = document.getElementById('exam-pdf-template').innerHTML;
-            const container = document.getElementById('preview-container');
-            container.innerHTML = templateHtml;
-            container.style.background = '#b2d8ba';
-            container.style.minHeight = 'auto';
+            document.getElementById('preview-container').innerHTML = templateHtml;
         }
 
-        async function generatePDF() {
+        function generatePDF() {
+            // Ensure template has latest data
+            prepareTemplateData();
+
+            // Make template visible momentarily for html2pdf
             let element = document.getElementById('exam-pdf-template');
-            let mCode = document.getElementById('mCode').value;
-            let btn = document.querySelector('button[onclick="generatePDF()"]');
+            element.style.display = 'block';
 
-            let originalBtnHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Generating PDFs...';
-            btn.disabled = true;
+            let opt = {
+                margin:       0,
+                filename:     document.getElementById('mCode').value + '_Exam.pdf',
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 4, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
 
-            // Get base program and extras
-            let baseProgram = document.getElementById('mProgram').value.toUpperCase();
-            let programs = [baseProgram];
-
-            const cbs = document.querySelectorAll('.extra-course-cb:checked');
-            if(cbs) {
-                cbs.forEach(cb => {
-                    if (cb.value !== baseProgram && !cb.disabled) {
-                        programs.push(cb.value);
-                    }
-                });
-            }
-
-            try {
-                for (let i = 0; i < programs.length; i++) {
-                    let prog = programs[i];
-                    prepareTemplateData(prog);
-
-                    element.style.display = 'block';
-
-                    // Reset minHeight before calculation
-                    element.style.minHeight = '297mm';
-                    
-                    // Force the exam theme to be an exact multiple of A4 height
-                    // so the footer aligns perfectly at the bottom of the last page
-                    const a4Ratio = 297 / 210;
-                    const pageHpx = element.offsetWidth * a4Ratio;
-                    const currentHeight = element.offsetHeight;
-                    
-                    if (currentHeight > pageHpx) {
-                        const totalPages = Math.ceil(currentHeight / pageHpx);
-                        element.style.minHeight = (totalPages * pageHpx) + 'px';
-                    }
-
-                    let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
-                    // Use html2canvas + jsPDF directly so we can paint background on every page
-                    const canvas = await html2canvas(element, {
-                        scale: 4,
-                        useCORS: true,
-                        letterRendering: true,
-                        backgroundColor: '#b2d8ba'
-                    });
-
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-
-                    const pageW = pdf.internal.pageSize.getWidth();
-                    const pageH = pdf.internal.pageSize.getHeight();
-                    const canvasW = canvas.width;
-                    const canvasH = canvas.height;
-                    const ratio = canvasW / pageW;
-                    const pageHpx = pageH * ratio;
-                    const totalPages = Math.ceil(canvasH / pageHpx);
-
-                    for (let page = 0; page < totalPages; page++) {
-                        if (page > 0) pdf.addPage();
-                        // Paint green background on every page
-                        pdf.setFillColor(178, 216, 186);  // #b2d8ba
-                        pdf.rect(0, 0, pageW, pageH, 'F');
-                        // Slice canvas for this page
-                        const srcY = page * pageHpx;
-                        const srcH = Math.min(pageHpx, canvasH - srcY);
-                        const sliceCanvas = document.createElement('canvas');
-                        sliceCanvas.width = canvasW;
-                        sliceCanvas.height = srcH;
-                        const ctx = sliceCanvas.getContext('2d');
-                        ctx.fillStyle = '#b2d8ba';
-                        ctx.fillRect(0, 0, canvasW, srcH);
-                        ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
-                        const sliceImg = sliceCanvas.toDataURL('image/jpeg', 1.0);
-                        pdf.addImage(sliceImg, 'JPEG', 0, 0, pageW, srcH / ratio);
-                    }
-
-                    pdf.save(`${mCode}_${safeProgName}_Exam.pdf`);
-                }
-            } catch (err) {
-                console.error('Error generating PDF:', err);
-                alert('An error occurred while generating the PDF(s).');
-            } finally {
-                element.style.display = 'none';
-                btn.innerHTML = originalBtnHtml;
-                btn.disabled = false;
-            }
+            // Generate
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.style.display = 'none'; // hide again
+            });
         }
     </script>
 </body>
