@@ -562,57 +562,7 @@
                         </div>
                         
                         <div id="questions-container" class="d-flex flex-column gap-3 mb-4">
-                            <!-- Default first question -->
-                            <div class="question-block p-3 border-0 rounded position-relative shadow-sm" style="background: rgba(255,255,255,0.9);">
-                                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
-                                <div class="row g-2 mb-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-secondary">Part / Section</label>
-                                        <select class="form-select form-select-sm q-part border-0 bg-light" onchange="updateQuestionNumbers(this)">
-                                            <option value="GENERAL">GENERAL / NO PART</option>
-                                            <option value="PART A">PART A</option>
-                                            <option value="PART B">PART B</option>
-                                            <option value="PART C">PART C</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-secondary">Question Number</label>
-                                        <select class="form-select form-select-sm q-number border-0 bg-light">
-                                            <option value="1">Question 1</option>
-                                            <option value="2">Question 2</option>
-                                            <option value="3">Question 3</option>
-                                            <option value="4">Question 4</option>
-                                            <option value="5">Question 5</option>
-                                            <option value="6">Question 6</option>
-                                            <option value="7">Question 7</option>
-                                            <option value="8">Question 8</option>
-                                            <option value="9">Question 9</option>
-                                            <option value="10">Question 10</option>
-                                            <option value="11">Question 11</option>
-                                            <option value="12">Question 12</option>
-                                            <option value="13">Question 13</option>
-                                            <option value="14">Question 14</option>
-                                            <option value="15">Question 15</option>
-                                            <option value="16">Question 16</option>
-                                            <option value="17">Question 17</option>
-                                            <option value="18">Question 18</option>
-                                            <option value="19">Question 19</option>
-                                            <option value="20">Question 20</option>
-                                            <option value="21">Question 21</option>
-                                            <option value="22">Question 22</option>
-                                            <option value="23">Question 23</option>
-                                            <option value="24">Question 24</option>
-                                            <option value="25">Question 25</option>
-                                            <option value="26">Question 26</option>
-                                            <option value="27">Question 27</option>
-                                            <option value="28">Question 28</option>
-                                            <option value="29">Question 29</option>
-                                            <option value="30">Question 30</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <textarea class="form-control q-content border-0 bg-light" rows="3" placeholder="Type the question content here..."></textarea>
-                            </div>
+                            <!-- Blocks will be generated automatically by JS -->
                         </div>
 
                         <div class="d-flex justify-content-between mt-4 pt-3 border-top align-items-center">
@@ -1108,8 +1058,8 @@
             let opt = {
                 margin:       0,
                 filename:     document.getElementById('mCode').value + '_Exam.pdf',
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 4, useCORS: true, letterRendering: true },
+                image:        { type: 'jpeg', quality: 0.75 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
                 pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
