@@ -1,7 +1,9 @@
 package com.school.controller;
 
 import com.school.model.Course;
+import com.school.model.Subject;
 import com.school.repository.CourseRepository;
+import com.school.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +18,14 @@ import java.util.stream.Collectors;
 @RestController
 public class CourseApiController {
 
-        private CourseRepository courseRepository;
+    private CourseRepository courseRepository;
+    private SubjectRepository subjectRepository;
+    private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
 
-    public CourseApiController(CourseRepository courseRepository) {
+    public CourseApiController(CourseRepository courseRepository, SubjectRepository subjectRepository, org.springframework.data.mongodb.core.MongoTemplate mongoTemplate) {
         this.courseRepository = courseRepository;
+        this.subjectRepository = subjectRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
 
@@ -34,10 +40,39 @@ public class CourseApiController {
                 .collect(Collectors.toList());
         }
         
+        // Fetch raw documents to avoid Spring Data MongoDB N+1 DBRef eager fetching overhead
+        List<org.bson.Document> subjectDocs = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query(), org.bson.Document.class, "subjects");
+        
+        // Group subjects by course id manually
+        Map<String, List<Map<String, Object>>> subjectsByCourseId = new HashMap<>();
+        for (org.bson.Document doc : subjectDocs) {
+            Object courseRef = doc.get("course");
+            String courseId = null;
+            if (courseRef instanceof com.mongodb.DBRef) {
+                courseId = ((com.mongodb.DBRef) courseRef).getId().toString();
+            } else if (courseRef instanceof org.bson.Document) {
+                Object idObj = ((org.bson.Document) courseRef).get("$id");
+                if (idObj != null) courseId = idObj.toString();
+            }
+            if (courseId != null) {
+                Map<String, Object> smap = new HashMap<>();
+                smap.put("code", doc.getString("code") != null ? doc.getString("code") : "");
+                smap.put("name", doc.getString("name") != null ? doc.getString("name") : "");
+                smap.put("semesterNo", doc.getInteger("semesterNo"));
+                smap.put("levelNo", doc.getInteger("levelNo"));
+                
+                subjectsByCourseId.computeIfAbsent(courseId, k -> new java.util.ArrayList<>()).add(smap);
+            }
+        }
+
         List<Map<String, Object>> response = allCourses.stream().map(c -> {
             Map<String, Object> map = new HashMap<>();
             map.put("code", c.getProgramType()); // Uses programType as unique code identifier (e.g. DIP_CSE)
             map.put("name", c.getName());
+
+            List<Map<String, Object>> subjList = subjectsByCourseId.getOrDefault(c.getId(), List.of());
+            map.put("subjects", subjList);
+
             return map;
         }).collect(Collectors.toList());
         

@@ -171,6 +171,45 @@ public class NoteService {
             }
         }
     }
+
+    public void uploadSharedNote(String title, String category, String academicYear, org.springframework.web.multipart.MultipartFile file, List<String> targetCourses, com.school.model.User loggedInUser, String appUrl) throws IOException {
+        // Upload the file once
+        String fileUrl = fileStorageService.uploadFile(file);
+        String originalFilename = file.getOriginalFilename();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+        // Create a note for each selected target course
+        for (String target : targetCourses) {
+            // target format: "programType|levelNo|semesterNo|moduleName|moduleCode"
+            String[] parts = target.split("\\|");
+            if (parts.length >= 5) {
+                Note note = new Note();
+                note.setTitle(title);
+                note.setCategory(category);
+                note.setAcademicYear(academicYear);
+                note.setFilename(originalFilename);
+                note.setFileUrl(fileUrl);
+                note.setUploadDate(now);
+                note.setIsPublic(true);
+                note.setInstitution(loggedInUser.getInstitution());
+                
+                note.setProgramType(parts[0]);
+                try {
+                    note.setLevelNo(Integer.parseInt(parts[1]));
+                    note.setSemesterNo(Integer.parseInt(parts[2]));
+                } catch(NumberFormatException e) {
+                    log.error("Invalid level/semester format in shared note upload: " + target);
+                    continue;
+                }
+                note.setModuleName(parts[3]);
+                note.setModuleCode(parts[4]);
+
+                noteRepository.save(note);
+                
+                // We can add push notifications here if needed, but skipped for brevity or add it similarly
+            }
+        }
+    }
         private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
 
     public NoteService(NoteRepository noteRepository, CourseRepository courseRepository, SubjectRepository subjectRepository, com.school.service.FileStorageService fileStorageService, com.school.service.NotificationService notificationService, com.school.service.EmailService emailService, com.school.repository.UserRepository userRepository, org.springframework.data.mongodb.core.MongoTemplate mongoTemplate) {

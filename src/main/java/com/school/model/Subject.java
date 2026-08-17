@@ -17,7 +17,7 @@ public class Subject {
     private Integer levelNo;
     private Integer credits; // Credit hours for GPA calculation
 
-    @DBRef
+    @DBRef(lazy = true)
     private Course course;
 
     public Subject() {}

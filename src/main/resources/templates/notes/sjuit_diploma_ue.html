@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +8,28 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Premium Global CSS -->
     <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
+    <link rel="stylesheet" th:href="@{/css/mobile-spacing-standards.css}">
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <!-- HTML2PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- HTML2PDF and jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* Background Effects */
         body {
             background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #ecfdf5 100%) !important;
             position: relative;
         }
+
         body::before {
             content: '';
             position: fixed;
@@ -30,14 +37,20 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at 30% 30%, rgba(16,185,129,0.15) 0%, transparent 40%),
-                        radial-gradient(circle at 70% 70%, rgba(5,150,105,0.1) 0%, transparent 40%);
+            background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 70% 70%, rgba(5, 150, 105, 0.1) 0%, transparent 40%);
             z-index: -1;
             animation: bgShift 25s ease-in-out infinite alternate;
         }
+
         @keyframes bgShift {
-            0% { transform: scale(1) translate(0, 0); }
-            100% { transform: scale(1.1) translate(-2%, -2%); }
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            100% {
+                transform: scale(1.1) translate(-2%, -2%);
+            }
         }
 
         .exam-generator-card {
@@ -49,15 +62,16 @@
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
             padding: 45px !important;
         }
-        
-        .step-content > div {
+
+        .step-content>div {
             background: rgba(255, 255, 255, 0.55) !important;
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.9) !important;
             border-radius: 20px !important;
-            box-shadow: 0 10px 40px rgba(16,185,129,0.04);
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.04);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .premium-header {
             font-family: 'Outfit', sans-serif;
             font-size: 1.4rem;
@@ -68,7 +82,7 @@
             text-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);
             letter-spacing: -0.5px;
         }
-        
+
         .form-label {
             color: #064e3b !important;
             font-size: 0.85rem !important;
@@ -80,7 +94,8 @@
         }
 
         /* Soft Smooth Dropdowns & Inputs */
-        .form-select, .form-control {
+        .form-select,
+        .form-control {
             background-color: rgba(255, 255, 255, 0.85) !important;
             border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
             border-radius: 14px !important;
@@ -89,23 +104,26 @@
             color: #064e3b !important;
             font-weight: 700 !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 4px 15px rgba(16,185,129,0.05) !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 4px 15px rgba(16, 185, 129, 0.05) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
         }
-        .form-select:focus, .form-control:focus {
+
+        .form-select:focus,
+        .form-control:focus {
             background-color: #ffffff !important;
             border-color: #10b981 !important;
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2) !important;
             outline: none !important;
         }
-        
+
         /* Custom Dropdown Styling (Replacing Native Select) */
         .custom-select-wrapper {
             position: relative;
             user-select: none;
             width: 100%;
         }
+
         .custom-select-trigger {
             background-color: rgba(255, 255, 255, 0.85);
             border: 1.5px solid rgba(16, 185, 129, 0.3);
@@ -121,29 +139,34 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 4px 15px rgba(16,185,129,0.05);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 4px 15px rgba(16, 185, 129, 0.05);
         }
+
         .custom-select-trigger:hover {
             background-color: #ffffff;
             border-color: rgba(16, 185, 129, 0.7);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16,185,129,0.15);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
         }
+
         .custom-select-wrapper.open .custom-select-trigger {
             background-color: #ffffff;
             border-color: #10b981;
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
             transform: translateY(-2px);
         }
+
         .custom-select-trigger::after {
             content: '';
-            width: 10px; height: 10px;
+            width: 10px;
+            height: 10px;
             border-bottom: 2px solid #059669;
             border-right: 2px solid #059669;
             transform: rotate(45deg);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             margin-top: -5px;
         }
+
         .custom-select-wrapper.open .custom-select-trigger::after {
             transform: rotate(-135deg);
             margin-top: 5px;
@@ -157,7 +180,7 @@
             background: #ffffff;
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -167,17 +190,28 @@
             max-height: 250px;
             overflow-y: auto;
         }
+
         /* Custom scrollbar for options */
-        .custom-options::-webkit-scrollbar { width: 6px; }
-        .custom-options::-webkit-scrollbar-track { background: transparent; }
-        .custom-options::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
-        
+        .custom-options::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-options::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-options::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+        }
+
         .custom-select-wrapper.open .custom-options {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
             transform: translateY(0) scale(1);
         }
+
         .custom-option {
             padding: 12px 20px;
             color: #065f46;
@@ -186,15 +220,18 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             border-bottom: 1px solid rgba(16, 185, 129, 0.1);
         }
+
         .custom-option:last-child {
             border-bottom: none;
         }
-        .custom-option:hover, .custom-option.selected {
+
+        .custom-option:hover,
+        .custom-option.selected {
             background: rgba(16, 185, 129, 0.2);
             padding-left: 28px;
             color: #047857;
         }
-        
+
         /* Magical Buttons */
         .btn-success {
             background: linear-gradient(135deg, #10b981, #059669) !important;
@@ -206,32 +243,40 @@
             font-weight: 600 !important;
             letter-spacing: 0.5px;
         }
+
         .btn-success:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4) !important;
         }
+
         .btn-success::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
             transform: skewX(-25deg);
             transition: all 0.6s ease;
         }
+
         .btn-success:hover::after {
             left: 150%;
         }
+
         #editor {
             height: 400px;
             background: white;
             border-radius: 0 0 14px 14px;
         }
+
         .ql-toolbar.ql-snow {
             border-radius: 14px 14px 0 0;
             background: #f8fafc;
             border-color: #e2e8f0;
         }
-        
+
         /* Multi-step Form UI */
         .stepper-wrapper {
             display: flex;
@@ -239,6 +284,7 @@
             margin-bottom: 2rem;
             position: relative;
         }
+
         .stepper-wrapper::before {
             content: '';
             position: absolute;
@@ -250,6 +296,7 @@
             z-index: 0;
             transform: translateY(-50%);
         }
+
         .stepper-item {
             position: relative;
             z-index: 1;
@@ -260,6 +307,7 @@
             padding: 0 15px;
             border-radius: 20px;
         }
+
         .step-counter {
             width: 45px;
             height: 45px;
@@ -274,6 +322,7 @@
             color: #64748b;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .stepper-item.active .step-counter {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
@@ -281,11 +330,13 @@
             box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
             transform: scale(1.1);
         }
+
         .stepper-item.completed .step-counter {
             background: #10b981;
             color: white;
             border-color: #10b981;
         }
+
         .step-name {
             margin-top: 8px;
             font-size: 0.85rem;
@@ -294,27 +345,46 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
         .stepper-item.active .step-name {
             color: #059669;
         }
+
         .step-content {
             display: none;
             animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
         .step-content.active {
             display: block;
         }
+
         .step-content.slide-left {
             animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        
+
         @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
         @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* Hidden Template for PDF Generation */
@@ -332,8 +402,7 @@
             font-size: 13pt;
             line-height: 1.7;
             font-family: 'Times New Roman', Times, serif;
-            display: flex;
-            flex-direction: column;
+            position: relative;
         }
 
         .exam-theme::before {
@@ -363,76 +432,156 @@
         }
 
         .exam-theme .logo-badge {
-            background: linear-gradient(180deg, #222 0%, #050505 100%);
-            border: 2px solid #10b981;
-            padding: 6px 14px;
-            border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Inter', sans-serif;
-            font-weight: 900; font-size: 22px;
-            color: #ffffff; letter-spacing: 1.5px;
+            background-color: #111111;
+            border: 3px solid #10b981;
+            padding: 6px 12px;
+            display: inline-block;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 22px;
+            color: #ffffff;
+            letter-spacing: 2px;
         }
 
-        .exam-theme .header-right { text-align: right; font-family: 'Inter', sans-serif; }
-        .exam-theme .cta-text { font-size: 9px; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; font-weight: 700; }
-        .exam-theme .site { font-size: 14px; color: #f5c518; font-weight: 800; letter-spacing: 0.5px; text-transform: lowercase; }
+        .exam-theme .header-right {
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .exam-theme .cta-text {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+
+        .exam-theme .site {
+            font-size: 14px;
+            color: #f5c518;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+        }
 
         /* ===== CONTENT ===== */
-        .exam-theme .content { padding: 10mm 18mm 10mm 18mm; flex: 1; position: relative; z-index: 1; }
+        .exam-theme .content {
+            padding: 10mm 18mm 10mm 18mm;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
 
         .exam-theme .uni-block {
             text-align: center;
             border-bottom: 2.5px solid #111;
-            padding-bottom: 10px; margin-bottom: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
-        .exam-theme .uni-name { font-size: 15pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-        .exam-theme .prog-name { font-size: 11.5pt; font-weight: bold; text-transform: uppercase; margin-top: 2px; }
-        .exam-theme .subj-name { font-size: 13.5pt; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+
+        .exam-theme .uni-name {
+            font-size: 15pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .exam-theme .prog-name {
+            font-size: 11.5pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .exam-theme .subj-name {
+            font-size: 13.5pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
 
         .exam-theme .meta-row {
-            display: flex; justify-content: space-between; align-items: center;
-            margin: 8px 0 6px 0; font-size: 11pt;
-            border-bottom: 1px solid #444; padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0 6px 0;
+            font-size: 11pt;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
         }
 
         .exam-theme .exam-meta {
-            display: flex; justify-content: space-between;
-            font-size: 11pt; margin: 6px 0 10px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11pt;
+            margin: 6px 0 10px 0;
         }
-        
+
         .exam-theme .instr-box {
             border: 1px solid rgba(10, 92, 52, 0.2);
-            border-left: 5px solid #0a5c34; 
-            background: linear-gradient(to right, rgba(255,255,255,0.6), rgba(255,255,255,0.2)); 
-            padding: 10px 14px; margin-bottom: 16px;
-            font-size: 11pt; color: #111;
+            border-left: 5px solid #0a5c34;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            font-size: 11pt;
+            color: #111;
             border-radius: 4px;
         }
-        .exam-theme .instr-box strong { color: #0a5c34; font-family: 'Inter', sans-serif; font-size: 11.5pt; letter-spacing: 0.5px;}
+
+        .exam-theme .instr-box strong {
+            color: #0a5c34;
+            font-family: 'Inter', sans-serif;
+            font-size: 11.5pt;
+            letter-spacing: 0.5px;
+        }
 
         .exam-theme .security-banner {
-            display: flex; align-items: center; gap: 12px;
-            background: linear-gradient(to right, rgba(10,92,52,0.08), transparent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(to right, rgba(10, 92, 52, 0.08), transparent);
             border-left: 3px solid #0a5c34;
-            padding: 8px 12px; margin: -2px 0 14px 0;
+            padding: 8px 12px;
+            margin: -2px 0 14px 0;
             border-radius: 2px;
         }
-        .exam-theme .qr-placeholder img { border-radius: 4px; border: 1.5px solid #fff; }
-        .exam-theme .sec-title { font-size: 9.5pt; font-weight: 800; color: #0a5c34; font-family: 'Inter', sans-serif; letter-spacing: 0.5px; }
+
+        .exam-theme .qr-placeholder img {
+            border-radius: 4px;
+            border: 1.5px solid #fff;
+        }
+
+        .exam-theme .sec-title {
+            font-size: 9.5pt;
+            font-weight: 800;
+            color: #0a5c34;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+        }
 
         /* ===== FOOTER ===== */
         .exam-theme .footer-bar {
-            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 100%);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 100%);
             border-top: 2px solid #0a5c34;
             padding: 10px 18mm;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-family: 'Inter', sans-serif;
             position: relative;
         }
+
         .exam-theme .footer-bar::before {
-            content: ''; position: absolute; top: -2px; left: 0; right: 0; height: 2px;
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
             background: linear-gradient(90deg, #0a5c34, #10b981, #0a5c34);
         }
+
         .exam-theme .copyright-banner {
             text-align: center;
             font-size: 7.5pt;
@@ -445,34 +594,102 @@
 
         /* Mobile Optimization Magic */
         @media (max-width: 768px) {
-            .generator-text { display: none !important; }
-            .navbar-brand { font-size: 1rem !important; }
-            .stepper-item { padding: 0 5px; }
-            .step-counter { width: 35px; height: 35px; font-size: 0.9rem; }
-            .step-name { font-size: 0.65rem; text-align: center; line-height: 1.1; margin-top: 5px; }
-            .stepper-wrapper::before { top: 35%; left: 10%; right: 10%; }
-            .p-4 { padding: 1.25rem !important; border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; }
-            .questions-header-container { flex-direction: column; align-items: flex-start !important; gap: 12px; }
-            .questions-header-container button { width: 100%; justify-content: center; padding: 10px; font-size: 1rem; }
-            .btn-lg { padding: 0.5rem 1rem; font-size: 1rem; }
-            .container { padding-left: 0 !important; padding-right: 0 !important; }
-            .stepper-wrapper { margin-bottom: 0.5rem !important; margin-left: 10px; margin-right: 10px; }
-            .exam-generator-card > .text-center { margin-top: 10px; }
-            #preview-container { zoom: 0.45; margin: 0 auto !important; }
+            .generator-text {
+                display: none !important;
+            }
+
+            .navbar-brand {
+                font-size: 1rem !important;
+            }
+
+            .stepper-item {
+                padding: 0 5px;
+            }
+
+            .step-counter {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .step-name {
+                font-size: 0.65rem;
+                text-align: center;
+                line-height: 1.1;
+                margin-top: 5px;
+            }
+
+            .stepper-wrapper::before {
+                top: 35%;
+                left: 10%;
+                right: 10%;
+            }
+
+            .p-4 {
+                padding: 1.25rem !important;
+                border-radius: 0 !important;
+                border-left: 0 !important;
+                border-right: 0 !important;
+            }
+
+            .questions-header-container {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px;
+            }
+
+            .questions-header-container button {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+                font-size: 1rem;
+            }
+
+            .btn-lg {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+
+            .container {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            .stepper-wrapper {
+                margin-bottom: 0.5rem !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .exam-generator-card>.text-center {
+                margin-top: 10px;
+            }
+
+            #preview-container {
+                zoom: 0.45;
+                margin: 0 auto !important;
+            }
         }
     </style>
 </head>
+
 <body>
-    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16, 185, 129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
+    <nav class="navbar sticky-top py-2"
+        style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16, 185, 129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center text-decoration-none" href="/dashboard">
-                <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px;">
+                <div class="d-flex align-items-center justify-content-center me-2"
+                    style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px;">
                     <i class="bi bi-file-earmark-pdf-fill text-white"></i>
                 </div>
-                <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px;"><span style="color: #ffffff; font-family: 'Outfit'; font-weight: 900; letter-spacing: 2px;">4LAZIE</span></div>
-                <span class="ms-2 generator-text" style="font-family: 'Outfit'; font-weight: 900; font-size: 1.8rem; background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GENERATOR</span>
+                <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px;"><span
+                        style="color: #ffffff; font-family: 'Outfit'; font-weight: 900; letter-spacing: 2px;">4LAZIE</span>
+                </div>
+                <span class="ms-2 generator-text"
+                    style="font-family: 'Outfit'; font-weight: 900; font-size: 1.8rem; background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GENERATOR</span>
             </a>
-            <button class="btn btn-sm btn-outline-success rounded-pill px-3" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+            <button class="btn btn-sm btn-outline-success rounded-pill px-3" data-bs-toggle="offcanvas"
+                data-bs-target="#adminSidebar">
                 <i class="bi bi-list me-2"></i> Admin Menu
             </button>
         </div>
@@ -481,8 +698,10 @@
     <div class="container my-4">
         <div class="exam-generator-card position-relative z-1">
             <div class="text-center mb-4">
-                <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #065f46;">SJUIT Diploma UE Generator</h2>
-                <p class="text-muted small">This template is strictly configured for St. Joseph University (SJUIT) Diploma University Examinations.</p>
+                <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #065f46;">SJUIT Diploma UE Generator
+                </h2>
+                <p class="text-muted small">This template is strictly configured for St. Joseph University (SJUIT)
+                    Diploma University Examinations.</p>
             </div>
 
             <form id="examForm">
@@ -504,12 +723,17 @@
 
                 <!-- STEP 1: Academic Details -->
                 <div class="step-content active" id="step-1">
-                    <div class="p-4" style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
-                        <h5 class="premium-header mb-4 border-bottom pb-2" style="border-color: rgba(16,185,129,0.2) !important;"><i class="bi bi-mortarboard-fill me-2" style="color: #059669;"></i>Academic & Program Details</h5>
+                    <div class="p-4"
+                        style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
+                        <h5 class="premium-header mb-4 border-bottom pb-2"
+                            style="border-color: rgba(16,185,129,0.2) !important;"><i
+                                class="bi bi-mortarboard-fill me-2" style="color: #059669;"></i>Academic & Program
+                            Details</h5>
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-success small">Program Level</label>
-                                <select id="mLevel" class="form-select form-select-lg shadow-sm border-0" onchange="updateProgramList(); updateExamTime();">
+                                <select id="mLevel" class="form-select form-select-lg shadow-sm border-0"
+                                    onchange="updateProgramList(); updateExamTime();">
                                     <option value="DIPLOMA" selected>Diploma (NTA 4 - 6)</option>
                                 </select>
                             </div>
@@ -528,23 +752,29 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-success small">Select Extra Courses for PDF Copies (Optional)</label>
-                                <div id="mExtraProgramsContainer" class="border rounded p-2 shadow-sm" style="max-height: 140px; overflow-y: auto; background: #f8fafc; border-color: #e2e8f0 !important;">
-                                    <div class="text-muted small fst-italic">Select a program level first to see available courses...</div>
+                                <label class="form-label fw-bold text-success small">Select Extra Courses for PDF Copies
+                                    (Optional)</label>
+                                <div id="mExtraProgramsContainer" class="border rounded p-2 shadow-sm"
+                                    style="max-height: 140px; overflow-y: auto; background: #f8fafc; border-color: #e2e8f0 !important;">
+                                    <div class="text-muted small fst-italic">Select a program level first to see
+                                        available courses...</div>
                                 </div>
-                                <div class="form-text small" style="color: #059669;"><i class="bi bi-info-circle"></i> Multiple PDFs will be generated automatically for each course selected.</div>
+                                <div class="form-text small" style="color: #059669;"><i class="bi bi-info-circle"></i>
+                                    Multiple PDFs will be generated automatically for each course selected.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-success small">Semester</label>
-                                <select id="mSemester" class="form-select form-select-lg shadow-sm border-0" onchange="updateModuleList()">
+                                <select id="mSemester" class="form-select form-select-lg shadow-sm border-0"
+                                    onchange="updateModuleList()">
                                     <option value="SEM: I">Semester I</option>
                                     <option value="SEM: II">Semester II</option>
                                 </select>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-success small">Select Module/Subject</label>
-                                <select id="mModuleSelect" class="form-select form-select-lg shadow-sm border-0" onchange="autoFillModule()">
+                                <select id="mModuleSelect" class="form-select form-select-lg shadow-sm border-0"
+                                    onchange="autoFillModule()">
                                     <option value="">-- First Select Program & Semester --</option>
                                 </select>
                             </div>
@@ -557,99 +787,98 @@
                             </div>
                         </div>
                         <div class="text-end mt-4 pt-3 border-top">
-                            <button type="button" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm w-100" style="max-width: 400px;" onclick="nextStep(2)">Next Step <i class="bi bi-arrow-right ms-2"></i></button>
+                            <button type="button" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm w-100"
+                                style="max-width: 400px;" onclick="nextStep(2)">Next Step <i
+                                    class="bi bi-arrow-right ms-2"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <!-- STEP 2: Module & Exam Details -->
                 <div class="step-content" id="step-2">
-                    <div class="p-4" style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
-                        <h5 class="premium-header mb-4 border-bottom pb-2" style="border-color: rgba(16,185,129,0.2) !important;"><i class="bi bi-journal-text me-2" style="color: #059669;"></i>Module & Exam Metadata</h5>
+                    <div class="p-4"
+                        style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
+                        <h5 class="premium-header mb-4 border-bottom pb-2"
+                            style="border-color: rgba(16,185,129,0.2) !important;"><i class="bi bi-journal-text me-2"
+                                style="color: #059669;"></i>Module & Exam Metadata</h5>
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Module Code</label>
-                                <input type="text" id="mCode" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. CST04101" required>
+                                <input type="text" id="mCode" class="form-control form-control-lg shadow-sm border-0"
+                                    placeholder="e.g. CST04101" required>
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label fw-bold text-success small">Module Name</label>
-                                <input type="text" id="mName" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. Basic Concepts of Computers" required>
+                                <input type="text" id="mName" class="form-control form-control-lg shadow-sm border-0"
+                                    placeholder="e.g. Basic Concepts of Computers" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Exam Type</label>
-                                <select id="mType" class="form-select form-select-lg shadow-sm border-0" onchange="updateExamTime()">
+                                <select id="mType" class="form-select form-select-lg shadow-sm border-0"
+                                    onchange="updateExamTime()">
                                     <option value="UNIVERSITY EXAMINATIONS">UNIVERSITY EXAMINATIONS (UE)</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Exam Session / Date</label>
-                                <input type="text" id="mDate" class="form-control form-control-lg shadow-sm border-0" placeholder="e.g. FEBRUARY 2025" required>
+                                <input type="text" id="mDate" class="form-control form-control-lg shadow-sm border-0"
+                                    placeholder="e.g. FEBRUARY 2025" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-success small">Time Allowed</label>
-                                <input type="text" id="mTime" class="form-control form-control-lg shadow-sm border-0" value="2:30 HOURS" placeholder="e.g. 2:30 HOURS" required>
+                                <input type="text" id="mTime" class="form-control form-control-lg shadow-sm border-0"
+                                    value="2:30 HOURS" placeholder="e.g. 2:30 HOURS" required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold text-success small">Exam Instructions (SJUIT Standard)</label>
+                                <label class="form-label fw-bold text-success small">Exam Instructions (SJUIT
+                                    Standard)</label>
                                 <textarea id="mInstructions" class="form-control shadow-sm border-0" rows="3">1. Answer ALL questions in Part A.
 2. Answer ANY FIVE (5) questions from Part B.
 3. Answer ANY FIVE (5) questions from Part C.</textarea>
                             </div>
                         </div>
                         <div class="d-flex flex-column flex-md-row justify-content-between mt-4 pt-3 border-top gap-2">
-                            <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-4 order-2 order-md-1" onclick="prevStep(1)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
-                            <button type="button" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm order-1 order-md-2" onclick="nextStep(3)">Next Step <i class="bi bi-arrow-right ms-2"></i></button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-lg rounded-pill px-4 order-2 order-md-1"
+                                onclick="prevStep(1)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
+                            <button type="button"
+                                class="btn btn-success btn-lg rounded-pill px-5 shadow-sm order-1 order-md-2"
+                                onclick="nextStep(3)">Next Step <i class="bi bi-arrow-right ms-2"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <!-- STEP 3: Question Builder -->
                 <div class="step-content" id="step-3">
-                    <div class="p-4" style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
-                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 questions-header-container">
-                            <h5 class="premium-header mb-0"><i class="bi bi-list-task me-2" style="color: #059669;"></i>Exam Questions Builder</h5>
-                            <button type="button" class="btn btn-sm btn-success rounded-pill shadow-sm" onclick="addQuestionBlock()">
+                    <div class="p-4"
+                        style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 questions-header-container">
+                            <h5 class="premium-header mb-0"><i class="bi bi-list-task me-2"
+                                    style="color: #059669;"></i>Exam Questions Builder</h5>
+                            <button type="button" class="btn btn-sm btn-success rounded-pill shadow-sm"
+                                onclick="addQuestionBlock()">
                                 <i class="bi bi-plus-circle me-1"></i> Add Question
                             </button>
                         </div>
-                        
+
                         <div id="questions-container" class="d-flex flex-column gap-3 mb-4">
-                            <!-- Default first question -->
-                            <div class="question-block p-3 border-0 rounded position-relative shadow-sm" style="background: rgba(255,255,255,0.9);">
-                                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
-                                <div class="row g-2 mb-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-secondary">Part / Section</label>
-                                        <select class="form-select form-select-sm q-part border-0 bg-light">
-                                            <option value="GENERAL">GENERAL / NO PART</option>
-                                            <option value="PART A">PART A</option>
-                                            <option value="PART B">PART B</option>
-                                            <option value="PART C">PART C</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-secondary">Question Number</label>
-                                        <select class="form-select form-select-sm q-number border-0 bg-light">
-                                            <option value="1">Question 1</option>
-                                            <option value="2">Question 2</option>
-                                            <option value="3">Question 3</option>
-                                            <option value="4">Question 4</option>
-                                            <option value="5">Question 5</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <textarea class="form-control q-content border-0 bg-light" rows="3" placeholder="Type the question content here..."></textarea>
-                            </div>
+                            <!-- Questions will be dynamically loaded here by initQuestions() -->
                         </div>
 
-                        <div class="d-flex flex-column flex-md-row justify-content-between mt-4 pt-3 border-top align-items-md-center gap-3">
-                            <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-4 order-2 order-md-1" onclick="prevStep(2)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
-                            
+                        <div
+                            class="d-flex flex-column flex-md-row justify-content-between mt-4 pt-3 border-top align-items-md-center gap-3">
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-lg rounded-pill px-4 order-2 order-md-1"
+                                onclick="prevStep(2)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
+
                             <div class="d-flex flex-column flex-md-row gap-2 order-1 order-md-2">
-                                <button type="button" class="btn btn-outline-primary btn-lg px-4 rounded-pill shadow-sm" onclick="previewPDF()">
+                                <button type="button" class="btn btn-outline-primary btn-lg px-4 rounded-pill shadow-sm"
+                                    onclick="previewPDF()">
                                     <i class="bi bi-eye-fill me-2"></i> Live Preview
                                 </button>
-                                <button type="button" class="btn btn-success btn-lg px-4 rounded-pill shadow" onclick="generatePDF()">
+                                <button type="button" class="btn btn-success btn-lg px-4 rounded-pill shadow"
+                                    onclick="generatePDF()">
                                     <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
                                 </button>
                             </div>
@@ -662,155 +891,193 @@
 
     <!-- Preview Modal -->
     <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content" style="background: #f1f5f9;">
-          <div class="modal-header bg-white border-bottom-0 shadow-sm z-1">
-            <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: #0f172a;"><i class="bi bi-eye-fill text-primary me-2"></i>Exam Live Preview</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-2 p-md-4" style="background: #e2e8f0;">
-            <div style="width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; padding: 10px 0;">
-                <!-- The preview will be injected into this container which matches A4 dimensions proportionally -->
-                <div id="preview-container" class="exam-theme" style="box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: left; background: #b2d8ba;">
-                    <!-- Content injected via JS -->
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content" style="background: #f1f5f9;">
+                <div class="modal-header bg-white border-bottom-0 shadow-sm z-1">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: #0f172a;"><i
+                            class="bi bi-eye-fill text-primary me-2"></i>Exam Live Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-2 p-md-4" style="background: #e2e8f0;">
+                    <div
+                        style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; padding: 10px 0;">
+                        <!-- The preview will be injected into this container which matches A4 dimensions proportionally -->
+                        <div id="preview-container" class="exam-theme"
+                            style="box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: left; background: #b2d8ba;">
+                            <!-- Content injected via JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-top-0 shadow-sm z-1">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success rounded-pill px-4" onclick="generatePDF()"
+                        data-bs-dismiss="modal"><i class="bi bi-file-earmark-pdf-fill me-1"></i> Generate PDF
+                        Now</button>
                 </div>
             </div>
-          </div>
-          <div class="modal-footer bg-white border-top-0 shadow-sm z-1">
-            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success rounded-pill px-4" onclick="generatePDF()" data-bs-dismiss="modal"><i class="bi bi-file-earmark-pdf-fill me-1"></i> Generate PDF Now</button>
-          </div>
         </div>
-      </div>
     </div>
 
     <!-- Hidden Template that will be converted to PDF -->
     <div id="exam-pdf-template" class="exam-theme">
-      <!-- TOP HEADER (4LAZIE BANNER) -->
-      <div class="header-bar" style="background: linear-gradient(90deg, #05552b 0%, #0c8245 100%); padding: 10px 15mm; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #f9c004; position: relative;">
-        
-        <!-- LEFT: LOGO & TAGLINE -->
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <!-- Logo Box -->
-            <div style="background: #111; border-radius: 4px; padding: 4px 10px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                <div style="font-family: 'Inter', sans-serif; font-size: 16pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1; margin: 0;">4LAZIE</div>
-            </div>
-            <!-- Tagline -->
-            <div style="color: rgba(255,255,255,0.9); font-family: 'Outfit', sans-serif; font-size: 9.5pt; font-weight: 500; letter-spacing: 0.5px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 15px;">
-                Unlock Past Papers & Notes For Free!
-            </div>
-        </div>
+        <!-- TOP HEADER (4LAZIE BANNER) -->
+        <div class="header-bar"
+            style="background: linear-gradient(90deg, #05552b 0%, #0c8245 100%); padding: 10px 15mm; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #f9c004; position: relative;">
 
-        <!-- RIGHT: PROMO & CONTACT -->
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="color: #f9c004; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 13pt; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
-                www.4lazie.com
-            </div>
-            <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px;">
-                <span style="color: #10b981; font-size: 10pt; line-height: 1;"><i class="bi bi-envelope-fill"></i></span>
-                <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-size: 8.5pt; font-weight: 600;">support@4lazie.com</span>
-            </div>
-        </div>
-
-      </div>
-
-      <!-- CONTENT -->
-      <div class="content" style="padding: 10mm 15mm;">
-
-        <div class="uni-block" style="text-align:center; border-bottom: 2px solid #000; padding-bottom:15px; margin-bottom:10px; font-family:'Times New Roman', serif;">
-          <div style="font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">ST. JOSEPH UNIVERSITY IN TANZANIA</div>
-          <div class="prog-name" id="pdf-program" style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">DIPLOMA IN INFORMATION TECHNOLOGY</div>
-          <div style="font-size: 13pt; margin: 8px 0;" id="pdf-semester">SEM: I</div>
-          <div class="subj-name" id="pdf-module-code" style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">CST04101 &mdash; BASIC CONCEPTS OF COMPUTERS</div>
-        </div>
-
-        <div class="meta-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom: 10px; border-bottom: 1px solid #000; font-family:'Times New Roman', serif;">
-          <div style="font-size:12pt; text-align: left; line-height: 2;">
-            <div>Centre Code: <strong>SJCET &ndash; 11</strong></div>
-            <div style="display:flex; align-items:center; gap:5px;">
-              <span>Reg. No.:</span> 
-              <div style="display:inline-block; border: 1px solid #000; width:120px; height:22px;"></div>
-            </div>
-          </div>
-          
-          <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
-             <div style="font-size:11pt; margin-bottom:3px;">CODE</div>
-             <div style="border: 2px solid #000; width: 40px; height: 18px;"></div>
-          </div>
-
-          <div style="text-align:right; font-size:12pt; line-height: 1.6;" id="pdf-exam-type-date">
-            UNIVERSITY EXAMINATIONS<br/>
-            <strong>FEBRUARY 2026</strong>
-          </div>
-        </div>
-
-        <div class="exam-meta" style="display: flex; justify-content: space-between; font-weight: bold; font-size: 12pt; margin-bottom: 20px; font-family:'Times New Roman', serif;">
-          <span>Time: <span id="pdf-time">2:30 Hours</span></span>
-          <span>Max. Marks: 100</span>
-        </div>
-
-        <div class="instr-box" style="border:none; background:none; padding:0; margin-bottom:20px; font-family:'Times New Roman', serif;">
-          <strong style="font-size: 12pt; color:#000; font-family:'Times New Roman', serif; text-decoration: underline;">INSTRUCTIONS:</strong><br/>
-          <div style="font-weight: normal; white-space: pre-wrap; margin-top:5px; font-size: 12pt; line-height:1.5;" id="pdf-instructions">Answer ALL questions in PART A. Answer ANY FIVE (5) questions from PART B. Answer ANY FIVE (5) questions from PART C.</div>
-        </div>
-
-        <!-- SECURITY BANNER -->
-        <div style="background: #c3e2cc; border-left: 3px solid #08693c; padding: 8px 12px; margin: 0 0 25px 0; display: flex; align-items: center; gap: 12px; font-family: 'Inter', 'Outfit', sans-serif;">
-            <!-- QR Code -->
-            <div style="background: #ffffff; padding: 3px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;">
-                <img src="https://quickchart.io/qr?text=https://www.4lazie.com&size=60&margin=0" alt="QR Code" style="width: 40px; height: 40px; display: block;" crossorigin="anonymous" />
-            </div>
-            <!-- Text Content -->
-            <div>
-                <div style="color: #08693c; font-weight: 800; font-size: 9.5pt; letter-spacing: 0.5px; margin-bottom: 2px;">
-                    OFFICIAL 4LAZIE DOCUMENT
+            <!-- LEFT: LOGO & TAGLINE -->
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <!-- Logo Box -->
+                <div
+                    style="background: #111; border-radius: 4px; padding: 4px 10px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    <div
+                        style="font-family: 'Inter', sans-serif; font-size: 16pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1; margin: 0;">
+                        4LAZIE</div>
                 </div>
-                <div style="color: #222; font-style: italic; font-size: 8pt;">
-                    Scan to verify authenticity & access marking schemes. Commercial distribution is strictly prohibited.
+                <!-- Tagline -->
+                <div
+                    style="color: rgba(255,255,255,0.9); font-family: 'Outfit', sans-serif; font-size: 9.5pt; font-weight: 500; letter-spacing: 0.5px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 15px;">
+                    Unlock Past Papers & Notes For Free!
                 </div>
             </div>
+
+            <!-- RIGHT: PROMO & CONTACT -->
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div
+                    style="color: #f9c004; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 13pt; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
+                    www.4lazie.com
+                </div>
+                <div
+                    style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px;">
+                    <span style="color: #10b981; font-size: 10pt; line-height: 1;"><i
+                            class="bi bi-envelope-fill"></i></span>
+                    <span
+                        style="color: #ffffff; font-family: 'Outfit', sans-serif; font-size: 8.5pt; font-weight: 600;">support@4lazie.com</span>
+                </div>
+            </div>
+
         </div>
 
-        <div class="pdf-content" id="pdf-content-body" style="font-family:'Times New Roman', serif;">
-            <!-- Content injected here from structured builder -->
+        <!-- CONTENT -->
+        <div class="content" id="pdf-main-content" style="padding: 10mm 15mm;">
+
+            <div class="uni-block"
+                style="text-align:center; border-bottom: 2px solid #000; padding-bottom:15px; margin-bottom:10px; font-family:'Times New Roman', serif;">
+                <div
+                    style="font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
+                    ST. JOSEPH UNIVERSITY IN TANZANIA</div>
+                <div class="prog-name" id="pdf-program"
+                    style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">DIPLOMA IN INFORMATION
+                    TECHNOLOGY</div>
+                <div style="font-size: 13pt; margin: 8px 0;" id="pdf-semester">SEM: I</div>
+                <div class="subj-name" id="pdf-module-code"
+                    style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">CST04101 &mdash; BASIC
+                    CONCEPTS OF COMPUTERS</div>
+            </div>
+
+            <div class="meta-row"
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom: 10px; border-bottom: 1px solid #000; font-family:'Times New Roman', serif;">
+                <div style="font-size:12pt; text-align: left; line-height: 2;">
+                    <div>Centre Code: <strong>SJCET &ndash; 11</strong></div>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <span>Reg. No.:</span>
+                        <div style="display:inline-block; border: 1px solid #000; width:120px; height:22px;"></div>
+                    </div>
+                </div>
+
+                <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size:11pt; margin-bottom:3px;">CODE</div>
+                    <div style="border: 2px solid #000; width: 40px; height: 18px;"></div>
+                </div>
+
+                <div style="text-align:right; font-size:12pt; line-height: 1.6;" id="pdf-exam-type-date">
+                    UNIVERSITY EXAMINATIONS<br />
+                    <strong>FEBRUARY 2026</strong>
+                </div>
+            </div>
+
+            <div class="exam-meta"
+                style="display: flex; justify-content: space-between; font-weight: bold; font-size: 12pt; margin-bottom: 20px; font-family:'Times New Roman', serif;">
+                <span>Time: <span id="pdf-time">2:30 Hours</span></span>
+                <span>Max. Marks: 100</span>
+            </div>
+
+            <div class="instr-box"
+                style="border:none; background:none; padding:0; margin-bottom:20px; font-family:'Times New Roman', serif;">
+                <strong
+                    style="font-size: 12pt; color:#000; font-family:'Times New Roman', serif; text-decoration: underline;">INSTRUCTIONS:</strong><br />
+                <div style="font-weight: normal; white-space: pre-wrap; margin-top:5px; font-size: 12pt; line-height:1.5;"
+                    id="pdf-instructions">Answer ALL questions in PART A. Answer ANY FIVE (5) questions from PART B.
+                    Answer ANY FIVE (5) questions from PART C.</div>
+            </div>
+
+            <!-- SECURITY BANNER -->
+            <div
+                style="background: #c3e2cc; border-left: 3px solid #08693c; padding: 8px 12px; margin: 0 0 25px 0; display: flex; align-items: center; gap: 12px; font-family: 'Inter', 'Outfit', sans-serif;">
+                <!-- QR Code -->
+                <div
+                    style="background: #ffffff; padding: 3px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;">
+                    <img src="https://quickchart.io/qr?text=https://www.4lazie.com&size=60&margin=0" alt="QR Code"
+                        style="width: 40px; height: 40px; display: block;" crossorigin="anonymous" />
+                </div>
+                <!-- Text Content -->
+                <div>
+                    <div
+                        style="color: #08693c; font-weight: 800; font-size: 9.5pt; letter-spacing: 0.5px; margin-bottom: 2px;">
+                        OFFICIAL 4LAZIE DOCUMENT
+                    </div>
+                    <div style="color: #222; font-style: italic; font-size: 8pt;">
+                        Scan to verify authenticity & access marking schemes. Commercial distribution is strictly
+                        prohibited.
+                    </div>
+                </div>
+            </div>
+
+            <div class="pdf-content" id="pdf-content-body" style="font-family:'Times New Roman', serif;">
+                <!-- Content injected here from structured builder -->
+            </div>
+
+        </div><!-- end content -->
+
+        <!-- BOTTOM SECTION -->
+        <div style="margin-top: 0; width: 100%;" id="pdf-footer-section">
+
+            <!-- BOTTOM FOOTER -->
+            <div
+                style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
+                <!-- Top Row -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 18mm;">
+                    <!-- Left side -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <!-- Logo Box -->
+                        <div
+                            style="background: #111; border-radius: 4px; padding: 3px 8px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <div
+                                style="font-family: 'Inter', sans-serif; font-size: 10pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1;">
+                                4LAZIE</div>
+                        </div>
+                        <!-- Slogan -->
+                        <div style="color: #065e31; font-weight: 700; font-size: 9.5pt;">
+                            Built out of necessity. Built by a student. Built for students.
+                        </div>
+                    </div>
+
+                    <!-- Right side -->
+                    <div style="color: #4b6b55; font-weight: 600; font-size: 9pt;">
+                        Digitized for students, by students.
+                    </div>
+                </div>
+
+                <!-- Bottom Copyright Row -->
+                <div
+                    style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
+                    <div style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
+                        @4LAZIE STUDENT COMMUNITY FORUM.ALL RIGHTS RESERVED
+                    </div>
+                </div>
+            </div>
+            <!-- End of Wrapper -->
         </div>
-
-      </div><!-- end content -->
-
-      <!-- BOTTOM SECTION (Pushed to bottom) -->
-      <div style="margin-top: auto; width: 100%;">
-          
-          <!-- BOTTOM FOOTER -->
-          <div style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
-          <!-- Top Row -->
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 18mm;">
-              <!-- Left side -->
-              <div style="display: flex; align-items: center; gap: 8px;">
-                  <!-- Logo Box -->
-                  <div style="background: #111; border-radius: 4px; padding: 3px 8px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                      <div style="font-family: 'Inter', sans-serif; font-size: 10pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1;">4LAZIE</div>
-                  </div>
-                  <!-- Slogan -->
-                  <div style="color: #065e31; font-weight: 700; font-size: 9.5pt;">
-                      Built out of necessity. Built by a student. Built for students.
-                  </div>
-              </div>
-              
-              <!-- Right side -->
-              <div style="color: #4b6b55; font-weight: 600; font-size: 9pt;">
-                  Digitized for students, by students.
-              </div>
-          </div>
-          
-          <!-- Bottom Copyright Row -->
-          <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
-              <div style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
-                  © 2025 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.
-              </div>
-          </div>
-      </div>
-      <!-- End of Wrapper -->
-      </div>
     </div>
 
     <!-- Offcanvas Admin Sidebar -->
@@ -824,38 +1091,38 @@
                 select.nextElementSibling.remove(); // Re-initialize if exists
             }
             select.style.display = 'none'; // hide native select
-            
+
             const wrapper = document.createElement('div');
             wrapper.className = 'custom-select-wrapper';
-            
+
             const trigger = document.createElement('div');
             trigger.className = 'custom-select-trigger';
             trigger.textContent = select.options[select.selectedIndex]?.textContent || select.options[0]?.textContent || '-- Select --';
-            
+
             const optionsContainer = document.createElement('div');
             optionsContainer.className = 'custom-options';
-            
+
             Array.from(select.options).forEach(option => {
-                if(option.value === "" && option.disabled) return; // Skip placeholders if needed
-                
+                if (option.value === "" && option.disabled) return; // Skip placeholders if needed
+
                 const optDiv = document.createElement('div');
                 optDiv.className = 'custom-option';
                 if (option.selected) optDiv.classList.add('selected');
                 optDiv.textContent = option.textContent;
                 optDiv.dataset.value = option.value;
-                
-                optDiv.addEventListener('click', function(e) {
+
+                optDiv.addEventListener('click', function (e) {
                     e.stopPropagation();
                     trigger.textContent = this.textContent;
                     select.value = this.dataset.value;
-                    
+
                     optionsContainer.querySelectorAll('.custom-option').forEach(el => el.classList.remove('selected'));
                     this.classList.add('selected');
                     wrapper.classList.remove('open');
-                    
+
                     // Trigger change event to fire updateProgramList etc
                     select.dispatchEvent(new Event('change', { bubbles: true }));
-                    
+
                     // Explicitly call inline onchange if present (as dispatchEvent sometimes ignores it for programmatic changes)
                     if (typeof select.onchange === 'function') {
                         select.onchange();
@@ -869,15 +1136,15 @@
                 });
                 optionsContainer.appendChild(optDiv);
             });
-            
-            trigger.addEventListener('click', function(e) {
+
+            trigger.addEventListener('click', function (e) {
                 e.stopPropagation();
                 document.querySelectorAll('.custom-select-wrapper').forEach(w => {
                     if (w !== wrapper) w.classList.remove('open');
                 });
                 wrapper.classList.toggle('open');
             });
-            
+
             wrapper.appendChild(trigger);
             wrapper.appendChild(optionsContainer);
             select.parentNode.insertBefore(wrapper, select.nextSibling);
@@ -887,16 +1154,17 @@
             document.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
         }
 
-        document.addEventListener('click', function() {
+        document.addEventListener('click', function () {
             document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
         });
-        
+
         // --- DYNAMIC LOGIC ---
         let allCourses = [];
         let currentCourses = [];
 
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             initAllCustomSelects();
+            initQuestions();
             try {
                 // Prefetch all courses on load for instant, zero-delay switching
                 const response = await fetch('/api/courses');
@@ -911,7 +1179,7 @@
             const programSelect = document.getElementById('mProgram');
             const moduleSelect = document.getElementById('mModuleSelect');
             const ntaContainer = document.getElementById('ntaLevelContainer');
-            
+
             if (level === 'DIPLOMA') {
                 ntaContainer.style.display = 'block';
                 initCustomSelect(document.getElementById('mNtaLevel'));
@@ -983,42 +1251,42 @@
                 `;
                 extraContainer.appendChild(checkDiv);
             });
-            
+
             // Add event listener to mProgram's custom select trigger
             programSelect.setAttribute('onchange', 'updateModuleList()');
             initCustomSelect(programSelect);
         }
-        
+
         function updateModuleList() {
             const programSelect = document.getElementById('mProgram');
             const semesterSelect = document.getElementById('mSemester');
             const moduleSelect = document.getElementById('mModuleSelect');
-            
+
             const selectedProgramName = programSelect.value;
             const selectedSemester = semesterSelect.value;
-            
+
             moduleSelect.innerHTML = '<option value="">-- Select Module --</option>';
             document.getElementById('mCode').value = '';
             document.getElementById('mName').value = '';
-            
+
             if (!selectedProgramName || !selectedSemester) {
                 initCustomSelect(moduleSelect);
                 return;
             }
-            
+
             // Find the course from currentCourses
             const course = currentCourses.find(c => c.name.toUpperCase() === selectedProgramName);
             if (!course || !course.subjects) {
                 initCustomSelect(moduleSelect);
                 return;
             }
-            
+
             // Determine semester number (SEM: I -> 1, SEM: II -> 2)
             const semNo = selectedSemester.includes('I') && !selectedSemester.includes('II') ? 1 : 2;
-            
+
             // Filter subjects by semester
             const filteredSubjects = course.subjects.filter(s => s.semesterNo === semNo);
-            
+
             if (filteredSubjects.length === 0) {
                 moduleSelect.innerHTML = '<option value="">-- No Modules Found --</option>';
             } else {
@@ -1029,14 +1297,14 @@
                     moduleSelect.appendChild(opt);
                 });
             }
-            
+
             initCustomSelect(moduleSelect);
         }
-        
+
         function autoFillModule() {
             const moduleSelect = document.getElementById('mModuleSelect');
             const val = moduleSelect.value;
-            
+
             if (val && val.includes('||')) {
                 const parts = val.split('||');
                 document.getElementById('mCode').value = parts[0];
@@ -1055,7 +1323,7 @@
             const nextEl = document.getElementById('step-' + step);
             nextEl.style.display = 'block';
             nextEl.classList.remove('slide-left');
-            
+
             document.querySelectorAll('.stepper-item').forEach((el, index) => {
                 if (index < step) {
                     el.classList.add('active');
@@ -1077,7 +1345,7 @@
             const prevEl = document.getElementById('step-' + step);
             prevEl.style.display = 'block';
             prevEl.classList.add('slide-left');
-            
+
             document.querySelectorAll('.stepper-item').forEach((el, index) => {
                 if (index < step) {
                     el.classList.add('active');
@@ -1096,7 +1364,7 @@
             const numSelect = partSelect.closest('.question-block').querySelector('.q-number');
             const partValue = partSelect.value;
             let start = 1;
-            let end = 30;
+            let end = 40;
 
             if (partValue === 'PART A') {
                 start = 1; end = 10;
@@ -1112,13 +1380,13 @@
                 optionsHtml += `<option value="${i}">Question ${i}</option>`;
             }
             numSelect.innerHTML = optionsHtml;
-            
+
             if (prevValue >= start && prevValue <= end) {
                 numSelect.value = prevValue;
             } else {
                 numSelect.value = start;
             }
-            
+
             initCustomSelect(numSelect);
         }
 
@@ -1126,11 +1394,11 @@
             const level = document.getElementById('mLevel').value;
             const type = document.getElementById('mType').value;
             const timeInput = document.getElementById('mTime');
-            
+
             if (level === 'DIPLOMA') {
                 timeInput.setAttribute('readonly', 'readonly');
                 timeInput.style.backgroundColor = '#f1f5f9'; // visual cue it's disabled
-                
+
                 if (type === 'UNIVERSITY EXAMINATIONS') {
                     timeInput.value = '2:30 HOURS';
                 } else if (type.includes('CAT')) {
@@ -1144,39 +1412,35 @@
             }
         }
 
-        let questionCount = 1;
-        function addQuestionBlock() {
+        function addQuestionBlock(part = 'GENERAL', num = 1) {
             const container = document.getElementById('questions-container');
+            
+            let optionsHtml = '';
+            for (let i = 1; i <= 40; i++) {
+                optionsHtml += `<option value="${i}" ${i === num ? 'selected' : ''}>Question ${i}</option>`;
+            }
+            
             const blockHtml = `
-                <div class="question-block p-3 border rounded bg-light position-relative mt-3">
+                <div class="question-block p-2 p-md-3 border-0 rounded position-relative shadow-sm" style="background: rgba(255,255,255,0.9);">
                     <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
                     <div class="row g-2 mb-2">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Part / Section</label>
-                            <select class="form-select form-select-sm q-part" onchange="updateQuestionNumbers(this)">
-                                <option value="PART A">PART A</option>
-                                <option value="PART B">PART B</option>
-                                <option value="PART C">PART C</option>
-                                <option value="GENERAL">GENERAL / NO PART</option>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary mb-1" style="font-size:0.72rem;">Part / Section</label>
+                            <select class="form-select form-select-sm q-part border-0 bg-light" onchange="updateQuestionNumbers(this)">
+                                <option value="GENERAL" ${part === 'GENERAL' ? 'selected' : ''}>GENERAL</option>
+                                <option value="PART A" ${part === 'PART A' ? 'selected' : ''}>PART A</option>
+                                <option value="PART B" ${part === 'PART B' ? 'selected' : ''}>PART B</option>
+                                <option value="PART C" ${part === 'PART C' ? 'selected' : ''}>PART C</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Question Number</label>
-                            <select class="form-select form-select-sm q-number">
-                                <option value="1">Question 1</option>
-                                <option value="2">Question 2</option>
-                                <option value="3">Question 3</option>
-                                <option value="4">Question 4</option>
-                                <option value="5">Question 5</option>
-                                <option value="6">Question 6</option>
-                                <option value="7">Question 7</option>
-                                <option value="8">Question 8</option>
-                                <option value="9">Question 9</option>
-                                <option value="10">Question 10</option>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary mb-1" style="font-size:0.72rem;">Q. Number</label>
+                            <select class="form-select form-select-sm q-number border-0 bg-light">
+                                ${optionsHtml}
                             </select>
                         </div>
                     </div>
-                    <textarea class="form-control q-content" rows="3" placeholder="Type the question content here..."></textarea>
+                    <textarea class="form-control q-content border-0 bg-light" rows="2" placeholder="Type question here..."></textarea>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', blockHtml);
@@ -1184,18 +1448,27 @@
             newBlock.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
         }
 
+        function initQuestions() {
+            // Add 10 questions for PART A (1 to 10)
+            for (let i = 1; i <= 10; i++) addQuestionBlock('PART A', i);
+            // Add 10 questions for PART B (11 to 20)
+            for (let i = 11; i <= 20; i++) addQuestionBlock('PART B', i);
+            // Add 10 questions for PART C (21 to 30)
+            for (let i = 21; i <= 30; i++) addQuestionBlock('PART C', i);
+        }
+
         function prepareTemplateData(overrideProgramName) {
             // Populate hidden template header
             let programName = overrideProgramName || document.getElementById('mProgram').value.toUpperCase();
             const level = document.getElementById('mLevel').value;
-            
+
             if (level === 'DIPLOMA') {
                 const ntaLevel = document.getElementById('mNtaLevel').value;
                 let certPrefix = "DIPLOMA IN";
                 if (ntaLevel === "4") certPrefix = "BASIC TECHNICIAN CERTIFICATE IN";
                 else if (ntaLevel === "5") certPrefix = "TECHNICIAN CERTIFICATE IN";
                 else if (ntaLevel === "6") certPrefix = "ORDINARY DIPLOMA IN";
-                
+
                 // Replace 'DIPLOMA IN' if present, otherwise just prepend it
                 if (programName.startsWith('DIPLOMA IN')) {
                     programName = programName.replace('DIPLOMA IN', certPrefix);
@@ -1206,22 +1479,22 @@
                     programName += ` (NTA ${ntaLevel})`;
                 }
             }
-            
+
             document.getElementById('pdf-program').innerText = programName;
             document.getElementById('pdf-module-code').innerHTML = document.getElementById('mCode').value.toUpperCase() + ' &mdash; ' + document.getElementById('mName').value.toUpperCase();
             document.getElementById('pdf-time').innerText = document.getElementById('mTime').value.toUpperCase();
             document.getElementById('pdf-instructions').innerText = document.getElementById('mInstructions').value;
-            
+
             // New fields
             document.getElementById('pdf-semester').innerText = document.getElementById('mSemester').value.toUpperCase();
             let examType = document.getElementById('mType').value;
             let examDate = document.getElementById('mDate').value.toUpperCase();
             document.getElementById('pdf-exam-type-date').innerHTML = examType + "<br><strong>" + examDate + "</strong>";
-            
+
             // Build the body content from the structured builder
-            let blocks = document.querySelectorAll('.question-block');
+            let blocks = document.querySelectorAll('#questions-container .question-block');
             let questionsData = [];
-            
+
             blocks.forEach(block => {
                 questionsData.push({
                     part: block.querySelector('.q-part').value,
@@ -1229,75 +1502,95 @@
                     content: block.querySelector('.q-content').value
                 });
             });
-            
+
             // Group by part and sort by number
             let grouped = {};
             questionsData.forEach(q => {
-                if(!grouped[q.part]) grouped[q.part] = [];
+                if (!grouped[q.part]) grouped[q.part] = [];
                 grouped[q.part].push(q);
             });
-            
+
             let finalHtml = '';
-            
+
             // Define order of parts
             ['GENERAL', 'PART A', 'PART B', 'PART C'].forEach(partName => {
-                if(grouped[partName] && grouped[partName].length > 0) {
+                if (grouped[partName] && grouped[partName].length > 0) {
                     if (partName !== 'GENERAL') {
-                        let marksText = "";
-                        let instructionText = "";
-                        
+                        let headerText = '';
+                        let subText = '';
                         if (partName === 'PART A') {
-                            marksText = "(10 &times; 2 = 20 MARKS)";
-                            instructionText = "(Answer all questions)";
+                            headerText = 'PART &ndash; A &nbsp;(10 &times; 2 = 20 MARKS)';
+                            subText = '(Answer all questions)';
                         } else if (partName === 'PART B') {
-                            marksText = "(5 &times; 8 = 40 MARKS)";
-                            instructionText = "(Answer any FIVE questions)";
+                            headerText = 'PART &ndash; B &nbsp;(5 &times; 4 = 20 MARKS)';
+                            subText = '(Answer any five)';
                         } else if (partName === 'PART C') {
-                            marksText = "(2 &times; 20 = 40 MARKS)";
-                            instructionText = "(Answer any TWO questions)";
+                            headerText = 'PART &ndash; C &nbsp;(5 &times; 12 = 60 MARKS)';
+                            subText = '(Answer any five)';
+                        } else {
+                            headerText = partName;
                         }
-
+                        
                         finalHtml += `
-                            <div style="margin-top: 25px; margin-bottom: 15px; text-align: center;">
-                                <div style="border: 1px solid #94bba2; background: rgba(162, 210, 179, 0.4); padding: 5px; font-weight: bold; font-family: 'Times New Roman', serif; font-size: 12pt;">
-                                    ${partName.replace('PART ', 'PART &ndash; ')} &nbsp;${marksText}
-                                </div>
-                                <div style="font-style: italic; font-family: 'Times New Roman', serif; font-size: 11pt; margin-top: 4px;">
-                                    ${instructionText}
-                                </div>
+                            <div style="border: 1px solid #111; text-align: center; padding: 6px 0; margin: 25px 0 5px 0;">
+                                <strong style="font-size: 13pt;">${headerText}</strong>
+                            </div>
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <i style="font-size: 11pt; color: #222;">${subText}</i>
                             </div>
                         `;
                     } else {
                         finalHtml += `<div style="margin-top: 10px;"></div>`;
                     }
-                    
+
                     // Sort questions in this part
                     grouped[partName].sort((a, b) => a.number - b.number);
-                    
+
                     grouped[partName].forEach(q => {
                         let contentHtml = q.content.replace(/\n/g, '<br>');
                         finalHtml += `
-                            <div style="margin-bottom: 12px; display: flex; page-break-inside: avoid;">
-                                <div style="min-width: 30px; font-weight: bold;">${q.number}.</div>
-                                <div>${contentHtml}</div>
+                            <div style="margin-bottom: 12px; page-break-inside: avoid; position: relative; padding-left: 35px; min-height: 24px;">
+                                <div style="position: absolute; left: 0; top: 0; font-weight: bold; width: 30px; text-align: right;">${q.number}.</div>
+                                <div style="color: #111; word-wrap: break-word;">${contentHtml}</div>
                             </div>
                         `;
                     });
                 }
             });
-            
+
             document.getElementById('pdf-content-body').innerHTML = finalHtml;
+
+            // Set green background explicitly on all content areas so every page
+            // (including Part B and Part C) carries the same green background color.
+            const bgColor = '#b2d8ba';
+            const mainContent = document.getElementById('pdf-main-content');
+            if (mainContent) {
+                mainContent.style.minHeight = '';
+                mainContent.style.background = bgColor;
+            }
+            const contentBody = document.getElementById('pdf-content-body');
+            if (contentBody) {
+                contentBody.style.background = bgColor;
+            }
+            const footerSection = document.getElementById('pdf-footer-section');
+            if (footerSection) {
+                footerSection.style.background = bgColor;
+            }
         }
 
         function previewPDF() {
             try {
                 // First, update the hidden template with current form data
                 prepareTemplateData();
-                
+
                 // Copy the HTML of the hidden template into the preview modal container
                 const templateHtml = document.getElementById('exam-pdf-template').innerHTML;
-                document.getElementById('preview-container').innerHTML = templateHtml;
-                
+                const container = document.getElementById('preview-container');
+                container.innerHTML = templateHtml;
+                // Ensure the preview-container itself has the green background covering full height
+                container.style.background = '#b2d8ba';
+                container.style.minHeight = 'auto';
+
                 // Show modal explicitly in case data-bs-toggle fails
                 var myModal = new bootstrap.Modal(document.getElementById('previewModal'));
                 myModal.show();
@@ -1311,7 +1604,7 @@
             let element = document.getElementById('exam-pdf-template');
             let mCode = document.getElementById('mCode').value;
             let btn = document.querySelector('button[onclick="generatePDF()"]');
-            
+
             let originalBtnHtml = btn.innerHTML;
             btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Generating PDFs...';
             btn.disabled = true;
@@ -1319,7 +1612,7 @@
             // Get base program and extras
             let baseProgram = document.getElementById('mProgram').value.toUpperCase();
             let programs = [baseProgram];
-            
+
             document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
                 if (cb.value !== baseProgram) {
                     programs.push(cb.value);
@@ -1331,8 +1624,8 @@
                     let prog = programs[i];
                     // Update DOM for this specific program
                     prepareTemplateData(prog);
-                    
-                    element.style.display = 'flex';
+
+                    element.style.display = 'block';
                     element.style.position = 'absolute';
                     element.style.top = '0';
                     element.style.left = '0';
@@ -1340,16 +1633,52 @@
 
                     // Ensure unique filename
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
-                    let opt = {
-                        margin:       0,
-                        filename:     `${mCode}_${safeProgName}_Exam.pdf`,
-                        image:        { type: 'jpeg', quality: 1.0 },
-                        html2canvas:  { scale: 4, useCORS: true, letterRendering: true, scrollY: 0, windowHeight: element.scrollHeight },
-                        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-                        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-                    };
+                    // Use html2canvas + jsPDF directly so we can paint background on every page
+                    const canvas = await html2canvas(element, {
+                        scale: 4,
+                        useCORS: true,
+                        letterRendering: true,
+                        backgroundColor: '#b2d8ba'
+                    });
 
-                    await html2pdf().set(opt).from(element).save();
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+
+                    const pageW = pdf.internal.pageSize.getWidth();
+                    const pageH = pdf.internal.pageSize.getHeight();
+
+                    const canvasW = canvas.width;
+                    const canvasH = canvas.height;
+                    const ratio = canvasW / pageW;       // canvas pixels per mm
+                    const pageHpx = pageH * ratio;       // page height in canvas pixels
+
+                    const totalPages = Math.ceil(canvasH / pageHpx);
+
+                    for (let page = 0; page < totalPages; page++) {
+                        if (page > 0) pdf.addPage();
+
+                        // Paint green background on this page
+                        pdf.setFillColor(178, 216, 186);  // #b2d8ba
+                        pdf.rect(0, 0, pageW, pageH, 'F');
+
+                        // Slice the canvas for this page
+                        const srcY = page * pageHpx;
+                        const srcH = Math.min(pageHpx, canvasH - srcY);
+
+                        const sliceCanvas = document.createElement('canvas');
+                        sliceCanvas.width = canvasW;
+                        sliceCanvas.height = srcH;
+                        const ctx = sliceCanvas.getContext('2d');
+                        ctx.fillStyle = '#b2d8ba';
+                        ctx.fillRect(0, 0, canvasW, srcH);
+                        ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
+
+                        const sliceImg = sliceCanvas.toDataURL('image/jpeg', 1.0);
+                        const sliceHmm = (srcH / ratio);
+                        pdf.addImage(sliceImg, 'JPEG', 0, 0, pageW, sliceHmm);
+                    }
+
+                    pdf.save(`${mCode}_${safeProgName}_Exam.pdf`);
                     element.style.display = 'none';
                     element.style.position = 'static';
                 }
@@ -1365,4 +1694,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -28,13 +28,23 @@ import com.school.service.PdfParsingService;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.bson.Document;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
         private UserRepository userRepository;
 
         private NoteRepository noteRepository;
+
+        @Autowired
+        private com.school.service.NoteService noteService;
     
         private PasswordResetTokenRepository passwordResetTokenRepository;
     
@@ -1175,6 +1185,74 @@ public class AdminController {
         teamMemberService.toggleStatus(id);
         redirectAttributes.addFlashAttribute("success", "Status changed successfully!");
         return "redirect:/admin/team-members";
+    }
+
+    @GetMapping("/upload-shared")
+    public String showUploadSharedPage(Model model) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        
+        List<Course> allCourses = courseRepository.findAll();
+        
+        // Use MongoTemplate to fetch raw documents and avoid N+1 DBRef lazy loading queries
+        List<Document> rawSubjects = mongoTemplate.findAll(Document.class, "subjects");
+        java.util.Map<String, java.util.List<Subject>> subjectsByCourseId = new java.util.HashMap<>();
+        
+        for (Document rawSub : rawSubjects) {
+            Object courseObj = rawSub.get("course");
+            if (courseObj instanceof com.mongodb.DBRef) {
+                com.mongodb.DBRef courseRef = (com.mongodb.DBRef) courseObj;
+                String courseId = courseRef.getId().toString();
+                
+                Subject sub = new Subject();
+                sub.setId(rawSub.getObjectId("_id").toHexString());
+                sub.setName(rawSub.getString("name"));
+                sub.setCode(rawSub.getString("code"));
+                sub.setLevelNo(rawSub.getInteger("levelNo"));
+                sub.setSemesterNo(rawSub.getInteger("semesterNo"));
+                
+                subjectsByCourseId.computeIfAbsent(courseId, k -> new java.util.ArrayList<>()).add(sub);
+            }
+        }
+        
+        model.addAttribute("courses", allCourses);
+        model.addAttribute("subjectsByCourseId", subjectsByCourseId);
+        model.addAttribute("activePage", "upload-shared");
+        
+        return "notes/upload_shared";
+    }
+
+    @PostMapping("/upload-shared")
+    public String processUploadShared(@RequestParam("title") String title,
+                                      @RequestParam("category") String category,
+                                      @RequestParam("academicYear") String academicYear,
+                                      @RequestParam("file") MultipartFile file,
+                                      @RequestParam(value = "targetCourses", required = false) List<String> targetCourses,
+                                      jakarta.servlet.http.HttpServletRequest request,
+                                      RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return "redirect:/login";
+        }
+        
+        if (targetCourses == null || targetCourses.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Please select at least one course/module.");
+            return "redirect:/admin/upload-shared";
+        }
+        
+        try {
+            String appUrl = request.getScheme() + "://" + request.getServerName() + 
+                            ("http".equals(request.getScheme()) && request.getServerPort() == 80 || "https".equals(request.getScheme()) && request.getServerPort() == 443 ? "" : ":" + request.getServerPort());
+                            
+            noteService.uploadSharedNote(title, category, academicYear, file, targetCourses, user, appUrl);
+            redirectAttributes.addFlashAttribute("success", "Shared document uploaded and assigned successfully to " + targetCourses.size() + " modules!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload document: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/upload-shared";
     }
 
 }

@@ -47,4 +47,17 @@ public class ExamGeneratorController {
         model.addAttribute("activePage", "generator");
         return "notes/generate_exam";
     }
+
+    /**
+     * SJUIT Diploma UE Exam builder page
+     * URL: /generate-exam/sjuit-diploma-ue
+     */
+    @GetMapping("/generate-exam/sjuit-diploma-ue")
+    public String showSjuitDiplomaUeExam(Model model) {
+        User user = getLoggedInUser();
+        model.addAttribute("user", user);
+        model.addAttribute("activePage", "generator");
+        return "notes/sjuit_diploma_ue";
+    }
 }
+

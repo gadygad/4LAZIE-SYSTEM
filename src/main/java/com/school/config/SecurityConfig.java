@@ -19,11 +19,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 public class SecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public org.springframework.security.core.session.SessionRegistry sessionRegistry() {
         return new org.springframework.security.core.session.SessionRegistryImpl();
     }
