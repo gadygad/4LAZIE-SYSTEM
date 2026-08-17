@@ -1352,16 +1352,16 @@
                 }
             }
             
-            document.getElementById('pdf-program').innerText = programName;
-            document.getElementById('pdf-module-code').innerHTML = document.getElementById('mCode').value.toUpperCase() + ' &mdash; ' + document.getElementById('mName').value.toUpperCase();
-            document.getElementById('pdf-time').innerText = document.getElementById('mTime').value.toUpperCase();
-            document.getElementById('pdf-instructions').innerText = document.getElementById('mInstructions').value;
+            document.querySelector('#exam-pdf-template #pdf-program').innerText = programName;
+            document.querySelector('#exam-pdf-template #pdf-module-code').innerHTML = document.getElementById('mCode').value.toUpperCase() + ' &mdash; ' + document.getElementById('mName').value.toUpperCase();
+            document.querySelector('#exam-pdf-template #pdf-time').innerText = document.getElementById('mTime').value.toUpperCase();
+            document.querySelector('#exam-pdf-template #pdf-instructions').innerText = document.getElementById('mInstructions').value;
             
             // New fields
-            document.getElementById('pdf-semester').innerText = document.getElementById('mSemester').value.toUpperCase();
+            document.querySelector('#exam-pdf-template #pdf-semester').innerText = document.getElementById('mSemester').value.toUpperCase();
             let examType = document.getElementById('mType').value;
             let examDate = document.getElementById('mDate').value.toUpperCase();
-            document.getElementById('pdf-exam-type-date').innerHTML = examType + "<br><strong>" + examDate + "</strong>";
+            document.querySelector('#exam-pdf-template #pdf-exam-type-date').innerHTML = examType + "<br><strong>" + examDate + "</strong>";
             
             // Build the body content from the structured builder
             let blocks = document.querySelectorAll('.question-block');
@@ -1431,7 +1431,7 @@
                 }
             });
             
-            document.getElementById('pdf-content-body').innerHTML = finalHtml;
+            document.querySelector('#exam-pdf-template #pdf-content-body').innerHTML = finalHtml;
         }
 
         function previewPDF() {
