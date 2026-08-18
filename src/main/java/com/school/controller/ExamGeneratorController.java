@@ -9,12 +9,30 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import java.util.HashMap;
+import java.time.LocalDateTime;
+
+import com.school.model.Note;
+import com.school.repository.NoteRepository;
+import com.school.service.NoteService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ExamGeneratorController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private NoteRepository noteRepository;
+
+    @Autowired
+    private NoteService noteService;
 
     private User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -58,6 +76,72 @@ public class ExamGeneratorController {
         model.addAttribute("user", user);
         model.addAttribute("activePage", "generator");
         return "notes/sjuit_diploma_ue";
+    }
+
+    public static class ExamSubmissionRequest {
+        public String title;
+        public String programType;
+        public Integer levelNo;
+        public Integer semesterNo;
+        public String moduleName;
+        public String moduleCode;
+        public String academicYear;
+        public String contentJson;
+    }
+
+    @PostMapping("/api/generate-exam/save")
+    @ResponseBody
+    public ResponseEntity<?> saveGeneratedExam(@RequestBody ExamSubmissionRequest request, HttpServletRequest httpRequest) {
+        User user = getLoggedInUser();
+        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+            return ResponseEntity.status(403).body(Map.of("success", false, "message", "Unauthorized"));
+        }
+
+        try {
+            Note note = new Note();
+            note.setTitle(request.title);
+            note.setProgramType(request.programType);
+            note.setLevelNo(request.levelNo);
+            note.setSemesterNo(request.semesterNo);
+            note.setModuleName(request.moduleName);
+            note.setModuleCode(request.moduleCode);
+            note.setAcademicYear(request.academicYear);
+            note.setCategory("UE");
+            note.setContentJson(request.contentJson);
+            note.setUploadDate(LocalDateTime.now());
+            note.setIsPublic(true);
+            note.setIsGeneral(false);
+            
+            // Dummy filename since we don't have a real file
+            note.setFilename(request.moduleCode + "_Generated.pdf");
+
+            noteRepository.save(note);
+            
+            // --- NEW: Trigger Notifications ---
+            String appUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + 
+                            (httpRequest.getServerPort() != 80 && httpRequest.getServerPort() != 443 ? ":" + httpRequest.getServerPort() : "");
+            noteService.triggerNotificationsForNote(note, user, appUrl);
+            // ----------------------------------
+            
+            return ResponseEntity.ok(Map.of("success", true, "message", "Exam saved successfully", "noteId", note.getId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Server error: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/view-generated-exam/{id}")
+    public String viewGeneratedExam(@org.springframework.web.bind.annotation.PathVariable("id") String id, 
+                                    @org.springframework.web.bind.annotation.RequestParam(value = "action", required = false, defaultValue = "read") String action,
+                                    Model model) {
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null || note.getContentJson() == null) {
+            return "redirect:/dashboard";
+        }
+        model.addAttribute("note", note);
+        model.addAttribute("action", action);
+        model.addAttribute("user", getLoggedInUser());
+        return "notes/view_generated_exam";
     }
 }
 

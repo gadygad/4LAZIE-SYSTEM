@@ -74,7 +74,7 @@ public class SecurityConfig {
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
-                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'"))
+                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-src 'self' blob:; img-src 'self' https: data: blob:; frame-ancestors 'self'"))
             );
 
         return http.build();

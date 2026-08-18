@@ -527,6 +527,13 @@ public class NotesController {
             userRepository.save(loggedInUser);
         }
 
+        // --- NEW: Client-Side PDF Generation Intercept ---
+        if (note.getContentJson() != null && !note.getContentJson().isEmpty()) {
+            response.sendRedirect("/view-generated-exam/" + note.getId() + "?action=download");
+            return;
+        }
+        // ------------------------------------------------
+
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
@@ -642,6 +649,13 @@ public class NotesController {
 
         note.setViewCount((note.getViewCount() == null ? 0 : note.getViewCount()) + 1);
         noteRepository.save(note);
+
+        // --- NEW: Client-Side PDF Generation Intercept ---
+        if (note.getContentJson() != null && !note.getContentJson().isEmpty()) {
+            response.sendRedirect("/view-generated-exam/" + note.getId() + "?action=read");
+            return;
+        }
+        // ------------------------------------------------
 
         if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";

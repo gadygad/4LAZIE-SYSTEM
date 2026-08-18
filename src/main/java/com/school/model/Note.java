@@ -37,6 +37,9 @@ public class Note {
     private String fileUrl;
     private String academicYear;
 
+    // JSON content for dynamically generated exams (client-side PDF generation)
+    private String contentJson;
+
     @Indexed
     private LocalDateTime uploadDate;
 
@@ -104,6 +107,8 @@ public class Note {
     public void setFilename(String filename) { this.filename = filename; }
     public String getFileUrl() { return fileUrl; }
     public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+    public String getContentJson() { return contentJson; }
+    public void setContentJson(String contentJson) { this.contentJson = contentJson; }
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear != null ? academicYear.toUpperCase() : null; }
     public LocalDateTime getUploadDate() { return uploadDate; }

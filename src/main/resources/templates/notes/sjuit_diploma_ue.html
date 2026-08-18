@@ -629,10 +629,14 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-success small">Academic Year</label>
-                                <select id="mAcademicYear" class="form-select form-select-lg shadow-sm border-0">
-                                    <option value="2024/2025" selected>2024/2025</option>
-                                    <option value="2025/2026">2025/2026</option>
-                                </select>
+                                <input type="number" id="mAcademicYear" list="academicYearsList" class="form-control form-control-lg shadow-sm border-0" value="2026" placeholder="Mf. 2026">
+                                <datalist id="academicYearsList">
+                                    <option value="2026">
+                                    <option value="2025">
+                                    <option value="2024">
+                                    <option value="2023">
+                                    <option value="2022">
+                                </datalist>
                             </div>
                         </div>
                         <div class="text-end mt-4 pt-3 border-top">
@@ -705,6 +709,9 @@
                                 </button>
                                 <button type="button" class="btn btn-success btn-lg px-4 rounded-pill shadow" onclick="generatePDF()">
                                     <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg px-4 rounded-pill shadow" onclick="saveToDatabase(this)">
+                                    <i class="bi bi-cloud-arrow-up-fill me-2"></i> Save to Database
                                 </button>
                             </div>
                         </div>
@@ -812,7 +819,7 @@
         <div style="background: #c3e2cc; border-left: 3px solid #08693c; padding: 8px 12px; margin: 0 0 25px 0; display: flex; align-items: center; gap: 12px; font-family: 'Inter', 'Outfit', sans-serif;">
             <!-- QR Code -->
             <div style="background: #ffffff; padding: 3px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;">
-                <img src="https://quickchart.io/qr?text=https://www.4lazie.com&size=60&margin=0" alt="QR Code" style="width: 40px; height: 40px; display: block;" crossorigin="anonymous" />
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8AQMAAAAAMksxAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA10lEQVQokXXRsQqDMBAG4JMMbnXt5iu0W13qq0QEfYAuHYQIDi4FV4eCzyIF3fQVBIeuAVfpNcGqscR/+oZwd7kDmMMwBeJit4KS4souoCAcUh454wbFOd5D3CYbUJKX41TwB4Z5409N/yFymGebwAZs++qm4A4MSEV08F6pW+DQrQi5yaMKFATkfR4x04GC3SayxQpLzCzrLAhOtGF1rIOHsdXjA1YAHI3C4ArETz++k3UaUJKefPlmgdgqt+VgCnLr6eAOyg4iBeKCVlJzBXLPkYk6zPkCX1v1ldFRyt8AAAAASUVORK5CYII=" alt="QR Code" style="width: 40px; height: 40px; display: block;" />
             </div>
             <!-- Text Content -->
             <div>
@@ -1508,6 +1515,64 @@
             document.querySelector('#exam-pdf-template #pdf-content-body').innerHTML = finalHtml;
         }
 
+        async function saveToDatabase(btn) {
+            try {
+                prepareTemplateData();
+                const blocks = document.querySelectorAll('.question-block');
+                const questionsArray = [];
+                blocks.forEach(block => {
+                    questionsArray.push({
+                        part: block.querySelector('.q-part').value,
+                        number: block.querySelector('.q-number').value,
+                        content: block.querySelector('.q-content').value
+                    });
+                });
+
+                const requestData = {
+                    title: document.getElementById('mCode').value + ' - ' + document.getElementById('mName').value,
+                    programType: document.querySelector('#exam-pdf-template #pdf-program').innerText,
+                    levelNo: parseInt(document.getElementById('mNtaLevel').value),
+                    semesterNo: document.getElementById('mSemester').value === 'SEM: I' ? 1 : 2,
+                    moduleCode: document.getElementById('mCode').value,
+                    moduleName: document.getElementById('mName').value,
+                    academicYear: document.getElementById('mAcademicYear').value,
+                    contentJson: JSON.stringify({
+                        examTime: document.getElementById('mTime').value.toUpperCase(),
+                        instructions: document.getElementById('mInstructions').value,
+                        examType: document.getElementById('mType').value,
+                        examDate: document.getElementById('mDate').value.toUpperCase(),
+                        questions: questionsArray
+                    })
+                };
+
+                const originalBtnHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
+                btn.disabled = true;
+
+                const response = await fetch('/api/generate-exam/save', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+                
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+
+                if (result.success) {
+                    alert('Success! The exam has been saved to the Database.');
+                } else {
+                    alert('Failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while saving.");
+                btn.disabled = false;
+            }
+        }
+
         function previewPDF() {
             try {
                 // First, update the hidden template with current form data
@@ -1525,7 +1590,7 @@
                 var myModal = new bootstrap.Modal(document.getElementById('previewModal'));
                 myModal.show();
             } catch (error) {
-                alert("Kuna shida imetokea wakati wa kutengeneza Preview: " + error.message);
+                alert("An error occurred while generating the Preview: " + error.message);
                 console.error("Preview Error: ", error);
             }
         }
@@ -1658,8 +1723,8 @@
                 btn.disabled = false;
                 
             } catch (error) {
-                console.error("PDF Generation Error:", error);
-                alert("Kuna tatizo limetokea wakati wa kutengeneza PDF. Tafadhali jaribu tena.");
+                console.error("PDF Generation Error: ", error);
+                alert("An error occurred while generating the PDF. Please try again.");
                 
                 // Always restore button if error occurs
                 const btn = document.querySelector('button[onclick="generatePDF()"]');

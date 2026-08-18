@@ -146,23 +146,31 @@ public class NoteService {
         note.setInstitution(loggedInUser.getInstitution());
         noteRepository.save(note);
 
+        triggerNotificationsForNote(note, loggedInUser, appUrl);
+    }
+
+    public void triggerNotificationsForNote(Note note, com.school.model.User loggedInUser, String appUrl) {
         if (pushNotificationService != null) {
             String pushTitle = "New Notes Added! 🎉";
             String categoryLabel = (note.getCategory() == null || note.getCategory().trim().isEmpty()) ? "Note" : note.getCategory();
             String pushBody = "Hey there! We just added a new " + categoryLabel + " titled '" + note.getTitle() + "'. Tap here to check it out!";
-            String pushUrl = "/view/" + note.getEncryptedSlug();
             
+            // Fix URL for generated exams vs normal notes
+            String pushUrl = (note.getContentJson() != null && !note.getContentJson().isEmpty()) 
+                            ? "/view-generated-exam/" + note.getId() 
+                            : "/view/" + note.getEncryptedSlug();
+
             pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
-            
+
             if (notificationService != null && userRepository != null) {
                 List<com.school.model.User> matchedUsers = userRepository.findAll().stream()
                     .filter(u -> note.getProgramType().equals(u.getCourseProgram()) &&
                                  note.getLevelNo().equals(u.getLevel()) &&
                                  note.getSemesterNo().equals(u.getSemester()))
                     .collect(java.util.stream.Collectors.toList());
-                    
+
                 for (com.school.model.User u : matchedUsers) {
-                    if (!u.getId().equals(loggedInUser.getId())) {
+                    if (loggedInUser == null || !u.getId().equals(loggedInUser.getId())) {
                         notificationService.createNotification(u.getId(), pushTitle, pushBody);
                         String emailLink = appUrl + pushUrl;
                         emailService.sendNewNoteNotification(u.getEmail(), note.getTitle(), categoryLabel, emailLink);
