@@ -106,7 +106,6 @@
             background-color: #e0f7fa;
             color: #000;
             width: 210mm;
-            min-height: 297mm;
             margin: 0;
             padding: 0;
             position: relative;
@@ -422,7 +421,6 @@
             width: 794px !important;
             min-width: 794px !important;
             max-width: 794px !important;
-            min-height: 1122px;
             background: #e0f7fa;
             color: #111;
             font-size: 13pt;
@@ -430,6 +428,7 @@
             font-family: 'Times New Roman', Times, serif;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .exam-theme::before {
@@ -897,8 +896,8 @@
 
       </div><!-- end content -->
 
-      <!-- BOTTOM SECTION (Pushed to bottom) -->
-      <div id="pdf-bottom-footer" style="position: absolute; bottom: 0; left: 0; width: 100%;">
+      <!-- BOTTOM SECTION (Flows naturally) -->
+      <div id="pdf-bottom-footer" style="margin-top: 20px; width: 100%;">
           
           <!-- BOTTOM FOOTER -->
           <div style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
@@ -1613,7 +1612,7 @@
                     const result = await response.json();
                     if (response.ok || result.success) {
                         successCount++;
-                        lastNoteId = result.id;
+                        lastNoteId = result.noteId;
                     }
                 }
 
@@ -1701,18 +1700,32 @@
                     element.style.paddingBottom = '0px'; // Reset padding to accurately measure content height
 
                     calculatePDFLayout();
-
-                    // Save scroll position and jump to top to prevent html2canvas clipping bug
+                    // ==========================================
+                    // 1. Hakikisha fonts zote zimepakia kabla ya kupima/ku-capture
+                    // ==========================================
+                    if (document.fonts && document.fonts.ready) {
+                        try { await document.fonts.ready; } catch (e) {}
+                    }
+    
+                    const footerEl = element.querySelector('#pdf-bottom-footer');
+    
+                    void element.offsetHeight;
+                    await new Promise(resolve => setTimeout(resolve, 300));
+    
+                    const elementRectHint = element.getBoundingClientRect();
+                    let footerTopCSSHint = 0;
+                    if(footerEl) {
+                        const footerRectHint = footerEl.getBoundingClientRect();
+                        footerTopCSSHint = footerRectHint.top - elementRectHint.top;
+                    }
+    
+                    const SCALE = 2;
+    
                     const originalScrollY = window.scrollY;
                     window.scrollTo(0, 0);
-
-                    // Crucial: Wait for browser to actually paint the element on the screen
-                    void element.offsetHeight; // Force layout calc
-                    await new Promise(resolve => setTimeout(resolve, 300));
-
-                    // 5. Capture the element as an image
+    
                     const canvas = await html2canvas(element, {
-                        scale: 2, // Reduced from 4 to 2 for smaller file size but still sharp
+                        scale: SCALE,
                         useCORS: true,
                         letterRendering: true,
                         backgroundColor: '#e0f7fa',
@@ -1723,58 +1736,109 @@
                         windowWidth: element.scrollWidth,
                         windowHeight: element.scrollHeight
                     });
-
-                    // Restore scroll position immediately after capture
+    
                     window.scrollTo(0, originalScrollY);
-
-                    // 6. Initialize jsPDF
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF({ 
-                        unit: 'mm', 
-                        format: 'a4', 
-                        orientation: 'portrait', 
-                        compress: true 
-                    });
                     
-                    // 7. Calculate dimensions for A4 slicing
-                    const pageW = pdf.internal.pageSize.getWidth();
-                    const pageH = pdf.internal.pageSize.getHeight();
-                    const canvasW = canvas.width;
-                    const canvasH = canvas.height;
-                    const ratio = canvasW / pageW;
-                    const pageHpx = pageH * ratio;
-                    
-                    // Add a small 10px tolerance to avoid generating an extra blank page for a sub-pixel sliver
-                    const totalPages = Math.ceil((canvasH - 10) / pageHpx);
-                    
-                    // 8. Loop through pages and slice the canvas
-                    for (let page = 0; page < totalPages; page++) {
-                        if (page > 0) pdf.addPage();
-                        
-                        // Paint the background green for the entire A4 page
-                        pdf.setFillColor(178, 216, 186); // #b2d8ba
-                        pdf.rect(0, 0, pageW, pageH, 'F');
-                        
-                        const srcY = page * pageHpx;
-                        const srcH = Math.min(pageHpx, canvasH - srcY);
-                        
-                        // Create a temporary canvas for this specific slice
-                        const sliceCanvas = document.createElement('canvas');
-                        sliceCanvas.width = canvasW;
-                        sliceCanvas.height = srcH;
-                        const ctx = sliceCanvas.getContext('2d');
-                        
-                        // Draw the background and the content slice
-                        ctx.fillStyle = '#b2d8ba';
-                        ctx.fillRect(0, 0, canvasW, srcH);
-                        ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
-                        
-                        // Add the slice to the PDF with 75% quality to significantly reduce MBs
-                        const sliceImg = sliceCanvas.toDataURL('image/jpeg', 0.75);
-                        const sliceHmm = (srcH / ratio);
-                        pdf.addImage(sliceImg, 'JPEG', 0, 0, pageW, sliceHmm);
+                    const footerTopPX = Math.max(0, Math.floor(footerTopCSSHint * SCALE));
+    
+                    // ==========================================
+                    // 2. TRIM kwa FULL PIXEL SCAN ya picha halisi
+                    // ==========================================
+                    const ctx = canvas.getContext('2d');
+                    const bgR = 224, bgG = 247, bgB = 250; 
+                    const tolerance = 25;
+                    const minContentPixelsPerRow = Math.floor(canvas.width * 0.15); 
+    
+                    let lastContentY = 0;
+                    const chunkSize = 200;
+                    outerLoop:
+                    for (let yStart = canvas.height - chunkSize; yStart > -chunkSize; yStart -= chunkSize) {
+                        const realStart = Math.max(0, yStart);
+                        const realHeight = Math.min(chunkSize, canvas.height - realStart);
+                        if (realHeight <= 0) continue;
+    
+                        const chunkData = ctx.getImageData(0, realStart, canvas.width, realHeight).data;
+    
+                        for (let rowOffset = realHeight - 1; rowOffset >= 0; rowOffset--) {
+                            let contentPixelCount = 0;
+                            const rowBase = rowOffset * canvas.width * 4;
+                            for (let x = 0; x < canvas.width; x++) {
+                                const idx = rowBase + x * 4;
+                                const r = chunkData[idx], g = chunkData[idx + 1], b = chunkData[idx + 2], a = chunkData[idx + 3];
+                                if (a > 0 && (Math.abs(r - bgR) > tolerance || Math.abs(g - bgG) > tolerance || Math.abs(b - bgB) > tolerance)) {
+                                    contentPixelCount++;
+                                    if (contentPixelCount >= minContentPixelsPerRow) break;
+                                }
+                            }
+                            if (contentPixelCount >= minContentPixelsPerRow) {
+                                lastContentY = realStart + rowOffset + 1;
+                                break outerLoop;
+                            }
+                        }
                     }
-                    
+    
+                    lastContentY = Math.min(canvas.height, lastContentY + 6);
+                    if (lastContentY <= 0) lastContentY = canvas.height;
+    
+                    const trimmedCanvas = document.createElement('canvas');
+                    trimmedCanvas.width = canvas.width;
+                    trimmedCanvas.height = lastContentY;
+                    trimmedCanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, lastContentY, 0, 0, canvas.width, lastContentY);
+                    const pdfCanvas = trimmedCanvas;
+    
+                    // ==========================================
+                    // 3. Gawa katika A4 pages, bila kukata footer
+                    // ==========================================
+                    const { jsPDF } = window.jspdf;
+                    const canvasW = pdfCanvas.width;
+                    const canvasH = pdfCanvas.height;
+                    const canvasPageHeight = canvasW * (297 / 210);
+                    const pageW = 210;
+                    const minMeaningfulLeftover = Math.max(canvasPageHeight * 0.08, 60);
+    
+                    let pageSlices = [];
+                    let cursor = 0;
+                    while (cursor < canvasH - 1) {
+                        let boundary = Math.min(cursor + canvasPageHeight, canvasH);
+    
+                        if (footerTopPX > 0 && boundary > footerTopPX && boundary < canvasH && cursor < footerTopPX) {
+                            boundary = footerTopPX;
+                        }
+    
+                        const sliceHeight = boundary - cursor;
+                        if (sliceHeight < 5) break;
+    
+                        pageSlices.push(sliceHeight);
+                        cursor = boundary;
+                    }
+    
+                    while (pageSlices.length > 1 && pageSlices[pageSlices.length - 1] < minMeaningfulLeftover) {
+                        const last = pageSlices.pop();
+                        pageSlices[pageSlices.length - 1] += last;
+                    }
+    
+                    let pdf = null;
+                    let currentY = 0;
+                    for (const sliceHeight of pageSlices) {
+                        const drawHeight = pageW * (sliceHeight / canvasW);
+    
+                        if (!pdf) {
+                            pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
+                        } else {
+                            pdf.addPage([pageW, drawHeight]);
+                        }
+    
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = canvasW;
+                        tempCanvas.height = sliceHeight;
+                        tempCanvas.getContext('2d').drawImage(pdfCanvas, 0, currentY, canvasW, sliceHeight, 0, 0, canvasW, sliceHeight);
+    
+                        const imgData = tempCanvas.toDataURL('image/jpeg', 0.85);
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
+    
+                        currentY += sliceHeight;
+                    }
+    
                     // 9. Save the PDF file
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
                     let finalFileName = `${mCode}_${safeProgName}_Exam.pdf`;
@@ -1784,6 +1848,7 @@
                     element.style.display = 'none';
                     element.style.position = 'static';
                 }
+
 
                 // Restore button state
                 btn.innerHTML = originalBtnHtml;

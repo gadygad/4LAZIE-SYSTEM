@@ -70,9 +70,12 @@ public class HomeController {
         if (session.getAttribute("user") != null) {
             return "redirect:/dashboard";
         }
-        // Fetch the absolute 10 most recent uploads (Public Quick Access)
-        List<Note> popularNotes = noteRepository.findTop10ByOrderByIdDesc().stream()
+        // Fetch the absolute 10 most recent uploads (Public Quick Access), filtering duplicates
+        java.util.Set<String> seenTitles = new java.util.HashSet<>();
+        List<Note> popularNotes = noteRepository.findTop50ByOrderByIdDesc().stream()
                 .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
+                .filter(n -> seenTitles.add(n.getTitle())) // only keep the first occurrence of each title
+                .limit(10)
                 .collect(Collectors.toList());
         
         // Fetch distinct module names from database and map to advice

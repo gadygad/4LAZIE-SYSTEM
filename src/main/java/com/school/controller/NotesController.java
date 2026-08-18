@@ -325,8 +325,18 @@ public class NotesController {
             popularNotes = noteService.fetchDashboardNotes(program, "downloadCount", 5);
             recentNotes = noteService.fetchDashboardNotes(program, "uploadDate", 5);
         } else {
-            popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
-            recentNotes = noteRepository.findTop5ByOrderByUploadDateDesc();
+            java.util.Set<String> seenPopTitles = new java.util.HashSet<>();
+            popularNotes = noteRepository.findTop50ByOrderByIdDesc().stream()
+                .sorted((a, b) -> Integer.compare(b.getDownloadCount(), a.getDownloadCount()))
+                .filter(n -> seenPopTitles.add(n.getTitle()))
+                .limit(5)
+                .collect(java.util.stream.Collectors.toList());
+
+            java.util.Set<String> seenRecTitles = new java.util.HashSet<>();
+            recentNotes = noteRepository.findTop50ByOrderByIdDesc().stream()
+                .filter(n -> seenRecTitles.add(n.getTitle()))
+                .limit(5)
+                .collect(java.util.stream.Collectors.toList());
         }
 
         model.addAttribute("popularNotes", popularNotes);

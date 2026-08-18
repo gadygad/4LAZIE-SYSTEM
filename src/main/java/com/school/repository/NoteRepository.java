@@ -111,6 +111,7 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     
     // Fetch latest 10 notes across all categories
     List<Note> findTop10ByOrderByIdDesc();
+    List<Note> findTop50ByOrderByIdDesc();
     List<Note> findTop6ByOrderByIdDesc();
 
     @Aggregation(pipeline = {

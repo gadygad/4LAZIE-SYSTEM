@@ -13,12 +13,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; display: flex; align-items: flex-start; justify-content: center; height: 100vh; overflow: auto; padding: 20px 0; }
         .exam-theme {
             width: 794px !important;
             min-width: 794px !important;
             max-width: 794px !important;
-            min-height: 1122px;
             background: #e0f7fa;
             color: #111;
             font-size: 13pt;
@@ -53,7 +52,7 @@
         .exam-theme .sec-title { font-size: 9.5pt; font-weight: 800; color: #0a5c34; font-family: 'Inter', sans-serif; letter-spacing: 0.5px; }
         .exam-theme .footer-bar { background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 100%); border-top: 2px solid #0a5c34; padding: 10px 18mm; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; position: relative; }
         .exam-theme .footer-bar::before { content: ''; position: absolute; top: -2px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #0a5c34, #10b981, #0a5c34); }
-        .exam-theme .copyright-banner { text-align: center; font-size: 7.5pt; color: #444; padding: 5px 0 7px 0; font-family: 'Inter', sans-serif; border-top: 1px solid rgba(0,0,0,0.1); margin-top: auto; }
+        .exam-theme .copyright-banner { text-align: center; font-size: 7.5pt; color: #444; padding: 5px 0 7px 0; font-family: 'Inter', sans-serif; border-top: 1px solid rgba(0,0,0,0.1); margin-top: 20px; }
         
         .loading-container { text-align: center; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(16, 185, 129, 0.2); border-top-color: #10b981; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
@@ -183,8 +182,8 @@
         </div>
       </div>
       
-      <!-- BOTTOM SECTION (Pushed to bottom) -->
-      <div id="pdf-bottom-footer" style="position: absolute; bottom: 0; left: 0; width: 100%;">
+      <!-- BOTTOM SECTION (Flows naturally) -->
+      <div id="pdf-bottom-footer" style="margin-top: 20px; width: 100%;">
           <!-- BOTTOM FOOTER -->
           <div style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
           <!-- Top Row -->
@@ -279,9 +278,13 @@
                             else if (partName === 'PART C') { marksText = "(5 &times; 12 = 60 MARKS)"; instructionText = "(Answer any five)"; }
                             
                             finalHtml += `
-                                <div class="pdf-part-header" style="margin-top: 20px;">
-                                    <div style="font-weight: bold; font-size: 15pt; text-decoration: underline;">${partName} ${marksText}</div>
-                                    <div style="font-size: 11.5pt; font-style: italic; margin-top: 3px;">${instructionText}</div>
+                                <div class="pdf-part-header" style="margin-top: 25px; margin-bottom: 15px; text-align: center;">
+                                    <div style="border: 1px solid #94bba2; background: rgba(162, 210, 179, 0.4); padding: 5px; font-weight: bold; font-family: 'Times New Roman', serif; font-size: 12pt;">
+                                        ${partName.replace('PART ', 'PART &ndash; ')} &nbsp;${marksText}
+                                    </div>
+                                    <div style="font-style: italic; font-family: 'Times New Roman', serif; font-size: 11pt; margin-top: 4px;">
+                                        ${instructionText}
+                                    </div>
                                 </div>
                             `;
                         }
@@ -338,17 +341,7 @@
                 }
 
                 void element.offsetHeight;
-                const contentHeight = element.scrollHeight;
-                let pagesRequired = Math.ceil(contentHeight / exactA4Height);
 
-                const availableSpace = (pagesRequired * exactA4Height) - contentHeight;
-                if (availableSpace < 85) {
-                    pagesRequired++;
-                }
-
-                const requiredHeight = pagesRequired * exactA4Height;
-                element.style.minHeight = requiredHeight + 'px';
-                
                 document.getElementById('status-text').innerText = "Rendering PDF...";
                 
                 // 4. Capture Canvas
@@ -372,12 +365,32 @@
                 } catch (e) {
                     console.warn("Could not pre-fetch QR code", e);
                 }
-                
+
+                // ==========================================
+                // 1. Hakikisha fonts zote zimepakia kabla ya kupima/ku-capture
+                //    (hii inazuia tofauti ya urefu kati ya DOM na canvas)
+                // ==========================================
+                if (document.fonts && document.fonts.ready) {
+                    try { await document.fonts.ready; } catch (e) {}
+                }
+
+                const footerEl = document.getElementById('pdf-bottom-footer');
+
                 void element.offsetHeight;
                 await new Promise(resolve => setTimeout(resolve, 300));
-                
+
+                // DOM hint tu (si ya uhakika 100%, itatumika kuzuia footer isikatike
+                // katikati ya pages — si kwa trim ya mwisho)
+                const elementRectHint = element.getBoundingClientRect();
+                const footerRectHint = footerEl.getBoundingClientRect();
+                const footerTopCSSHint = footerRectHint.top - elementRectHint.top;
+
+                const SCALE = 2;
+
+                window.scrollTo(0, 0);
+
                 const canvas = await html2canvas(element, {
-                    scale: 2,
+                    scale: SCALE,
                     useCORS: true,
                     letterRendering: true,
                     backgroundColor: '#e0f7fa',
@@ -388,47 +401,123 @@
                     windowWidth: element.scrollWidth,
                     windowHeight: element.scrollHeight
                 });
-                
+
                 window.scrollTo(0, originalScrollY);
-                element.style.display = 'none'; // hide it again
-                
-                // 5. Build PDF
+                element.style.display = 'none';
+
+                const footerTopPX = Math.max(0, Math.floor(footerTopCSSHint * SCALE));
+
+                // ==========================================
+                // 2. TRIM kwa FULL PIXEL SCAN ya picha halisi (si makisio ya DOM)
+                //    Hii ndiyo ya uhakika zaidi kwa sababu inaangalia picha iliyotokea
+                //    kweli, hivyo haiwezi kudanganywa na tofauti za font-loading kati
+                //    ya DOM na html2canvas internal clone.
+                // ==========================================
+                const ctx = canvas.getContext('2d');
+                const bgR = 224, bgG = 247, bgB = 250; // #e0f7fa
+                const tolerance = 25;
+                const minContentPixelsPerRow = Math.floor(canvas.width * 0.15); // 15% ya upana
+
+                let lastContentY = 0;
+                // Scan kwa vipande vya row 200 kwa wakati mmoja (haraka zaidi kuliko row moja moja)
+                const chunkSize = 200;
+                outerLoop:
+                for (let yStart = canvas.height - chunkSize; yStart > -chunkSize; yStart -= chunkSize) {
+                    const realStart = Math.max(0, yStart);
+                    const realHeight = Math.min(chunkSize, canvas.height - realStart);
+                    if (realHeight <= 0) continue;
+
+                    const chunkData = ctx.getImageData(0, realStart, canvas.width, realHeight).data;
+
+                    for (let rowOffset = realHeight - 1; rowOffset >= 0; rowOffset--) {
+                        let contentPixelCount = 0;
+                        const rowBase = rowOffset * canvas.width * 4;
+                        for (let x = 0; x < canvas.width; x++) {
+                            const idx = rowBase + x * 4;
+                            const r = chunkData[idx], g = chunkData[idx + 1], b = chunkData[idx + 2], a = chunkData[idx + 3];
+                            if (a > 0 && (Math.abs(r - bgR) > tolerance || Math.abs(g - bgG) > tolerance || Math.abs(b - bgB) > tolerance)) {
+                                contentPixelCount++;
+                                if (contentPixelCount >= minContentPixelsPerRow) break;
+                            }
+                        }
+                        if (contentPixelCount >= minContentPixelsPerRow) {
+                            lastContentY = realStart + rowOffset + 1;
+                            break outerLoop;
+                        }
+                    }
+                }
+
+                // safety padding ndogo (border ya footer isikatike)
+                lastContentY = Math.min(canvas.height, lastContentY + 6);
+                if (lastContentY <= 0) lastContentY = canvas.height; // fallback ya usalama
+
+                const trimmedCanvas = document.createElement('canvas');
+                trimmedCanvas.width = canvas.width;
+                trimmedCanvas.height = lastContentY;
+                trimmedCanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, lastContentY, 0, 0, canvas.width, lastContentY);
+                const pdfCanvas = trimmedCanvas;
+
+                console.log("[4LAZIE PDF] footerTopPX (DOM hint):", footerTopPX, "| canvas.height (raw):", canvas.height, "| trimmed to (real scan):", lastContentY);
+
+                // ==========================================
+                // 3. Gawa katika A4 pages, bila kukata footer katikati
+                // ==========================================
                 document.getElementById('status-text').innerText = "Finalizing...";
-                
                 const { jsPDF } = window.jspdf;
-                const canvasW = canvas.width;
-                const canvasH = canvas.height;
+                const canvasW = pdfCanvas.width;
+                const canvasH = pdfCanvas.height;
                 const canvasPageHeight = canvasW * (297 / 210);
-                
-                const pageW = 210; // A4 width in mm
+                const pageW = 210;
+                const minMeaningfulLeftover = Math.max(canvasPageHeight * 0.08, 60);
+
+                let pageSlices = [];
+                let cursor = 0;
+                while (cursor < canvasH - 1) {
+                    let boundary = Math.min(cursor + canvasPageHeight, canvasH);
+
+                    // Kama mpaka huu ungekata ndani ya footer (kwa kutumia DOM hint),
+                    // sogeza mpaka mbele ili footer ihamie page inayofuata kikamilifu
+                    if (boundary > footerTopPX && boundary < canvasH && cursor < footerTopPX) {
+                        boundary = footerTopPX;
+                    }
+
+                    const sliceHeight = boundary - cursor;
+                    if (sliceHeight < 5) break;
+
+                    pageSlices.push(sliceHeight);
+                    cursor = boundary;
+                }
+
+                while (pageSlices.length > 1 && pageSlices[pageSlices.length - 1] < minMeaningfulLeftover) {
+                    const last = pageSlices.pop();
+                    pageSlices[pageSlices.length - 1] += last;
+                }
+
+                console.log("[4LAZIE PDF] pageSlices:", pageSlices, "| total pages:", pageSlices.length);
+
                 let pdf = null;
-                
                 let currentY = 0;
-                let pageIndex = 0;
-                while (currentY < canvasH) {
-                    let sliceHeight = Math.min(canvasPageHeight, canvasH - currentY);
+                for (const sliceHeight of pageSlices) {
                     const drawHeight = pageW * (sliceHeight / canvasW);
-                    
+
                     if (!pdf) {
                         pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
                     } else {
                         pdf.addPage([pageW, drawHeight]);
                     }
-                    
+
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = canvasW;
                     tempCanvas.height = sliceHeight;
-                    const ctx = tempCanvas.getContext('2d');
-                    ctx.drawImage(canvas, 0, currentY, canvasW, sliceHeight, 0, 0, canvasW, sliceHeight);
-                    
+                    tempCanvas.getContext('2d').drawImage(pdfCanvas, 0, currentY, canvasW, sliceHeight, 0, 0, canvasW, sliceHeight);
+
                     const imgData = tempCanvas.toDataURL('image/jpeg', 0.85);
                     pdf.addImage(imgData, 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
-                    
-                    currentY += canvasPageHeight;
-                    pageIndex++;
+
+                    currentY += sliceHeight;
                 }
-                
-                const cleanFileName = (noteData.title || 'Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');
+             
+                const cleanFileName = ((noteData && noteData.title) || 'Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');;
 
                 if (actionParam === 'read') {
                     // 6. View Mode
