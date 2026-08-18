@@ -242,6 +242,11 @@
                 
                 // 2. Render Questions and Extra Details
                 const parsedData = JSON.parse(noteData.contentJson);
+                
+                if (parsedData.fullProgramName) {
+                    document.getElementById('pdf-program').innerText = parsedData.fullProgramName;
+                }
+
                 let questionsArray = [];
                 let examTime = "02:30 HOURS";
                 let instructionsText = "1. This paper consists of THREE (3) sections A, B and C.\n2. Read carefully the instructions in each section.\n3. Answer all questions in section A and B and any FIVE (5) questions in section C.\n4. Mobile phones and unauthorized materials are strictly prohibited in examination room.";

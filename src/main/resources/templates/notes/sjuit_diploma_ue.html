@@ -1585,9 +1585,17 @@
                     let prog = programs[i];
                     prepareTemplateData(prog);
 
+                    let shortCode = prog;
+                    if (typeof allCourses !== 'undefined') {
+                        const matchedCourse = allCourses.find(c => c.name.toUpperCase() === prog);
+                        if (matchedCourse && matchedCourse.code) {
+                            shortCode = matchedCourse.code;
+                        }
+                    }
+
                     const requestData = {
                         title: document.getElementById('mCode').value + ' - ' + document.getElementById('mName').value,
-                        programType: document.querySelector('#exam-pdf-template #pdf-program').innerText,
+                        programType: shortCode,
                         levelNo: parseInt(document.getElementById('mNtaLevel').value),
                         semesterNo: document.getElementById('mSemester').value === 'SEM: I' ? 1 : 2,
                         moduleCode: document.getElementById('mCode').value,
@@ -1598,7 +1606,8 @@
                             instructions: document.getElementById('mInstructions').value,
                             examType: document.getElementById('mType').value,
                             examDate: document.getElementById('mDate').value.toUpperCase(),
-                            questions: questionsArray
+                            questions: questionsArray,
+                            fullProgramName: document.querySelector('#exam-pdf-template #pdf-program').innerText
                         })
                     };
 
