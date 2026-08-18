@@ -206,7 +206,7 @@
           </div>
           <!-- Bottom Copyright Row -->
           <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
-              <div style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
+              <div id="pdf-copyright-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
                   © 2025 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.
               </div>
           </div>
@@ -245,6 +245,13 @@
                 
                 if (parsedData.fullProgramName) {
                     document.getElementById('pdf-program').innerText = parsedData.fullProgramName;
+                }
+                
+                // Update copyright year
+                const academicYearStr = noteData.academicYear || new Date().getFullYear();
+                const copyrightEl = document.getElementById('pdf-copyright-text');
+                if (copyrightEl) {
+                    copyrightEl.innerText = `© ${academicYearStr} 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.`;
                 }
 
                 let questionsArray = [];

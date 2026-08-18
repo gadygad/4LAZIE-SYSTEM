@@ -923,7 +923,7 @@
           
           <!-- Bottom Copyright Row -->
           <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
-              <div style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
+              <div id="pdf-copyright-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
                   © 2025 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.
               </div>
           </div>
@@ -1468,11 +1468,18 @@
                     programName = certPrefix + ' ' + programName;
                 }
                 if (!programName.includes('(NTA')) {
-                    programName += ` (NTA ${ntaLevel})`;
+                    programName += ' (NTA LEVEL ' + ntaLevel + ')';
                 }
             }
             
             document.querySelector('#exam-pdf-template #pdf-program').innerText = programName;
+            
+            // Populate copyright text dynamically
+            const academicYearStr = document.getElementById('mAcademicYear').value || new Date().getFullYear();
+            const copyrightEl = document.querySelector('#exam-pdf-template #pdf-copyright-text');
+            if (copyrightEl) {
+                copyrightEl.innerText = `© ${academicYearStr} 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.`;
+            };
             document.querySelector('#exam-pdf-template #pdf-module-code').innerHTML = document.getElementById('mCode').value.toUpperCase() + ' &mdash; ' + document.getElementById('mName').value.toUpperCase();
             document.querySelector('#exam-pdf-template #pdf-time').innerText = document.getElementById('mTime').value.toUpperCase();
             document.querySelector('#exam-pdf-template #pdf-instructions').innerText = document.getElementById('mInstructions').value;
