@@ -207,6 +207,25 @@
             padding-left: 28px;
             color: #047857;
         }
+
+        /* Compact Custom Dropdown */
+        .custom-select-wrapper.compact-wrapper .custom-select-trigger {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+        .custom-select-wrapper.compact-wrapper .custom-options {
+            top: calc(100% + 4px);
+            border-radius: 8px;
+        }
+        .custom-select-wrapper.compact-wrapper .custom-option {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+        .custom-select-wrapper.compact-wrapper .custom-option:hover, 
+        .custom-select-wrapper.compact-wrapper .custom-option.selected {
+            padding-left: 16px;
+        }
         
         /* Magical Buttons */
         .btn-success {
@@ -691,28 +710,68 @@
                     <div class="p-4" style="background: rgba(255,255,255,0.4); border-radius: 15px; border: 1px solid rgba(16,185,129,0.1);">
                         <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 questions-header-container">
                             <h5 class="premium-header mb-0"><i class="bi bi-list-task me-2" style="color: #059669;"></i>Exam Questions Builder</h5>
-                            <button type="button" class="btn btn-sm btn-success rounded-pill shadow-sm" onclick="addQuestionBlock()">
-                                <i class="bi bi-plus-circle me-1"></i> Add Question
-                            </button>
                         </div>
                         
-                        <div id="questions-container" class="d-flex flex-column gap-3 mb-4">
-                            <!-- Blocks will be generated automatically by JS -->
+                        <div class="accordion mb-4" id="questionsAccordion">
+                            <div class="accordion-item border-0 shadow-sm mb-3 rounded overflow-hidden">
+                                <h2 class="accordion-header" id="headingPartA">
+                                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePartA" aria-expanded="true" aria-controls="collapsePartA" style="background-color: #f8fafc; color: #0f172a;">
+                                        PART A (Mandatory Questions)
+                                    </button>
+                                </h2>
+                                <div id="collapsePartA" class="accordion-collapse collapse show" aria-labelledby="headingPartA" data-bs-parent="#questionsAccordion">
+                                    <div class="accordion-body bg-white">
+                                        <div id="questions-container-part-a" class="d-flex flex-column gap-3 mb-3"></div>
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill" onclick="addQuestionBlock('PART A')"><i class="bi bi-plus-circle me-1"></i> Add Question to Part A</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0 shadow-sm mb-3 rounded overflow-hidden">
+                                <h2 class="accordion-header" id="headingPartB">
+                                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePartB" aria-expanded="false" aria-controls="collapsePartB" style="background-color: #f8fafc; color: #0f172a;">
+                                        PART B (Optional Questions)
+                                    </button>
+                                </h2>
+                                <div id="collapsePartB" class="accordion-collapse collapse" aria-labelledby="headingPartB" data-bs-parent="#questionsAccordion">
+                                    <div class="accordion-body bg-white">
+                                        <div id="questions-container-part-b" class="d-flex flex-column gap-3 mb-3"></div>
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill" onclick="addQuestionBlock('PART B')"><i class="bi bi-plus-circle me-1"></i> Add Question to Part B</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0 shadow-sm mb-3 rounded overflow-hidden">
+                                <h2 class="accordion-header" id="headingPartC">
+                                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePartC" aria-expanded="false" aria-controls="collapsePartC" style="background-color: #f8fafc; color: #0f172a;">
+                                        PART C (Optional Questions)
+                                    </button>
+                                </h2>
+                                <div id="collapsePartC" class="accordion-collapse collapse" aria-labelledby="headingPartC" data-bs-parent="#questionsAccordion">
+                                    <div class="accordion-body bg-white">
+                                        <div id="questions-container-part-c" class="d-flex flex-column gap-3 mb-3"></div>
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill" onclick="addQuestionBlock('PART C')"><i class="bi bi-plus-circle me-1"></i> Add Question to Part C</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="d-flex flex-column flex-md-row justify-content-between mt-4 pt-3 border-top align-items-md-center gap-3">
-                            <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-4 order-2 order-md-1" onclick="prevStep(2)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
-                            
-                            <div class="d-flex flex-column flex-md-row gap-2 order-1 order-md-2">
-                                <button type="button" class="btn btn-live-preview btn-lg px-4 rounded-pill shadow-sm" onclick="previewPDF()">
-                                    <i class="bi bi-eye-fill me-2"></i> Live Preview
-                                </button>
-                                <button type="button" class="btn btn-success btn-lg px-4 rounded-pill shadow" onclick="generatePDF()">
-                                    <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
-                                </button>
-                                <button type="button" class="btn btn-primary btn-lg px-4 rounded-pill shadow" onclick="saveToDatabase(this)">
-                                    <i class="bi bi-cloud-arrow-up-fill me-2"></i> Save to Database
-                                </button>
+                        <!-- Spacer so fixed-bottom doesn't cover the last question -->
+                        <div style="height: 80px;"></div>
+
+                        <div class="fixed-bottom bg-white shadow-lg border-top" style="z-index: 1050; padding-bottom: env(safe-area-inset-bottom);">
+                            <div class="container-fluid px-4 py-2 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-4 order-2 order-md-1" onclick="prevStep(2)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
+                                
+                                <div class="d-flex flex-wrap justify-content-center gap-2 order-1 order-md-2">
+                                    <button type="button" class="btn btn-sm btn-live-preview px-4 rounded-pill shadow-sm" onclick="previewPDF()">
+                                        <i class="bi bi-eye-fill me-2"></i> Live Preview
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-success px-4 rounded-pill shadow" onclick="generatePDF()">
+                                        <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary px-4 rounded-pill shadow" onclick="saveToDatabase(this)">
+                                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Save to Database
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -888,6 +947,9 @@
             
             const wrapper = document.createElement('div');
             wrapper.className = 'custom-select-wrapper';
+            if (select.classList.contains('q-number')) {
+                wrapper.classList.add('compact-wrapper');
+            }
             
             const trigger = document.createElement('div');
             trigger.className = 'custom-select-trigger';
@@ -1266,85 +1328,63 @@
             }
         }
 
-        let questionCount = 1;
-        function addQuestionBlock() {
-            const container = document.getElementById('questions-container');
+        let questionCount = 1;        function addQuestionBlock(targetPart = 'PART A', defaultNum = null) {
+            let containerId = 'questions-container-part-a';
+            if (targetPart === 'PART B') containerId = 'questions-container-part-b';
+            else if (targetPart === 'PART C') containerId = 'questions-container-part-c';
+            
+            const container = document.getElementById(containerId);
+            const blockCount = container.querySelectorAll('.question-block').length;
+            const qNum = defaultNum !== null ? defaultNum : (blockCount + 1);
+
             const blockHtml = `
-                <div class="question-block p-3 border rounded bg-light position-relative mt-3">
+                <div class="question-block p-3 border rounded position-relative mt-2" style="background: #f8fafc;">
                     <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
                     <div class="row g-2 mb-2">
-                        <div class="col-md-4">
+                        <div class="col-md-4 d-none">
                             <label class="form-label small fw-bold">Part / Section</label>
                             <select class="form-select form-select-sm q-part" onchange="updateQuestionNumbers(this)">
-                                <option value="PART A">PART A</option>
-                                <option value="PART B">PART B</option>
-                                <option value="PART C">PART C</option>
-                                <option value="GENERAL">GENERAL / NO PART</option>
+                                <option value="${targetPart}" selected>${targetPart}</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Question Number</label>
-                            <select class="form-select form-select-sm q-number">
-                                <option value="1">Question 1</option>
-                                <option value="2">Question 2</option>
-                                <option value="3">Question 3</option>
-                                <option value="4">Question 4</option>
-                                <option value="5">Question 5</option>
-                                <option value="6">Question 6</option>
-                                <option value="7">Question 7</option>
-                                <option value="8">Question 8</option>
-                                <option value="9">Question 9</option>
-                                <option value="10">Question 10</option>
+                        <div class="col-auto">
+                            <label class="form-label small fw-bold text-success" style="font-size: 0.7rem !important; margin-bottom: 2px; letter-spacing: 0.5px;">Question No.</label>
+                            <select class="form-select form-select-sm q-number border-0 bg-white shadow-sm" style="min-width: 130px; padding: 0.5rem 1rem !important; font-size: 0.9rem !important;">
+                                <option value="${qNum}" selected>Question ${qNum}</option>
                             </select>
                         </div>
                     </div>
-                    <textarea class="form-control q-content" rows="3" placeholder="Type the question content here..."></textarea>
+                    <textarea class="form-control q-content border-0 shadow-sm bg-white" rows="3" placeholder="Type the question content here..."></textarea>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', blockHtml);
             const newBlock = container.lastElementChild;
+            // Initialize the custom dropdowns
             newBlock.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
+            
+            // After initCustomSelect, populate question numbers correctly
+            updateQuestionNumbers(newBlock.querySelector('.q-part'), false);
         }
 
         function generateDefaultBlocks() {
-            const container = document.getElementById('questions-container');
-            container.innerHTML = '';
+            document.getElementById('questions-container-part-a').innerHTML = '';
+            document.getElementById('questions-container-part-b').innerHTML = '';
+            document.getElementById('questions-container-part-c').innerHTML = '';
             
-            for(let i=1; i<=30; i++) {
-                let part = 'PART A';
-                if (i > 10 && i <= 20) part = 'PART B';
-                if (i > 20) part = 'PART C';
-                
-                const blockHtml = `
-                <div class="question-block p-3 border rounded bg-light position-relative mt-3">
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
-                    <div class="row g-2 mb-2">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Part / Section</label>
-                            <select class="form-select form-select-sm q-part border-0 bg-light" onchange="updateQuestionNumbers(this)">
-                                <option value="PART A" ${part === 'PART A' ? 'selected' : ''}>PART A</option>
-                                <option value="PART B" ${part === 'PART B' ? 'selected' : ''}>PART B</option>
-                                <option value="PART C" ${part === 'PART C' ? 'selected' : ''}>PART C</option>
-                                <option value="GENERAL">GENERAL / NO PART</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Question Number</label>
-                            <select class="form-select form-select-sm q-number border-0 bg-light">
-                                <option value="${i}" selected>Question ${i}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <textarea class="form-control q-content border-0 bg-light" rows="3" placeholder="Type the question content here..."></textarea>
-                </div>
-                `;
-                container.insertAdjacentHTML('beforeend', blockHtml);
+            // Generate 10 questions for Part A
+            for(let i=1; i<=10; i++) {
+                addQuestionBlock('PART A', i);
             }
             
-            // Initialize custom dropdowns and options list for all blocks
-            container.querySelectorAll('select.q-part').forEach(select => {
-                updateQuestionNumbers(select, false); // pass false to avoid overwriting existing value
-            });
+            // Generate 10 questions for Part B
+            for(let i=11; i<=20; i++) {
+                addQuestionBlock('PART B', i);
+            }
+            
+            // Generate 10 questions for Part C
+            for(let i=21; i<=30; i++) {
+                addQuestionBlock('PART C', i);
+            }
         }
         
         window.addEventListener('DOMContentLoaded', generateDefaultBlocks);
@@ -1517,7 +1557,14 @@
 
         async function saveToDatabase(btn) {
             try {
-                prepareTemplateData();
+                let baseProgram = document.getElementById('mProgram').value.toUpperCase();
+                let programs = [baseProgram];
+                document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
+                    if (cb.value !== baseProgram) {
+                        programs.push(cb.value);
+                    }
+                });
+
                 const blocks = document.querySelectorAll('.question-block');
                 const questionsArray = [];
                 blocks.forEach(block => {
@@ -1528,48 +1575,68 @@
                     });
                 });
 
-                const requestData = {
-                    title: document.getElementById('mCode').value + ' - ' + document.getElementById('mName').value,
-                    programType: document.querySelector('#exam-pdf-template #pdf-program').innerText,
-                    levelNo: parseInt(document.getElementById('mNtaLevel').value),
-                    semesterNo: document.getElementById('mSemester').value === 'SEM: I' ? 1 : 2,
-                    moduleCode: document.getElementById('mCode').value,
-                    moduleName: document.getElementById('mName').value,
-                    academicYear: document.getElementById('mAcademicYear').value,
-                    contentJson: JSON.stringify({
-                        examTime: document.getElementById('mTime').value.toUpperCase(),
-                        instructions: document.getElementById('mInstructions').value,
-                        examType: document.getElementById('mType').value,
-                        examDate: document.getElementById('mDate').value.toUpperCase(),
-                        questions: questionsArray
-                    })
-                };
-
                 const originalBtnHtml = btn.innerHTML;
                 btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
                 btn.disabled = true;
 
-                const response = await fetch('/api/generate-exam/save', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestData)
-                });
+                let successCount = 0;
+                let lastNoteId = null;
 
-                const result = await response.json();
-                
+                for (let i = 0; i < programs.length; i++) {
+                    let prog = programs[i];
+                    prepareTemplateData(prog);
+
+                    const requestData = {
+                        title: document.getElementById('mCode').value + ' - ' + document.getElementById('mName').value,
+                        programType: document.querySelector('#exam-pdf-template #pdf-program').innerText,
+                        levelNo: parseInt(document.getElementById('mNtaLevel').value),
+                        semesterNo: document.getElementById('mSemester').value === 'SEM: I' ? 1 : 2,
+                        moduleCode: document.getElementById('mCode').value,
+                        moduleName: document.getElementById('mName').value,
+                        academicYear: document.getElementById('mAcademicYear').value,
+                        contentJson: JSON.stringify({
+                            examTime: document.getElementById('mTime').value.toUpperCase(),
+                            instructions: document.getElementById('mInstructions').value,
+                            examType: document.getElementById('mType').value,
+                            examDate: document.getElementById('mDate').value.toUpperCase(),
+                            questions: questionsArray
+                        })
+                    };
+
+                    const response = await fetch('/api/generate-exam/save', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const result = await response.json();
+                    if (response.ok || result.success) {
+                        successCount++;
+                        lastNoteId = result.id;
+                    }
+                }
+
                 btn.innerHTML = originalBtnHtml;
                 btn.disabled = false;
 
-                if (result.success) {
-                    alert('Success! The exam has been saved to the Database.');
+                if (successCount > 0) {
+                    if (programs.length > 1) {
+                        alert(`Successfully saved ${successCount} exams to the database!`);
+                        window.location.href = '/dashboard';
+                    } else {
+                        alert("Exam saved successfully!");
+                        window.location.href = '/view-generated-exam/' + lastNoteId;
+                    }
                 } else {
-                    alert('Failed: ' + result.message);
+                    alert("Failed to save exams. Please check console for details.");
                 }
+
             } catch (error) {
-                console.error(error);
-                alert("An error occurred while saving.");
+                btn.innerHTML = 'Save to Database';
                 btn.disabled = false;
+                alert("An error occurred: " + error.message);
+                console.error("Save Error: ", error);
             }
         }
 
