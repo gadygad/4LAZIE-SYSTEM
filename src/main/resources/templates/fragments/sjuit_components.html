@@ -1008,7 +1008,7 @@
         <!-- ACADEMIC CALENDAR -->
         <a th:href="${currentCalendar != null and currentCalendar.fileUrl != null ? (#strings.startsWith(currentCalendar.fileUrl, 'http') ? currentCalendar.fileUrl : '/uploads/' + currentCalendar.fileUrl) : '#'}"
            th:target="${currentCalendar != null and currentCalendar.fileUrl != null ? '_blank' : '_self'}"
-           th:attr="data-bs-toggle=${currentCalendar == null or currentCalendar.fileUrl == null ? 'modal' : ''}, data-bs-target=${currentCalendar == null or currentCalendar.fileUrl == null ? '#calendarModal' : ''}"
+           th:attr="data-bs-toggle=${currentCalendar == null or currentCalendar.fileUrl == null ? 'modal' : null}, data-bs-target=${currentCalendar == null or currentCalendar.fileUrl == null ? '#calendarModal' : null}"
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(255, 255, 255, 0.9)); border-color: rgba(16, 185, 129, 0.2);">
             <div class="accent-line" style="background: linear-gradient(180deg, #10b981 0%, #059669 100%);"></div>
             <span class="fw-bold feature-title" style="color: #059669;">ACADEMIC CALENDAR</span>
@@ -1016,7 +1016,7 @@
         </a>
 
         <!-- CAT 1 PAST PAPERS -->
-        <a th:href="${session.user != null} ? @{/cat1} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
+        <a th:href="${session.user != null} ? @{/cat1} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : null" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : null" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
             <div class="accent-line"></div>
             <span class="fw-bold feature-title">CAT 1 PAST PAPERS</span>
@@ -1024,7 +1024,7 @@
         </a>
 
         <!-- CAT 2 PAST PAPERS -->
-        <a th:href="${session.user != null} ? @{/cat2} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
+        <a th:href="${session.user != null} ? @{/cat2} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : null" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : null" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
             <div class="accent-line"></div>
             <span class="fw-bold feature-title">CAT 2 PAST PAPERS</span>
@@ -1032,7 +1032,7 @@
         </a>
 
         <!-- ASSIGNMENTS & SOLUTIONS -->
-        <a th:href="${session.user != null} ? @{/assignments} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
+        <a th:href="${session.user != null} ? @{/assignments} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : null" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : null" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
             <div class="accent-line"></div>
             <span class="fw-bold feature-title">ASSIGNMENTS &amp; SOLUTIONS</span>
@@ -1040,7 +1040,7 @@
         </a>
 
         <!-- UNIVERSITY EXAMS (UE) -->
-        <a th:href="${session.user != null} ? @{/ue_exams} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
+        <a th:href="${session.user != null} ? @{/ue_exams} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : null" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : null" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
             <div class="accent-line"></div>
             <span class="fw-bold feature-title">UNIVERSITY EXAMS (UE)</span>
@@ -1048,7 +1048,7 @@
         </a>
 
         <!-- PROJECTS -->
-        <a th:href="${session.user != null} ? @{/projects} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : ''" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : ''" 
+        <a th:href="${session.user != null} ? @{/projects} : '#'" th:data-bs-toggle="${session.user == null} ? 'modal' : null" th:data-bs-target="${session.user == null} ? '#premiumLoginModal' : null" 
            class="premium-feature-card d-flex align-items-center justify-content-between py-3 px-4 rounded-4 text-decoration-none">
             <div class="accent-line"></div>
             <span class="fw-bold feature-title">PROJECTS</span>

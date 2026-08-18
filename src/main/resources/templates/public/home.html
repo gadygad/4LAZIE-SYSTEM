@@ -1055,7 +1055,7 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                                 <!-- Academic Calendar Card -->
                                 <a th:href="${currentCalendar != null and currentCalendar.fileUrl != null ? (#strings.startsWith(currentCalendar.fileUrl, 'http') ? currentCalendar.fileUrl : '/uploads/' + currentCalendar.fileUrl) : '#'}" 
                                    th:target="${currentCalendar != null and currentCalendar.fileUrl != null ? '_blank' : '_self'}"
-                                   th:attr="data-bs-toggle=${currentCalendar == null or currentCalendar.fileUrl == null ? 'modal' : ''}, data-bs-target=${currentCalendar == null or currentCalendar.fileUrl == null ? '#calendarModal' : ''}"
+                                   th:attr="data-bs-toggle=${currentCalendar == null or currentCalendar.fileUrl == null ? 'modal' : null}, data-bs-target=${currentCalendar == null or currentCalendar.fileUrl == null ? '#calendarModal' : null}"
                                    class="premium-glass-card"
                                     style="max-width: 100%; border: 1px solid rgba(16, 185, 129, 0.4); background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);">
                                     <div class="d-flex align-items-center gap-3">

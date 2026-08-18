@@ -233,13 +233,13 @@
                 
                 <div class="d-none d-sm-flex flex-column justify-content-center me-2">
                     <span class="fw-bold lh-1" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</span>
-                    <span class="lh-1 mt-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #10b981;">Premium</span>
+                    <span class="lh-1 mt-1" th:style="'font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: ' + (${session.user != null and session.user.role != null} ? (${session.user.role.name() == 'SUPER_ADMIN' or session.user.role.name() == 'ADMIN'} ? '#ef4444' : (${session.user.role.name() == 'CLASS_REPRESENTATIVE' or session.user.role.name() == 'LECTURE'} ? '#3b82f6' : '#10b981')) : '#10b981') + ';'" th:text="${session.user != null and session.user.role != null ? (session.user.role.name() == 'SUPER_ADMIN' ? 'SUPER ADMIN' : (session.user.role.name() == 'CLASS_REPRESENTATIVE' ? 'CR' : session.user.role.name())) : 'STUDENT'}">STUDENT</span>
                 </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2 profile-dropdown" aria-labelledby="profileDropdownTop" style="border-radius: 24px; min-width: 260px; background: #ffffff; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.2); transform-origin: top right; z-index: 1050;">
                 <li class="px-4 py-3 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: inset 0 0 10px rgba(255,255,255,0.2);">
                     <p class="mb-0 fw-bold position-relative" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; letter-spacing: -0.3px; color: #064e3b !important;" th:text="${session.user != null ? session.user.name : 'Student'}">John Doe</p>
-                    <p class="mb-0 fw-bold position-relative" style="font-size: 0.7rem; color: #047857 !important; letter-spacing: 1px; text-transform: uppercase;" th:text="${session.user != null and session.user.courseProgram != null ? session.user.courseProgram : 'STUDENT'}">STUDENT</p>
+                    <p class="mb-0 fw-bold position-relative" th:style="'font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: ' + (${session.user != null and session.user.role != null} ? (${session.user.role.name() == 'SUPER_ADMIN' or session.user.role.name() == 'ADMIN'} ? '#ef4444' : (${session.user.role.name() == 'CLASS_REPRESENTATIVE' or session.user.role.name() == 'LECTURE'} ? '#3b82f6' : '#047857')) : '#047857') + ' !important;'" th:text="${session.user != null and session.user.role != null ? (session.user.role.name() == 'SUPER_ADMIN' ? 'SUPER ADMIN' : (session.user.role.name() == 'CLASS_REPRESENTATIVE' ? 'CR' : session.user.role.name())) : 'STUDENT'}">STUDENT</p>
                 </li>
                 
                 <style>
