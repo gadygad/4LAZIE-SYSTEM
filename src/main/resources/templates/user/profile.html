@@ -176,16 +176,24 @@
                     <p class="text-muted mb-4" style="font-size: 1rem; font-weight: 500;" th:text="'@' + ${#strings.toLowerCase(#strings.replace(user.name, ' ', ''))}"></p>
                     
                     <div class="d-inline-flex align-items-center py-1 px-3 rounded-pill mt-2 mb-3 shadow-sm" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.03)); border: 1px solid rgba(16, 185, 129, 0.2); backdrop-filter: blur(5px);">
-                        <i class="bi bi-mortarboard-fill me-2" style="color: #10b981; font-size: 1rem; filter: drop-shadow(0 2px 3px rgba(16,185,129,0.3));"></i> 
-                        <span style="color: #1e293b !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;" th:text="${user.courseProgram != null ? user.courseProgram : 'Student'}"></span> 
-                        <th:block th:if="${user.courseProgram == null or !(#strings.containsIgnoreCase(user.courseProgram, 'degree') or #strings.containsIgnoreCase(user.courseProgram, 'bsc') or #strings.containsIgnoreCase(user.courseProgram, 'beng') or #strings.containsIgnoreCase(user.courseProgram, 'bachelor') or #strings.containsIgnoreCase(user.courseProgram, 'md '))} ">
-                            <span style="color: #94a3b8; font-size: 0.8rem;" class="mx-2">&bull;</span> 
-                            <span style="color: #475569 !important; font-size: 0.8rem; font-weight: 500;">Level</span> 
-                            <span class="badge rounded-pill ms-1" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 0.3em 0.6em; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 5px rgba(16,185,129,0.3);" th:text="${user.level != null ? user.level : 'Not Set'}"></span> 
+                        <i class="bi bi-mortarboard-fill me-2" th:if="${user.role.name() == 'STUDENT' or user.role.name() == 'CLASS_REPRESENTATIVE'}" style="color: #10b981; font-size: 1rem; filter: drop-shadow(0 2px 3px rgba(16,185,129,0.3));"></i>
+                        <i class="bi bi-person-workspace me-2" th:if="${user.role.name() == 'LECTURE'}" style="color: #0ea5e9; font-size: 1rem; filter: drop-shadow(0 2px 3px rgba(14,165,233,0.3));"></i>
+                        <i class="bi bi-shield-lock-fill me-2" th:if="${user.role.name() == 'ADMIN' or user.role.name() == 'SUPER_ADMIN'}" style="color: #f59e0b; font-size: 1rem; filter: drop-shadow(0 2px 3px rgba(245,158,11,0.3));"></i>
+                        
+                        <!-- Student or CR -->
+                        <span th:if="${user.role.name() == 'STUDENT' or user.role.name() == 'CLASS_REPRESENTATIVE'}" style="color: #1e293b !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;" th:text="${user.courseProgram != null ? user.courseProgram : 'Student'}"></span> 
+                        
+                        <!-- CR Badge -->
+                        <th:block th:if="${user.role.name() == 'CLASS_REPRESENTATIVE'}">
+                            <span style="color: #94a3b8; font-size: 0.8rem;" class="mx-2">&bull;</span>
+                            <span class="badge rounded-pill" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #fff; padding: 0.3em 0.6em; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 5px rgba(14,165,233,0.3);">CLASS REPRESENTATIVE (CR)</span>
                         </th:block>
-                        <span style="color: #94a3b8; font-size: 0.8rem;" class="mx-2">&bull;</span> 
-                        <span style="color: #475569 !important; font-size: 0.8rem; font-weight: 500;">Semester</span> 
-                        <span class="badge rounded-pill ms-1" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 0.3em 0.6em; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 5px rgba(16,185,129,0.3);" th:text="${user.semester != null ? user.semester : 'Not Set'}"></span>
+
+                        <!-- Lecturer -->
+                        <span th:if="${user.role.name() == 'LECTURE'}" style="color: #1e293b !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;">LECTURER</span>
+                        
+                        <!-- Admin -->
+                        <span th:if="${user.role.name() == 'ADMIN' or user.role.name() == 'SUPER_ADMIN'}" style="color: #1e293b !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;">SYSTEM ADMINISTRATOR</span>
                     </div>
 
                     <!-- Premium Bio View -->
@@ -365,7 +373,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-6 position-relative" id="levelContainerWrapper" style="transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
+                    <div class="col-md-6 position-relative d-none" id="levelContainerWrapper" style="transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
                         <label class="form-label fw-bold small mb-1 premium-label">NTA LEVEL</label>
                         <input type="hidden" name="level" id="levelInput" th:value="${user.level}">
                         <div class="dropdown">
@@ -379,7 +387,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-6 position-relative">
+                    <div class="col-md-6 position-relative d-none">
                         <label class="form-label fw-bold small mb-1 premium-label">SEMESTER</label>
                         <input type="hidden" name="semester" id="semesterInput" th:value="${user.semester}">
                         <div class="dropdown">

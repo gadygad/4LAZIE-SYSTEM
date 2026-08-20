@@ -928,9 +928,13 @@
     th:style="${session.user != null} ? 
     'background: linear-gradient(135deg, #10b981, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: Outfit, sans-serif; letter-spacing: 1px; border-bottom: 3px solid rgba(16, 185, 129, 0.5); filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));' : 
     'background: linear-gradient(135deg, #10b981, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: Outfit, sans-serif; letter-spacing: 1px; border-bottom: 3px solid rgba(16, 185, 129, 0.5); filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));'">
-            PREMIUM FEATURES
+            <span th:if="${session.user != null and (session.user.role.name() == 'LECTURE' or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}">LECTURER DESK &amp; TOOLS</span>
+            <span th:unless="${session.user != null and (session.user.role.name() == 'LECTURE' or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}">PREMIUM FEATURES</span>
         </h5>
-        <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;">Exclusive tools &amp; resources</div>
+        <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;">
+            <span th:if="${session.user != null and (session.user.role.name() == 'LECTURE' or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}">Manage your classes and uploads</span>
+            <span th:unless="${session.user != null and (session.user.role.name() == 'LECTURE' or session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}">Exclusive tools &amp; resources</span>
+        </div>
     </div>
 
     <!-- Features List CSS -->
