@@ -69,3 +69,40 @@
   }
 
 })();
+
+// ==========================================
+// 🚀 4LAZIE MAGIC SPEED (INSTANT PAGE LOAD)
+// ==========================================
+(function() {
+    const prefetchedUrls = new Set();
+    
+    function prefetchUrl(url) {
+        if (!url || url.startsWith('#') || url.startsWith('javascript') || prefetchedUrls.has(url)) return;
+        
+        // Only prefetch internal links
+        if (url.startsWith(window.location.origin) || url.startsWith('/')) {
+            prefetchedUrls.add(url);
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = url;
+            link.as = 'document';
+            document.head.appendChild(link);
+        }
+    }
+
+    // Prefetch when hovering over links (Mouse)
+    document.addEventListener('mouseover', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+            prefetchUrl(link.href);
+        }
+    }, { passive: true });
+
+    // Prefetch when touch starts (Mobile/Touch devices)
+    document.addEventListener('touchstart', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+            prefetchUrl(link.href);
+        }
+    }, { passive: true });
+})();
