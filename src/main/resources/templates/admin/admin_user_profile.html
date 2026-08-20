@@ -138,6 +138,8 @@
         .role-super { background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.2); }
         .role-admin { background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.2); }
         .role-student { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.2); }
+        .role-cr { background: rgba(6,182,212,0.1); color: #0891b2; border: 1px solid rgba(6,182,212,0.2); }
+        .role-lecture { background: rgba(139,92,246,0.1); color: #7c3aed; border: 1px solid rgba(139,92,246,0.2); }
 
         /* Suspended banner */
         .suspended-banner {
@@ -262,6 +264,12 @@
                                     </span>
                                     <span th:if="${profileUser.role == null or profileUser.role.name() == 'STUDENT'}" class="role-badge role-student">
                                         <i class="bi bi-mortarboard-fill"></i> STUDENT
+                                    </span>
+                                    <span th:if="${profileUser.role != null and profileUser.role.name() == 'CLASS_REPRESENTATIVE'}" class="role-badge role-cr">
+                                        <i class="bi bi-people-fill"></i> CR
+                                    </span>
+                                    <span th:if="${profileUser.role != null and profileUser.role.name() == 'LECTURE'}" class="role-badge role-lecture">
+                                        <i class="bi bi-person-workspace"></i> LECTURER
                                     </span>
                                     <!-- Suspended -->
                                     <span th:if="${profileUser.isSuspended}" class="role-badge" style="background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.2);">

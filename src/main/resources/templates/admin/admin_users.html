@@ -268,6 +268,22 @@
                                                             </button>
                                                         </form>
                                                     </li>
+                                                    <li th:if="${u.role == null or u.role.name() != 'CLASS_REPRESENTATIVE'}">
+                                                        <form th:action="@{/admin/users/{id}/role(id=${u.id})}" method="post">
+                                                            <input type="hidden" name="role" value="CLASS_REPRESENTATIVE">
+                                                            <button type="submit" class="dropdown-item fw-bold text-info">
+                                                                <i class="bi bi-people-fill me-2"></i> Make CR
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li th:if="${u.role == null or u.role.name() != 'LECTURE'}">
+                                                        <form th:action="@{/admin/users/{id}/role(id=${u.id})}" method="post">
+                                                            <input type="hidden" name="role" value="LECTURE">
+                                                            <button type="submit" class="dropdown-item fw-bold text-warning">
+                                                                <i class="bi bi-person-workspace me-2"></i> Make Lecturer
+                                                            </button>
+                                                        </form>
+                                                    </li>
                                                 </th:block>
                                                 <li th:if="${loggedInUser != null and loggedInUser.role != null and loggedInUser.role.name() == 'SUPER_ADMIN' and u.role != null and (u.role.name() == 'ADMIN' or u.role.name() == 'SUPER_ADMIN')}">
                                                     <a href="#" class="dropdown-item text-primary d-flex align-items-center fw-bold" data-bs-toggle="modal" th:data-bs-target="'#permissionsModal' + ${u.id}">
