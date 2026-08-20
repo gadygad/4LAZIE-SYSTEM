@@ -1728,16 +1728,37 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                 const results = document.getElementById(resultsId);
                 if (!input || !results) return;
                 let timeout = null;
-                let cache = {};
+                
+                const getCache = (query) => {
+                    try {
+                        const cached = localStorage.getItem('search_' + query);
+                        if (cached) {
+                            const data = JSON.parse(cached);
+                            if (new Date().getTime() - data.timestamp < 30 * 60 * 1000) {
+                                return data.results;
+                            }
+                            localStorage.removeItem('search_' + query);
+                        }
+                    } catch(e) {}
+                    return null;
+                };
+                
+                const setCache = (query, searchResults) => {
+                    try {
+                        const data = { results: searchResults, timestamp: new Date().getTime() };
+                        localStorage.setItem('search_' + query, JSON.stringify(data));
+                    } catch(e) {}
+                };
 
                 input.addEventListener('input', function(e) {
                     clearTimeout(timeout);
                     const query = e.target.value.trim();
-                    if (query.length < 2) { results.classList.add('d-none'); return; }
+                    if (query.length < 1) { results.classList.add('d-none'); return; }
 
                     // Check cache first for instant results
-                    if (cache[query]) {
-                        renderResults(cache[query], query, results);
+                    const cachedResults = getCache(query);
+                    if (cachedResults) {
+                        renderResults(cachedResults, query, results);
                         return;
                     }
 
@@ -1748,7 +1769,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                         fetch(`/api/search?q=${encodeURIComponent(query)}`)
                             .then(r => r.json())
                             .then(data => {
-                                cache[query] = data;
+                                setCache(query, data);
                                 renderResults(data, query, results);
                             })
                             .catch(() => {

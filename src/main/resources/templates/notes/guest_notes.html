@@ -590,22 +590,48 @@
             const results = document.getElementById(resultsId);
             if (!input || !results) return;
             let timeout = null;
-            let searchCache = {};
+            
+            // Function to get cache (30 min expiration)
+            const getCache = (query) => {
+                try {
+                    const cached = localStorage.getItem('search_' + query);
+                    if (cached) {
+                        const data = JSON.parse(cached);
+                        if (new Date().getTime() - data.timestamp < 30 * 60 * 1000) {
+                            return data.results;
+                        }
+                        localStorage.removeItem('search_' + query);
+                    }
+                } catch(e) { console.error('Cache read error', e); }
+                return null;
+            };
+
+            // Function to set cache
+            const setCache = (query, searchResults) => {
+                try {
+                    const data = {
+                        results: searchResults,
+                        timestamp: new Date().getTime()
+                    };
+                    localStorage.setItem('search_' + query, JSON.stringify(data));
+                } catch(e) { console.error('Cache write error', e); }
+            };
 
             input.addEventListener('input', function(e) {
                 clearTimeout(timeout);
                 const query = e.target.value.trim();
                 
-                if (query.length < 2) {
+                if (query.length < 1) { // Changed to 1
                     results.classList.add('d-none');
                     return;
                 }
 
                 // Check cache for instant results
-                if (searchCache[query]) {
+                const cachedResults = getCache(query);
+                if (cachedResults) {
                     results.classList.remove('d-none');
                     results.innerHTML = '';
-                    renderCachedResults(searchCache[query], query, results);
+                    renderCachedResults(cachedResults, query, results);
                     return;
                 }
 
@@ -617,7 +643,7 @@
                     fetch(`/api/search?q=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
-                            searchCache[query] = data;
+                            setCache(query, data);
                             results.innerHTML = '';
                             renderCachedResults(data, query, results);
                         })
