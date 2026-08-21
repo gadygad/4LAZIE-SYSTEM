@@ -29,6 +29,12 @@ public class CurriculumInitializer {
         if (existingCourses.isEmpty()) {
             Course course = new Course(name, type, shortName, subtitle, icon, color, bg, duration, levelPrefix, startLevel);
             repo.save(course);
+            // Evict the stale empty-list entry cached by the findByProgramType() call above,
+            // so callers later in the same startup run (e.g. line 100) see the new course.
+            org.springframework.cache.Cache courseCache = cacheManager.getCache("coursesByProgram");
+            if (courseCache != null) courseCache.evict(type);
+            org.springframework.cache.Cache allCoursesCache = cacheManager.getCache("allCourses");
+            if (allCoursesCache != null) allCoursesCache.clear();
         } else {
             for (Course course : existingCourses) {
                 boolean updated = false;
