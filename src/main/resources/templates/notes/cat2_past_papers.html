@@ -969,6 +969,10 @@
 
 <script>
     function openDocumentViewer(url) {
+        if (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            window.location.href = url;
+            return;
+        }
         document.getElementById('documentViewerLoading').style.display = 'flex';
         document.getElementById('documentViewerIframe').src = url;
         var myModal = new bootstrap.Modal(document.getElementById('documentViewerModal'));

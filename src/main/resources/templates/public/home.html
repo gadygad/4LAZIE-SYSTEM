@@ -1657,6 +1657,13 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
 
                 <script>
                     function loadPreview(id, title) {
+                        // On mobile devices, redirect to the dedicated viewer page instead of using an iframe modal
+                        // This prevents Safari iOS from crashing or showing a blocked plugin icon
+                        if (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                            window.location.href = '/view/' + id;
+                            return;
+                        }
+
                         const placeholder = document.getElementById('previewPlaceholder');
                         const iframe = document.getElementById('docPreviewFrame');
                         const downloadBtn = document.getElementById('previewDownloadBtn');
