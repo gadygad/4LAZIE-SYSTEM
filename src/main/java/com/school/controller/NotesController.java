@@ -675,10 +675,7 @@ public class NotesController {
             String userAgent = request.getHeader("User-Agent");
             boolean isMobile = userAgent != null && userAgent.toLowerCase().matches(".*(android|webos|iphone|ipad|ipod|blackberry|windows phone).*");
             
-            if (isMobile && ext.equalsIgnoreCase(".pdf")) {
-                response.sendRedirect("/mobile-viewer/" + note.getId());
-                return;
-            }
+            // Native view works best on iOS/Android, skipping Google Docs iframe
             
             response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
             return;
