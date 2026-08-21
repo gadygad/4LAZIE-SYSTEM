@@ -114,12 +114,12 @@ public class AssignmentHelpService {
             }
             
             // Generate automated 4LAZIE identity reply
-            String automatedReply = "Habari " + studentName + "! 👋\n\n" +
-                    "Asante sana kwa kutuamini na kututumia swali lako la " + req.getSubjectName() + ". Tunathamini sana juhudi zako katika masomo.\n\n" +
-                    "Timu yetu ya wataalamu imelifanyia kazi swali hili kwa umakini na weledi mkubwa ili kuhakikisha unapata majibu sahihi kwa asilimia 100%.\n\n" +
-                    "Tumeambatisha faili la PDF hapo chini lenye majibu yaliyochambuliwa hatua kwa hatua (step-by-step) ili kurahisisha uelewa wako. Tafadhali lipakue (Download) na ulipitie kwa wakati wako.\n\n" +
-                    "Tupo hapa kwa ajili yako muda wowote utakapohitaji msaada zaidi. Tunakutakia mafanikio mema katika masomo yako! 🎓\n\n" +
-                    "— Kwa heshima kutoka 4LAZIE Team";
+            String automatedReply = "Hello " + studentName + "! 👋\n\n" +
+                    "Thank you for trusting us with your " + req.getSubjectName() + " question. We highly appreciate your dedication to your studies.\n\n" +
+                    "Our team of experts has carefully worked on this question to ensure you get 100% accurate answers.\n\n" +
+                    "We have attached a PDF file below containing step-by-step analyzed answers to make it easier for you to understand. Please download and review it at your convenience.\n\n" +
+                    "We are here for you anytime you need further assistance. We wish you great success in your studies! 🎓\n\n" +
+                    "— Best regards, The 4LAZIE Team";
             
             ChatMessage initialMessage = new ChatMessage("ADMIN", "4LAZIE", automatedReply, fileUrl);
             

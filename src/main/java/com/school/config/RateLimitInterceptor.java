@@ -18,10 +18,10 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     // Kanzidata ya muda (Cache) kutunza Bucket ya kila IP Address
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
 
-    // Sheria yetu: Maombi 5 tu kwa kila dakika moja (Kulinda bajeti ya server)
+    // Sheria yetu: Maombi 200 kwa kila dakika moja (Kulinda bajeti ya server)
     private Bucket createNewBucket() {
-        Refill refill = Refill.intervally(5, Duration.ofMinutes(1));
-        Bandwidth limit = Bandwidth.classic(5, refill);
+        Refill refill = Refill.intervally(200, Duration.ofMinutes(1));
+        Bandwidth limit = Bandwidth.classic(200, refill);
         return Bucket.builder().addLimit(limit).build();
     }
 
@@ -47,7 +47,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         // Mtu amezidisha ukomo (Uchawi unafanya kazi hapa)
         response.setStatus(429); // 429 Too Many Requests
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"Umefikia ukomo wa matumizi kwa sasa. Tafadhali subiri kidogo kabla ya kujaribu tena (Error 429).\"}");
+        response.getWriter().write("{\"error\": \"You've reached your usage limit for now. Please wait a moment before trying again (Error 429).\"}");
         return false; // Mzuie asiendelee
     }
 }
