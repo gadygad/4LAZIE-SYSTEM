@@ -81,10 +81,31 @@
         </div>
         <h3 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #f8fafc; font-size: 1.75rem;">Download Complete!</h3>
         <p class="mb-4" style="font-size: 0.95rem; line-height: 1.5; color: #94a3b8;">Your exam has been saved successfully to your device. You can now access it anytime.</p>
-        
+
         <div class="mt-4">
-            <a href="/dashboard" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 text-decoration-none" 
+            <a href="/dashboard" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 text-decoration-none"
                style="background: linear-gradient(135deg, #64748b 0%, #475569 100%); color: white; border: none; box-shadow: 0 10px 25px rgba(71, 85, 105, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.15); letter-spacing: 1px;">
+                <i class="bi bi-house-door-fill" style="font-size: 1.2rem;"></i> Back Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Shown when PDF rendering fails (e.g. slow/blocked network for the html2canvas/jsPDF CDN
+         scripts) so the user sees a clear reason instead of a blank page. -->
+    <div class="loading-container" id="error-ui" style="display:none; text-align: center; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.2); padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-width: 450px; width: 90%;">
+        <div style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size: 36px; color: #ef4444;"></i>
+        </div>
+        <h3 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #f8fafc; font-size: 1.5rem;">Couldn't Open This Exam</h3>
+        <p class="mb-2" style="font-size: 0.95rem; line-height: 1.5; color: #94a3b8;">This usually happens when your internet connection is slow or is blocking some required resources.</p>
+        <p class="mb-4" style="font-size: 0.8rem; line-height: 1.4; color: #64748b;" id="error-detail"></p>
+        <div class="mt-4 d-flex flex-column gap-2">
+            <button onclick="location.reload()" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 text-decoration-none border-0"
+               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">
+                <i class="bi bi-arrow-clockwise" style="font-size: 1.2rem;"></i> Try Again
+            </button>
+            <a href="/dashboard" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 text-decoration-none"
+               style="background: rgba(255,255,255,0.08); color: #f8fafc;">
                 <i class="bi bi-house-door-fill" style="font-size: 1.2rem;"></i> Back Home
             </a>
         </div>
@@ -224,13 +245,32 @@
     </script>
     
     <script>
+        function showRenderError(detail) {
+            document.getElementById('loading-ui').style.display = 'none';
+            document.getElementById('error-detail').innerText = detail || '';
+            document.getElementById('error-ui').style.display = 'block';
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!noteData || !noteData.contentJson) {
-                document.getElementById('status-text').innerText = "Error: No questions found.";
-                document.getElementById('status-text').classList.replace('text-success', 'text-danger');
+                showRenderError('No exam content was found for this note.');
                 return;
             }
-            
+
+            // The PDF renderer depends on two scripts loaded from an external CDN.
+            // On a slow or restrictive network they can fail to load entirely, which
+            // used to leave the page stuck on a spinner with no explanation.
+            if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                showRenderError('The PDF tools failed to load — check your internet connection and try again.');
+                return;
+            }
+
+            // Safety net: if rendering hangs (slow device/network) for too long,
+            // show the error screen instead of leaving the user staring at a spinner.
+            const renderTimeout = setTimeout(() => {
+                showRenderError('This is taking much longer than expected — your connection may be too slow.');
+            }, 45000);
+
             try {
                 // 1. Render Boxes
                 const codeStr = noteData.moduleCode;
@@ -532,6 +572,8 @@
              
                 const cleanFileName = ((noteData && noteData.title) || 'Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');;
 
+                clearTimeout(renderTimeout);
+
                 if (actionParam === 'read') {
                     // 6. View Mode
                     document.getElementById('status-text').innerText = "Opening PDF...";
@@ -545,20 +587,16 @@
                     // 6. Download Mode
                     document.getElementById('status-text').innerText = "Saving file to your device...";
                     pdf.save(`4LAZIE_${cleanFileName}.pdf`);
-                    
+
                     // Show Success
                     document.getElementById('loading-ui').style.display = 'none';
                     document.getElementById('success-ui').style.display = 'block';
                 }
-                
-                // Show Success
-                document.getElementById('loading-ui').style.display = 'none';
-                document.getElementById('success-ui').style.display = 'block';
-                
+
             } catch (err) {
                 console.error(err);
-                document.getElementById('status-text').innerText = "Error: " + err.message;
-                document.getElementById('status-text').classList.replace('text-success', 'text-danger');
+                clearTimeout(renderTimeout);
+                showRenderError(err.message);
             }
         });
     </script>
