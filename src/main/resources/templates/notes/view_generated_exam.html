@@ -90,6 +90,20 @@
         </div>
     </div>
 
+    <!-- Shown on mobile once the PDF is ready: opening it needs a real tap (browsers block
+         window.open()/location navigation to blob: URLs that aren't a direct user gesture). -->
+    <div class="loading-container" id="open-pdf-ui" style="display:none; text-align: center; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.2); padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-width: 450px; width: 90%;">
+        <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px; color: #10b981;"></i>
+        </div>
+        <h3 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #f8fafc; font-size: 1.5rem;">Your Exam Is Ready</h3>
+        <p class="mb-4" style="font-size: 0.9rem; line-height: 1.5; color: #94a3b8;">Tap below to open it.</p>
+        <button id="open-pdf-btn" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 border-0"
+           style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">
+            <i class="bi bi-eye-fill" style="font-size: 1.2rem;"></i> Open Exam
+        </button>
+    </div>
+
     <!-- Shown when PDF rendering fails (e.g. slow/blocked network for the html2canvas/jsPDF CDN
          scripts) so the user sees a clear reason instead of a blank page. -->
     <div class="loading-container" id="error-ui" style="display:none; text-align: center; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.2); padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-width: 450px; width: 90%;">
@@ -579,10 +593,30 @@
                     document.getElementById('status-text').innerText = "Opening PDF...";
                     const blob = pdf.output('blob');
                     const blobUrl = URL.createObjectURL(blob);
-                    document.body.style.margin = '0';
-                    document.body.style.padding = '0';
-                    document.body.style.background = '#333';
-                    document.body.innerHTML = `<iframe src="${blobUrl}#toolbar=0&navpanes=0&scrollbar=0" style="width:100%; height:100vh; border:none; margin:0; padding:0; display:block;"></iframe>`;
+
+                    // Mobile Chrome/Safari frequently fail to render a blob: PDF embedded
+                    // in an <iframe> — it can flash the content and then replace it with
+                    // "This content is blocked. Contact the site owner to fix the issue."
+                    // Modern Chrome also silently blocks both `location.href = blobUrl`
+                    // and `window.open(blobUrl)` when they aren't triggered by a direct
+                    // user tap/click (confirmed: window.open() returns null here). So on
+                    // mobile we show a button and let the user's own tap open the PDF —
+                    // that's a real user gesture, which browsers always allow through.
+                    // Desktop keeps the iframe for the toolbar-free reading view.
+                    const isMobile = /android|iphone|ipad|ipod|webos|blackberry|windows phone/i.test(navigator.userAgent);
+                    if (isMobile) {
+                        document.getElementById('loading-ui').style.display = 'none';
+                        const openUi = document.getElementById('open-pdf-ui');
+                        openUi.style.display = 'block';
+                        document.getElementById('open-pdf-btn').addEventListener('click', () => {
+                            window.open(blobUrl, '_blank');
+                        });
+                    } else {
+                        document.body.style.margin = '0';
+                        document.body.style.padding = '0';
+                        document.body.style.background = '#333';
+                        document.body.innerHTML = `<iframe src="${blobUrl}#toolbar=0&navpanes=0&scrollbar=0" style="width:100%; height:100vh; border:none; margin:0; padding:0; display:block;"></iframe>`;
+                    }
                 } else {
                     // 6. Download Mode
                     document.getElementById('status-text').innerText = "Saving file to your device...";
