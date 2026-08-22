@@ -28,6 +28,7 @@
     <link rel="stylesheet" th:href="@{/css/global-premium.css?v=2}">
     <link rel="stylesheet" th:href="@{/css/dashboard-premium.css?v=6}">
     <link rel="stylesheet" href="/css/mobile-spacing-standards.css?v=2">
+    <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
 
     <!-- SEO and Developer Identity (JSON-LD Schema) -->
     <meta name="author" content="Godfrey Charles Nyagwisi">
@@ -126,17 +127,23 @@
         <!-- MAIN CONTENT AREA -->
         <div class="main-content">
 
-            <!-- Animated Background Blobs -->
-            <div
-                style="pointer-events: none; position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 10s ease-in-out infinite;">
+            <!-- Animated Background Blobs — wrapped so their deliberate off-edge
+                 bleed (used for a soft glow effect) gets clipped locally instead
+                 of widening the page's scrollable area. Do NOT add overflow-x
+                 to .main-content itself for this — see commit b98cfe1, which
+                 reverted that exact fix for breaking mobile vertical scrolling. -->
+            <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+                <div
+                    style="position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 10s ease-in-out infinite;">
+                </div>
+                <div
+                    style="position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 8s ease-in-out infinite reverse;">
+                </div>
+                <div
+                    style="position: absolute; top: 40%; right: 20%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0) 70%); border-radius: 50%; filter: blur(30px); animation: float 12s ease-in-out infinite 2s;">
+                </div>
             </div>
-            <div
-                style="pointer-events: none; position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0) 70%); border-radius: 50%; filter: blur(40px); animation: float 8s ease-in-out infinite reverse;">
-            </div>
-            <div
-                style="pointer-events: none; position: absolute; top: 40%; right: 20%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0) 70%); border-radius: 50%; filter: blur(30px); animation: float 12s ease-in-out infinite 2s;">
-            </div>
-            
+
 
             <!-- CENTER COLUMN (DASHBOARD OVERVIEW) -->
             <div class="center-col position-relative z-1"

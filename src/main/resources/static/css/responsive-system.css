@@ -170,6 +170,14 @@ img, video, iframe, embed, object {
     display: flex;
     flex-direction: column;
     transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* NOTE: do not add `overflow-x: hidden` here. It clips decorative
+       elements that bleed past their edges (which is otherwise correct),
+       but per the CSS overflow spec, constraining one axis forces the
+       other to become a scroll container too, which broke vertical
+       scrolling on mobile — see commit b98cfe1, which reverted this same
+       fix from user/dashboard.html and global-premium.css for that exact
+       reason. Fix overflow culprits (e.g. ambient background blobs) at
+       the source by giving them their own clipping wrapper instead. */
 }
 
 /* Sidebar Push Effect */
@@ -245,6 +253,53 @@ nav.navbar,
     nav.navbar,
     .top-navbar {
         padding: 0 12px;
+    }
+}
+
+/* Navbar action-icon cluster — shrink so search + messages + notifications +
+   profile fit next to the hamburger/brand without forcing horizontal scroll.
+   Measured overflow on a 375px viewport was ~85px before this rule. */
+@media (max-width: 480px) {
+    nav.navbar button[data-bs-target="#mobileSidebar"] {
+        width: 34px !important;
+        height: 34px !important;
+        margin-right: 6px !important;
+    }
+
+    .navbar-brand > div {
+        padding: 5px 8px !important;
+        margin-right: 4px !important;
+    }
+
+    .navbar-brand span {
+        font-size: 1rem !important;
+        letter-spacing: 1px !important;
+    }
+
+    nav.navbar .d-flex[style*="gap"] {
+        gap: 0.3rem !important;
+    }
+
+    #mobileSearchToggleBtn {
+        width: 34px !important;
+        height: 34px !important;
+    }
+
+    .top-action-btn,
+    .notification-trigger {
+        width: 36px !important;
+        height: 36px !important;
+        margin-right: 0 !important;
+    }
+
+    .top-action-btn i,
+    .notification-trigger i {
+        font-size: 1.05rem !important;
+    }
+
+    .profile-pic-trigger {
+        width: 32px !important;
+        height: 32px !important;
     }
 }
 
@@ -839,6 +894,16 @@ body.has-bottom-nav {
 /* ==========================================================================
    22. OFFCANVAS SIDEBAR (Bootstrap compatible)
    ========================================================================== */
+
+/* Safety net: any offcanvas panel (exam-date modal, filters, etc.) must never
+   widen the page's horizontal scroll bounds, even while translated off-screen
+   and invisible. Non-wrapping flex content inside can otherwise force the
+   panel wider than the viewport, which leaks into document.body.scrollWidth
+   and lets the whole page be swiped sideways on mobile. */
+.offcanvas {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
 
 /* Override Bootstrap offcanvas for our sidebar */
 #mobileSidebar.offcanvas {
