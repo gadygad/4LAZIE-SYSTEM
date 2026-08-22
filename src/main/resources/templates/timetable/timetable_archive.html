@@ -301,11 +301,15 @@
             .header-glass {
                 padding: 0.8rem 1rem;
                 margin-bottom: 1.5rem;
-                flex-wrap: nowrap;
-                gap: 5px;
+                /* Wrap instead of forcing one line — "TIMETABLE ARCHIVE" +
+                   "Back to Home" don't reliably fit a 375px screen even at
+                   reduced font sizes, and nowrap here forced the whole page
+                   to scroll horizontally. */
+                flex-wrap: wrap;
+                gap: 8px;
             }
             .header-title {
-                font-size: 0.95rem; /* Smaller font to fit on one line */
+                font-size: 0.85rem; /* Smaller font to fit on one line */
                 white-space: nowrap;
             }
             .back-btn {
