@@ -465,15 +465,28 @@ public class NotesController {
 
 
     @GetMapping("/download/{slug}")
-    public void downloadFile(@PathVariable("slug") String slug, 
+    public void downloadFile(@PathVariable("slug") String slug,
                                @RequestParam(value = "force", required = false) String force,
                                HttpSession session,
                                jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        try {
+            downloadFileInternal(slug, force, response);
+        } catch (Exception e) {
+            log.error("Unhandled error in /download/{}", slug, e);
+            if (!response.isCommitted()) {
+                response.sendError(500, "Download failed: " + e.getClass().getSimpleName());
+            }
+        }
+    }
+
+    private void downloadFileInternal(String slug, String force,
+                               jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        log.info("Download requested for slug='{}' force='{}'", slug, force);
         Note note = null;
         if (slug.length() == 24 && slug.matches("^[0-9a-fA-F]+$")) {
             note = noteRepository.findById(slug).orElse(null);
         }
-        
+
         // 2. If not found, try decrypting as AES slug or old format
         if (note == null) {
             String id = null;
@@ -486,15 +499,19 @@ public class NotesController {
             if (id == null) {
                 id = com.school.util.EncryptionUtil.decrypt(slug);
             }
+            log.info("Decrypted slug '{}' -> id '{}'", slug, id);
             if (id != null && !id.equals(slug)) {
                 note = noteRepository.findById(id).orElse(null);
             }
         }
-        
+
         if (note == null) {
+            log.warn("Download failed: no note resolved from slug '{}'", slug);
             response.sendError(404, "Note not found");
             return;
         }
+        log.info("Download resolved note id={} title='{}' hasContentJson={} hasFileUrl={}",
+                note.getId(), note.getTitle(), note.getContentJson() != null, note.getFileUrl() != null);
 
         User loggedInUser = getLoggedInUser();
         
@@ -545,7 +562,9 @@ public class NotesController {
 
         // --- NEW: Client-Side PDF Generation Intercept ---
         if (note.getContentJson() != null && !note.getContentJson().isEmpty()) {
-            response.sendRedirect("/view-generated-exam/" + note.getId() + "?action=download");
+            String redirectUrl = "/view-generated-exam/" + note.getId() + "?action=download";
+            log.info("Redirecting to generated-exam download: {}", redirectUrl);
+            response.sendRedirect(redirectUrl);
             return;
         }
         // ------------------------------------------------
@@ -555,13 +574,12 @@ public class NotesController {
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
             try {
-                String redirectUrl = "/proxy/" + note.getId() + "/" + brandedName;
-                if ("true".equals(force)) {
-                    redirectUrl += "?force=true";
-                }
+                String redirectUrl = "/proxy/" + note.getId() + "/" + brandedName + "?force=true";
+                log.info("Redirecting to file proxy download: {}", redirectUrl);
                 response.sendRedirect(redirectUrl);
                 return;
             } catch (Exception e) {
+                log.error("Failed to build proxy redirect for note {}", note.getId(), e);
                 // fall through to text fallback
             }
         }
