@@ -526,15 +526,21 @@ public class NotesController {
             }
         }
 
-        note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
-        noteRepository.save(note);
+        // Analytics bookkeeping — must never block the actual download if it fails
+        // (e.g. a transient DB hiccup), so failures here are logged, not thrown.
+        try {
+            note.setDownloadCount((note.getDownloadCount() == null ? 0 : note.getDownloadCount()) + 1);
+            noteRepository.save(note);
 
-        if (loggedInUser != null) {
-            if (loggedInUser.getDownloadedNotes() == null) {
-                loggedInUser.setDownloadedNotes(new java.util.HashSet<>());
+            if (loggedInUser != null) {
+                if (loggedInUser.getDownloadedNotes() == null) {
+                    loggedInUser.setDownloadedNotes(new java.util.HashSet<>());
+                }
+                loggedInUser.getDownloadedNotes().add(note.getId());
+                userRepository.save(loggedInUser);
             }
-            loggedInUser.getDownloadedNotes().add(note.getId());
-            userRepository.save(loggedInUser);
+        } catch (Exception e) {
+            log.error("Failed to record download analytics for note {}", note.getId(), e);
         }
 
         // --- NEW: Client-Side PDF Generation Intercept ---
