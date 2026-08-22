@@ -295,6 +295,11 @@
             });
         </script>
 
+        <!-- Web Push subscription prompt — wires up the #pushNotificationPrompt modal
+             above (Allow/Not Now) and fetches the current VAPID public key from the
+             server rather than hardcoding it, so it keeps working after key rotation. -->
+        <script th:src="@{/js/push-subscription.js}"></script>
+
         <!-- GLOBAL PREMIUM BUTTON LOADING SCRIPT -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {

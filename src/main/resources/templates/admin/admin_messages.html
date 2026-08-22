@@ -1088,6 +1088,14 @@
 
 </script>
 <!-- Push Notifications -->
-<script src="/js/push-manager.js"></script>
+<script th:src="@{/js/push-subscription.js}"></script>
+<script>
+    // This page has no #pushNotificationPrompt modal (that lives in fragments/footer,
+    // which this page doesn't include), so subscribe directly rather than calling
+    // checkAndPromptPush() — being on the messages page is high enough intent.
+    if (window.Notification && Notification.permission === 'granted') {
+        window.addEventListener('load', () => setTimeout(subscribeUserToPush, 2000));
+    }
+</script>
 </body>
 </html>

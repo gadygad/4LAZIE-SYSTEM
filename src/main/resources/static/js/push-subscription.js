@@ -43,6 +43,10 @@ async function checkAndPromptPush() {
 
 async function subscribeUserToPush() {
     try {
+        // Register defensively — most pages already do this themselves, but this
+        // page might be the user's first, and register() on an already-registered
+        // worker just resolves with the existing registration (safe to call again).
+        await navigator.serviceWorker.register('/sw.js');
         const registration = await navigator.serviceWorker.ready;
         let subscription = await registration.pushManager.getSubscription();
         
