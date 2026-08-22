@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR, jakarta.servlet.DispatcherType.INCLUDE).permitAll()
                 // Allow public access to static resources and public pages
                 .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/register/google", "/login", "/forgot-password", "/reset-password", "/verify-email", "/verify-otp", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/search", "/api/subjects", "/api/courses", "/api/notes/filter", "/policy", "/terms", "/contact", "/api/public/contact", "/sw.js", "/manifest.json", "/offline.html", "/api/notifications/**", "/quizzes", "/api/public/quizzes/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**", "/timetable/**", "/mobile-viewer/**").permitAll()
+                .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**", "/timetable/**", "/mobile-viewer/**", "/view-generated-exam/**").permitAll()
                 .requestMatchers("/generate-exam", "/generator-hub").authenticated()
                 // Require ADMIN or SUPER_ADMIN role for admin pages and upload page
                 .requestMatchers("/upload", "/admin/**").hasAnyRole(com.school.model.Role.ADMIN.name(), com.school.model.Role.SUPER_ADMIN.name())
