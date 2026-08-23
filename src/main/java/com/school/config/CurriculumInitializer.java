@@ -4,6 +4,7 @@ import com.school.model.Course;
 import com.school.model.Subject;
 import com.school.repository.CourseRepository;
 import com.school.repository.SubjectRepository;
+import com.school.repository.QuestionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +19,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CurriculumInitializer {
 
         private CacheManager cacheManager;
+        private QuestionRepository questionRepository;
 
-    public CurriculumInitializer(CacheManager cacheManager) {
+    public CurriculumInitializer(CacheManager cacheManager, QuestionRepository questionRepository) {
         this.cacheManager = cacheManager;
+        this.questionRepository = questionRepository;
+    }
+
+    /**
+     * This seeder deletes and recreates Subject documents by name on every
+     * startup to keep the curriculum in sync with the hardcoded module lists
+     * below. That's fine for a subject with no data yet, but deleting one
+     * that already has Questions pointing at its id orphans them forever —
+     * the quiz dropdown shows a freshly recreated subject with a new id, and
+     * "Server Administration" (or whichever subject) silently returns zero
+     * questions even though they still exist in the questions collection.
+     * This was almost certainly what broke DIP_CSE Level 5 Sem 2's Server
+     * Administration quiz. Never delete a subject that already has questions.
+     */
+    private void deleteSubjectIfUnused(Subject s, SubjectRepository subjectRepository) {
+        if (questionRepository.findBySubjectId(s.getId()).isEmpty()) {
+            subjectRepository.delete(s);
+        }
     }
 
 
@@ -119,7 +139,7 @@ public class CurriculumInitializer {
             List<Subject> existingSubjectsCSE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 5, 2);
             for (Subject s : existingSubjectsCSE) {
                 if (!moduleNamesCSE.contains(s.getName())) {
-                    subjectRepository.delete(s);
+                    deleteSubjectIfUnused(s, subjectRepository);
                 }
             }
             existingSubjectsCSE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaCSE, 5, 2);
@@ -147,7 +167,7 @@ public class CurriculumInitializer {
             List<Subject> existingSubjectsIT = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaIT, 5, 2);
             for (Subject s : existingSubjectsIT) {
                 if (!moduleNamesIT.contains(s.getName())) {
-                    subjectRepository.delete(s);
+                    deleteSubjectIfUnused(s, subjectRepository);
                 }
             }
             existingSubjectsIT = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaIT, 5, 2);
@@ -184,7 +204,7 @@ public class CurriculumInitializer {
                 List<Subject> existingSubjectsME = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaME, 5, 2);
                 for (Subject s : existingSubjectsME) {
                     if (!moduleNamesME.contains(s.getName())) {
-                        subjectRepository.delete(s);
+                        deleteSubjectIfUnused(s, subjectRepository);
                     }
                 }
                 existingSubjectsME = subjectRepository.findByCourseAndLevelNoAndSemesterNo(diplomaME, 5, 2);
@@ -218,7 +238,7 @@ public class CurriculumInitializer {
                 List<Subject> existingSubjectsDEG_CE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 3, 2);
                 for (Subject s : existingSubjectsDEG_CE) {
                     if (!moduleNamesDEG_CE.contains(s.getName())) {
-                        subjectRepository.delete(s);
+                        deleteSubjectIfUnused(s, subjectRepository);
                     }
                 }
                 existingSubjectsDEG_CE = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 3, 2);
@@ -249,7 +269,7 @@ public class CurriculumInitializer {
                 List<Subject> existingCEY4S1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 1);
                 for (Subject s : existingCEY4S1) {
                     if (!moduleNamesCEY4S1.contains(s.getName())) {
-                        subjectRepository.delete(s);
+                        deleteSubjectIfUnused(s, subjectRepository);
                     }
                 }
                 existingCEY4S1 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 1);
@@ -279,7 +299,7 @@ public class CurriculumInitializer {
                 List<Subject> existingSubjectsDEG_CE_Y4S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 2);
                 for (Subject s : existingSubjectsDEG_CE_Y4S2) {
                     if (!moduleNamesDEG_CE_Y4S2.contains(s.getName())) {
-                        subjectRepository.delete(s);
+                        deleteSubjectIfUnused(s, subjectRepository);
                     }
                 }
                 existingSubjectsDEG_CE_Y4S2 = subjectRepository.findByCourseAndLevelNoAndSemesterNo(degreeCE, 4, 2);
