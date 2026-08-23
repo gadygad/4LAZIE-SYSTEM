@@ -3229,7 +3229,26 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                             transform: translateY(0);
                         }
                     }
-                    
+
+                    /* On narrow screens, the badge + expand icon + subject-name
+                       input + credits + grade + delete button crammed onto one
+                       row leaves almost no width for the subject name, which
+                       gets truncated to a few characters (e.g. "COM..." instead
+                       of "COMMUNICATION SKILLS"). Give the name its own full
+                       line, with everything else wrapping onto a second line
+                       where they have plenty of room. */
+                    @media (max-width: 480px) {
+                        .gpa-course-row {
+                            flex-wrap: wrap;
+                            row-gap: 6px;
+                        }
+                        .gpa-course-row > .flex-grow-1 {
+                            order: -1;
+                            flex-basis: 100%;
+                            width: 100%;
+                        }
+                    }
+
                     @media print {
                         body * {
                             visibility: hidden;
