@@ -66,8 +66,13 @@ public class HomeController {
 
 
     @GetMapping("/")
-    public String home(Model model, jakarta.servlet.http.HttpSession session) {
-        if (session.getAttribute("user") != null) {
+    public String home(Model model, jakarta.servlet.http.HttpSession session,
+                        @org.springframework.web.bind.annotation.RequestParam(value = "openGpa", required = false) String openGpa) {
+        // Logged-in users are normally sent straight to their dashboard, but the
+        // GPA Calculator only exists on this page, so the "GPA CALCULATOR" nav
+        // link (fragments/sjuit_components.html) needs an escape hatch to land
+        // here instead of bouncing back to the dashboard.
+        if (session.getAttribute("user") != null && !"true".equals(openGpa)) {
             return "redirect:/dashboard";
         }
         // Fetch the absolute 10 most recent uploads (Public Quick Access), filtering duplicates

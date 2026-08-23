@@ -3675,6 +3675,19 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                         }, 400);
                                     }
                                 </script>
+
+    <!-- Auto-open the GPA Calculator when linked here from another page's
+         "GPA CALCULATOR" nav item (see fragments/sjuit_components.html). -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (new URLSearchParams(window.location.search).get('openGpa') === 'true') {
+                const modalEl = document.getElementById('gpaModal');
+                if (modalEl && window.bootstrap) {
+                    new bootstrap.Modal(modalEl).show();
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

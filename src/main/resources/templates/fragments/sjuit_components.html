@@ -1399,6 +1399,9 @@
                     <a href="/quizzes?type=ue_qns"><i class="bi bi-journal-check"></i> UE QNS</a>
                 </div>
             </div>
+            <!-- GPA Calculator lives on the homepage; other pages link there with
+                 a flag that auto-opens the modal on load (see home.html). -->
+            <a th:if="${session.user != null}" th:href="@{/(openGpa=true)}"><i class="bi bi-calculator-fill me-1"></i>GPA CALCULATOR</a>
         </div>
     </div>
     <style>
