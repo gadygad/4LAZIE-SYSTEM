@@ -821,11 +821,20 @@ public class NotesController {
             }
             
             String disposition = "true".equals(force) ? "attachment" : "inline";
+            // Without a known Content-Length, several mobile browsers refuse to
+            // stream-render a PDF inline and download it instead, even though
+            // the disposition header says "inline". Pass the upstream length
+            // through so mobile "Read" actually opens a viewer instead of
+            // downloading the file.
+            long upstreamLength = connection.getContentLengthLong();
             org.springframework.core.io.InputStreamResource resource = new org.springframework.core.io.InputStreamResource(connection.getInputStream());
-            return ResponseEntity.ok()
+            ResponseEntity.BodyBuilder builder = ResponseEntity.ok()
                     .contentType(mediaType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
-                    .body(resource);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"");
+            if (upstreamLength >= 0) {
+                builder = builder.contentLength(upstreamLength);
+            }
+            return builder.body(resource);
         } catch (Exception e) {
             log.error("Error proxying document", e);
             String errHtml = "<html><head><style>body{background:#0f172a;color:#f8fafc;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;}</style></head><body><h2>Document Fetch Error</h2><p>Unable to fetch the PDF from the remote server. The file might be missing or the repository is private.</p><br><a href='/dashboard' style='color:#3b82f6;text-decoration:none;'>Return to Dashboard</a></body></html>";
