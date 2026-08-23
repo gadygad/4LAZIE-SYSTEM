@@ -2371,26 +2371,6 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
     <!-- GPA Calculator Script -->
     <script>
         // ===== GPA CALCULATOR - COMPLETE SCRIPT =====
-        let currentScale = 'NTA45';
-
-        const gradeOptions = {
-            NTA45: [
-                { grade: 'A',  gp: 4.0 },
-                { grade: 'B+', gp: 3.5 },
-                { grade: 'B',  gp: 3.0 },
-                { grade: 'C',  gp: 2.0 },
-                { grade: 'D',  gp: 1.0 },
-                { grade: 'F',  gp: 0.0 }
-            ],
-            NTA6Degree: [
-                { grade: 'A',  gp: 5.0 },
-                { grade: 'B+', gp: 4.0 },
-                { grade: 'B',  gp: 3.0 },
-                { grade: 'C',  gp: 2.0 },
-                { grade: 'D',  gp: 1.0 },
-                { grade: 'F',  gp: 0.0 }
-            ]
-        };
         // ── Native Select handlers (replaces Bootstrap dropdown logic) ────────────
         function onGpaProgramTypeChange() {
             gpaInitDropdowns();           // Repopulate courses & semesters only
@@ -2483,17 +2463,12 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
         function onGpaLevelSemChange() { gpaUpdateScale(); }
 
         function gpaUpdateScale() {
-            const semEl = document.getElementById('gpaAutoLevelSemSelect');
-            const pTypeEl = document.getElementById('gpaAutoProgramType');
-            if (!semEl || !pTypeEl) return;
-            const levelNo = (semEl.value || '4-1').split('-')[0];
-            const pType   = pTypeEl.value; // 'DIPLOMA' or 'DEGREE'
-            // For degree or NTA level 6, use 5.0 scale
-            if (pType === 'DEGREE' || levelNo === '6') {
-                setGpaScale('NTA6Degree');
-            } else {
-                setGpaScale('NTA45');
-            }
+            // The 4.0-vs-5.0 scale is now computed fresh from the DOM every time
+            // by getGradingSystem() (see calculateGpa()/runTargetSimulator()), so
+            // there's nothing to precompute here. Kept as a function because
+            // onGpaSemesterChange() still calls it; calculateGpa() below picks up
+            // any change immediately regardless.
+            calculateGpa();
         }
 
         // ── Auto-Fetch Subjects from DB ───────────────────────────────────────
@@ -2914,8 +2889,15 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                 gpaEl.innerText = totalCredits > 0 ? gpa.toFixed(2) : '0.00';
             }
 
-            // Ring animation
-            const maxVal = currentScale === 'NTA45' ? 4.0 : 5.0;
+            // Ring animation — NTA Level 4/5 Diploma tops out at 4.0, but Level 6
+            // and Degree use a 5.0 scale. getGradingSystem() (already used for the
+            // grade dropdowns) is the source of truth here — the old currentScale/
+            // setGpaScale() mechanism was broken (setGpaScale was never defined,
+            // so currentScale silently stayed 'NTA45' forever regardless of what
+            // was actually selected).
+            const isFourScale = getGradingSystem().scale === 'NTA45';
+            const maxVal = isFourScale ? 4.0 : 5.0;
+            if (el('gpaMaxLabel')) el('gpaMaxLabel').innerText = 'out of ' + maxVal.toFixed(1);
             const ring   = el('gpaProgressRing');
             if (ring) {
                 const circ   = 2 * Math.PI * 42;
@@ -2927,7 +2909,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             // Classification
             let classText = 'No Courses', classColor = '#475569', bgGlow = 'rgba(148,163,184,0.1)', strokeColor = '#94a3b8';
             if (totalCredits > 0) {
-                if (currentScale === 'NTA45') {
+                if (isFourScale) {
                     if (gpa >= 3.5)      { classText = 'First Class 🌟';   classColor = '#047857'; bgGlow = 'rgba(16,185,129,0.15)';  strokeColor = '#10b981'; }
                     else if (gpa >= 3.0) { classText = 'Second Class 👍';  classColor = '#1d4ed8'; bgGlow = 'rgba(59,130,246,0.15)';  strokeColor = '#3b82f6'; }
                     else if (gpa >= 2.0) { classText = 'Pass 📝';          classColor = '#b45309'; bgGlow = 'rgba(245,158,11,0.15)';  strokeColor = '#f59e0b'; }
@@ -2970,7 +2952,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
             }
 
             const neededGpa = ((targetGpa * (doneCredits + remainingCredits)) - (doneGpa * doneCredits)) / remainingCredits;
-            const maxVal    = currentScale === 'NTA45' ? 4.0 : 5.0;
+            const maxVal    = getGradingSystem().scale === 'NTA45' ? 4.0 : 5.0;
 
             if (neededGpa < 0)        { resultBox.className = 'mt-1 text-success fw-bold'; resultBox.innerText = `🎉 Already secured! You only need 0.00 in remaining credits.`; }
             else if (neededGpa > maxVal) { resultBox.className = 'mt-1 text-danger fw-bold';  resultBox.innerText = `❌ Impossible! Would need ${neededGpa.toFixed(2)} (max ${maxVal}).`; }
