@@ -830,7 +830,14 @@ public class NotesController {
             org.springframework.core.io.InputStreamResource resource = new org.springframework.core.io.InputStreamResource(connection.getInputStream());
             ResponseEntity.BodyBuilder builder = ResponseEntity.ok()
                     .contentType(mediaType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"");
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + (note.getFilename() != null ? note.getFilename() : "document.pdf") + "\"")
+                    // Spring Security's default header writer sets Cache-Control:
+                    // no-store on every response. Mobile Safari (and some Android
+                    // browsers) refuse to render a PDF inline under no-store and
+                    // silently fall back to downloading it instead. Setting our
+                    // own Cache-Control here (before the response commits) takes
+                    // precedence, since that writer skips headers already present.
+                    .header(HttpHeaders.CACHE_CONTROL, "private, max-age=3600");
             if (upstreamLength >= 0) {
                 builder = builder.contentLength(upstreamLength);
             }
