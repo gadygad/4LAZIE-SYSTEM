@@ -611,6 +611,15 @@
                     </div>
 
                     <div style="background:rgba(255,255,255,0.95);border-top:1px solid rgba(99,102,241,0.08);padding:12px 18px calc(14px + env(safe-area-inset-bottom));flex-shrink:0; display:flex; flex-direction:column;">
+                        <div id="peerReplyContextBox" class="reply-context-box" style="border-radius: 20px 20px 0 0; margin-bottom: -15px; padding-bottom: 25px;">
+                            <div class="reply-context-content">
+                                <div id="peerReplyContextName" class="reply-context-name"></div>
+                                <div id="peerReplyContextText" class="reply-context-text"></div>
+                            </div>
+                            <button type="button" class="cancel-reply-btn" onclick="PeerChat.cancelReply()">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </button>
+                        </div>
                         <div id="peerInputShell" style="display:flex;align-items:flex-end;gap:10px;background:#f8fafc;border:1.5px solid rgba(99,102,241,0.2);border-radius:24px;padding:10px 14px;transition:all 0.3s; position:relative; z-index:2;">
                             <textarea id="peerMsgInput" rows="1" placeholder="Type a message..."
                                       style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.95rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
@@ -1356,6 +1365,7 @@
             let otherTypingTimeout = null;
             let typingSendTimer = null;
             let isTypingSent = false;
+            let replyState = { messageId: null, senderName: null, messageText: null };
 
             const chatBody = document.getElementById('peerChatBody');
             const msgWrap = document.getElementById('peerMsgWrap');
@@ -1372,33 +1382,105 @@
                 return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;">${ini}</div>`;
             }
 
+            function initReply(messageId, senderName, messageText) {
+                replyState = { messageId, senderName, messageText };
+                document.getElementById('peerReplyContextName').textContent = senderName;
+                document.getElementById('peerReplyContextText').textContent = messageText;
+                document.getElementById('peerReplyContextBox').style.display = 'flex';
+                if (input) input.focus();
+            }
+
+            function cancelReply() {
+                replyState = { messageId: null, senderName: null, messageText: null };
+                document.getElementById('peerReplyContextBox').style.display = 'none';
+            }
+
+            function statusHtml(status) {
+                if (status === 'Read') return '<span style="color:#059669;font-weight:700;">Read</span>';
+                if (status === 'Delivered') return '<span style="color:#64748b;font-weight:600;">Delivered</span>';
+                return '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
+            }
+
             function makeBubble(msg) {
                 const row = document.createElement('div');
-                row.className = 'msg-row' + (msg.isSelf ? ' self' : '');
                 row.id = 'peer-msg-' + msg.id;
+                const label = msg.isSelf ? 'You' : msg.senderName;
+
+                if (msg.isSelf) {
+                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row-reverse;margin-left:auto;max-width:100%;';
+                } else {
+                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;';
+                }
 
                 const avW = document.createElement('div');
                 avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
                 row.appendChild(avW.firstElementChild);
 
                 const col = document.createElement('div');
-                col.className = 'msg-col';
-                const label = document.createElement('span');
-                label.className = 'msg-label';
-                label.textContent = msg.isSelf ? 'You' : msg.senderName;
-                col.appendChild(label);
+                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+
+                const headerRow = document.createElement('div');
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
+                const nameEl = document.createElement('span');
+                nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
+                nameEl.textContent = label;
+                const timeEl = document.createElement('span');
+                timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
+                timeEl.textContent = msg.time || '';
+                if (msg.isSelf) { headerRow.appendChild(timeEl); headerRow.appendChild(nameEl); }
+                else { headerRow.appendChild(nameEl); headerRow.appendChild(timeEl); }
+                col.appendChild(headerRow);
 
                 const bubble = document.createElement('div');
-                bubble.className = 'bubble ' + (msg.isSelf ? 'sent' : 'recv');
-                const textEl = document.createElement('div');
-                textEl.innerHTML = esc(msg.messageText || '');
-                const timeEl = document.createElement('span');
-                timeEl.className = 'b-time';
-                timeEl.textContent = msg.time || '';
-                bubble.appendChild(textEl);
-                bubble.appendChild(timeEl);
+                if (msg.isSelf) {
+                    bubble.style.cssText = 'font-size:1.1rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%);padding:12px 18px;border-radius:20px;box-shadow:0 4px 15px rgba(79,70,229,0.25);';
+                } else {
+                    bubble.style.cssText = 'font-size:1.1rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:12px 18px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
+                }
+
+                if (msg.replyToMessageId) {
+                    const quotedDiv = document.createElement('div');
+                    quotedDiv.className = 'quoted-msg';
+                    quotedDiv.onclick = (e) => {
+                        e.stopPropagation();
+                        const target = document.getElementById('peer-msg-' + msg.replyToMessageId);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            const oldBg = target.style.background;
+                            target.style.background = 'rgba(99,102,241,0.15)';
+                            setTimeout(() => target.style.background = oldBg, 1500);
+                        }
+                    };
+                    quotedDiv.innerHTML = `<span class="quoted-msg-name">${esc(msg.replyToSenderName || '')}</span>
+                                           <span class="quoted-msg-text">${esc(msg.replyToMessageText || '')}</span>`;
+                    bubble.appendChild(quotedDiv);
+                }
+
+                const msgSpan = document.createElement('span');
+                msgSpan.innerHTML = esc(msg.messageText || '');
+                bubble.appendChild(msgSpan);
+                bubble.ondblclick = () => initReply(msg.id, label, msg.messageText);
                 col.appendChild(bubble);
+
+                const replyBtn = document.createElement('span');
+                replyBtn.style.cssText = 'color:#6366f1;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;';
+                replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
+                replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, label, msg.messageText); };
+                const replyWrapper = document.createElement('div');
+                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;' + (msg.isSelf ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
+                replyWrapper.appendChild(replyBtn);
+                col.appendChild(replyWrapper);
+
                 row.appendChild(col);
+
+                if (msg.isSelf) {
+                    const statusRow = document.createElement('div');
+                    statusRow.className = 'peer-status-text';
+                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:flex-end;width:100%;';
+                    statusRow.innerHTML = statusHtml(msg.status);
+                    col.appendChild(statusRow);
+                }
+
                 return row;
             }
 
@@ -1411,7 +1493,15 @@
                 let added = 0;
                 msgs.forEach(msg => {
                     const id = msg.id || ('tmp-' + Math.random());
-                    if (renderedIds.has(id)) return;
+                    const existing = document.getElementById('peer-msg-' + id);
+                    if (existing) {
+                        // Already rendered — just refresh its Sent/Delivered/Read status.
+                        if (msg.isSelf && msg.status) {
+                            const statusEl = existing.querySelector('.peer-status-text');
+                            if (statusEl) statusEl.innerHTML = statusHtml(msg.status);
+                        }
+                        return;
+                    }
                     renderedIds.add(id);
                     msgWrap.appendChild(makeBubble(msg));
                     added++;
@@ -1492,7 +1582,15 @@
                 clearTimeout(typingSendTimer);
                 if (isTypingSent) { isTypingSent = false; notifyTyping(false); }
 
-                const body = new URLSearchParams({ messageText: text });
+                const params = { messageText: text };
+                if (replyState.messageId) {
+                    params.replyToMessageId = replyState.messageId;
+                    params.replyToSenderName = replyState.senderName;
+                    params.replyToMessageText = replyState.messageText;
+                }
+                cancelReply();
+
+                const body = new URLSearchParams(params);
                 fetch('/api/peer-chat/' + currentChatId + '/send', {
                     method: 'POST', credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -1517,6 +1615,7 @@
             function open(chatId, otherId, otherName, otherPic) {
                 currentChatId = chatId;
                 currentOtherId = otherId;
+                cancelReply();
 
                 document.querySelectorAll('.msg-list-item').forEach(el => el.classList.remove('active'));
                 const li = document.getElementById('peer-list-item-' + chatId);
@@ -1548,7 +1647,7 @@
                 connectSSEPeer(chatId);
             }
 
-            return { open };
+            return { open, cancelReply };
         })();
         window.PeerChat = PeerChat;
 

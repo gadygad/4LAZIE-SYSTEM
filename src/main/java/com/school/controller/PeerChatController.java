@@ -123,25 +123,7 @@ public class PeerChatController {
     }
 
     private List<Map<String, Object>> buildMessageList(PeerChat chat, String viewerId) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("hh:mm a");
-        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd MMM");
-        for (ChatMessage msg : chat.getMessages()) {
-            Map<String, Object> m = new HashMap<>();
-            m.put("id", msg.getId());
-            m.put("senderId", msg.getSenderId());
-            m.put("senderName", msg.getSenderName());
-            m.put("senderProfilePicture", msg.getSenderProfilePicture());
-            m.put("messageText", msg.getMessageText());
-            m.put("replyToMessageId", msg.getReplyToMessageId());
-            m.put("replyToSenderName", msg.getReplyToSenderName());
-            m.put("replyToMessageText", msg.getReplyToMessageText());
-            m.put("time", msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
-            m.put("date", msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
-            m.put("isSelf", viewerId.equals(msg.getSenderId()));
-            result.add(m);
-        }
-        return result;
+        return buildMessageListStatic(chat, viewerId);
     }
 
     @GetMapping("/api/peer-chat/{chatId}/messages")
@@ -154,6 +136,9 @@ public class PeerChatController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         peerChatService.markRead(chatId, me.getId());
+        // Push the now-read status back out so the SENDER's open chat (if any)
+        // flips "Delivered" to "Read" live instead of only on their next reload.
+        notifyChat(chatId, peerChatService.getChatById(chatId));
         return ResponseEntity.ok(Map.of("success", true, "messages", buildMessageList(chat, me.getId())));
     }
 
@@ -283,7 +268,23 @@ public class PeerChatController {
             m.put("replyToMessageText", msg.getReplyToMessageText());
             m.put("time", msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
             m.put("date", msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
-            m.put("isSelf", viewerId.equals(msg.getSenderId()));
+            boolean isSelf = viewerId.equals(msg.getSenderId());
+            m.put("isSelf", isSelf);
+
+            // Sent / Delivered / Read, same three-state ladder as DirectChatController —
+            // only meaningful (and only rendered client-side) for the viewer's own messages.
+            String status = "Sent";
+            if (msg.isRead()) {
+                status = "Read";
+            } else if (isSelf && userRepoStatic != null) {
+                String recipientId = chat.otherUserId(viewerId);
+                User recipient = userRepoStatic.findById(recipientId).orElse(null);
+                if (recipient != null && recipient.getLastActiveTime() != null
+                        && recipient.getLastActiveTime().isAfter(LocalDateTime.now().minusMinutes(5))) {
+                    status = "Delivered";
+                }
+            }
+            m.put("status", status);
             result.add(m);
         }
         return result;
