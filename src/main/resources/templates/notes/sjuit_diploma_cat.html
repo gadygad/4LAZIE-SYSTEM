@@ -237,7 +237,7 @@
                                 <select id="mModuleSelect" class="form-select form-select-lg" onchange="autoFillModule()">
                                     <option value="">-- First Select Course &amp; Semester --</option>
                                 </select>
-                                <div class="form-text small" style="color: #334155;"><i class="bi bi-info-circle"></i> Picks the module code &amp; name for you — double-check them below before saving.</div>
+                                <div class="form-text small" style="color: #334155;"><i class="bi bi-info-circle"></i> Automatically fills the Module Code &amp; Name below from the database — pick a different module here if it's not the right one.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Select Extra Courses for PDF Copies (Optional)</label>
@@ -248,11 +248,11 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Module Code</label>
-                                <input type="text" id="mCode" class="form-control form-control-lg" placeholder="e.g. CET 05201" required>
+                                <input type="text" id="mCode" class="form-control form-control-lg" placeholder="Auto-filled from Module above" readonly required>
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label">Module Name</label>
-                                <input type="text" id="mName" class="form-control form-control-lg" placeholder="e.g. Computer Networks" required>
+                                <input type="text" id="mName" class="form-control form-control-lg" placeholder="Auto-filled from Module above" readonly required>
                             </div>
                         </div>
                         <div class="text-end mt-4 pt-3 border-top">
@@ -648,8 +648,12 @@
 
             moduleSelect.innerHTML = filteredSubjects.length === 0
                 ? '<option value="">-- No Modules Found --</option>'
-                : filteredSubjects.map(s => `<option value="${s.code}||${s.name}">${s.code} - ${s.name}</option>`).join('');
+                : filteredSubjects.map(s => `<option value="${s.code || ''}||${s.name}">${s.code ? s.code + ' - ' + s.name : s.name}</option>`).join('');
             initCustomSelect(moduleSelect);
+
+            // Auto-fill from the first matching module so admins don't have to
+            // manually click the dropdown just to populate Code/Name.
+            autoFillModule();
         }
 
         function autoFillModule() {
