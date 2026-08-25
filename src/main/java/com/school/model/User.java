@@ -67,9 +67,13 @@ public class User {
     private Set<String> savedNotes = new HashSet<>();
     private Set<String> downloadedNotes = new HashSet<>();
 
-    // Mutual student connections (LinkedIn-style "Connect", not one-way
-    // follow) — instant on click for now, no request/accept step.
-    private Set<String> connections = new HashSet<>();
+    // "Connect" is a one-way follow, not a mutual relationship — clicking
+    // Connect on someone's profile adds them to YOUR following list and adds
+    // YOU to THEIR followers list. A profile's "Connections" count is its
+    // follower count. Both directions are stored (rather than derived by
+    // counting who has your ID in their following set) so reads stay O(1).
+    private Set<String> following = new HashSet<>();
+    private Set<String> followers = new HashSet<>();
 
     private Boolean isVerified = true;
     private String verificationToken;
@@ -149,8 +153,11 @@ public class User {
     public Set<String> getSavedNotes() { return savedNotes; }
     public void setSavedNotes(Set<String> savedNotes) { this.savedNotes = savedNotes; }
 
-    public Set<String> getConnections() { return connections; }
-    public void setConnections(Set<String> connections) { this.connections = connections; }
+    public Set<String> getFollowing() { return following; }
+    public void setFollowing(Set<String> following) { this.following = following; }
+
+    public Set<String> getFollowers() { return followers; }
+    public void setFollowers(Set<String> followers) { this.followers = followers; }
     public Set<String> getDownloadedNotes() { return downloadedNotes; }
     public void setDownloadedNotes(Set<String> downloadedNotes) { this.downloadedNotes = downloadedNotes; }
     public Boolean getIsVerified() { return isVerified; }

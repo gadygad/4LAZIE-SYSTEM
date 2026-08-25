@@ -124,6 +124,7 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("editMode", edit);
         model.addAttribute("isOwnProfile", true);
+        model.addAttribute("connectionsCount", user.getFollowers() != null ? user.getFollowers().size() : 0);
         return "user/profile";
     }
 
@@ -151,12 +152,18 @@ public class UserController {
         model.addAttribute("user", target);
         model.addAttribute("editMode", false);
         model.addAttribute("isOwnProfile", false);
-        model.addAttribute("isConnected", me.getConnections() != null && me.getConnections().contains(target.getId()));
-        model.addAttribute("connectionsCount", target.getConnections() != null ? target.getConnections().size() : 0);
+        // "Connect" is one-way: am I (the viewer) already following THEM?
+        model.addAttribute("isConnected", me.getFollowing() != null && me.getFollowing().contains(target.getId()));
+        // "Connections" shown on a profile = that profile's follower count.
+        model.addAttribute("connectionsCount", target.getFollowers() != null ? target.getFollowers().size() : 0);
         return "user/profile";
     }
 
-    /** Toggle a mutual connection between the logged-in user and another student. */
+    /**
+     * Connect = follow, one-way. Clicking it on someone's profile adds them
+     * to YOUR following list and adds YOU to THEIR followers list — it does
+     * not make them follow you back.
+     */
     @PostMapping("/api/connections/{id}/toggle")
     @org.springframework.web.bind.annotation.ResponseBody
     public org.springframework.http.ResponseEntity<?> toggleConnection(@org.springframework.web.bind.annotation.PathVariable String id) {
@@ -173,17 +180,17 @@ public class UserController {
             return org.springframework.http.ResponseEntity.notFound().build();
         }
 
-        if (me.getConnections() == null) me.setConnections(new java.util.HashSet<>());
-        if (target.getConnections() == null) target.setConnections(new java.util.HashSet<>());
+        if (me.getFollowing() == null) me.setFollowing(new java.util.HashSet<>());
+        if (target.getFollowers() == null) target.setFollowers(new java.util.HashSet<>());
 
         boolean nowConnected;
-        if (me.getConnections().contains(target.getId())) {
-            me.getConnections().remove(target.getId());
-            target.getConnections().remove(me.getId());
+        if (me.getFollowing().contains(target.getId())) {
+            me.getFollowing().remove(target.getId());
+            target.getFollowers().remove(me.getId());
             nowConnected = false;
         } else {
-            me.getConnections().add(target.getId());
-            target.getConnections().add(me.getId());
+            me.getFollowing().add(target.getId());
+            target.getFollowers().add(me.getId());
             nowConnected = true;
             pushNotificationService.sendToUser(target.getId(), "New Connection",
                     me.getName() + " connected with you.", "/students/" + me.getId() + "/profile");
@@ -194,7 +201,7 @@ public class UserController {
         return org.springframework.http.ResponseEntity.ok(java.util.Map.of(
                 "success", true,
                 "connected", nowConnected,
-                "connectionsCount", target.getConnections().size()));
+                "connectionsCount", target.getFollowers().size()));
     }
 
     @PostMapping("/profile")

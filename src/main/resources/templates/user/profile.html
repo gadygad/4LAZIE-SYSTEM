@@ -185,7 +185,8 @@
                     <i class="bi bi-chat-dots-fill"></i> Message
                 </button>
             </div>
-            <div th:unless="${isOwnProfile}" class="text-center mb-3">
+            <!-- Connections (follower) count — shown on every profile, including your own -->
+            <div class="text-center mb-3">
                 <span class="text-muted" style="font-size: 0.85rem;">
                     <i class="bi bi-people-fill me-1" style="color:#6366f1;"></i>
                     <span id="connectionsCountText" th:text="${connectionsCount}">0</span> connection<span th:if="${connectionsCount != 1}">s</span>
