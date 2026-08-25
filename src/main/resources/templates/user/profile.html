@@ -173,6 +173,8 @@
                 .btn-connected { background: rgba(16,185,129,0.1); color: #059669; border: 1.5px solid rgba(16,185,129,0.3); }
                 .btn-connections-count { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.25); }
                 .btn-connections-count:hover { background: rgba(99,102,241,0.16); transform: translateY(-2px); }
+                .btn-connect-disabled, .btn-message-disabled { background: rgba(148,163,184,0.12) !important; color: #94a3b8 !important; border: 1.5px solid rgba(148,163,184,0.2) !important; cursor: not-allowed !important; opacity: 0.7; }
+                .btn-connect-disabled:hover, .btn-message-disabled:hover { transform: none !important; box-shadow: none !important; }
             </style>
 
             <div class="d-flex flex-column align-items-center text-center mb-5 position-relative">
@@ -207,19 +209,24 @@
 
                     <!-- Connect / Message / Connections — action row -->
                     <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
-                        <button type="button" id="connectBtn" th:unless="${isOwnProfile}" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                        <button type="button" id="connectBtn" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
                                 th:attr="data-user-id=${user.id},data-user-name=${user.name}"
-                                th:classappend="${isConnected} ? 'btn-connected' : 'btn-connect'"
-                                onclick="toggleConnection(this)">
+                                th:classappend="${isOwnProfile} ? 'btn-connect-disabled' : (${isConnected} ? 'btn-connected' : 'btn-connect')"
+                                th:disabled="${isOwnProfile}"
+                                th:title="${isOwnProfile} ? 'You cannot connect with yourself' : ''"
+                                th:onclick="${isOwnProfile} ? '' : 'toggleConnection(this)'">
                             <i class="bi" th:classappend="${isConnected} ? 'bi-person-check-fill' : 'bi-person-plus-fill'"></i>
-                            <span th:text="${isConnected} ? 'Connected' : 'Connect'">Connect</span>
+                            <span th:text="${isOwnProfile} ? 'Connect' : (${isConnected} ? 'Connected' : 'Connect')">Connect</span>
                         </button>
-                        <button type="button" id="messageBtn" th:unless="${isOwnProfile}" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                        <button type="button" id="messageBtn" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                                th:classappend="${isOwnProfile} ? 'btn-message-disabled' : ''"
                                 style="background: rgba(99,102,241,0.1); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.3);"
                                 th:attr="data-user-id=${user.id},data-user-name=${user.name}"
-                                onmouseover="this.style.background='#6366f1'; this.style.color='#fff';"
-                                onmouseout="this.style.background='rgba(99,102,241,0.1)'; this.style.color='#4f46e5';"
-                                onclick="messageStudent(this)">
+                                th:disabled="${isOwnProfile}"
+                                th:title="${isOwnProfile} ? 'You cannot message yourself' : ''"
+                                th:onclick="${isOwnProfile} ? '' : 'messageStudent(this)'"
+                                onmouseover="if(!this.disabled){this.style.background='#6366f1'; this.style.color='#fff';}"
+                                onmouseout="if(!this.disabled){this.style.background='rgba(99,102,241,0.1)'; this.style.color='#4f46e5';}">
                             <i class="bi bi-chat-dots-fill"></i> Message
                         </button>
                         <button type="button" id="connectionsCountBtn" class="btn btn-connections-count rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2">
