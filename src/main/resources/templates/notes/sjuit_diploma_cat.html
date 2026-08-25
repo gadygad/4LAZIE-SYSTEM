@@ -396,8 +396,8 @@
                     </div>
                 </div>
                 <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
-                    <div id="pdf-cat-footer-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
-                        Page 1 | Prepared exclusively by 4LAZIE System
+                    <div id="pdf-cat-copyright-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
+                        &copy; 2026 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.
                     </div>
                 </div>
             </div>
@@ -772,6 +772,13 @@
             document.getElementById('pdf-cat-module').innerText = code + ' - ' + name;
             document.getElementById('pdf-cat-semester').innerText = semNo === 1 ? 'I' : 'II';
             document.getElementById('pdf-cat-year').innerText = yearFromLevel(ntaLevel);
+
+            // Footer copyright year tracks the Academic Year field, same as UE.
+            const academicYearStr = document.getElementById('mAcademicYear').value || new Date().getFullYear();
+            const copyrightEl = document.getElementById('pdf-cat-copyright-text');
+            if (copyrightEl) {
+                copyrightEl.innerText = `© ${academicYearStr} 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.`;
+            }
 
             const questions = collectQuestions();
             let html = '';
