@@ -161,10 +161,22 @@
         /* Only the hidden PDF-generation source starts hidden — the preview
            modal's copy of this markup (#cat-preview-container) needs to render. */
         #exam-pdf-template-cat { display: none; }
-        .cat-pdf-theme .cat-watermark {
-            position: absolute; inset: 0; z-index: 0; pointer-events: none;
-            background-repeat: repeat;
-            opacity: 0.9;
+        /* Single centered "4LAZIE" watermark, matching the UE template exactly
+           (same size/rotation), just tinted black/gray instead of green to
+           stay within the CAT format's strict black & white rule. */
+        .cat-pdf-theme::before {
+            content: '4LAZIE';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 140px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.05);
+            font-family: 'Inter', sans-serif;
+            z-index: 0;
+            pointer-events: none;
+            letter-spacing: 5px;
         }
         .cat-pdf-theme .header-bar {
             background: #111111; padding: 10px 15mm; display: flex; align-items: center; justify-content: space-between;
@@ -323,7 +335,6 @@
 
     <!-- Hidden Template that will be converted to PDF (black &amp; white only) -->
     <div id="exam-pdf-template-cat" class="cat-pdf-theme">
-        <div class="cat-watermark" id="pdf-cat-watermark"></div>
         <div class="header-bar">
             <div style="display:flex; align-items:center; gap:15px;">
                 <div style="background:#fff; border-radius:4px; padding:4px 10px; border:2px solid #fff;">
@@ -695,17 +706,6 @@
             return { 4: 'I', 5: 'II', 6: 'III' }[level] || 'I';
         }
 
-        // Tiled diagonal watermark, built as an SVG data URI so html2canvas
-        // captures it as a plain background image (no live DOM text tiling needed).
-        function buildWatermarkDataUri(text) {
-            const tile = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="420" height="220">
-                    <text x="210" y="120" font-family="Arial, sans-serif" font-size="15" font-weight="bold"
-                          fill="rgba(0,0,0,0.06)" text-anchor="middle" transform="rotate(-30 210 110)">${text}</text>
-                </svg>`;
-            return 'url("data:image/svg+xml,' + encodeURIComponent(tile) + '")';
-        }
-
         function prepareTemplateData(overrideProgramName) {
             const ntaLevel = parseInt(document.getElementById('mNtaLevel').value);
             const semNo = parseInt(document.getElementById('mSemester').value);
@@ -724,8 +724,6 @@
             document.getElementById('pdf-cat-module').innerText = code + ' - ' + name;
             document.getElementById('pdf-cat-semester').innerText = semNo === 1 ? 'I' : 'II';
             document.getElementById('pdf-cat-year').innerText = yearFromLevel(ntaLevel);
-            document.getElementById('pdf-cat-watermark').style.backgroundImage =
-                buildWatermarkDataUri('ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY');
 
             const questions = collectQuestions();
             let html = '';
