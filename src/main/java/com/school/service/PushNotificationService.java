@@ -2,13 +2,15 @@ package com.school.service;
 
 import com.school.model.PushSubscription;
 import com.school.repository.PushSubscriptionRepository;
+import nl.martijndwars.webpush.Encoding;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import nl.martijndwars.webpush.Subscription;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Async;
@@ -31,12 +33,11 @@ public class PushNotificationService {
     @Value("${vapid.subject}")
     private String subject;
 
-        private PushSubscriptionRepository subscriptionRepository;
+    private PushSubscriptionRepository subscriptionRepository;
 
     public PushNotificationService(PushSubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
     }
-
 
     private PushService pushService;
 
@@ -63,57 +64,77 @@ public class PushNotificationService {
     @Async
     public void sendToAllSubscribers(String title, String body, String url) {
         if (pushService == null) return;
-
-        List<PushSubscription> subs = subscriptionRepository.findAll();
-        
-        // Build JSON payload
-        String payload = String.format("{\"title\": \"%s\", \"body\": \"%s\", \"url\": \"%s\"}", 
-            escapeJson(title), escapeJson(body), escapeJson(url));
-
-        for (PushSubscription sub : subs) {
-            try {
-                Subscription.Keys keys = new Subscription.Keys(sub.getP256dh(), sub.getAuth());
-                Subscription subscription = new Subscription(sub.getEndpoint(), keys);
-                Notification notification = new Notification(subscription, payload);
-                pushService.send(notification);
-            } catch (Exception e) {
-                logger.error("Failed to send push to endpoint: " + sub.getEndpoint(), e);
-                // If endpoint is invalid or expired, we might want to delete it from DB
-                if (e.getMessage() != null && (e.getMessage().contains("404") || e.getMessage().contains("410"))) {
-                    subscriptionRepository.delete(sub);
-                }
-            }
+        String payload = buildPayload(title, body, url);
+        for (PushSubscription sub : subscriptionRepository.findAll()) {
+            sendToSubscription(sub, payload);
         }
+    }
+
+    @Async
+    public void sendToUser(String userId, String title, String body, String url) {
+        if (pushService == null) return;
+        List<PushSubscription> subs = subscriptionRepository.findByUserId(userId);
+        if (subs == null || subs.isEmpty()) return;
+        String payload = buildPayload(title, body, url);
+        for (PushSubscription sub : subs) {
+            sendToSubscription(sub, payload);
+        }
+    }
+
+    /**
+     * PushService.send() does NOT throw on a non-2xx response — it returns an
+     * HttpResponse the caller is responsible for inspecting. The previous code
+     * never read that response at all, so a bad VAPID key, an expired
+     * subscription (410), an unknown endpoint (404), or an oversized payload
+     * (413) all looked exactly like success: no exception, nothing logged,
+     * dead subscriptions never cleaned up. That silent-failure gap is why
+     * push could appear to "send" from the server's point of view while
+     * nothing ever reached a device.
+     */
+    private void sendToSubscription(PushSubscription sub, String payload) {
+        try {
+            Subscription.Keys keys = new Subscription.Keys(sub.getP256dh(), sub.getAuth());
+            Subscription subscription = new Subscription(sub.getEndpoint(), keys);
+            Notification notification = new Notification(subscription, payload);
+            HttpResponse response = pushService.send(notification, Encoding.AES128GCM);
+
+            int status = response.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                logger.debug("Push delivered to {}", sub.getEndpoint());
+                return;
+            }
+
+            String responseBody = "";
+            try {
+                if (response.getEntity() != null) {
+                    responseBody = EntityUtils.toString(response.getEntity());
+                }
+            } catch (Exception ignored) { /* best-effort diagnostics only */ }
+
+            if (status == 404 || status == 410) {
+                logger.warn("Push subscription gone (HTTP {}) for endpoint {} — removing it.", status, sub.getEndpoint());
+                subscriptionRepository.delete(sub);
+            } else if (status == 401 || status == 403) {
+                logger.error("Push rejected (HTTP {}) for endpoint {} — this usually means the VAPID keys " +
+                        "the server is signing with don't match the key the browser subscribed with " +
+                        "(e.g. VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY were rotated without the app doing a fresh " +
+                        "resubscription). Response: {}", status, sub.getEndpoint(), responseBody);
+            } else {
+                logger.error("Push failed (HTTP {}) for endpoint {}. Response: {}", status, sub.getEndpoint(), responseBody);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to send push to endpoint: " + sub.getEndpoint(), e);
+        }
+    }
+
+    private String buildPayload(String title, String body, String url) {
+        return String.format("{\"title\": \"%s\", \"body\": \"%s\", \"url\": \"%s\"}",
+                escapeJson(title), escapeJson(body), escapeJson(url));
     }
 
     private String escapeJson(String input) {
         if (input == null) return "";
         return input.replace("\\", "\\\\").replace("\"", "\\\"")
                 .replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
-    }
-
-    @Async
-    public void sendToUser(String userId, String title, String body, String url) {
-        if (pushService == null) return;
-
-        List<PushSubscription> subs = subscriptionRepository.findByUserId(userId);
-        if (subs == null || subs.isEmpty()) return;
-        
-        String payload = String.format("{\"title\": \"%s\", \"body\": \"%s\", \"url\": \"%s\"}", 
-            escapeJson(title), escapeJson(body), escapeJson(url));
-
-        for (PushSubscription sub : subs) {
-            try {
-                Subscription.Keys keys = new Subscription.Keys(sub.getP256dh(), sub.getAuth());
-                Subscription subscription = new Subscription(sub.getEndpoint(), keys);
-                Notification notification = new Notification(subscription, payload);
-                pushService.send(notification);
-            } catch (Exception e) {
-                logger.error("Failed to send push to endpoint: " + sub.getEndpoint(), e);
-                if (e.getMessage() != null && (e.getMessage().contains("404") || e.getMessage().contains("410"))) {
-                    subscriptionRepository.delete(sub);
-                }
-            }
-        }
     }
 }

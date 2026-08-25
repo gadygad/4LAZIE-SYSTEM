@@ -41,6 +41,15 @@ async function checkAndPromptPush() {
     });
 }
 
+function arraysEqual(a, b) {
+    if (!a || !b || a.byteLength !== b.byteLength) return false;
+    const av = new Uint8Array(a), bv = new Uint8Array(b);
+    for (let i = 0; i < av.length; i++) {
+        if (av[i] !== bv[i]) return false;
+    }
+    return true;
+}
+
 async function subscribeUserToPush() {
     try {
         // Register defensively — most pages already do this themselves, but this
@@ -48,24 +57,34 @@ async function subscribeUserToPush() {
         // worker just resolves with the existing registration (safe to call again).
         await navigator.serviceWorker.register('/sw.js');
         const registration = await navigator.serviceWorker.ready;
-        let subscription = await registration.pushManager.getSubscription();
-        
-        if (!subscription) {
-            // Fetch public key
-            if (!vapidPublicKey) {
-                const response = await fetch('/api/notifications/public-key');
-                if(!response.ok) return;
-                const data = await response.json();
-                vapidPublicKey = data.publicKey;
-            }
 
-            const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+        // Always fetch the server's current VAPID public key — a browser
+        // subscription is cryptographically bound to whichever key was used
+        // to create it. If the server's VAPID keys were ever rotated, every
+        // existing subscription becomes permanently invalid: the push
+        // service will reject anything sent to it with the new private key,
+        // silently, with no error the user (or admin) can see anywhere.
+        const response = await fetch('/api/notifications/public-key');
+        if (!response.ok) return;
+        const data = await response.json();
+        vapidPublicKey = data.publicKey;
+        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+        let subscription = await registration.pushManager.getSubscription();
+
+        if (subscription && !arraysEqual(subscription.options.applicationServerKey, convertedVapidKey)) {
+            console.warn('Push subscription was created with an old VAPID key — resubscribing with the current key.');
+            await subscription.unsubscribe();
+            subscription = null;
+        }
+
+        if (!subscription) {
             subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: convertedVapidKey
             });
         }
-        
+
         // Send subscription to backend
         await fetch('/api/notifications/subscribe', {
             method: 'POST',
@@ -74,7 +93,7 @@ async function subscribeUserToPush() {
             },
             body: JSON.stringify(subscription)
         });
-        
+
     } catch (e) {
         console.error('Failed to subscribe to push notifications', e);
     }
