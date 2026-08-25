@@ -1508,84 +1508,30 @@
         
         window.addEventListener('DOMContentLoaded', generateDefaultBlocks);
 
+        // Single continuous page, no internal page breaks — the exam renders
+        // as one tall page ending right after the footer, so there's no
+        // A4-page-boundary math left that could split a question or the
+        // footer awkwardly, and no leftover blank space at the very end.
         function calculatePDFLayout() {
             const element = document.getElementById('exam-pdf-template');
             const origDisplay = element.style.display;
             const origPosition = element.style.position;
             const origZIndex = element.style.zIndex;
-            
+
             element.style.display = 'block';
             element.style.position = 'absolute';
             element.style.zIndex = '-9999';
             element.style.paddingBottom = '0px';
-
-            const exactA4Height = element.offsetWidth * (297 / 210); 
-            element.style.minHeight = exactA4Height + 'px'; 
+            element.style.minHeight = '';
             void element.offsetHeight;
-            
-            const itemsToCheck = element.querySelectorAll('.pdf-q-item, .pdf-part-header');
-            itemsToCheck.forEach(item => item.style.marginTop = '0px');
-            
-            let hasBreaks = true;
-            let loopCount = 0;
-            while (hasBreaks && loopCount < 50) {
-                hasBreaks = false;
-                loopCount++;
-                const templateTop = element.getBoundingClientRect().top;
-                for (let j = 0; j < itemsToCheck.length; j++) {
-                    const item = itemsToCheck[j];
-                    const rect = item.getBoundingClientRect();
-                    const startY = rect.top - templateTop;
-                    const endY = rect.bottom - templateTop;
-                    const pageBoundary = Math.ceil(endY / exactA4Height) * exactA4Height - exactA4Height;
-                    
-                    if (startY < pageBoundary && endY > pageBoundary) {
-                        if ((endY - startY) > exactA4Height) continue;
-                        const currentMargin = parseFloat(window.getComputedStyle(item).marginTop) || 0;
-                        const pushAmount = pageBoundary - startY + 2;
-                        item.style.marginTop = (currentMargin + pushAmount) + 'px';
-                        hasBreaks = true;
-                        break;
-                    }
-                }
-            }
 
-            // The footer isn't in itemsToCheck (adding it there would wipe its
-            // base 20px margin-top on every reset), but it still must never
-            // straddle a page boundary — otherwise it prints as a truncated
-            // sliver at the bottom of one page with a blank gap left behind
-            // where it "almost" fit, and the rest is lost. Same rect-based
-            // push math as above, just without the reset-to-zero step first.
-            const footerElForBreak = element.querySelector('#pdf-bottom-footer');
-            if (footerElForBreak) {
-                const templateTop = element.getBoundingClientRect().top;
-                const fRect = footerElForBreak.getBoundingClientRect();
-                const fStartY = fRect.top - templateTop;
-                const fEndY = fRect.bottom - templateTop;
-                const fPageBoundary = Math.ceil(fEndY / exactA4Height) * exactA4Height - exactA4Height;
-                if (fStartY < fPageBoundary && fEndY > fPageBoundary && (fEndY - fStartY) <= exactA4Height) {
-                    const currentMargin = parseFloat(window.getComputedStyle(footerElForBreak).marginTop) || 0;
-                    footerElForBreak.style.marginTop = (currentMargin + (fPageBoundary - fStartY + 2)) + 'px';
-                }
-            }
-
-            void element.offsetHeight;
             const contentHeight = element.scrollHeight;
-            let pagesRequired = Math.ceil(contentHeight / exactA4Height);
-            
-            const availableSpace = (pagesRequired * exactA4Height) - contentHeight;
-            if (availableSpace < 85) {
-                pagesRequired++;
-            }
-            
-            const requiredHeight = pagesRequired * exactA4Height;
-            element.style.minHeight = requiredHeight + 'px';
-            
+
             element.style.display = origDisplay;
             element.style.position = origPosition;
             element.style.zIndex = origZIndex;
-            
-            return requiredHeight;
+
+            return contentHeight;
         }
 
         function prepareTemplateData(overrideProgramName) {
@@ -1863,18 +1809,9 @@
                         try { await document.fonts.ready; } catch (e) {}
                     }
     
-                    const footerEl = element.querySelector('#pdf-bottom-footer');
-    
                     void element.offsetHeight;
                     await new Promise(resolve => setTimeout(resolve, 300));
-    
-                    const elementRectHint = element.getBoundingClientRect();
-                    let footerTopCSSHint = 0;
-                    if(footerEl) {
-                        const footerRectHint = footerEl.getBoundingClientRect();
-                        footerTopCSSHint = footerRectHint.top - elementRectHint.top;
-                    }
-    
+
                     const SCALE = 2;
     
                     const originalScrollY = window.scrollY;
@@ -1894,9 +1831,7 @@
                     });
     
                     window.scrollTo(0, originalScrollY);
-                    
-                    const footerTopPX = Math.max(0, Math.floor(footerTopCSSHint * SCALE));
-    
+
                     // ==========================================
                     // 2. TRIM kwa FULL PIXEL SCAN ya picha halisi
                     // ==========================================
@@ -1943,58 +1878,18 @@
                     const pdfCanvas = trimmedCanvas;
     
                     // ==========================================
-                    // 3. Gawa katika A4 pages, bila kukata footer
+                    // 3. Ukurasa MMOJA tu — bila mgawanyo wa A4, hivyo hakuna
+                    //    swali wala footer inayoweza kupasuka kati ya kurasa.
                     // ==========================================
                     const { jsPDF } = window.jspdf;
                     const canvasW = pdfCanvas.width;
                     const canvasH = pdfCanvas.height;
-                    const canvasPageHeight = canvasW * (297 / 210);
                     const pageW = 210;
-                    const minMeaningfulLeftover = Math.max(canvasPageHeight * 0.08, 60);
-    
-                    let pageSlices = [];
-                    let cursor = 0;
-                    while (cursor < canvasH - 1) {
-                        let boundary = Math.min(cursor + canvasPageHeight, canvasH);
-    
-                        if (footerTopPX > 0 && boundary > footerTopPX && boundary < canvasH && cursor < footerTopPX) {
-                            boundary = footerTopPX;
-                        }
-    
-                        const sliceHeight = boundary - cursor;
-                        if (sliceHeight < 5) break;
-    
-                        pageSlices.push(sliceHeight);
-                        cursor = boundary;
-                    }
-    
-                    while (pageSlices.length > 1 && pageSlices[pageSlices.length - 1] < minMeaningfulLeftover) {
-                        const last = pageSlices.pop();
-                        pageSlices[pageSlices.length - 1] += last;
-                    }
-    
-                    let pdf = null;
-                    let currentY = 0;
-                    for (const sliceHeight of pageSlices) {
-                        const drawHeight = pageW * (sliceHeight / canvasW);
-    
-                        if (!pdf) {
-                            pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
-                        } else {
-                            pdf.addPage([pageW, drawHeight]);
-                        }
-    
-                        const tempCanvas = document.createElement('canvas');
-                        tempCanvas.width = canvasW;
-                        tempCanvas.height = sliceHeight;
-                        tempCanvas.getContext('2d').drawImage(pdfCanvas, 0, currentY, canvasW, sliceHeight, 0, 0, canvasW, sliceHeight);
-    
-                        const imgData = tempCanvas.toDataURL('image/jpeg', 0.85);
-                        pdf.addImage(imgData, 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
-    
-                        currentY += sliceHeight;
-                    }
-    
+                    const drawHeight = pageW * (canvasH / canvasW);
+
+                    const pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
+                    pdf.addImage(pdfCanvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
+
                     // 9. Save the PDF file
                     let safeProgName = prog.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
                     let finalFileName = `${mCode}_${safeProgName}_Exam.pdf`;
