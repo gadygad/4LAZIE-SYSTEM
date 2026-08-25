@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'CAT ' + ${catNumber} + ' Generator - 4LAZIE'">CAT Generator - 4LAZIE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #eef1f4 50%, #f1f5f9 100%) !important;
+        }
+        .exam-generator-card {
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(30px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.7) !important;
+            border-radius: 28px !important;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+            padding: 45px !important;
+        }
+        .step-content > div {
+            background: rgba(255, 255, 255, 0.6) !important;
+            border: 1px solid rgba(0,0,0,0.06) !important;
+            border-radius: 20px !important;
+        }
+        .premium-header {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800 !important;
+            color: #1e293b;
+        }
+        .form-label { color: #1e293b !important; font-size: 0.85rem !important; text-transform: uppercase; letter-spacing: 1px; font-weight: 900 !important; }
+        .form-select, .form-control {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            border: 1.5px solid rgba(30, 41, 59, 0.15) !important;
+            border-radius: 14px !important;
+            padding: 0.9rem 1.25rem !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #334155 !important;
+            box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.15) !important;
+        }
+        .btn-dark-premium {
+            background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+            color: #fff !important;
+            border: none !important;
+        }
+        .part-banner {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 20px 0 12px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .question-block { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+        .question-block .q-label { font-weight: 800; color: #334155; margin-bottom: 6px; font-size: 0.9rem; }
+
+        /* ===== CAT PDF THEME — strictly black & white ===== */
+        #exam-pdf-template-cat {
+            width: 794px !important; min-width: 794px !important; max-width: 794px !important;
+            background: #ffffff; color: #000; font-size: 12pt; line-height: 1.6;
+            font-family: 'Times New Roman', Times, serif;
+            display: none; flex-direction: column; position: relative;
+        }
+        #exam-pdf-template-cat .cat-watermark {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            background-repeat: repeat;
+            opacity: 0.9;
+        }
+        #exam-pdf-template-cat .header-bar {
+            background: #111111; padding: 10px 15mm; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 3px solid #000; position: relative; z-index: 1;
+        }
+        #exam-pdf-template-cat .content { padding: 10mm 15mm; flex: 1; position: relative; z-index: 1; }
+        #exam-pdf-template-cat .uni-block { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+        #exam-pdf-template-cat .meta-row-2col { display: flex; justify-content: space-between; font-size: 11pt; margin: 6px 0; }
+        #exam-pdf-template-cat .cat-footer { text-align: center; font-size: 8pt; color: #333; padding: 8px 0; border-top: 1px solid #000; margin-top: 20px; font-family: 'Inter', sans-serif; position: relative; z-index: 1; }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
+</head>
+<body>
+    <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.08); z-index: 1040;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center text-decoration-none" href="/dashboard">
+                <div style="background-color: #111111; border: 3px solid #334155; padding: 6px 12px;"><span style="color: #ffffff; font-family: 'Outfit'; font-weight: 900; letter-spacing: 2px;">4LAZIE</span></div>
+                <span class="ms-2" style="font-family: 'Outfit'; font-weight: 900; font-size: 1.5rem; color: #1e293b;" th:text="'CAT ' + ${catNumber} + ' GENERATOR'">CAT GENERATOR</span>
+            </a>
+            <button class="btn btn-sm btn-outline-dark rounded-pill px-3" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                <i class="bi bi-list me-2"></i> Admin Menu
+            </button>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="exam-generator-card position-relative z-1">
+            <div class="text-center mb-4">
+                <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #1e293b;" th:text="'SJUIT Diploma CAT ' + ${catNumber} + ' Generator'">SJUIT Diploma CAT Generator</h2>
+                <p class="text-muted small">Fixed St. Joseph College of Engineering &amp; Technology (SJCET) CAT format — 17 questions, Part A/B/C, 1 Hr 30 Min, 50 marks. Black &amp; white only.</p>
+            </div>
+
+            <form id="examForm">
+                <!-- STEP 1: Details -->
+                <div class="step-content active" id="step-1">
+                    <div class="p-4">
+                        <h5 class="premium-header mb-4 border-bottom pb-2"><i class="bi bi-mortarboard-fill me-2"></i>Module &amp; Session Details</h5>
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <label class="form-label">NTA Level</label>
+                                <select id="mNtaLevel" class="form-select form-select-lg">
+                                    <option value="4">NTA Level 4</option>
+                                    <option value="5">NTA Level 5</option>
+                                    <option value="6">NTA Level 6</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Semester</label>
+                                <select id="mSemester" class="form-select form-select-lg">
+                                    <option value="1">Semester I</option>
+                                    <option value="2">Semester II</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Academic Year</label>
+                                <input type="number" id="mAcademicYear" class="form-control form-control-lg" value="2026">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Program Name</label>
+                                <input type="text" id="mProgram" class="form-control form-control-lg" placeholder="e.g. Diploma in Computer Science Engineering" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Program Code (short)</label>
+                                <input type="text" id="mProgramCode" class="form-control form-control-lg" placeholder="e.g. DIP_CSE" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Exam Session (Month-Year)</label>
+                                <input type="text" id="mDate" class="form-control form-control-lg" placeholder="e.g. JUNE-2026" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Module Code</label>
+                                <input type="text" id="mCode" class="form-control form-control-lg" placeholder="e.g. CET 05201" required>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Module Name</label>
+                                <input type="text" id="mName" class="form-control form-control-lg" placeholder="e.g. Computer Networks" required>
+                            </div>
+                        </div>
+                        <div class="text-end mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-dark-premium btn-lg rounded-pill px-5 w-100" style="max-width: 400px;" onclick="nextStep(2)">Next: Questions <i class="bi bi-arrow-right ms-2"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Fixed 17-question builder -->
+                <div class="step-content" id="step-2" style="display:none;">
+                    <div class="p-4">
+                        <h5 class="premium-header mb-3 border-bottom pb-2"><i class="bi bi-list-task me-2"></i>Questions (fixed CAT format — 17 total)</h5>
+
+                        <div class="part-banner">PART A &mdash; Answer ALL questions (7 &times; 2 = 14 marks)</div>
+                        <div id="part-a-container"></div>
+
+                        <div class="part-banner">PART B &mdash; Answer any THREE questions (3 &times; 4 = 12 marks)</div>
+                        <div id="part-b-container"></div>
+
+                        <div class="part-banner">PART C &mdash; Answer any TWO questions (2 &times; 12 = 24 marks)</div>
+                        <div id="part-c-container"></div>
+
+                        <div style="height: 80px;"></div>
+                        <div class="fixed-bottom bg-white shadow-lg border-top" style="z-index: 1050; padding-bottom: env(safe-area-inset-bottom);">
+                            <div class="container-fluid px-4 py-2 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-4 order-2 order-md-1" onclick="prevStep(1)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
+                                <div class="d-flex flex-wrap justify-content-center gap-2 order-1 order-md-2">
+                                    <button type="button" class="btn btn-sm btn-dark-premium px-4 rounded-pill" onclick="generatePDF()">
+                                        <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary px-4 rounded-pill" onclick="saveToDatabase(this)">
+                                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Save to Database
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hidden Template that will be converted to PDF (black &amp; white only) -->
+    <div id="exam-pdf-template-cat">
+        <div class="cat-watermark" id="pdf-cat-watermark"></div>
+        <div class="header-bar">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div style="background:#fff; border-radius:4px; padding:4px 10px; border:2px solid #fff;">
+                    <div style="font-family:'Inter',sans-serif; font-size:16pt; font-weight:900; color:#111; letter-spacing:0.5px;">4LAZIE</div>
+                </div>
+                <div style="color:rgba(255,255,255,0.9); font-family:'Outfit',sans-serif; font-size:9.5pt; font-weight:500; border-left:1px solid rgba(255,255,255,0.4); padding-left:15px;">
+                    Unlock Past Papers &amp; Notes For Free!
+                </div>
+            </div>
+            <div style="color:#fff; font-family:'Outfit',sans-serif; font-weight:900; font-size:13pt; letter-spacing:1px;">www.4lazie.com</div>
+        </div>
+
+        <div class="content">
+            <div class="uni-block">
+                <div style="font-size:15pt; font-weight:bold; text-transform:uppercase;">ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</div>
+                <div id="pdf-cat-program" style="font-size:12pt; font-weight:bold; text-transform:uppercase; margin-top:4px;">NTA LEVEL 5 - TECHNICIAN CERTIFICATE</div>
+                <div id="pdf-cat-title" style="font-size:12.5pt; font-weight:bold; text-transform:uppercase; margin-top:6px;">CONTINUOUS ASSESSMENT TEST - I - JUNE-2026</div>
+                <div id="pdf-cat-module" style="font-size:13pt; font-weight:bold; text-transform:uppercase; margin-top:6px;">CODE - NAME</div>
+            </div>
+
+            <div class="meta-row-2col" style="border-bottom:1px solid #000; padding-bottom:6px;">
+                <div>SEMESTER: <strong id="pdf-cat-semester">I</strong></div>
+                <div>YEAR: <strong id="pdf-cat-year">I</strong></div>
+            </div>
+            <div class="meta-row-2col" style="border-bottom:1px solid #000; padding-bottom:10px; margin-bottom:14px;">
+                <div>DURATION: <strong>1 Hr 30 Min.</strong></div>
+                <div>MAX. MARKS: <strong>50</strong></div>
+            </div>
+
+            <div id="pdf-cat-content-body" style="font-family:'Times New Roman', Times, serif; font-size:12pt; line-height:1.55; color:#000;">
+                <!-- Questions injected here -->
+            </div>
+        </div>
+
+        <div id="pdf-cat-bottom-footer">
+            <div class="cat-footer" id="pdf-cat-footer-text">Page 1 | Prepared exclusively by 4LAZIE System</div>
+        </div>
+    </div>
+
+    <!-- Offcanvas Admin Sidebar -->
+    <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='generator')}"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const CAT_NUMBER = /*[[${catNumber}]]*/ 1;
+        /*]]>*/
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const CAT_ROMAN = CAT_NUMBER === 2 ? 'II' : 'I';
+        const CAT_CATEGORY = 'CAT ' + CAT_NUMBER;
+
+        function nextStep(step) {
+            document.getElementById('step-1').style.display = step === 1 ? 'block' : 'none';
+            document.getElementById('step-2').style.display = step === 2 ? 'block' : 'none';
+        }
+        function prevStep(step) { nextStep(step); }
+
+        // Fixed layout: Part A = Q1-7 (all answered), Part B = Q8-13 (choose 3),
+        // Part C = Q14-17 (choose 2). This mirrors every St. Joseph CAT paper,
+        // so it's baked in rather than left for the admin to configure.
+        const PARTS = [
+            { key: 'A', containerId: 'part-a-container', from: 1, to: 7 },
+            { key: 'B', containerId: 'part-b-container', from: 8, to: 13 },
+            { key: 'C', containerId: 'part-c-container', from: 14, to: 17 }
+        ];
+
+        function buildQuestionBoxes() {
+            PARTS.forEach(part => {
+                const container = document.getElementById(part.containerId);
+                let html = '';
+                for (let n = part.from; n <= part.to; n++) {
+                    html += `
+                        <div class="question-block">
+                            <div class="q-label">Question ${n}</div>
+                            <textarea class="form-control q-content" data-number="${n}" data-part="PART ${part.key}" rows="3" placeholder="Type the question content here..."></textarea>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            });
+        }
+        window.addEventListener('DOMContentLoaded', buildQuestionBoxes);
+
+        function collectQuestions() {
+            const blocks = document.querySelectorAll('.q-content');
+            const questions = [];
+            blocks.forEach(el => {
+                questions.push({ part: el.dataset.part, number: parseInt(el.dataset.number), content: el.value });
+            });
+            return questions;
+        }
+
+        // NTA Level 4/5/6 maps to Year I/II/III at a Tanzanian technical college.
+        function yearFromLevel(level) {
+            return { 4: 'I', 5: 'II', 6: 'III' }[level] || 'I';
+        }
+
+        // Tiled diagonal watermark, built as an SVG data URI so html2canvas
+        // captures it as a plain background image (no live DOM text tiling needed).
+        function buildWatermarkDataUri(text) {
+            const tile = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="420" height="220">
+                    <text x="210" y="120" font-family="Arial, sans-serif" font-size="15" font-weight="bold"
+                          fill="rgba(0,0,0,0.06)" text-anchor="middle" transform="rotate(-30 210 110)">${text}</text>
+                </svg>`;
+            return 'url("data:image/svg+xml,' + encodeURIComponent(tile) + '")';
+        }
+
+        function prepareTemplateData() {
+            const ntaLevel = parseInt(document.getElementById('mNtaLevel').value);
+            const semNo = parseInt(document.getElementById('mSemester').value);
+            const program = document.getElementById('mProgram').value.toUpperCase();
+            const date = document.getElementById('mDate').value.toUpperCase();
+            const code = document.getElementById('mCode').value.toUpperCase();
+            const name = document.getElementById('mName').value.toUpperCase();
+
+            const certByLevel = { 4: 'BASIC TECHNICIAN CERTIFICATE', 5: 'TECHNICIAN CERTIFICATE', 6: 'ORDINARY DIPLOMA' };
+            // Admins usually type the program as "Diploma in X" — strip that
+            // prefix so it doesn't duplicate the NTA-level certificate name
+            // (e.g. avoid "TECHNICIAN CERTIFICATE IN DIPLOMA IN X").
+            const cleanedProgram = program.replace(/^(BASIC TECHNICIAN CERTIFICATE|TECHNICIAN CERTIFICATE|ORDINARY DIPLOMA|DIPLOMA)\s+IN\s+/, '');
+            document.getElementById('pdf-cat-program').innerText = 'NTA LEVEL ' + ntaLevel + ' - ' + (certByLevel[ntaLevel] || '') + ' IN ' + cleanedProgram;
+            document.getElementById('pdf-cat-title').innerText = 'CONTINUOUS ASSESSMENT TEST - ' + CAT_ROMAN + ' - ' + date;
+            document.getElementById('pdf-cat-module').innerText = code + ' - ' + name;
+            document.getElementById('pdf-cat-semester').innerText = semNo === 1 ? 'I' : 'II';
+            document.getElementById('pdf-cat-year').innerText = yearFromLevel(ntaLevel);
+            document.getElementById('pdf-cat-watermark').style.backgroundImage =
+                buildWatermarkDataUri('ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY');
+
+            const questions = collectQuestions();
+            let html = '';
+            const partMeta = {
+                'PART A': { label: 'PART &ndash; A (Answer all the Questions) (7 &times; 2 = 14)' },
+                'PART B': { label: 'PART &ndash; B (Answer any three Questions) (3 &times; 4 = 12)' },
+                'PART C': { label: 'PART &ndash; C (Answer any two Questions) (2 &times; 12 = 24)' }
+            };
+            ['PART A', 'PART B', 'PART C'].forEach(partName => {
+                html += `<div class="pdf-cat-part-header" style="margin-top:20px; margin-bottom:12px; text-align:center; border:1px solid #000; padding:6px; font-weight:bold;">${partMeta[partName].label}</div>`;
+                questions.filter(q => q.part === partName).forEach(q => {
+                    const contentHtml = (q.content || '').replace(/\n/g, '<br>');
+                    html += `
+                        <div class="pdf-cat-q-item" style="display:flex; gap:10px; margin-top:12px; page-break-inside:avoid;">
+                            <div style="min-width:26px; font-weight:bold;">${q.number}.</div>
+                            <div>${contentHtml}</div>
+                        </div>
+                    `;
+                });
+            });
+            document.getElementById('pdf-cat-content-body').innerHTML = html;
+
+            return { ntaLevel, semNo, program, date, code, name, questions };
+        }
+
+        function validateForm() {
+            if (!document.getElementById('mProgram').value || !document.getElementById('mProgramCode').value ||
+                !document.getElementById('mDate').value || !document.getElementById('mCode').value || !document.getElementById('mName').value) {
+                alert('Tafadhali jaza taarifa zote za somo/kikao kwenye Hatua ya 1 kabla ya kuendelea.');
+                return false;
+            }
+            return true;
+        }
+
+        async function saveToDatabase(btn) {
+            if (!validateForm()) return;
+            const data = prepareTemplateData();
+            const originalBtnHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
+            btn.disabled = true;
+            try {
+                const requestData = {
+                    title: data.code + ' - ' + data.name,
+                    programType: document.getElementById('mProgramCode').value,
+                    levelNo: data.ntaLevel,
+                    semesterNo: data.semNo,
+                    moduleCode: data.code,
+                    moduleName: data.name,
+                    academicYear: document.getElementById('mAcademicYear').value,
+                    category: CAT_CATEGORY,
+                    contentJson: JSON.stringify({
+                        templateType: 'CAT',
+                        catNumber: CAT_NUMBER,
+                        examDate: data.date,
+                        fullProgramName: document.getElementById('pdf-cat-program').innerText,
+                        questions: data.questions
+                    })
+                };
+                const response = await fetch('/api/generate-exam/save', {
+                    method: 'POST', credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+                const result = await response.json();
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+                if (response.ok && result.success) {
+                    alert('CAT ' + CAT_NUMBER + ' exam saved successfully!');
+                    window.location.href = '/view-generated-exam/' + result.noteId;
+                } else {
+                    alert('Failed to save: ' + (result.message || 'unknown error'));
+                }
+            } catch (error) {
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+                alert('An error occurred: ' + error.message);
+            }
+        }
+
+        function calculatePDFLayout(element) {
+            element.style.display = 'flex';
+            element.style.position = 'absolute';
+            element.style.zIndex = '-9999';
+
+            const exactA4Height = element.offsetWidth * (297 / 210);
+            void element.offsetHeight;
+
+            const itemsToCheck = element.querySelectorAll('.pdf-cat-q-item, .pdf-cat-part-header');
+            itemsToCheck.forEach(item => item.style.marginTop = '0px');
+
+            let hasBreaks = true, loopCount = 0;
+            while (hasBreaks && loopCount < 50) {
+                hasBreaks = false; loopCount++;
+                const templateTop = element.getBoundingClientRect().top;
+                for (const item of itemsToCheck) {
+                    const rect = item.getBoundingClientRect();
+                    const startY = rect.top - templateTop;
+                    const endY = rect.bottom - templateTop;
+                    const pageBoundary = Math.ceil(endY / exactA4Height) * exactA4Height - exactA4Height;
+                    if (startY < pageBoundary && endY > pageBoundary) {
+                        if ((endY - startY) > exactA4Height) continue;
+                        const currentMargin = parseFloat(window.getComputedStyle(item).marginTop) || 0;
+                        item.style.marginTop = (currentMargin + (pageBoundary - startY + 2)) + 'px';
+                        hasBreaks = true;
+                        break;
+                    }
+                }
+            }
+
+            void element.offsetHeight;
+            const contentHeight = element.scrollHeight;
+            let pagesRequired = Math.ceil(contentHeight / exactA4Height);
+            const availableSpace = (pagesRequired * exactA4Height) - contentHeight;
+            if (availableSpace < 60) pagesRequired++;
+            element.style.minHeight = (pagesRequired * exactA4Height) + 'px';
+            return exactA4Height;
+        }
+
+        async function generatePDF() {
+            if (!validateForm()) return;
+            const btn = document.querySelector('button[onclick="generatePDF()"]');
+            const element = document.getElementById('exam-pdf-template-cat');
+            const originalBtnHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Generating...';
+            btn.disabled = true;
+
+            try {
+                const data = prepareTemplateData();
+                const pageHeightCss = calculatePDFLayout(element);
+
+                if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
+                void element.offsetHeight;
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                const SCALE = 2;
+                const canvas = await html2canvas(element, {
+                    scale: SCALE, useCORS: true, backgroundColor: '#ffffff',
+                    windowWidth: element.scrollWidth, windowHeight: element.scrollHeight
+                });
+
+                const { jsPDF } = window.jspdf;
+                const pageW = 210;
+                const canvasPageHeight = pageHeightCss * SCALE;
+                const totalPages = Math.max(1, Math.ceil(canvas.height / canvasPageHeight));
+
+                let pdf = null;
+                let cursor = 0;
+                let pageNum = 1;
+                while (cursor < canvas.height - 1) {
+                    const sliceHeight = Math.min(canvasPageHeight, canvas.height - cursor);
+                    const drawHeight = pageW * (sliceHeight / canvas.width);
+
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = canvas.width;
+                    tempCanvas.height = sliceHeight;
+                    const ctx = tempCanvas.getContext('2d');
+                    ctx.drawImage(canvas, 0, cursor, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+                    // Stamp "Page X | Prepared exclusively by 4LAZIE System" at the
+                    // bottom of every page (the source canvas has no per-page DOM
+                    // element to attach this to, since it's one continuous image).
+                    ctx.fillStyle = 'rgba(0,0,0,0.65)';
+                    ctx.font = (14 * SCALE / 2) + 'px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Page ' + pageNum + ' | Prepared exclusively by 4LAZIE System', tempCanvas.width / 2, tempCanvas.height - 14);
+
+                    if (!pdf) {
+                        pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
+                    } else {
+                        pdf.addPage([pageW, drawHeight]);
+                    }
+                    pdf.addImage(tempCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
+
+                    cursor += sliceHeight;
+                    pageNum++;
+                }
+
+                const safeName = (document.getElementById('mCode').value || 'CAT' + CAT_NUMBER).replace(/[^a-zA-Z0-9]/g, '_');
+                pdf.save(`${safeName}_CAT${CAT_NUMBER}_Exam.pdf`);
+
+                element.style.display = 'none';
+                element.style.position = 'static';
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+            } catch (error) {
+                console.error('CAT PDF generation error:', error);
+                alert('An error occurred while generating the PDF. Please try again.');
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+                element.style.display = 'none';
+                element.style.position = 'static';
+            }
+        }
+    </script>
+</body>
+</html>

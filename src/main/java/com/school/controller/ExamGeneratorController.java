@@ -78,6 +78,30 @@ public class ExamGeneratorController {
         return "notes/sjuit_diploma_ue";
     }
 
+    /**
+     * SJUIT Diploma CAT 1 / CAT 2 builder page (shares one template — CAT 1
+     * and CAT 2 use an identical fixed 17-question, 3-part layout, they only
+     * differ in the "TEST - I"/"TEST - II" wording and saved category).
+     * URL: /generate-exam/sjuit-diploma-cat1 or .../sjuit-diploma-cat2
+     */
+    @GetMapping("/generate-exam/sjuit-diploma-cat1")
+    public String showSjuitDiplomaCat1Exam(Model model) {
+        return showSjuitDiplomaCatExam(model, 1);
+    }
+
+    @GetMapping("/generate-exam/sjuit-diploma-cat2")
+    public String showSjuitDiplomaCat2Exam(Model model) {
+        return showSjuitDiplomaCatExam(model, 2);
+    }
+
+    private String showSjuitDiplomaCatExam(Model model, int catNumber) {
+        User user = getLoggedInUser();
+        model.addAttribute("user", user);
+        model.addAttribute("activePage", "generator");
+        model.addAttribute("catNumber", catNumber);
+        return "notes/sjuit_diploma_cat";
+    }
+
     public static class ExamSubmissionRequest {
         public String title;
         public String programType;
@@ -87,6 +111,9 @@ public class ExamGeneratorController {
         public String moduleCode;
         public String academicYear;
         public String contentJson;
+        // "UE", "CAT 1", "CAT 2" — defaults to "UE" so the existing UE generator
+        // page (which never sends this field) keeps behaving exactly as before.
+        public String category;
     }
 
     @PostMapping("/api/generate-exam/save")
@@ -106,7 +133,7 @@ public class ExamGeneratorController {
             note.setModuleName(request.moduleName);
             note.setModuleCode(request.moduleCode);
             note.setAcademicYear(request.academicYear);
-            note.setCategory("UE");
+            note.setCategory(request.category != null && !request.category.isBlank() ? request.category : "UE");
             note.setContentJson(request.contentJson);
             note.setUploadDate(LocalDateTime.now());
             note.setIsPublic(true);
