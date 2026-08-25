@@ -198,6 +198,13 @@
             0% { opacity: 0; transform: translate(-30px, 20px) scale(0.8); }
             100% { opacity: 1; transform: translate(0, 0) scale(1); }
         }
+        /* Peer chat bubbles rise up from the bottom with a springy overshoot
+           pop instead of sliding in sideways — used for new messages only. */
+        @keyframes slidePeerBubbleIn {
+            0% { opacity: 0; transform: translateY(28px) scale(0.85); }
+            60% { opacity: 1; transform: translateY(-4px) scale(1.03); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
         
         .chat-body-container {
             background: #f8fafc;
@@ -1401,14 +1408,15 @@
                 return '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
             }
 
-            function makeBubble(msg) {
+            function makeBubble(msg, isNew) {
                 const row = document.createElement('div');
                 row.id = 'peer-msg-' + msg.id;
                 const label = msg.isSelf ? 'You' : msg.senderName;
 
                 // Both sender and receiver bubbles sit on the left, one under
                 // the other — only the color tells them apart (self = black).
-                row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;';
+                const entranceAnim = isNew ? 'animation:slidePeerBubbleIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : '';
+                row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;' + entranceAnim;
 
                 const avW = document.createElement('div');
                 avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
@@ -1518,7 +1526,7 @@
                         }
                     }
                     renderedIds.add(id);
-                    msgWrap.appendChild(makeBubble(msg));
+                    msgWrap.appendChild(makeBubble(msg, isNew));
                     added++;
                 });
                 if (added > 0) {
@@ -1623,7 +1631,7 @@
                     optimisticMsg.replyToSenderName = replyState.senderName;
                     optimisticMsg.replyToMessageText = replyState.messageText;
                 }
-                const bubble = makeBubble(optimisticMsg);
+                const bubble = makeBubble(optimisticMsg, true);
                 bubble.classList.add('temp-msg');
                 emptyEl.style.display = 'none';
                 msgWrap.appendChild(bubble);
