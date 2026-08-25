@@ -121,6 +121,13 @@
         .typing-cursor::after { content:'▋'; animation:blink-c 0.7s step-start infinite; }
         @keyframes blink-c { 50%{opacity:0;} }
 
+        /* Live "is typing" indicator — three bouncing dots */
+        .typing-indicator-dots { display:inline-flex; gap:2px; }
+        .typing-indicator-dots span { width:5px; height:5px; border-radius:50%; background:#10b981; display:inline-block; animation: typing-bounce 1.2s infinite ease-in-out; }
+        .typing-indicator-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-indicator-dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typing-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-3px); opacity: 1; } }
+
         /* Input */
         .chat-input-area {
             background: rgba(255,255,255,0.97); border-top: 1px solid rgba(0,0,0,0.04);
@@ -478,6 +485,49 @@
     // ID-based deduplication — reset when switching chats
     let renderedIds = new Set();
 
+    // Live "is typing" indicator state
+    let studentIsOnline = false;
+    let studentIsTyping = false;
+    let studentTypingTimeout = null;
+    let adminTypingSendTimer = null;
+    let adminIsTypingSent = false;
+
+    function renderChatStatus() {
+        const statusDiv = document.querySelector('.header-online-status');
+        if (!statusDiv) return;
+        if (studentIsTyping) {
+            statusDiv.style.color = '#10b981';
+            statusDiv.innerHTML = '<span class="typing-indicator-dots"><span></span><span></span><span></span></span> Anaandika...';
+        } else if (studentIsOnline) {
+            statusDiv.style.color = '#10b981';
+            statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
+        } else {
+            statusDiv.style.color = '#94a3b8';
+            statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+        }
+    }
+
+    function getCsrf() {
+        let csrfToken = '', csrfHeader = 'X-XSRF-TOKEN';
+        const metaToken = document.querySelector('meta[name="_csrf"]');
+        if (metaToken) {
+            csrfToken = metaToken.getAttribute('content');
+            csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        } else {
+            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+            if (match) csrfToken = match[2];
+        }
+        return { csrfToken, csrfHeader };
+    }
+
+    function notifyAdminTyping(typing) {
+        if (!currentChatId) return;
+        const { csrfToken, csrfHeader } = getCsrf();
+        fetch('/admin/chat/' + currentChatId + '/typing?typing=' + typing, {
+            method: 'POST', headers: { [csrfHeader]: csrfToken }, credentials: 'same-origin'
+        }).catch(() => {});
+    }
+
     const msgsEl = document.getElementById('adminChatMessages');
     const esc = t => (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 
@@ -734,6 +784,7 @@
     function connectSSE(chatId) {
         if (sseConn) { try { sseConn.close(); } catch(e){} }
         sseActive = false; typeQueue = []; isTyping = false;
+        studentIsOnline = false; studentIsTyping = false; clearTimeout(studentTypingTimeout);
         renderedIds = new Set();
         if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 
@@ -751,15 +802,20 @@
         es.addEventListener('presence', e => {
             try {
                 const data = JSON.parse(e.data);
-                const statusDiv = document.querySelector('.header-online-status');
-                if (statusDiv) {
-                    if (data.studentOnline) {
-                        statusDiv.style.color = '#10b981';
-                        statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
-                    } else {
-                        statusDiv.style.color = '#94a3b8';
-                        statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
-                    }
+                studentIsOnline = !!data.studentOnline;
+                renderChatStatus();
+            } catch(err){}
+        });
+        es.addEventListener('typing', e => {
+            try {
+                const data = JSON.parse(e.data);
+                studentIsTyping = !!data.typing;
+                renderChatStatus();
+                // Safety net: if a "stopped typing" event is ever lost to a
+                // network blip, don't leave the indicator stuck forever.
+                clearTimeout(studentTypingTimeout);
+                if (studentIsTyping) {
+                    studentTypingTimeout = setTimeout(() => { studentIsTyping = false; renderChatStatus(); }, 5000);
                 }
             } catch(err){}
         });
@@ -898,17 +954,12 @@
         // Clear input immediately for responsiveness
         if (input) { input.value = ''; input.style.height = 'auto'; }
 
+        // The message itself is the clearest possible "stopped typing" signal
+        clearTimeout(adminTypingSendTimer);
+        if (adminIsTypingSent) { adminIsTypingSent = false; notifyAdminTyping(false); }
+
         // Get CSRF Token
-        let csrfToken = '';
-        let csrfHeader = 'X-XSRF-TOKEN';
-        const metaToken = document.querySelector('meta[name="_csrf"]');
-        if (metaToken) {
-            csrfToken = metaToken.getAttribute('content');
-            csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-        } else {
-            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
-            if (match) csrfToken = match[2];
-        }
+        const { csrfToken, csrfHeader } = getCsrf();
 
         const fd = new FormData();
         fd.append('messageText', text);
@@ -950,6 +1001,16 @@
         adminInput.addEventListener('input', () => {
             adminInput.style.height = 'auto';
             adminInput.style.height = Math.min(adminInput.scrollHeight, 110) + 'px';
+
+            if (!adminIsTypingSent) {
+                adminIsTypingSent = true;
+                notifyAdminTyping(true);
+            }
+            clearTimeout(adminTypingSendTimer);
+            adminTypingSendTimer = setTimeout(() => {
+                adminIsTypingSent = false;
+                notifyAdminTyping(false);
+            }, 2000);
         });
         adminInput.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.adminSendMessage(); }

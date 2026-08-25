@@ -346,6 +346,13 @@
         .msg-row.student .quoted-msg:hover, .chat-thread-item .quoted-msg:hover { background: rgba(255,255,255,0.15); }
         .msg-row.student .quoted-msg-name, .chat-thread-item .quoted-msg-name { color: #34d399; }
         .msg-row.student .quoted-msg-text, .chat-thread-item .quoted-msg-text { color: rgba(255,255,255,0.9); }
+
+        /* Live "is typing" indicator — three bouncing dots */
+        .typing-indicator-dots { display:inline-flex; gap:2px; }
+        .typing-indicator-dots span { width:5px; height:5px; border-radius:50%; background:#10b981; display:inline-block; animation: typing-bounce 1.2s infinite ease-in-out; }
+        .typing-indicator-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-indicator-dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typing-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-3px); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -855,6 +862,40 @@
             let typeQueue  = [];
             let isTyping   = false;
 
+            // Live "is typing" indicator state
+            let adminIsOnline = false;
+            let adminIsTyping = false;
+            let adminTypingTimeout = null;
+            let studentTypingSendTimer = null;
+            let studentIsTypingSent = false;
+
+            function renderChatStatus() {
+                const statusDiv = document.querySelector('.header-online-status');
+                if (!statusDiv) return;
+                if (adminIsTyping) {
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.innerHTML = '<span class="typing-indicator-dots"><span></span><span></span><span></span></span> Anaandika...';
+                } else if (adminIsOnline) {
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
+                } else {
+                    statusDiv.style.color = '#94a3b8';
+                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+                }
+            }
+
+            function notifyStudentTyping(typing) {
+                let csrfToken = '', csrfHeader = 'X-XSRF-TOKEN';
+                const metaToken = document.querySelector('meta[name="_csrf"]');
+                if (metaToken) {
+                    csrfToken = metaToken.getAttribute('content');
+                    csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                }
+                fetch(`/student/chat/${CHAT_ID}/typing?typing=${typing}`, {
+                    method: 'POST', headers: { [csrfHeader]: csrfToken }, credentials: 'same-origin'
+                }).catch(() => {});
+            }
+
             const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 
             // Build avatar HTML — profile pic or coloured initial
@@ -1087,16 +1128,19 @@
                         });
                         es.addEventListener('presence', e => {
                             const data = JSON.parse(e.data);
-                            const statusDiv = document.querySelector('.header-online-status');
-                            if (statusDiv) {
-                                if (data.adminOnline) {
-                                    statusDiv.style.color = '#10b981';
-                                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
-                                } else {
-                                    statusDiv.style.color = '#94a3b8';
-                                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+                            adminIsOnline = !!data.adminOnline;
+                            renderChatStatus();
+                        });
+                        es.addEventListener('typing', e => {
+                            try {
+                                const data = JSON.parse(e.data);
+                                adminIsTyping = !!data.typing;
+                                renderChatStatus();
+                                clearTimeout(adminTypingTimeout);
+                                if (adminIsTyping) {
+                                    adminTypingTimeout = setTimeout(() => { adminIsTyping = false; renderChatStatus(); }, 5000);
                                 }
-                            }
+                            } catch(err){}
                         });
                         es.onerror = () => { es.close(); sseActive = false; setTimeout(fallbackPoll, 2000); };
                     })
@@ -1161,6 +1205,9 @@
                 // Clear input immediately for responsiveness
                 if (input) { input.value = ''; input.style.height = 'auto'; }
 
+                clearTimeout(studentTypingSendTimer);
+                if (studentIsTypingSent) { studentIsTypingSent = false; notifyStudentTyping(false); }
+
                 // Get CSRF Token
                 let csrfToken = '';
                 let csrfHeader = 'X-XSRF-TOKEN';
@@ -1209,6 +1256,16 @@
                     input.style.height = Math.min(input.scrollHeight, 120) + 'px';
                     const shell = document.getElementById('directInputShell');
                     if (shell) { shell.style.borderColor = '#10b981'; shell.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.1)'; }
+
+                    if (!studentIsTypingSent) {
+                        studentIsTypingSent = true;
+                        notifyStudentTyping(true);
+                    }
+                    clearTimeout(studentTypingSendTimer);
+                    studentTypingSendTimer = setTimeout(() => {
+                        studentIsTypingSent = false;
+                        notifyStudentTyping(false);
+                    }, 2000);
                 });
                 input.addEventListener('blur', () => {
                     const shell = document.getElementById('directInputShell');

@@ -218,6 +218,59 @@ public class DirectChatController {
         });
     }
 
+    /**
+     * Pushes a live "is typing" signal to the OTHER party in a chat (never
+     * echoed back to whoever sent it). Purely ephemeral — nothing is
+     * persisted, it just rides the same SSE connection presence already uses.
+     */
+    private static void broadcastTyping(String chatId, String fromViewer, boolean typing) {
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
+            Map<String, Object> data = new HashMap<>();
+            data.put("from", fromViewer);
+            data.put("typing", typing);
+
+            List<SseEmitter> dead = new ArrayList<>();
+            for (SseEmitter emitter : emitters) {
+                String viewer = emitterViewers.get(emitter);
+                if (viewer == null || viewer.equals(fromViewer)) continue;
+                try {
+                    emitter.send(SseEmitter.event().name("typing").data(data, MediaType.APPLICATION_JSON));
+                } catch (Exception e) {
+                    dead.add(emitter);
+                }
+            }
+            for (SseEmitter d : dead) {
+                emitters.remove(d);
+                emitterViewers.remove(d);
+            }
+        });
+    }
+
+    /** Admin's textarea firing "typing"/"stopped typing" — POST /admin/chat/{chatId}/typing */
+    @PostMapping("/admin/chat/{chatId}/typing")
+    @ResponseBody
+    public ResponseEntity<Void> adminTyping(@PathVariable String chatId,
+                                             @RequestParam("typing") boolean typing,
+                                             HttpSession session) {
+        User admin = (User) session.getAttribute("user");
+        if (admin == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        broadcastTyping(chatId, "ADMIN", typing);
+        return ResponseEntity.ok().build();
+    }
+
+    /** Student's textarea firing "typing"/"stopped typing" — POST /student/chat/{chatId}/typing */
+    @PostMapping("/student/chat/{chatId}/typing")
+    @ResponseBody
+    public ResponseEntity<Void> studentTyping(@PathVariable String chatId,
+                                               @RequestParam("typing") boolean typing,
+                                               HttpSession session) {
+        User student = (User) session.getAttribute("user");
+        if (student == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        broadcastTyping(chatId, student.getId(), typing);
+        return ResponseEntity.ok().build();
+    }
+
     // ─────────────────────────────────────────────
     //  ADMIN SIDE
     // ─────────────────────────────────────────────
