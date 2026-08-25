@@ -1406,34 +1406,32 @@
                 row.id = 'peer-msg-' + msg.id;
                 const label = msg.isSelf ? 'You' : msg.senderName;
 
-                if (msg.isSelf) {
-                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row-reverse;margin-left:auto;max-width:100%;';
-                } else {
-                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;';
-                }
+                // Both sender and receiver bubbles sit on the left, one under
+                // the other — only the color tells them apart (self = black).
+                row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;';
 
                 const avW = document.createElement('div');
                 avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
                 row.appendChild(avW.firstElementChild);
 
                 const col = document.createElement('div');
-                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-start;';
 
                 const headerRow = document.createElement('div');
-                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? 'justify-content:flex-end;' : '');
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
                 nameEl.textContent = label;
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
                 timeEl.textContent = msg.time || '';
-                if (msg.isSelf) { headerRow.appendChild(timeEl); headerRow.appendChild(nameEl); }
-                else { headerRow.appendChild(nameEl); headerRow.appendChild(timeEl); }
+                headerRow.appendChild(nameEl);
+                headerRow.appendChild(timeEl);
                 col.appendChild(headerRow);
 
                 const bubble = document.createElement('div');
                 if (msg.isSelf) {
-                    bubble.style.cssText = 'font-size:1.1rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%);padding:12px 18px;border-radius:20px;box-shadow:0 4px 15px rgba(79,70,229,0.25);';
+                    bubble.style.cssText = 'font-size:1.1rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:12px 18px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
                 } else {
                     bubble.style.cssText = 'font-size:1.1rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:12px 18px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
                 }
@@ -1467,7 +1465,7 @@
                 replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
                 replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, label, msg.messageText); };
                 const replyWrapper = document.createElement('div');
-                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;' + (msg.isSelf ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
+                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;justify-content:flex-start;';
                 replyWrapper.appendChild(replyBtn);
                 col.appendChild(replyWrapper);
 
@@ -1476,7 +1474,7 @@
                 if (msg.isSelf) {
                     const statusRow = document.createElement('div');
                     statusRow.className = 'peer-status-text';
-                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:flex-end;width:100%;';
+                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:flex-start;width:100%;';
                     statusRow.innerHTML = statusHtml(msg.status);
                     col.appendChild(statusRow);
                 }
