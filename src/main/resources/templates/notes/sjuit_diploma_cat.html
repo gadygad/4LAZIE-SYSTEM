@@ -145,6 +145,13 @@
                                 <label class="form-label">Exam Session (Month-Year)</label>
                                 <input type="text" id="mDate" class="form-control form-control-lg" placeholder="e.g. JUNE-2026" required>
                             </div>
+                            <div class="col-12">
+                                <label class="form-label">Select Extra Courses for PDF Copies (Optional)</label>
+                                <div id="mExtraProgramsContainer" class="border rounded p-2" style="max-height: 140px; overflow-y: auto; background: #f8fafc; border-color: #e2e8f0 !important;">
+                                    <div class="text-muted small fst-italic">Loading courses...</div>
+                                </div>
+                                <div class="form-text small" style="color: #334155;"><i class="bi bi-info-circle"></i> Used when this module is shared across multiple courses — a separate PDF/note is generated for each course checked, in addition to the Program Name above.</div>
+                            </div>
                             <div class="col-md-4">
                                 <label class="form-label">Module Code</label>
                                 <input type="text" id="mCode" class="form-control form-control-lg" placeholder="e.g. CET 05201" required>
@@ -281,6 +288,46 @@
         }
         window.addEventListener('DOMContentLoaded', buildQuestionBoxes);
 
+        // --- Extra courses for batch PDF generation (module shared across classes) ---
+        let allCourses = [];
+        window.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('mExtraProgramsContainer');
+            try {
+                const response = await fetch('/api/courses');
+                allCourses = await response.json();
+            } catch (e) {
+                console.error('Failed to fetch courses:', e);
+                container.innerHTML = '<div class="text-danger small">Failed to load courses.</div>';
+                return;
+            }
+            const diplomaCourses = allCourses.filter(c => c.code && c.code.startsWith('DIP_'));
+            if (diplomaCourses.length === 0) {
+                container.innerHTML = '<div class="text-muted small fst-italic">No courses available.</div>';
+                return;
+            }
+            container.innerHTML = diplomaCourses.map((course, index) => `
+                <div class="form-check mb-1">
+                    <input class="form-check-input extra-course-cb" type="checkbox" value="${course.name.toUpperCase()}" data-code="${course.code}" id="cb_${index}" style="cursor:pointer;">
+                    <label class="form-check-label small text-secondary" for="cb_${index}" style="cursor:pointer; user-select:none;">${course.name}</label>
+                </div>
+            `).join('');
+        });
+
+        // Base program + any checked extras, each as {name, code}. The base
+        // program's own code comes from the "Program Code (short)" field since
+        // it's typed freely; extras carry the code stored on their checkbox.
+        function collectTargetPrograms() {
+            const baseName = document.getElementById('mProgram').value.toUpperCase();
+            const baseCode = document.getElementById('mProgramCode').value;
+            const targets = [{ name: baseName, code: baseCode }];
+            document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
+                if (cb.value !== baseName) {
+                    targets.push({ name: cb.value, code: cb.dataset.code });
+                }
+            });
+            return targets;
+        }
+
         function collectQuestions() {
             const blocks = document.querySelectorAll('.q-content');
             const questions = [];
@@ -306,10 +353,10 @@
             return 'url("data:image/svg+xml,' + encodeURIComponent(tile) + '")';
         }
 
-        function prepareTemplateData() {
+        function prepareTemplateData(overrideProgramName) {
             const ntaLevel = parseInt(document.getElementById('mNtaLevel').value);
             const semNo = parseInt(document.getElementById('mSemester').value);
-            const program = document.getElementById('mProgram').value.toUpperCase();
+            const program = (overrideProgramName || document.getElementById('mProgram').value).toUpperCase();
             const date = document.getElementById('mDate').value.toUpperCase();
             const code = document.getElementById('mCode').value.toUpperCase();
             const name = document.getElementById('mName').value.toUpperCase();
@@ -362,41 +409,56 @@
 
         async function saveToDatabase(btn) {
             if (!validateForm()) return;
-            const data = prepareTemplateData();
+            const targets = collectTargetPrograms();
             const originalBtnHtml = btn.innerHTML;
             btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
             btn.disabled = true;
+
+            let successCount = 0;
+            let lastNoteId = null;
             try {
-                const requestData = {
-                    title: data.code + ' - ' + data.name,
-                    programType: document.getElementById('mProgramCode').value,
-                    levelNo: data.ntaLevel,
-                    semesterNo: data.semNo,
-                    moduleCode: data.code,
-                    moduleName: data.name,
-                    academicYear: document.getElementById('mAcademicYear').value,
-                    category: CAT_CATEGORY,
-                    contentJson: JSON.stringify({
-                        templateType: 'CAT',
-                        catNumber: CAT_NUMBER,
-                        examDate: data.date,
-                        fullProgramName: document.getElementById('pdf-cat-program').innerText,
-                        questions: data.questions
-                    })
-                };
-                const response = await fetch('/api/generate-exam/save', {
-                    method: 'POST', credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestData)
-                });
-                const result = await response.json();
+                for (const target of targets) {
+                    const data = prepareTemplateData(target.name);
+                    const requestData = {
+                        title: data.code + ' - ' + data.name,
+                        programType: target.code,
+                        levelNo: data.ntaLevel,
+                        semesterNo: data.semNo,
+                        moduleCode: data.code,
+                        moduleName: data.name,
+                        academicYear: document.getElementById('mAcademicYear').value,
+                        category: CAT_CATEGORY,
+                        contentJson: JSON.stringify({
+                            templateType: 'CAT',
+                            catNumber: CAT_NUMBER,
+                            examDate: data.date,
+                            fullProgramName: document.getElementById('pdf-cat-program').innerText,
+                            questions: data.questions
+                        })
+                    };
+                    const response = await fetch('/api/generate-exam/save', {
+                        method: 'POST', credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        successCount++;
+                        lastNoteId = result.noteId;
+                    }
+                }
+
                 btn.innerHTML = originalBtnHtml;
                 btn.disabled = false;
-                if (response.ok && result.success) {
-                    alert('CAT ' + CAT_NUMBER + ' exam saved successfully!');
-                    window.location.href = '/view-generated-exam/' + result.noteId;
+
+                if (successCount === 0) {
+                    alert('Failed to save exams. Please check console for details.');
+                } else if (targets.length > 1) {
+                    alert(`Successfully saved ${successCount} of ${targets.length} exams to the database!`);
+                    window.location.href = '/dashboard';
                 } else {
-                    alert('Failed to save: ' + (result.message || 'unknown error'));
+                    alert('CAT ' + CAT_NUMBER + ' exam saved successfully!');
+                    window.location.href = '/view-generated-exam/' + lastNoteId;
                 }
             } catch (error) {
                 btn.innerHTML = originalBtnHtml;
@@ -453,61 +515,65 @@
             btn.disabled = true;
 
             try {
-                const data = prepareTemplateData();
-                const pageHeightCss = calculatePDFLayout(element);
+                const targets = collectTargetPrograms();
+                for (const target of targets) {
+                    prepareTemplateData(target.name);
+                    const pageHeightCss = calculatePDFLayout(element);
 
-                if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
-                void element.offsetHeight;
-                await new Promise(resolve => setTimeout(resolve, 300));
+                    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
+                    void element.offsetHeight;
+                    await new Promise(resolve => setTimeout(resolve, 300));
 
-                const SCALE = 2;
-                const canvas = await html2canvas(element, {
-                    scale: SCALE, useCORS: true, backgroundColor: '#ffffff',
-                    windowWidth: element.scrollWidth, windowHeight: element.scrollHeight
-                });
+                    const SCALE = 2;
+                    const canvas = await html2canvas(element, {
+                        scale: SCALE, useCORS: true, backgroundColor: '#ffffff',
+                        windowWidth: element.scrollWidth, windowHeight: element.scrollHeight
+                    });
 
-                const { jsPDF } = window.jspdf;
-                const pageW = 210;
-                const canvasPageHeight = pageHeightCss * SCALE;
-                const totalPages = Math.max(1, Math.ceil(canvas.height / canvasPageHeight));
+                    const { jsPDF } = window.jspdf;
+                    const pageW = 210;
+                    const canvasPageHeight = pageHeightCss * SCALE;
 
-                let pdf = null;
-                let cursor = 0;
-                let pageNum = 1;
-                while (cursor < canvas.height - 1) {
-                    const sliceHeight = Math.min(canvasPageHeight, canvas.height - cursor);
-                    const drawHeight = pageW * (sliceHeight / canvas.width);
+                    let pdf = null;
+                    let cursor = 0;
+                    let pageNum = 1;
+                    while (cursor < canvas.height - 1) {
+                        const sliceHeight = Math.min(canvasPageHeight, canvas.height - cursor);
+                        const drawHeight = pageW * (sliceHeight / canvas.width);
 
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = canvas.width;
-                    tempCanvas.height = sliceHeight;
-                    const ctx = tempCanvas.getContext('2d');
-                    ctx.drawImage(canvas, 0, cursor, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = canvas.width;
+                        tempCanvas.height = sliceHeight;
+                        const ctx = tempCanvas.getContext('2d');
+                        ctx.drawImage(canvas, 0, cursor, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
 
-                    // Stamp "Page X | Prepared exclusively by 4LAZIE System" at the
-                    // bottom of every page (the source canvas has no per-page DOM
-                    // element to attach this to, since it's one continuous image).
-                    ctx.fillStyle = 'rgba(0,0,0,0.65)';
-                    ctx.font = (14 * SCALE / 2) + 'px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('Page ' + pageNum + ' | Prepared exclusively by 4LAZIE System', tempCanvas.width / 2, tempCanvas.height - 14);
+                        // Stamp "Page X | Prepared exclusively by 4LAZIE System" at the
+                        // bottom of every page (the source canvas has no per-page DOM
+                        // element to attach this to, since it's one continuous image).
+                        ctx.fillStyle = 'rgba(0,0,0,0.65)';
+                        ctx.font = (14 * SCALE / 2) + 'px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Page ' + pageNum + ' | Prepared exclusively by 4LAZIE System', tempCanvas.width / 2, tempCanvas.height - 14);
 
-                    if (!pdf) {
-                        pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
-                    } else {
-                        pdf.addPage([pageW, drawHeight]);
+                        if (!pdf) {
+                            pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
+                        } else {
+                            pdf.addPage([pageW, drawHeight]);
+                        }
+                        pdf.addImage(tempCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
+
+                        cursor += sliceHeight;
+                        pageNum++;
                     }
-                    pdf.addImage(tempCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
 
-                    cursor += sliceHeight;
-                    pageNum++;
+                    const safeCode = (document.getElementById('mCode').value || 'CAT' + CAT_NUMBER).replace(/[^a-zA-Z0-9]/g, '_');
+                    const safeProgram = target.name.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
+                    pdf.save(`${safeCode}_${safeProgram}_CAT${CAT_NUMBER}_Exam.pdf`);
+
+                    element.style.display = 'none';
+                    element.style.position = 'static';
                 }
 
-                const safeName = (document.getElementById('mCode').value || 'CAT' + CAT_NUMBER).replace(/[^a-zA-Z0-9]/g, '_');
-                pdf.save(`${safeName}_CAT${CAT_NUMBER}_Exam.pdf`);
-
-                element.style.display = 'none';
-                element.style.position = 'static';
                 btn.innerHTML = originalBtnHtml;
                 btn.disabled = false;
             } catch (error) {
