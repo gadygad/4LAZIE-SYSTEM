@@ -30,7 +30,11 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 - **Admin dashboard** — manage users, notes, subjects, courses, and timetables
 - **Super Admin approvals** — sensitive delete actions need approval
 - **Push notifications** — works as a PWA on mobile (installable, offline support)
-- **Exam Generator Hub** — built-in tools for admins to generate beautiful PDF past papers (UE, CATs) for multiple universities
+- **Exam Generator Hub** — built-in tools for admins to generate beautiful PDF past papers (UE, CAT 1, CAT 2) for multiple universities, with live preview and database-driven course/module selection
+- **Student profiles** — every student has a public profile (bio, course, social links) that other students can view
+- **Connect / Connections** — students can follow ("Connect" with) each other; a profile shows its Connections (follower) count
+- **Peer-to-peer chat** — students can message each other directly (not just admin), with reply-to-message quoting, typing indicators, online presence, and read receipts, all delivered in real time over Server-Sent Events (SSE)
+- **Admin ↔ Student chat** — direct messaging with admins, same real-time reply/read-receipt experience
 - **Premium section** — optional upgrade area for extra features
 
 ---
