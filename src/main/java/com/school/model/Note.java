@@ -5,9 +5,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import com.school.util.EncryptionUtil;
 import java.time.LocalDateTime;
 
+// The dashboard/browse queries almost always filter on all four of these
+// fields together (programType + levelNo + semesterNo + category) — a
+// compound index covering that combination is far more efficient than
+// relying on the individual single-field @Indexed ones below for that
+// specific, very common query shape.
+@CompoundIndexes({
+    @CompoundIndex(name = "browse_notes_idx", def = "{'programType': 1, 'levelNo': 1, 'semesterNo': 1, 'category': 1}")
+})
 @Document(collection = "notes")
 public class Note {
 
