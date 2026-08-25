@@ -33,13 +33,36 @@ public class DirectChatController {
     private com.school.service.PushNotificationService pushNotificationService;
 
     private UserRepository userRepository;
-    
+
     private static UserRepository userRepoStatic;
+    private static DirectChatService directChatServiceStatic;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
         DirectChatController.userRepoStatic = userRepository;
+    }
+
+    @jakarta.annotation.PostConstruct
+    private void initStaticServiceRef() {
+        DirectChatController.directChatServiceStatic = this.directChatService;
+    }
+
+    /**
+     * Every 30s, re-broadcast presence to any chat with at least one open SSE
+     * connection. A live emitter is the strongest online signal, but mobile
+     * browsers routinely kill SSE streams when a tab is backgrounded or the
+     * screen locks — long before the student has actually left the site —
+     * which used to leave admins staring at a stuck "Offline" for someone
+     * still actively using 4LAZIE elsewhere. This periodic tick lets the
+     * lastActiveTime fallback inside broadcastPresence() correct that without
+     * waiting for the next connect/disconnect event.
+     */
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 30_000L)
+    public void refreshPresenceForOpenChats() {
+        for (String chatId : chatEmitters.keySet()) {
+            broadcastPresence(chatId);
+        }
     }
 
     // ─────────────────────────────────────────────
@@ -139,6 +162,22 @@ public class DirectChatController {
                 String role = emitterViewers.get(emitter);
                 if ("ADMIN".equals(role)) adminOnline = true;
                 else if (role != null) studentOnline = true; // Anyone else is a student
+            }
+
+            // No live emitter for the student doesn't mean they're gone — fall
+            // back to whether they've touched the site recently at all
+            // (ActiveUserInterceptor stamps lastActiveTime on every request),
+            // since their chat tab's SSE connection is the flakiest part of
+            // this, not their actual presence on 4LAZIE.
+            if (!studentOnline && directChatServiceStatic != null && userRepoStatic != null) {
+                DirectChat chat = directChatServiceStatic.getChatById(chatId);
+                if (chat != null && chat.getStudentId() != null) {
+                    User student = userRepoStatic.findById(chat.getStudentId()).orElse(null);
+                    if (student != null && student.getLastActiveTime() != null
+                            && student.getLastActiveTime().isAfter(LocalDateTime.now().minusMinutes(2))) {
+                        studentOnline = true;
+                    }
+                }
             }
 
             Map<String, Object> presenceData = new HashMap<>();
