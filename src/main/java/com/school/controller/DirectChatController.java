@@ -339,11 +339,12 @@ public class DirectChatController {
             resp.put("success", false);
             return ResponseEntity.badRequest().body(resp);
         }
+        // sendMessage() already pushes a notification to the student — sending
+        // another one here would double up (the student would get two pushes
+        // for one message, one of them in Swahili and out of step with the rest
+        // of the app's English-only notification text).
         DirectChat chat = directChatService.sendMessage(chatId, "ADMIN", "4LAZIE Admin", messageText.trim(), replyToMessageId, replyToSenderName, replyToMessageText);
         if (chat == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp); }
-
-        // Send Push Notification to Student
-        pushNotificationService.sendToUser(chat.getStudentId(), "Ujumbe Mpya Kutoka Kwa Admin", messageText.trim(), "/messages");
 
         // Push personalized SSE to every listener (admin sees isSelf=true, student sees isSelf=false)
         notifyChat(chatId, chat);
@@ -449,16 +450,12 @@ public class DirectChatController {
         if (messageText == null || messageText.trim().isEmpty()) {
             resp.put("success", false); return ResponseEntity.badRequest().body(resp);
         }
+        // sendMessage() already pushes a notification to every admin — sending
+        // another one here would double up (each admin would get two pushes
+        // for one message, one of them in Swahili and out of step with the
+        // rest of the app's English-only notification text).
         DirectChat updated = directChatService.sendMessage(chatId, student.getId(), student.getName(), messageText.trim(), replyToMessageId, replyToSenderName, replyToMessageText);
         if (updated == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp); }
-
-        // Send Push Notification to all Admins
-        List<User> admins = userRepository.findAll().stream()
-            .filter(u -> u.getRole() != null && (u.getRole().name().equals("ADMIN") || u.getRole().name().equals("SUPER_ADMIN")))
-            .toList();
-        for (User a : admins) {
-            pushNotificationService.sendToUser(a.getId(), "Ujumbe Mpya Kutoka Kwa " + student.getName(), messageText.trim(), "/admin/messages");
-        }
 
         // Push personalized SSE to every listener (student sees isSelf=true, admin sees isSelf=false)
         notifyChat(chatId, updated);

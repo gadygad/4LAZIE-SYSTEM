@@ -237,7 +237,7 @@ public class AssignmentHelpController {
                     assignmentHelpService.replyToRequest(id, file, studentName);
                     
                     if (pushNotificationService != null && req.getUserId() != null) {
-                        pushNotificationService.sendToUser(req.getUserId(), "Assignment Reply", "Admin amejibu assignment yako ya " + req.getSubjectName(), "/messages");
+                        pushNotificationService.sendToUser(req.getUserId(), "Assignment Reply", "An admin has replied to your " + req.getSubjectName() + " assignment.", "/messages");
                     }
                     
                     redirectAttributes.addFlashAttribute("success", "Automated Magic Reply sent successfully!");
@@ -315,7 +315,7 @@ public class AssignmentHelpController {
                 response.put("attachmentUrl", lastMsg.getAttachmentUrl());
                 
                 if (pushNotificationService != null && req.getUserId() != null) {
-                    pushNotificationService.sendToUser(req.getUserId(), "New Message", "Admin ametuma ujumbe kwenye assignment yako ya " + req.getSubjectName(), "/messages");
+                    pushNotificationService.sendToUser(req.getUserId(), "New Message", "An admin sent you a message about your " + req.getSubjectName() + " assignment.", "/messages");
                 }
             } else {
                 response.put("success", false);
