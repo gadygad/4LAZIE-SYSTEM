@@ -66,25 +66,28 @@
         .question-block .q-label { font-weight: 800; color: #334155; margin-bottom: 6px; font-size: 0.9rem; }
 
         /* ===== CAT PDF THEME — strictly black & white ===== */
-        #exam-pdf-template-cat {
+        .cat-pdf-theme {
             width: 794px !important; min-width: 794px !important; max-width: 794px !important;
             background: #ffffff; color: #000; font-size: 12pt; line-height: 1.6;
             font-family: 'Times New Roman', Times, serif;
-            display: none; flex-direction: column; position: relative;
+            flex-direction: column; position: relative;
         }
-        #exam-pdf-template-cat .cat-watermark {
+        /* Only the hidden PDF-generation source starts hidden — the preview
+           modal's copy of this markup (#cat-preview-container) needs to render. */
+        #exam-pdf-template-cat { display: none; }
+        .cat-pdf-theme .cat-watermark {
             position: absolute; inset: 0; z-index: 0; pointer-events: none;
             background-repeat: repeat;
             opacity: 0.9;
         }
-        #exam-pdf-template-cat .header-bar {
+        .cat-pdf-theme .header-bar {
             background: #111111; padding: 10px 15mm; display: flex; align-items: center; justify-content: space-between;
             border-bottom: 3px solid #000; position: relative; z-index: 1;
         }
-        #exam-pdf-template-cat .content { padding: 10mm 15mm; flex: 1; position: relative; z-index: 1; }
-        #exam-pdf-template-cat .uni-block { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
-        #exam-pdf-template-cat .meta-row-2col { display: flex; justify-content: space-between; font-size: 11pt; margin: 6px 0; }
-        #exam-pdf-template-cat .cat-footer { text-align: center; font-size: 8pt; color: #333; padding: 8px 0; border-top: 1px solid #000; margin-top: 20px; font-family: 'Inter', sans-serif; position: relative; z-index: 1; }
+        .cat-pdf-theme .content { padding: 10mm 15mm; flex: 1; position: relative; z-index: 1; }
+        .cat-pdf-theme .uni-block { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .cat-pdf-theme .meta-row-2col { display: flex; justify-content: space-between; font-size: 11pt; margin: 6px 0; }
+        .cat-pdf-theme .cat-footer { text-align: center; font-size: 8pt; color: #333; padding: 8px 0; border-top: 1px solid #000; margin-top: 20px; font-family: 'Inter', sans-serif; position: relative; z-index: 1; }
     </style>
     <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
 </head>
@@ -186,6 +189,9 @@
                             <div class="container-fluid px-4 py-2 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
                                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-4 order-2 order-md-1" onclick="prevStep(1)"><i class="bi bi-arrow-left me-2"></i> Previous</button>
                                 <div class="d-flex flex-wrap justify-content-center gap-2 order-1 order-md-2">
+                                    <button type="button" class="btn btn-sm btn-outline-dark px-4 rounded-pill" onclick="previewPDF()">
+                                        <i class="bi bi-eye-fill me-2"></i> Live Preview
+                                    </button>
                                     <button type="button" class="btn btn-sm btn-dark-premium px-4 rounded-pill" onclick="generatePDF()">
                                         <i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF
                                     </button>
@@ -201,8 +207,31 @@
         </div>
     </div>
 
+    <!-- Live Preview Modal -->
+    <div class="modal fade" id="catPreviewModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content" style="background: #f1f5f9;">
+          <div class="modal-header bg-white border-bottom-0 shadow-sm z-1">
+            <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: #0f172a;"><i class="bi bi-eye-fill me-2"></i>CAT Exam Live Preview</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-2 p-md-4" style="background: #e2e8f0;">
+            <div style="width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; padding: 10px 0;">
+                <div id="cat-preview-container" class="cat-pdf-theme" style="display:flex; box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: left;">
+                    <!-- Content injected via JS -->
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer bg-white border-top-0 shadow-sm z-1">
+            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-dark-premium rounded-pill px-4" onclick="generatePDF()" data-bs-dismiss="modal"><i class="bi bi-file-earmark-pdf-fill me-1"></i> Generate PDF Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Hidden Template that will be converted to PDF (black &amp; white only) -->
-    <div id="exam-pdf-template-cat">
+    <div id="exam-pdf-template-cat" class="cat-pdf-theme">
         <div class="cat-watermark" id="pdf-cat-watermark"></div>
         <div class="header-bar">
             <div style="display:flex; align-items:center; gap:15px;">
@@ -607,6 +636,33 @@
             if (availableSpace < 60) pagesRequired++;
             element.style.minHeight = (pagesRequired * exactA4Height) + 'px';
             return exactA4Height;
+        }
+
+        function previewPDF() {
+            if (!validateForm()) return;
+            try {
+                const hiddenElement = document.getElementById('exam-pdf-template-cat');
+                prepareTemplateData();
+                const pageHeightCss = calculatePDFLayout(hiddenElement);
+
+                const previewContainer = document.getElementById('cat-preview-container');
+                previewContainer.innerHTML = hiddenElement.innerHTML;
+                previewContainer.style.minHeight = hiddenElement.style.minHeight || (pageHeightCss + 'px');
+                previewContainer.style.position = 'relative';
+
+                // The hidden source stays absolutely positioned off-screen for
+                // canvas capture — put it back the way generatePDF()/
+                // saveToDatabase() expect to find it.
+                hiddenElement.style.display = 'none';
+                hiddenElement.style.position = 'static';
+                hiddenElement.style.zIndex = '';
+
+                var myModal = new bootstrap.Modal(document.getElementById('catPreviewModal'));
+                myModal.show();
+            } catch (error) {
+                alert('An error occurred while generating the Preview: ' + error.message);
+                console.error('CAT Preview Error:', error);
+            }
         }
 
         async function generatePDF() {
