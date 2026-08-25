@@ -1500,6 +1500,23 @@
                         }
                         return;
                     }
+                    if (msg.isSelf) {
+                        // The real message just came back (via SSE or the fetch
+                        // response) for the bubble we already rendered instantly
+                        // when the admin/student hit Send — swap it in place
+                        // instead of appending a duplicate.
+                        const tempEl = msgWrap.querySelector('.temp-msg');
+                        if (tempEl) {
+                            tempEl.id = 'peer-msg-' + id;
+                            tempEl.classList.remove('temp-msg');
+                            renderedIds.add(id);
+                            if (msg.status) {
+                                const statusEl = tempEl.querySelector('.peer-status-text');
+                                if (statusEl) statusEl.innerHTML = statusHtml(msg.status);
+                            }
+                            return;
+                        }
+                    }
                     renderedIds.add(id);
                     msgWrap.appendChild(makeBubble(msg));
                     added++;
@@ -1586,6 +1603,32 @@
                     params.replyToSenderName = replyState.senderName;
                     params.replyToMessageText = replyState.messageText;
                 }
+
+                // Render the bubble instantly instead of waiting on the
+                // POST -> save -> SSE round-trip — renderMessages() swaps this
+                // temp bubble for the real one the moment the server confirms it.
+                const myName = document.getElementById('DC_STUDENT_NAME')?.value || 'You';
+                const myPic = document.getElementById('DC_STUDENT_PIC')?.value || '';
+                const optimisticMsg = {
+                    id: 'temp-' + Date.now(),
+                    isSelf: true,
+                    senderName: myName,
+                    senderProfilePicture: myPic,
+                    messageText: text,
+                    status: 'Sent',
+                    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                };
+                if (replyState.messageId) {
+                    optimisticMsg.replyToMessageId = replyState.messageId;
+                    optimisticMsg.replyToSenderName = replyState.senderName;
+                    optimisticMsg.replyToMessageText = replyState.messageText;
+                }
+                const bubble = makeBubble(optimisticMsg);
+                bubble.classList.add('temp-msg');
+                emptyEl.style.display = 'none';
+                msgWrap.appendChild(bubble);
+                scrollBottom(true);
+
                 cancelReply();
 
                 const body = new URLSearchParams(params);
