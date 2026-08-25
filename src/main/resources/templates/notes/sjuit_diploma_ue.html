@@ -1017,16 +1017,135 @@
         // --- DYNAMIC LOGIC ---
         let allCourses = [];
         let currentCourses = [];
+        let coursesPrefetchPromise = null;
 
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', function() {
             initAllCustomSelects();
+            // Prefetch all courses on load for instant, zero-delay switching
+            coursesPrefetchPromise = fetch('/api/courses')
+                .then(r => r.json())
+                .then(data => { allCourses = data; })
+                .catch(e => console.error("Failed to prefetch courses:", e));
+        });
+
+        // ===== DRAFT AUTOSAVE =====
+        // A UE paper can easily have 20-30 questions — that's a lot of typing
+        // to lose to a session timeout or the browser silently reloading a
+        // long-idle tab to save memory. Every edit is mirrored into
+        // localStorage a moment later, so a reload can offer it back.
+        const DRAFT_KEY = '4lazie_draft_ue_exam';
+        let draftSaveTimer = null;
+
+        function draftFieldValue(id) {
+            const el = document.getElementById(id);
+            return el ? el.value : '';
+        }
+
+        function collectDraftData() {
+            const extras = Array.from(document.querySelectorAll('.extra-course-cb:checked')).map(cb => cb.value);
+            const questions = Array.from(document.querySelectorAll('.question-block')).map(block => ({
+                part: block.querySelector('.q-part').value,
+                number: block.querySelector('.q-number').value,
+                content: block.querySelector('.q-content').value
+            }));
+            return {
+                mLevel: draftFieldValue('mLevel'), mProgram: draftFieldValue('mProgram'),
+                mNtaLevel: draftFieldValue('mNtaLevel'), mSemester: draftFieldValue('mSemester'),
+                mModuleSelect: draftFieldValue('mModuleSelect'), mAcademicYear: draftFieldValue('mAcademicYear'),
+                mCode: draftFieldValue('mCode'), mName: draftFieldValue('mName'), mType: draftFieldValue('mType'),
+                mDate: draftFieldValue('mDate'), mTime: draftFieldValue('mTime'), mInstructions: draftFieldValue('mInstructions'),
+                extras, questions
+            };
+        }
+
+        function scheduleDraftSave() {
+            clearTimeout(draftSaveTimer);
+            draftSaveTimer = setTimeout(() => {
+                try {
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), data: collectDraftData() }));
+                } catch (e) { console.warn('Draft autosave failed:', e); }
+            }, 1200);
+        }
+
+        function clearDraft() {
+            localStorage.removeItem(DRAFT_KEY);
+        }
+
+        async function restoreDraft(data) {
+            if (coursesPrefetchPromise) { try { await coursesPrefetchPromise; } catch (e) {} }
+
+            document.getElementById('mLevel').value = data.mLevel || 'DIPLOMA';
+            await updateProgramList();
+            document.getElementById('mProgram').value = data.mProgram || '';
+            document.getElementById('mNtaLevel').value = data.mNtaLevel || '4';
+            document.getElementById('mSemester').value = data.mSemester || 'SEM: I';
+            updateModuleList();
+            document.getElementById('mModuleSelect').value = data.mModuleSelect || '';
+            document.getElementById('mAcademicYear').value = data.mAcademicYear || '2026';
+            document.getElementById('mCode').value = data.mCode || '';
+            document.getElementById('mName').value = data.mName || '';
+            document.getElementById('mType').value = data.mType || 'UNIVERSITY EXAMINATIONS';
+            document.getElementById('mDate').value = data.mDate || '';
+            document.getElementById('mTime').value = data.mTime || '';
+            document.getElementById('mInstructions').value = data.mInstructions || '';
+
+            // Re-render every custom dropdown so its visible trigger text
+            // matches the values we just restored on the underlying <select>.
+            document.querySelectorAll('select.form-select').forEach(select => initCustomSelect(select));
+
+            (data.extras || []).forEach(v => {
+                const cb = document.querySelector(`.extra-course-cb[value="${CSS.escape(v)}"]`);
+                if (cb) cb.checked = true;
+            });
+
+            // The page always generates the standard 30 question blocks
+            // (PART A/B/C, 10 each) on load — restore just re-fills their text
+            // rather than rebuilding the accordion, which covers the normal
+            // case of the admin only having typed content into them.
+            (data.questions || []).forEach(q => {
+                const block = Array.from(document.querySelectorAll('.question-block')).find(b =>
+                    b.querySelector('.q-part').value === q.part && b.querySelector('.q-number').value == q.number);
+                if (block) block.querySelector('.q-content').value = q.content;
+            });
+
+            updateLiveProgress();
+        }
+
+        function showDraftBanner(ageMinutes, data) {
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed; top:0; left:0; right:0; z-index:2000; background:#064e3b; color:#fff; padding:12px 20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; font-family:Inter,sans-serif; font-size:0.9rem; box-shadow:0 4px 15px rgba(0,0,0,0.2);';
+            banner.innerHTML = `
+                <span><i class="bi bi-clock-history me-2"></i>Kuna rasimu uliyokuwa unaandika, dakika ${ageMinutes} zilizopita. Uirejeshe?</span>
+                <button type="button" id="draftRestoreBtn" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">Rejesha Rasimu</button>
+                <button type="button" id="draftDiscardBtn" class="btn btn-sm btn-outline-light rounded-pill px-3">Ondoa</button>
+            `;
+            document.body.prepend(banner);
+            document.getElementById('draftRestoreBtn').addEventListener('click', async () => {
+                await restoreDraft(data);
+                banner.remove();
+            });
+            document.getElementById('draftDiscardBtn').addEventListener('click', () => {
+                clearDraft();
+                banner.remove();
+            });
+        }
+
+        function checkForDraftOnLoad() {
+            const raw = localStorage.getItem(DRAFT_KEY);
+            if (!raw) return;
             try {
-                // Prefetch all courses on load for instant, zero-delay switching
-                const response = await fetch('/api/courses');
-                allCourses = await response.json();
+                const parsed = JSON.parse(raw);
+                const ageMinutes = Math.max(1, Math.round((Date.now() - parsed.savedAt) / 60000));
+                showDraftBanner(ageMinutes, parsed.data);
             } catch (e) {
-                console.error("Failed to prefetch courses:", e);
+                localStorage.removeItem(DRAFT_KEY);
             }
+        }
+        window.addEventListener('load', () => {
+            document.getElementById('examForm').addEventListener('input', scheduleDraftSave);
+            document.getElementById('examForm').addEventListener('change', scheduleDraftSave);
+            document.getElementById('examForm').addEventListener('click', scheduleDraftSave);
+            checkForDraftOnLoad();
         });
 
         async function updateProgramList() {
@@ -1637,6 +1756,7 @@
                 btn.disabled = false;
 
                 if (successCount > 0) {
+                    clearDraft();
                     if (programs.length > 1) {
                         alert(`Successfully saved ${successCount} exams to the database!`);
                         window.location.href = '/dashboard';

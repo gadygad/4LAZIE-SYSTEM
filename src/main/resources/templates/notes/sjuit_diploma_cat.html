@@ -256,6 +256,105 @@
         const CAT_ROMAN = CAT_NUMBER === 2 ? 'II' : 'I';
         const CAT_CATEGORY = 'CAT ' + CAT_NUMBER;
 
+        // ===== DRAFT AUTOSAVE =====
+        // A tab left open for a long time (typing 17 questions takes a while)
+        // can get logged out or silently reloaded by the browser to free memory
+        // — either way, an unsaved form used to just vanish. Everything typed
+        // is mirrored into localStorage a moment after each edit, so a reload
+        // can offer it back instead of losing it.
+        const DRAFT_KEY = '4lazie_draft_cat' + CAT_NUMBER + '_exam';
+        let draftSaveTimer = null;
+
+        function draftFieldValue(id) {
+            const el = document.getElementById(id);
+            return el ? el.value : '';
+        }
+
+        function collectDraftData() {
+            const extras = Array.from(document.querySelectorAll('.extra-course-cb:checked')).map(cb => cb.value);
+            const questions = Array.from(document.querySelectorAll('.q-content')).map(el => ({
+                number: el.dataset.number, part: el.dataset.part, content: el.value
+            }));
+            return {
+                mNtaLevel: draftFieldValue('mNtaLevel'), mSemester: draftFieldValue('mSemester'),
+                mAcademicYear: draftFieldValue('mAcademicYear'), mProgram: draftFieldValue('mProgram'),
+                mProgramCode: draftFieldValue('mProgramCode'), mDate: draftFieldValue('mDate'),
+                mCode: draftFieldValue('mCode'), mName: draftFieldValue('mName'),
+                extras, questions
+            };
+        }
+
+        function scheduleDraftSave() {
+            clearTimeout(draftSaveTimer);
+            draftSaveTimer = setTimeout(() => {
+                try {
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), data: collectDraftData() }));
+                } catch (e) { console.warn('Draft autosave failed:', e); }
+            }, 1200);
+        }
+
+        function clearDraft() {
+            localStorage.removeItem(DRAFT_KEY);
+        }
+
+        async function restoreDraft(data) {
+            document.getElementById('mNtaLevel').value = data.mNtaLevel || '4';
+            document.getElementById('mSemester').value = data.mSemester || '1';
+            document.getElementById('mAcademicYear').value = data.mAcademicYear || '2026';
+            document.getElementById('mProgram').value = data.mProgram || '';
+            document.getElementById('mProgramCode').value = data.mProgramCode || '';
+            document.getElementById('mDate').value = data.mDate || '';
+            document.getElementById('mCode').value = data.mCode || '';
+            document.getElementById('mName').value = data.mName || '';
+
+            if (coursesLoadedPromise) { try { await coursesLoadedPromise; } catch (e) {} }
+            (data.extras || []).forEach(v => {
+                const cb = document.querySelector(`.extra-course-cb[value="${CSS.escape(v)}"]`);
+                if (cb) cb.checked = true;
+            });
+
+            (data.questions || []).forEach(q => {
+                const el = document.querySelector(`.q-content[data-number="${q.number}"][data-part="${q.part}"]`);
+                if (el) el.value = q.content;
+            });
+        }
+
+        function showDraftBanner(ageMinutes, data) {
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed; top:0; left:0; right:0; z-index:2000; background:#0f172a; color:#fff; padding:12px 20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; font-family:Inter,sans-serif; font-size:0.9rem; box-shadow:0 4px 15px rgba(0,0,0,0.2);';
+            banner.innerHTML = `
+                <span><i class="bi bi-clock-history me-2"></i>Kuna rasimu uliyokuwa unaandika, dakika ${ageMinutes} zilizopita. Uirejeshe?</span>
+                <button type="button" id="draftRestoreBtn" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">Rejesha Rasimu</button>
+                <button type="button" id="draftDiscardBtn" class="btn btn-sm btn-outline-light rounded-pill px-3">Ondoa</button>
+            `;
+            document.body.prepend(banner);
+            document.getElementById('draftRestoreBtn').addEventListener('click', async () => {
+                await restoreDraft(data);
+                banner.remove();
+            });
+            document.getElementById('draftDiscardBtn').addEventListener('click', () => {
+                clearDraft();
+                banner.remove();
+            });
+        }
+
+        function checkForDraftOnLoad() {
+            const raw = localStorage.getItem(DRAFT_KEY);
+            if (!raw) return;
+            try {
+                const parsed = JSON.parse(raw);
+                const ageMinutes = Math.max(1, Math.round((Date.now() - parsed.savedAt) / 60000));
+                showDraftBanner(ageMinutes, parsed.data);
+            } catch (e) {
+                localStorage.removeItem(DRAFT_KEY);
+            }
+        }
+        window.addEventListener('load', () => {
+            document.getElementById('examForm').addEventListener('input', scheduleDraftSave);
+            document.getElementById('examForm').addEventListener('change', scheduleDraftSave);
+            checkForDraftOnLoad();
+        });
+
         function nextStep(step) {
             document.getElementById('step-1').style.display = step === 1 ? 'block' : 'none';
             document.getElementById('step-2').style.display = step === 2 ? 'block' : 'none';
@@ -290,7 +389,9 @@
 
         // --- Extra courses for batch PDF generation (module shared across classes) ---
         let allCourses = [];
-        window.addEventListener('DOMContentLoaded', async () => {
+        let coursesLoadedPromise = null;
+        window.addEventListener('DOMContentLoaded', () => { coursesLoadedPromise = loadExtraCourses(); });
+        async function loadExtraCourses() {
             const container = document.getElementById('mExtraProgramsContainer');
             try {
                 const response = await fetch('/api/courses');
@@ -311,7 +412,7 @@
                     <label class="form-check-label small text-secondary" for="cb_${index}" style="cursor:pointer; user-select:none;">${course.name}</label>
                 </div>
             `).join('');
-        });
+        }
 
         // Base program + any checked extras, each as {name, code}. The base
         // program's own code comes from the "Program Code (short)" field since
@@ -454,9 +555,11 @@
                 if (successCount === 0) {
                     alert('Failed to save exams. Please check console for details.');
                 } else if (targets.length > 1) {
+                    clearDraft();
                     alert(`Successfully saved ${successCount} of ${targets.length} exams to the database!`);
                     window.location.href = '/dashboard';
                 } else {
+                    clearDraft();
                     alert('CAT ' + CAT_NUMBER + ' exam saved successfully!');
                     window.location.href = '/view-generated-exam/' + lastNoteId;
                 }
