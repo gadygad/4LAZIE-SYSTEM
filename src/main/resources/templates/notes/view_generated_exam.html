@@ -332,43 +332,16 @@
             return 'url("data:image/svg+xml,' + encodeURIComponent(tile) + '")';
         }
 
+        // Single continuous page, no internal page breaks — matches the CAT
+        // generator page and the UE renderer below, so the exam ends right
+        // after the footer with no blank space or mid-question page splits.
         function catCalculatePDFLayout(element) {
             element.style.display = 'flex';
             element.style.position = 'absolute';
             element.style.zIndex = '-9999';
-
-            const exactA4Height = element.offsetWidth * (297 / 210);
+            element.style.minHeight = '';
             void element.offsetHeight;
-
-            const itemsToCheck = element.querySelectorAll('.pdf-cat-q-item, .pdf-cat-part-header');
-            itemsToCheck.forEach(item => item.style.marginTop = '0px');
-
-            let hasBreaks = true, loopCount = 0;
-            while (hasBreaks && loopCount < 50) {
-                hasBreaks = false; loopCount++;
-                const templateTop = element.getBoundingClientRect().top;
-                for (const item of itemsToCheck) {
-                    const rect = item.getBoundingClientRect();
-                    const startY = rect.top - templateTop;
-                    const endY = rect.bottom - templateTop;
-                    const pageBoundary = Math.ceil(endY / exactA4Height) * exactA4Height - exactA4Height;
-                    if (startY < pageBoundary && endY > pageBoundary) {
-                        if ((endY - startY) > exactA4Height) continue;
-                        const currentMargin = parseFloat(window.getComputedStyle(item).marginTop) || 0;
-                        item.style.marginTop = (currentMargin + (pageBoundary - startY + 2)) + 'px';
-                        hasBreaks = true;
-                        break;
-                    }
-                }
-            }
-
-            void element.offsetHeight;
-            const contentHeight = element.scrollHeight;
-            let pagesRequired = Math.ceil(contentHeight / exactA4Height);
-            const availableSpace = (pagesRequired * exactA4Height) - contentHeight;
-            if (availableSpace < 60) pagesRequired++;
-            element.style.minHeight = (pagesRequired * exactA4Height) + 'px';
-            return exactA4Height;
+            return element.scrollHeight;
         }
 
         // Renders a CAT 1 / CAT 2 note (fixed 17-question, black & white SJCET
@@ -417,7 +390,7 @@
                 document.getElementById('pdf-cat-content-body').innerHTML = html;
 
                 const element = document.getElementById('exam-pdf-template-cat');
-                const pageHeightCss = catCalculatePDFLayout(element);
+                catCalculatePDFLayout(element);
 
                 if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
                 void element.offsetHeight;
@@ -430,36 +403,52 @@
                 });
                 element.style.display = 'none';
 
+                // Trim any leftover blank space at the bottom by scanning the
+                // real rendered pixels — same approach as the UE renderer.
+                const catCtx = canvas.getContext('2d');
+                const catBgR = 255, catBgG = 255, catBgB = 255;
+                const catTolerance = 25;
+                const catMinContentPixelsPerRow = Math.floor(canvas.width * 0.15);
+                let catLastContentY = 0;
+                const catChunkSize = 200;
+                catOuterLoop:
+                for (let yStart = canvas.height - catChunkSize; yStart > -catChunkSize; yStart -= catChunkSize) {
+                    const realStart = Math.max(0, yStart);
+                    const realHeight = Math.min(catChunkSize, canvas.height - realStart);
+                    if (realHeight <= 0) continue;
+                    const chunkData = catCtx.getImageData(0, realStart, canvas.width, realHeight).data;
+                    for (let rowOffset = realHeight - 1; rowOffset >= 0; rowOffset--) {
+                        let contentPixelCount = 0;
+                        const rowBase = rowOffset * canvas.width * 4;
+                        for (let x = 0; x < canvas.width; x++) {
+                            const idx = rowBase + x * 4;
+                            const r = chunkData[idx], g = chunkData[idx + 1], b = chunkData[idx + 2], a = chunkData[idx + 3];
+                            if (a > 0 && (Math.abs(r - catBgR) > catTolerance || Math.abs(g - catBgG) > catTolerance || Math.abs(b - catBgB) > catTolerance)) {
+                                contentPixelCount++;
+                                if (contentPixelCount >= catMinContentPixelsPerRow) break;
+                            }
+                        }
+                        if (contentPixelCount >= catMinContentPixelsPerRow) {
+                            catLastContentY = realStart + rowOffset + 1;
+                            break catOuterLoop;
+                        }
+                    }
+                }
+                catLastContentY = Math.min(canvas.height, catLastContentY + 6);
+                if (catLastContentY <= 0) catLastContentY = canvas.height;
+
+                const catTrimmedCanvas = document.createElement('canvas');
+                catTrimmedCanvas.width = canvas.width;
+                catTrimmedCanvas.height = catLastContentY;
+                catTrimmedCanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, catLastContentY, 0, 0, canvas.width, catLastContentY);
+
+                // Single continuous page — the whole exam (questions + footer)
+                // fits on one long page ending right after the footer.
                 const { jsPDF } = window.jspdf;
                 const pageW = 210;
-                const canvasPageHeight = pageHeightCss * SCALE;
-
-                let pdf = null, cursor = 0, pageNum = 1;
-                while (cursor < canvas.height - 1) {
-                    const sliceHeight = Math.min(canvasPageHeight, canvas.height - cursor);
-                    const drawHeight = pageW * (sliceHeight / canvas.width);
-
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = canvas.width;
-                    tempCanvas.height = sliceHeight;
-                    const ctx = tempCanvas.getContext('2d');
-                    ctx.drawImage(canvas, 0, cursor, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-
-                    ctx.fillStyle = 'rgba(0,0,0,0.65)';
-                    ctx.font = (14 * SCALE / 2) + 'px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('Page ' + pageNum + ' | Prepared exclusively by 4LAZIE System', tempCanvas.width / 2, tempCanvas.height - 14);
-
-                    if (!pdf) {
-                        pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
-                    } else {
-                        pdf.addPage([pageW, drawHeight]);
-                    }
-                    pdf.addImage(tempCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
-
-                    cursor += sliceHeight;
-                    pageNum++;
-                }
+                const drawHeight = pageW * (catTrimmedCanvas.height / catTrimmedCanvas.width);
+                const pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
+                pdf.addImage(catTrimmedCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
 
                 const cleanFileName = ((noteData && noteData.title) || 'CAT_Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');
 
