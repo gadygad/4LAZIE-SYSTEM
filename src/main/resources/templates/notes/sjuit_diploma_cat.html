@@ -185,7 +185,6 @@
         .cat-pdf-theme .content { padding: 10mm 15mm; flex: 1; position: relative; z-index: 1; }
         .cat-pdf-theme .uni-block { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
         .cat-pdf-theme .meta-row-2col { display: flex; justify-content: space-between; font-size: 11pt; margin: 6px 0; }
-        .cat-pdf-theme .cat-footer { text-align: center; font-size: 8pt; color: #333; padding: 8px 0; border-top: 1px solid #000; margin-top: 20px; font-family: 'Inter', sans-serif; position: relative; z-index: 1; }
     </style>
     <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
 </head>
@@ -378,8 +377,30 @@
             </div>
         </div>
 
-        <div id="pdf-cat-bottom-footer">
-            <div class="cat-footer" id="pdf-cat-footer-text">Page 1 | Prepared exclusively by 4LAZIE System</div>
+        <!-- Bottom footer stays full-color like UE's — it's 4LAZIE branding,
+             not part of the exam paper itself, so the black & white rule
+             doesn't apply to it. Same structure/colors as UE's #pdf-bottom-footer. -->
+        <div id="pdf-cat-bottom-footer" style="margin-top: 20px; width: 100%;">
+            <div style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 18mm;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="background: #111; border-radius: 4px; padding: 3px 8px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <div style="font-family: 'Inter', sans-serif; font-size: 10pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1;">4LAZIE</div>
+                        </div>
+                        <div style="color: #065e31; font-weight: 700; font-size: 9.5pt;">
+                            Built out of necessity. Built by a student. Built for students.
+                        </div>
+                    </div>
+                    <div style="color: #4b6b55; font-weight: 600; font-size: 9pt;">
+                        Digitized for students, by students.
+                    </div>
+                </div>
+                <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
+                    <div id="pdf-cat-footer-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
+                        Page 1 | Prepared exclusively by 4LAZIE System
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
