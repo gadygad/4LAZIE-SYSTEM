@@ -654,8 +654,27 @@
                             const pushAmount = pageBoundary - startY + 2;
                             item.style.marginTop = (currentMargin + pushAmount) + 'px';
                             hasBreaks = true;
-                            break; 
+                            break;
                         }
+                    }
+                }
+
+                // The footer isn't in itemsToCheck (adding it there would wipe
+                // its base 20px margin-top on every reset), but it still must
+                // never straddle a page boundary — otherwise it prints as a
+                // truncated sliver at the bottom of one page with a blank gap
+                // left behind, and the rest is lost. Same rect-based push math
+                // as above, just without the reset-to-zero step first.
+                const footerElForBreak = element.querySelector('#pdf-bottom-footer');
+                if (footerElForBreak) {
+                    const templateTop = element.getBoundingClientRect().top;
+                    const fRect = footerElForBreak.getBoundingClientRect();
+                    const fStartY = fRect.top - templateTop;
+                    const fEndY = fRect.bottom - templateTop;
+                    const fPageBoundary = Math.ceil(fEndY / exactA4Height) * exactA4Height - exactA4Height;
+                    if (fStartY < fPageBoundary && fEndY > fPageBoundary && (fEndY - fStartY) <= exactA4Height) {
+                        const currentMargin = parseFloat(window.getComputedStyle(footerElForBreak).marginTop) || 0;
+                        footerElForBreak.style.marginTop = (currentMargin + (fPageBoundary - fStartY + 2)) + 'px';
                     }
                 }
 
