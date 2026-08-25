@@ -1115,9 +1115,9 @@
             const banner = document.createElement('div');
             banner.style.cssText = 'position:fixed; top:0; left:0; right:0; z-index:2000; background:#064e3b; color:#fff; padding:12px 20px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; font-family:Inter,sans-serif; font-size:0.9rem; box-shadow:0 4px 15px rgba(0,0,0,0.2);';
             banner.innerHTML = `
-                <span><i class="bi bi-clock-history me-2"></i>Kuna rasimu uliyokuwa unaandika, dakika ${ageMinutes} zilizopita. Uirejeshe?</span>
-                <button type="button" id="draftRestoreBtn" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">Rejesha Rasimu</button>
-                <button type="button" id="draftDiscardBtn" class="btn btn-sm btn-outline-light rounded-pill px-3">Ondoa</button>
+                <span><i class="bi bi-clock-history me-2"></i>We found a draft you were working on ${ageMinutes} minute(s) ago. Want it back?</span>
+                <button type="button" id="draftRestoreBtn" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">Restore Draft</button>
+                <button type="button" id="draftDiscardBtn" class="btn btn-sm btn-outline-light rounded-pill px-3">Discard</button>
             `;
             document.body.prepend(banner);
             document.getElementById('draftRestoreBtn').addEventListener('click', async () => {
