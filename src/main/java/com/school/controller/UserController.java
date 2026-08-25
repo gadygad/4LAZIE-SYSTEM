@@ -34,12 +34,26 @@ public class UserController {
 
         private FileStorageService fileStorageService;
 
-    public UserController(UserRepository userRepository, com.school.util.AuthUtil authUtil, com.school.service.NotificationService notificationService, com.school.repository.NoteRepository noteRepository, FileStorageService fileStorageService) {
+        private com.school.service.PushNotificationService pushNotificationService;
+
+    public UserController(UserRepository userRepository, com.school.util.AuthUtil authUtil, com.school.service.NotificationService notificationService, com.school.repository.NoteRepository noteRepository, FileStorageService fileStorageService, com.school.service.PushNotificationService pushNotificationService) {
         this.userRepository = userRepository;
         this.authUtil = authUtil;
         this.notificationService = notificationService;
         this.noteRepository = noteRepository;
         this.fileStorageService = fileStorageService;
+        this.pushNotificationService = pushNotificationService;
+    }
+
+    /** Resolves a user's cover photo via reflection so this still works even
+     * against an older compiled User class that predates the field. */
+    private String resolveCoverPhoto(User user) {
+        try {
+            java.lang.reflect.Method m = user.getClass().getMethod("getCoverPhoto");
+            return (String) m.invoke(user);
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     @Autowired
@@ -109,7 +123,78 @@ public class UserController {
         
         model.addAttribute("user", user);
         model.addAttribute("editMode", edit);
+        model.addAttribute("isOwnProfile", true);
         return "user/profile";
+    }
+
+    /**
+     * Read-only view of ANOTHER student's profile — same template as one's own
+     * (per product requirement), just with editing/private-activity sections
+     * hidden and a Connect/Message section shown instead.
+     */
+    @GetMapping("/students/{id}/profile")
+    public String viewStudentProfile(@org.springframework.web.bind.annotation.PathVariable String id, Model model) {
+        User me = getLoggedInUser();
+        if (me == null) return "redirect:/login";
+
+        if (id.equals(me.getId())) {
+            return "redirect:/profile";
+        }
+
+        User target = userRepository.findById(id).orElse(null);
+        if (target == null || target.getRole() != com.school.model.Role.STUDENT
+                || Boolean.TRUE.equals(target.getIsSuspended())) {
+            return "redirect:/messages";
+        }
+
+        model.addAttribute("coverPhoto", resolveCoverPhoto(target));
+        model.addAttribute("user", target);
+        model.addAttribute("editMode", false);
+        model.addAttribute("isOwnProfile", false);
+        model.addAttribute("isConnected", me.getConnections() != null && me.getConnections().contains(target.getId()));
+        model.addAttribute("connectionsCount", target.getConnections() != null ? target.getConnections().size() : 0);
+        return "user/profile";
+    }
+
+    /** Toggle a mutual connection between the logged-in user and another student. */
+    @PostMapping("/api/connections/{id}/toggle")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<?> toggleConnection(@org.springframework.web.bind.annotation.PathVariable String id) {
+        User me = getLoggedInUser();
+        if (me == null) {
+            return org.springframework.http.ResponseEntity.status(401).body(java.util.Map.of("success", false));
+        }
+        if (id.equals(me.getId())) {
+            return org.springframework.http.ResponseEntity.badRequest()
+                    .body(java.util.Map.of("success", false, "message", "You can't connect with yourself."));
+        }
+        User target = userRepository.findById(id).orElse(null);
+        if (target == null) {
+            return org.springframework.http.ResponseEntity.notFound().build();
+        }
+
+        if (me.getConnections() == null) me.setConnections(new java.util.HashSet<>());
+        if (target.getConnections() == null) target.setConnections(new java.util.HashSet<>());
+
+        boolean nowConnected;
+        if (me.getConnections().contains(target.getId())) {
+            me.getConnections().remove(target.getId());
+            target.getConnections().remove(me.getId());
+            nowConnected = false;
+        } else {
+            me.getConnections().add(target.getId());
+            target.getConnections().add(me.getId());
+            nowConnected = true;
+            pushNotificationService.sendToUser(target.getId(), "New Connection",
+                    me.getName() + " connected with you.", "/students/" + me.getId() + "/profile");
+        }
+        userRepository.save(me);
+        userRepository.save(target);
+
+        return org.springframework.http.ResponseEntity.ok(java.util.Map.of(
+                "success", true,
+                "connected", nowConnected,
+                "connectionsCount", target.getConnections().size()));
     }
 
     @PostMapping("/profile")

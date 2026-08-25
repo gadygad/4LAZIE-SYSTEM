@@ -67,6 +67,10 @@ public class User {
     private Set<String> savedNotes = new HashSet<>();
     private Set<String> downloadedNotes = new HashSet<>();
 
+    // Mutual student connections (LinkedIn-style "Connect", not one-way
+    // follow) — instant on click for now, no request/accept step.
+    private Set<String> connections = new HashSet<>();
+
     private Boolean isVerified = true;
     private String verificationToken;
     private String securityToken;
@@ -144,6 +148,9 @@ public class User {
     public void setInstitution(Institution institution) { this.institution = institution; }
     public Set<String> getSavedNotes() { return savedNotes; }
     public void setSavedNotes(Set<String> savedNotes) { this.savedNotes = savedNotes; }
+
+    public Set<String> getConnections() { return connections; }
+    public void setConnections(Set<String> connections) { this.connections = connections; }
     public Set<String> getDownloadedNotes() { return downloadedNotes; }
     public void setDownloadedNotes(Set<String> downloadedNotes) { this.downloadedNotes = downloadedNotes; }
     public Boolean getIsVerified() { return isVerified; }

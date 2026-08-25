@@ -160,12 +160,42 @@
                 })();
             </script>
 
-            <!-- Edit Button positioned on the top right -->
-            <div class="position-absolute" style="top: 20px; right: 20px; z-index: 10;">
+            <!-- Edit Button positioned on the top right (own profile only) -->
+            <div th:if="${isOwnProfile}" class="position-absolute" style="top: 20px; right: 20px; z-index: 10;">
                 <a href="/profile?edit=true" class="btn rounded-pill px-3 py-2 fw-bold shadow-sm d-flex align-items-center" style="background: #0f172a; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);" onmouseover="this.style.background='#10b981'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#0f172a'; this.style.transform='none';">
                     <i class="bi bi-pencil-square me-2"></i> Edit Profile
                 </a>
             </div>
+
+            <!-- Connect / Message — viewing someone else's profile -->
+            <div th:unless="${isOwnProfile}" class="d-flex justify-content-center gap-3 mb-4" style="margin-top: -10px;">
+                <button type="button" id="connectBtn" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                        th:attr="data-user-id=${user.id},data-user-name=${user.name}"
+                        th:classappend="${isConnected} ? 'btn-connected' : 'btn-connect'"
+                        onclick="toggleConnection(this)">
+                    <i class="bi" th:classappend="${isConnected} ? 'bi-person-check-fill' : 'bi-person-plus-fill'"></i>
+                    <span th:text="${isConnected} ? 'Connected' : 'Connect'">Connect</span>
+                </button>
+                <button type="button" id="messageBtn" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                        style="background: rgba(99,102,241,0.1); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.3);"
+                        th:attr="data-user-id=${user.id},data-user-name=${user.name}"
+                        onmouseover="this.style.background='#6366f1'; this.style.color='#fff';"
+                        onmouseout="this.style.background='rgba(99,102,241,0.1)'; this.style.color='#4f46e5';"
+                        onclick="messageStudent(this)">
+                    <i class="bi bi-chat-dots-fill"></i> Message
+                </button>
+            </div>
+            <div th:unless="${isOwnProfile}" class="text-center mb-3">
+                <span class="text-muted" style="font-size: 0.85rem;">
+                    <i class="bi bi-people-fill me-1" style="color:#6366f1;"></i>
+                    <span id="connectionsCountText" th:text="${connectionsCount}">0</span> connection<span th:if="${connectionsCount != 1}">s</span>
+                </span>
+            </div>
+            <style>
+                .btn-connect { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border: none; }
+                .btn-connect:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.35); }
+                .btn-connected { background: rgba(16,185,129,0.1); color: #059669; border: 1.5px solid rgba(16,185,129,0.3); }
+            </style>
 
             <div class="d-flex flex-column align-items-center text-center mb-5 position-relative">
                 <div class="mb-3 position-relative profile-avatar-container">
@@ -248,8 +278,8 @@
             </div>
 
 
-            <!-- Plain Text Resources Section -->
-            <div class="mt-2 mb-3">
+            <!-- Plain Text Resources Section (own profile only — this is private activity) -->
+            <div th:if="${isOwnProfile}" class="mt-2 mb-3">
                 <h6 class="fw-bold mb-2 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #94a3b8; font-size: 0.75rem; letter-spacing: 1px;">your activity</h6>
                 
                 
@@ -281,8 +311,8 @@
             </div>
         </div>
 
-        <!-- Edit Mode -->
-        <div th:if="${editMode}" class="px-3 py-4">
+        <!-- Edit Mode (own profile only) -->
+        <div th:if="${editMode and isOwnProfile}" class="px-3 py-4">
             <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
                 <h3 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #0f172a;">Edit Profile</h3>
                 <a href="/profile" class="btn-close" aria-label="Close"></a>
@@ -945,6 +975,50 @@ document.addEventListener('DOMContentLoaded', function() {
             void lightbox.offsetWidth;
             lightbox.style.opacity = '1';
             lightbox.children[0].style.transform = 'scale(1) translateY(0)';
+        }
+
+        async function toggleConnection(btn) {
+            const userId = btn.dataset.userId;
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/connections/' + userId + '/toggle', { method: 'POST', credentials: 'same-origin' });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Could not update connection.'); return; }
+
+                const icon = btn.querySelector('i');
+                const label = btn.querySelector('span');
+                if (data.connected) {
+                    btn.classList.remove('btn-connect');
+                    btn.classList.add('btn-connected');
+                    icon.className = 'bi bi-person-check-fill';
+                    label.textContent = 'Connected';
+                } else {
+                    btn.classList.remove('btn-connected');
+                    btn.classList.add('btn-connect');
+                    icon.className = 'bi bi-person-plus-fill';
+                    label.textContent = 'Connect';
+                }
+                const countEl = document.getElementById('connectionsCountText');
+                if (countEl) countEl.textContent = data.connectionsCount;
+            } catch (e) {
+                alert('Could not update connection. Please try again.');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function messageStudent(btn) {
+            const userId = btn.dataset.userId;
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/peer-chat/start/' + userId, { method: 'POST', credentials: 'same-origin' });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Could not start chat.'); return; }
+                window.location.href = '/messages?openPeerChat=' + data.chatId;
+            } catch (e) {
+                alert('Could not start chat. Please try again.');
+                btn.disabled = false;
+            }
         }
     </script>
 </body>

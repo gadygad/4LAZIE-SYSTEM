@@ -1558,6 +1558,7 @@
             try {
                 const res = await fetch('/api/peer-chat/inbox', { credentials: 'same-origin' });
                 const list = await res.json();
+                window.__peerInbox = list;
                 const container = document.getElementById('peerChatList');
                 const divider = document.getElementById('peerChatDivider');
                 if (!Array.isArray(list) || list.length === 0) {
@@ -1639,8 +1640,17 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadPeerInbox();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadPeerInbox();
+            // Arriving here from a student's profile "Message" button — the
+            // chat already exists (or was just created) server-side, this
+            // just opens it directly instead of leaving the admin land on
+            // the empty-state screen.
+            const openId = new URLSearchParams(window.location.search).get('openPeerChat');
+            if (openId) {
+                const entry = (window.__peerInbox || []).find(c => c.chatId === openId);
+                if (entry) PeerChat.open(entry.chatId, entry.otherUserId, entry.otherUserName, entry.otherUserProfilePicture);
+            }
             const searchInput = document.getElementById('studentPickerSearch');
             if (searchInput) {
                 searchInput.addEventListener('input', () => {
