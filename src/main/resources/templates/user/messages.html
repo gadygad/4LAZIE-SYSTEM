@@ -373,15 +373,25 @@
                     <h4 class="fw-bold m-0" style="font-family: 'Outfit', sans-serif; color: #1e293b;">
                         <i class="bi bi-chat-left-dots-fill me-2" style="color: #10b981;"></i> My Messages
                     </h4>
-                    <form th:action="@{/student/chat/start}" method="post" style="margin:0;">
-                        <button type="submit" class="btn btn-sm shadow-sm" id="newChatBtn"
-                                style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
-                                title="New Chat with Admin"
-                                onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.4)';"
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm shadow-sm" id="newStudentChatBtn"
+                                style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                                title="New Chat with a Student"
+                                onclick="openStudentPicker()"
+                                onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(99,102,241,0.4)';"
                                 onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
-                            <i class="bi bi-pencil-square" style="font-size: 1.1rem;"></i>
+                            <i class="bi bi-people-fill" style="font-size: 1.05rem;"></i>
                         </button>
-                    </form>
+                        <form th:action="@{/student/chat/start}" method="post" style="margin:0;">
+                            <button type="submit" class="btn btn-sm shadow-sm" id="newChatBtn"
+                                    style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                                    title="New Chat with Admin"
+                                    onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.4)';"
+                                    onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                                <i class="bi bi-pencil-square" style="font-size: 1.1rem;"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 
                 <div style="padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); background: rgba(255,255,255,0.6);">
@@ -431,6 +441,12 @@
                             </button>
                         </form>
                     </div>
+
+                    <!-- Peer (student-to-student) conversations — populated via JS since they aren't known at page render time -->
+                    <div id="peerChatDivider" style="padding:8px 18px; display:none;">
+                        <div style="font-size:0.68rem;font-weight:800;letter-spacing:1.2px;color:#94a3b8;text-transform:uppercase;">Students</div>
+                    </div>
+                    <div id="peerChatList"></div>
 
                     <!-- Divider -->
                     <div th:if="${messages != null and !messages.isEmpty()}" style="padding:8px 18px;">
@@ -555,6 +571,51 @@
                                       style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.95rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
                             <button type="button" id="directSendBtn" onclick="sendDirectMessage()"
                                     style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 14px rgba(16,185,129,0.35);"
+                                    onmouseover="this.style.transform='scale(1.12) rotate(8deg)';"
+                                    onmouseout="this.style.transform='none';">
+                                <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>
+                            </button>
+                        </div>
+                        <div style="text-align:center;margin-top:5px;font-size:0.64rem;color:#b0bec5;">
+                            <i class="bi bi-lock-fill me-1"></i>Private · Enter to send · Shift+Enter for new line
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ② PEER CHAT INLINE PANEL (student ↔ student, SSE real-time) -->
+                <div id="chat-view-peer" class="chat-view d-none flex-column h-100" style="overflow:hidden;">
+                    <div class="p-3 px-md-4 border-bottom d-flex align-items-center gap-3"
+                         style="background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);flex-shrink:0;">
+                        <button class="btn btn-light d-md-none me-1 p-0 d-flex align-items-center justify-content-center" onclick="closeChat()" style="border-radius:50%; width:38px; height:38px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); color:#6366f1; transition:all 0.25s;">
+                            <i class="bi bi-arrow-left" style="font-size:1.1rem; stroke-width: 1.5;"></i>
+                        </button>
+                        <div id="peerChatAvatar" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(99,102,241,0.3);flex-shrink:0;color:white;font-weight:900;font-family:'Outfit',sans-serif;"></div>
+                        <div style="display:flex;align-items:center;gap:12px;overflow:hidden;">
+                            <div id="peerChatName" class="fw-bold text-truncate" style="font-family:'Outfit',sans-serif;font-size:1.35rem;color:#1e293b;letter-spacing:-0.2px;"></div>
+                            <div class="header-online-status" style="font-size:0.85rem;color:#94a3b8;font-weight:600;display:flex;align-items:center;gap:4px;transition:all 0.3s ease;">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="peerChatBody" style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:6px;
+                         background:radial-gradient(circle at 8% 15%,rgba(99,102,241,0.04),transparent 35%),radial-gradient(circle at 92% 85%,rgba(16,185,129,0.03),transparent 35%),#f8fafc;">
+                        <div id="peerChatEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8;text-align:center;padding:40px;">
+                            <div style="width:72px;height:72px;border-radius:50%;background:rgba(99,102,241,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+                                <i class="bi bi-chat-dots-fill" style="font-size:1.8rem;color:#6366f1;"></i>
+                            </div>
+                            <div style="font-weight:700;font-size:0.95rem;color:#475569;margin-bottom:5px;">Say hello!</div>
+                            <div style="font-size:0.8rem;max-width:220px;line-height:1.5;">Send a message to start the conversation.</div>
+                        </div>
+                        <div id="peerMsgWrap"></div>
+                    </div>
+
+                    <div style="background:rgba(255,255,255,0.95);border-top:1px solid rgba(99,102,241,0.08);padding:12px 18px calc(14px + env(safe-area-inset-bottom));flex-shrink:0; display:flex; flex-direction:column;">
+                        <div id="peerInputShell" style="display:flex;align-items:flex-end;gap:10px;background:#f8fafc;border:1.5px solid rgba(99,102,241,0.2);border-radius:24px;padding:10px 14px;transition:all 0.3s; position:relative; z-index:2;">
+                            <textarea id="peerMsgInput" rows="1" placeholder="Type a message..."
+                                      style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.95rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
+                            <button type="button" id="peerSendBtn"
+                                    style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 14px rgba(99,102,241,0.35);"
                                     onmouseover="this.style.transform='scale(1.12) rotate(8deg)';"
                                     onmouseout="this.style.transform='none';">
                                 <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>
@@ -1279,6 +1340,317 @@
             connectSSE();
         })();
 
+        // ═══════════════════════════════════════════════════
+        //  PEER CHAT ENGINE (student ↔ student, SSE + typing)
+        // ═══════════════════════════════════════════════════
+        const PeerChat = (() => {
+            let currentChatId = null;
+            let currentOtherId = null;
+            let sseConn = null;
+            let sseActive = false;
+            let pollTimer = null;
+            let isSending = false;
+            let renderedIds = new Set();
+            let otherIsOnline = false;
+            let otherIsTyping = false;
+            let otherTypingTimeout = null;
+            let typingSendTimer = null;
+            let isTypingSent = false;
+
+            const chatBody = document.getElementById('peerChatBody');
+            const msgWrap = document.getElementById('peerMsgWrap');
+            const emptyEl = document.getElementById('peerChatEmpty');
+            const input = document.getElementById('peerMsgInput');
+            const sendBtn = document.getElementById('peerSendBtn');
+
+            const esc = s => String(s || '')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+            function avatarHtml(name, pic) {
+                if (pic) return `<img src="${esc(pic)}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
+                const ini = (name || '?').charAt(0).toUpperCase();
+                return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;">${ini}</div>`;
+            }
+
+            function makeBubble(msg) {
+                const row = document.createElement('div');
+                row.className = 'msg-row' + (msg.isSelf ? ' self' : '');
+                row.id = 'peer-msg-' + msg.id;
+
+                const avW = document.createElement('div');
+                avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
+                row.appendChild(avW.firstElementChild);
+
+                const col = document.createElement('div');
+                col.className = 'msg-col';
+                const label = document.createElement('span');
+                label.className = 'msg-label';
+                label.textContent = msg.isSelf ? 'You' : msg.senderName;
+                col.appendChild(label);
+
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble ' + (msg.isSelf ? 'sent' : 'recv');
+                const textEl = document.createElement('div');
+                textEl.innerHTML = esc(msg.messageText || '');
+                const timeEl = document.createElement('span');
+                timeEl.className = 'b-time';
+                timeEl.textContent = msg.time || '';
+                bubble.appendChild(textEl);
+                bubble.appendChild(timeEl);
+                col.appendChild(bubble);
+                row.appendChild(col);
+                return row;
+            }
+
+            function scrollBottom(smooth) {
+                if (chatBody) chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+            }
+
+            function renderMessages(msgs, isNew) {
+                if (!Array.isArray(msgs) || !msgs.length) return;
+                let added = 0;
+                msgs.forEach(msg => {
+                    const id = msg.id || ('tmp-' + Math.random());
+                    if (renderedIds.has(id)) return;
+                    renderedIds.add(id);
+                    msgWrap.appendChild(makeBubble(msg));
+                    added++;
+                });
+                if (added > 0) {
+                    emptyEl.style.display = 'none';
+                    scrollBottom(isNew);
+                }
+            }
+
+            function renderStatus() {
+                const statusDiv = document.querySelector('#chat-view-peer .header-online-status');
+                if (!statusDiv) return;
+                if (otherIsTyping) {
+                    statusDiv.style.color = '#6366f1';
+                    statusDiv.innerHTML = '<span class="typing-indicator-dots"><span></span><span></span><span></span></span> typing...';
+                } else if (otherIsOnline) {
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> Online';
+                } else {
+                    statusDiv.style.color = '#94a3b8';
+                    statusDiv.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;"></span> Offline';
+                }
+            }
+
+            function connectSSEPeer(chatId) {
+                if (sseConn) { try { sseConn.close(); } catch(e){} }
+                sseActive = false; renderedIds = new Set();
+                otherIsOnline = false; otherIsTyping = false; clearTimeout(otherTypingTimeout);
+                if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+
+                fetch('/api/peer-chat/' + chatId + '/messages', { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => { if (d.success) renderMessages(d.messages, false); })
+                    .catch(() => {});
+
+                const es = new EventSource('/api/peer-chat/' + chatId + '/stream');
+                sseConn = es;
+                es.addEventListener('init', e => { try { renderMessages(JSON.parse(e.data), false); sseActive = true; } catch(err){} });
+                es.addEventListener('message', e => { try { renderMessages(JSON.parse(e.data), true); } catch(err){} });
+                es.addEventListener('presence', e => {
+                    try {
+                        const data = JSON.parse(e.data);
+                        if (data.userId === currentOtherId) { otherIsOnline = !!data.online; renderStatus(); }
+                    } catch(err){}
+                });
+                es.addEventListener('typing', e => {
+                    try {
+                        const data = JSON.parse(e.data);
+                        otherIsTyping = !!data.typing;
+                        renderStatus();
+                        clearTimeout(otherTypingTimeout);
+                        if (otherIsTyping) otherTypingTimeout = setTimeout(() => { otherIsTyping = false; renderStatus(); }, 5000);
+                    } catch(err){}
+                });
+                es.onerror = () => {
+                    es.close(); sseActive = false;
+                    if (!pollTimer) {
+                        pollTimer = setInterval(() => {
+                            if (sseActive || currentChatId !== chatId) { clearInterval(pollTimer); pollTimer = null; return; }
+                            fetch('/api/peer-chat/' + chatId + '/messages', { credentials: 'same-origin' })
+                                .then(r => r.json()).then(d => { if (d.success) renderMessages(d.messages, true); }).catch(() => {});
+                        }, 3000);
+                    }
+                };
+            }
+
+            function notifyTyping(typing) {
+                if (!currentChatId) return;
+                fetch('/api/peer-chat/' + currentChatId + '/typing?typing=' + typing, { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+            }
+
+            function sendMessage() {
+                const text = input.value.trim();
+                if (!text || isSending || !currentChatId) return;
+                isSending = true; sendBtn.disabled = true;
+                input.value = ''; input.style.height = 'auto';
+                clearTimeout(typingSendTimer);
+                if (isTypingSent) { isTypingSent = false; notifyTyping(false); }
+
+                const body = new URLSearchParams({ messageText: text });
+                fetch('/api/peer-chat/' + currentChatId + '/send', {
+                    method: 'POST', credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body.toString()
+                }).catch(() => {}).finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
+            }
+
+            if (input) {
+                input.addEventListener('input', () => {
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+                    if (!isTypingSent) { isTypingSent = true; notifyTyping(true); }
+                    clearTimeout(typingSendTimer);
+                    typingSendTimer = setTimeout(() => { isTypingSent = false; notifyTyping(false); }, 2000);
+                });
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                });
+            }
+            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+
+            function open(chatId, otherId, otherName, otherPic) {
+                currentChatId = chatId;
+                currentOtherId = otherId;
+
+                document.querySelectorAll('.msg-list-item').forEach(el => el.classList.remove('active'));
+                const li = document.getElementById('peer-list-item-' + chatId);
+                if (li) { li.classList.add('active'); li.classList.remove('has-unread'); }
+
+                const chatDefault = document.getElementById('chatDefault');
+                if (chatDefault) { chatDefault.classList.add('d-none'); chatDefault.classList.remove('d-flex'); }
+                document.querySelectorAll('.chat-view').forEach(el => { el.classList.add('d-none'); el.classList.remove('d-flex'); });
+                const view = document.getElementById('chat-view-peer');
+                if (view) { view.classList.remove('d-none'); view.classList.add('d-flex'); }
+
+                document.getElementById('peerChatName').textContent = otherName;
+                document.getElementById('peerChatAvatar').innerHTML = otherPic
+                    ? `<img src="${esc(otherPic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+                    : esc((otherName || '?').charAt(0).toUpperCase());
+
+                if (window.innerWidth <= 768) {
+                    const container = document.getElementById('messagesContainer');
+                    if (container) container.classList.add('chat-active');
+                }
+
+                msgWrap.innerHTML = '';
+                emptyEl.style.display = 'flex';
+                connectSSEPeer(chatId);
+            }
+
+            return { open };
+        })();
+        window.PeerChat = PeerChat;
+
+        // JSON.stringify always double-quotes — embedding that raw inside a
+        // double-quoted HTML attribute (onclick="...") truncates the attribute
+        // at the first embedded quote. Escape them for safe attribute embedding.
+        function attrJson(v) {
+            return JSON.stringify(v).replace(/"/g, '&quot;');
+        }
+
+        async function loadPeerInbox() {
+            try {
+                const res = await fetch('/api/peer-chat/inbox', { credentials: 'same-origin' });
+                const list = await res.json();
+                const container = document.getElementById('peerChatList');
+                const divider = document.getElementById('peerChatDivider');
+                if (!Array.isArray(list) || list.length === 0) {
+                    container.innerHTML = '';
+                    divider.style.display = 'none';
+                    return;
+                }
+                divider.style.display = 'block';
+                container.innerHTML = list.map(c => `
+                    <div class="msg-list-item d-flex align-items-center gap-3${c.hasUnread ? ' has-unread' : ''}" id="peer-list-item-${c.chatId}"
+                         onclick="PeerChat.open('${c.chatId}', '${c.otherUserId}', ${attrJson(c.otherUserName)}, ${c.otherUserProfilePicture ? attrJson(c.otherUserProfilePicture) : 'null'})"
+                         style="border-left: 3px solid rgba(99,102,241,0.4); background: rgba(99,102,241,0.02); cursor:pointer;">
+                        <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-family:'Outfit',sans-serif;overflow:hidden;">
+                            ${c.otherUserProfilePicture ? `<img src="${c.otherUserProfilePicture}" style="width:100%;height:100%;object-fit:cover;">` : (c.otherUserName || '?').charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="inbox-name">${c.otherUserName}</span>
+                                <small class="inbox-time">${c.lastMessageTime || ''}</small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <p class="inbox-msg-preview text-truncate" style="max-width:160px;">${c.lastMessage || 'Tap to start chatting'}</p>
+                                ${c.hasUnread ? '<span class="badge rounded-pill" style="background:#6366f1;font-size:0.65rem;padding:3px 8px;">New</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error('Failed to load peer inbox', e); }
+        }
+
+        function renderStudentPickerList(students) {
+            const listEl = document.getElementById('studentPickerList');
+            if (!students.length) {
+                listEl.innerHTML = '<div class="text-center text-muted py-4">No students found.</div>';
+                return;
+            }
+            listEl.innerHTML = students.map(s => `
+                <div class="d-flex align-items-center gap-3 p-2 rounded-3" style="cursor:pointer;" onclick="startPeerChat('${s.id}', ${attrJson(s.name)}, ${s.profilePicture ? attrJson(s.profilePicture) : 'null'})"
+                     onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='transparent';">
+                    <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-family:'Outfit',sans-serif;overflow:hidden;">
+                        ${s.profilePicture ? `<img src="${s.profilePicture}" style="width:100%;height:100%;object-fit:cover;">` : (s.name || '?').charAt(0).toUpperCase()}
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold text-truncate" style="font-size:0.92rem;">${s.name}</div>
+                        <div class="text-muted small text-truncate">${s.courseProgram || ''}${s.level ? ' · Level ' + s.level : ''}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function openStudentPicker() {
+            const modalEl = document.getElementById('studentPickerModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+            const listEl = document.getElementById('studentPickerList');
+            listEl.innerHTML = '<div class="text-center text-muted py-4">Loading students...</div>';
+            try {
+                const res = await fetch('/api/students/directory', { credentials: 'same-origin' });
+                const students = await res.json();
+                window.__allStudents = students;
+                renderStudentPickerList(students);
+            } catch (e) {
+                listEl.innerHTML = '<div class="text-center text-danger py-4">Failed to load students.</div>';
+            }
+        }
+
+        async function startPeerChat(otherId, otherName, otherPic) {
+            try {
+                const res = await fetch('/api/peer-chat/start/' + otherId, { method: 'POST', credentials: 'same-origin' });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Could not start chat.'); return; }
+                const modalEl = document.getElementById('studentPickerModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+                await loadPeerInbox();
+                PeerChat.open(data.chatId, otherId, otherName, otherPic);
+            } catch (e) {
+                alert('Could not start chat.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPeerInbox();
+            const searchInput = document.getElementById('studentPickerSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    const q = searchInput.value.toLowerCase();
+                    const filtered = (window.__allStudents || []).filter(s => (s.name || '').toLowerCase().includes(q));
+                    renderStudentPickerList(filtered);
+                });
+            }
+        });
+
         // Open direct chat in the right panel
         window.openDirectChat = function() {
             document.querySelectorAll('.msg-list-item').forEach(el => el.classList.remove('active'));
@@ -1427,6 +1799,26 @@
         // Custom dropdown handler removed to allow native Bootstrap 5 initialization.
     </script>
 <script src="/js/bootstrap.bundle.min.js"></script>
+<!-- Student Picker Modal (start a new chat with any registered student) -->
+<div class="modal fade" id="studentPickerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+            <div class="modal-header border-0" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white;">
+                <h5 class="modal-title fw-bold" style="font-family: 'Outfit', sans-serif;"><i class="bi bi-people-fill me-2"></i>Chat with a Student</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="position-relative mb-3">
+                    <i class="bi bi-search position-absolute" style="left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                    <input type="text" id="studentPickerSearch" placeholder="Search students by name..."
+                           style="width: 100%; padding: 10px 14px 10px 42px; border-radius: 50px; border: 1.5px solid rgba(0,0,0,0.08); background: #f8fafc; font-size: 0.9rem; outline: none;">
+                </div>
+                <div id="studentPickerList" style="max-height: 340px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Push Notifications -->
 <script th:src="@{/js/push-subscription.js}"></script>
 <script>
