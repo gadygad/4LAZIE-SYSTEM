@@ -168,13 +168,44 @@
             </div>
 
             <style>
-                .btn-connect { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border: none; }
-                .btn-connect:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.35); }
+                /* Frosted-glass card grouping Connect / Message / Connections
+                   into one cohesive unit instead of three loose buttons. */
+                .profile-action-card {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    align-items: stretch;
+                    gap: 10px;
+                    max-width: 560px;
+                    padding: 12px;
+                    border-radius: 24px;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(248,250,252,0.5));
+                    border: 1px solid rgba(255,255,255,0.7);
+                    box-shadow: 0 10px 30px rgba(15,23,42,0.06), inset 0 1px 1px rgba(255,255,255,0.8);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                }
+                .profile-action-btn {
+                    flex: 1 1 150px;
+                    max-width: 190px;
+                    padding: 10px 18px;
+                    font-size: 0.92rem;
+                    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                .btn-connect { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border: none; box-shadow: 0 4px 14px rgba(99,102,241,0.3); }
+                .btn-connect:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(99,102,241,0.4); }
                 .btn-connected { background: rgba(16,185,129,0.1); color: #059669; border: 1.5px solid rgba(16,185,129,0.3); }
-                .btn-connections-count { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.25); }
-                .btn-connections-count:hover { background: rgba(99,102,241,0.16); transform: translateY(-2px); }
-                .btn-connect-disabled, .btn-message-disabled { background: rgba(148,163,184,0.12) !important; color: #94a3b8 !important; border: 1.5px solid rgba(148,163,184,0.2) !important; cursor: not-allowed !important; opacity: 0.7; }
+                .btn-connected:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(16,185,129,0.2); }
+                .btn-message { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.25); }
+                .btn-message:hover { background: #6366f1; color: #fff; transform: translateY(-3px); box-shadow: 0 10px 24px rgba(99,102,241,0.3); }
+                .btn-connections-count { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.25); cursor: default; }
+                .btn-connections-count:hover { background: rgba(99,102,241,0.16); transform: translateY(-3px); }
+                .btn-connect-disabled, .btn-message-disabled { background: rgba(148,163,184,0.1) !important; color: #94a3b8 !important; border: 1.5px dashed rgba(148,163,184,0.35) !important; cursor: not-allowed !important; box-shadow: none !important; }
                 .btn-connect-disabled:hover, .btn-message-disabled:hover { transform: none !important; box-shadow: none !important; }
+                @media (max-width: 420px) {
+                    .profile-action-card { padding: 10px; gap: 8px; }
+                    .profile-action-btn { flex-basis: 100%; max-width: 100%; }
+                }
             </style>
 
             <div class="d-flex flex-column align-items-center text-center mb-5 position-relative">
@@ -207,9 +238,9 @@
                         <span th:if="${user.role.name() == 'ADMIN' or user.role.name() == 'SUPER_ADMIN'}" style="color: #1e293b !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;">SYSTEM ADMINISTRATOR</span>
                     </div>
 
-                    <!-- Connect / Message / Connections — action row -->
-                    <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
-                        <button type="button" id="connectBtn" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                    <!-- Connect / Message / Connections — grouped in one balanced action card -->
+                    <div class="profile-action-card mx-auto mb-4">
+                        <button type="button" id="connectBtn" class="btn rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2 profile-action-btn"
                                 th:attr="data-user-id=${user.id},data-user-name=${user.name}"
                                 th:classappend="${isOwnProfile} ? 'btn-connect-disabled' : (${isConnected} ? 'btn-connected' : 'btn-connect')"
                                 th:disabled="${isOwnProfile}"
@@ -218,18 +249,15 @@
                             <i class="bi" th:classappend="${isConnected} ? 'bi-person-check-fill' : 'bi-person-plus-fill'"></i>
                             <span th:text="${isOwnProfile} ? 'Connect' : (${isConnected} ? 'Connected' : 'Connect')">Connect</span>
                         </button>
-                        <button type="button" id="messageBtn" class="btn rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2"
+                        <button type="button" id="messageBtn" class="btn rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2 profile-action-btn btn-message"
                                 th:classappend="${isOwnProfile} ? 'btn-message-disabled' : ''"
-                                style="background: rgba(99,102,241,0.1); color: #4f46e5; border: 1.5px solid rgba(99,102,241,0.3);"
                                 th:attr="data-user-id=${user.id},data-user-name=${user.name}"
                                 th:disabled="${isOwnProfile}"
                                 th:title="${isOwnProfile} ? 'You cannot message yourself' : ''"
-                                th:onclick="${isOwnProfile} ? '' : 'messageStudent(this)'"
-                                onmouseover="if(!this.disabled){this.style.background='#6366f1'; this.style.color='#fff';}"
-                                onmouseout="if(!this.disabled){this.style.background='rgba(99,102,241,0.1)'; this.style.color='#4f46e5';}">
+                                th:onclick="${isOwnProfile} ? '' : 'messageStudent(this)'">
                             <i class="bi bi-chat-dots-fill"></i> Message
                         </button>
-                        <button type="button" id="connectionsCountBtn" class="btn btn-connections-count rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2">
+                        <button type="button" id="connectionsCountBtn" class="btn rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2 profile-action-btn btn-connections-count">
                             <i class="bi bi-people-fill"></i>
                             <span>Connections</span>
                             <span id="connectionsCountText" class="badge rounded-pill" style="background: rgba(99,102,241,0.9); color: #fff;" th:text="${connectionsCount}">0</span>
