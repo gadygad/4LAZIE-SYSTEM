@@ -410,6 +410,8 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         const CAT_NUMBER = /*[[${catNumber}]]*/ 1;
+        const EDIT_NOTE_ID = /*[[${editNoteId}]]*/ null;
+        const EDIT_NOTE_DATA_RAW = /*[[${editNoteDataJson}]]*/ null;
         /*]]>*/
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -585,8 +587,24 @@
         window.addEventListener('load', () => {
             document.getElementById('examForm').addEventListener('input', scheduleDraftSave);
             document.getElementById('examForm').addEventListener('change', scheduleDraftSave);
-            checkForDraftOnLoad();
+            if (EDIT_NOTE_ID && EDIT_NOTE_DATA_RAW) {
+                enterEditMode();
+                restoreDraft(JSON.parse(EDIT_NOTE_DATA_RAW));
+            } else {
+                checkForDraftOnLoad();
+            }
         });
+
+        // Switches the page into "editing a saved exam" mode: skips the
+        // normal draft-recovery banner (there's nothing to recover from —
+        // we're loading real saved data) and relabels the Save button so the
+        // admin knows this will update the existing note, not create a new one.
+        function enterEditMode() {
+            const heading = document.querySelector('.exam-generator-card h2');
+            if (heading) heading.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editing Saved CAT ' + CAT_NUMBER + ' Exam';
+            const saveBtn = document.querySelector('button[onclick="saveToDatabase(this)"]');
+            if (saveBtn) saveBtn.innerHTML = '<i class="bi bi-save2-fill me-2"></i> Update Exam';
+        }
 
         function nextStep(step) {
             document.getElementById('step-1').style.display = step === 1 ? 'block' : 'none';
@@ -790,10 +808,15 @@
 
         async function saveToDatabase(btn) {
             if (!validateForm()) return;
-            const targets = collectTargetPrograms();
             const originalBtnHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> ' + (EDIT_NOTE_ID ? 'Updating...' : 'Saving...');
             btn.disabled = true;
+
+            // Editing a saved exam only ever touches that one note — extra
+            // courses/copies are a create-time-only concept.
+            const targets = EDIT_NOTE_ID
+                ? [{ name: document.getElementById('mProgram').value.toUpperCase(), code: currentCourse ? currentCourse.code : '' }]
+                : collectTargetPrograms();
 
             let successCount = 0;
             let lastNoteId = null;
@@ -817,11 +840,14 @@
                             questions: data.questions
                         })
                     };
-                    const response = await fetch('/api/generate-exam/save', {
-                        method: 'POST', credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestData)
-                    });
+                    const response = await fetch(
+                        EDIT_NOTE_ID ? ('/api/generate-exam/update/' + EDIT_NOTE_ID) : '/api/generate-exam/save',
+                        {
+                            method: EDIT_NOTE_ID ? 'PUT' : 'POST', credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestData)
+                        }
+                    );
                     const result = await response.json();
                     if (response.ok && result.success) {
                         successCount++;
@@ -834,6 +860,9 @@
 
                 if (successCount === 0) {
                     alert('Failed to save exams. Please check console for details.');
+                } else if (EDIT_NOTE_ID) {
+                    alert('CAT ' + CAT_NUMBER + ' exam updated successfully!');
+                    window.location.href = '/view-generated-exam/' + lastNoteId;
                 } else if (targets.length > 1) {
                     clearDraft();
                     alert(`Successfully saved ${successCount} of ${targets.length} exams to the database!`);

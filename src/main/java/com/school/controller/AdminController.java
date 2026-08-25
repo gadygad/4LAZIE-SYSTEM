@@ -445,6 +445,7 @@ public class AdminController {
         }
         List<Note> notes = noteRepository.findAll();
         model.addAttribute("notes", notes);
+        model.addAttribute("isSuperAdmin", user.getRole() == Role.SUPER_ADMIN);
         return "admin/admin_notes";
     }
 
@@ -482,6 +483,78 @@ public class AdminController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Note not found.");
         }
+        return "redirect:/admin/notes";
+    }
+
+    /**
+     * Edit entry point for a note — Super Admin only. Generated exams (UE /
+     * CAT 1 / CAT 2, identified by having a contentJson) redirect straight
+     * into their own generator page pre-filled for editing, since that page
+     * already has all the question-builder UI. Plain uploaded notes (just a
+     * file + metadata) get a small standalone metadata-edit form instead,
+     * since there's no "content" to edit beyond that — the file itself lives
+     * in Cloudinary.
+     */
+    @GetMapping("/notes/{id}/edit")
+    public String editNote(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.SUPER_ADMIN) {
+            redirectAttributes.addFlashAttribute("error", "Only Super Admin can edit a note.");
+            return "redirect:/admin/notes";
+        }
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null) {
+            redirectAttributes.addFlashAttribute("error", "Note not found.");
+            return "redirect:/admin/notes";
+        }
+
+        if (note.getContentJson() != null) {
+            String category = note.getCategory() != null ? note.getCategory().trim() : "";
+            if ("CAT 1".equalsIgnoreCase(category)) {
+                return "redirect:/generate-exam/sjuit-diploma-cat1?editId=" + id;
+            } else if ("CAT 2".equalsIgnoreCase(category)) {
+                return "redirect:/generate-exam/sjuit-diploma-cat2?editId=" + id;
+            }
+            return "redirect:/generate-exam/sjuit-diploma-ue?editId=" + id;
+        }
+
+        model.addAttribute("note", note);
+        model.addAttribute("user", user);
+        return "admin/edit_note";
+    }
+
+    @PostMapping("/notes/{id}/edit")
+    public String updateNoteMetadata(@PathVariable String id,
+                                      @RequestParam String title,
+                                      @RequestParam(required = false) String moduleCode,
+                                      @RequestParam(required = false) String moduleName,
+                                      @RequestParam(required = false) String academicYear,
+                                      @RequestParam(required = false) Integer levelNo,
+                                      @RequestParam(required = false) Integer semesterNo,
+                                      @RequestParam(required = false) String category,
+                                      RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null || user.getRole() != Role.SUPER_ADMIN) {
+            redirectAttributes.addFlashAttribute("error", "Only Super Admin can edit a note.");
+            return "redirect:/admin/notes";
+        }
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null) {
+            redirectAttributes.addFlashAttribute("error", "Note not found.");
+            return "redirect:/admin/notes";
+        }
+
+        note.setTitle(title);
+        note.setModuleCode(moduleCode);
+        note.setModuleName(moduleName);
+        note.setAcademicYear(academicYear);
+        note.setLevelNo(levelNo);
+        note.setSemesterNo(semesterNo);
+        if (category != null && !category.isBlank()) {
+            note.setCategory(category);
+        }
+        noteRepository.save(note);
+        redirectAttributes.addFlashAttribute("success", "Note updated successfully.");
         return "redirect:/admin/notes";
     }
 

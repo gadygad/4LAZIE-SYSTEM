@@ -936,6 +936,12 @@
     <!-- Offcanvas Admin Sidebar -->
     <div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='generator')}"></div>
 
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const EDIT_NOTE_ID = /*[[${editNoteId}]]*/ null;
+        const EDIT_NOTE_DATA_RAW = /*[[${editNoteDataJson}]]*/ null;
+        /*]]>*/
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // --- CUSTOM MAGICAL DROPDOWNS ---
@@ -1145,8 +1151,24 @@
             document.getElementById('examForm').addEventListener('input', scheduleDraftSave);
             document.getElementById('examForm').addEventListener('change', scheduleDraftSave);
             document.getElementById('examForm').addEventListener('click', scheduleDraftSave);
-            checkForDraftOnLoad();
+            if (EDIT_NOTE_ID && EDIT_NOTE_DATA_RAW) {
+                enterEditMode();
+                restoreDraft(JSON.parse(EDIT_NOTE_DATA_RAW));
+            } else {
+                checkForDraftOnLoad();
+            }
         });
+
+        // Switches the page into "editing a saved exam" mode: skips the
+        // normal draft-recovery banner (there's nothing to recover from — we're
+        // loading real saved data) and relabels the Save button so the admin
+        // knows this will update the existing note, not create a new one.
+        function enterEditMode() {
+            const heading = document.querySelector('.exam-generator-card .text-center h2');
+            if (heading) heading.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editing Saved UE Exam';
+            const saveBtn = document.querySelector('button[onclick="saveToDatabase(this)"]');
+            if (saveBtn) saveBtn.innerHTML = '<i class="bi bi-save2-fill me-2"></i> Update Exam';
+        }
 
         async function updateProgramList() {
             const level = document.getElementById('mLevel').value;
@@ -1649,12 +1671,16 @@
         async function saveToDatabase(btn) {
             try {
                 let baseProgram = document.getElementById('mProgram').value.toUpperCase();
+                // Editing a saved exam only ever touches that one note — extra
+                // courses/copies are a create-time-only concept.
                 let programs = [baseProgram];
-                document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
-                    if (cb.value !== baseProgram) {
-                        programs.push(cb.value);
-                    }
-                });
+                if (!EDIT_NOTE_ID) {
+                    document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
+                        if (cb.value !== baseProgram) {
+                            programs.push(cb.value);
+                        }
+                    });
+                }
 
                 const blocks = document.querySelectorAll('.question-block');
                 const questionsArray = [];
@@ -1667,7 +1693,7 @@
                 });
 
                 const originalBtnHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
+                btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> ' + (EDIT_NOTE_ID ? 'Updating...' : 'Saving...');
                 btn.disabled = true;
 
                 let successCount = 0;
@@ -1703,12 +1729,15 @@
                         })
                     };
 
-                    const response = await fetch('/api/generate-exam/save', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestData)
-                    });
+                    const response = await fetch(
+                        EDIT_NOTE_ID ? ('/api/generate-exam/update/' + EDIT_NOTE_ID) : '/api/generate-exam/save',
+                        {
+                            method: EDIT_NOTE_ID ? 'PUT' : 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestData)
+                        }
+                    );
 
                     const result = await response.json();
                     if (response.ok || result.success) {
@@ -1721,6 +1750,11 @@
                 btn.disabled = false;
 
                 if (successCount > 0) {
+                    if (EDIT_NOTE_ID) {
+                        alert("Exam updated successfully!");
+                        window.location.href = '/view-generated-exam/' + lastNoteId;
+                        return;
+                    }
                     clearDraft();
                     if (programs.length > 1) {
                         alert(`Successfully saved ${successCount} exams to the database!`);
