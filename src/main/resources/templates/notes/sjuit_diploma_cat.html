@@ -205,7 +205,7 @@
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <label class="form-label">NTA Level</label>
-                                <select id="mNtaLevel" class="form-select form-select-lg">
+                                <select id="mNtaLevel" class="form-select form-select-lg" onchange="updateModuleList()">
                                     <option value="4">NTA Level 4</option>
                                     <option value="5">NTA Level 5</option>
                                     <option value="6">NTA Level 6</option>
@@ -213,7 +213,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Semester</label>
-                                <select id="mSemester" class="form-select form-select-lg">
+                                <select id="mSemester" class="form-select form-select-lg" onchange="updateModuleList()">
                                     <option value="1">Semester I</option>
                                     <option value="2">Semester II</option>
                                 </select>
@@ -222,24 +222,29 @@
                                 <label class="form-label">Academic Year</label>
                                 <input type="number" id="mAcademicYear" class="form-control form-control-lg" value="2026">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Program Name</label>
-                                <input type="text" id="mProgram" class="form-control form-control-lg" placeholder="e.g. Diploma in Computer Science Engineering" required>
+                            <div class="col-md-6">
+                                <label class="form-label">Course</label>
+                                <select id="mProgram" class="form-select form-select-lg" onchange="updateModuleList()">
+                                    <option value="">-- Select NTA Level first --</option>
+                                </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Program Code (short)</label>
-                                <input type="text" id="mProgramCode" class="form-control form-control-lg" placeholder="e.g. DIP_CSE" required>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">Exam Session (Month-Year)</label>
                                 <input type="text" id="mDate" class="form-control form-control-lg" placeholder="e.g. JUNE-2026" required>
                             </div>
-                            <div class="col-12">
+                            <div class="col-md-6">
+                                <label class="form-label">Module</label>
+                                <select id="mModuleSelect" class="form-select form-select-lg" onchange="autoFillModule()">
+                                    <option value="">-- First Select Course &amp; Semester --</option>
+                                </select>
+                                <div class="form-text small" style="color: #334155;"><i class="bi bi-info-circle"></i> Picks the module code &amp; name for you — double-check them below before saving.</div>
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label">Select Extra Courses for PDF Copies (Optional)</label>
                                 <div id="mExtraProgramsContainer" class="border rounded p-2" style="max-height: 140px; overflow-y: auto; background: #f8fafc; border-color: #e2e8f0 !important;">
                                     <div class="text-muted small fst-italic">Loading courses...</div>
                                 </div>
-                                <div class="form-text small" style="color: #334155;"><i class="bi bi-info-circle"></i> Used when this module is shared across multiple courses — a separate PDF/note is generated for each course checked, in addition to the Program Name above.</div>
+                                <div class="form-text small" style="color: #334155;"><i class="bi bi-info-circle"></i> Used when this module is shared across multiple courses — a separate PDF/note is generated for each course checked, in addition to the Course above.</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Module Code</label>
@@ -454,7 +459,7 @@
             return {
                 mNtaLevel: draftFieldValue('mNtaLevel'), mSemester: draftFieldValue('mSemester'),
                 mAcademicYear: draftFieldValue('mAcademicYear'), mProgram: draftFieldValue('mProgram'),
-                mProgramCode: draftFieldValue('mProgramCode'), mDate: draftFieldValue('mDate'),
+                mModuleSelect: draftFieldValue('mModuleSelect'), mDate: draftFieldValue('mDate'),
                 mCode: draftFieldValue('mCode'), mName: draftFieldValue('mName'),
                 extras, questions
             };
@@ -474,12 +479,20 @@
         }
 
         async function restoreDraft(data) {
+            // The Course and Module dropdowns only have options once /api/courses
+            // has loaded, so that has to finish before we can set their values.
+            if (coursesLoadedPromise) { try { await coursesLoadedPromise; } catch (e) {} }
+
             document.getElementById('mNtaLevel').value = data.mNtaLevel || '4';
             document.getElementById('mSemester').value = data.mSemester || '1';
             document.getElementById('mAcademicYear').value = data.mAcademicYear || '2026';
             document.getElementById('mProgram').value = data.mProgram || '';
-            document.getElementById('mProgramCode').value = data.mProgramCode || '';
             document.getElementById('mDate').value = data.mDate || '';
+
+            updateModuleList();
+            document.getElementById('mModuleSelect').value = data.mModuleSelect || '';
+            // updateModuleList() clears these — restore the saved values after,
+            // in case the admin had tweaked them from what the module picked.
             document.getElementById('mCode').value = data.mCode || '';
             document.getElementById('mName').value = data.mName || '';
 
@@ -487,7 +500,6 @@
             // matches the values just restored on the underlying <select>.
             initAllCustomSelects();
 
-            if (coursesLoadedPromise) { try { await coursesLoadedPromise; } catch (e) {} }
             (data.extras || []).forEach(v => {
                 const cb = document.querySelector(`.extra-course-cb[value="${CSS.escape(v)}"]`);
                 if (cb) cb.checked = true;
@@ -567,26 +579,43 @@
         }
         window.addEventListener('DOMContentLoaded', buildQuestionBoxes);
 
-        // --- Extra courses for batch PDF generation (module shared across classes) ---
+        // --- Courses & modules, straight from the database — the admin picks
+        // from real registered courses/subjects instead of typing names/codes
+        // by hand, which is what kept causing typos and mismatched programType
+        // values that broke filtering downstream. ---
         let allCourses = [];
+        let currentCourse = null;
         let coursesLoadedPromise = null;
-        window.addEventListener('DOMContentLoaded', () => { coursesLoadedPromise = loadExtraCourses(); });
-        async function loadExtraCourses() {
-            const container = document.getElementById('mExtraProgramsContainer');
+        window.addEventListener('DOMContentLoaded', () => { coursesLoadedPromise = loadCourses(); });
+
+        async function loadCourses() {
+            const programSelect = document.getElementById('mProgram');
+            const extraContainer = document.getElementById('mExtraProgramsContainer');
             try {
                 const response = await fetch('/api/courses');
                 allCourses = await response.json();
             } catch (e) {
                 console.error('Failed to fetch courses:', e);
-                container.innerHTML = '<div class="text-danger small">Failed to load courses.</div>';
+                programSelect.innerHTML = '<option value="">-- Failed to load courses --</option>';
+                extraContainer.innerHTML = '<div class="text-danger small">Failed to load courses.</div>';
                 return;
             }
             const diplomaCourses = allCourses.filter(c => c.code && c.code.startsWith('DIP_'));
+
+            programSelect.innerHTML = '<option value="">-- Select a course --</option>';
+            diplomaCourses.forEach(course => {
+                const opt = document.createElement('option');
+                opt.value = course.name.toUpperCase();
+                opt.textContent = course.name;
+                programSelect.appendChild(opt);
+            });
+            initCustomSelect(programSelect);
+
             if (diplomaCourses.length === 0) {
-                container.innerHTML = '<div class="text-muted small fst-italic">No courses available.</div>';
+                extraContainer.innerHTML = '<div class="text-muted small fst-italic">No courses available.</div>';
                 return;
             }
-            container.innerHTML = diplomaCourses.map((course, index) => `
+            extraContainer.innerHTML = diplomaCourses.map((course, index) => `
                 <div class="form-check mb-1">
                     <input class="form-check-input extra-course-cb" type="checkbox" value="${course.name.toUpperCase()}" data-code="${course.code}" id="cb_${index}" style="cursor:pointer;">
                     <label class="form-check-label small text-secondary" for="cb_${index}" style="cursor:pointer; user-select:none;">${course.name}</label>
@@ -594,12 +623,51 @@
             `).join('');
         }
 
-        // Base program + any checked extras, each as {name, code}. The base
-        // program's own code comes from the "Program Code (short)" field since
-        // it's typed freely; extras carry the code stored on their checkbox.
+        // Rebuilds the Module dropdown from the selected course's subjects,
+        // filtered to the chosen semester + NTA level, whenever any of those
+        // three change.
+        function updateModuleList() {
+            const programSelect = document.getElementById('mProgram');
+            const moduleSelect = document.getElementById('mModuleSelect');
+            const selectedProgramName = programSelect.value;
+            const semNo = parseInt(document.getElementById('mSemester').value);
+            const ntaLevel = parseInt(document.getElementById('mNtaLevel').value);
+
+            document.getElementById('mCode').value = '';
+            document.getElementById('mName').value = '';
+
+            currentCourse = allCourses.find(c => c.name.toUpperCase() === selectedProgramName) || null;
+            if (!currentCourse || !currentCourse.subjects) {
+                moduleSelect.innerHTML = '<option value="">-- First Select Course &amp; Semester --</option>';
+                initCustomSelect(moduleSelect);
+                return;
+            }
+
+            const filteredSubjects = currentCourse.subjects.filter(s =>
+                s.semesterNo === semNo && (!s.levelNo || s.levelNo === ntaLevel));
+
+            moduleSelect.innerHTML = filteredSubjects.length === 0
+                ? '<option value="">-- No Modules Found --</option>'
+                : filteredSubjects.map(s => `<option value="${s.code}||${s.name}">${s.code} - ${s.name}</option>`).join('');
+            initCustomSelect(moduleSelect);
+        }
+
+        function autoFillModule() {
+            const val = document.getElementById('mModuleSelect').value;
+            if (val && val.includes('||')) {
+                const [code, name] = val.split('||');
+                document.getElementById('mCode').value = code;
+                document.getElementById('mName').value = name;
+            } else {
+                document.getElementById('mCode').value = '';
+                document.getElementById('mName').value = '';
+            }
+        }
+
+        // Base program + any checked extras, each as {name, code}.
         function collectTargetPrograms() {
             const baseName = document.getElementById('mProgram').value.toUpperCase();
-            const baseCode = document.getElementById('mProgramCode').value;
+            const baseCode = currentCourse ? currentCourse.code : '';
             const targets = [{ name: baseName, code: baseCode }];
             document.querySelectorAll('.extra-course-cb:checked').forEach(cb => {
                 if (cb.value !== baseName) {
@@ -680,7 +748,7 @@
         }
 
         function validateForm() {
-            if (!document.getElementById('mProgram').value || !document.getElementById('mProgramCode').value ||
+            if (!document.getElementById('mProgram').value ||
                 !document.getElementById('mDate').value || !document.getElementById('mCode').value || !document.getElementById('mName').value) {
                 alert('Please fill in all the module/session details in Step 1 before continuing.');
                 return false;
