@@ -10,7 +10,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collections;
 
-// @Service (Disabled in favor of CustomAuthenticationProvider)
+/**
+ * Not used for the interactive login flow itself — CustomAuthenticationProvider
+ * handles that directly against MongoDB. This bean exists purely so Spring
+ * Security's remember-me filter can reload a user from just their email
+ * (stored in the remember-me cookie) on a brand-new session, without the
+ * user having to submit the login form again.
+ */
+@org.springframework.stereotype.Service
 public class CustomUserDetailsService implements UserDetailsService {
 
         private UserRepository userRepository;

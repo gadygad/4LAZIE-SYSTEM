@@ -30,10 +30,13 @@ public class SecurityConfig {
 
         private CustomAuthenticationSuccessHandler successHandler;
         private LoginRateLimitFilter loginRateLimitFilter;
+        private com.school.service.impl.CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, LoginRateLimitFilter loginRateLimitFilter) {
+    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, LoginRateLimitFilter loginRateLimitFilter,
+                           com.school.service.impl.CustomUserDetailsService customUserDetailsService) {
         this.successHandler = successHandler;
         this.loginRateLimitFilter = loginRateLimitFilter;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
 
@@ -65,6 +68,19 @@ public class SecurityConfig {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/")
                 .permitAll()
+            )
+            // The login page's "Keep me signed in" checkbox (name="remember")
+            // was previously wired to nothing — checking it did nothing, and
+            // everyone got logged out after the plain 30-minute default
+            // session timeout regardless. Checking it now keeps the user
+            // signed in for 30 days via a signed cookie; the session-timeout
+            // bump below (application.properties) covers everyone who leaves
+            // it unchecked.
+            .rememberMe(remember -> remember
+                .key("4lazie-remember-me-9f3c7a1e")
+                .rememberMeParameter("remember")
+                .tokenValiditySeconds(60 * 60 * 24 * 30)
+                .userDetailsService(customUserDetailsService)
             )
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/api/**", "/admin/assignments/reply/**", "/admin/assignments/chat/**",
