@@ -1280,9 +1280,10 @@
             function renderMessages(msgs, isNew) {
                 if (!Array.isArray(msgs) || msgs.length === 0) return;
                 if (emptyEl) emptyEl.style.display = 'none';
+                let newlyAdded = false;
                 for (let i = 0; i < msgs.length; i++) {
                     const msg = msgs[i];
-                    
+
                     const existingEl = document.getElementById('msg-' + msg.id);
                     if (existingEl) {
                         if (msg.isSelf) {
@@ -1313,6 +1314,7 @@
                             }
                         }
                         msgWrap.appendChild(makeBubble(msg, isNew));
+                        newlyAdded = true;
                     }
                 }
                 if (chatBody) {
@@ -1320,6 +1322,19 @@
                         chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
                     } else {
                         chatBody.scrollTop = chatBody.scrollHeight;
+                    }
+                }
+                // The admin/direct chat's sidebar row is server-rendered
+                // (not part of loadPeerInbox's fetched list), so update its
+                // preview text and time directly instead of a full refetch.
+                if (newlyAdded) {
+                    const last = msgs[msgs.length - 1];
+                    const row = document.getElementById('list-item-direct');
+                    if (row && last) {
+                        const previewEl = row.querySelector('.inbox-msg-preview');
+                        const timeEl = row.querySelector('.inbox-time');
+                        if (previewEl) previewEl.textContent = last.messageText || '';
+                        if (timeEl) timeEl.textContent = last.time || last.date || timeEl.textContent;
                     }
                 }
             }
@@ -1415,6 +1430,18 @@
                 bubble.classList.add('temp-msg');
                 msgWrap.appendChild(bubble);
                 if (chatBody) chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+
+                // The real confirmation later only swaps this temp bubble in
+                // place (renderMessages' newlyAdded flag never fires for your
+                // own sends), so update the sidebar preview/time here instead
+                // of leaving it stale until the next receive or page reload.
+                const directRow = document.getElementById('list-item-direct');
+                if (directRow) {
+                    const previewEl = directRow.querySelector('.inbox-msg-preview');
+                    const timeEl = directRow.querySelector('.inbox-time');
+                    if (previewEl) previewEl.textContent = text;
+                    if (timeEl) timeEl.textContent = bubbleParams.time;
+                }
 
                 // Clear input immediately for responsiveness
                 if (input) { input.value = ''; input.style.height = 'auto'; }
@@ -1720,6 +1747,7 @@
                 if (added > 0) {
                     emptyEl.style.display = 'none';
                     scrollBottom(isNew);
+                    scheduleInboxRefresh();
                 }
             }
 
@@ -1824,6 +1852,12 @@
                 emptyEl.style.display = 'none';
                 msgWrap.appendChild(bubble);
                 scrollBottom(true);
+                // The real confirmation later just swaps this temp bubble in
+                // place (doesn't count as "added" in renderMessages), so the
+                // inbox-refresh trigger there never fires for your own sends
+                // — trigger it here instead, right when the optimistic bubble
+                // appears, so the sidebar preview/order updates immediately.
+                scheduleInboxRefresh();
 
                 cancelReply();
 
@@ -1832,7 +1866,10 @@
                     method: 'POST', credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: body.toString()
-                }).catch(() => {}).finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
+                }).catch(() => {}).finally(() => {
+                    isSending = false; sendBtn.disabled = false; input.focus();
+                    scheduleInboxRefresh(); // re-fire once the send is actually persisted, in case the optimistic one above raced ahead of it
+                });
             }
 
             if (input) {
@@ -1907,6 +1944,20 @@
         // at the first embedded quote. Escape them for safe attribute embedding.
         function attrJson(v) {
             return JSON.stringify(v).replace(/"/g, '&quot;');
+        }
+
+        // The sidebar list (name/last-message/time, and its ordering) was a
+        // one-time snapshot taken at page load — sending or receiving a
+        // message updated the open chat live via SSE, but the list row for
+        // that chat just sat there stale until a full page reload. Debounced
+        // so a burst of messages doesn't refetch the list on every single one.
+        let inboxRefreshTimer = null;
+        function scheduleInboxRefresh() {
+            clearTimeout(inboxRefreshTimer);
+            inboxRefreshTimer = setTimeout(() => {
+                loadPeerInbox();
+                if (typeof loadGroupInbox === 'function') loadGroupInbox();
+            }, 300);
         }
 
         // Escapes text rendered directly into innerHTML (group/chat names,
@@ -2276,6 +2327,7 @@
                 if (added > 0) {
                     emptyEl.style.display = 'none';
                     scrollBottom(isNew);
+                    scheduleInboxRefresh();
                 }
             }
 
@@ -2338,13 +2390,17 @@
                 emptyEl.style.display = 'none';
                 msgWrap.appendChild(bubble);
                 scrollBottom(true);
+                scheduleInboxRefresh();
 
                 const body = new URLSearchParams({ messageText: text });
                 fetch('/api/groups/' + currentGroupId + '/send', {
                     method: 'POST', credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: body.toString()
-                }).catch(() => {}).finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
+                }).catch(() => {}).finally(() => {
+                    isSending = false; sendBtn.disabled = false; input.focus();
+                    scheduleInboxRefresh();
+                });
             }
 
             if (input) {
