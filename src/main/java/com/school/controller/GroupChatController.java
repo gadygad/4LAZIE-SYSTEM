@@ -94,6 +94,33 @@ public class GroupChatController {
         return group != null && group.getMemberIds().contains(userId);
     }
 
+    @GetMapping("/api/groups/{groupId}/members")
+    @ResponseBody
+    public ResponseEntity<?> members(@PathVariable String groupId, HttpSession session) {
+        User me = currentUser(session);
+        if (me == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        GroupChat group = groupChatService.getGroupById(groupId);
+        if (!isMember(group, me.getId())) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (User u : userRepository.findAllById(group.getMemberIds())) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("id", u.getId());
+            m.put("name", u.getName());
+            m.put("profilePicture", u.getProfilePicture());
+            m.put("role", u.getId().equals(group.getCreatedBy()) ? "Leader" : "Member");
+            result.add(m);
+        }
+        // Leader first, then alphabetical.
+        result.sort((a, b) -> {
+            boolean aLeader = "Leader".equals(a.get("role"));
+            boolean bLeader = "Leader".equals(b.get("role"));
+            if (aLeader != bLeader) return aLeader ? -1 : 1;
+            return String.valueOf(a.get("name")).compareToIgnoreCase(String.valueOf(b.get("name")));
+        });
+        return ResponseEntity.ok(Map.of("success", true, "members", result));
+    }
+
     @GetMapping("/api/groups/{groupId}/messages")
     @ResponseBody
     public ResponseEntity<?> messages(@PathVariable String groupId, HttpSession session) {
