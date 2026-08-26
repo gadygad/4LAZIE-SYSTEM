@@ -1755,7 +1755,7 @@
             listEl.innerHTML = students.map(s => `
                 <div class="d-flex align-items-center gap-3 p-2 rounded-3"
                      onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='transparent';">
-                    <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-family:'Outfit',sans-serif;overflow:hidden;cursor:pointer;" onclick="window.location.href='/students/${s.id}/profile'" title="View profile">
+                    <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-family:'Outfit',sans-serif;overflow:hidden;cursor:pointer;" onclick="window.location.href='/students/${s.id}/profile'" title="View profile">
                         ${s.profilePicture ? `<img src="${s.profilePicture}" style="width:100%;height:100%;object-fit:cover;">` : (s.name || '?').charAt(0).toUpperCase()}
                     </div>
                     <div class="overflow-hidden flex-grow-1" style="cursor:pointer;" onclick="window.location.href='/students/${s.id}/profile'" title="View profile">
@@ -1763,7 +1763,7 @@
                         <div class="text-muted small text-truncate">${s.courseProgram || ''}${s.level ? ' · Level ' + s.level : ''}</div>
                     </div>
                     <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width:36px;height:36px;background:rgba(99,102,241,0.1);color:#6366f1;border:none;"
+                            style="width:36px;height:36px;background:#059669;color:#fff;border:none;"
                             title="Message" onclick="startPeerChat('${s.id}', ${attrJson(s.name)}, ${s.profilePicture ? attrJson(s.profilePicture) : 'null'})">
                         <i class="bi bi-chat-dots-fill"></i>
                     </button>
@@ -2046,7 +2046,7 @@
 <div class="modal fade" id="studentPickerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
-            <div class="modal-header border-0" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white;">
+            <div class="modal-header border-0" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
                 <h5 class="modal-title fw-bold" style="font-family: 'Outfit', sans-serif;"><i class="bi bi-people-fill me-2"></i>Chat with a Student</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
