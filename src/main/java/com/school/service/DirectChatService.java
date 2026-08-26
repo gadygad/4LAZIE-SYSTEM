@@ -88,7 +88,7 @@ public class DirectChatService {
         if (senderIsAdmin) {
             chat.setHasUnreadForStudent(true);
             // Push Notification to Student
-            pushNotificationService.sendToUser(chat.getStudentId(), "New Message from Admin", senderName + ": " + messageText, "/messages");
+            pushNotificationService.sendToUser(chat.getStudentId(), "New Message from Admin", senderName + ": " + messageText, "/messages?openDirect=1");
         } else {
             chat.setHasUnreadForAdmin(true);
             // Push Notification to all Admins

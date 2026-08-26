@@ -73,7 +73,11 @@ public class PeerChatService {
             chat.setHasUnreadForUser2(true);
         }
 
-        pushNotificationService.sendToUser(recipientId, "New Message from " + senderName, messageText, "/messages");
+        // Deep-link straight into this conversation instead of the bare
+        // inbox — tapping the notification should land the recipient with
+        // the reply box already in view, not make them hunt for the chat.
+        pushNotificationService.sendToUser(recipientId, "New Message from " + senderName, messageText,
+                "/messages?openPeerChat=" + chatId);
 
         return peerChatRepository.save(chat);
     }

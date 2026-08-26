@@ -2352,7 +2352,17 @@
             const openId = new URLSearchParams(window.location.search).get('openPeerChat');
             if (openId) {
                 const entry = (window.__peerInbox || []).find(c => c.chatId === openId);
-                if (entry) PeerChat.open(entry.chatId, entry.otherUserId, entry.otherUserName, entry.otherUserProfilePicture);
+                if (entry) {
+                    PeerChat.open(entry.chatId, entry.otherUserId, entry.otherUserName, entry.otherUserProfilePicture);
+                    setTimeout(() => document.getElementById('peerMsgInput')?.focus(), 300);
+                }
+            }
+            // Arriving here from a "New Message from Admin" push notification —
+            // land straight in the conversation with the reply box focused
+            // instead of the bare inbox.
+            if (new URLSearchParams(window.location.search).get('openDirect')) {
+                openDirectChat();
+                setTimeout(() => document.getElementById('directMsgInput')?.focus(), 300);
             }
             const searchInput = document.getElementById('studentPickerSearch');
             if (searchInput) {
