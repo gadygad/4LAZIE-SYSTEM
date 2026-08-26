@@ -4,6 +4,7 @@ import com.school.model.ChatMessage;
 import com.school.model.GroupChat;
 import com.school.model.User;
 import com.school.repository.UserRepository;
+import com.school.service.FileStorageService;
 import com.school.service.GroupChatService;
 import com.school.util.AuthUtil;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -33,11 +35,13 @@ public class GroupChatController {
     private final GroupChatService groupChatService;
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
+    private final FileStorageService fileStorageService;
 
-    public GroupChatController(GroupChatService groupChatService, UserRepository userRepository, AuthUtil authUtil) {
+    public GroupChatController(GroupChatService groupChatService, UserRepository userRepository, AuthUtil authUtil, FileStorageService fileStorageService) {
         this.groupChatService = groupChatService;
         this.userRepository = userRepository;
         this.authUtil = authUtil;
+        this.fileStorageService = fileStorageService;
     }
 
     private static final Map<String, List<SseEmitter>> groupEmitters = new ConcurrentHashMap<>();
@@ -82,6 +86,7 @@ public class GroupChatController {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("groupId", group.getId());
             m.put("name", group.getName());
+            m.put("picture", group.getGroupPicture());
             m.put("memberCount", group.getMemberIds().size());
             m.put("lastMessage", last != null ? last.getMessageText() : "");
             m.put("lastMessageTime", last != null && last.getTimestamp() != null ? fmt.format(last.getTimestamp()) : "");
@@ -92,6 +97,28 @@ public class GroupChatController {
 
     private boolean isMember(GroupChat group, String userId) {
         return group != null && group.getMemberIds().contains(userId);
+    }
+
+    @PostMapping("/api/groups/{groupId}/picture")
+    @ResponseBody
+    public ResponseEntity<?> updatePicture(@PathVariable String groupId,
+                                            @RequestParam("file") MultipartFile file,
+                                            HttpSession session) {
+        User me = currentUser(session);
+        if (me == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        GroupChat group = groupChatService.getGroupById(groupId);
+        if (!isMember(group, me.getId())) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Pick an image."));
+        }
+        try {
+            String url = fileStorageService.uploadFile(file);
+            GroupChat updated = groupChatService.updateGroupPicture(groupId, url, me.getName());
+            notifyGroup(groupId, updated);
+            return ResponseEntity.ok(Map.of("success", true, "url", url));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "Upload failed."));
+        }
     }
 
     @GetMapping("/api/groups/{groupId}/members")
@@ -129,11 +156,13 @@ public class GroupChatController {
         GroupChat group = groupChatService.getGroupById(groupId);
         if (!isMember(group, me.getId())) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "messages", buildMessageListStatic(group, me.getId()),
-                "name", group.getName(),
-                "memberCount", group.getMemberIds().size()));
+        Map<String, Object> resp = new LinkedHashMap<>();
+        resp.put("success", true);
+        resp.put("messages", buildMessageListStatic(group, me.getId()));
+        resp.put("name", group.getName());
+        resp.put("picture", group.getGroupPicture());
+        resp.put("memberCount", group.getMemberIds().size());
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping(value = "/api/groups/{groupId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

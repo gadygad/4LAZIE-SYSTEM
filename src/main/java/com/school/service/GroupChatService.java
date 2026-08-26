@@ -55,6 +55,19 @@ public class GroupChatService {
         return groupChatRepository.save(group);
     }
 
+    /** Any member can set the group photo — no "leader only" restriction, per product decision. */
+    public GroupChat updateGroupPicture(String groupId, String pictureUrl, String updaterName) {
+        GroupChat group = groupChatRepository.findById(groupId).orElse(null);
+        if (group == null) return null;
+
+        group.setGroupPicture(pictureUrl);
+        ChatMessage notice = new ChatMessage(SYSTEM_SENDER_ID, "System", null, updaterName + " changed the group photo", null);
+        group.getMessages().add(notice);
+        group.setLastMessageAt(LocalDateTime.now());
+
+        return groupChatRepository.save(group);
+    }
+
     public GroupChat getGroupById(String groupId) {
         return groupChatRepository.findById(groupId).orElse(null);
     }

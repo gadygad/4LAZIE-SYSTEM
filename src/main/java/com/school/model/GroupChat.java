@@ -16,6 +16,7 @@ public class GroupChat {
     @Id
     private String id;
     private String name;
+    private String groupPicture;
     private String createdBy;
     private Set<String> memberIds = new LinkedHashSet<>();
     private List<ChatMessage> messages = new ArrayList<>();
@@ -27,6 +28,9 @@ public class GroupChat {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getGroupPicture() { return groupPicture; }
+    public void setGroupPicture(String groupPicture) { this.groupPicture = groupPicture; }
 
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
