@@ -1109,10 +1109,10 @@
                 
                 const replyBtn = document.createElement('span');
                 replyBtn.className = 'reply-link-btn';
-                replyBtn.style.cssText = 'color:#10b981;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;';
+                replyBtn.style.cssText = 'color:#10b981;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;flex-shrink:0;';
                 replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
                 replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText); };
-                
+
                 if (msg.isSelf) { // Sender (Right)
                     headerRow.appendChild(timeEl);
                     headerRow.appendChild(nameEl);
@@ -1153,14 +1153,14 @@
                 msgSpan.innerHTML = esc(msg.messageText || '');
                 textEl.appendChild(msgSpan);
 
+                const bubbleRow = document.createElement('div');
+                bubbleRow.style.cssText = 'display:flex;align-items:flex-end;gap:8px;max-width:100%;';
+                bubbleRow.appendChild(textEl);
+                bubbleRow.appendChild(replyBtn);
+
                 contentCol.appendChild(headerRow);
-                contentCol.appendChild(textEl);
-                
-                const replyWrapper = document.createElement('div');
-                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;' + (msg.isSelf ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
-                replyWrapper.appendChild(replyBtn);
-                contentCol.appendChild(replyWrapper);
-                
+                contentCol.appendChild(bubbleRow);
+
                 // Double Click to Reply
                 textEl.ondblclick = () => initReply(msg.id, msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN', msg.messageText);
 
