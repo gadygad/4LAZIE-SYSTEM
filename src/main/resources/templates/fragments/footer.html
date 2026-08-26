@@ -5,48 +5,27 @@
     <!-- INTERNATIONAL PREMIUM MINIMALIST FOOTER -->
     <footer th:fragment="footer" style="width: 100%; border-top: 1px solid rgba(16, 185, 129, 0.15); background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10; margin-top: auto;">
         <style>
-            /* Premium Footer Links (Pill Shaped with Left-to-Right Slide) */
+            /* Plain-text footer links (legal/nav) — subtle gray, green on
+               hover, no pill/button styling so they read as ordinary footer
+               links rather than call-to-action buttons. */
             .footer-premium-link {
-                color: #ffffff !important;
-                background: #0f172a; /* Solid dark navy/black */
-                border-radius: 50px; /* Pill shape */
-                padding: 6px 18px !important; /* Snug padding */
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-                transition: transform 0.3s ease;
-                position: relative;
-                overflow: hidden;
+                color: #64748b !important;
+                background: none;
+                padding: 4px 6px !important;
+                transition: color 0.25s ease;
                 font-weight: 600;
                 font-size: 13px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 letter-spacing: 0.3px;
-                border: none;
-                z-index: 1; /* Keep text above the sliding background */
-                white-space: nowrap; 
-                flex-shrink: 0; 
+                white-space: nowrap;
+                flex-shrink: 0;
                 text-decoration: none;
             }
-            .footer-premium-link::before {
-                content: '';
-                position: absolute;
-                top: 0; 
-                left: 0; 
-                width: 0%; /* Start with 0 width */
-                height: 100%;
-                background: linear-gradient(135deg, #10b981, #059669); /* Premium Green */
-                transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth slide */
-                z-index: -1; /* Keep it behind the text */
-                border-radius: 50px; 
-            }
+            .footer-premium-link:hover,
             .footer-premium-link.active {
-                background: linear-gradient(135deg, #10b981, #059669) !important;
-            }
-            .footer-premium-link:hover {
-                transform: translateY(-2px);
-            }
-            .footer-premium-link:hover::before {
-                width: 100%; /* Slide in fully to the right */
+                color: #10b981 !important;
             }
         </style>
         <style>
@@ -86,49 +65,10 @@
                 }
             }
             
-            /* Premium Footer Links (Pill Shaped with Left-to-Right Slide) */
-            .footer-premium-link {
-                color: #ffffff !important;
-                background: #0f172a; /* Solid dark navy/black from screenshot */
-                border-radius: 50px; /* Pill shape */
-                padding: 8px 18px !important; /* Snug padding to match text size */
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Soft drop shadow */
-                transition: color 0.4s ease; /* Only text color needs to transition here */
-                position: relative;
-                overflow: hidden;
-                font-weight: 600;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                letter-spacing: 0.3px;
-                border: none;
-                z-index: 1; /* Keep text above the sliding background */
-                white-space: nowrap; /* Prevent words from stacking */
-                flex-shrink: 0; /* Prevent the button from getting squished */
-            }
-            .footer-premium-link::before {
-                content: '';
-                position: absolute;
-                top: 0; 
-                left: 0; 
-                width: 0%; /* Start with 0 width */
-                height: 100%;
-                background: linear-gradient(135deg, #10b981, #059669); /* Premium Green */
-                transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth slide */
-                z-index: -1; /* Keep it behind the text */
-                border-radius: 50px; /* Keep the pill shape intact during slide */
-            }
-            .footer-premium-link.active {
-                background: linear-gradient(135deg, #10b981, #059669) !important;
-            }
-            .footer-premium-link:hover::before {
-                width: 100%; /* Slide in fully to the right */
-            }
-            
             @media (max-width: 576px) {
                 .footer-premium-link {
-                    font-size: 10px !important;
-                    padding: 6px 8px !important;
+                    font-size: 11px !important;
+                    padding: 4px 5px !important;
                     letter-spacing: 0px;
                 }
             }
