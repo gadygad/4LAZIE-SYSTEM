@@ -130,14 +130,37 @@ self.addEventListener('push', event => {
     body: data.body || 'You have new content to check out.',
     icon: '/images/logo.png',
     badge: '/images/logo.png',
-    data: { url: data.url || '/' }
+    data: { url: data.url || '/', connectUserId: data.connectUserId || null }
   };
+  // "New Connection" pushes carry a connectUserId — offer a one-tap
+  // "Connect Back" action so the recipient doesn't have to open the app
+  // and find the person's profile just to follow back.
+  if (data.connectUserId) {
+    options.actions = [{ action: 'connect_back', title: 'Connect Back' }];
+  }
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   const urlToOpen = event.notification.data.url || '/';
+
+  if (event.action === 'connect_back' && event.notification.data.connectUserId) {
+    event.waitUntil(
+      fetch('/api/connections/' + event.notification.data.connectUserId + '/toggle', {
+        method: 'POST', credentials: 'include'
+      }).then(() => {
+        return self.registration.showNotification('Connected!', {
+          body: 'You are now connected.',
+          icon: '/images/logo.png',
+          badge: '/images/logo.png',
+          data: { url: urlToOpen }
+        });
+      }).catch(() => {})
+    );
+    return;
+  }
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
       for (let i = 0; i < windowClients.length; i++) {

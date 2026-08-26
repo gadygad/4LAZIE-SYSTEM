@@ -193,7 +193,7 @@ public class UserController {
             target.getFollowers().add(me.getId());
             nowConnected = true;
             pushNotificationService.sendToUser(target.getId(), "New Connection",
-                    me.getName() + " connected with you.", "/students/" + me.getId() + "/profile");
+                    me.getName() + " connected with you.", "/students/" + me.getId() + "/profile", me.getId());
         }
         userRepository.save(me);
         userRepository.save(target);

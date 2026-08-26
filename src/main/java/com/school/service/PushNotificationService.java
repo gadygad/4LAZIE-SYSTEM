@@ -72,10 +72,21 @@ public class PushNotificationService {
 
     @Async
     public void sendToUser(String userId, String title, String body, String url) {
+        sendToUser(userId, title, body, url, null);
+    }
+
+    /**
+     * Same as sendToUser(), but with a "connectUserId" data field the
+     * service worker can act on directly — e.g. a "Connect Back" action
+     * button on a new-connection notification that fires the connect API
+     * without the user having to open the app first.
+     */
+    @Async
+    public void sendToUser(String userId, String title, String body, String url, String connectUserId) {
         if (pushService == null) return;
         List<PushSubscription> subs = subscriptionRepository.findByUserId(userId);
         if (subs == null || subs.isEmpty()) return;
-        String payload = buildPayload(title, body, url);
+        String payload = buildPayload(title, body, url, connectUserId);
         for (PushSubscription sub : subs) {
             sendToSubscription(sub, payload);
         }
@@ -128,8 +139,16 @@ public class PushNotificationService {
     }
 
     private String buildPayload(String title, String body, String url) {
-        return String.format("{\"title\": \"%s\", \"body\": \"%s\", \"url\": \"%s\"}",
+        return buildPayload(title, body, url, null);
+    }
+
+    private String buildPayload(String title, String body, String url, String connectUserId) {
+        String base = String.format("{\"title\": \"%s\", \"body\": \"%s\", \"url\": \"%s\"",
                 escapeJson(title), escapeJson(body), escapeJson(url));
+        if (connectUserId != null && !connectUserId.isBlank()) {
+            base += String.format(", \"connectUserId\": \"%s\"", escapeJson(connectUserId));
+        }
+        return base + "}";
     }
 
     private String escapeJson(String input) {
