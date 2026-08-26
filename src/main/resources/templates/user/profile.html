@@ -197,18 +197,6 @@
                     height: auto !important;
                     transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
-                /* Diagonal shine sweep on hover for enabled buttons. */
-                .profile-action-btn:not(:disabled)::after {
-                    content: '';
-                    position: absolute;
-                    top: 0; left: -60%;
-                    width: 40%; height: 100%;
-                    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
-                    transform: skewX(-20deg);
-                    transition: left 0.6s ease;
-                    pointer-events: none;
-                }
-                .profile-action-btn:not(:disabled):hover::after { left: 130%; }
                 .btn-connect { background: rgba(100,116,139,0.1); color: #475569; border: 1.5px solid rgba(100,116,139,0.22); }
                 .btn-connect:hover { background: rgba(100,116,139,0.18); transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 22px rgba(100,116,139,0.2); }
                 .btn-connected { background: rgba(100,116,139,0.16); color: #334155; border: 1.5px solid rgba(100,116,139,0.3); }
