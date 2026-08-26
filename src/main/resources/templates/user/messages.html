@@ -380,13 +380,21 @@
                         <i class="bi bi-chat-left-dots-fill me-2" style="color: #10b981;"></i> My Messages
                     </h4>
                     <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm shadow-sm" id="newGroupChatBtn"
+                                style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                                title="New Group"
+                                onclick="openGroupCreateModal()"
+                                onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.4)';"
+                                onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                            <i class="bi bi-people-fill" style="font-size: 1.05rem;"></i>
+                        </button>
                         <button type="button" class="btn btn-sm shadow-sm" id="newStudentChatBtn"
                                 style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
                                 title="New Chat with a Student"
                                 onclick="openStudentPicker()"
                                 onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(16,185,129,0.4)';"
                                 onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
-                            <i class="bi bi-people-fill" style="font-size: 1.05rem;"></i>
+                            <i class="bi bi-person-plus-fill" style="font-size: 1.05rem;"></i>
                         </button>
                         <form th:action="@{/student/chat/start}" method="post" style="margin:0;">
                             <button type="submit" class="btn btn-sm shadow-sm" id="newChatBtn"
@@ -407,7 +415,23 @@
                     </div>
                 </div>
 
+                <!-- Chats / Assignments / Groups tab switcher -->
+                <div class="d-flex" id="msgTabBar" style="padding: 10px 20px 0; gap: 6px; border-bottom: 1px solid rgba(0,0,0,0.03); background: rgba(255,255,255,0.6);">
+                    <button type="button" class="msg-tab-btn active" data-tab="chats" onclick="switchMsgTab('chats')">Chats</button>
+                    <button type="button" class="msg-tab-btn" data-tab="assignments" onclick="switchMsgTab('assignments')">Assignments</button>
+                    <button type="button" class="msg-tab-btn" data-tab="groups" onclick="switchMsgTab('groups')">Groups</button>
+                </div>
+                <style>
+                    .msg-tab-btn {
+                        border: none; background: transparent; color: #94a3b8; font-weight: 700; font-size: 0.8rem;
+                        padding: 8px 4px 10px; border-bottom: 2.5px solid transparent; transition: all 0.25s; flex: 1;
+                    }
+                    .msg-tab-btn.active { color: #10b981; border-bottom-color: #10b981; }
+                </style>
+
                 <div class="overflow-auto flex-grow-1" style="scrollbar-width: thin;">
+
+                    <div id="chatsTabPanel">
 
                     <!-- ① DIRECT CHAT pinned at top -->
                     <div th:if="${directChat != null}"
@@ -454,10 +478,13 @@
                     </div>
                     <div id="peerChatList"></div>
 
-                    <!-- Divider -->
-                    <div th:if="${messages != null and !messages.isEmpty()}" style="padding:8px 18px;">
-                        <div style="font-size:0.68rem;font-weight:800;letter-spacing:1.2px;color:#94a3b8;text-transform:uppercase;">Assignment Messages</div>
-                    </div>
+                    <!-- Students found by name search who aren't already an
+                         existing chat thread — lets you start a brand new
+                         conversation straight from the search bar. -->
+                    <div id="directorySearchResults" style="display:none;"></div>
+                    </div><!-- /chatsTabPanel -->
+
+                    <div id="assignmentsTabPanel" style="display:none;">
 
                     <!-- Empty State for assignment messages only -->
                     <div th:if="${messages == null or #lists.isEmpty(messages)}" class="text-center p-5">
@@ -495,10 +522,19 @@
                         </div>
                     </div>
 
-                    <!-- Students found by name search who aren't already an
-                         existing chat thread — lets you start a brand new
-                         conversation straight from the search bar. -->
-                    <div id="directorySearchResults" style="display:none;"></div>
+                    </div><!-- /assignmentsTabPanel -->
+
+                    <div id="groupsTabPanel" style="display:none;">
+                        <div id="groupChatEmptyState" class="text-center p-5">
+                            <div class="mb-3" style="width: 80px; height: 80px; background: rgba(16,185,129,0.1); border-radius: 50%; display: flex; align-items:center; justify-content:center; margin: 0 auto; color: #10b981; font-size: 2rem;">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <h5 class="fw-bold" style="color: #475569;">No Groups Yet</h5>
+                            <p class="text-muted" style="font-size: 0.9rem;">Create a group to chat with several classmates at once.</p>
+                        </div>
+                        <div id="groupChatList"></div>
+                    </div><!-- /groupsTabPanel -->
+
                 </div>
             </div>
 
@@ -643,6 +679,48 @@
                         </div>
                         <div style="text-align:center;margin-top:5px;font-size:0.64rem;color:#b0bec5;">
                             <i class="bi bi-lock-fill me-1"></i>Private · Enter to send · Shift+Enter for new line
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ③ GROUP CHAT INLINE PANEL (many students, SSE real-time) -->
+                <div id="chat-view-group" class="chat-view d-none flex-column h-100" style="overflow:hidden;">
+                    <div class="p-3 px-md-4 border-bottom d-flex align-items-center gap-3"
+                         style="background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);flex-shrink:0;">
+                        <button class="btn btn-light d-md-none me-1 p-0 d-flex align-items-center justify-content-center" onclick="closeChat()" style="border-radius:50%; width:38px; height:38px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); color:#10b981; transition:all 0.25s;">
+                            <i class="bi bi-arrow-left" style="font-size:1.1rem; stroke-width: 1.5;"></i>
+                        </button>
+                        <div id="groupChatAvatar" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(16,185,129,0.3);flex-shrink:0;color:white;font-size:1.2rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div style="display:flex;flex-direction:column;overflow:hidden;">
+                            <span id="groupChatName" class="fw-bold text-truncate" style="font-family:'Outfit',sans-serif;font-size:1.35rem;color:#1e293b;letter-spacing:-0.2px;"></span>
+                            <div id="groupChatMemberCount" style="font-size:0.85rem;color:#94a3b8;font-weight:600;"></div>
+                        </div>
+                    </div>
+
+                    <div id="groupChatBody" style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:6px;
+                         background:radial-gradient(circle at 8% 15%,rgba(16,185,129,0.04),transparent 35%),radial-gradient(circle at 92% 85%,rgba(16,185,129,0.03),transparent 35%),#f8fafc;">
+                        <div id="groupChatEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8;text-align:center;padding:40px;">
+                            <div class="spinner-border spinner-border-sm" style="color:#94a3b8;margin-bottom:14px;" role="status"></div>
+                            <div style="font-weight:700;font-size:0.9rem;color:#64748b;">Loading messages...</div>
+                        </div>
+                        <div id="groupMsgWrap"></div>
+                    </div>
+
+                    <div style="background:rgba(255,255,255,0.95);border-top:1px solid rgba(16,185,129,0.08);padding:12px 18px calc(14px + env(safe-area-inset-bottom));flex-shrink:0; display:flex; flex-direction:column;">
+                        <div id="groupInputShell" style="display:flex;align-items:flex-end;gap:10px;background:#f8fafc;border:1.5px solid rgba(16,185,129,0.2);border-radius:24px;padding:10px 14px;transition:all 0.3s;">
+                            <textarea id="groupMsgInput" rows="1" placeholder="Message the group..."
+                                      style="flex:1;border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;font-size:0.95rem;color:#1e293b;resize:none;max-height:120px;min-height:24px;line-height:1.5;"></textarea>
+                            <button type="button" id="groupSendBtn"
+                                    style="width:44px;height:44px;border-radius:50%;background:#111111;border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 14px rgba(0,0,0,0.35);"
+                                    onmouseover="this.style.transform='scale(1.12) rotate(8deg)';"
+                                    onmouseout="this.style.transform='none';">
+                                <i class="bi bi-send-fill" style="font-size:0.85rem;"></i>
+                            </button>
+                        </div>
+                        <div style="text-align:center;margin-top:5px;font-size:0.64rem;color:#b0bec5;">
+                            <i class="bi bi-lock-fill me-1"></i>Private group · Enter to send · Shift+Enter for new line
                         </div>
                     </div>
                 </div>
@@ -1833,6 +1911,343 @@
             return window.__allStudents;
         }
 
+        // ═══════════════════════════════════════════════════
+        //  Chats / Assignments / Groups tab switcher
+        // ═══════════════════════════════════════════════════
+        function switchMsgTab(tab) {
+            document.querySelectorAll('.msg-tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+            document.getElementById('chatsTabPanel').style.display = tab === 'chats' ? '' : 'none';
+            document.getElementById('assignmentsTabPanel').style.display = tab === 'assignments' ? '' : 'none';
+            document.getElementById('groupsTabPanel').style.display = tab === 'groups' ? '' : 'none';
+            if (tab === 'groups') loadGroupInbox();
+        }
+
+        // ═══════════════════════════════════════════════════
+        //  GROUP CHAT — inbox list, creation modal, and the chat engine
+        // ═══════════════════════════════════════════════════
+        async function loadGroupInbox() {
+            try {
+                const res = await fetch('/api/groups/mine', { credentials: 'same-origin' });
+                const list = await res.json();
+                window.__groupInbox = list;
+                const container = document.getElementById('groupChatList');
+                const emptyState = document.getElementById('groupChatEmptyState');
+                if (!Array.isArray(list) || list.length === 0) {
+                    container.innerHTML = '';
+                    emptyState.style.display = '';
+                    return;
+                }
+                emptyState.style.display = 'none';
+                container.innerHTML = list.map(g => `
+                    <div class="msg-list-item d-flex align-items-center gap-3" id="group-list-item-${g.groupId}"
+                         onclick="GroupChat.open('${g.groupId}', ${attrJson(g.name)}, ${g.memberCount})"
+                         style="border-left: 3px solid rgba(16,185,129,0.4); background: rgba(16,185,129,0.02); cursor:pointer;">
+                        <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-size:1.15rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="inbox-name">${g.name}</span>
+                                <small class="inbox-time">${g.lastMessageTime || ''}</small>
+                            </div>
+                            <p class="inbox-msg-preview text-truncate" style="max-width:200px;">${g.lastMessage || (g.memberCount + ' members')}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error('Failed to load group inbox', e); }
+        }
+
+        // Group creation modal — member picker with checkboxes
+        window.__groupSelectedMembers = new Set();
+
+        function renderGroupMemberPickerList(students) {
+            const listEl = document.getElementById('groupMemberPickerList');
+            if (!students.length) {
+                listEl.innerHTML = '<div class="text-center text-muted py-4">No students found.</div>';
+                return;
+            }
+            listEl.innerHTML = students.map(s => `
+                <div class="d-flex align-items-center gap-3 p-2 rounded-3" style="cursor:pointer;"
+                     onclick="toggleGroupMember('${s.id}', this)"
+                     onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='transparent';">
+                    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-family:'Outfit',sans-serif;overflow:hidden;">
+                        ${s.profilePicture ? `<img src="${s.profilePicture}" style="width:100%;height:100%;object-fit:cover;">` : (s.name || '?').charAt(0).toUpperCase()}
+                    </div>
+                    <div class="overflow-hidden flex-grow-1">
+                        <div class="fw-bold text-truncate" style="font-size:0.9rem;">${s.name}</div>
+                        <div class="text-muted small text-truncate">${s.courseProgram || ''}</div>
+                    </div>
+                    <i class="bi ${window.__groupSelectedMembers.has(s.id) ? 'bi-check-circle-fill' : 'bi-circle'}" style="color:#10b981;font-size:1.2rem;flex-shrink:0;"></i>
+                </div>
+            `).join('');
+        }
+
+        function toggleGroupMember(id, rowEl) {
+            const icon = rowEl.querySelector('i');
+            if (window.__groupSelectedMembers.has(id)) {
+                window.__groupSelectedMembers.delete(id);
+                icon.className = 'bi bi-circle';
+            } else {
+                window.__groupSelectedMembers.add(id);
+                icon.className = 'bi bi-check-circle-fill';
+            }
+            document.getElementById('groupMemberCountLabel').textContent = window.__groupSelectedMembers.size;
+        }
+
+        async function openGroupCreateModal() {
+            window.__groupSelectedMembers = new Set();
+            document.getElementById('groupMemberCountLabel').textContent = '0';
+            document.getElementById('groupNameInput').value = '';
+            document.getElementById('groupMemberSearch').value = '';
+            const modalEl = document.getElementById('groupCreateModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+            const listEl = document.getElementById('groupMemberPickerList');
+            listEl.innerHTML = '<div class="text-center text-muted py-4">Loading students...</div>';
+            const students = await ensureStudentDirectoryLoaded();
+            renderGroupMemberPickerList(students);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const memberSearch = document.getElementById('groupMemberSearch');
+            if (memberSearch) {
+                memberSearch.addEventListener('input', async () => {
+                    const q = memberSearch.value.toLowerCase();
+                    const students = await ensureStudentDirectoryLoaded();
+                    renderGroupMemberPickerList(students.filter(s => (s.name || '').toLowerCase().includes(q)));
+                });
+            }
+        });
+
+        async function submitCreateGroup() {
+            const name = document.getElementById('groupNameInput').value.trim();
+            if (!name) { alert('Please enter a group name.'); return; }
+            if (window.__groupSelectedMembers.size === 0) { alert('Pick at least one member.'); return; }
+
+            const btn = document.getElementById('groupCreateSubmitBtn');
+            btn.disabled = true; btn.textContent = 'Creating...';
+            try {
+                const body = new URLSearchParams();
+                body.append('name', name);
+                window.__groupSelectedMembers.forEach(id => body.append('memberIds', id));
+                const res = await fetch('/api/groups/create', {
+                    method: 'POST', credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body.toString()
+                });
+                const data = await res.json();
+                if (!data.success) { alert(data.message || 'Could not create group.'); return; }
+                const modalEl = document.getElementById('groupCreateModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+                switchMsgTab('groups');
+                await loadGroupInbox();
+                GroupChat.open(data.groupId, data.name, window.__groupSelectedMembers.size + 1);
+            } catch (e) {
+                alert('Could not create group.');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Create Group';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════
+        //  GROUP CHAT ENGINE (SSE real-time, N members)
+        // ═══════════════════════════════════════════════════
+        const GroupChat = (() => {
+            const chatBody = document.getElementById('groupChatBody');
+            const msgWrap = document.getElementById('groupMsgWrap');
+            const emptyEl = document.getElementById('groupChatEmpty');
+            const input = document.getElementById('groupMsgInput');
+            const sendBtn = document.getElementById('groupSendBtn');
+
+            const esc = s => String(s || '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            let currentGroupId = null;
+            let sseConn = null;
+            let isSending = false;
+            let renderedIds = new Set();
+            let historyResolved = false;
+
+            const GROUP_EMPTY_LOADING_HTML = `
+                <div class="spinner-border spinner-border-sm" style="color:#94a3b8;margin-bottom:14px;" role="status"></div>
+                <div style="font-weight:700;font-size:0.9rem;color:#64748b;">Loading messages...</div>`;
+            const GROUP_EMPTY_SAY_HELLO_HTML = `
+                <div style="width:72px;height:72px;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+                    <i class="bi bi-people-fill" style="font-size:1.8rem;color:#10b981;"></i>
+                </div>
+                <div style="font-weight:700;font-size:0.95rem;color:#475569;margin-bottom:5px;">Say hello to the group!</div>
+                <div style="font-size:0.8rem;max-width:220px;line-height:1.5;">Send the first message to break the ice.</div>`;
+
+            function avatarHtml(name, pic) {
+                return pic
+                    ? `<img src="${esc(pic)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+                    : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.85rem;font-family:'Outfit',sans-serif;">${esc((name || '?').charAt(0).toUpperCase())}</div>`;
+            }
+
+            function makeBubble(msg) {
+                const outer = document.createElement('div');
+                outer.id = 'group-msg-' + msg.id;
+                outer.style.cssText = 'display:flex;flex-direction:column;margin-bottom:12px;max-width:100%;' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex;align-items:flex-end;gap:8px;max-width:100%;' + (msg.isSelf ? 'flex-direction:row-reverse;' : 'flex-direction:row;');
+
+                const avW = document.createElement('div');
+                avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
+                row.appendChild(avW.firstElementChild);
+
+                const col = document.createElement('div');
+                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(75%, 380px);' + (msg.isSelf ? 'align-items:flex-end;' : 'align-items:flex-start;');
+
+                if (!msg.isSelf) {
+                    const nameEl = document.createElement('div');
+                    nameEl.style.cssText = 'font-size:0.72rem;font-weight:700;color:#64748b;margin-bottom:2px;padding:0 4px;';
+                    nameEl.textContent = msg.senderName || '';
+                    col.appendChild(nameEl);
+                }
+
+                const bubble = document.createElement('div');
+                bubble.style.cssText = 'font-size:0.92rem;line-height:1.3;word-break:break-word;width:fit-content;padding:6px 14px;border-radius:999px;' +
+                    (msg.isSelf
+                        ? 'color:#ffffff;background:#111111;box-shadow:0 4px 15px rgba(0,0,0,0.25);'
+                        : 'color:#334155;background:#f1f5f9;border:1px solid rgba(0,0,0,0.04);');
+                bubble.innerHTML = esc(msg.messageText || '');
+                col.appendChild(bubble);
+
+                const timeEl = document.createElement('div');
+                timeEl.style.cssText = 'font-size:0.68rem;color:#94a3b8;margin-top:2px;padding:0 4px;';
+                timeEl.textContent = msg.time || '';
+                col.appendChild(timeEl);
+
+                row.appendChild(col);
+                outer.appendChild(row);
+                return outer;
+            }
+
+            function scrollBottom(smooth) {
+                if (chatBody) chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+            }
+
+            function renderMessages(msgs, isNew) {
+                if (!historyResolved && !msgWrap.children.length) {
+                    historyResolved = true;
+                    emptyEl.innerHTML = (Array.isArray(msgs) && msgs.length) ? '' : GROUP_EMPTY_SAY_HELLO_HTML;
+                } else if (!historyResolved) {
+                    historyResolved = true;
+                }
+                if (!Array.isArray(msgs) || !msgs.length) return;
+                let added = 0;
+                msgs.forEach(msg => {
+                    const id = msg.id || ('tmp-' + Math.random());
+                    if (document.getElementById('group-msg-' + id)) return;
+                    if (msg.isSelf) {
+                        const tempEl = msgWrap.querySelector('.temp-msg');
+                        if (tempEl) {
+                            tempEl.id = 'group-msg-' + id;
+                            tempEl.classList.remove('temp-msg');
+                            renderedIds.add(id);
+                            return;
+                        }
+                    }
+                    renderedIds.add(id);
+                    msgWrap.appendChild(makeBubble(msg));
+                    added++;
+                });
+                if (added > 0) {
+                    emptyEl.style.display = 'none';
+                    scrollBottom(isNew);
+                }
+            }
+
+            function connectSSE(groupId) {
+                if (sseConn) { try { sseConn.close(); } catch (e) {} }
+                renderedIds = new Set();
+
+                fetch('/api/groups/' + groupId + '/messages', { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(d => { if (d.success) renderMessages(d.messages, false); })
+                    .catch(() => {});
+
+                const es = new EventSource('/api/groups/' + groupId + '/stream');
+                sseConn = es;
+                es.addEventListener('init', e => { try { renderMessages(JSON.parse(e.data), false); } catch (err) {} });
+                es.addEventListener('message', e => { try { renderMessages(JSON.parse(e.data), true); } catch (err) {} });
+            }
+
+            function sendMessage() {
+                const text = input.value.trim();
+                if (!text || isSending || !currentGroupId) return;
+                isSending = true; sendBtn.disabled = true;
+                input.value = ''; input.style.height = 'auto';
+
+                const myName = document.getElementById('DC_STUDENT_NAME')?.value || 'You';
+                const myPic = document.getElementById('DC_STUDENT_PIC')?.value || '';
+                const optimisticMsg = {
+                    id: 'temp-' + Date.now(),
+                    isSelf: true,
+                    senderName: myName,
+                    senderProfilePicture: myPic,
+                    messageText: text,
+                    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                };
+                const bubble = makeBubble(optimisticMsg);
+                bubble.classList.add('temp-msg');
+                emptyEl.style.display = 'none';
+                msgWrap.appendChild(bubble);
+                scrollBottom(true);
+
+                const body = new URLSearchParams({ messageText: text });
+                fetch('/api/groups/' + currentGroupId + '/send', {
+                    method: 'POST', credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body.toString()
+                }).catch(() => {}).finally(() => { isSending = false; sendBtn.disabled = false; input.focus(); });
+            }
+
+            if (input) {
+                input.addEventListener('input', () => {
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+                });
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                });
+            }
+            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+
+            function open(groupId, name, memberCount) {
+                currentGroupId = groupId;
+
+                document.querySelectorAll('.msg-list-item').forEach(el => el.classList.remove('active'));
+                const li = document.getElementById('group-list-item-' + groupId);
+                if (li) li.classList.add('active');
+
+                const chatDefault = document.getElementById('chatDefault');
+                if (chatDefault) { chatDefault.classList.add('d-none'); chatDefault.classList.remove('d-flex'); }
+                document.querySelectorAll('.chat-view').forEach(el => { el.classList.add('d-none'); el.classList.remove('d-flex'); });
+                const view = document.getElementById('chat-view-group');
+                if (view) { view.classList.remove('d-none'); view.classList.add('d-flex'); }
+
+                document.getElementById('groupChatName').textContent = name;
+                document.getElementById('groupChatMemberCount').textContent = memberCount + ' members';
+
+                if (window.innerWidth <= 768) {
+                    const container = document.getElementById('messagesContainer');
+                    if (container) container.classList.add('chat-active');
+                }
+
+                msgWrap.innerHTML = '';
+                historyResolved = false;
+                emptyEl.innerHTML = GROUP_EMPTY_LOADING_HTML;
+                emptyEl.style.display = 'flex';
+                connectSSE(groupId);
+            }
+
+            return { open };
+        })();
+        window.GroupChat = GroupChat;
+
         // Filters the already-rendered chat/thread rows in place (people you've
         // already chatted with keep their spot, just hidden/shown), then adds
         // any other matching student from the full directory below as a
@@ -2092,6 +2507,33 @@
                            style="width: 100%; padding: 10px 14px 10px 42px; border-radius: 50px; border: 1.5px solid rgba(0,0,0,0.08); background: #f8fafc; font-size: 0.9rem; outline: none;">
                 </div>
                 <div id="studentPickerList" style="max-height: 340px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Group Modal -->
+<div class="modal fade" id="groupCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+            <div class="modal-header border-0" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 14px; min-height: unset;">
+                <h5 class="modal-title fw-bold mb-0" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; line-height: 1.3;"><i class="bi bi-people-fill me-2" style="font-size: 0.85rem;"></i>New Group</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.65rem; padding: 0;"></button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="text" id="groupNameInput" placeholder="Group name..." maxlength="60"
+                       style="width: 100%; padding: 10px 14px; border-radius: 14px; border: 1.5px solid rgba(0,0,0,0.08); background: #f8fafc; font-size: 0.9rem; outline: none; margin-bottom: 10px;">
+                <div class="position-relative mb-2">
+                    <i class="bi bi-search position-absolute" style="left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                    <input type="text" id="groupMemberSearch" placeholder="Search students to add..."
+                           style="width: 100%; padding: 10px 14px 10px 42px; border-radius: 50px; border: 1.5px solid rgba(0,0,0,0.08); background: #f8fafc; font-size: 0.9rem; outline: none;">
+                </div>
+                <div style="font-size:0.7rem;font-weight:700;color:#94a3b8;margin-bottom:6px;"><span id="groupMemberCountLabel">0</span> selected</div>
+                <div id="groupMemberPickerList" style="max-height: 260px; overflow-y: auto;"></div>
+                <button type="button" id="groupCreateSubmitBtn" onclick="submitCreateGroup()"
+                        style="width:100%;margin-top:14px;padding:11px;border:none;border-radius:14px;background:linear-gradient(135deg,#10b981,#059669);color:white;font-weight:700;font-size:0.9rem;cursor:pointer;">
+                    Create Group
+                </button>
             </div>
         </div>
     </div>
