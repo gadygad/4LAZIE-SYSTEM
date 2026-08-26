@@ -126,10 +126,18 @@ public class PushNotificationService {
                 logger.warn("Push subscription gone (HTTP {}) for endpoint {} — removing it.", status, sub.getEndpoint());
                 subscriptionRepository.delete(sub);
             } else if (status == 401 || status == 403) {
-                logger.error("Push rejected (HTTP {}) for endpoint {} — this usually means the VAPID keys " +
-                        "the server is signing with don't match the key the browser subscribed with " +
-                        "(e.g. VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY were rotated without the app doing a fresh " +
-                        "resubscription). Response: {}", status, sub.getEndpoint(), responseBody);
+                // A VAPID-mismatch rejection is permanent for THIS subscription —
+                // the browser already self-heals by unsubscribing and creating a
+                // fresh subscription (new endpoint) the next time it loads the
+                // app with mismatched keys (see push-subscription.js), but that
+                // leaves this orphaned old-endpoint row behind forever, failing
+                // — and logging an error — on every single send. Delete it so
+                // the noise doesn't repeat indefinitely; the client's own
+                // resubscribe already restored real push delivery for this user.
+                logger.warn("Push subscription permanently rejected (HTTP {}) for endpoint {} — VAPID key " +
+                        "mismatch, removing this orphaned subscription. The client resubscribes with a new " +
+                        "endpoint automatically on its next page load. Response: {}", status, sub.getEndpoint(), responseBody);
+                subscriptionRepository.delete(sub);
             } else {
                 logger.error("Push failed (HTTP {}) for endpoint {}. Response: {}", status, sub.getEndpoint(), responseBody);
             }
