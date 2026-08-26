@@ -174,12 +174,13 @@
                 .profile-action-card {
                     position: relative;
                     display: inline-flex;
-                    flex-wrap: wrap;
+                    flex-wrap: nowrap;
                     justify-content: center;
                     align-items: stretch;
                     gap: 10px;
                     padding: 10px;
                     margin: 4px 0 24px;
+                    max-width: 100%;
                     border-radius: 999px;
                     background: linear-gradient(135deg, rgba(255,255,255,0.75), rgba(248,250,252,0.55));
                     border: 1px solid rgba(255,255,255,0.8);
@@ -211,13 +212,16 @@
                 .profile-action-btn:not(:disabled):hover i { transform: scale(1.2) rotate(-6deg); }
                 .btn-connect-disabled, .btn-message-disabled { background: rgba(148,163,184,0.1) !important; color: #94a3b8 !important; border: 1.5px dashed rgba(148,163,184,0.35) !important; cursor: not-allowed !important; box-shadow: none !important; }
                 .btn-connect-disabled:hover, .btn-message-disabled:hover { transform: none !important; box-shadow: none !important; }
-                @media (max-width: 480px) {
-                    .profile-action-card { flex-wrap: nowrap; gap: 6px; padding: 6px; max-width: 100%; }
+                @media (max-width: 600px) {
+                    .profile-action-card { gap: 6px; padding: 6px; }
                     .profile-action-btn { flex-shrink: 0; font-size: 0.68rem !important; padding: 7px 10px !important; gap: 4px !important; }
                     .btn-connections-count #connectionsCountText { font-size: 0.62rem; padding: 0.2em 0.45em; }
                 }
-                @media (max-width: 360px) {
+                @media (max-width: 400px) {
                     .profile-action-btn { font-size: 0.62rem !important; padding: 6px 8px !important; }
+                }
+                @media (max-width: 340px) {
+                    .profile-action-btn { font-size: 0.56rem !important; padding: 5px 6px !important; gap: 3px !important; }
                 }
             </style>
 
