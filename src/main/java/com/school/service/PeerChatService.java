@@ -6,6 +6,8 @@ import com.school.model.User;
 import com.school.repository.PeerChatRepository;
 import com.school.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,27 @@ public class PeerChatService {
 
     @Autowired
     private PushNotificationService pushNotificationService;
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    /** Same Caffeine cache pattern as GroupChatService — a chat is re-read
+     * on every open/SSE-connect/send, but only changes on a write, so
+     * caching it by id turns most reads into an in-memory hit instead of a
+     * MongoDB round trip. Every write below updates the cache right after
+     * saving so readers never see stale data. */
+    private static final String CACHE_NAME = "peerChats";
+
+    private Cache cache() {
+        return cacheManager.getCache(CACHE_NAME);
+    }
+
+    private PeerChat save(PeerChat chat) {
+        PeerChat saved = peerChatRepository.save(chat);
+        Cache cache = cache();
+        if (cache != null) cache.put(saved.getId(), saved);
+        return saved;
+    }
 
     /**
      * Starts (or reuses) a chat between two users. The pair is always stored
@@ -48,12 +71,12 @@ public class PeerChatService {
         chat.setUser1Name(user1 != null ? user1.getName() : "Student");
         chat.setUser2Name(user2 != null ? user2.getName() : "Student");
 
-        return peerChatRepository.save(chat);
+        return save(chat);
     }
 
     public PeerChat sendMessage(String chatId, String senderId, String senderName, String messageText,
                                  String replyToMessageId, String replyToSenderName, String replyToMessageText) {
-        PeerChat chat = peerChatRepository.findById(chatId).orElse(null);
+        PeerChat chat = getChatById(chatId);
         if (chat == null) return null;
 
         User sender = userRepository.findById(senderId).orElse(null);
@@ -79,7 +102,7 @@ public class PeerChatService {
         pushNotificationService.sendToUser(recipientId, "New Message from " + senderName, messageText,
                 "/messages?openPeerChat=" + chatId);
 
-        return peerChatRepository.save(chat);
+        return save(chat);
     }
 
     /**
@@ -88,7 +111,7 @@ public class PeerChatService {
      * re-fetch what this method already loaded and saved.
      */
     public PeerChat markRead(String chatId, String readerId) {
-        PeerChat chat = peerChatRepository.findById(chatId).orElse(null);
+        PeerChat chat = getChatById(chatId);
         if (chat == null) return null;
 
         if (chat.isUser1(readerId)) {
@@ -102,11 +125,18 @@ public class PeerChatService {
                 if (otherId.equals(m.getSenderId())) m.setRead(true);
             });
         }
-        return peerChatRepository.save(chat);
+        return save(chat);
     }
 
     public PeerChat getChatById(String chatId) {
-        return peerChatRepository.findById(chatId).orElse(null);
+        Cache cache = cache();
+        if (cache != null) {
+            PeerChat cached = cache.get(chatId, PeerChat.class);
+            if (cached != null) return cached;
+        }
+        PeerChat chat = peerChatRepository.findById(chatId).orElse(null);
+        if (chat != null && cache != null) cache.put(chatId, chat);
+        return chat;
     }
 
     /** All of a user's peer conversations, most recently active first. */

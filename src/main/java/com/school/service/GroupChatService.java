@@ -4,6 +4,8 @@ import com.school.model.ChatMessage;
 import com.school.model.GroupChat;
 import com.school.repository.GroupChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,28 @@ public class GroupChatService {
 
     @Autowired
     private GroupChatRepository groupChatRepository;
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    /** Same Caffeine-backed CacheManager already used elsewhere in the app
+     * (see CacheConfig) — a group is re-read constantly (every open, every
+     * SSE connect, every send) but only changes on a write, so caching the
+     * whole document by id turns most of those reads into an in-memory hit
+     * instead of a MongoDB round trip. Every write path below updates the
+     * cache immediately after saving, so readers never see stale data. */
+    private static final String CACHE_NAME = "groupChats";
+
+    private Cache cache() {
+        return cacheManager.getCache(CACHE_NAME);
+    }
+
+    private GroupChat save(GroupChat group) {
+        GroupChat saved = groupChatRepository.save(group);
+        Cache cache = cache();
+        if (cache != null) cache.put(saved.getId(), saved);
+        return saved;
+    }
 
     /** Sender id used for the auto-generated "X created the group / added Y"
      * notices, so the frontend can tell them apart from a real member's
@@ -41,23 +65,23 @@ public class GroupChatService {
         group.getMessages().add(notice);
         group.setLastMessageAt(LocalDateTime.now());
 
-        return groupChatRepository.save(group);
+        return save(group);
     }
 
     public GroupChat sendMessage(String groupId, String senderId, String senderName, String senderProfilePicture, String messageText) {
-        GroupChat group = groupChatRepository.findById(groupId).orElse(null);
+        GroupChat group = getGroupById(groupId);
         if (group == null) return null;
 
         ChatMessage msg = new ChatMessage(senderId, senderName, senderProfilePicture, messageText, null);
         group.getMessages().add(msg);
         group.setLastMessageAt(LocalDateTime.now());
 
-        return groupChatRepository.save(group);
+        return save(group);
     }
 
     /** Any member can set the group photo — no "leader only" restriction, per product decision. */
     public GroupChat updateGroupPicture(String groupId, String pictureUrl, String updaterName) {
-        GroupChat group = groupChatRepository.findById(groupId).orElse(null);
+        GroupChat group = getGroupById(groupId);
         if (group == null) return null;
 
         group.setGroupPicture(pictureUrl);
@@ -65,11 +89,18 @@ public class GroupChatService {
         group.getMessages().add(notice);
         group.setLastMessageAt(LocalDateTime.now());
 
-        return groupChatRepository.save(group);
+        return save(group);
     }
 
     public GroupChat getGroupById(String groupId) {
-        return groupChatRepository.findById(groupId).orElse(null);
+        Cache cache = cache();
+        if (cache != null) {
+            GroupChat cached = cache.get(groupId, GroupChat.class);
+            if (cached != null) return cached;
+        }
+        GroupChat group = groupChatRepository.findById(groupId).orElse(null);
+        if (group != null && cache != null) cache.put(groupId, group);
+        return group;
     }
 
     /** All groups this user belongs to, most recently active first. */

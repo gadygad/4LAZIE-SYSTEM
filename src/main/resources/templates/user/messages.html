@@ -1617,6 +1617,23 @@
                     <div style="font-size:0.85rem;max-width:240px;line-height:1.6;color:#94a3b8;">This is the start of your conversation. Send a message to break the ice!</div>`;
             }
 
+            // Local cache of the last known message list per chat — lets a
+            // reopened chat render instantly from disk while the real fetch/
+            // SSE catches up in the background, instead of flashing a
+            // spinner every single time. The server always sends the full
+            // history in one shot (never a delta), so caching whatever we
+            // last received is always a valid — if possibly slightly stale
+            // — snapshot to show immediately.
+            function cacheMessages(chatId, msgs) {
+                try { localStorage.setItem('peerchat_cache_' + chatId, JSON.stringify(msgs.slice(-30))); } catch (e) {}
+            }
+            function readCachedMessages(chatId) {
+                try {
+                    const raw = localStorage.getItem('peerchat_cache_' + chatId);
+                    return raw ? JSON.parse(raw) : null;
+                } catch (e) { return null; }
+            }
+
             function renderMessages(msgs, isNew) {
                 // If the user already sent an optimistic bubble while this
                 // response was in flight, don't let a stale/late "no history
@@ -1629,6 +1646,7 @@
                     historyResolved = true;
                 }
                 if (!Array.isArray(msgs) || !msgs.length) return;
+                if (currentChatId) cacheMessages(currentChatId, msgs);
                 let added = 0;
                 msgs.forEach(msg => {
                     const id = msg.id || ('tmp-' + Math.random());
@@ -1826,8 +1844,20 @@
 
                 msgWrap.innerHTML = '';
                 historyResolved = false;
-                emptyEl.innerHTML = PEER_EMPTY_LOADING_HTML;
-                emptyEl.style.display = 'flex';
+
+                // Instant paint from whatever we last saw for this chat —
+                // the live fetch/SSE below will reconcile with real data
+                // (new messages, read-status changes) moments later, but the
+                // user never has to stare at a spinner for a chat they've
+                // already opened before.
+                const cached = readCachedMessages(chatId);
+                if (cached && cached.length) {
+                    emptyEl.style.display = 'none';
+                    renderMessages(cached, false);
+                } else {
+                    emptyEl.innerHTML = PEER_EMPTY_LOADING_HTML;
+                    emptyEl.style.display = 'flex';
+                }
                 connectSSEPeer(chatId);
             }
 
@@ -2158,6 +2188,20 @@
                 if (chatBody) chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
             }
 
+            // Same instant-paint-from-cache pattern as PeerChat — the server
+            // always sends the full message list in one shot, so caching the
+            // last one we saw per group is always a valid snapshot to show
+            // immediately on reopen instead of a spinner.
+            function cacheMessages(groupId, msgs) {
+                try { localStorage.setItem('groupchat_cache_' + groupId, JSON.stringify(msgs.slice(-30))); } catch (e) {}
+            }
+            function readCachedMessages(groupId) {
+                try {
+                    const raw = localStorage.getItem('groupchat_cache_' + groupId);
+                    return raw ? JSON.parse(raw) : null;
+                } catch (e) { return null; }
+            }
+
             function renderMessages(msgs, isNew) {
                 if (!historyResolved && !msgWrap.children.length) {
                     historyResolved = true;
@@ -2166,6 +2210,7 @@
                     historyResolved = true;
                 }
                 if (!Array.isArray(msgs) || !msgs.length) return;
+                if (currentGroupId) cacheMessages(currentGroupId, msgs);
                 let added = 0;
                 msgs.forEach(msg => {
                     const id = msg.id || ('tmp-' + Math.random());
@@ -2300,8 +2345,15 @@
 
                 msgWrap.innerHTML = '';
                 historyResolved = false;
-                emptyEl.innerHTML = GROUP_EMPTY_LOADING_HTML;
-                emptyEl.style.display = 'flex';
+
+                const cached = readCachedMessages(groupId);
+                if (cached && cached.length) {
+                    emptyEl.style.display = 'none';
+                    renderMessages(cached, false);
+                } else {
+                    emptyEl.innerHTML = GROUP_EMPTY_LOADING_HTML;
+                    emptyEl.style.display = 'flex';
+                }
                 connectSSE(groupId);
             }
 
