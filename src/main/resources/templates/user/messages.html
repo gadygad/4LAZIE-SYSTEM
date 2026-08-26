@@ -1413,44 +1413,47 @@
             }
 
             function makeBubble(msg, isNew) {
-                const row = document.createElement('div');
-                row.id = 'peer-msg-' + msg.id;
-                const label = msg.isSelf ? 'You' : msg.senderName;
+                const outer = document.createElement('div');
+                outer.id = 'peer-msg-' + msg.id;
+                outer.style.cssText = 'display:flex;flex-direction:column;margin-bottom:12px;max-width:100%;' + (msg.isSelf ? 'align-items:flex-start;' : 'align-items:flex-end;');
+                const label = msg.senderName;
 
                 // Your own messages (sender) sit on the left; the other
                 // person's (receiver) sit on the right — mirrored from the
                 // usual convention, per request.
                 const entranceAnim = isNew ? 'animation:slidePeerBubbleIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : '';
-                if (msg.isSelf) {
-                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;' + entranceAnim;
-                } else {
-                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row-reverse;margin-left:auto;max-width:100%;' + entranceAnim;
-                }
 
-                const avW = document.createElement('div');
-                avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
-                row.appendChild(avW.firstElementChild);
-
-                const col = document.createElement('div');
-                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (msg.isSelf ? 'align-items:flex-start;' : 'align-items:flex-end;');
-
+                // Name + time, always the real sender's name (never "You").
                 const headerRow = document.createElement('div');
-                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? '' : 'justify-content:flex-end;');
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;padding:0 56px;' + (msg.isSelf ? '' : 'flex-direction:row-reverse;');
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
                 nameEl.textContent = label;
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
                 timeEl.textContent = msg.time || '';
-                if (msg.isSelf) { headerRow.appendChild(nameEl); headerRow.appendChild(timeEl); }
-                else { headerRow.appendChild(timeEl); headerRow.appendChild(nameEl); }
-                col.appendChild(headerRow);
+                headerRow.appendChild(nameEl);
+                headerRow.appendChild(timeEl);
+                outer.appendChild(headerRow);
+
+                // Avatar + bubble share one row, bottom-aligned with each
+                // other — nothing else lives in this row, so they always
+                // line up regardless of how much other content (reply link,
+                // status) sits below.
+                const avatarBubbleRow = document.createElement('div');
+                avatarBubbleRow.style.cssText = 'display:flex;align-items:flex-end;gap:10px;max-width:100%;' +
+                    (msg.isSelf ? 'flex-direction:row;' : 'flex-direction:row-reverse;') + entranceAnim;
+
+                const avW = document.createElement('div');
+                avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
+                avatarBubbleRow.appendChild(avW.firstElementChild);
 
                 const bubble = document.createElement('div');
+                bubble.style.cssText = 'max-width:min(78%, 400px);';
                 if (msg.isSelf) {
-                    bubble.style.cssText = 'font-size:0.92rem;color:#ffffff;line-height:1.45;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:18px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
+                    bubble.style.cssText += 'font-size:0.92rem;color:#ffffff;line-height:1.45;word-break:break-word;width:fit-content;background:#111111;padding:9px 14px;border-radius:18px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
                 } else {
-                    bubble.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.45;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
+                    bubble.style.cssText += 'font-size:0.92rem;color:#334155;line-height:1.45;word-break:break-word;width:fit-content;background:#f1f5f9;padding:9px 14px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
                 }
 
                 if (msg.replyToMessageId) {
@@ -1475,28 +1478,27 @@
                 msgSpan.innerHTML = esc(msg.messageText || '');
                 bubble.appendChild(msgSpan);
                 bubble.ondblclick = () => initReply(msg.id, label, msg.messageText);
-                col.appendChild(bubble);
+                avatarBubbleRow.appendChild(bubble);
+                outer.appendChild(avatarBubbleRow);
 
                 const replyBtn = document.createElement('span');
                 replyBtn.style.cssText = 'color:#6366f1;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;';
                 replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
                 replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, label, msg.messageText); };
                 const replyWrapper = document.createElement('div');
-                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;' + (msg.isSelf ? 'justify-content:flex-start;' : 'justify-content:flex-end;');
+                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;padding:0 56px;' + (msg.isSelf ? 'justify-content:flex-start;' : 'justify-content:flex-end;');
                 replyWrapper.appendChild(replyBtn);
-                col.appendChild(replyWrapper);
-
-                row.appendChild(col);
+                outer.appendChild(replyWrapper);
 
                 if (msg.isSelf) {
                     const statusRow = document.createElement('div');
                     statusRow.className = 'peer-status-text';
-                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:flex-start;width:100%;';
+                    statusRow.style.cssText = 'font-size:0.8rem;margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:flex-start;width:100%;padding:0 56px;';
                     statusRow.innerHTML = statusHtml(msg.status);
-                    col.appendChild(statusRow);
+                    outer.appendChild(statusRow);
                 }
 
-                return row;
+                return outer;
             }
 
             function scrollBottom(smooth) {
