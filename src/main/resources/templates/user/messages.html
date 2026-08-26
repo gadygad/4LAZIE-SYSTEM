@@ -348,16 +348,27 @@
         .cancel-reply-btn { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; }
         .cancel-reply-btn:hover { color: #ef4444; }
 
-        /* Default quoted msg (for light bubbles) — kept thin/slim, not the
-           pill-rounded shape used for the bubble itself, so it reads as a
-           compact reference strip rather than a second bubble. */
+        /* Quoted/reply preview — a small glassy "card" nested inside the
+           bubble, softly rounded with a gradient accent bar and a reply
+           icon, so it reads as a polished reference chip rather than a
+           plain gray box. Stays compact (slim) regardless of bubble shape. */
         .quoted-msg {
-            background: rgba(0,0,0,0.04); border-left: 2.5px solid #10b981;
-            padding: 3px 8px; border-radius: 4px; margin-bottom: 5px;
-            cursor: pointer; transition: background 0.2s;
+            position: relative;
+            background: linear-gradient(135deg, rgba(16,185,129,0.09), rgba(16,185,129,0.03));
+            padding: 5px 10px 5px 12px; border-radius: 10px; margin-bottom: 6px;
+            cursor: pointer; transition: all 0.2s ease;
+            border: 1px solid rgba(16,185,129,0.12);
         }
-        .quoted-msg:hover { background: rgba(0,0,0,0.08); }
-        .quoted-msg-name { font-size: 0.65rem; font-weight: 800; color: #10b981; margin-bottom: 1px; display: block; text-transform: uppercase; letter-spacing: 0.4px; }
+        .quoted-msg::before {
+            content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px;
+            border-radius: 3px; background: linear-gradient(180deg, #10b981, #059669);
+        }
+        .quoted-msg:hover { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.06)); transform: translateX(1px); }
+        .quoted-msg-name {
+            font-size: 0.65rem; font-weight: 800; color: #059669; margin-bottom: 1px;
+            display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.4px;
+        }
+        .quoted-msg-name::before { content: '↩'; font-size: 0.8rem; font-weight: 900; }
         .quoted-msg-text {
             font-size: 0.72rem; color: #475569; font-style: italic;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -366,9 +377,13 @@
 
         /* Dark bubble quoted msg */
         .msg-row.student .quoted-msg, .chat-thread-item .quoted-msg {
-            background: rgba(255,255,255,0.1); border-left: 3px solid #34d399;
+            background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.14);
         }
-        .msg-row.student .quoted-msg:hover, .chat-thread-item .quoted-msg:hover { background: rgba(255,255,255,0.15); }
+        .msg-row.student .quoted-msg::before, .chat-thread-item .quoted-msg::before {
+            background: linear-gradient(180deg, #34d399, #10b981);
+        }
+        .msg-row.student .quoted-msg:hover, .chat-thread-item .quoted-msg:hover { background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
         .msg-row.student .quoted-msg-name, .chat-thread-item .quoted-msg-name { color: #34d399; }
         .msg-row.student .quoted-msg-text, .chat-thread-item .quoted-msg-text { color: rgba(255,255,255,0.9); }
 
