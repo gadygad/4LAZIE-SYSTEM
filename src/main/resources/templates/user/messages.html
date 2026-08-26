@@ -2069,6 +2069,8 @@
 
             let currentGroupId = null;
             let sseConn = null;
+            let sseActive = false;
+            let pollTimer = null;
             let isSending = false;
             let renderedIds = new Set();
             let historyResolved = false;
@@ -2166,7 +2168,8 @@
 
             function connectSSE(groupId) {
                 if (sseConn) { try { sseConn.close(); } catch (e) {} }
-                renderedIds = new Set();
+                sseActive = false; renderedIds = new Set();
+                if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 
                 fetch('/api/groups/' + groupId + '/messages', { credentials: 'same-origin' })
                     .then(r => r.json())
@@ -2175,8 +2178,30 @@
 
                 const es = new EventSource('/api/groups/' + groupId + '/stream');
                 sseConn = es;
-                es.addEventListener('init', e => { try { renderMessages(JSON.parse(e.data), false); } catch (err) {} });
+                es.addEventListener('init', e => { try { renderMessages(JSON.parse(e.data), false); sseActive = true; } catch (err) {} });
                 es.addEventListener('message', e => { try { renderMessages(JSON.parse(e.data), true); } catch (err) {} });
+                // If the SSE connection can't be established (proxy/timeout
+                // issues are common on free hosting tiers), fall back to
+                // polling so the chat doesn't get stuck on "Loading..."
+                // forever waiting for a stream that will never open.
+                es.onerror = () => {
+                    es.close(); sseActive = false;
+                    if (!pollTimer) {
+                        pollTimer = setInterval(() => {
+                            if (sseActive || currentGroupId !== groupId) { clearInterval(pollTimer); pollTimer = null; return; }
+                            fetch('/api/groups/' + groupId + '/messages', { credentials: 'same-origin' })
+                                .then(r => r.json()).then(d => { if (d.success) renderMessages(d.messages, true); }).catch(() => {});
+                        }, 3000);
+                    }
+                };
+
+                // Watchdog: if neither the fetch nor SSE 'init' resolved the
+                // history within 8s (both failed silently, e.g. a dropped
+                // connection), stop showing the loading spinner forever —
+                // fall back to an empty render so "Say hello!" can show.
+                setTimeout(() => {
+                    if (currentGroupId === groupId && !historyResolved) renderMessages([], false);
+                }, 8000);
             }
 
             function sendMessage() {
