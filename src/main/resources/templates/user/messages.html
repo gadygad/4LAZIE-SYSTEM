@@ -2424,25 +2424,33 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadPeerInbox();
+            // Kick the inbox fetch off immediately but don't block on it —
+            // opening the admin chat (openDirect) needs nothing from it, and
+            // making that wait on a full peer-inbox round trip was adding a
+            // visible stall to the "tap a push notification" path.
+            const peerInboxPromise = loadPeerInbox();
+
+            // Arriving here from a "New Message from Admin" push notification —
+            // land straight in the conversation with the reply box focused
+            // instead of the bare inbox. Runs instantly, no network wait.
+            if (new URLSearchParams(window.location.search).get('openDirect')) {
+                openDirectChat();
+                setTimeout(() => document.getElementById('directMsgInput')?.focus(), 300);
+            }
+
             // Arriving here from a student's profile "Message" button — the
             // chat already exists (or was just created) server-side, this
             // just opens it directly instead of leaving the admin land on
-            // the empty-state screen.
+            // the empty-state screen. This one genuinely needs the inbox
+            // list loaded first to find the chat entry.
             const openId = new URLSearchParams(window.location.search).get('openPeerChat');
             if (openId) {
+                await peerInboxPromise;
                 const entry = (window.__peerInbox || []).find(c => c.chatId === openId);
                 if (entry) {
                     PeerChat.open(entry.chatId, entry.otherUserId, entry.otherUserName, entry.otherUserProfilePicture);
                     setTimeout(() => document.getElementById('peerMsgInput')?.focus(), 300);
                 }
-            }
-            // Arriving here from a "New Message from Admin" push notification —
-            // land straight in the conversation with the reply box focused
-            // instead of the bare inbox.
-            if (new URLSearchParams(window.location.search).get('openDirect')) {
-                openDirectChat();
-                setTimeout(() => document.getElementById('directMsgInput')?.focus(), 300);
             }
             const searchInput = document.getElementById('studentPickerSearch');
             if (searchInput) {
