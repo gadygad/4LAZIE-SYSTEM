@@ -78,21 +78,27 @@ public class PeerChatService {
         return peerChatRepository.save(chat);
     }
 
-    public void markRead(String chatId, String readerId) {
-        peerChatRepository.findById(chatId).ifPresent(chat -> {
-            if (chat.isUser1(readerId)) {
-                chat.setHasUnreadForUser1(false);
-            } else {
-                chat.setHasUnreadForUser2(false);
-            }
-            String otherId = chat.otherUserId(readerId);
-            if (chat.getMessages() != null) {
-                chat.getMessages().forEach(m -> {
-                    if (otherId.equals(m.getSenderId())) m.setRead(true);
-                });
-            }
-            peerChatRepository.save(chat);
-        });
+    /**
+     * Returns the saved chat so callers (e.g. the live-status SSE broadcast)
+     * can reuse it instead of issuing another database round trip just to
+     * re-fetch what this method already loaded and saved.
+     */
+    public PeerChat markRead(String chatId, String readerId) {
+        PeerChat chat = peerChatRepository.findById(chatId).orElse(null);
+        if (chat == null) return null;
+
+        if (chat.isUser1(readerId)) {
+            chat.setHasUnreadForUser1(false);
+        } else {
+            chat.setHasUnreadForUser2(false);
+        }
+        String otherId = chat.otherUserId(readerId);
+        if (chat.getMessages() != null) {
+            chat.getMessages().forEach(m -> {
+                if (otherId.equals(m.getSenderId())) m.setRead(true);
+            });
+        }
+        return peerChatRepository.save(chat);
     }
 
     public PeerChat getChatById(String chatId) {

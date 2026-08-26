@@ -1371,6 +1371,12 @@
             let pollTimer = null;
             let isSending = false;
             let renderedIds = new Set();
+            // Whether we've heard back yet (fetch or SSE init) about whether
+            // this chat actually has history — until we know, we show a
+            // neutral loading state instead of "Say hello!", which used to
+            // flash misleadingly for chats that DO have history but are
+            // just slow to load.
+            let historyResolved = false;
             let otherIsOnline = false;
             let otherIsTyping = false;
             let otherTypingTimeout = null;
@@ -1505,7 +1511,21 @@
                 if (chatBody) chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
             }
 
+            const PEER_EMPTY_LOADING_HTML = `
+                <div class="spinner-border spinner-border-sm" style="color:#94a3b8;margin-bottom:14px;" role="status"></div>
+                <div style="font-weight:700;font-size:0.9rem;color:#64748b;">Loading messages...</div>`;
+            const PEER_EMPTY_SAY_HELLO_HTML = `
+                <div style="width:72px;height:72px;border-radius:50%;background:rgba(100,116,139,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+                    <i class="bi bi-chat-dots-fill" style="font-size:1.8rem;color:#64748b;"></i>
+                </div>
+                <div style="font-weight:700;font-size:0.95rem;color:#475569;margin-bottom:5px;">Say hello!</div>
+                <div style="font-size:0.8rem;max-width:220px;line-height:1.5;">Send a message to start the conversation.</div>`;
+
             function renderMessages(msgs, isNew) {
+                if (!historyResolved) {
+                    historyResolved = true;
+                    emptyEl.innerHTML = (Array.isArray(msgs) && msgs.length) ? '' : PEER_EMPTY_SAY_HELLO_HTML;
+                }
                 if (!Array.isArray(msgs) || !msgs.length) return;
                 let added = 0;
                 msgs.forEach(msg => {
@@ -1703,6 +1723,8 @@
                 }
 
                 msgWrap.innerHTML = '';
+                historyResolved = false;
+                emptyEl.innerHTML = PEER_EMPTY_LOADING_HTML;
                 emptyEl.style.display = 'flex';
                 connectSSEPeer(chatId);
             }

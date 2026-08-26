@@ -135,10 +135,14 @@ public class PeerChatController {
         if (chat == null || !(chat.getUser1Id().equals(me.getId()) || chat.getUser2Id().equals(me.getId()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        peerChatService.markRead(chatId, me.getId());
+        // markRead() already returns the freshly-saved chat, so reuse it for
+        // the live-status broadcast below instead of a third redundant fetch
+        // — this endpoint used to hit the database 3 times (fetch, markRead's
+        // own fetch+save, and another fetch just to notify) for one page open.
+        PeerChat updatedChat = peerChatService.markRead(chatId, me.getId());
         // Push the now-read status back out so the SENDER's open chat (if any)
         // flips "Delivered" to "Read" live instead of only on their next reload.
-        notifyChat(chatId, peerChatService.getChatById(chatId));
+        if (updatedChat != null) notifyChat(chatId, updatedChat);
         return ResponseEntity.ok(Map.of("success", true, "messages", buildMessageList(chat, me.getId())));
     }
 
