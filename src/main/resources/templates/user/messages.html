@@ -1905,6 +1905,14 @@
             return JSON.stringify(v).replace(/"/g, '&quot;');
         }
 
+        // Escapes text rendered directly into innerHTML (group/chat names,
+        // message previews) so a name containing "<" or "&" can't corrupt
+        // the surrounding markup — the onclick="..." attribute values are
+        // already safe via attrJson() above, this is for the visible text.
+        function escHtml(v) {
+            return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
         async function loadPeerInbox() {
             try {
                 const res = await fetch('/api/peer-chat/inbox', { credentials: 'same-origin' });
@@ -1927,11 +1935,11 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="inbox-name">${c.otherUserName}</span>
+                                <span class="inbox-name">${escHtml(c.otherUserName)}</span>
                                 <small class="inbox-time">${c.lastMessageTime || ''}</small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-1">
-                                <p class="inbox-msg-preview text-truncate" style="max-width:160px;">${c.lastMessage || 'Tap to start chatting'}</p>
+                                <p class="inbox-msg-preview text-truncate" style="max-width:160px;">${escHtml(c.lastMessage) || 'Tap to start chatting'}</p>
                                 ${c.hasUnread ? '<span class="badge rounded-pill" style="background:#6366f1;font-size:0.65rem;padding:3px 8px;">New</span>' : ''}
                             </div>
                         </div>
@@ -1953,8 +1961,8 @@
                         ${s.profilePicture ? `<img src="${s.profilePicture}" style="width:100%;height:100%;object-fit:cover;">` : (s.name || '?').charAt(0).toUpperCase()}
                     </div>
                     <div class="overflow-hidden flex-grow-1" style="cursor:pointer;" onclick="window.location.href='/students/${s.id}/profile'" title="View profile">
-                        <div class="fw-bold text-truncate" style="font-size:0.92rem;">${s.name}</div>
-                        <div class="text-muted small text-truncate">${s.courseProgram || ''}${s.level ? ' · Level ' + s.level : ''}</div>
+                        <div class="fw-bold text-truncate" style="font-size:0.92rem;">${escHtml(s.name)}</div>
+                        <div class="text-muted small text-truncate">${escHtml(s.courseProgram) || ''}${s.level ? ' · Level ' + escHtml(s.level) : ''}</div>
                     </div>
                     <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
                             style="width:36px;height:36px;background:#059669;color:#fff;border:none;"
@@ -2028,10 +2036,10 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="inbox-name">${g.name}</span>
+                                <span class="inbox-name">${escHtml(g.name)}</span>
                                 <small class="inbox-time">${g.lastMessageTime || ''}</small>
                             </div>
-                            <p class="inbox-msg-preview text-truncate" style="max-width:200px;">${g.lastMessage || (g.memberCount + ' members')}</p>
+                            <p class="inbox-msg-preview text-truncate" style="max-width:200px;">${escHtml(g.lastMessage) || (g.memberCount + ' members')}</p>
                         </div>
                     </div>
                 `).join('');
