@@ -1417,28 +1417,33 @@
                 row.id = 'peer-msg-' + msg.id;
                 const label = msg.isSelf ? 'You' : msg.senderName;
 
-                // Both sender and receiver bubbles sit on the left, one under
-                // the other — only the color tells them apart (self = black).
+                // Your own messages (sender) sit on the left; the other
+                // person's (receiver) sit on the right — mirrored from the
+                // usual convention, per request.
                 const entranceAnim = isNew ? 'animation:slidePeerBubbleIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : '';
-                row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;' + entranceAnim;
+                if (msg.isSelf) {
+                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row;margin-right:auto;max-width:100%;' + entranceAnim;
+                } else {
+                    row.style.cssText = 'display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;flex-direction:row-reverse;margin-left:auto;max-width:100%;' + entranceAnim;
+                }
 
                 const avW = document.createElement('div');
                 avW.innerHTML = avatarHtml(msg.senderName, msg.senderProfilePicture);
                 row.appendChild(avW.firstElementChild);
 
                 const col = document.createElement('div');
-                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);align-items:flex-start;';
+                col.style.cssText = 'display:flex;flex-direction:column;max-width:min(85%, 450px);' + (msg.isSelf ? 'align-items:flex-start;' : 'align-items:flex-end;');
 
                 const headerRow = document.createElement('div');
-                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;';
+                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;' + (msg.isSelf ? '' : 'justify-content:flex-end;');
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
                 nameEl.textContent = label;
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
                 timeEl.textContent = msg.time || '';
-                headerRow.appendChild(nameEl);
-                headerRow.appendChild(timeEl);
+                if (msg.isSelf) { headerRow.appendChild(nameEl); headerRow.appendChild(timeEl); }
+                else { headerRow.appendChild(timeEl); headerRow.appendChild(nameEl); }
                 col.appendChild(headerRow);
 
                 const bubble = document.createElement('div');
@@ -1477,7 +1482,7 @@
                 replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
                 replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, label, msg.messageText); };
                 const replyWrapper = document.createElement('div');
-                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;justify-content:flex-start;';
+                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;' + (msg.isSelf ? 'justify-content:flex-start;' : 'justify-content:flex-end;');
                 replyWrapper.appendChild(replyBtn);
                 col.appendChild(replyWrapper);
 
