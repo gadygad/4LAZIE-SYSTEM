@@ -821,7 +821,7 @@
                                         <!-- Avatar -->
                                         <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
                                         
-                                        <div style="font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.25);text-align:left;">
+                                        <div style="font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.25);text-align:left;">
                                             <div th:text="${msg.questionText != null and !msg.questionText.isEmpty() ? msg.questionText : 'Attached a document for help.'}">Question</div>
                                             <div th:if="${msg.attachmentUrl != null}" class="mt-2 text-end">
                                                 <a th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
@@ -846,7 +846,7 @@
                                             <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                         </div>
                                         
-                                        <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:16px;border:1px solid rgba(0,0,0,0.04);text-align:left;">
+                                        <div th:classappend="${!msg.read} ? 'typing-text' : ''" style="font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);text-align:left;">
                                             <div th:text="${msg.adminReply}">Admin reply</div>
                                             <div th:if="${msg.replyPdfUrl != null}" class="mt-2 text-start">
                                                 <a th:href="${msg.replyPdfUrl.startsWith('http') ? msg.replyPdfUrl : '/uploads/' + msg.replyPdfUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
@@ -876,7 +876,7 @@
                                                         <img src="/images/logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:white;padding:1px;">
                                                     </div>
                                                     
-                                                    <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:16px;border:1px solid rgba(0,0,0,0.04);text-align:left;">
+                                                    <div th:classappend="${!msg.read and iterStat.last} ? 'typing-text' : ''" style="font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);text-align:left;">
                                                         <div th:text="${chat.messageText}">Message</div>
                                                         <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-start">
                                                             <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #10b981;">
@@ -901,7 +901,7 @@
                                                     <!-- Avatar -->
                                                     <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;" th:text="${session.user.name.substring(0, 1).toUpperCase()}">U</div>
                                                     
-                                                    <div style="font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.25);text-align:left;">
+                                                    <div style="font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.25);text-align:left;">
                                                         <div th:text="${chat.messageText}">Message</div>
                                                         <div th:if="${chat.attachmentUrl != null}" class="mt-2 text-end">
                                                             <a th:href="${chat.attachmentUrl.startsWith('http') ? chat.attachmentUrl : '/uploads/' + chat.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold" style="font-size: 0.85rem; color: #60a5fa;">
@@ -1171,9 +1171,9 @@
                 const textEl = document.createElement('div');
                 textEl.className = 'msg-bubble';
                 if (msg.isSelf) {
-                    textEl.style.cssText = 'font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
+                    textEl.style.cssText = 'font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
                 } else {
-                    textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:16px;border:1px solid rgba(0,0,0,0.04);';
+                    textEl.style.cssText = 'font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#f1f5f9;padding:9px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);';
                 }
 
                 // Render Quoted Message if it exists
@@ -1586,9 +1586,9 @@
                 const bubble = document.createElement('div');
                 bubble.style.cssText = 'max-width:min(78%, 400px);';
                 if (msg.isSelf) {
-                    bubble.style.cssText += 'font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;background:#111111;padding:9px 14px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
+                    bubble.style.cssText += 'font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;background:#111111;padding:9px 14px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.25);';
                 } else {
-                    bubble.style.cssText += 'font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;background:#f1f5f9;padding:9px 14px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
+                    bubble.style.cssText += 'font-size:0.92rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;background:#f1f5f9;padding:9px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);';
                 }
 
                 if (msg.replyToMessageId) {
@@ -2200,7 +2200,7 @@
                 }
 
                 const bubble = document.createElement('div');
-                bubble.style.cssText = 'font-size:0.92rem;line-height:1.5;word-break:break-word;width:fit-content;padding:9px 14px;border-radius:16px;' +
+                bubble.style.cssText = 'font-size:0.92rem;line-height:1.5;word-break:break-word;width:fit-content;padding:9px 14px;border-radius:8px;' +
                     (msg.isSelf
                         ? 'color:#ffffff;background:#111111;box-shadow:0 4px 15px rgba(0,0,0,0.25);'
                         : 'color:#334155;background:#f1f5f9;border:1px solid rgba(0,0,0,0.04);');
@@ -2646,7 +2646,7 @@
                                     <div style="display:flex;align-items:flex-end;gap:12px;transform-origin:right bottom;flex-direction:row-reverse;">
                                         <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.85rem;box-shadow:0 2px 8px rgba(59,130,246,0.2);flex-shrink:0;">${initial}</div>
                                         
-                                        <div style="font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.25);text-align:left;">
+                                        <div style="font-size:0.92rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:#111111;padding:9px 14px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.25);text-align:left;">
                                             <div class="dynamic-typing-text"></div>
                                             ${attachmentHtml}
                                         </div>
