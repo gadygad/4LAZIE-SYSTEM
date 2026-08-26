@@ -18,7 +18,12 @@ public class GroupChatService {
     @Autowired
     private GroupChatRepository groupChatRepository;
 
-    public GroupChat createGroup(String name, String creatorId, Set<String> memberIds) {
+    /** Sender id used for the auto-generated "X created the group / added Y"
+     * notices, so the frontend can tell them apart from a real member's
+     * message and render them as centered system text instead of a bubble. */
+    public static final String SYSTEM_SENDER_ID = "SYSTEM";
+
+    public GroupChat createGroup(String name, String creatorId, String creatorName, Set<String> memberIds, List<String> addedMemberNames) {
         Set<String> members = new LinkedHashSet<>(memberIds);
         members.add(creatorId);
 
@@ -27,6 +32,14 @@ public class GroupChatService {
         group.setCreatedBy(creatorId);
         group.setMemberIds(members);
         group.setCreatedAt(LocalDateTime.now());
+
+        String noticeText = creatorName + " created the group";
+        if (addedMemberNames != null && !addedMemberNames.isEmpty()) {
+            noticeText += " and added " + String.join(", ", addedMemberNames);
+        }
+        ChatMessage notice = new ChatMessage(SYSTEM_SENDER_ID, "System", null, noticeText, null);
+        group.getMessages().add(notice);
+        group.setLastMessageAt(LocalDateTime.now());
 
         return groupChatRepository.save(group);
     }

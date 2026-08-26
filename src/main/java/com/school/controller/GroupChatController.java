@@ -61,7 +61,11 @@ public class GroupChatController {
         if (memberIds == null || memberIds.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Pick at least one member."));
         }
-        GroupChat group = groupChatService.createGroup(name.trim(), me.getId(), new LinkedHashSet<>(memberIds));
+        List<String> addedMemberNames = new ArrayList<>();
+        for (User u : userRepository.findAllById(memberIds)) {
+            addedMemberNames.add(u.getName());
+        }
+        GroupChat group = groupChatService.createGroup(name.trim(), me.getId(), me.getName(), new LinkedHashSet<>(memberIds), addedMemberNames);
         return ResponseEntity.ok(Map.of("success", true, "groupId", group.getId(), "name", group.getName()));
     }
 
@@ -204,6 +208,7 @@ public class GroupChatController {
             m.put("messageText", msg.getMessageText());
             m.put("time", msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
             m.put("isSelf", viewerId.equals(msg.getSenderId()));
+            m.put("isSystem", com.school.service.GroupChatService.SYSTEM_SENDER_ID.equals(msg.getSenderId()));
             result.add(m);
         }
         return result;
