@@ -1485,16 +1485,14 @@
                 bubble.appendChild(msgSpan);
                 bubble.ondblclick = () => initReply(msg.id, label, msg.messageText);
                 avatarBubbleRow.appendChild(bubble);
-                outer.appendChild(avatarBubbleRow);
 
                 const replyBtn = document.createElement('span');
-                replyBtn.style.cssText = 'color:#6366f1;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;';
+                replyBtn.style.cssText = 'color:#10b981;cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:2px;flex-shrink:0;';
                 replyBtn.innerHTML = '<i class="bi bi-reply-fill"></i> Reply';
                 replyBtn.onclick = (e) => { e.stopPropagation(); initReply(msg.id, label, msg.messageText); };
-                const replyWrapper = document.createElement('div');
-                replyWrapper.style.cssText = 'display:flex;width:100%;margin-top:4px;padding:0 56px;' + (msg.isSelf ? 'justify-content:flex-start;' : 'justify-content:flex-end;');
-                replyWrapper.appendChild(replyBtn);
-                outer.appendChild(replyWrapper);
+                avatarBubbleRow.appendChild(replyBtn);
+
+                outer.appendChild(avatarBubbleRow);
 
                 if (msg.isSelf) {
                     const statusRow = document.createElement('div');
