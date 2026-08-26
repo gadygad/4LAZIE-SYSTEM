@@ -403,6 +403,18 @@
     <!-- Mobile Sidebar -->
     <div th:replace="~{fragments/sidebar_fragments :: mobile_sidebar}"></div>
 
+    <!-- Bottom nav — visible on the chat list / Assignments / Groups tabs so
+         the user can navigate elsewhere, but hidden the moment an actual
+         chat is open (messagesContainer.chat-active) so it doesn't crowd
+         the message input / keyboard area. -->
+    <div th:replace="~{fragments/bottom_nav :: nav('messages')}"></div>
+    <style>
+        @media (max-width: 991.98px) {
+            body:has(#messagesContainer.chat-active) .custom-mobile-nav-wrapper { display: none !important; }
+            body:has(#messagesContainer.chat-active) { padding-bottom: 0 !important; }
+        }
+    </style>
+
     <div class="container-fluid px-2 px-md-4">
         
         <div class="messages-container" id="messagesContainer">
