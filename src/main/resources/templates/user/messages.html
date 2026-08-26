@@ -370,22 +370,26 @@
         }
         .quoted-msg-name::before { content: '↩'; font-size: 0.8rem; font-weight: 900; }
         .quoted-msg-text {
-            font-size: 0.72rem; color: #475569; font-style: italic;
+            font-size: 0.75rem; color: #475569; font-weight: 500;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+            overflow: hidden; text-overflow: ellipsis; line-height: 1.35;
         }
 
-        /* Dark bubble quoted msg */
-        .msg-row.student .quoted-msg, .chat-thread-item .quoted-msg {
-            background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
-            border: 1px solid rgba(255,255,255,0.14);
+        /* Dark bubble quoted msg — .quoted-msg-dark is added by JS whenever
+           the quote sits inside a black self-bubble; the old low-contrast
+           dark-gray-on-black text (from the light-bubble default above)
+           was genuinely hard to read, so this pairs a lighter tinted card
+           with bright, non-italic text specifically for that context. */
+        .msg-row.student .quoted-msg, .chat-thread-item .quoted-msg, .quoted-msg-dark {
+            background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+            border: 1px solid rgba(255,255,255,0.16);
         }
-        .msg-row.student .quoted-msg::before, .chat-thread-item .quoted-msg::before {
+        .msg-row.student .quoted-msg::before, .chat-thread-item .quoted-msg::before, .quoted-msg-dark::before {
             background: linear-gradient(180deg, #34d399, #10b981);
         }
-        .msg-row.student .quoted-msg:hover, .chat-thread-item .quoted-msg:hover { background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
-        .msg-row.student .quoted-msg-name, .chat-thread-item .quoted-msg-name { color: #34d399; }
-        .msg-row.student .quoted-msg-text, .chat-thread-item .quoted-msg-text { color: rgba(255,255,255,0.9); }
+        .msg-row.student .quoted-msg:hover, .chat-thread-item .quoted-msg:hover, .quoted-msg-dark:hover { background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.1)); }
+        .msg-row.student .quoted-msg-name, .chat-thread-item .quoted-msg-name, .quoted-msg-dark .quoted-msg-name { color: #6ee7b7; }
+        .msg-row.student .quoted-msg-text, .chat-thread-item .quoted-msg-text, .quoted-msg-dark .quoted-msg-text { color: rgba(255,255,255,0.95); font-weight: 500; }
 
         /* Live "is typing" indicator — three bouncing dots */
         .typing-indicator-dots { display:inline-flex; gap:2px; }
@@ -1179,7 +1183,7 @@
                 // Render Quoted Message if it exists
                 if (msg.replyToMessageId) {
                     const quotedDiv = document.createElement('div');
-                    quotedDiv.className = 'quoted-msg';
+                    quotedDiv.className = 'quoted-msg' + (msg.isSelf ? ' quoted-msg-dark' : '');
                     quotedDiv.onclick = (e) => {
                         e.stopPropagation();
                         const target = document.getElementById('msg-' + msg.replyToMessageId);
@@ -1593,7 +1597,7 @@
 
                 if (msg.replyToMessageId) {
                     const quotedDiv = document.createElement('div');
-                    quotedDiv.className = 'quoted-msg';
+                    quotedDiv.className = 'quoted-msg' + (msg.isSelf ? ' quoted-msg-dark' : '');
                     quotedDiv.onclick = (e) => {
                         e.stopPropagation();
                         const target = document.getElementById('peer-msg-' + msg.replyToMessageId);
