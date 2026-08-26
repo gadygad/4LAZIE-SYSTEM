@@ -1210,6 +1210,19 @@
                 </div>
                 <h6 class="fw-bolder mb-1" style="font-family: 'Outfit', sans-serif; color: #1e293b; letter-spacing: -0.2px; font-size: 0.95rem;" id="examModalTitle">Exam Schedule</h6>
                 <span class="d-inline-block rounded-pill" style="font-size: 0.65rem; color: #94a3b8; font-weight: 500; letter-spacing: 0.4px; border: 1px dashed #cbd5e1; background: rgba(241, 245, 249, 0.4); padding: 0.15rem 0.7rem; margin-bottom: 0;" id="examModalSubtitle">Here are the important dates.</span>
+
+                <!-- CAT 1 / CAT 2 toggle — only shown when the combined CAT button opened this modal -->
+                <div id="catTabToggle" class="d-flex justify-content-center gap-2 mt-2" style="display:none;">
+                    <button type="button" class="cat-tab-btn active" data-cat-tab="cat1" onclick="setCatTab('cat1')">CAT 1</button>
+                    <button type="button" class="cat-tab-btn" data-cat-tab="cat2" onclick="setCatTab('cat2')">CAT 2</button>
+                </div>
+                <style>
+                    .cat-tab-btn {
+                        border: 1.5px solid rgba(16,185,129,0.25); background: rgba(16,185,129,0.05); color: #64748b;
+                        font-weight: 700; font-size: 0.7rem; border-radius: 999px; padding: 4px 16px; transition: all 0.25s;
+                    }
+                    .cat-tab-btn.active { background: #10b981; color: #fff; border-color: #10b981; }
+                </style>
             </div>
             
             <div class="d-flex flex-column gap-2 text-start mx-auto" style="max-width: 450px;">
