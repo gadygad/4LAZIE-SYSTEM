@@ -204,6 +204,36 @@ public class UserController {
                 "connectionsCount", target.getFollowers().size()));
     }
 
+    /** Who follows this user — powers the Connections list modal on a profile. */
+    @GetMapping("/api/connections/{id}/followers")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<?> getFollowers(@org.springframework.web.bind.annotation.PathVariable String id) {
+        User me = getLoggedInUser();
+        if (me == null) {
+            return org.springframework.http.ResponseEntity.status(401).body(java.util.Map.of("success", false));
+        }
+        User target = userRepository.findById(id).orElse(null);
+        if (target == null) {
+            return org.springframework.http.ResponseEntity.notFound().build();
+        }
+
+        java.util.Set<String> followerIds = target.getFollowers() != null ? target.getFollowers() : java.util.Set.of();
+        java.util.List<java.util.Map<String, Object>> followers = new java.util.ArrayList<>();
+        for (User u : userRepository.findAllById(followerIds)) {
+            java.util.Map<String, Object> m = new java.util.HashMap<>();
+            m.put("id", u.getId());
+            m.put("name", u.getName());
+            m.put("profilePicture", u.getProfilePicture());
+            m.put("courseProgram", u.getCourseProgram());
+            m.put("isMe", u.getId().equals(me.getId()));
+            m.put("isFollowedByMe", me.getFollowing() != null && me.getFollowing().contains(u.getId()));
+            followers.add(m);
+        }
+        followers.sort((a, b) -> ((String) a.get("name")).compareToIgnoreCase((String) b.get("name")));
+
+        return org.springframework.http.ResponseEntity.ok(java.util.Map.of("success", true, "followers", followers));
+    }
+
     @PostMapping("/profile")
     public String updateProfile(@jakarta.validation.Valid @ModelAttribute("formUser") com.school.dto.UserProfileUpdateDTO formUser,
                              org.springframework.validation.BindingResult bindingResult,
