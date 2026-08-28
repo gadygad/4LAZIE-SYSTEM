@@ -367,13 +367,13 @@
     <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0" style="border-radius: 20px; background: rgba(31, 41, 55, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
-                <div class="modal-header border-0 pb-2">
-                    <h5 class="modal-title fw-bold" id="createPostModalLabel" style="font-size: 1.25rem; color: #fff; letter-spacing: 0.5px;">Create Post</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8;"></button>
+                <div class="modal-header border-0 pt-3 pb-1 px-3">
+                    <h5 class="modal-title fw-bold" id="createPostModalLabel" style="font-size: 1.05rem; color: #fff; letter-spacing: 0.5px;">Create Post</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; font-size: 0.8rem;"></button>
                 </div>
-                <div class="modal-body pt-0">
+                <div class="modal-body pt-0 px-3 pb-3">
                     <form th:action="@{/community/post}" method="post">
-                        <div class="d-flex mb-3 mt-2">
+                        <div class="d-flex mb-2 mt-1">
                             <!-- Avatar -->
                             <div class="me-3" style="flex-shrink: 0;">
                                 <img th:if="${user != null and user.profilePicture != null}" th:src="${user.profilePicture}" class="rounded-circle shadow-sm" style="width: 46px; height: 46px; object-fit: cover; border: 2px solid #10b981;">
@@ -416,8 +416,8 @@
                             </div>
                         </div>
                         
-                        <div class="d-flex justify-content-end align-items-center border-top pt-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
-                            <button type="submit" class="btn rounded-pill border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 10px 28px; font-weight: 600; font-size: 1rem; letter-spacing: 0.5px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(16, 185, 129, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Post</button>
+                        <div class="d-flex justify-content-end align-items-center border-top pt-2 mt-1" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                            <button type="submit" class="btn rounded-pill border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 8px 24px; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(16, 185, 129, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Post</button>
                         </div>
                     </form>
                 </div>
