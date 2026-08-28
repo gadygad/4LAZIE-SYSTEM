@@ -311,7 +311,7 @@
                             </div>
                             
                             <!-- Like Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 107, 107, 0.15)'; this.style.color='#ff6b6b'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'">
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="if(!this.classList.contains('liked')) { this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981' }" onmouseout="if(!this.classList.contains('liked')) { this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)' }" onclick="toggleLike(this)">
                                 <i class="bi bi-heart"></i>
                                 <span class="ms-2 fw-medium" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
                             </div>
@@ -459,6 +459,31 @@
                 scrollToTopBtn.style.visibility = 'hidden';
             }
         });
+
+        // Like Button Toggle Logic (Frontend Only)
+        function toggleLike(element) {
+            const icon = element.querySelector('i');
+            const countSpan = element.querySelector('span');
+            let count = parseInt(countSpan.innerText) || 0;
+            
+            if (element.classList.contains('liked')) {
+                // Unlike action
+                element.classList.remove('liked');
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+                element.style.background = 'rgba(255, 255, 255, 0.05)';
+                element.style.color = 'rgba(255, 255, 255, 0.8)';
+                countSpan.innerText = count > 0 ? count - 1 : 0;
+            } else {
+                // Like action
+                element.classList.add('liked');
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+                element.style.background = 'rgba(16, 185, 129, 0.2)';
+                element.style.color = '#10b981';
+                countSpan.innerText = count + 1;
+            }
+        }
     </script>
 </body>
 </html>
