@@ -298,15 +298,33 @@
                             <!-- Input Area -->
                             <div class="flex-grow-1">
                                 <style>
-                                    .glass-textarea::placeholder {
+                                    .glass-textarea::placeholder, .glass-input::placeholder {
                                         color: rgba(255, 255, 255, 0.5) !important;
                                         font-weight: 400;
                                     }
-                                    .glass-textarea:focus {
+                                    .glass-textarea:focus, .glass-input:focus {
                                         outline: none !important;
                                         box-shadow: none !important;
+                                        border-color: rgba(16,185,129,0.5) !important;
+                                    }
+                                    .glass-input {
+                                        background: rgba(255,255,255,0.07);
+                                        border: 1px solid rgba(255,255,255,0.15);
+                                        border-radius: 10px;
+                                        color: rgba(255,255,255,0.95);
+                                        font-size: 0.95rem;
+                                        font-weight: 600;
+                                        padding: 8px 14px;
+                                        width: 100%;
+                                        margin-bottom: 10px;
+                                        transition: border-color 0.2s;
                                     }
                                 </style>
+                                <!-- Title / Heading field -->
+                                <input type="text" name="title" class="glass-input" 
+                                       placeholder="Heading (e.g. Study tips for CAT 1...)" 
+                                       maxlength="100" required
+                                       style="display:block;">
                                 <textarea name="content" class="form-control border-0 px-0 shadow-none glass-textarea" rows="4" placeholder="What's happening?" required style="resize: none; font-size: 1.15rem; background: transparent; color: rgba(255, 255, 255, 0.95);"></textarea>
                             </div>
                         </div>
