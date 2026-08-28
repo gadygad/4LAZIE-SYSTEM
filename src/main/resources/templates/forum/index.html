@@ -522,10 +522,36 @@
             return match ? match[2] : '';
         }
 
-        // Like Button — persisted via POST /community/post/{id}/like
-        function toggleLike(element, postId) {
+        // Like Button — updates instantly (optimistic), then confirms with the
+        // server in the background; only rolled back if the request fails.
+        function applyLikeState(element, liked, count) {
             const icon = element.querySelector('i');
             const countSpan = element.querySelector('.like-count');
+            countSpan.innerText = count;
+            if (liked) {
+                element.classList.add('liked');
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+                element.style.background = 'rgba(16, 185, 129, 0.2)';
+                element.style.color = '#10b981';
+            } else {
+                element.classList.remove('liked');
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+                element.style.background = 'rgba(255, 255, 255, 0.05)';
+                element.style.color = 'rgba(255, 255, 255, 0.8)';
+            }
+        }
+
+        function toggleLike(element, postId) {
+            if (element.dataset.pending === '1') return; // ignore rapid double-clicks
+            element.dataset.pending = '1';
+
+            const countSpan = element.querySelector('.like-count');
+            const wasLiked = element.classList.contains('liked');
+            const prevCount = parseInt(countSpan.innerText) || 0;
+            const optimisticCount = wasLiked ? Math.max(0, prevCount - 1) : prevCount + 1;
+            applyLikeState(element, !wasLiked, optimisticCount);
 
             fetch('/community/post/' + postId + '/like', { method: 'POST', headers: { 'X-XSRF-TOKEN': csrfToken() } })
                 .then(res => {
@@ -533,23 +559,14 @@
                     return res.json();
                 })
                 .then(data => {
-                    if (!data || data.error) return;
-                    countSpan.innerText = data.count;
-                    if (data.liked) {
-                        element.classList.add('liked');
-                        icon.classList.remove('bi-heart');
-                        icon.classList.add('bi-heart-fill');
-                        element.style.background = 'rgba(16, 185, 129, 0.2)';
-                        element.style.color = '#10b981';
-                    } else {
-                        element.classList.remove('liked');
-                        icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart');
-                        element.style.background = 'rgba(255, 255, 255, 0.05)';
-                        element.style.color = 'rgba(255, 255, 255, 0.8)';
-                    }
+                    if (!data || data.error) { applyLikeState(element, wasLiked, prevCount); return; }
+                    applyLikeState(element, data.liked, data.count); // reconcile with the real count
                 })
-                .catch(err => console.error('toggleLike failed:', err));
+                .catch(err => {
+                    console.error('toggleLike failed:', err);
+                    applyLikeState(element, wasLiked, prevCount); // roll back on network failure
+                })
+                .finally(() => { element.dataset.pending = '0'; });
         }
 
         // Comments — loaded/posted via GET+POST /community/post/{id}/comment(s)
