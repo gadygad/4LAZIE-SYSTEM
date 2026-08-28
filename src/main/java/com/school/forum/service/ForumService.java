@@ -48,7 +48,7 @@ public class ForumService {
         List<ForumPost> notePosts = new ArrayList<>();
         if (adminUser != null) {
             final User admin = adminUser;
-            List<Note> allNotes = noteRepository.findTop50ByOrderByIdDesc();
+            List<Note> allNotes = noteRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
             for (Note note : allNotes) {
                 ForumPost post = new ForumPost();
                 post.setAuthor(admin);
@@ -113,9 +113,8 @@ public class ForumService {
             List<ForumPost> olderPosts = new ArrayList<>(allPosts.subList(newestLimit, allPosts.size()));
             Collections.shuffle(olderPosts);
             
-            // Optionally limit how many old posts to load at once (e.g., max 20 random old posts)
-            int olderLimit = Math.min(20, olderPosts.size());
-            feed.addAll(olderPosts.subList(0, olderLimit));
+            // Show ALL older posts (no cap)
+            feed.addAll(olderPosts);
         }
 
         return feed;
