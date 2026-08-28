@@ -2,9 +2,11 @@ package com.school.forum.model;
 
 import com.school.auth.User;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Document(collection = "forum_posts")
 public class ForumPost {
@@ -12,6 +14,13 @@ public class ForumPost {
     @Id
     private String id;
 
+    // Only the author's id is persisted, avoiding an embedded User (which caused
+    // Spring Data to pick up User.email's unique index for this collection) and
+    // avoiding @DBRef (which resolves one extra query per post, i.e. N+1 on the feed).
+    private String authorId;
+
+    // Populated in-memory by ForumService via a single batch lookup; never persisted.
+    @Transient
     private User author;
 
     private String title;
@@ -22,6 +31,10 @@ public class ForumPost {
 
     private int likesCount = 0;
     private int commentsCount = 0;
+
+    // User ids who liked this post — likesCount is kept in sync with this set's
+    // size so existing templates/consumers reading likesCount don't change.
+    private Set<String> likedBy = new LinkedHashSet<>();
 
     // Transient flag set at runtime (not saved to DB) for template use
     @org.springframework.data.annotation.Transient
@@ -51,7 +64,7 @@ public class ForumPost {
     public ForumPost() {}
 
     public ForumPost(User author, String title, String content) {
-        this.author = author;
+        setAuthor(author);
         this.title = title;
         this.content = content;
         this.createdAt = LocalDateTime.now();
@@ -71,6 +84,15 @@ public class ForumPost {
 
     public void setAuthor(User author) {
         this.author = author;
+        this.authorId = author != null ? author.getId() : null;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getTitle() {
@@ -111,5 +133,13 @@ public class ForumPost {
 
     public void setCommentsCount(int commentsCount) {
         this.commentsCount = commentsCount;
+    }
+
+    public Set<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(Set<String> likedBy) {
+        this.likedBy = likedBy != null ? likedBy : new LinkedHashSet<>();
     }
 }

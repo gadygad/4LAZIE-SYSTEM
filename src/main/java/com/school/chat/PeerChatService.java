@@ -42,6 +42,22 @@ public class PeerChatService {
         return cacheManager.getCache(CACHE_NAME);
     }
 
+    /** ADMIN/SUPER_ADMIN users appear to everyone else as "4LAZIE" with the
+     * brand logo instead of their personal name/photo — same convention the
+     * forum and DirectChat support inbox already use. */
+    private boolean isAdmin(User user) {
+        return user != null && user.getRole() != null &&
+                (user.getRole().name().equals("ADMIN") || user.getRole().name().equals("SUPER_ADMIN"));
+    }
+
+    private String brandedName(User user) {
+        return isAdmin(user) ? "4LAZIE" : (user != null ? user.getName() : "Student");
+    }
+
+    private String brandedPicture(User user) {
+        return isAdmin(user) ? "/images/logo.png" : (user != null ? user.getProfilePicture() : null);
+    }
+
     private PeerChat save(PeerChat chat) {
         PeerChat saved = peerChatRepository.save(chat);
         Cache cache = cache();
@@ -69,8 +85,8 @@ public class PeerChatService {
         PeerChat chat = new PeerChat();
         chat.setUser1Id(user1Id);
         chat.setUser2Id(user2Id);
-        chat.setUser1Name(user1 != null ? user1.getName() : "Student");
-        chat.setUser2Name(user2 != null ? user2.getName() : "Student");
+        chat.setUser1Name(brandedName(user1));
+        chat.setUser2Name(brandedName(user2));
 
         return save(chat);
     }
@@ -81,9 +97,10 @@ public class PeerChatService {
         if (chat == null) return null;
 
         User sender = userRepository.findById(senderId).orElse(null);
-        String profilePicture = sender != null ? sender.getProfilePicture() : null;
+        String brandedSenderName = isAdmin(sender) ? "4LAZIE" : senderName;
+        String profilePicture = brandedPicture(sender);
 
-        ChatMessage msg = new ChatMessage(senderId, senderName, profilePicture, messageText, null);
+        ChatMessage msg = new ChatMessage(senderId, brandedSenderName, profilePicture, messageText, null);
         msg.setReplyToMessageId(replyToMessageId);
         msg.setReplyToSenderName(replyToSenderName);
         msg.setReplyToMessageText(replyToMessageText);
@@ -100,7 +117,7 @@ public class PeerChatService {
         // Deep-link straight into this conversation instead of the bare
         // inbox — tapping the notification should land the recipient with
         // the reply box already in view, not make them hunt for the chat.
-        pushNotificationService.sendToUser(recipientId, "New Message from " + senderName, messageText,
+        pushNotificationService.sendToUser(recipientId, "New Message from " + brandedSenderName, messageText,
                 "/messages?openPeerChat=" + chatId);
 
         return save(chat);

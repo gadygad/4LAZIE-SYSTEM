@@ -1,5 +1,7 @@
 package com.school.chat;
 
+import com.school.auth.User;
+import com.school.auth.UserRepository;
 import com.school.chat.ChatMessage;
 import com.school.chat.GroupChat;
 import com.school.chat.GroupChatRepository;
@@ -21,7 +23,18 @@ public class GroupChatService {
     private GroupChatRepository groupChatRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private CacheManager cacheManager;
+
+    /** ADMIN/SUPER_ADMIN users appear to everyone else as "4LAZIE" with the
+     * brand logo instead of their personal name/photo — same convention the
+     * forum and DirectChat support inbox already use. */
+    private boolean isAdmin(User user) {
+        return user != null && user.getRole() != null &&
+                (user.getRole().name().equals("ADMIN") || user.getRole().name().equals("SUPER_ADMIN"));
+    }
 
     /** Same Caffeine-backed CacheManager already used elsewhere in the app
      * (see CacheConfig) — a group is re-read constantly (every open, every
@@ -57,7 +70,9 @@ public class GroupChatService {
         group.setMemberIds(members);
         group.setCreatedAt(LocalDateTime.now());
 
-        String noticeText = creatorName + " created the group";
+        User creator = userRepository.findById(creatorId).orElse(null);
+        String brandedCreatorName = isAdmin(creator) ? "4LAZIE" : creatorName;
+        String noticeText = brandedCreatorName + " created the group";
         if (addedMemberNames != null && !addedMemberNames.isEmpty()) {
             noticeText += " and added " + String.join(", ", addedMemberNames);
         }
@@ -72,7 +87,11 @@ public class GroupChatService {
         GroupChat group = getGroupById(groupId);
         if (group == null) return null;
 
-        ChatMessage msg = new ChatMessage(senderId, senderName, senderProfilePicture, messageText, null);
+        User sender = userRepository.findById(senderId).orElse(null);
+        String brandedSenderName = isAdmin(sender) ? "4LAZIE" : senderName;
+        String brandedPicture = isAdmin(sender) ? "/images/logo.png" : senderProfilePicture;
+
+        ChatMessage msg = new ChatMessage(senderId, brandedSenderName, brandedPicture, messageText, null);
         group.getMessages().add(msg);
         group.setLastMessageAt(LocalDateTime.now());
 

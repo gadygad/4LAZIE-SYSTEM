@@ -9,8 +9,14 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Referencing _csrf.token here is what makes Spring Security actually
+         write the XSRF-TOKEN cookie our fetch() calls read for like/comment. -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>COMMUNITY - 4LAZIE</title>
-    
+
+    <!-- Warm up the CDN connection before the CSS requests fire -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -167,7 +173,7 @@
                 <p class="opacity-75">Be the first to start a conversation!</p>
             </div>
 
-        <div th:each="post : ${posts}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+        <div th:each="post : ${posts}" th:id="${post.noteId == null ? 'post-' + post.id : null}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
             <div style="padding: 16px;">
                 <div class="d-flex">
                     <!-- ── AVATAR (role-based) ── -->
@@ -303,21 +309,45 @@
                         </div>
                         
                         <!-- Action Buttons (Like, Comment, Share) -->
-                        <div class="d-flex gap-3 mt-3">
+                        <div class="d-flex gap-3 mt-3" th:data-post-id="${post.noteId == null ? post.id : ''}">
                             <!-- Comment Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'">
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn"
+                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
+                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
+                                 th:if="${post.noteId == null}"
+                                 th:data-post-id="${post.id}"
+                                 onclick="openComments(this.dataset.postId)">
+                                <i class="bi bi-chat"></i>
+                                <span class="ms-2 fw-medium comment-count" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
+                            </div>
+                            <div th:if="${post.noteId != null}" class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4); font-size: 13px;">
                                 <i class="bi bi-chat"></i>
                                 <span class="ms-2 fw-medium" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
                             </div>
-                            
+
                             <!-- Like Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="if(!this.classList.contains('liked')) { this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981' }" onmouseout="if(!this.classList.contains('liked')) { this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)' }" onclick="toggleLike(this)">
+                            <div th:if="${post.noteId == null}"
+                                 class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
+                                 th:classappend="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'liked' : ''"
+                                 th:style="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 13px; cursor: pointer; transition: all 0.2s;' : 'background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;'"
+                                 onmouseover="if(!this.classList.contains('liked')) { this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981' }" onmouseout="if(!this.classList.contains('liked')) { this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)' }"
+                                 th:data-post-id="${post.id}"
+                                 onclick="toggleLike(this, this.dataset.postId)">
+                                <i th:class="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+                                <span class="ms-2 fw-medium like-count" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
+                            </div>
+                            <div th:if="${post.noteId != null}" class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4); font-size: 13px;">
                                 <i class="bi bi-heart"></i>
                                 <span class="ms-2 fw-medium" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
                             </div>
-                            
+
                             <!-- Share Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'">
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1"
+                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
+                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
+                                 th:data-post-id="${post.noteId == null ? post.id : ''}"
+                                 th:data-post-title="${post.title != null ? post.title : '4LAZIE Community'}"
+                                 onclick="sharePost(this.dataset.postId, this.dataset.postTitle)">
                                 <i class="bi bi-share"></i>
                             </div>
                         </div>
@@ -359,7 +389,7 @@
     <div th:replace="~{fragments/bottom_nav :: nav('community')}"></div>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTopBtn" class="btn rounded-circle shadow d-flex align-items-center justify-content-center" style="position: fixed; bottom: 150px; right: 20px; width: 50px; height: 50px; background: rgba(31, 41, 55, 0.8); color: white; border: 1px solid rgba(255,255,255,0.2); z-index: 1049; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(10px);" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" onmouseover="this.style.background='rgba(16, 185, 129, 0.9)'" onmouseout="this.style.background='rgba(31, 41, 55, 0.8)'">
+    <button id="scrollToTopBtn" class="btn rounded-circle shadow d-flex align-items-center justify-content-center" style="position: fixed; bottom: 170px; right: 20px; width: 50px; height: 50px; background: rgba(31, 41, 55, 0.8); color: white; border: 1px solid rgba(255,255,255,0.2); z-index: 1049; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(10px);" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" onmouseover="this.style.background='rgba(16, 185, 129, 0.9)'" onmouseout="this.style.background='rgba(31, 41, 55, 0.8)'">
         <i class="bi bi-arrow-up-short" style="font-size: 1.8rem;"></i>
     </button>
 
@@ -369,60 +399,65 @@
     </button>
 
     <!-- Post Creation Modal -->
+    <style>
+        /* Blur everything behind the modal instead of just darkening it */
+        .modal-backdrop.show {
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            background-color: rgba(0, 0, 0, 0.55);
+            opacity: 1 !important;
+        }
+        .glass-textarea::placeholder, .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+            font-weight: 400;
+        }
+        .glass-textarea:focus, .glass-input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border-color: rgba(16,185,129,0.5) !important;
+        }
+        .glass-input {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            color: rgba(255,255,255,0.95);
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 9px 14px;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+    </style>
     <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="margin-top: 85px;">
-            <div class="modal-content border-0" style="border-radius: 20px; background: #1f2937; border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered" style="margin-top: 8px; max-width: 480px;">
+            <div class="modal-content border-0" style="border-radius: 16px; background: #1f2937; border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
                 <div class="modal-header border-0 pt-3 pb-1 px-3">
                     <h5 class="modal-title fw-bold" id="createPostModalLabel" style="font-size: 1.05rem; color: #fff; letter-spacing: 0.5px;">Create Post</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; font-size: 0.8rem;"></button>
                 </div>
                 <div class="modal-body pt-0 px-3 pb-3">
                     <form th:action="@{/community/post}" method="post">
-                        <div class="d-flex mb-1 mt-1">
+                        <div class="d-flex align-items-center mb-2 mt-1">
                             <!-- Avatar -->
-                            <div class="me-3" style="flex-shrink: 0;">
-                                <img th:if="${user != null and user.profilePicture != null}" th:src="${user.profilePicture}" class="rounded-circle shadow-sm" style="width: 46px; height: 46px; object-fit: cover; border: 2px solid #10b981;">
-                                <div th:unless="${user != null and user.profilePicture != null}" class="rounded-circle d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 46px; height: 46px; background: linear-gradient(135deg, #10b981, #059669); border: 2px solid rgba(255,255,255,0.2); font-weight: bold; font-size: 1.3rem;">
+                            <div class="me-2" style="flex-shrink: 0;">
+                                <img th:if="${user != null and user.profilePicture != null}" th:src="${user.profilePicture}" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid #10b981;">
+                                <div th:unless="${user != null and user.profilePicture != null}" class="rounded-circle d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, #10b981, #059669); border: 2px solid rgba(255,255,255,0.2); font-weight: bold; font-size: 1.1rem;">
                                     <span th:text="${user != null ? user.name.substring(0,1) : 'U'}">U</span>
                                 </div>
                             </div>
-                            
-                            <!-- Input Area -->
-                            <div class="flex-grow-1">
-                                <style>
-                                    .glass-textarea::placeholder, .glass-input::placeholder {
-                                        color: rgba(255, 255, 255, 0.5) !important;
-                                        font-weight: 400;
-                                    }
-                                    .glass-textarea:focus, .glass-input:focus {
-                                        outline: none !important;
-                                        box-shadow: none !important;
-                                        border-color: rgba(16,185,129,0.5) !important;
-                                    }
-                                    .glass-input {
-                                        background: rgba(255,255,255,0.07);
-                                        border: 1px solid rgba(255,255,255,0.15);
-                                        border-radius: 10px;
-                                        color: rgba(255,255,255,0.95);
-                                        font-size: 0.95rem;
-                                        font-weight: 600;
-                                        padding: 8px 14px;
-                                        width: 100%;
-                                        margin-bottom: 10px;
-                                        transition: border-color 0.2s;
-                                    }
-                                </style>
-                                <!-- Title / Heading field -->
-                                <input type="text" name="title" class="glass-input" 
-                                       placeholder="Heading (e.g. Study tips for CAT 1...)" 
-                                       maxlength="100" required
-                                       style="display:block;">
-                                <textarea name="content" class="form-control border-0 px-0 shadow-none glass-textarea" placeholder="What's happening?" required style="resize: none; font-size: 1.15rem; background: transparent; color: rgba(255, 255, 255, 0.95); height: 60px; min-height: 60px; max-height: 200px; overflow-y: auto;"></textarea>
-                            </div>
+                            <span class="fw-semibold" style="color: rgba(255,255,255,0.9); font-size: 0.9rem;" th:text="${user != null ? user.name : 'You'}">You</span>
                         </div>
-                        
-                        <div class="d-flex justify-content-end align-items-center border-top pt-2 mt-0" style="border-color: rgba(255, 255, 255, 0.1) !important;">
-                            <button type="submit" class="btn rounded-pill border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 8px 24px; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(16, 185, 129, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Post</button>
+
+                        <!-- Input Area: full-width, stacked below the avatar row -->
+                        <input type="text" name="title" class="glass-input"
+                               placeholder="Heading (e.g. Study tips for CAT 1...)"
+                               maxlength="100" required
+                               style="display:block;">
+                        <textarea name="content" class="form-control border-0 px-0 shadow-none glass-textarea" placeholder="What's happening?" required style="resize: none; font-size: 1.05rem; background: transparent; color: rgba(255, 255, 255, 0.95); width: 100%; height: 130px; min-height: 130px; max-height: 300px; overflow-y: auto;"></textarea>
+
+                        <div class="d-flex justify-content-end align-items-center border-top pt-2 mt-1" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                            <button type="submit" class="btn border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 4px 18px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.5px; line-height: 1.6; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(16, 185, 129, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Post</button>
                         </div>
                     </form>
                 </div>
@@ -430,8 +465,29 @@
         </div>
     </div>
 
+    <!-- Comments Modal -->
+    <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="margin-top: 8px; max-width: 480px;">
+            <div class="modal-content border-0" style="border-radius: 16px; background: #1f2937; border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); max-height: 85vh;">
+                <div class="modal-header border-0 pt-3 pb-1 px-3">
+                    <h5 class="modal-title fw-bold" id="commentsModalLabel" style="font-size: 1.05rem; color: #fff;">Comments</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; font-size: 0.8rem;"></button>
+                </div>
+                <div class="modal-body pt-0 px-3 pb-2" id="commentsList" style="overflow-y: auto; flex: 1;">
+                    <div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>
+                </div>
+                <div class="px-3 pb-3 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                    <form id="commentForm" class="d-flex gap-2" onsubmit="submitComment(event)">
+                        <input type="text" id="commentInput" class="glass-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0;">
+                        <button type="submit" class="btn border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 4px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; flex-shrink: 0;">Post</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <script th:src="@{/js/main.js}"></script>
     <script>
         // Navbar and Scroll to Top Logic
@@ -460,28 +516,128 @@
             }
         });
 
-        // Like Button Toggle Logic (Frontend Only)
-        function toggleLike(element) {
+        // CSRF token cookie set by Spring Security — required on every state-changing fetch()
+        function csrfToken() {
+            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+            return match ? match[2] : '';
+        }
+
+        // Like Button — persisted via POST /community/post/{id}/like
+        function toggleLike(element, postId) {
             const icon = element.querySelector('i');
-            const countSpan = element.querySelector('span');
-            let count = parseInt(countSpan.innerText) || 0;
-            
-            if (element.classList.contains('liked')) {
-                // Unlike action
-                element.classList.remove('liked');
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.add('bi-heart');
-                element.style.background = 'rgba(255, 255, 255, 0.05)';
-                element.style.color = 'rgba(255, 255, 255, 0.8)';
-                countSpan.innerText = count > 0 ? count - 1 : 0;
+            const countSpan = element.querySelector('.like-count');
+
+            fetch('/community/post/' + postId + '/like', { method: 'POST', headers: { 'X-XSRF-TOKEN': csrfToken() } })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) return;
+                    countSpan.innerText = data.count;
+                    if (data.liked) {
+                        element.classList.add('liked');
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                        element.style.background = 'rgba(16, 185, 129, 0.2)';
+                        element.style.color = '#10b981';
+                    } else {
+                        element.classList.remove('liked');
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                        element.style.background = 'rgba(255, 255, 255, 0.05)';
+                        element.style.color = 'rgba(255, 255, 255, 0.8)';
+                    }
+                })
+                .catch(err => console.error('toggleLike failed:', err));
+        }
+
+        // Comments — loaded/posted via GET+POST /community/post/{id}/comment(s)
+        let activeCommentPostId = null;
+        const escComment = s => String(s || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        function openComments(postId) {
+            activeCommentPostId = postId;
+            const modalEl = document.getElementById('commentsModal');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            const list = document.getElementById('commentsList');
+            list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>';
+            modal.show();
+
+            fetch('/community/post/' + postId + '/comments')
+                .then(res => res.json())
+                .then(comments => renderComments(comments))
+                .catch(err => {
+                    console.error('openComments failed:', err);
+                    list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Failed to load comments.</div>';
+                });
+        }
+
+        function renderComments(comments) {
+            const list = document.getElementById('commentsList');
+            if (!Array.isArray(comments) || comments.length === 0) {
+                list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">No comments yet. Be the first!</div>';
+                return;
+            }
+            list.innerHTML = comments.map(c => `
+                <div class="d-flex mb-3 gap-2">
+                    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.8rem;">${escComment(c.authorName).charAt(0).toUpperCase()}</div>
+                    <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
+                        <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${escComment(c.authorName)}</div>
+                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
+                    </div>
+                </div>
+            `).join('');
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function submitComment(event) {
+            event.preventDefault();
+            if (!activeCommentPostId) return;
+            const input = document.getElementById('commentInput');
+            const content = input.value.trim();
+            if (!content) return;
+
+            const params = new URLSearchParams();
+            params.append('content', content);
+
+            fetch('/community/post/' + activeCommentPostId + '/comment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                body: params
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) return;
+                    input.value = '';
+                    fetch('/community/post/' + activeCommentPostId + '/comments')
+                        .then(res => res.json())
+                        .then(comments => renderComments(comments));
+                    document.querySelectorAll('[data-post-id="' + activeCommentPostId + '"] .comment-count')
+                        .forEach(el => el.innerText = data.count);
+                })
+                .catch(err => console.error('submitComment failed:', err));
+        }
+
+        // Share — Web Share API where available, clipboard-copy fallback otherwise
+        function sharePost(postId, title) {
+            const url = window.location.origin + '/community' + (postId ? '#post-' + postId : '');
+            if (navigator.share) {
+                navigator.share({ title: title || '4LAZIE Community', url: url }).catch(() => {});
+                return;
+            }
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copied: ' + url);
+                }).catch(() => {
+                    prompt('Copy this link:', url);
+                });
             } else {
-                // Like action
-                element.classList.add('liked');
-                icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                element.style.background = 'rgba(16, 185, 129, 0.2)';
-                element.style.color = '#10b981';
-                countSpan.innerText = count + 1;
+                prompt('Copy this link:', url);
             }
         }
     </script>

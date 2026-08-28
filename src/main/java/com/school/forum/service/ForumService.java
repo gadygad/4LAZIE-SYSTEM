@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,10 +84,22 @@ public class ForumService {
             }
         }
 
-        // ── 3. Fetch real forum posts and tag their roles ──
+        // ── 3. Fetch real forum posts, then resolve all authors in a single batch query
+        //      instead of one lookup per post (avoids an N+1 query on the feed) ──
         List<ForumPost> realPosts = forumPostRepository.findTop50ByOrderByCreatedAtDesc();
+        List<String> authorIds = realPosts.stream()
+                .map(ForumPost::getAuthorId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<String, User> authorsById = authorIds.isEmpty()
+                ? Collections.emptyMap()
+                : userRepository.findAllById(authorIds).stream()
+                        .collect(Collectors.toMap(User::getId, u -> u));
         realPosts.forEach(post -> {
-            String role = resolveRole(post.getAuthor());
+            User author = authorsById.get(post.getAuthorId());
+            post.setAuthor(author);
+            String role = resolveRole(author);
             post.setAuthorRole(role);
             if (isAuthority(role)) post.setAdminPost(true);
         });
@@ -109,12 +122,12 @@ public class ForumService {
         List<ForumPost> newestPosts = new ArrayList<>(allPosts.subList(0, newestLimit));
         feed.addAll(newestPosts);
 
-        // Take the rest of the older posts and shuffle them randomly
+        // Take the rest of the older posts and shuffle them randomly (capped, so the
+        // feed doesn't keep growing/reshuffling every request as the forum accumulates posts)
         if (allPosts.size() > newestLimit) {
-            List<ForumPost> olderPosts = new ArrayList<>(allPosts.subList(newestLimit, allPosts.size()));
+            int olderLimit = Math.min(40, allPosts.size() - newestLimit);
+            List<ForumPost> olderPosts = new ArrayList<>(allPosts.subList(newestLimit, newestLimit + olderLimit));
             Collections.shuffle(olderPosts);
-            
-            // Show ALL older posts (no cap)
             feed.addAll(olderPosts);
         }
 

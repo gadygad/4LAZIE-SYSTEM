@@ -1559,6 +1559,15 @@
                 return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.72rem;font-family:'Outfit',sans-serif;">${ini}</div>`;
             }
 
+            // The backend brands ADMIN/SUPER_ADMIN senders as "4LAZIE" — show
+            // that name with a green verified badge, same as the forum feed.
+            function verifiedNameHtml(name) {
+                if (name === '4LAZIE') {
+                    return `${esc(name)} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.85em;" title="Verified Official"></i>`;
+                }
+                return esc(name);
+            }
+
             function initReply(messageId, senderName, messageText) {
                 replyState = { messageId, senderName, messageText };
                 document.getElementById('peerReplyContextName').textContent = senderName;
@@ -1594,7 +1603,7 @@
                 headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;padding:0 56px;' + (msg.isSelf ? '' : 'flex-direction:row-reverse;');
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
-                nameEl.textContent = label;
+                nameEl.innerHTML = verifiedNameHtml(label);
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
                 timeEl.textContent = msg.time || '';
@@ -1903,7 +1912,7 @@
 
                 const profileUrl = '/students/' + otherId + '/profile';
                 const nameLink = document.getElementById('peerChatName');
-                nameLink.textContent = otherName;
+                nameLink.innerHTML = verifiedNameHtml(otherName);
                 nameLink.href = profileUrl;
                 const avatarLink = document.getElementById('peerChatAvatar');
                 avatarLink.href = profileUrl;
@@ -1990,7 +1999,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="inbox-name">${escHtml(c.otherUserName)}</span>
+                                <span class="inbox-name">${verifiedNameHtml(c.otherUserName)}</span>
                                 <small class="inbox-time">${c.lastMessageTime || ''}</small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-1">
@@ -2231,6 +2240,15 @@
                     : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:900;font-size:0.85rem;font-family:'Outfit',sans-serif;">${esc((name || '?').charAt(0).toUpperCase())}</div>`;
             }
 
+            // The backend brands ADMIN/SUPER_ADMIN senders as "4LAZIE" — show
+            // that name with a green verified badge, same as the forum feed.
+            function verifiedNameHtml(name) {
+                if (name === '4LAZIE') {
+                    return `${esc(name)} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.85em;" title="Verified Official"></i>`;
+                }
+                return esc(name);
+            }
+
             function makeBubble(msg) {
                 const outer = document.createElement('div');
                 outer.id = 'group-msg-' + msg.id;
@@ -2258,7 +2276,7 @@
                 if (!msg.isSelf) {
                     const nameEl = document.createElement('div');
                     nameEl.style.cssText = 'font-size:0.72rem;font-weight:700;color:#64748b;margin-bottom:2px;padding:0 4px;';
-                    nameEl.textContent = msg.senderName || '';
+                    nameEl.innerHTML = verifiedNameHtml(msg.senderName || '');
                     col.appendChild(nameEl);
                 }
 
