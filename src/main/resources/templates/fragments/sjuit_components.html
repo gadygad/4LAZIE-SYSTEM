@@ -2,6 +2,66 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <style>
+
+    /* MAGIC PREMIUM STYLES */
+    .magic-glass {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%) !important;
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .magic-glass:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 45px 0 rgba(16, 185, 129, 0.2) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.05) 100%) !important;
+    }
+    
+    .magic-folder {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .magic-folder::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: all 0.7s ease;
+    }
+    .magic-folder:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+    }
+    .magic-folder:hover::before {
+        left: 200%;
+    }
+
+    .magic-icon-glow {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        transition: all 0.3s ease;
+    }
+    .magic-folder:hover .magic-icon-glow {
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+        transform: scale(1.1);
+    }
+    
+    .magic-text-gradient {
+        background: linear-gradient(90deg, #059669, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
     /* GUARANTEED SIDEBAR HOVER STYLES (Bypasses CSS Cache) - Updated to Premium Light */
     .sidebar-hover-content, .sidebar-hover-item .sidebar-hover-content.collapse {
         display: block !important;
@@ -492,7 +552,7 @@
                         </div>
                         
                         <div class="d-flex flex-column gap-2">
-                            <div th:each="note, stat : ${notes}" th:if="${stat.index < 3}" class="p-3 rounded-3 d-flex align-items-center bg-white shadow-sm position-relative" style="border: 1px solid rgba(0,0,0,0.04); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(6px)'; this.style.borderColor='rgba(16, 185, 129, 0.2)';" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(0,0,0,0.04)';">
+                            <div th:each="note, stat : ${notes}" th:if="${stat.index < 3}" class="p-3 rounded-3 d-flex align-items-center position-relative" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.03);" onmouseover="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(52, 211, 153, 0.05) 100%)'; this.style.transform='translateX(6px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%)'; this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.03)'; this.style.borderColor='rgba(16, 185, 129, 0.15)';">
                                 
                                 <!-- Rank Box matching resource icon boxes -->
                                 <div class="icon-box me-3 d-flex align-items-center justify-content-center fw-bold" 
@@ -588,114 +648,157 @@
                             </h2>
                             <div th:id="'categoryCollapse1_' + ${stat.index}" class="accordion-collapse collapse" th:data-bs-parent="'#accordionCategory' + ${stat.index}">
                                 <div class="accordion-body p-3 pt-0">
-                                    <div class="accordion border-0" th:id="'accordionUnits' + ${stat.index}" style="display:flex; flex-direction:column;">
-                                        <div th:each="unitNum, uStat : ${#numbers.sequence(1, 5)}"
-                                             style="border-bottom: 1px solid rgba(16, 185, 129,0.1); background: transparent;">
-                                            <th:block th:with="unitNotes=${entry.value.?[unitNumber == __${unitNum}__ and category != 'Assignment' and category != 'CAT 1' and category != 'CAT 2' and category != 'UE' and category != 'Project' and category != 'Past Paper']}">
-                                                <button class="accordion-button collapsed px-1 py-3 w-100"
-                                                        type="button"
-                                                        data-bs-toggle="collapse"
-                                                        th:data-bs-target="'#unitCollapse' + ${stat.index} + '_' + ${unitNum}"
-                                                        style="background: transparent; border: none; font-family: 'Outfit', sans-serif; box-shadow: none;">
-                                                    <div class="d-flex align-items-center gap-3 w-100">
-                                                        <div style="color: var(--acc-icon-color, #059669); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                                            <i class="bi bi-bookmark-star-fill" style="font-size: 1.15rem;"></i>
-                                                        </div>
-                                                        <div class="d-flex flex-column text-start">
-                                                            <span class="fw-bold text-uppercase" style="color: #1e293b; font-size: 0.9rem; letter-spacing: 0.5px;">UNIT [[${unitNum}]]</span>
-                                                            <span th:if="${#lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">Pending</span>
-                                                            <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: var(--acc-text-light, #059669); font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
+                                    <div class="accordion border-0" th:id="'accordionYears' + ${stat.index}" style="display:flex; flex-direction:column;">
+                                        <th:block th:with="allLecNotes=${entry.value.?[category != 'Assignment' and category != 'CAT 1' and category != 'CAT 2' and category != 'UE' and category != 'Project' and category != 'Past Paper']}">
+                                            <th:block th:if="${not #lists.isEmpty(allLecNotes)}">
+                                                <th:block th:with="years=${allLecNotes.![academicYear != null and !academicYear.isEmpty() ? academicYear : 'N/A'].stream().distinct().toList()}">
+                                                    
+                                                    <!-- Premium Folder Container for Years -->
+                                                    <div class="d-flex flex-wrap gap-3 gap-md-4 mb-3 px-1" th:id="'lecYearsParent' + ${stat.index}">
+                                                        <div th:each="year, yearStat : ${years}" 
+                                                             class="year-folder-card d-flex flex-column align-items-center justify-content-center p-3 rounded-4"
+                                                             style="cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(16, 185, 129, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.04); min-width: 105px;"
+                                                             data-bs-toggle="collapse"
+                                                             th:data-bs-target="'#lecYearCollapse_' + ${stat.index} + '_' + ${yearStat.index}"
+                                                             onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.boxShadow='0 15px 30px rgba(16, 185, 129, 0.2)'; this.style.borderColor='rgba(16, 185, 129, 0.4)'; this.style.background='rgba(255,255,255,0.95)'; this.querySelector('i').style.transform='scale(1.1) translateY(-2px)'; this.querySelector('.badge').style.transform='translate(-50%, -50%) scale(1.15)'; this.querySelector('.year-label').style.background='rgba(16, 185, 129, 0.15)'; this.querySelector('.year-label').style.color='#047857';"
+                                                             onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.04)'; this.style.borderColor='rgba(16, 185, 129, 0.15)'; this.style.background='rgba(255, 255, 255, 0.85)'; this.querySelector('i').style.transform='none'; this.querySelector('.badge').style.transform='translate(-50%, -50%) scale(1)'; this.querySelector('.year-label').style.background='rgba(16, 185, 129, 0.08)'; this.querySelector('.year-label').style.color='#1e293b';">
+                                                            
+                                                            <div class="position-relative mb-2" style="perspective: 1000px;">
+                                                                <i class="bi bi-folder-fill" style="font-size: 3.3rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 6px 12px rgba(16, 185, 129, 0.35)); display: inline-block; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);"></i>
+                                                                <span class="position-absolute top-50 start-50 translate-middle badge rounded-pill" 
+                                                                      style="background: #ffffff; color: #047857; font-size: 0.75rem; font-weight: 800; border: 2px solid #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); padding: 0.35em 0.6em; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 2;" 
+                                                                      th:text="${allLecNotes.?[academicYear == '__${year}__' or (academicYear == null and '__${year}__' == 'N/A')].size()}">2</span>
+                                                            </div>
+                                                            
+                                                            <span class="year-label fw-bolder mt-1 text-center w-100" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b; letter-spacing: 0.5px; background: rgba(16, 185, 129, 0.08); padding: 5px 10px; border-radius: 8px; transition: all 0.3s ease; text-transform: uppercase;" 
+                                                                  th:text="${year == 'N/A' ? 'GENERAL' : year}">2026</span>
                                                         </div>
                                                     </div>
-                                                </button>
-                                                <div th:id="'unitCollapse' + ${stat.index} + '_' + ${unitNum}"
-                                                     class="accordion-collapse collapse"
-                                                     th:data-bs-parent="'#accordionUnits' + ${stat.index}">
-                                                    <div class="px-2 pb-3 pt-0 d-flex flex-column gap-1" style="border-left: 2px solid var(--acc-border, rgba(16, 185, 129,0.2)); margin-left: 10px; padding-left: 15px !important;">
-                                                        <th:block th:if="${not #lists.isEmpty(unitNotes)}" th:each="note : ${unitNotes}">
-                                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-2 rounded-3" style="transition: all 0.3s ease; border-bottom: 1px solid var(--acc-border-light, rgba(16, 185, 129,0.05));" onmouseover="this.style.backgroundColor='var(--acc-bg-hover, rgba(16, 185, 129,0.03))'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none'">
-                                                                <div class="d-flex align-items-center mb-3 mb-sm-0 pe-2">
-                                                                    <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: var(--acc-icon-bg, rgba(16, 185, 129,0.1)); color: var(--acc-icon-color, #059669);">
-                                                                        <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.1rem;"></i>
-                                                                    </div>
-                                                                    <div class="d-flex flex-column">
-                                                                        <span class="fw-bold text-uppercase" style="color: var(--acc-text-bold, #047857); font-size: 0.9rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
-                                                                        <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}" style="font-size: 0.75rem; color: var(--acc-text-light, #059669); font-weight: 600; opacity: 0.8;" th:text="${note.academicYear}">2024</span>
-                                                                    </div>
+
+                                                    <!-- Folder Contents (Units inside the year) -->
+                                                    <div th:each="year, yearStat : ${years}">
+                                                        <div th:id="'lecYearCollapse_' + ${stat.index} + '_' + ${yearStat.index}" class="collapse mt-1 mb-2" th:data-bs-parent="'#lecYearsParent' + ${stat.index}">
+                                                            
+                                                            <div class="accordion border-0 ms-2 border-start border-2 ps-3 py-2" th:id="'accordionUnits_' + ${stat.index} + '_' + ${yearStat.index}" style="border-color: rgba(16, 185, 129, 0.25) !important;">
+                                                                
+                                                                <!-- Units 1 to 5 -->
+                                                                <div th:each="unitNum, uStat : ${#numbers.sequence(1, 5)}" style="border-bottom: 1px solid rgba(16, 185, 129,0.1); background: transparent;">
+                                                                    <th:block th:with="unitNotes=${allLecNotes.?[unitNumber == __${unitNum}__ and (academicYear == '__${year}__' or (academicYear == null and '__${year}__' == 'N/A'))]}">
+                                                                        <button class="accordion-button collapsed px-1 py-3 w-100"
+                                                                                type="button"
+                                                                                data-bs-toggle="collapse"
+                                                                                th:data-bs-target="'#unitCollapse' + ${stat.index} + '_' + ${yearStat.index} + '_' + ${unitNum}"
+                                                                                style="background: transparent; border: none; font-family: 'Outfit', sans-serif; box-shadow: none;">
+                                                                            <div class="d-flex align-items-center gap-3 w-100">
+                                                                                <div style="color: var(--acc-icon-color, #059669); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                                                                    <i class="bi bi-bookmark-star-fill" style="font-size: 1.15rem;"></i>
+                                                                                </div>
+                                                                                <div class="d-flex flex-column text-start">
+                                                                                    <span class="fw-bold text-uppercase" style="color: #1e293b; font-size: 0.9rem; letter-spacing: 0.5px;">UNIT [[${unitNum}]]</span>
+                                                                                    <span th:if="${#lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">No files</span>
+                                                                                    <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: var(--acc-text-light, #059669); font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </button>
+                                                                        
+                                                                        <div th:id="'unitCollapse' + ${stat.index} + '_' + ${yearStat.index} + '_' + ${unitNum}"
+                                                                             class="accordion-collapse collapse"
+                                                                             th:data-bs-parent="'#accordionUnits_' + ${stat.index} + '_' + ${yearStat.index}">
+                                                                            <div class="px-2 pb-3 pt-0 d-flex flex-column gap-2" style="border-left: 2px solid var(--acc-border, rgba(16, 185, 129,0.2)); margin-left: 10px; padding-left: 15px !important;">
+                                                                                <th:block th:if="${not #lists.isEmpty(unitNotes)}">
+                                                                                    <th:block th:each="note : ${unitNotes}">
+                                                                                        <!-- File Item -->
+                                                                                        <!-- Premium Green Glassmorphism Note Item -->
+                                                                                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-3 rounded-3" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.03);" onmouseover="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(52, 211, 153, 0.05) 100%)'; this.style.transform='translateX(6px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%)'; this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.03)'; this.style.borderColor='rgba(16, 185, 129, 0.15)';">
+                                                                                            <div class="d-flex align-items-center mb-3 mb-sm-0 pe-2">
+                                                                                                <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129,0.15); color: #059669;">
+                                                                                                    <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.1rem;"></i>
+                                                                                                </div>
+                                                                                                <div class="d-flex flex-column">
+                                                                                                    <span class="fw-bold text-uppercase" style="color: #0f172a; font-size: 0.85rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
+                                                                                                    <span style="font-size: 0.7rem; color: #64748b; font-weight: 600; opacity: 0.9;" th:text="${note.category}">Category</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="d-flex gap-2 mt-2 mt-sm-0">
+                                                                                                <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; font-size: 0.75rem; border-radius: 6px; padding: 2px 10px !important; line-height: 1 !important; max-height: 26px !important; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.25)'; this.style.transform='translateY(-2px)'; this.style.color='#dc2626'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.15)'; this.style.transform='none'; this.style.color='#ef4444'; }">
+                                                                                                    <i class="bi bi-eye-fill"></i> <span>Read</span>
+                                                                                                </button>
+                                                                                                <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(239, 68, 68, 0.85); color: #ffffff; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 600; font-size: 0.75rem; border-radius: 6px; padding: 2px 10px !important; line-height: 1 !important; max-height: 26px !important; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='rgba(220, 38, 38, 1)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(239, 68, 68, 0.85)'; this.style.transform='none';">
+                                                                                                    <i class="bi bi-cloud-download-fill"></i> <span>Download</span>
+                                                                                                </a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </th:block>
+                                                                                </th:block>
+                                                                            </div>
+                                                                        </div>
+                                                                    </th:block>
                                                                 </div>
-                                                                <div class="d-flex gap-2 flex-shrink-0">
-                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(239, 68, 68, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; font-size: 0.85rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 80px;" onmouseover="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.25)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(239, 68, 68, 0.15)'; this.style.color='#dc2626'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.15)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'; this.style.color='#ef4444'; }">
-                                                                        <i class="bi bi-eye-fill"></i> <span>Read</span>
-                                                                    </button>
-                                                                    <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="btn btn-sm d-flex align-items-center gap-1" style="background: rgba(239, 68, 68, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 600; font-size: 0.85rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='rgba(220, 38, 38, 1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(239, 68, 68, 0.3)';" onmouseout="this.style.background='rgba(239, 68, 68, 0.85)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
-                                                                        <i class="bi bi-cloud-download-fill"></i> Download
-                                                                    </a>
+                                                                
+                                                                <!-- General Notes -->
+                                                                <div style="border-bottom: 1px solid rgba(16, 185, 129,0.1); background: transparent;">
+                                                                    <th:block th:with="unitNotes=${allLecNotes.?[unitNumber == null and (academicYear == '__${year}__' or (academicYear == null and '__${year}__' == 'N/A'))]}">
+                                                                        <button class="accordion-button collapsed px-1 py-3 w-100"
+                                                                                type="button"
+                                                                                data-bs-toggle="collapse"
+                                                                                th:data-bs-target="'#unitCollapse' + ${stat.index} + '_' + ${yearStat.index} + '_general'"
+                                                                                style="background: transparent; border: none; font-family: 'Outfit', sans-serif; box-shadow: none;">
+                                                                            <div class="d-flex align-items-center gap-3 w-100">
+                                                                                <div style="color: var(--acc-icon-color, #059669); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                                                                    <i class="bi bi-bookmark-star-fill" style="font-size: 1.15rem;"></i>
+                                                                                </div>
+                                                                                <div class="d-flex flex-column text-start">
+                                                                                    <span class="fw-bold text-uppercase" style="color: #1e293b; font-size: 0.9rem; letter-spacing: 0.5px;">GENERAL NOTES</span>
+                                                                                    <span th:if="${#lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">No files</span>
+                                                                                    <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: var(--acc-text-light, #059669); font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </button>
+                                                                        
+                                                                        <div th:id="'unitCollapse' + ${stat.index} + '_' + ${yearStat.index} + '_general'"
+                                                                             class="accordion-collapse collapse"
+                                                                             th:data-bs-parent="'#accordionUnits_' + ${stat.index} + '_' + ${yearStat.index}">
+                                                                            <div class="px-2 pb-3 pt-0 d-flex flex-column gap-2" style="border-left: 2px solid var(--acc-border, rgba(16, 185, 129,0.2)); margin-left: 10px; padding-left: 15px !important;">
+                                                                                <th:block th:if="${not #lists.isEmpty(unitNotes)}">
+                                                                                    <th:block th:each="note : ${unitNotes}">
+                                                                                        <!-- File Item -->
+                                                                                        <!-- Premium Green Glassmorphism Note Item -->
+                                                                                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-3 rounded-3" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.03);" onmouseover="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(52, 211, 153, 0.05) 100%)'; this.style.transform='translateX(6px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%)'; this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.03)'; this.style.borderColor='rgba(16, 185, 129, 0.15)';">
+                                                                                            <div class="d-flex align-items-center mb-3 mb-sm-0 pe-2">
+                                                                                                <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129,0.15); color: #059669;">
+                                                                                                    <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.1rem;"></i>
+                                                                                                </div>
+                                                                                                <div class="d-flex flex-column">
+                                                                                                    <span class="fw-bold text-uppercase" style="color: #0f172a; font-size: 0.85rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
+                                                                                                    <span style="font-size: 0.7rem; color: #64748b; font-weight: 600; opacity: 0.9;" th:text="${note.category}">Category</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="d-flex gap-2 mt-2 mt-sm-0">
+                                                                                                <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; font-size: 0.75rem; border-radius: 6px; padding: 2px 10px !important; line-height: 1 !important; max-height: 26px !important; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.25)'; this.style.transform='translateY(-2px)'; this.style.color='#dc2626'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.15)'; this.style.transform='none'; this.style.color='#ef4444'; }">
+                                                                                                    <i class="bi bi-eye-fill"></i> <span>Read</span>
+                                                                                                </button>
+                                                                                                <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(239, 68, 68, 0.85); color: #ffffff; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 600; font-size: 0.75rem; border-radius: 6px; padding: 2px 10px !important; line-height: 1 !important; max-height: 26px !important; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" onmouseover="this.style.background='rgba(220, 38, 38, 1)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(239, 68, 68, 0.85)'; this.style.transform='none';">
+                                                                                                    <i class="bi bi-cloud-download-fill"></i> <span>Download</span>
+                                                                                                </a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </th:block>
+                                                                                </th:block>
+                                                                            </div>
+                                                                        </div>
+                                                                    </th:block>
                                                                 </div>
                                                             </div>
-                                                        </th:block>
-                                                        <div th:if="${#lists.isEmpty(unitNotes)}" class="py-1">
-                                                            <div th:replace="~{fragments/empty_states :: premium_empty_mini(
-                                                                icon='bi-journal-x',
-                                                                message='No notes uploaded yet for this unit.'
-                                                            )}"></div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </th:block>
                                             </th:block>
-                                        </div>
-                                        <!-- GENERAL NOTES (No Unit) -->
-                                        <div style="border-bottom: 1px solid rgba(16, 185, 129,0.1); background: transparent;">
-                                            <th:block th:with="unitNotes=${entry.value.?[unitNumber == null and category != 'Assignment' and category != 'CAT 1' and category != 'CAT 2' and category != 'UE' and category != 'Project' and category != 'Past Paper']}">
-                                                <button class="accordion-button collapsed px-1 py-3 w-100"
-                                                        type="button"
-                                                        data-bs-toggle="collapse"
-                                                        th:data-bs-target="'#unitCollapse' + ${stat.index} + '_general'"
-                                                        style="background: transparent; border: none; font-family: 'Outfit', sans-serif; box-shadow: none;">
-                                                    <div class="d-flex align-items-center gap-3 w-100">
-                                                        <div style="color: var(--acc-icon-color, #059669); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                                            <i class="bi bi-bookmark-star-fill" style="font-size: 1.15rem;"></i>
-                                                        </div>
-                                                        <div class="d-flex flex-column text-start">
-                                                            <span class="fw-bold text-uppercase" style="color: #1e293b; font-size: 0.9rem; letter-spacing: 0.5px;">GENERAL NOTES</span>
-                                                            <span th:if="${#lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">Pending</span>
-                                                            <span th:if="${not #lists.isEmpty(unitNotes)}" style="font-size: 0.75rem; color: var(--acc-text-light, #059669); font-weight: 600;">[[${#lists.size(unitNotes)}]] file(s) available</span>
-                                                        </div>
-                                                    </div>
-                                                </button>
-                                                <div th:id="'unitCollapse' + ${stat.index} + '_general'"
-                                                     class="accordion-collapse collapse"
-                                                     th:data-bs-parent="'#accordionUnits' + ${stat.index}">
-                                                    <div class="px-2 pb-3 pt-0 d-flex flex-column gap-1" style="border-left: 2px solid var(--acc-border, rgba(16, 185, 129,0.2)); margin-left: 10px; padding-left: 15px !important;">
-                                                        <th:block th:if="${not #lists.isEmpty(unitNotes)}" th:each="note : ${unitNotes}">
-                                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-2 px-2 rounded-3" style="transition: all 0.3s ease; border-bottom: 1px solid var(--acc-border-light, rgba(16, 185, 129,0.05));" onmouseover="this.style.backgroundColor='var(--acc-bg-hover, rgba(16, 185, 129,0.03))'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none'">
-                                                                <div class="d-flex align-items-center mb-3 mb-sm-0 pe-2">
-                                                                    <div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: var(--acc-icon-bg, rgba(16, 185, 129,0.1)); color: var(--acc-icon-color, #059669);">
-                                                                        <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.1rem;"></i>
-                                                                    </div>
-                                                                    <div class="d-flex flex-column">
-                                                                        <span class="fw-bold text-uppercase" style="color: var(--acc-text-bold, #047857); font-size: 0.9rem; letter-spacing: 0.3px; font-family: 'Outfit', sans-serif;" th:text="${note.title}">Note Title</span>
-                                                                        <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}" style="font-size: 0.75rem; color: var(--acc-text-light, #059669); font-weight: 600; opacity: 0.8;" th:text="${note.academicYear}">2024</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="d-flex gap-2 flex-shrink-0">
-                                                                    <button th:data-note-id="${note.id}" th:data-note-title="${note.title}" onclick="openPreviewModal(this, this.getAttribute('data-note-id'), this.getAttribute('data-note-title'))" class="btn btn-sm d-flex align-items-center justify-content-center gap-1" style="background: rgba(239, 68, 68, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; font-size: 0.85rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 80px;" onmouseover="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.25)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(239, 68, 68, 0.15)'; this.style.color='#dc2626'; }" onmouseout="if(!this.classList.contains('loading')){ this.style.background='rgba(239, 68, 68, 0.15)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)'; this.style.color='#ef4444'; }">
-                                                                        <i class="bi bi-eye-fill"></i> <span>Read</span>
-                                                                    </button>
-                                                                    <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="btn btn-sm d-flex align-items-center gap-1" style="background: rgba(239, 68, 68, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 600; font-size: 0.85rem; border-radius: 8px; padding: 5px 14px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='rgba(220, 38, 38, 1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(239, 68, 68, 0.3)';" onmouseout="this.style.background='rgba(239, 68, 68, 0.85)'; this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
-                                                                        <i class="bi bi-cloud-download-fill"></i> Download
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </th:block>
-                                                        <div th:if="${#lists.isEmpty(unitNotes)}" class="text-start py-2" style="color:#94a3b8; font-size: 0.85rem; font-style: italic;">
-                                                            No general notes uploaded yet.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </th:block>
-                                        </div>
-                                    </div>
-                                </div>
+                                            
+                                            <div th:if="${#lists.isEmpty(allLecNotes)}" class="py-3">
+                                                <div th:replace="~{fragments/empty_states :: premium_empty_mini(icon='bi-journal-x', message='No lecture notes available for this module yet.')}"></div>
+                                            </div>
+                                        </th:block>
+                                    </div>                                </div>
                             </div>
                         </div>
 
@@ -716,19 +819,53 @@
                                 <div class="accordion-body p-3 pt-0">
                                     <div class="d-flex flex-column gap-2">
                                         <th:block th:with="restrictedNotes=${entry.value.?[category == 'Assignment' or category == 'CAT 1' or category == 'CAT 2' or category == 'UE' or category == 'Project' or category == 'Past Paper']}">
-                                            <th:block th:if="${not #lists.isEmpty(restrictedNotes)}" th:each="note : ${restrictedNotes}">
-                                                <a th:href="${session.user == null ? '#' : '/view/' + note.id}" 
-                                                   th:attr="onclick=${session.user == null ? 'showRestrictedModal(); return false;' : ''}"
-                                                   class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(16, 185, 129,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)';">
-                                                    <div class="d-flex flex-column align-items-start">
-                                                        <span class="badge badge-custom badge-category mb-1" style="font-size: 0.7rem; padding: 2px 6px; background: rgba(100,116,139,0.1); color: #64748b;" th:text="${note.academicYear != null ? note.academicYear : '2024'}">2024</span>
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="bi bi-file-earmark-lock-fill me-2" style="color: #059669; font-size: 1.1rem;"></i>
-                                                            <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;" th:text="${note.category + ' - ' + note.title}">CAT 1</span>
+                                            <th:block th:if="${not #lists.isEmpty(restrictedNotes)}">
+                                                <th:block th:with="years=${restrictedNotes.![academicYear != null and !academicYear.isEmpty() ? academicYear : 'N/A'].stream().distinct().toList()}">
+                                                    
+                                                    <!-- Premium Folder Container for Years -->
+                                                    <div class="d-flex flex-wrap gap-3 gap-md-4 mb-3 px-1" th:id="'premiumYearsParent' + ${stat.index}">
+                                                        <div th:each="year, yearStat : ${years}" 
+                                                             class="year-folder-card d-flex flex-column align-items-center justify-content-center p-3 rounded-4"
+                                                             style="cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(16, 185, 129, 0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.04); min-width: 105px;"
+                                                             data-bs-toggle="collapse"
+                                                             th:data-bs-target="'#premiumYearCollapse_' + ${stat.index} + '_' + ${yearStat.index}"
+                                                             onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.boxShadow='0 15px 30px rgba(16, 185, 129, 0.2)'; this.style.borderColor='rgba(16, 185, 129, 0.4)'; this.style.background='rgba(255,255,255,0.95)'; this.querySelector('i').style.transform='scale(1.1) translateY(-2px)'; this.querySelector('.badge').style.transform='translate(-50%, -50%) scale(1.15)'; this.querySelector('.year-label').style.background='rgba(16, 185, 129, 0.15)'; this.querySelector('.year-label').style.color='#047857';"
+                                                             onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.04)'; this.style.borderColor='rgba(16, 185, 129, 0.15)'; this.style.background='rgba(255, 255, 255, 0.85)'; this.querySelector('i').style.transform='none'; this.querySelector('.badge').style.transform='translate(-50%, -50%) scale(1)'; this.querySelector('.year-label').style.background='rgba(16, 185, 129, 0.08)'; this.querySelector('.year-label').style.color='#1e293b';">
+                                                            
+                                                            <div class="position-relative mb-2" style="perspective: 1000px;">
+                                                                <i class="bi bi-folder-fill" style="font-size: 3.3rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 6px 12px rgba(16, 185, 129, 0.35)); display: inline-block; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);"></i>
+                                                                <span class="position-absolute top-50 start-50 translate-middle badge rounded-pill" 
+                                                                      style="background: #ffffff; color: #047857; font-size: 0.75rem; font-weight: 800; border: 2px solid #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); padding: 0.35em 0.6em; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 2;" 
+                                                                      th:text="${restrictedNotes.?[academicYear == '__${year}__' or (academicYear == null and '__${year}__' == 'N/A')].size()}">2</span>
+                                                            </div>
+                                                            
+                                                            <span class="year-label fw-bolder mt-1 text-center w-100" style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: #1e293b; letter-spacing: 0.5px; background: rgba(16, 185, 129, 0.08); padding: 5px 10px; border-radius: 8px; transition: all 0.3s ease; text-transform: uppercase;" 
+                                                                  th:text="${year == 'N/A' ? 'GENERAL' : year}">2026</span>
                                                         </div>
                                                     </div>
-                                                    <span th:if="${session.user == null}" style="font-size: 0.75rem; color:#047857; background:rgba(16, 185, 129,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
-                                                </a>
+
+                                                    <!-- Folder Contents (Premium notes inside the year) -->
+                                                    <div th:each="year, yearStat : ${years}">
+                                                        <div th:id="'premiumYearCollapse_' + ${stat.index} + '_' + ${yearStat.index}" class="collapse mt-1 mb-2" th:data-bs-parent="'#premiumYearsParent' + ${stat.index}">
+                                                            <div class="px-2 pb-3 pt-0 d-flex flex-column gap-2" style="border-left: 2px solid rgba(16, 185, 129,0.2); margin-left: 10px; padding-left: 15px !important;">
+                                                                <th:block th:with="yearNotes=${restrictedNotes.?[academicYear == '__${year}__' or (academicYear == null and '__${year}__' == 'N/A')]}">
+                                                                    <a th:each="note : ${yearNotes}" 
+                                                                       th:href="${session.user == null ? '#' : '/view/' + note.id}" 
+                                                                       th:attr="onclick=${session.user == null ? 'showRestrictedModal(); return false;' : ''}"
+                                                                       class="magic-glass p-3 text-decoration-none text-start d-flex justify-content-between align-items-center mb-2">
+                                                                        <div class="d-flex flex-column align-items-start">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="bi bi-file-earmark-lock-fill me-2" style="color: #059669; font-size: 1.1rem;"></i>
+                                                                                <span class="fw-bold text-dark" style="font-size:0.85rem; letter-spacing:0.3px;" th:text="${note.category + ' - ' + note.title}">CAT 1</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <span th:if="${session.user == null}" style="font-size: 0.75rem; color:#047857; background:rgba(16, 185, 129,0.1); padding:4px 8px; border-radius:6px; font-weight:bold;"><i class="bi bi-lock-fill me-1"></i>Premium</span>
+                                                                    </a>
+                                                                </th:block>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </th:block>
                                             </th:block>
                                             <div th:if="${#lists.isEmpty(restrictedNotes)}" class="text-start py-2" style="color:#94a3b8; font-size: 0.85rem; font-style: italic;">
                                                 No premium content available yet.
@@ -756,35 +893,35 @@
                                 <div class="accordion-body p-3 pt-0">
                                     <p style="font-size:0.7rem; color:#047857; line-height:1.5; margin:0; margin-bottom:12px; font-weight:500;">Access complete premium archives from previous academic years to boost your preparation.</p>
                                     <div class="d-flex flex-column gap-2">
-                                        <a href="/upgrade" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(5, 150, 105,0.2); box-shadow: 0 2px 8px rgba(5, 150, 105,0.05); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(5, 150, 105,0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(5, 150, 105,0.05)';">
+                                        <a href="/upgrade" class="magic-glass p-3 text-decoration-none text-start d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center">
                                                 <i class="bi bi-journal-text me-3" style="color: #059669; font-size: 1.1rem;"></i>
                                                 <span class="fw-bold" style="color:#92400e; font-size:0.85rem; letter-spacing:0.3px;">Past Assignments</span>
                                             </div>
                                             <span style="font-size: 0.75rem; color:#fff; background:linear-gradient(135deg, #10b981, #059669); padding:4px 8px; border-radius:6px; font-weight:bold; box-shadow: 0 2px 4px rgba(5, 150, 105,0.3);"><i class="bi bi-star-fill me-1" style="font-size:0.55rem;"></i>Gold</span>
                                         </a>
-                                        <a href="/upgrade" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(5, 150, 105,0.2); box-shadow: 0 2px 8px rgba(5, 150, 105,0.05); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(5, 150, 105,0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(5, 150, 105,0.05)';">
+                                        <a href="/upgrade" class="magic-glass p-3 text-decoration-none text-start d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center">
                                                 <i class="bi bi-ui-checks me-3" style="color: #059669; font-size: 1.1rem;"></i>
                                                 <span class="fw-bold" style="color:#92400e; font-size:0.85rem; letter-spacing:0.3px;">Past CAT 1</span>
                                             </div>
                                             <span style="font-size: 0.75rem; color:#fff; background:linear-gradient(135deg, #10b981, #059669); padding:4px 8px; border-radius:6px; font-weight:bold; box-shadow: 0 2px 4px rgba(5, 150, 105,0.3);"><i class="bi bi-star-fill me-1" style="font-size:0.55rem;"></i>Gold</span>
                                         </a>
-                                        <a href="/upgrade" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(5, 150, 105,0.2); box-shadow: 0 2px 8px rgba(5, 150, 105,0.05); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(5, 150, 105,0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(5, 150, 105,0.05)';">
+                                        <a href="/upgrade" class="magic-glass p-3 text-decoration-none text-start d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center">
                                                 <i class="bi bi-ui-checks-grid me-3" style="color: #059669; font-size: 1.1rem;"></i>
                                                 <span class="fw-bold" style="color:#92400e; font-size:0.85rem; letter-spacing:0.3px;">Past CAT 2</span>
                                             </div>
                                             <span style="font-size: 0.75rem; color:#fff; background:linear-gradient(135deg, #10b981, #059669); padding:4px 8px; border-radius:6px; font-weight:bold; box-shadow: 0 2px 4px rgba(5, 150, 105,0.3);"><i class="bi bi-star-fill me-1" style="font-size:0.55rem;"></i>Gold</span>
                                         </a>
-                                        <a href="/upgrade" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(5, 150, 105,0.2); box-shadow: 0 2px 8px rgba(5, 150, 105,0.05); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(5, 150, 105,0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(5, 150, 105,0.05)';">
+                                        <a href="/upgrade" class="magic-glass p-3 text-decoration-none text-start d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center">
                                                 <i class="bi bi-mortarboard-fill me-3" style="color: #059669; font-size: 1.1rem;"></i>
                                                 <span class="fw-bold" style="color:#92400e; font-size:0.85rem; letter-spacing:0.3px;">Past Univ. Exams (UE)</span>
                                             </div>
                                             <span style="font-size: 0.75rem; color:#fff; background:linear-gradient(135deg, #10b981, #059669); padding:4px 8px; border-radius:6px; font-weight:bold; box-shadow: 0 2px 4px rgba(5, 150, 105,0.3);"><i class="bi bi-star-fill me-1" style="font-size:0.55rem;"></i>Gold</span>
                                         </a>
-                                        <a href="/upgrade" class="bg-white rounded-3 p-3 text-decoration-none text-start d-flex justify-content-between align-items-center" style="border: 1px solid rgba(5, 150, 105,0.2); box-shadow: 0 2px 8px rgba(5, 150, 105,0.05); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(5, 150, 105,0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(5, 150, 105,0.05)';">
+                                        <a href="/upgrade" class="magic-glass p-3 text-decoration-none text-start d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center">
                                                 <i class="bi bi-book-half me-3" style="color: #059669; font-size: 1.1rem;"></i>
                                                 <span class="fw-bold" style="color:#92400e; font-size:0.85rem; letter-spacing:0.3px;">Reference Books</span>
@@ -941,6 +1078,66 @@
 
     <!-- Features List CSS -->
     <style>
+
+    /* MAGIC PREMIUM STYLES */
+    .magic-glass {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%) !important;
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .magic-glass:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 45px 0 rgba(16, 185, 129, 0.2) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.05) 100%) !important;
+    }
+    
+    .magic-folder {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .magic-folder::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: all 0.7s ease;
+    }
+    .magic-folder:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+    }
+    .magic-folder:hover::before {
+        left: 200%;
+    }
+
+    .magic-icon-glow {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        transition: all 0.3s ease;
+    }
+    .magic-folder:hover .magic-icon-glow {
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+        transform: scale(1.1);
+    }
+    
+    .magic-text-gradient {
+        background: linear-gradient(90deg, #059669, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
         .premium-feature-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
@@ -1121,6 +1318,66 @@
      ============================================================ -->
 <div th:fragment="calendar_modals">
     <style>
+
+    /* MAGIC PREMIUM STYLES */
+    .magic-glass {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%) !important;
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .magic-glass:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 45px 0 rgba(16, 185, 129, 0.2) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.05) 100%) !important;
+    }
+    
+    .magic-folder {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .magic-folder::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: all 0.7s ease;
+    }
+    .magic-folder:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+    }
+    .magic-folder:hover::before {
+        left: 200%;
+    }
+
+    .magic-icon-glow {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        transition: all 0.3s ease;
+    }
+    .magic-folder:hover .magic-icon-glow {
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+        transform: scale(1.1);
+    }
+    
+    .magic-text-gradient {
+        background: linear-gradient(90deg, #059669, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
         .smooth-glass-modal {
             background: rgba(255, 255, 255, 0.35) !important;
             backdrop-filter: blur(20px) !important;
@@ -1217,6 +1474,66 @@
                     <button type="button" class="cat-tab-btn" data-cat-tab="cat2" onclick="setCatTab('cat2')">CAT 2</button>
                 </div>
                 <style>
+
+    /* MAGIC PREMIUM STYLES */
+    .magic-glass {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%) !important;
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .magic-glass:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 45px 0 rgba(16, 185, 129, 0.2) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.05) 100%) !important;
+    }
+    
+    .magic-folder {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .magic-folder::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: all 0.7s ease;
+    }
+    .magic-folder:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+    }
+    .magic-folder:hover::before {
+        left: 200%;
+    }
+
+    .magic-icon-glow {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        transition: all 0.3s ease;
+    }
+    .magic-folder:hover .magic-icon-glow {
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+        transform: scale(1.1);
+    }
+    
+    .magic-text-gradient {
+        background: linear-gradient(90deg, #059669, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
                     .cat-tab-btn {
                         border: 1.5px solid rgba(16,185,129,0.25); background: rgba(16,185,129,0.05); color: #64748b;
                         font-weight: 700; font-size: 0.7rem; border-radius: 999px; padding: 4px 16px; transition: all 0.25s;
@@ -1327,6 +1644,66 @@
         }
     </script>
     <style>
+
+    /* MAGIC PREMIUM STYLES */
+    .magic-glass {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%) !important;
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .magic-glass:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 45px 0 rgba(16, 185, 129, 0.2) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.05) 100%) !important;
+    }
+    
+    .magic-folder {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .magic-folder::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: all 0.7s ease;
+    }
+    .magic-folder:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+    }
+    .magic-folder:hover::before {
+        left: 200%;
+    }
+
+    .magic-icon-glow {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        transition: all 0.3s ease;
+    }
+    .magic-folder:hover .magic-icon-glow {
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+        transform: scale(1.1);
+    }
+    
+    .magic-text-gradient {
+        background: linear-gradient(90deg, #059669, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
         .exam-date-card {
             transform: translateY(0);
         }
@@ -1414,10 +1791,72 @@
             </div>
             <!-- GPA Calculator lives on the homepage; other pages link there with
                  a flag that auto-opens the modal on load (see home.html). -->
-            <a th:if="${session.user != null}" th:href="@{/(openGpa=true)}"><i class="bi bi-calculator-fill me-1"></i>GPA CALCULATOR</a>
+            <a th:if="${session.user != null or (#ctx.containsVariable('isHomePage') == false)}" th:href="@{/(openGpa=true)}"><i class="bi bi-calculator-fill me-1"></i>GPA CALCULATOR</a>
+            
+            <a href="javascript:void(0)" onclick="alert('4LAZIE Forum is coming soon!');"><i class="bi bi-chat-square-text-fill me-1" style="color: #10b981;"></i>FORUM</a>
         </div>
     </div>
     <style>
+
+    /* MAGIC PREMIUM STYLES */
+    .magic-glass {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%) !important;
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .magic-glass:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 45px 0 rgba(16, 185, 129, 0.2) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.05) 100%) !important;
+    }
+    
+    .magic-folder {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    .magic-folder::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: all 0.7s ease;
+    }
+    .magic-folder:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+    }
+    .magic-folder:hover::before {
+        left: 200%;
+    }
+
+    .magic-icon-glow {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        transition: all 0.3s ease;
+    }
+    .magic-folder:hover .magic-icon-glow {
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+        transform: scale(1.1);
+    }
+    
+    .magic-text-gradient {
+        background: linear-gradient(90deg, #059669, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
     .secondary-nav-strip {
         background-color: #282A35;
         width: 100%;
