@@ -39,16 +39,17 @@ public class ForumService {
         // ── 1. Find admin user to attribute uploaded notes to ──
         User adminUser = userRepository.findByEmail("admin@school.com").orElse(null);
         if (adminUser == null) {
-            adminUser = userRepository.findAll().stream()
-                    .filter(u -> u.getRole() == Role.ADMIN || u.getRole() == Role.SUPER_ADMIN)
-                    .findFirst().orElse(null);
+            adminUser = userRepository.findByRole(Role.SUPER_ADMIN).stream().findFirst().orElse(null);
+        }
+        if (adminUser == null) {
+            adminUser = userRepository.findByRole(Role.ADMIN).stream().findFirst().orElse(null);
         }
 
         // ── 2. Convert all uploaded Notes/Mitihani into ForumPost objects ──
         List<ForumPost> notePosts = new ArrayList<>();
         if (adminUser != null) {
             final User admin = adminUser;
-            List<Note> allNotes = noteRepository.findTop50ByOrderByIdDesc();
+            List<Note> allNotes = noteRepository.findTop10ByOrderByIdDesc();
             for (Note note : allNotes) {
                 ForumPost post = new ForumPost();
                 post.setAuthor(admin);
