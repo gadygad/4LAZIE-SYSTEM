@@ -48,7 +48,7 @@ public class ForumService {
         List<ForumPost> notePosts = new ArrayList<>();
         if (adminUser != null) {
             final User admin = adminUser;
-            List<Note> allNotes = noteRepository.findAllByOrderByIdDesc();
+            List<Note> allNotes = noteRepository.findTop50ByOrderByIdDesc();
             for (Note note : allNotes) {
                 ForumPost post = new ForumPost();
                 post.setAuthor(admin);
@@ -57,16 +57,20 @@ public class ForumService {
                 post.setCommentsCount(note.getViewCount() != null ? note.getViewCount() : 0);
 
                 String category = note.getCategory() != null ? note.getCategory() : "Document";
-                String title    = note.getTitle() != null ? note.getTitle() : "Untitled";
+                String noteTitle = note.getTitle() != null ? note.getTitle() : "Untitled";
                 String module   = note.getModuleName() != null ? " — " + note.getModuleName() : "";
+                String instStr  = (note.getInstitution() != null && note.getInstitution().getShortName() != null) 
+                                  ? note.getInstitution().getShortName() + " Institute" : "SJUIT INSTITUTE";
                 String program  = note.getProgramType() != null ? note.getProgramType() : "";
                 String level    = note.getLevelNo() != null ? "Level " + note.getLevelNo() : "";
                 String sem      = note.getSemesterNo() != null ? "Sem " + note.getSemesterNo() : "";
                 String year     = note.getAcademicYear() != null ? " (" + note.getAcademicYear() + ")" : "";
 
-                String content  = "📚 " + category + " Mpya Imepakiwa!\n\n"
-                        + title + module + "\n"
-                        + program + " · " + level + " · " + sem + year + "\n\n"
+                post.setTitle("📚 " + category + " Mpya Imepakiwa!");
+                post.setInstitutionPlaceholder(instStr);
+                
+                String content  = noteTitle + module + "\n"
+                        + program + " · " + level + " · " + sem + year + "\n"
                         + "⬇️ Pakua kutoka kwenye sehemu ya Notes.";
 
                 post.setContent(content);
@@ -78,7 +82,7 @@ public class ForumService {
         }
 
         // ── 3. Fetch real forum posts and tag their roles ──
-        List<ForumPost> realPosts = forumPostRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<ForumPost> realPosts = forumPostRepository.findTop50ByOrderByCreatedAtDesc();
         realPosts.forEach(post -> {
             String role = resolveRole(post.getAuthor());
             post.setAuthorRole(role);
@@ -92,48 +96,26 @@ public class ForumService {
 
         if (allPosts.isEmpty()) return new ArrayList<>();
 
-        // ── 5. Tier separation ──
-        // Tier 1: ADMIN + SUPER_ADMIN (pinned at top, newest first)
-        List<ForumPost> tier1 = allPosts.stream()
-                .filter(p -> isAuthority(p.getAuthorRole()))
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .collect(Collectors.toList());
+        // ── 5. New Feed Algorithm: Newest at top, rest randomized ──
+        // Sort all posts by date (newest first)
+        allPosts.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
 
-        // Tier 2: LECTURE (after admins)
-        List<ForumPost> tier2 = allPosts.stream()
-                .filter(p -> "LECTURE".equals(p.getAuthorRole()))
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .collect(Collectors.toList());
-
-        // Tier 3: CLASS_REPRESENTATIVE (after lecturers)
-        List<ForumPost> tier3 = allPosts.stream()
-                .filter(p -> "CLASS_REPRESENTATIVE".equals(p.getAuthorRole()))
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .collect(Collectors.toList());
-
-        // Tier 4: Students — randomize newest 5, then shuffle older
-        List<ForumPost> studentPosts = allPosts.stream()
-                .filter(p -> "STUDENT".equals(p.getAuthorRole()))
-                .collect(Collectors.toList());
-
-        int newestLimit = Math.min(5, studentPosts.size());
-        List<ForumPost> newestStudents = new ArrayList<>(studentPosts.subList(0, newestLimit));
-        Collections.shuffle(newestStudents);
-
-        List<ForumPost> olderStudents = new ArrayList<>();
-        if (studentPosts.size() > newestLimit) {
-            olderStudents = new ArrayList<>(studentPosts.subList(newestLimit, studentPosts.size()));
-            Collections.shuffle(olderStudents);
-        }
-
-        // ── 6. Assemble final feed ──
         List<ForumPost> feed = new ArrayList<>();
-        feed.addAll(tier1);
-        feed.addAll(tier2);
-        feed.addAll(tier3);
-        feed.addAll(newestStudents);
-        int olderLimit = Math.min(10, olderStudents.size());
-        feed.addAll(olderStudents.subList(0, olderLimit));
+        
+        // Take the top 10 newest posts (or less if not enough)
+        int newestLimit = Math.min(10, allPosts.size());
+        List<ForumPost> newestPosts = new ArrayList<>(allPosts.subList(0, newestLimit));
+        feed.addAll(newestPosts);
+
+        // Take the rest of the older posts and shuffle them randomly
+        if (allPosts.size() > newestLimit) {
+            List<ForumPost> olderPosts = new ArrayList<>(allPosts.subList(newestLimit, allPosts.size()));
+            Collections.shuffle(olderPosts);
+            
+            // Optionally limit how many old posts to load at once (e.g., max 20 random old posts)
+            int olderLimit = Math.min(20, olderPosts.size());
+            feed.addAll(olderPosts.subList(0, olderLimit));
+        }
 
         return feed;
     }

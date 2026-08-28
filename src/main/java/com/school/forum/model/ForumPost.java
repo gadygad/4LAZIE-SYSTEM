@@ -14,6 +14,8 @@ public class ForumPost {
 
     private User author;
 
+    private String title;
+
     private String content;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -28,16 +30,23 @@ public class ForumPost {
     @org.springframework.data.annotation.Transient
     private String authorRole = "STUDENT"; // ADMIN, SUPER_ADMIN, LECTURE, CLASS_REPRESENTATIVE, STUDENT
 
+    @org.springframework.data.annotation.Transient
+    private String institutionPlaceholder;
+
     public boolean isAdminPost() { return adminPost; }
     public void setAdminPost(boolean adminPost) { this.adminPost = adminPost; }
 
     public String getAuthorRole() { return authorRole; }
     public void setAuthorRole(String authorRole) { this.authorRole = authorRole; }
 
+    public String getInstitutionPlaceholder() { return institutionPlaceholder; }
+    public void setInstitutionPlaceholder(String institutionPlaceholder) { this.institutionPlaceholder = institutionPlaceholder; }
+
     public ForumPost() {}
 
-    public ForumPost(User author, String content) {
+    public ForumPost(User author, String title, String content) {
         this.author = author;
+        this.title = title;
         this.content = content;
         this.createdAt = LocalDateTime.now();
     }
@@ -56,6 +65,14 @@ public class ForumPost {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {

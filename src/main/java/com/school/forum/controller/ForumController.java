@@ -41,10 +41,15 @@ public class ForumController {
     }
 
     @PostMapping("/post")
-    public String createPost(@RequestParam("content") String content) {
+    public String createPost(@RequestParam("title") String title, @RequestParam("content") String content) {
         User loggedInUser = authUtil.getLoggedInUser();
-        if (loggedInUser != null && content != null && !content.trim().isEmpty()) {
-            ForumPost post = new ForumPost(loggedInUser, content);
+        if (loggedInUser != null && content != null && !content.trim().isEmpty() && title != null && !title.trim().isEmpty()) {
+            ForumPost post = new ForumPost(loggedInUser, title, content);
+            if (loggedInUser.getInstitution() != null && loggedInUser.getInstitution().getShortName() != null) {
+                post.setInstitutionPlaceholder(loggedInUser.getInstitution().getShortName() + " INSTITUTE");
+            } else {
+                post.setInstitutionPlaceholder("SJUIT INSTITUTE");
+            }
             forumPostRepository.save(post);
         }
         return "redirect:/community";

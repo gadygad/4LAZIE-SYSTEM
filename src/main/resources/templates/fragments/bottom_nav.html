@@ -21,8 +21,8 @@
                     <span style="font-size: 0.6rem; font-weight: 700; font-family: 'Outfit', sans-serif;">PRACTICE</span>
                 </a>
 
-                <!-- FORUM (center, elevated — placeholder button, no page yet) -->
-                <a href="javascript:void(0)" onclick="alert('4LAZIE Forum is coming soon!');"
+                <!-- COMMUNITY (center, elevated) -->
+                <a href="/community"
                     class="bottom-nav-btn forum-nav-btn text-decoration-none d-flex flex-column align-items-center py-1 px-2 rounded-4 border border-transparent flex-shrink-0"
                     style="color: #ffffff; width: 60px;">
                     <i class="bi bi-chat-square-text-fill" style="font-size: 1.3rem; margin-bottom: 2px;"></i>
@@ -112,6 +112,10 @@
                     bottom: 0 !important;
                     display: block !important;
                     justify-content: unset !important;
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                }
+                .custom-mobile-nav-wrapper.nav-hidden {
+                    transform: translateY(120%) !important;
                 }
 
                 /* Inner bar: flat, full-width, NOT a pill */
@@ -400,6 +404,20 @@
                     t.classList.toggle('active', t.getAttribute('data-cat-tab') === which);
                 });
             };
+
+            // Auto-hide bottom nav on scroll down, show on scroll up
+            var lastScrollY = window.scrollY;
+            var bottomNav = document.querySelector('.custom-mobile-nav-wrapper');
+            window.addEventListener('scroll', function() {
+                if (!bottomNav) return;
+                var currentScrollY = window.scrollY;
+                if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                    bottomNav.classList.add('nav-hidden');
+                } else {
+                    bottomNav.classList.remove('nav-hidden');
+                }
+                lastScrollY = currentScrollY;
+            }, { passive: true });
         </script>
 
         <!-- Modals (Calendar & Exams) -->
