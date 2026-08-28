@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMMUNITY - 4LAZIE</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- 4LAZIE Theme CSS -->
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css?v=2.4}">
+    <link rel="stylesheet" th:href="@{/css/dashboard-layout.css}">
+    
+    <style>
+    </style>
+</head>
+<body style="background: #10b981 !important; min-height: 100vh; display: flex; flex-direction: column;">
+
+    <!-- Glassmorphism Navbar -->
+    <nav class="w-100 position-relative z-3" style="background: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-bottom: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; padding: 15px 20px; animation: slideDownFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(-40px);">
+        <div class="container d-flex justify-content-between align-items-center">
+            
+            <!-- Upande wa Kushoto (Far Left) -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Hamburger Menu (Inaonekana kwenye Simu tu: d-lg-none inaficha kwenye Desktop) -->
+                <button class="btn btn-link d-lg-none p-0 text-white text-decoration-none" style="font-size: 1.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <!-- Logo ya 4LAZIE Box Style -->
+                <a href="/dashboard" class="d-flex align-items-center text-decoration-none" style="transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="background: #111; border: 3px solid #10b981; padding: 4px 14px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
+                        <h4 class="m-0 text-white" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: 2px;">4LAZIE</h4>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Upande wa Kulia (Search Bar & Login Icon) -->
+            <div class="flex-grow-1 ms-3 ms-md-4 d-flex justify-content-end align-items-center gap-3">
+                
+                <!-- Search Bar -->
+                <div class="position-relative w-100" style="max-width: 400px;">
+                    <i class="bi bi-search position-absolute text-white" style="left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.7;"></i>
+                    <input type="text" class="form-control search-input text-white" placeholder="Search community..." style="background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; padding-left: 45px; padding-right: 15px; height: 45px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                </div>
+
+                <!-- Login Icon -->
+                <a href="/login" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 45px; height: 45px; border-radius: 50%; background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;">
+                    <i class="bi bi-person-fill" style="font-size: 1.4rem;"></i>
+                </a>
+
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="container py-4 flex-grow-1 position-relative z-2" style="max-width: 800px; padding-bottom: 100px !important;">
+        
+        <!-- Post Creation Box Removed - Now in a Modal -->
+        <!-- Posts Feed -->
+        <div class="d-flex flex-column gap-3">
+            <!-- Empty state -->
+            <div th:if="${posts == null || posts.isEmpty()}" class="text-center p-5 rounded-4 text-white" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2);">
+                <i class="bi bi-chat-square-text" style="font-size: 3rem; opacity: 0.5;"></i>
+                <h4 class="mt-3">No posts yet</h4>
+                <p class="opacity-75">Be the first to start a conversation!</p>
+            </div>
+
+            <!-- Feed Posts (Dark Gray Cards, No Hover) -->
+        <div th:each="post : ${posts}" class="mb-3 rounded-4" style="background: #374151; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <div style="padding: 16px;">
+                <div class="d-flex">
+                    <!-- ── AVATAR (role-based) ── -->
+                    <div class="me-3 position-relative" style="flex-shrink: 0;">
+
+                        <!-- ADMIN / SUPER_ADMIN → 4LAZIE logo -->
+                        <img th:if="${post.adminPost}"
+                             src="/images/logo.png"
+                             class="rounded-circle"
+                             style="width: 42px; height: 42px; object-fit: contain; background: #ffffff; border: 2px solid #4ade80; padding: 3px;">
+
+                        <!-- LECTURE → profile pic or gold initial -->
+                        <img th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}"
+                             th:src="${post.author.profilePicture}"
+                             class="rounded-circle"
+                             style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #f59e0b;">
+                        <div th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}"
+                             class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                             style="width: 42px; height: 42px; background: linear-gradient(135deg,#92400e,#f59e0b); border: 2px solid #f59e0b; color: #fff; font-size: 1.1rem;">
+                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'L'}">L</span>
+                        </div>
+
+                        <!-- CLASS_REPRESENTATIVE → profile pic or blue initial -->
+                        <img th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}"
+                             th:src="${post.author.profilePicture}"
+                             class="rounded-circle"
+                             style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #60a5fa;">
+                        <div th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}"
+                             class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                             style="width: 42px; height: 42px; background: linear-gradient(135deg,#1e3a8a,#3b82f6); border: 2px solid #60a5fa; color: #fff; font-size: 1.1rem;">
+                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'C'}">C</span>
+                        </div>
+
+                        <!-- STUDENT → profile pic or grey initial -->
+                        <img th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}"
+                             th:src="${post.author.profilePicture}"
+                             class="rounded-circle"
+                             style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
+                        <div th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}"
+                             class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                             style="width: 42px; height: 42px; background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.3); color: #fff; font-size: 1.1rem;">
+                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'U'}">U</span>
+                        </div>
+                    </div>
+
+                    <!-- ── CONTENT RIGHT SIDE ── -->
+                    <div style="flex-grow: 1; min-width: 0;">
+                        <!-- Header: Name + Badge + Time -->
+                        <div class="d-flex align-items-center mb-2" style="flex-wrap: wrap; gap: 4px;">
+
+                            <!-- ADMIN / SUPER_ADMIN → "4LAZIE" + green verified -->
+                            <span th:if="${post.adminPost}" class="fw-bold" style="font-size: 13.5px; color: #fff;">4LAZIE</span>
+                            <span th:if="${post.adminPost}" style="color: #4ade80; font-size: 13px;" title="Verified Official">
+                                <i class="bi bi-patch-check-fill"></i>
+                            </span>
+
+                            <!-- LECTURE → real name + gold badge -->
+                            <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
+                                  class="fw-bold" style="font-size: 13.5px; color: #fde68a;"
+                                  th:text="${post.author != null ? post.author.name : 'Lecturer'}">Lecturer</span>
+                            <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
+                                  class="d-inline-flex align-items-center px-1 rounded"
+                                  style="background: rgba(245,158,11,0.2); color: #f59e0b; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
+                                🎓 LECTURER
+                            </span>
+
+                            <!-- CLASS_REPRESENTATIVE → real name + blue badge -->
+                            <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
+                                  class="fw-bold" style="font-size: 13.5px; color: #bfdbfe;"
+                                  th:text="${post.author != null ? post.author.name : 'CR'}">CR</span>
+                            <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
+                                  class="d-inline-flex align-items-center px-1 rounded"
+                                  style="background: rgba(96,165,250,0.2); color: #60a5fa; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
+                                🛡️ CR
+                            </span>
+
+                            <!-- STUDENT → real name, no badge -->
+                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}"
+                                  class="fw-bold" style="font-size: 13.5px; color: rgba(255,255,255,0.95);"
+                                  th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</span>
+
+                            <span style="color: rgba(255,255,255,0.4); font-size: 12px;">·</span>
+                            <span style="color: rgba(255,255,255,0.6); font-size: 12px;"
+                                  th:text="${#temporals.format(post.createdAt, 'MMM dd')}">Date</span>
+                        </div>
+
+                        
+                        <!-- Post Text -->
+                        <div style="font-size: 13.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.9); white-space: pre-wrap; word-wrap: break-word; letter-spacing: 0.1px;" th:text="${post.content}">
+                            Hapa ndipo posti inapokaa.
+                        </div>
+                        
+                        <!-- Action Buttons (Like, Comment, Share) -->
+                        <div class="d-flex justify-content-between mt-3 pt-2 border-top" style="max-width: 400px; border-color: rgba(255, 255, 255, 0.1) !important;">
+                            <!-- Comment Button -->
+                            <div class="d-flex align-items-center" style="color: rgba(255, 255, 255, 0.7); font-size: 14px; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='rgba(255, 255, 255, 0.7)'">
+                                <div class="icon-bg d-flex align-items-center justify-content-center rounded-circle" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-chat"></i>
+                                </div>
+                                <span class="ms-1" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
+                            </div>
+                            
+                            <!-- Like Button -->
+                            <div class="d-flex align-items-center" style="color: rgba(255, 255, 255, 0.7); font-size: 14px; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='rgba(255, 255, 255, 0.7)'">
+                                <div class="icon-bg d-flex align-items-center justify-content-center rounded-circle" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-heart"></i>
+                                </div>
+                                <span class="ms-1" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
+                            </div>
+                            
+                            <!-- Share Button -->
+                            <div class="d-flex align-items-center" style="color: rgba(255, 255, 255, 0.7); font-size: 14px; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='rgba(255, 255, 255, 0.7)'">
+                                <div class="icon-bg d-flex align-items-center justify-content-center rounded-circle" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-share"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </main>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background: #10b981 !important; /* Solid Green Theme */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        @keyframes slideDownFade {
+            0% { opacity: 0; transform: translateY(-40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <!-- Mobile Bottom Navigation -->
+    <div th:replace="~{fragments/bottom_nav :: nav('community')}"></div>
+
+    <!-- Floating Action Button (FAB) -->
+    <button type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #0d9468; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <i class="bi bi-plus-lg" style="font-size: 1.8rem;"></i>
+    </button>
+
+    <!-- Post Creation Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px; background: #374151; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="createPostModalLabel" style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.95);">Create Post</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8;"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/community/post}" method="post">
+                        <div class="d-flex mb-3">
+                            <!-- Avatar -->
+                            <div class="me-3" style="flex-shrink: 0;">
+                                <img th:if="${user != null and user.profilePicture != null}" th:src="${user.profilePicture}" class="rounded-circle shadow-sm" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.2);">
+                                <div th:unless="${user != null and user.profilePicture != null}" class="rounded-circle d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 42px; height: 42px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.3); font-weight: bold; font-size: 1.2rem;">
+                                    <span th:text="${user != null ? user.name.substring(0,1) : 'U'}">U</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Input Area -->
+                            <div class="flex-grow-1">
+                                <textarea name="content" class="form-control border-0 px-0 shadow-none" rows="4" placeholder="What's happening?" required style="resize: none; font-size: 1.1rem; background: transparent; color: rgba(255, 255, 255, 0.95);"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end align-items-center border-top pt-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                            <button type="submit" class="btn rounded-pill" style="background: #0d9468; color: white; padding: 8px 24px; font-weight: 600; font-size: 0.95rem;">Post</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
