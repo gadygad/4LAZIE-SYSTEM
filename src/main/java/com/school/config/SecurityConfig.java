@@ -30,10 +30,10 @@ public class SecurityConfig {
 
         private CustomAuthenticationSuccessHandler successHandler;
         private LoginRateLimitFilter loginRateLimitFilter;
-        private com.school.service.impl.CustomUserDetailsService customUserDetailsService;
+        private com.school.auth.CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, LoginRateLimitFilter loginRateLimitFilter,
-                           com.school.service.impl.CustomUserDetailsService customUserDetailsService) {
+                           com.school.auth.CustomUserDetailsService customUserDetailsService) {
         this.successHandler = successHandler;
         this.loginRateLimitFilter = loginRateLimitFilter;
         this.customUserDetailsService = customUserDetailsService;
@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**", "/timetable/**", "/mobile-viewer/**", "/view-generated-exam/**").permitAll()
                 .requestMatchers("/generate-exam", "/generator-hub").authenticated()
                 // Require ADMIN or SUPER_ADMIN role for admin pages and upload page
-                .requestMatchers("/upload", "/admin/**").hasAnyRole(com.school.model.Role.ADMIN.name(), com.school.model.Role.SUPER_ADMIN.name())
+                .requestMatchers("/upload", "/admin/**").hasAnyRole(com.school.auth.Role.ADMIN.name(), com.school.auth.Role.SUPER_ADMIN.name())
                 // All other requests require authentication
                 .anyRequest().authenticated()
             )

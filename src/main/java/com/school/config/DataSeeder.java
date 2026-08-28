@@ -1,7 +1,7 @@
 package com.school.config;
 
-import com.school.model.TeamMember;
-import com.school.repository.TeamMemberRepository;
+import com.school.core.TeamMember;
+import com.school.core.TeamMemberRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

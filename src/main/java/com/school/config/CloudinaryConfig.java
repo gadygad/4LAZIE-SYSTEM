@@ -1,9 +1,9 @@
 package com.school.config;
 
 import com.cloudinary.Cloudinary;
-import com.school.service.FileStorageService;
-import com.school.service.impl.CloudinaryStorageServiceImpl;
-import com.school.service.impl.LocalStorageServiceImpl;
+import com.school.core.FileStorageService;
+import com.school.core.impl.CloudinaryStorageServiceImpl;
+import com.school.core.impl.LocalStorageServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

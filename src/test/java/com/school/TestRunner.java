@@ -1,9 +1,9 @@
 package com.school;
 
-import com.school.repository.SubjectRepository;
-import com.school.model.Subject;
-import com.school.model.Course;
-import com.school.repository.CourseRepository;
+import com.school.academic.SubjectRepository;
+import com.school.academic.Subject;
+import com.school.academic.Course;
+import com.school.academic.CourseRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.school.config;
 
-import com.school.model.User;
-import com.school.repository.UserRepository;
-import com.school.service.NotificationService;
-import com.school.service.DirectChatService;
+import com.school.auth.User;
+import com.school.auth.UserRepository;
+import com.school.notification.NotificationService;
+import com.school.chat.DirectChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -64,8 +64,8 @@ public class GlobalModelAttributes {
                     
                     // Add notification details
                     try {
-                        java.util.List<com.school.model.Notification> allNotifs = notificationService.getUserNotifications(user.getId());
-                        java.util.List<com.school.model.Notification> recentNotifs = allNotifs.stream().limit(10).toList();
+                        java.util.List<com.school.notification.Notification> allNotifs = notificationService.getUserNotifications(user.getId());
+                        java.util.List<com.school.notification.Notification> recentNotifs = allNotifs.stream().limit(10).toList();
                         model.addAttribute("notifications", recentNotifs);
                         model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
                         

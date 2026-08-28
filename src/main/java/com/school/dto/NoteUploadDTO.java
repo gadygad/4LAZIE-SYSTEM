@@ -21,6 +21,7 @@ public class NoteUploadDTO {
     private String moduleCode;
     private String category;
     private Integer unitNumber;
+    @NotBlank(message = "Academic Year is required (e.g. 2024 or 2025/2026)")
     private String academicYear;
     private Boolean isGeneral = false;
 

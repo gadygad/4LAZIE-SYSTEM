@@ -1,7 +1,8 @@
 package com.school.config;
 
-import com.school.model.User;
-import com.school.repository.UserRepository;
+import com.school.auth.Role;
+import com.school.auth.User;
+import com.school.auth.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -69,8 +70,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             session.setAttribute("user", user);
             
             boolean isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_" + com.school.model.Role.ADMIN.name()) || 
-                                   a.getAuthority().equals("ROLE_" + com.school.model.Role.SUPER_ADMIN.name()));
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_" + com.school.auth.Role.ADMIN.name()) || 
+                                   a.getAuthority().equals("ROLE_" + com.school.auth.Role.SUPER_ADMIN.name()));
                     
             String redirectUrl = (String) session.getAttribute("redirectUrl");
             if (redirectUrl != null && !redirectUrl.isEmpty()) {

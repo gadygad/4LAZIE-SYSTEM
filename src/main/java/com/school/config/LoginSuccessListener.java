@@ -1,8 +1,8 @@
 package com.school.config;
 
-import com.school.model.User;
-import com.school.repository.UserRepository;
-import com.school.service.EmailService;
+import com.school.auth.User;
+import com.school.auth.UserRepository;
+import com.school.core.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;

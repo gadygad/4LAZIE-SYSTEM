@@ -1,10 +1,12 @@
 package com.school.config;
 
-import com.school.model.Course;
-import com.school.model.Subject;
-import com.school.repository.CourseRepository;
-import com.school.repository.SubjectRepository;
-import com.school.repository.QuestionRepository;
+import com.school.academic.Subject;
+import com.school.academic.Course;
+import com.school.academic.SubjectRepository;
+import com.school.academic.CourseRepository;
+import com.school.academic.Timetable;
+import com.school.academic.TimetableRepository;
+import com.school.exam.QuestionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -102,7 +104,7 @@ public class CurriculumInitializer {
     }
 
     @Bean
-    public CommandLineRunner initCurriculumData(CourseRepository courseRepository, SubjectRepository subjectRepository, com.school.repository.TimetableRepository timetableRepository) {
+    public CommandLineRunner initCurriculumData(CourseRepository courseRepository, SubjectRepository subjectRepository, TimetableRepository timetableRepository) {
         return args -> {
             // Seed Diplomas
             seedCourse(courseRepository, "DIPLOMA IN INFORMATION TECHNOLOGY", "DIP_IT", "Diploma in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 3, "Level", 4);
@@ -525,7 +527,7 @@ public class CurriculumInitializer {
             
             
             // Seed DEG_CE Year 4 Sem 1 Timetable
-            com.school.model.Timetable tt_ce_y4_s1 = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 4, 1).orElse(new com.school.model.Timetable());
+            com.school.academic.Timetable tt_ce_y4_s1 = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 4, 1).orElse(new com.school.academic.Timetable());
             tt_ce_y4_s1.setProgramType("DEG_CE");
             tt_ce_y4_s1.setLevelNo(4);
             tt_ce_y4_s1.setSemesterNo(1);

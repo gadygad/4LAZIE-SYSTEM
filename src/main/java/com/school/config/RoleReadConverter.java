@@ -1,6 +1,6 @@
 package com.school.config;
 
-import com.school.model.Role;
+import com.school.auth.Role;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.slf4j.Logger;

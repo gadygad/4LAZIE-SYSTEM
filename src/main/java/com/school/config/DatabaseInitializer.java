@@ -1,12 +1,13 @@
 package com.school.config;
 
-import com.school.model.Note;
-import com.school.model.User;
-import com.school.repository.NoteRepository;
-import com.school.repository.UserRepository;
-import com.school.repository.InstitutionRepository;
-import com.school.repository.AcademicCalendarRepository;
-import com.school.repository.CourseRepository;
+import com.school.auth.Role;
+import com.school.auth.User;
+import com.school.auth.UserRepository;
+import com.school.notes.Note;
+import com.school.notes.NoteRepository;
+import com.school.academic.InstitutionRepository;
+import com.school.academic.AcademicCalendarRepository;
+import com.school.academic.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -16,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.school.model.Role;
+import com.school.auth.Role;
 
 @Component
 public class DatabaseInitializer implements CommandLineRunner {
@@ -88,7 +89,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         try {
             // Seed Default Institution
             if (institutionRepository.count() == 0) {
-                com.school.model.Institution sjuit = new com.school.model.Institution();
+                com.school.academic.Institution sjuit = new com.school.academic.Institution();
                 sjuit.setId("1");
                 sjuit.setName("St. Joseph University in Tanzania");
                 sjuit.setShortName("SJUIT");
@@ -112,7 +113,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         try {
             if (academicCalendarRepository.count() == 0) {
-                com.school.model.AcademicCalendar cal = new com.school.model.AcademicCalendar();
+                com.school.academic.AcademicCalendar cal = new com.school.academic.AcademicCalendar();
                 cal.setAcademicYear("2025/2026");
                 cal.setFileUrl("academic_calendar_2025.pdf");
                 cal.setSem1Cat1DegreeDate("2026-01-13");

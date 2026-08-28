@@ -1,9 +1,9 @@
 package com.school.config;
 
-import com.school.model.ActivityLog;
-import com.school.model.User;
-import com.school.repository.ActivityLogRepository;
-import com.school.repository.UserRepository;
+import com.school.core.ActivityLog;
+import com.school.auth.User;
+import com.school.core.ActivityLogRepository;
+import com.school.auth.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

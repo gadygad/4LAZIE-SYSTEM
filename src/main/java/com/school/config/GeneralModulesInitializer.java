@@ -1,9 +1,9 @@
 package com.school.config;
 
-import com.school.model.Note;
-import com.school.repository.NoteRepository;
-import com.school.model.Institution;
-import com.school.repository.InstitutionRepository;
+import com.school.notes.Note;
+import com.school.notes.NoteRepository;
+import com.school.academic.Institution;
+import com.school.academic.InstitutionRepository;
 import org.springframework.boot.CommandLineRunner;
 
 import java.time.LocalDateTime;

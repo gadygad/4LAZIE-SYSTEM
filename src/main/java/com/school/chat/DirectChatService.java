@@ -1,0 +1,165 @@
+package com.school.chat;
+
+import com.school.chat.ChatMessage;
+import com.school.chat.DirectChat;
+import com.school.auth.Role;
+import com.school.auth.User;
+import com.school.chat.DirectChatRepository;
+import com.school.auth.UserRepository;
+import com.school.notification.PushNotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class DirectChatService {
+
+    @Autowired
+    private DirectChatRepository directChatRepository;
+
+    @Autowired
+    private com.school.auth.UserRepository userRepository;
+
+    @Autowired
+    private PushNotificationService pushNotificationService;
+
+    /**
+     * Admin anaanzisha chat na mwanafunzi.
+     * Kama chat tayari ipo, inairejesha ile ile (no duplicate).
+     */
+    public DirectChat startOrGetChat(String adminId, String studentId) {
+        // Check if a chat already exists between this admin and student
+        Optional<DirectChat> existing = directChatRepository.findByAdminIdAndStudentId(adminId, studentId);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        // Check if ANY admin has already chatted with this student - reuse that thread
+        Optional<DirectChat> anyExisting = directChatRepository.findByStudentId(studentId);
+        if (anyExisting.isPresent()) {
+            return anyExisting.get();
+        }
+
+        // Create new chat
+        User admin   = userRepository.findById(adminId).orElse(null);
+        User student = userRepository.findById(studentId).orElse(null);
+
+        DirectChat chat = new DirectChat();
+        chat.setAdminId(adminId);
+        chat.setStudentId(studentId);
+        chat.setStudentName(student != null ? student.getName() : "Student");
+        chat.setAdminName(admin != null ? admin.getName() : "4LAZIE Admin");
+
+        return directChatRepository.save(chat);
+    }
+
+    /**
+     * Tuma message — inaweza kuwa admin au student.
+     * senderId: "ADMIN" au user's ID
+     */
+    public DirectChat sendMessage(String chatId, String senderId, String senderName, String messageText, String replyToMessageId, String replyToSenderName, String replyToMessageText) {
+        DirectChat chat = directChatRepository.findById(chatId).orElse(null);
+        if (chat == null) return null;
+
+        // Fetch profile picture for this sender
+        String profilePicture = null;
+        boolean senderIsAdmin;
+
+        if ("ADMIN".equals(senderId)) {
+            senderIsAdmin = true;
+            // Admin uses the 4LAZIE logo — no personal picture needed, keep null
+        } else {
+            User sender = userRepository.findById(senderId).orElse(null);
+            senderIsAdmin = sender != null && sender.getRole() != null &&
+                    (sender.getRole().name().equals("ADMIN") || sender.getRole().name().equals("SUPER_ADMIN"));
+            if (sender != null) {
+                profilePicture = sender.getProfilePicture();
+            }
+        }
+
+        ChatMessage msg = new ChatMessage(senderId, senderName, profilePicture, messageText, null);
+        msg.setReplyToMessageId(replyToMessageId);
+        msg.setReplyToSenderName(replyToSenderName);
+        msg.setReplyToMessageText(replyToMessageText);
+        chat.getMessages().add(msg);
+        chat.setLastMessageAt(LocalDateTime.now());
+
+        if (senderIsAdmin) {
+            chat.setHasUnreadForStudent(true);
+            // Push Notification to Student
+            pushNotificationService.sendToUser(chat.getStudentId(), "New Message from Admin", senderName + ": " + messageText, "/messages?openDirect=1");
+        } else {
+            chat.setHasUnreadForAdmin(true);
+            // Push Notification to all Admins
+            java.util.List<User> admins = userRepository.findByRole(com.school.auth.Role.ADMIN);
+            java.util.List<User> superAdmins = userRepository.findByRole(com.school.auth.Role.SUPER_ADMIN);
+            admins.forEach(a -> pushNotificationService.sendToUser(a.getId(), "New Message from " + senderName, messageText, "/admin/messages"));
+            superAdmins.forEach(sa -> pushNotificationService.sendToUser(sa.getId(), "New Message from " + senderName, messageText, "/admin/messages"));
+        }
+
+        return directChatRepository.save(chat);
+    }
+
+    /**
+     * Admin anafungua chat — mark as read for admin
+     */
+    public void markReadForAdmin(String chatId) {
+        directChatRepository.findById(chatId).ifPresent(chat -> {
+            chat.setHasUnreadForAdmin(false);
+            if (chat.getMessages() != null) {
+                chat.getMessages().forEach(m -> {
+                    if (!"ADMIN".equals(m.getSenderId())) m.setRead(true);
+                });
+            }
+            directChatRepository.save(chat);
+        });
+    }
+
+    /**
+     * Student anafungua chat — mark as read for student
+     */
+    public void markReadForStudent(String chatId) {
+        directChatRepository.findById(chatId).ifPresent(chat -> {
+            chat.setHasUnreadForStudent(false);
+            if (chat.getMessages() != null) {
+                chat.getMessages().forEach(m -> {
+                    if ("ADMIN".equals(m.getSenderId())) m.setRead(true);
+                });
+            }
+            directChatRepository.save(chat);
+        });
+    }
+
+    public DirectChat getChatById(String chatId) {
+        return directChatRepository.findById(chatId).orElse(null);
+    }
+
+    public List<DirectChat> getStudentInbox(String studentId) {
+        return directChatRepository.findByStudentIdOrderByLastMessageAtDesc(studentId);
+    }
+
+    public List<DirectChat> getAdminChats(String adminId) {
+        return directChatRepository.findByAdminIdOrderByLastMessageAtDesc(adminId);
+    }
+
+    public long getUnreadCountForAdmin(String adminId) {
+        return directChatRepository.countByAdminIdAndHasUnreadForAdminTrue(adminId);
+    }
+
+    public long getUnreadCountForStudent(String studentId) {
+        return directChatRepository.countByStudentIdAndHasUnreadForStudentTrue(studentId);
+    }
+
+    /** Returns ALL chats sorted by latest activity (for admin inbox) */
+    public List<DirectChat> getAllChats() {
+        return directChatRepository.findAllByOrderByLastMessageAtDesc();
+    }
+
+    /** Total unread messages across all students for any admin */
+    public long getTotalUnreadForAdmin() {
+        return directChatRepository.countByHasUnreadForAdminTrue();
+    }
+}

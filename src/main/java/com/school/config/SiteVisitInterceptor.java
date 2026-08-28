@@ -1,9 +1,9 @@
 package com.school.config;
 
-import com.school.model.SiteVisit;
-import com.school.model.User;
-import com.school.repository.SiteVisitRepository;
-import com.school.repository.UserRepository;
+import com.school.core.SiteVisit;
+import com.school.auth.User;
+import com.school.core.SiteVisitRepository;
+import com.school.auth.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
