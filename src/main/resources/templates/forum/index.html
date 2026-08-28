@@ -59,22 +59,87 @@
 
                 <!-- Profile / Login Icon -->
                 <!-- Logged in: show profile picture → goes to /profile -->
-                <a th:if="${session.user != null}"
-                   href="/profile"
-                   class="d-flex align-items-center justify-content-center text-white text-decoration-none"
-                   style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #10b981; box-shadow: 0 2px 8px rgba(16,185,129,0.3); flex-shrink: 0; overflow: hidden; transition: transform 0.2s;"
-                   onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
-                    <!-- Has profile picture -->
-                    <img th:if="${session.user.profilePicture != null}"
-                         th:src="${session.user.profilePicture}"
-                         alt="Profile"
-                         style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
-                    <!-- No profile picture: use initials avatar -->
-                    <img th:unless="${session.user.profilePicture != null}"
-                         th:src="'https://ui-avatars.com/api/?name=' + ${session.user.name} + '&background=10b981&color=fff&size=100'"
-                         alt="Profile"
-                         style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
-                </a>
+                <!-- Profile Dropdown (Logged in) -->
+                <div class="dropdown" th:if="${session.user != null}">
+                    <a href="#"
+                       class="d-flex align-items-center justify-content-center text-white text-decoration-none dropdown-toggle"
+                       id="forumProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                       style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #10b981; box-shadow: 0 2px 8px rgba(16,185,129,0.3); flex-shrink: 0; overflow: hidden; transition: transform 0.2s;"
+                       onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                        <!-- Has profile picture -->
+                        <img th:if="${session.user.profilePicture != null}"
+                             th:src="${session.user.profilePicture}"
+                             alt="Profile"
+                             style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                        <!-- No profile picture: use initials avatar -->
+                        <img th:unless="${session.user.profilePicture != null}"
+                             th:src="'https://ui-avatars.com/api/?name=' + ${session.user.name} + '&background=10b981&color=fff&size=100'"
+                             alt="Profile"
+                             style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                    </a>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2 profile-dropdown" aria-labelledby="forumProfileDropdown" style="border-radius: 24px; min-width: 260px; background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.1); transform-origin: top right;">
+                        <li class="px-4 py-3 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p class="mb-0 fw-bold position-relative" style="font-size: 1.05rem; font-family: 'Outfit', sans-serif; letter-spacing: -0.3px; color: #fff !important;" th:text="${session.user.name}">John Doe</p>
+                            <p class="mb-0 fw-bold position-relative" th:style="'font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: ' + (${session.user.role != null} ? (${session.user.role.name() == 'SUPER_ADMIN' or session.user.role.name() == 'ADMIN'} ? '#ef4444' : (${session.user.role.name() == 'CLASS_REPRESENTATIVE' or session.user.role.name() == 'LECTURE'} ? '#3b82f6' : '#10b981')) : '#10b981') + ' !important;'" th:text="${session.user.role != null ? (session.user.role.name() == 'SUPER_ADMIN' ? 'SUPER ADMIN' : (session.user.role.name() == 'CLASS_REPRESENTATIVE' ? 'CR' : session.user.role.name())) : 'STUDENT'}">STUDENT</p>
+                        </li>
+                        
+                        <style>
+                            .forum-dropdown-item {
+                                transition: all 0.3s ease !important;
+                                border-radius: 14px;
+                                margin-bottom: 4px;
+                                display: flex;
+                                align-items: center;
+                                color: #d1d5db !important;
+                            }
+                            .forum-dropdown-item:hover {
+                                background: rgba(16, 185, 129, 0.15) !important;
+                                transform: translateX(8px);
+                                color: #fff !important;
+                                font-weight: 700 !important;
+                                border-left: 3px solid #10b981;
+                            }
+                            .icon-box-f {
+                                width: 36px; height: 36px;
+                                border-radius: 10px;
+                                display: flex; align-items: center; justify-content: center;
+                                background: rgba(255,255,255,0.05); color: #9ca3af;
+                                transition: all 0.3s ease;
+                            }
+                            .forum-dropdown-item:hover .icon-box-f {
+                                background: rgba(16, 185, 129, 0.25); color: #10b981;
+                                transform: scale(1.1);
+                            }
+                        </style>
+
+                        <li th:if="${session.user.role == 'ADMIN'}">
+                            <a class="dropdown-item py-2 px-3 fw-medium forum-dropdown-item" href="/upload" style="font-size: 0.95rem;">
+                                <div class="icon-box-f me-3"><i class="bi bi-speedometer2"></i></div>
+                                Admin Dashboard
+                            </a>
+                        </li>
+                        <li th:unless="${session.user.role == 'ADMIN'}">
+                            <a class="dropdown-item py-2 px-3 fw-medium forum-dropdown-item" href="/dashboard" style="font-size: 0.95rem;">
+                                <div class="icon-box-f me-3"><i class="bi bi-grid-1x2-fill"></i></div>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 fw-medium forum-dropdown-item" href="/profile" style="font-size: 0.95rem;">
+                                <div class="icon-box-f me-3"><i class="bi bi-person-fill"></i></div>
+                                My Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider my-2" style="border-color: rgba(255, 255, 255, 0.1);"></li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 mb-1 fw-bold text-danger" href="/logout" style="font-size: 0.95rem; border-radius: 14px; transition: all 0.3s ease; display: flex; align-items: center;" onmouseover="this.style.background='rgba(239, 68, 68, 0.15)'; this.style.borderLeft='3px solid #ef4444'; this.style.transform='translateX(5px)';" onmouseout="this.style.background='transparent'; this.style.borderLeft='none'; this.style.transform='none';">
+                                <div class="icon-box-f me-3" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;"><i class="bi bi-box-arrow-right"></i></div>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
                 <!-- Not logged in: show generic person icon → goes to /login -->
                 <a th:if="${session.user == null}"
