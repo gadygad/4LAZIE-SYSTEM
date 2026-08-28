@@ -48,7 +48,7 @@ public class ForumService {
         List<ForumPost> notePosts = new ArrayList<>();
         if (adminUser != null) {
             final User admin = adminUser;
-            List<Note> allNotes = noteRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+            List<Note> allNotes = noteRepository.findTop50ByOrderByIdDesc();
             for (Note note : allNotes) {
                 ForumPost post = new ForumPost();
                 post.setAuthor(admin);
