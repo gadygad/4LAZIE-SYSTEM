@@ -66,12 +66,12 @@ public class ForumService {
                 String sem      = note.getSemesterNo() != null ? "Sem " + note.getSemesterNo() : "";
                 String year     = note.getAcademicYear() != null ? " (" + note.getAcademicYear() + ")" : "";
 
-                post.setTitle("📚 " + category + " Mpya Imepakiwa!");
+                post.setTitle("📖 New " + category + " Uploaded!");
                 post.setInstitutionPlaceholder(instStr);
                 
                 String content  = noteTitle + module + "\n"
                         + program + " · " + level + " · " + sem + year + "\n"
-                        + "⬇️ Pakua kutoka kwenye sehemu ya Notes.";
+                        + "⬇️ Download it from the Notes section.";
 
                 post.setContent(content);
                 post.setId("note-" + note.getId());
