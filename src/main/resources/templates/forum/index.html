@@ -177,7 +177,42 @@
                                  style="color: #9ca3af; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; margin-bottom: 4px; text-transform: uppercase;">
                             </div>
                             
-                            <div th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
+                            <!-- For admin note posts: show Read & Download buttons if logged in -->
+                            <div th:if="${post.adminPost and post.noteId != null}">
+                                <div th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap; margin-bottom: 10px;"></div>
+
+                                <!-- Logged in: show Read + Download buttons -->
+                                <div th:if="${session.user != null}" class="d-flex gap-2 mt-2 flex-wrap">
+                                    <a th:href="@{'/view/' + ${post.noteId}}"
+                                       target="_blank"
+                                       class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold"
+                                       style="background: rgba(16,185,129,0.15); color: #4ade80; border: 1px solid rgba(16,185,129,0.3); font-size: 12px; transition: all 0.2s;"
+                                       onmouseover="this.style.background='rgba(16,185,129,0.3)'; this.style.color='#ffffff';"
+                                       onmouseout="this.style.background='rgba(16,185,129,0.15)'; this.style.color='#4ade80';">
+                                        <i class="bi bi-eye-fill" style="font-size: 11px;"></i> Read
+                                    </a>
+                                    <a th:href="@{'/download/' + ${post.noteId}}"
+                                       class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold"
+                                       style="background: rgba(96,165,250,0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.3); font-size: 12px; transition: all 0.2s;"
+                                       onmouseover="this.style.background='rgba(96,165,250,0.3)'; this.style.color='#ffffff';"
+                                       onmouseout="this.style.background='rgba(96,165,250,0.15)'; this.style.color='#93c5fd';">
+                                        <i class="bi bi-download" style="font-size: 11px;"></i> Download
+                                    </a>
+                                </div>
+
+                                <!-- Not logged in: prompt to login -->
+                                <div th:if="${session.user == null}" class="mt-2">
+                                    <a href="/login"
+                                       class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold"
+                                       style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); font-size: 12px;">
+                                        <i class="bi bi-lock-fill" style="font-size: 11px;"></i> Login to Read &amp; Download
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Regular student post: plain text -->
+                            <div th:if="${!post.adminPost or post.noteId == null}"
+                                 th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
                         </div>
                         
                         <!-- Action Buttons (Like, Comment, Share) -->

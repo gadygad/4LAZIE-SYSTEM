@@ -42,6 +42,12 @@ public class ForumPost {
     public String getInstitutionPlaceholder() { return institutionPlaceholder; }
     public void setInstitutionPlaceholder(String institutionPlaceholder) { this.institutionPlaceholder = institutionPlaceholder; }
 
+    @org.springframework.data.annotation.Transient
+    private String noteId; // The actual Note document ID, used for Read/Download from Forum
+
+    public String getNoteId() { return noteId; }
+    public void setNoteId(String noteId) { this.noteId = noteId; }
+
     public ForumPost() {}
 
     public ForumPost(User author, String title, String content) {

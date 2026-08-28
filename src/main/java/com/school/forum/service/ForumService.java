@@ -75,6 +75,7 @@ public class ForumService {
 
                 post.setContent(content);
                 post.setId("note-" + note.getId());
+                post.setNoteId(note.getId()); // for forum Read/Download buttons
                 post.setAdminPost(true);
                 post.setAuthorRole("ADMIN"); // notes always attributed to admin brand
                 notePosts.add(post);

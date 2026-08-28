@@ -515,15 +515,8 @@ public class NotesController {
                 note.getId(), note.getTitle(), note.getContentJson() != null, note.getFileUrl() != null);
 
         User loggedInUser = getLoggedInUser();
-        
-        // Enforce course boundaries for students
-        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
-            boolean isCourseMatch = note.getProgramType() != null && note.getProgramType().equalsIgnoreCase(loggedInUser.getCourseProgram());
-            if (!isCourseMatch && !Boolean.TRUE.equals(note.getIsGeneral())) {
-                response.sendError(403, "Access Denied: You can only access materials related to your course (" + loggedInUser.getCourseProgram() + ")");
-                return;
-            }
-        }
+        // Note: course-boundary check removed so logged-in users from ANY institution
+        // (including those arriving via the Forum) can download materials freely.
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
@@ -653,15 +646,8 @@ public class NotesController {
         }
 
         User loggedInUser = getLoggedInUser();
-        
-        // Enforce course boundaries for students
-        if (loggedInUser != null && loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole() != Role.SUPER_ADMIN) {
-            boolean isCourseMatch = note.getProgramType() != null && note.getProgramType().equalsIgnoreCase(loggedInUser.getCourseProgram());
-            if (!isCourseMatch && !Boolean.TRUE.equals(note.getIsGeneral())) {
-                response.sendError(403, "Access Denied: You can only view materials related to your course (" + loggedInUser.getCourseProgram() + ")");
-                return;
-            }
-        }
+        // Note: course-boundary check removed so logged-in users from ANY institution
+        // (including those arriving via the Forum) can read materials freely.
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
