@@ -673,9 +673,9 @@
                             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
                     </div>
-                    <button type="button" class="comment-reply-btn" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
-                            style="padding-left: ${replyIndent}px;">
-                        <i class="bi bi-reply-fill"></i> Reply</button>
+                    <span class="comment-reply-btn" role="button" tabindex="0" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
+                          style="padding-left: ${replyIndent}px;">
+                        <i class="bi bi-reply-fill"></i> Reply</span>
                 </div>`;
         }
 
@@ -741,6 +741,17 @@
             const commentId = btn.closest('[data-comment-id]').dataset.commentId;
             const rootId = btn.closest('.comment-thread').dataset.threadRoot;
             initCommentReply(commentId, rootId, btn.dataset.replyAuthor, btn.dataset.replyContent);
+        });
+        // The Reply "button" is a <span role="button"> (see commentBubbleHtml —
+        // real <button> elements picked up a forced 48px min-height in this
+        // app's environment, which was the actual source of the visible gap
+        // under each comment), so Enter/Space needs to be wired up manually.
+        document.getElementById('commentsList').addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            const btn = e.target.closest('.comment-reply-btn');
+            if (!btn) return;
+            e.preventDefault();
+            btn.click();
         });
 
         function appendRootThread(authorName, authorPicture, content) {
