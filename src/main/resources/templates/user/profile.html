@@ -1175,7 +1175,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <form th:action="@{/profile/request-verification}" method="post">
                     <div class="modal-body pt-2">
-                        <p class="text-muted" style="font-size: 0.88rem;">Tell us why you should be verified (e.g. Class Representative, notable contributor, trusted community member).</p>
+                        <p class="text-muted" style="font-size: 0.88rem;">Tell us why you should be verified.</p>
+                        <label class="form-label fw-semibold" style="font-size: 0.82rem; color: #334155;">Reason type</label>
+                        <select name="category" class="form-select mb-3" required style="border-radius: 10px; font-size: 0.9rem;">
+                            <option value="CLASS_REPRESENTATIVE">Class Representative</option>
+                            <option value="ACTIVE_CONTRIBUTOR">Active Contributor</option>
+                            <option value="LECTURER">Lecturer</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                        <label class="form-label fw-semibold" style="font-size: 0.82rem; color: #334155;">Details</label>
                         <textarea name="reason" class="form-control" rows="4" maxlength="300" required placeholder="Explain your reason..." style="border-radius: 10px; font-size: 0.9rem;"></textarea>
                     </div>
                     <div class="modal-footer border-0 pt-0">

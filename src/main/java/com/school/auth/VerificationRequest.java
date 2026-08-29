@@ -13,6 +13,10 @@ public class VerificationRequest {
 
     private String userId;
 
+    // One of the short preset options (CLASS_REPRESENTATIVE, ACTIVE_CONTRIBUTOR,
+    // LECTURER, OTHER) shown as a dropdown in the request form.
+    private String category;
+
     private String reason;
 
     // PENDING, APPROVED, REJECTED
@@ -25,8 +29,9 @@ public class VerificationRequest {
 
     public VerificationRequest() {}
 
-    public VerificationRequest(String userId, String reason) {
+    public VerificationRequest(String userId, String category, String reason) {
         this.userId = userId;
+        this.category = category;
         this.reason = reason;
         this.requestDate = LocalDateTime.now();
     }
@@ -36,6 +41,9 @@ public class VerificationRequest {
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }

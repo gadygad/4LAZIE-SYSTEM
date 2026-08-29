@@ -137,7 +137,8 @@ public class UserController {
     // Student requests the community "verified" trust badge — goes into the
     // same admin queue as any other approval-style request in this app.
     @PostMapping("/profile/request-verification")
-    public String requestVerification(@RequestParam String reason,
+    public String requestVerification(@RequestParam String category,
+                                       @RequestParam String reason,
                                        org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (user == null) return "redirect:/login";
@@ -154,7 +155,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Please explain why you're requesting verification.");
             return "redirect:/profile";
         }
-        verificationRequestRepository.save(new com.school.auth.VerificationRequest(user.getId(), reason.trim()));
+        verificationRequestRepository.save(new com.school.auth.VerificationRequest(user.getId(), category, reason.trim()));
         redirectAttributes.addFlashAttribute("success", "Verification request submitted — an admin will review it soon.");
         return "redirect:/profile";
     }
