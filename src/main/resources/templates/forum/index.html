@@ -369,11 +369,22 @@
                                 <i class="bi bi-share"></i>
                             </div>
                         </div>
+
+                        <!-- Inline comment preview — up to 2 recent comments plus a
+                             quick reply box, right on the feed, so most comments
+                             never need the permalink page at all. -->
+                        <div class="inline-comments mt-2" th:data-post-id="${post.id}" th:data-comments-count="${post.commentsCount != null ? post.commentsCount : 0}">
+                            <div class="inline-comments-list"></div>
+                            <form class="d-flex gap-2 mt-2" style="max-width: 420px;" onsubmit="submitInlineComment(event, this)">
+                                <input type="text" class="glass-input inline-comment-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0; font-size: 0.85rem; padding: 7px 12px; flex: 1 1 auto; width: auto; min-width: 0;">
+                                <button type="submit" class="btn border-0 flex-shrink-0" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 6px 16px; border-radius: 6px; font-weight: 600; font-size: 0.82rem;">Post</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- End of Feed Indicator -->
         <div th:if="${posts != null && !posts.isEmpty()}" class="text-center py-4" style="color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500; letter-spacing: 1px;">
             No more posts
@@ -621,6 +632,93 @@
             } else {
                 prompt('Copy this link:', url);
             }
+        }
+
+        // Inline comment preview — up to 2 recent comments shown right on
+        // the feed card, with a quick-reply box, so most comments never need
+        // the permalink page. Deliberately flat (no reply-threading here);
+        // "View all N comments" sends you to the full page for that.
+        const escInline = s => String(s || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        function inlineNameHtml(name, verified) {
+            const safe = escInline(name);
+            if (name === '4LAZIE' || verified) {
+                return `<span style="${verified && name !== '4LAZIE' ? 'color:#4ade80;' : ''}">${safe}</span> <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.8em;"></i>`;
+            }
+            return safe;
+        }
+
+        function inlineAvatarHtml(name, pic) {
+            if (pic) return `<img src="${escInline(pic)}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
+            return `<div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.7rem;">${escInline(name).charAt(0).toUpperCase()}</div>`;
+        }
+
+        function inlineCommentHtml(c) {
+            return `
+                <div class="d-flex gap-2 mt-2">
+                    ${inlineAvatarHtml(c.authorName, c.authorPicture)}
+                    <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 10px;">
+                        <div class="fw-bold" style="font-size: 0.75rem; color: #fff;">${inlineNameHtml(c.authorName, c.authorVerified)}</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escInline(c.content)}</div>
+                    </div>
+                </div>`;
+        }
+
+        function loadInlinePreview(container) {
+            const postId = container.dataset.postId;
+            const totalCount = parseInt(container.dataset.commentsCount) || 0;
+            if (totalCount <= 0) return;
+            const list = container.querySelector('.inline-comments-list');
+            fetch('/community/post/' + postId + '/comments')
+                .then(res => res.json())
+                .then(comments => {
+                    if (!Array.isArray(comments) || comments.length === 0) return;
+                    const preview = comments.slice(-2);
+                    let html = preview.map(inlineCommentHtml).join('');
+                    if (comments.length > preview.length) {
+                        html += `<a href="/community/post/${postId}" class="d-block text-decoration-none mt-1" style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">View all ${comments.length} comments</a>`;
+                    }
+                    list.innerHTML = html;
+                })
+                .catch(err => console.error('loadInlinePreview failed:', err));
+        }
+
+        document.querySelectorAll('.inline-comments').forEach(loadInlinePreview);
+
+        function submitInlineComment(event, form) {
+            event.preventDefault();
+            const container = form.closest('.inline-comments');
+            const postId = container.dataset.postId;
+            const input = form.querySelector('.inline-comment-input');
+            const content = input.value.trim();
+            if (!content) return;
+            input.value = '';
+
+            const params = new URLSearchParams();
+            params.append('content', content);
+
+            fetch('/community/post/' + postId + '/comment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                body: params
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) throw new Error((data && data.error) || 'failed');
+                    container.querySelector('.inline-comments-list')
+                        .insertAdjacentHTML('beforeend', inlineCommentHtml(data));
+                    document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
+                        .forEach(el => el.innerText = data.count);
+                    container.dataset.commentsCount = data.count;
+                })
+                .catch(err => {
+                    console.error('submitInlineComment failed:', err);
+                    input.value = content; // give the text back so nothing's lost
+                });
         }
     </script>
 </body>
