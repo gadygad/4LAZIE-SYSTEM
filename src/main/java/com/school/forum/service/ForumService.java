@@ -10,6 +10,7 @@ import com.school.notes.Note;
 import com.school.notes.NoteRepository;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -43,6 +44,10 @@ public class ForumService {
         return "ADMIN".equals(role) || "SUPER_ADMIN".equals(role);
     }
 
+    // Short-lived cache (see CacheConfig — 8s TTL) so Back/repeat navigation
+    // to /community within a few seconds is instant instead of re-running
+    // ~9 sequential MongoDB round trips every single time.
+    @Cacheable("forumFeed")
     public List<ForumPost> getRandomizedFeed() {
 
         // ── 1. Find admin user to attribute uploaded notes to ──

@@ -10,6 +10,7 @@ import com.school.forum.repository.ForumCommentRepository;
 import com.school.forum.repository.ForumPostRepository;
 import com.school.notes.Note;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -97,6 +98,7 @@ public class ForumController {
     }
 
     @PostMapping("/post")
+    @CacheEvict(value = "forumFeed", allEntries = true)
     public String createPost(@RequestParam("title") String title, @RequestParam("content") String content) {
         User loggedInUser = authUtil.getLoggedInUser();
         if (loggedInUser != null && content != null && !content.trim().isEmpty() && title != null && !title.trim().isEmpty()) {
