@@ -569,6 +569,16 @@
         const escComment = s => String(s || '')
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+        // Same convention as the post header: an ADMIN/SUPER_ADMIN commenter is
+        // branded "4LAZIE" by the backend, shown here with a green verified badge.
+        function verifiedCommentName(name) {
+            const safe = escComment(name);
+            if (name === '4LAZIE') {
+                return `${safe} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.8em;" title="Verified Official"></i>`;
+            }
+            return safe;
+        }
+
         function openComments(postId) {
             activeCommentPostId = postId;
             const modalEl = document.getElementById('commentsModal');
@@ -596,7 +606,7 @@
                 <div class="d-flex mb-3 gap-2">
                     <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.8rem;">${escComment(c.authorName).charAt(0).toUpperCase()}</div>
                     <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
-                        <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${escComment(c.authorName)}</div>
+                        <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
                         <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                     </div>
                 </div>
@@ -615,7 +625,7 @@
             div.innerHTML = `
                 <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.8rem;">${escComment(authorName).charAt(0).toUpperCase()}</div>
                 <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
-                    <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${escComment(authorName)}</div>
+                    <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(authorName)}</div>
                     <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(content)}</div>
                 </div>`;
             list.appendChild(div);
