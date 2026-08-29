@@ -71,7 +71,7 @@ public class ForumService {
                         Aggregation.group("postId").count().as("count")
                 );
                 for (Document doc : mongoTemplate.aggregate(agg, "forum_comments", Document.class).getMappedResults()) {
-                    commentCountsByPostId.put(doc.getString("_id"), doc.getLong("count"));
+                    commentCountsByPostId.put(doc.getString("_id"), ((Number) doc.get("count")).longValue());
                 }
             }
 
