@@ -339,14 +339,16 @@
                         <!-- Action Buttons (Like, Comment, Share) — work for note-derived
                              cards too: their state lives on the underlying Note document. -->
                         <div class="d-flex gap-3 mt-3" th:data-post-id="${post.id}">
-                            <!-- Comment Button -->
-                            <a class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn text-decoration-none"
-                               style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
-                               onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
-                               th:href="@{'/community/post/' + ${post.id}}">
+                            <!-- Comment Button — one tap opens the inline preview right
+                                 here instead of navigating away immediately. -->
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn"
+                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
+                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
+                                 th:data-post-id="${post.id}"
+                                 onclick="toggleInlineComments(this.dataset.postId)">
                                 <i class="bi bi-chat"></i>
                                 <span class="ms-2 fw-medium comment-count" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
-                            </a>
+                            </div>
 
                             <!-- Like Button -->
                             <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
@@ -373,7 +375,7 @@
                         <!-- Inline comment preview — up to 2 recent comments plus a
                              quick reply box, right on the feed, so most comments
                              never need the permalink page at all. -->
-                        <div class="inline-comments mt-2" th:data-post-id="${post.id}" th:data-comments-count="${post.commentsCount != null ? post.commentsCount : 0}">
+                        <div class="inline-comments mt-2" style="display: none;" th:data-post-id="${post.id}" th:data-comments-count="${post.commentsCount != null ? post.commentsCount : 0}">
                             <div class="inline-comments-list"></div>
                             <form class="d-flex gap-2 mt-2" style="max-width: 420px;" onsubmit="submitInlineComment(event, this)">
                                 <input type="text" class="glass-input inline-comment-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0; font-size: 0.85rem; padding: 7px 12px; flex: 1 1 auto; width: auto; min-width: 0;">
@@ -684,7 +686,23 @@
                 .catch(err => console.error('loadInlinePreview failed:', err));
         }
 
-        document.querySelectorAll('.inline-comments').forEach(loadInlinePreview);
+        // Collapsed by default — one tap on the comment icon opens it (and
+        // fetches the preview only then, instead of every post on the feed
+        // firing a comments request on page load).
+        function toggleInlineComments(postId) {
+            const container = document.querySelector('.inline-comments[data-post-id="' + postId + '"]');
+            if (!container) return;
+            const isOpen = container.style.display !== 'none';
+            if (isOpen) {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+            if (!container.dataset.loaded) {
+                container.dataset.loaded = '1';
+                loadInlinePreview(container);
+            }
+        }
 
         function submitInlineComment(event, form) {
             event.preventDefault();
