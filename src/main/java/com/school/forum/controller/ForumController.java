@@ -61,6 +61,10 @@ public class ForumController {
         return isAdmin(user) ? "4LAZIE" : user.getName();
     }
 
+    private String displayPicture(User user) {
+        return isAdmin(user) ? "/images/logo.png" : user.getProfilePicture();
+    }
+
     @GetMapping
     public String showCommunityForum(Model model) {
         User loggedInUser = authUtil.getLoggedInUser();
@@ -166,6 +170,7 @@ public class ForumController {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("id", comment.getId());
         body.put("authorName", displayName(user));
+        body.put("authorPicture", displayPicture(user));
         body.put("content", comment.getContent());
         body.put("count", count);
         return ResponseEntity.ok(body);
@@ -185,6 +190,7 @@ public class ForumController {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("id", c.getId());
             m.put("authorName", author != null ? displayName(author) : "Unknown");
+            m.put("authorPicture", author != null ? displayPicture(author) : null);
             m.put("content", c.getContent());
             return m;
         }).collect(Collectors.toList());
