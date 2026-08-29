@@ -1,10 +1,18 @@
 package com.school.forum.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+// Every read (listing, counting) filters by postId and sorts by createdAt —
+// without this index it's a full collection scan that gets slower as
+// comments pile up, which is why opening the comments panel felt slow.
+@CompoundIndexes({
+    @CompoundIndex(name = "postId_createdAt_idx", def = "{'postId': 1, 'createdAt': 1}")
+})
 @Document(collection = "forum_comments")
 public class ForumComment {
 

@@ -8,12 +8,17 @@ import com.school.forum.repository.ForumCommentRepository;
 import com.school.forum.repository.ForumPostRepository;
 import com.school.notes.Note;
 import com.school.notes.NoteRepository;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +30,7 @@ public class ForumService {
     @Autowired private ForumCommentRepository forumCommentRepository;
     @Autowired private NoteRepository noteRepository;
     @Autowired private UserRepository userRepository;
+    @Autowired private MongoTemplate mongoTemplate;
 
     // ── Helper: resolve role string from User ──
     private String resolveRole(User user) {
@@ -53,13 +59,29 @@ public class ForumService {
         if (adminUser != null) {
             final User admin = adminUser;
             List<Note> allNotes = noteRepository.findTop10ByOrderByIdDesc();
+
+            // One aggregation for all notes' comment counts instead of a
+            // countByPostId query per note (was a 10-query N+1 on every
+            // /community page load).
+            List<String> notePostIds = allNotes.stream().map(n -> "note-" + n.getId()).collect(Collectors.toList());
+            Map<String, Long> commentCountsByPostId = new HashMap<>();
+            if (!notePostIds.isEmpty()) {
+                Aggregation agg = Aggregation.newAggregation(
+                        Aggregation.match(Criteria.where("postId").in(notePostIds)),
+                        Aggregation.group("postId").count().as("count")
+                );
+                for (Document doc : mongoTemplate.aggregate(agg, "forum_comments", Document.class).getMappedResults()) {
+                    commentCountsByPostId.put(doc.getString("_id"), doc.getLong("count"));
+                }
+            }
+
             for (Note note : allNotes) {
                 ForumPost post = new ForumPost();
                 post.setAuthor(admin);
                 post.setCreatedAt(note.getUploadDate() != null ? note.getUploadDate() : java.time.LocalDateTime.now());
                 post.setLikesCount(note.getLikesCount() != null ? note.getLikesCount() : 0);
                 post.setLikedBy(note.getLikedBy());
-                post.setCommentsCount((int) forumCommentRepository.countByPostId("note-" + note.getId()));
+                post.setCommentsCount(commentCountsByPostId.getOrDefault("note-" + note.getId(), 0L).intValue());
 
                 String category = note.getCategory() != null ? note.getCategory() : "Document";
                 String noteTitle = note.getTitle() != null ? note.getTitle() : "Untitled";
