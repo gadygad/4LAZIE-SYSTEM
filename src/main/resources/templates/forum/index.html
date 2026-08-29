@@ -250,10 +250,15 @@
                                 🛡️ CR
                             </span>
 
-                            <!-- STUDENT → real name, no badge -->
+                            <!-- STUDENT → real name; green + checkmark if community-verified -->
                             <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}"
-                                  class="fw-bold" style="font-size: 13.5px; color: rgba(255,255,255,0.95);"
+                                  class="fw-bold"
+                                  th:style="'font-size: 13.5px; color: ' + (${post.author != null and post.author.hasVerifiedBadge} ? '#4ade80' : 'rgba(255,255,255,0.95)') + ';'"
                                   th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</span>
+                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.hasVerifiedBadge}"
+                                  style="color: #4ade80; font-size: 13px;" title="Verified">
+                                <i class="bi bi-patch-check-fill"></i>
+                            </span>
 
                             <span style="color: rgba(255,255,255,0.4); font-size: 12px;">·</span>
                             <span style="color: rgba(255,255,255,0.6); font-size: 12px;"

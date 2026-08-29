@@ -84,6 +84,11 @@ public class User {
     private Boolean isSuspended = false;
     private Set<String> permissions = new HashSet<>();
 
+    // Community "verified" trust badge (green name + checkmark on posts/comments/chat) —
+    // distinct from isVerified above, which gates login/account-email verification.
+    // Granted via admin approval of a VerificationRequest, or directly by an admin.
+    private Boolean hasVerifiedBadge = false;
+
     // Constructors
     public User() {
         this.role = Role.STUDENT;
@@ -173,4 +178,6 @@ public class User {
     public void setIsSuspended(Boolean isSuspended) { this.isSuspended = isSuspended; }
     public Set<String> getPermissions() { return permissions; }
     public void setPermissions(Set<String> permissions) { this.permissions = permissions; }
+    public Boolean getHasVerifiedBadge() { return hasVerifiedBadge; }
+    public void setHasVerifiedBadge(Boolean hasVerifiedBadge) { this.hasVerifiedBadge = hasVerifiedBadge; }
 }

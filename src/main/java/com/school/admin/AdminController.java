@@ -80,6 +80,9 @@ public class AdminController {
         @org.springframework.beans.factory.annotation.Autowired
         private com.school.core.TeamMemberService teamMemberService;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.auth.VerificationRequestRepository verificationRequestRepository;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -1184,6 +1187,125 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("success", "Action rejected.");
         }
         return "redirect:/admin/approvals";
+    }
+
+    // ============ VERIFIED BADGE REQUESTS ============
+    // SUPER_ADMIN always manages verification; SUPER_ADMIN can additionally
+    // delegate that ability to any other user via the "canVerifyUsers"
+    // permission string (reusing the existing generic permissions set).
+
+    private boolean canManageVerification(User user) {
+        return user != null && (user.getRole() == Role.SUPER_ADMIN
+                || (user.getPermissions() != null && user.getPermissions().contains("canVerifyUsers")));
+    }
+
+    @GetMapping("/verification-requests")
+    public String viewVerificationRequests(Model model) {
+        User user = getLoggedInUser();
+        if (!canManageVerification(user)) {
+            return "redirect:/login";
+        }
+        List<com.school.auth.VerificationRequest> requests = verificationRequestRepository.findByStatusOrderByRequestDateDesc("PENDING");
+        java.util.Map<String, User> requesters = new java.util.HashMap<>();
+        for (com.school.auth.VerificationRequest r : requests) {
+            userRepository.findById(r.getUserId()).ifPresent(u -> requesters.put(r.getUserId(), u));
+        }
+        model.addAttribute("requests", requests);
+        model.addAttribute("requesters", requesters);
+        return "admin/admin_verification_requests";
+    }
+
+    @PostMapping("/verification-requests/{id}/approve")
+    public String approveVerification(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (!canManageVerification(user)) {
+            return "redirect:/login";
+        }
+        com.school.auth.VerificationRequest req = verificationRequestRepository.findById(id).orElse(null);
+        if (req != null && "PENDING".equals(req.getStatus())) {
+            req.setStatus("APPROVED");
+            req.setReviewedByUserId(user.getId());
+            req.setReviewedAt(java.time.LocalDateTime.now());
+            verificationRequestRepository.save(req);
+            userRepository.findById(req.getUserId()).ifPresent(u -> {
+                u.setHasVerifiedBadge(true);
+                userRepository.save(u);
+            });
+            redirectAttributes.addFlashAttribute("success", "Verification approved.");
+        }
+        return "redirect:/admin/verification-requests";
+    }
+
+    @PostMapping("/verification-requests/{id}/reject")
+    public String rejectVerification(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (!canManageVerification(user)) {
+            return "redirect:/login";
+        }
+        com.school.auth.VerificationRequest req = verificationRequestRepository.findById(id).orElse(null);
+        if (req != null && "PENDING".equals(req.getStatus())) {
+            req.setStatus("REJECTED");
+            req.setReviewedByUserId(user.getId());
+            req.setReviewedAt(java.time.LocalDateTime.now());
+            verificationRequestRepository.save(req);
+            redirectAttributes.addFlashAttribute("success", "Request rejected.");
+        }
+        return "redirect:/admin/verification-requests";
+    }
+
+    // Direct grant — an admin with verification rights can badge someone
+    // without them ever having submitted a request.
+    @PostMapping("/users/{id}/grant-badge")
+    public String grantBadge(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User admin = getLoggedInUser();
+        if (!canManageVerification(admin)) {
+            return "redirect:/login";
+        }
+        User target = userRepository.findById(id).orElse(null);
+        if (target != null) {
+            target.setHasVerifiedBadge(true);
+            userRepository.save(target);
+            redirectAttributes.addFlashAttribute("success", target.getName() + " is now verified.");
+        }
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/revoke-badge")
+    public String revokeBadge(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User admin = getLoggedInUser();
+        if (!canManageVerification(admin)) {
+            return "redirect:/login";
+        }
+        User target = userRepository.findById(id).orElse(null);
+        if (target != null) {
+            target.setHasVerifiedBadge(false);
+            userRepository.save(target);
+            redirectAttributes.addFlashAttribute("success", "Badge revoked from " + target.getName() + ".");
+        }
+        return "redirect:/admin/users";
+    }
+
+    // Delegation — only SUPER_ADMIN can grant/revoke another admin's ability
+    // to manage verification themselves.
+    @PostMapping("/users/{id}/toggle-can-verify")
+    public String toggleCanVerify(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        User admin = getLoggedInUser();
+        if (admin == null || admin.getRole() != Role.SUPER_ADMIN) {
+            return "redirect:/login";
+        }
+        User target = userRepository.findById(id).orElse(null);
+        if (target != null) {
+            if (target.getPermissions() == null) target.setPermissions(new java.util.HashSet<>());
+            if (target.getPermissions().contains("canVerifyUsers")) {
+                target.getPermissions().remove("canVerifyUsers");
+                redirectAttributes.addFlashAttribute("success", target.getName() + " can no longer approve verification requests.");
+            } else {
+                target.getPermissions().add("canVerifyUsers");
+                redirectAttributes.addFlashAttribute("success", target.getName() + " can now approve verification requests.");
+            }
+            userRepository.save(target);
+        }
+        return "redirect:/admin/users";
     }
 
     // ============ ADMIN TEAM MEMBERS MANAGEMENT ============

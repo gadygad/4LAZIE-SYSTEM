@@ -94,6 +94,9 @@
                 <a th:if="${session.user != null and session.user.role != null and session.user.role.name() == 'SUPER_ADMIN'}" href="/admin/approvals" class="sidebar-nav-item" th:classappend="${activePage == 'approvals' ? 'active' : ''}">
                     <i class="bi bi-shield-lock-fill"></i>PENDING APPROVALS
                 </a>
+                <a th:if="${session.user != null and session.user.role != null and (session.user.role.name() == 'SUPER_ADMIN' or (session.user.permissions != null and session.user.permissions.contains('canVerifyUsers')))}" href="/admin/verification-requests" class="sidebar-nav-item" th:classappend="${activePage == 'verification-requests' ? 'active' : ''}">
+                    <i class="bi bi-patch-check-fill"></i>VERIFICATION REQUESTS
+                </a>
                 <a href="/admin/users" class="sidebar-nav-item" th:classappend="${activePage == 'users' ? 'active' : ''}">
                     <i class="bi bi-people-fill"></i>USERS MANAGEMENT
                 </a>

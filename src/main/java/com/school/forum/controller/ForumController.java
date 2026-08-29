@@ -84,6 +84,13 @@ public class ForumController {
         return isAdmin(user) ? "/images/logo.png" : user.getProfilePicture();
     }
 
+    // A non-admin's badge is a separate, community-granted trust marker (green
+    // name + checkmark) — admins are always "verified" via the 4LAZIE brand
+    // itself, not this flag.
+    private boolean isVerifiedNonAdmin(User user) {
+        return !isAdmin(user) && user != null && Boolean.TRUE.equals(user.getHasVerifiedBadge());
+    }
+
     private static final DateTimeFormatter COMMENT_TIME_FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss");
 
     @GetMapping
@@ -225,6 +232,7 @@ public class ForumController {
         body.put("id", comment.getId());
         body.put("authorName", displayName(user));
         body.put("authorPicture", displayPicture(user));
+        body.put("authorVerified", isVerifiedNonAdmin(user));
         body.put("content", comment.getContent());
         body.put("createdAt", comment.getCreatedAt().format(COMMENT_TIME_FORMAT));
         body.put("replyToCommentId", comment.getReplyToCommentId());
@@ -253,6 +261,7 @@ public class ForumController {
             m.put("id", c.getId());
             m.put("authorName", author != null ? displayName(author) : "Unknown");
             m.put("authorPicture", author != null ? displayPicture(author) : null);
+            m.put("authorVerified", isVerifiedNonAdmin(author));
             m.put("content", c.getContent());
             m.put("createdAt", c.getCreatedAt().format(COMMENT_TIME_FORMAT));
             m.put("replyToCommentId", c.getReplyToCommentId());

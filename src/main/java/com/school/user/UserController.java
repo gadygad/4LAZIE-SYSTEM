@@ -37,6 +37,9 @@ public class UserController {
 
         private com.school.notification.PushNotificationService pushNotificationService;
 
+        @Autowired
+        private com.school.auth.VerificationRequestRepository verificationRequestRepository;
+
     public UserController(UserRepository userRepository, com.school.auth.AuthUtil authUtil, com.school.notification.NotificationService notificationService, com.school.notes.NoteRepository noteRepository, FileStorageService fileStorageService, com.school.notification.PushNotificationService pushNotificationService) {
         this.userRepository = userRepository;
         this.authUtil = authUtil;
@@ -126,7 +129,34 @@ public class UserController {
         model.addAttribute("editMode", edit);
         model.addAttribute("isOwnProfile", true);
         model.addAttribute("connectionsCount", user.getFollowers() != null ? user.getFollowers().size() : 0);
+        model.addAttribute("hasPendingVerification",
+                verificationRequestRepository.findByUserIdAndStatus(user.getId(), "PENDING").isPresent());
         return "user/profile";
+    }
+
+    // Student requests the community "verified" trust badge — goes into the
+    // same admin queue as any other approval-style request in this app.
+    @PostMapping("/profile/request-verification")
+    public String requestVerification(@RequestParam String reason,
+                                       org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (user == null) return "redirect:/login";
+
+        if (Boolean.TRUE.equals(user.getHasVerifiedBadge())) {
+            redirectAttributes.addFlashAttribute("info", "You're already verified.");
+            return "redirect:/profile";
+        }
+        if (verificationRequestRepository.findByUserIdAndStatus(user.getId(), "PENDING").isPresent()) {
+            redirectAttributes.addFlashAttribute("info", "You already have a pending verification request.");
+            return "redirect:/profile";
+        }
+        if (reason == null || reason.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Please explain why you're requesting verification.");
+            return "redirect:/profile";
+        }
+        verificationRequestRepository.save(new com.school.auth.VerificationRequest(user.getId(), reason.trim()));
+        redirectAttributes.addFlashAttribute("success", "Verification request submitted — an admin will review it soon.");
+        return "redirect:/profile";
     }
 
     /**

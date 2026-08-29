@@ -108,7 +108,8 @@
                             <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}" class="fw-bold" style="font-size: 13.5px; color: #bfdbfe;" th:text="${post.author != null ? post.author.name : 'CR'}">CR</span>
                             <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}" class="d-inline-flex align-items-center px-1 rounded" style="background: rgba(96,165,250,0.2); color: #60a5fa; font-size: 10px; font-weight: 600;">🛡️ CR</span>
 
-                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}" class="fw-bold" style="font-size: 13.5px; color: rgba(255,255,255,0.95);" th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</span>
+                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}" class="fw-bold" th:style="'font-size: 13.5px; color: ' + (${post.author != null and post.author.hasVerifiedBadge} ? '#4ade80' : 'rgba(255,255,255,0.95)') + ';'" th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</span>
+                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.hasVerifiedBadge}" style="color: #4ade80; font-size: 13px;" title="Verified"><i class="bi bi-patch-check-fill"></i></span>
 
                             <span style="color: rgba(255,255,255,0.4); font-size: 12px;">·</span>
                             <span style="color: rgba(255,255,255,0.6); font-size: 12px;" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm:ss')}">Date</span>
@@ -250,6 +251,9 @@
         // server confirms), matching how the backend brands admins as "4LAZIE".
         const CURRENT_USER_NAME = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '4LAZIE' : (session.user != null ? session.user.name : 'You')}]]*/ 'You';
         const CURRENT_USER_PICTURE = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '/images/logo.png' : (session.user != null ? session.user.profilePicture : null)}]]*/ null;
+        // The community-granted trust badge (green name + check) — distinct
+        // from the 4LAZIE admin brand above.
+        const CURRENT_USER_VERIFIED = /*[[${session.user != null and session.user.role != null and session.user.role.name() != 'ADMIN' and session.user.role.name() != 'SUPER_ADMIN' and session.user.hasVerifiedBadge}]]*/ false;
 
         // CSRF token cookie set by Spring Security — required on every state-changing fetch()
         function csrfToken() {
@@ -323,10 +327,16 @@
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         const escAttr = s => escComment(s).replace(/"/g, '&quot;');
 
-        function verifiedCommentName(name) {
+        // Admin (name === '4LAZIE') gets the white name + badge as before;
+        // a community-verified regular user gets their real name in green
+        // plus the same checkmark, per authorVerified from the API.
+        function verifiedCommentName(name, verified) {
             const safe = escComment(name);
             if (name === '4LAZIE') {
                 return `${safe} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.8em;" title="Verified Official"></i>`;
+            }
+            if (verified) {
+                return `<span style="color:#4ade80;">${safe}</span> <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.8em;" title="Verified"></i>`;
             }
             return safe;
         }
@@ -356,7 +366,7 @@
                         ${commentAvatarHtml(c.authorName, c.authorPicture).replace(/width:\d+px;height:\d+px/, `width:${avatarPx}px;height:${avatarPx}px`)}
                         <div class="flex-grow-1 comment-bubble" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
                             <div class="d-flex align-items-center" style="gap: 6px; flex-wrap: wrap;">
-                                <span class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</span>
+                                <span class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName, c.authorVerified)}</span>
                                 <span style="color: rgba(255,255,255,0.35); font-size: 0.7rem;">·</span>
                                 <span style="color: rgba(255,255,255,0.5); font-size: 0.68rem;">${escComment(c.createdAt || '')}</span>
                             </div>
@@ -439,7 +449,7 @@
             const list = document.getElementById('commentsList');
             if (list.children.length === 1 && list.querySelector('.text-center')) list.innerHTML = '';
             const wrap = document.createElement('div');
-            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '', createdAt: formatNow() }, []);
+            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '', createdAt: formatNow(), authorVerified: CURRENT_USER_VERIFIED }, []);
             const thread = wrap.firstElementChild;
             list.appendChild(thread);
             thread.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -450,7 +460,7 @@
             const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
             if (!container) return null;
             const wrap = document.createElement('div');
-            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '', createdAt: formatNow() }, true, quote);
+            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '', createdAt: formatNow(), authorVerified: CURRENT_USER_VERIFIED }, true, quote);
             const bubble = wrap.firstElementChild;
             container.appendChild(bubble);
             bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
