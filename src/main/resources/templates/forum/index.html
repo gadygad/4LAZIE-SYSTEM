@@ -54,14 +54,25 @@
                 </a>
             </div>
 
-            <!-- Upande wa Kulia (Search Bar & Login Icon) -->
-            <div class="flex-grow-1 ms-3 ms-md-4 d-flex justify-content-end align-items-center gap-3" style="min-width: 0;">
+            <!-- Upande wa Kulia (Search / Messages / Notifications / Profile) -->
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
 
-                <!-- Search Bar -->
-                <div class="position-relative w-100" style="max-width: 400px; min-width: 0;">
-                    <i class="bi bi-search position-absolute text-white nav-search-icon" style="left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.7;"></i>
-                    <input type="text" class="form-control search-input text-white nav-search-input" placeholder="Search community..." style="background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; padding-left: 45px; padding-right: 15px; height: 45px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                </div>
+                <!-- Search — icon-only in the navbar; clicking it drops the real
+                     input down below the navbar instead of living inline, which
+                     is what was crowding out everything else next to it. -->
+                <button type="button" id="navSearchToggle" class="d-flex align-items-center justify-content-center text-white border-0" style="width: 42px; height: 42px; border-radius: 50%; background: #0d9468; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;">
+                    <i class="bi bi-search" style="font-size: 1.1rem;"></i>
+                </button>
+
+                <!-- Messages -->
+                <a th:if="${session.user != null}" href="/messages" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;" title="Messages">
+                    <i class="bi bi-chat-dots-fill" style="font-size: 1.1rem;"></i>
+                </a>
+
+                <!-- Notifications -->
+                <a th:if="${session.user != null}" href="/notifications" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;" title="Notifications">
+                    <i class="bi bi-bell-fill" style="font-size: 1.1rem;"></i>
+                </a>
 
                 <!-- Profile / Login Icon -->
                 <!-- Logged in: show profile picture → goes to /profile -->
@@ -157,6 +168,18 @@
 
             </div>
 
+        </div>
+
+        <!-- Expandable search — collapsed by default, dropped open by
+             #navSearchToggle so the navbar itself only ever holds icons. -->
+        <div id="navSearchPanel" class="w-100" style="max-height: 0; overflow: hidden; transition: max-height 0.25s ease, padding 0.25s ease; padding: 0 20px;">
+            <div class="position-relative w-100 mx-auto" style="max-width: 500px; padding: 10px 0 4px;">
+                <i class="bi bi-search position-absolute text-white" style="left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.7;"></i>
+                <input type="text" id="navSearchInput" class="form-control text-white search-input" placeholder="Search community..." style="background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; padding-left: 45px; padding-right: 40px; height: 45px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <button type="button" id="navSearchClose" class="position-absolute d-flex align-items-center justify-content-center border-0 bg-transparent text-white" style="right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; opacity: 0.8;">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -374,22 +397,14 @@
             color: rgba(255, 255, 255, 0.7) !important;
         }
 
-        /* Navbar on narrow screens: the logo box, search input, and profile
-           icon were fighting over ~300px of space, squeezing the search bar
-           down until its placeholder text was clipped after a few letters.
-           Shrink the logo and search bar's own padding/font instead of
-           letting the input's available width collapse further. */
+        /* Navbar on narrow screens: shrink the logo a touch — the right side
+           is now just fixed-size icon buttons (search/messages/notifications/
+           profile), which no longer fight anyone for space. */
         @media (max-width: 480px) {
             .nav-logo-box { padding: 3px 10px !important; }
             .nav-logo-text { font-size: 1.05rem !important; }
-            .nav-search-input {
-                padding-left: 34px !important;
-                font-size: 0.8rem !important;
-                height: 40px !important;
-            }
-            .nav-search-icon { left: 12px !important; font-size: 0.85rem; }
         }
-        @media (max-width: 360px) {
+        @media (max-width: 340px) {
             .nav-logo-link { display: none !important; }
         }
 
@@ -411,12 +426,6 @@
     <button type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #0d9468; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
         <i class="bi bi-plus-lg" style="font-size: 1.8rem;"></i>
     </button>
-
-    <!-- Messages — one tap straight into the peer-to-peer chat inbox, no
-         detour through dashboard/menus first. -->
-    <a th:if="${session.user != null}" href="/messages" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="position: fixed; bottom: 80px; left: 20px; width: 54px; height: 54px; background: #1f2937; color: #10b981; border: 1px solid rgba(16,185,129,0.35); z-index: 1050; transition: transform 0.2s;" title="Messages" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-        <i class="bi bi-chat-dots-fill" style="font-size: 1.5rem;"></i>
-    </a>
 
     <!-- Post Creation Modal -->
     <style>
@@ -489,12 +498,31 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <script th:src="@{/js/main.js}"></script>
     <script>
-        // "Search community..." doesn't fit the input's real width on small
-        // screens even after shrinking padding/font — shorten it there instead.
-        const navSearchInput = document.querySelector('.nav-search-input');
-        if (navSearchInput && window.innerWidth <= 480) {
-            navSearchInput.placeholder = 'Search...';
+        // Expandable search — the navbar only ever holds the icon; clicking
+        // it drops the real input open below the navbar instead.
+        const navSearchToggle = document.getElementById('navSearchToggle');
+        const navSearchPanel = document.getElementById('navSearchPanel');
+        const navSearchInput = document.getElementById('navSearchInput');
+        const navSearchClose = document.getElementById('navSearchClose');
+
+        function openNavSearch() {
+            navSearchPanel.style.maxHeight = '80px';
+            navSearchPanel.style.padding = '0 20px';
+            setTimeout(() => navSearchInput.focus(), 200);
         }
+        function closeNavSearch() {
+            navSearchPanel.style.maxHeight = '0';
+            navSearchPanel.style.padding = '0 20px 0 20px';
+            navSearchInput.blur();
+        }
+        navSearchToggle.addEventListener('click', () => {
+            const isOpen = navSearchPanel.style.maxHeight && navSearchPanel.style.maxHeight !== '0px';
+            isOpen ? closeNavSearch() : openNavSearch();
+        });
+        navSearchClose.addEventListener('click', closeNavSearch);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeNavSearch();
+        });
 
         // Navbar and Scroll to Top Logic
         let lastScrollTopY = window.scrollY;
