@@ -612,9 +612,12 @@
                 });
         }
 
-        // Comment ids/content aren't attacker-controlled HTML at this point (already
-        // escaped below), but store raw text on the element for initCommentReply
-        // to read back rather than re-parsing escaped HTML.
+        // Escape for safe embedding inside a double-quoted HTML attribute
+        // (escComment alone doesn't escape quotes, which broke inline
+        // onclick="...JSON.stringify(...)..." handlers whenever a name or
+        // comment contained a double quote).
+        const escAttr = s => escComment(s).replace(/"/g, '&quot;');
+
         function quotedCommentHtml(replyToAuthorName, replyToContent) {
             if (!replyToAuthorName) return '';
             return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
@@ -626,16 +629,17 @@
         function commentBubbleHtml(c) {
             const id = c.id || '';
             return `
-                <div class="d-flex mb-3 gap-2" data-comment-id="${id}">
-                    ${commentAvatarHtml(c.authorName, c.authorPicture)}
-                    <div class="flex-grow-1">
-                        <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
+                <div class="mb-3" data-comment-id="${id}">
+                    <div class="d-flex gap-2">
+                        ${commentAvatarHtml(c.authorName, c.authorPicture)}
+                        <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
                             <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
                             ${quotedCommentHtml(c.replyToAuthorName, c.replyToContent)}
                             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
-                        <button type="button" onclick="initCommentReply(this.closest('[data-comment-id]').dataset.commentId, ${JSON.stringify(c.authorName || '')}, ${JSON.stringify(c.content || '')})" style="background: none; border: none; padding: 2px 4px; margin-top: 2px; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer;">Reply</button>
                     </div>
+                    <button type="button" class="comment-reply-btn" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
+                            style="background: none; border: none; padding: 2px 4px 0 42px; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer;">Reply</button>
                 </div>`;
         }
 
@@ -648,6 +652,16 @@
             list.innerHTML = comments.map(commentBubbleHtml).join('');
             list.scrollTop = list.scrollHeight;
         }
+
+        // One delegated listener handles every Reply button, including ones
+        // added later by appendCommentBubble — reads the author/content back
+        // from data attributes instead of baking them into an inline handler.
+        document.getElementById('commentsList').addEventListener('click', (e) => {
+            const btn = e.target.closest('.comment-reply-btn');
+            if (!btn) return;
+            const commentId = btn.closest('[data-comment-id]').dataset.commentId;
+            initCommentReply(commentId, btn.dataset.replyAuthor, btn.dataset.replyContent);
+        });
 
         function appendCommentBubble(authorName, authorPicture, content, replyToAuthorName, replyToContent) {
             const list = document.getElementById('commentsList');
