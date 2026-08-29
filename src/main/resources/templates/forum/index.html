@@ -419,6 +419,31 @@
             margin-bottom: 10px;
             transition: border-color 0.2s;
         }
+
+        /* Comments panel polish */
+        @keyframes commentSlideIn {
+            from { opacity: 0; transform: translateY(6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .comment-enter { animation: commentSlideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+        .comment-bubble { transition: background 0.18s ease; }
+        .comment-bubble:hover { background: rgba(255,255,255,0.09) !important; }
+        .comment-reply-btn {
+            background: none; border: none; margin-top: 3px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2px;
+            color: rgba(255,255,255,0.4); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 4px;
+            transition: color 0.15s ease;
+        }
+        .comment-reply-btn:hover { color: #4ade80; }
+        .comment-reply-btn i { font-size: 0.78rem; }
+        .thread-replies {
+            margin-left: 42px; padding-left: 14px; margin-top: 8px;
+            border-left: 2px solid transparent;
+            border-image: linear-gradient(180deg, rgba(16,185,129,0.35), rgba(16,185,129,0.05)) 1;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .thread-replies:empty { margin-top: 0; border-image: none; border-left: none; }
     </style>
     <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="margin-top: 8px; max-width: 480px;">
@@ -467,12 +492,12 @@
                 <div class="modal-body pt-0 px-3 pb-2" id="commentsList" style="overflow-y: auto; flex: 1;">
                     <div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>
                 </div>
-                <div id="commentReplyContextBox" class="d-flex align-items-center justify-content-between px-3" style="display: none; padding-top: 8px; padding-bottom: 8px; background: rgba(16,185,129,0.08); border-top: 1px solid rgba(255,255,255,0.1);">
+                <div id="commentReplyContextBox" class="d-flex align-items-center justify-content-between" style="display: none; margin: 0 12px; padding: 8px 12px; background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.05)); border: 1px solid rgba(16,185,129,0.18); border-radius: 10px 10px 0 0; border-bottom: none; animation: commentSlideIn 0.2s ease;">
                     <div style="overflow: hidden;">
-                        <div id="commentReplyContextName" style="font-size: 0.78rem; font-weight: 700; color: #4ade80;"></div>
-                        <div id="commentReplyContextText" style="font-size: 0.78rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;"></div>
+                        <div id="commentReplyContextName" style="font-size: 0.75rem; font-weight: 800; color: #4ade80; display: flex; align-items: center; gap: 4px;"></div>
+                        <div id="commentReplyContextText" style="font-size: 0.78rem; color: rgba(255,255,255,0.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;"></div>
                     </div>
-                    <button type="button" onclick="cancelCommentReply()" style="background: none; border: none; color: rgba(255,255,255,0.5); font-size: 1.1rem; line-height: 1; padding: 4px;">&times;</button>
+                    <button type="button" onclick="cancelCommentReply()" title="Cancel reply" style="background: rgba(255,255,255,0.08); border: none; color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#f87171';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.color='rgba(255,255,255,0.6)';">&times;</button>
                 </div>
                 <div class="px-3 pb-3 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.1) !important;">
                     <form id="commentForm" class="d-flex gap-2" onsubmit="submitComment(event)">
@@ -618,37 +643,54 @@
         // comment contained a double quote).
         const escAttr = s => escComment(s).replace(/"/g, '&quot;');
 
-        // Only top-level comments show a Reply link — replying to a reply
-        // just attaches to the same thread (2-level threading), same as
-        // most simple comment systems, so nesting never gets deeper than one.
-        function commentBubbleHtml(c, isReply) {
+        // Small quoted chip shown inside a reply-to-a-reply, so it's clear
+        // exactly which comment within the thread is being answered (the
+        // thread's visual nesting alone isn't enough once there's more than
+        // one reply in it).
+        function quotedCommentHtml(authorName, content) {
+            if (!authorName) return '';
+            return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
+                        <div style="font-size: 0.64rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${escComment(authorName)}</div>
+                        <div style="font-size: 0.74rem; color: rgba(255,255,255,0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escComment(content || '')}</div>
+                    </div>`;
+        }
+
+        // Every comment — root or reply — can be replied to; replying to a
+        // reply still attaches flatly to the same thread (2-level
+        // threading) rather than nesting further, with a quoted chip
+        // marking exactly who's being answered.
+        function commentBubbleHtml(c, isReply, quote) {
             const id = c.id || '';
             const avatarPx = isReply ? 26 : 32;
-            const replyBtn = isReply ? '' : `
-                <button type="button" class="comment-reply-btn" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
-                        style="background: none; border: none; padding: 2px 4px 0 42px; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer;">Reply</button>`;
+            const replyIndent = isReply ? 34 : 42;
             return `
-                <div data-comment-id="${id}">
+                <div data-comment-id="${id}" class="comment-enter">
                     <div class="d-flex gap-2">
                         ${commentAvatarHtml(c.authorName, c.authorPicture).replace(/width:\d+px;height:\d+px/, `width:${avatarPx}px;height:${avatarPx}px`)}
-                        <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
+                        <div class="flex-grow-1 comment-bubble" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
                             <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
+                            ${quote ? quotedCommentHtml(quote.authorName, quote.content) : ''}
                             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
                     </div>
-                    ${replyBtn}
+                    <button type="button" class="comment-reply-btn" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
+                            style="padding-left: ${replyIndent}px;">
+                        <i class="bi bi-reply-fill"></i> Reply</button>
                 </div>`;
         }
 
         // A thread = one top-level comment plus its flat list of replies,
-        // visually connected with a left border so they read as one group
+        // visually connected with a gradient line so they read as one group
         // instead of the whole modal being a single undifferentiated list.
         function threadHtml(root, replies) {
             return `
-                <div class="comment-thread mb-3">
-                    ${commentBubbleHtml(root, false)}
-                    <div class="thread-replies" data-thread-for="${root.id || ''}" style="margin-left: 42px; padding-left: 12px; margin-top: 6px; border-left: 2px solid rgba(255,255,255,0.12);">
-                        ${replies.map(r => commentBubbleHtml(r, true)).join('')}
+                <div class="comment-thread mb-3" data-thread-root="${root.id || ''}">
+                    ${commentBubbleHtml(root, false, null)}
+                    <div class="thread-replies" data-thread-for="${root.id || ''}">
+                        ${replies.map(r => commentBubbleHtml(r, true,
+                            (r.replyToCommentId && r.replyToCommentId !== root.id)
+                                ? { authorName: r.replyToAuthorName, content: r.replyToContent } : null
+                        )).join('')}
                     </div>
                 </div>`;
         }
@@ -689,11 +731,16 @@
         // One delegated listener handles every Reply button, including ones
         // added later while posting — reads the author/content back from
         // data attributes instead of baking them into an inline handler.
+        // Reply target (which exact comment) and thread root (where the new
+        // bubble physically gets appended) are tracked separately, since any
+        // comment in a thread can now be replied to but replies always
+        // attach flatly to the thread's root container.
         document.getElementById('commentsList').addEventListener('click', (e) => {
             const btn = e.target.closest('.comment-reply-btn');
             if (!btn) return;
             const commentId = btn.closest('[data-comment-id]').dataset.commentId;
-            initCommentReply(commentId, btn.dataset.replyAuthor, btn.dataset.replyContent);
+            const rootId = btn.closest('.comment-thread').dataset.threadRoot;
+            initCommentReply(commentId, rootId, btn.dataset.replyAuthor, btn.dataset.replyContent);
         });
 
         function appendRootThread(authorName, authorPicture, content) {
@@ -707,11 +754,11 @@
             return thread;
         }
 
-        function appendReplyBubble(rootId, authorName, authorPicture, content) {
+        function appendReplyBubble(rootId, authorName, authorPicture, content, quote) {
             const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
             if (!container) return null;
             const wrap = document.createElement('div');
-            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true);
+            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true, quote);
             const bubble = wrap.firstElementChild;
             container.appendChild(bubble);
             document.getElementById('commentsList').scrollTop = document.getElementById('commentsList').scrollHeight;
@@ -719,18 +766,18 @@
         }
 
         // Reply state — mirrors the PeerChat reply pattern (initReply/cancelReply)
-        let commentReplyState = { commentId: null, authorName: null, content: null };
+        let commentReplyState = { commentId: null, rootId: null, authorName: null, content: null };
 
-        function initCommentReply(commentId, authorName, content) {
-            commentReplyState = { commentId, authorName, content };
-            document.getElementById('commentReplyContextName').textContent = authorName;
+        function initCommentReply(commentId, rootId, authorName, content) {
+            commentReplyState = { commentId, rootId, authorName, content };
+            document.getElementById('commentReplyContextName').innerHTML = `<i class="bi bi-reply-fill"></i> Replying to ${escComment(authorName)}`;
             document.getElementById('commentReplyContextText').textContent = content;
             document.getElementById('commentReplyContextBox').style.display = 'flex';
             document.getElementById('commentInput').focus();
         }
 
         function cancelCommentReply() {
-            commentReplyState = { commentId: null, authorName: null, content: null };
+            commentReplyState = { commentId: null, rootId: null, authorName: null, content: null };
             document.getElementById('commentReplyContextBox').style.display = 'none';
         }
 
@@ -749,8 +796,12 @@
             cancelCommentReply();
 
             const isReply = !!replyingTo.commentId;
+            // Only show the quoted chip when replying to something other than
+            // the thread's own root — nesting already makes that case obvious.
+            const quote = (isReply && replyingTo.commentId !== replyingTo.rootId)
+                ? { authorName: replyingTo.authorName, content: replyingTo.content } : null;
             const bubble = isReply
-                ? appendReplyBubble(replyingTo.commentId, CURRENT_USER_NAME, CURRENT_USER_PICTURE, content)
+                ? appendReplyBubble(replyingTo.rootId, CURRENT_USER_NAME, CURRENT_USER_PICTURE, content, quote)
                 : appendRootThread(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content).querySelector('[data-comment-id]');
             document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
                 .forEach(el => el.innerText = (parseInt(el.innerText) || 0) + 1);
@@ -773,7 +824,9 @@
                     if (bubble) {
                         bubble.dataset.commentId = data.id; // let a follow-up reply target the real id
                         if (!isReply) {
-                            const repliesDiv = bubble.parentElement.querySelector('.thread-replies');
+                            const thread = bubble.closest('.comment-thread');
+                            thread.dataset.threadRoot = data.id;
+                            const repliesDiv = thread.querySelector('.thread-replies');
                             if (repliesDiv) repliesDiv.dataset.threadFor = data.id;
                         }
                     }
