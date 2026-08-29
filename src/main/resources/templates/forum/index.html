@@ -761,7 +761,10 @@
             wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true, quote);
             const bubble = wrap.firstElementChild;
             container.appendChild(bubble);
-            document.getElementById('commentsList').scrollTop = document.getElementById('commentsList').scrollHeight;
+            // Scroll to the reply itself, not the bottom of the whole list —
+            // with hundreds of comments the thread being replied to could be
+            // anywhere, and jumping to the very end would lose the user's place.
+            bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             return bubble;
         }
 
