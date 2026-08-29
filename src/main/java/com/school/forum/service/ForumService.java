@@ -158,4 +158,59 @@ public class ForumService {
 
         return feed;
     }
+
+    /** Single-post lookup for the permalink page — mirrors how each post is
+     * assembled inside getRandomizedFeed(), just for one id instead of the
+     * whole feed. Returns null if the post/note doesn't exist. */
+    public ForumPost getPostById(String id) {
+        if (id != null && id.startsWith("note-")) {
+            String noteId = id.substring("note-".length());
+            Note note = noteRepository.findById(noteId).orElse(null);
+            if (note == null) return null;
+
+            User adminUser = userRepository.findByEmail("admin@school.com").orElse(null);
+            if (adminUser == null) {
+                adminUser = userRepository.findByRole(Role.SUPER_ADMIN).stream().findFirst().orElse(null);
+            }
+            if (adminUser == null) {
+                adminUser = userRepository.findByRole(Role.ADMIN).stream().findFirst().orElse(null);
+            }
+
+            ForumPost post = new ForumPost();
+            post.setAuthor(adminUser);
+            post.setCreatedAt(note.getUploadDate() != null ? note.getUploadDate() : java.time.LocalDateTime.now());
+            post.setLikesCount(note.getLikesCount() != null ? note.getLikesCount() : 0);
+            post.setLikedBy(note.getLikedBy());
+            post.setCommentsCount((int) forumCommentRepository.countByPostId(id));
+
+            String category = note.getCategory() != null ? note.getCategory() : "Document";
+            String noteTitle = note.getTitle() != null ? note.getTitle() : "Untitled";
+            String module   = note.getModuleName() != null ? " — " + note.getModuleName() : "";
+            String instStr  = (note.getInstitution() != null && note.getInstitution().getShortName() != null)
+                              ? note.getInstitution().getShortName() + " Institute" : "SJUIT INSTITUTE";
+            String program  = note.getProgramType() != null ? note.getProgramType() : "";
+            String level    = note.getLevelNo() != null ? "Level " + note.getLevelNo() : "";
+            String sem      = note.getSemesterNo() != null ? "Sem " + note.getSemesterNo() : "";
+            String year     = note.getAcademicYear() != null ? " (" + note.getAcademicYear() + ")" : "";
+
+            post.setTitle("📖 New " + category + " Uploaded!");
+            post.setInstitutionPlaceholder(instStr);
+            post.setContent(noteTitle + module + "\n" + program + " · " + level + " · " + sem + year
+                    + "\n⬇️ Download it from the Notes section.");
+            post.setId(id);
+            post.setNoteId(note.getId());
+            post.setAdminPost(true);
+            post.setAuthorRole("ADMIN");
+            return post;
+        }
+
+        ForumPost post = forumPostRepository.findById(id).orElse(null);
+        if (post == null) return null;
+        User author = userRepository.findById(post.getAuthorId()).orElse(null);
+        post.setAuthor(author);
+        String role = resolveRole(author);
+        post.setAuthorRole(role);
+        if (isAuthority(role)) post.setAdminPost(true);
+        return post;
+    }
 }

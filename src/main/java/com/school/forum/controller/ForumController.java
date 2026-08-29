@@ -69,12 +69,28 @@ public class ForumController {
     public String showCommunityForum(Model model) {
         User loggedInUser = authUtil.getLoggedInUser();
         model.addAttribute("user", loggedInUser);
-        
+
         // Fetch real feed (admin posts pinned at top, then newest regular posts)
         List<ForumPost> feed = forumService.getRandomizedFeed();
         model.addAttribute("posts", feed);
-        
+
         return "forum/index";
+    }
+
+    // Permalink page — the post plus all its comments open here instead of
+    // in a modal, so Share has a real page to point at and a single post's
+    // comment thread doesn't drag the whole feed's page length down with it.
+    @GetMapping("/post/{id}")
+    public String showPost(@PathVariable String id, Model model) {
+        User loggedInUser = authUtil.getLoggedInUser();
+        model.addAttribute("user", loggedInUser);
+
+        ForumPost post = forumService.getPostById(id);
+        if (post == null) {
+            return "redirect:/community";
+        }
+        model.addAttribute("post", post);
+        return "forum/post-detail";
     }
 
     @PostMapping("/post")

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Referencing _csrf.token here is what makes Spring Security actually
+         write the XSRF-TOKEN cookie our fetch() calls read for like/comment. -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${(post.title != null and !post.title.isEmpty() ? post.title : 'Post') + ' - 4LAZIE Community'}">Post - 4LAZIE Community</title>
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/premium-theme.css?v=2.4}">
+    <link rel="stylesheet" th:href="@{/css/dashboard-layout.css}">
+
+    <style>
+        #top-nav.nav-hidden {
+            animation: none !important;
+            transform: translateY(-100%) !important;
+        }
+    </style>
+</head>
+<body style="background: #1f2937 !important; min-height: 100vh; display: flex; flex-direction: column;">
+
+    <!-- Glassmorphism Navbar (same as the feed) -->
+    <nav id="top-nav" class="w-100 position-fixed top-0 z-3" style="background: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-bottom: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; padding: 15px 20px; animation: slideDownFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(-40px); transition: transform 0.3s ease-in-out;">
+        <div class="container-fluid px-2 px-sm-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <a th:href="@{/community}" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                    <i class="bi bi-arrow-left" style="font-size: 1.3rem;"></i>
+                </a>
+                <a href="/dashboard" class="d-flex align-items-center text-decoration-none" style="transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="background: #111; border: 3px solid #10b981; padding: 4px 14px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
+                        <h4 class="m-0 text-white" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: 2px;">4LAZIE</h4>
+                    </div>
+                </a>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown" th:if="${session.user != null}">
+                    <a href="#"
+                       class="d-flex align-items-center justify-content-center text-white text-decoration-none dropdown-toggle"
+                       id="forumProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                       style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #10b981; box-shadow: 0 2px 8px rgba(16,185,129,0.3); flex-shrink: 0; overflow: hidden; transition: transform 0.2s;"
+                       onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                        <img th:if="${session.user.profilePicture != null}" th:src="${session.user.profilePicture}" alt="Profile" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                        <img th:unless="${session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user.name} + '&background=10b981&color=fff&size=100'" alt="Profile" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="forumProfileDropdown" style="border-radius: 24px; min-width: 220px; background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <li class="px-3 py-2 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p class="mb-0 fw-bold text-truncate" style="font-size: 1rem; color: #fff !important; max-width: 180px;" th:text="${session.user.name}">John Doe</p>
+                        </li>
+                        <li><a class="dropdown-item py-2 px-3 fw-medium" href="/dashboard" style="font-size: 0.95rem; color: #d1d5db;">Dashboard</a></li>
+                        <li><a class="dropdown-item py-2 px-3 fw-medium" href="/profile" style="font-size: 0.95rem; color: #d1d5db;">My Profile</a></li>
+                        <li><hr class="dropdown-divider my-2" style="border-color: rgba(255, 255, 255, 0.1);"></li>
+                        <li><a class="dropdown-item py-2 px-3 fw-bold text-danger" href="/logout" style="font-size: 0.95rem;">Logout</a></li>
+                    </ul>
+                </div>
+                <a th:if="${session.user == null}" href="/login" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 45px; height: 45px; border-radius: 50%; background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); flex-shrink: 0;">
+                    <i class="bi bi-person-fill" style="font-size: 1.4rem;"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="w-100 px-0 mx-auto flex-grow-1 position-relative z-2" style="max-width: 800px; padding-top: 85px; padding-bottom: 100px !important;">
+
+        <!-- The Post (same card markup as the feed) -->
+        <div th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+            <div style="padding: 16px;">
+                <div class="d-flex">
+                    <div class="me-3 position-relative" style="flex-shrink: 0;">
+                        <img th:if="${post.adminPost}" src="/images/logo.png" class="rounded-circle" style="width: 42px; height: 42px; object-fit: contain; background: #ffffff; border: 2px solid #4ade80; padding: 3px;">
+
+                        <img th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}" th:src="${post.author.profilePicture}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #f59e0b;">
+                        <div th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}" class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; background: linear-gradient(135deg,#92400e,#f59e0b); border: 2px solid #f59e0b; color: #fff; font-size: 1.1rem;">
+                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'L'}">L</span>
+                        </div>
+
+                        <img th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}" th:src="${post.author.profilePicture}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #60a5fa;">
+                        <div th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}" class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; background: linear-gradient(135deg,#1e3a8a,#3b82f6); border: 2px solid #60a5fa; color: #fff; font-size: 1.1rem;">
+                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'C'}">C</span>
+                        </div>
+
+                        <img th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}" th:src="${post.author.profilePicture}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
+                        <div th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}" class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.3); color: #fff; font-size: 1.1rem;">
+                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'U'}">U</span>
+                        </div>
+                    </div>
+
+                    <div style="flex-grow: 1; min-width: 0;">
+                        <div class="d-flex align-items-center mb-2" style="flex-wrap: wrap; gap: 4px;">
+                            <span th:if="${post.adminPost}" class="fw-bold" style="font-size: 13.5px; color: #fff;">4LAZIE</span>
+                            <span th:if="${post.adminPost}" style="color: #4ade80; font-size: 13px;" title="Verified Official"><i class="bi bi-patch-check-fill"></i></span>
+
+                            <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}" class="fw-bold" style="font-size: 13.5px; color: #fde68a;" th:text="${post.author != null ? post.author.name : 'Lecturer'}">Lecturer</span>
+                            <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}" class="d-inline-flex align-items-center px-1 rounded" style="background: rgba(245,158,11,0.2); color: #f59e0b; font-size: 10px; font-weight: 600;">🎓 LECTURER</span>
+
+                            <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}" class="fw-bold" style="font-size: 13.5px; color: #bfdbfe;" th:text="${post.author != null ? post.author.name : 'CR'}">CR</span>
+                            <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}" class="d-inline-flex align-items-center px-1 rounded" style="background: rgba(96,165,250,0.2); color: #60a5fa; font-size: 10px; font-weight: 600;">🛡️ CR</span>
+
+                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}" class="fw-bold" style="font-size: 13.5px; color: rgba(255,255,255,0.95);" th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</span>
+
+                            <span style="color: rgba(255,255,255,0.4); font-size: 12px;">·</span>
+                            <span style="color: rgba(255,255,255,0.6); font-size: 12px;" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm:ss')}">Date</span>
+                        </div>
+
+                        <div style="font-size: 13.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.9); word-wrap: break-word; letter-spacing: 0.1px;">
+                            <div th:if="${post.title != null and !post.title.isEmpty()}" th:text="${post.title}" th:classappend="${post.adminPost ? 'text-uppercase' : ''}" class="fw-bold mb-0" style="font-size: 13px; line-height: 1.2; color: #4ade80; font-style: italic;"></div>
+                            <div th:text="${post.institutionPlaceholder != null and !post.institutionPlaceholder.isEmpty() ? post.institutionPlaceholder : 'SJUIT INSTITUTE'}" style="color: #9ca3af; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; margin-bottom: 4px; text-transform: uppercase;"></div>
+
+                            <div th:if="${post.adminPost and post.noteId != null}">
+                                <div th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap; margin-bottom: 10px;"></div>
+                                <div th:if="${session.user != null}" class="d-flex gap-2 mt-2 flex-wrap">
+                                    <a th:href="@{'/view/' + ${post.noteId}}" target="_blank" class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold" style="background: rgba(16,185,129,0.15); color: #4ade80; border: 1px solid rgba(16,185,129,0.3); font-size: 12px;">
+                                        <i class="bi bi-eye-fill" style="font-size: 11px;"></i> Read
+                                    </a>
+                                    <a th:href="@{'/download/' + ${post.noteId}}" class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold" style="background: rgba(96,165,250,0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.3); font-size: 12px;">
+                                        <i class="bi bi-download" style="font-size: 11px;"></i> Download
+                                    </a>
+                                </div>
+                                <div th:if="${session.user == null}" class="mt-2">
+                                    <a href="/login" class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold" style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); font-size: 12px;">
+                                        <i class="bi bi-lock-fill" style="font-size: 11px;"></i> Login to Read &amp; Download
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div th:if="${!post.adminPost or post.noteId == null}" th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-3" th:data-post-id="${post.id}">
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px;">
+                                <i class="bi bi-chat"></i>
+                                <span class="ms-2 fw-medium comment-count" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
+                            </div>
+
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
+                                 th:classappend="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'liked' : ''"
+                                 th:style="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 13px; cursor: pointer; transition: all 0.2s;' : 'background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;'"
+                                 onmouseover="if(!this.classList.contains('liked')) { this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981' }" onmouseout="if(!this.classList.contains('liked')) { this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)' }"
+                                 th:data-post-id="${post.id}"
+                                 onclick="toggleLike(this, this.dataset.postId)">
+                                <i th:class="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+                                <span class="ms-2 fw-medium like-count" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
+                            </div>
+
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1"
+                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
+                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
+                                 th:data-post-id="${post.id}"
+                                 th:data-post-title="${post.title != null ? post.title : '4LAZIE Community'}"
+                                 onclick="sharePost(this.dataset.postId, this.dataset.postTitle)">
+                                <i class="bi bi-share"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments — always open here, inline, instead of a modal -->
+        <div class="mx-3" style="background: #374151; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+            <div class="px-3 pt-3 pb-2">
+                <h6 class="fw-bold mb-0" style="color: #fff; font-size: 0.95rem;">Comments</h6>
+            </div>
+            <div id="commentsList" class="px-3" style="min-height: 60px;">
+                <div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>
+            </div>
+            <div id="commentReplyContextBox" style="display: none; align-items: center; justify-content: space-between; margin: 0 12px; padding: 8px 12px; background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.05)); border: 1px solid rgba(16,185,129,0.18); border-radius: 10px 10px 0 0; border-bottom: none; animation: commentSlideIn 0.2s ease;">
+                <div style="overflow: hidden;">
+                    <div id="commentReplyContextName" style="font-size: 0.75rem; font-weight: 800; color: #4ade80; display: flex; align-items: center; gap: 4px;"></div>
+                    <div id="commentReplyContextText" style="font-size: 0.78rem; color: rgba(255,255,255,0.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;"></div>
+                </div>
+                <button type="button" onclick="cancelCommentReply()" title="Cancel reply" style="background: rgba(255,255,255,0.08); border: none; color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#f87171';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.color='rgba(255,255,255,0.6)';">&times;</button>
+            </div>
+            <div class="px-3 pb-3 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                <form id="commentForm" class="d-flex gap-2" onsubmit="submitComment(event)">
+                    <input type="text" id="commentInput" class="glass-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0;">
+                    <button type="submit" class="btn border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 4px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; flex-shrink: 0;">Post</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            background: #1f2937 !important;
+            -webkit-font-smoothing: antialiased;
+            -webkit-overflow-scrolling: touch;
+        }
+        @keyframes slideDownFade {
+            0% { opacity: 0; transform: translateY(-40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .glass-textarea::placeholder, .glass-input::placeholder { color: rgba(255, 255, 255, 0.5) !important; font-weight: 400; }
+        .glass-textarea:focus, .glass-input:focus { outline: none !important; box-shadow: none !important; border-color: rgba(16,185,129,0.5) !important; }
+        .glass-input {
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+            color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; padding: 9px 14px;
+            width: 100%; margin-bottom: 10px; transition: border-color 0.2s;
+        }
+
+        /* Comments panel polish */
+        @keyframes commentSlideIn {
+            from { opacity: 0; transform: translateY(6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .comment-enter { animation: commentSlideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+        .comment-bubble { transition: background 0.18s ease; }
+        .comment-bubble:hover { background: rgba(255,255,255,0.09) !important; }
+        .comment-reply-btn {
+            background: none; border: none; margin: 0; padding-top: 0 !important; padding-bottom: 0 !important;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2px; line-height: 1.4;
+            color: rgba(255,255,255,0.4); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 4px;
+            transition: color 0.15s ease;
+        }
+        .comment-reply-btn:hover { color: #4ade80; }
+        .comment-reply-btn i { font-size: 0.78rem; }
+        .thread-replies {
+            margin-left: 42px; padding-left: 14px; margin-top: 8px;
+            border-left: 2px solid transparent;
+            border-image: linear-gradient(180deg, rgba(16,185,129,0.35), rgba(16,185,129,0.05)) 1;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .thread-replies:empty { margin-top: 0; border-image: none; border-left: none; }
+    </style>
+
+    <!-- Mobile Bottom Navigation -->
+    <div th:replace="~{fragments/bottom_nav :: nav('community')}"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:inline="javascript">
+        const POST_ID = /*[[${post.id}]]*/ '';
+        // Used to show the comment author's name/avatar instantly (before the
+        // server confirms), matching how the backend brands admins as "4LAZIE".
+        const CURRENT_USER_NAME = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '4LAZIE' : (session.user != null ? session.user.name : 'You')}]]*/ 'You';
+        const CURRENT_USER_PICTURE = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '/images/logo.png' : (session.user != null ? session.user.profilePicture : null)}]]*/ null;
+
+        // CSRF token cookie set by Spring Security — required on every state-changing fetch()
+        function csrfToken() {
+            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+            return match ? match[2] : '';
+        }
+
+        // Like Button — updates instantly (optimistic), then confirms with the
+        // server in the background; only rolled back if the request fails.
+        function applyLikeState(element, liked, count) {
+            const icon = element.querySelector('i');
+            const countSpan = element.querySelector('.like-count');
+            countSpan.innerText = count;
+            if (liked) {
+                element.classList.add('liked');
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+                element.style.background = 'rgba(16, 185, 129, 0.2)';
+                element.style.color = '#10b981';
+            } else {
+                element.classList.remove('liked');
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+                element.style.background = 'rgba(255, 255, 255, 0.05)';
+                element.style.color = 'rgba(255, 255, 255, 0.8)';
+            }
+        }
+
+        function toggleLike(element, postId) {
+            if (element.dataset.pending === '1') return;
+            element.dataset.pending = '1';
+
+            const countSpan = element.querySelector('.like-count');
+            const wasLiked = element.classList.contains('liked');
+            const prevCount = parseInt(countSpan.innerText) || 0;
+            const optimisticCount = wasLiked ? Math.max(0, prevCount - 1) : prevCount + 1;
+            applyLikeState(element, !wasLiked, optimisticCount);
+
+            fetch('/community/post/' + postId + '/like', { method: 'POST', headers: { 'X-XSRF-TOKEN': csrfToken() } })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { applyLikeState(element, wasLiked, prevCount); return; }
+                    applyLikeState(element, data.liked, data.count);
+                })
+                .catch(err => {
+                    console.error('toggleLike failed:', err);
+                    applyLikeState(element, wasLiked, prevCount);
+                })
+                .finally(() => { element.dataset.pending = '0'; });
+        }
+
+        // Share
+        function sharePost(postId, title) {
+            const url = window.location.origin + (postId ? '/community/post/' + postId : '/community');
+            if (navigator.share) {
+                navigator.share({ title: title || '4LAZIE Community', url: url }).catch(() => {});
+                return;
+            }
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => alert('Link copied: ' + url)).catch(() => prompt('Copy this link:', url));
+            } else {
+                prompt('Copy this link:', url);
+            }
+        }
+
+        // Comments — rendered inline on this page (no modal), loaded on page load.
+        const escComment = s => String(s || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const escAttr = s => escComment(s).replace(/"/g, '&quot;');
+
+        function verifiedCommentName(name) {
+            const safe = escComment(name);
+            if (name === '4LAZIE') {
+                return `${safe} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.8em;" title="Verified Official"></i>`;
+            }
+            return safe;
+        }
+
+        function commentAvatarHtml(name, pic) {
+            if (pic) {
+                return `<img src="${escComment(pic)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
+            }
+            return `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.8rem;">${escComment(name).charAt(0).toUpperCase()}</div>`;
+        }
+
+        function quotedCommentHtml(authorName, content) {
+            if (!authorName) return '';
+            return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
+                        <div style="font-size: 0.64rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${escComment(authorName)}</div>
+                        <div style="font-size: 0.74rem; color: rgba(255,255,255,0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escComment(content || '')}</div>
+                    </div>`;
+        }
+
+        function commentBubbleHtml(c, isReply, quote) {
+            const id = c.id || '';
+            const avatarPx = isReply ? 26 : 32;
+            const replyIndent = isReply ? 34 : 42;
+            return `
+                <div data-comment-id="${id}" class="comment-enter">
+                    <div class="d-flex gap-2">
+                        ${commentAvatarHtml(c.authorName, c.authorPicture).replace(/width:\d+px;height:\d+px/, `width:${avatarPx}px;height:${avatarPx}px`)}
+                        <div class="flex-grow-1 comment-bubble" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
+                            <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
+                            ${quote ? quotedCommentHtml(quote.authorName, quote.content) : ''}
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
+                        </div>
+                    </div>
+                    <span class="comment-reply-btn" role="button" tabindex="0" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
+                          style="padding-left: ${replyIndent}px;">
+                        <i class="bi bi-reply-fill"></i> Reply</span>
+                </div>`;
+        }
+
+        function threadHtml(root, replies) {
+            return `
+                <div class="comment-thread mb-3" data-thread-root="${root.id || ''}">
+                    ${commentBubbleHtml(root, false, null)}
+                    <div class="thread-replies" data-thread-for="${root.id || ''}">
+                        ${replies.map(r => commentBubbleHtml(r, true,
+                            (r.replyToCommentId && r.replyToCommentId !== root.id)
+                                ? { authorName: r.replyToAuthorName, content: r.replyToContent } : null
+                        )).join('')}
+                    </div>
+                </div>`;
+        }
+
+        function renderComments(comments) {
+            const list = document.getElementById('commentsList');
+            if (!Array.isArray(comments) || comments.length === 0) {
+                list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">No comments yet. Be the first!</div>';
+                return;
+            }
+            const byId = {};
+            comments.forEach(c => { byId[c.id] = c; });
+            function rootIdOf(c) {
+                let cur = c, guard = 0;
+                while (cur.replyToCommentId && byId[cur.replyToCommentId] && guard++ < 20) {
+                    cur = byId[cur.replyToCommentId];
+                }
+                return cur.id;
+            }
+            const order = [];
+            const rootsById = {};
+            const repliesByRoot = {};
+            comments.forEach(c => {
+                const rid = rootIdOf(c);
+                if (!(rid in rootsById) && byId[rid]) { rootsById[rid] = byId[rid]; order.push(rid); }
+                if (!repliesByRoot[rid]) repliesByRoot[rid] = [];
+                if (rid !== c.id) repliesByRoot[rid].push(c);
+            });
+            list.innerHTML = order.map(rid => threadHtml(rootsById[rid], repliesByRoot[rid])).join('');
+        }
+
+        document.getElementById('commentsList').addEventListener('click', (e) => {
+            const btn = e.target.closest('.comment-reply-btn');
+            if (!btn) return;
+            const commentId = btn.closest('[data-comment-id]').dataset.commentId;
+            const rootId = btn.closest('.comment-thread').dataset.threadRoot;
+            initCommentReply(commentId, rootId, btn.dataset.replyAuthor, btn.dataset.replyContent);
+        });
+        document.getElementById('commentsList').addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            const btn = e.target.closest('.comment-reply-btn');
+            if (!btn) return;
+            e.preventDefault();
+            btn.click();
+        });
+
+        function appendRootThread(authorName, authorPicture, content) {
+            const list = document.getElementById('commentsList');
+            if (list.children.length === 1 && list.querySelector('.text-center')) list.innerHTML = '';
+            const wrap = document.createElement('div');
+            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '' }, []);
+            const thread = wrap.firstElementChild;
+            list.appendChild(thread);
+            thread.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            return thread;
+        }
+
+        function appendReplyBubble(rootId, authorName, authorPicture, content, quote) {
+            const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
+            if (!container) return null;
+            const wrap = document.createElement('div');
+            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true, quote);
+            const bubble = wrap.firstElementChild;
+            container.appendChild(bubble);
+            bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            return bubble;
+        }
+
+        let commentReplyState = { commentId: null, rootId: null, authorName: null, content: null };
+
+        function initCommentReply(commentId, rootId, authorName, content) {
+            commentReplyState = { commentId, rootId, authorName, content };
+            document.getElementById('commentReplyContextName').innerHTML = `<i class="bi bi-reply-fill"></i> Replying to ${escComment(authorName)}`;
+            document.getElementById('commentReplyContextText').textContent = content;
+            document.getElementById('commentReplyContextBox').style.display = 'flex';
+            document.getElementById('commentInput').focus();
+        }
+
+        function cancelCommentReply() {
+            commentReplyState = { commentId: null, rootId: null, authorName: null, content: null };
+            document.getElementById('commentReplyContextBox').style.display = 'none';
+        }
+
+        function submitComment(event) {
+            event.preventDefault();
+            const postId = POST_ID;
+            const input = document.getElementById('commentInput');
+            const content = input.value.trim();
+            if (!content) return;
+            const replyingTo = commentReplyState;
+
+            input.value = '';
+            cancelCommentReply();
+
+            const isReply = !!replyingTo.commentId;
+            const quote = (isReply && replyingTo.commentId !== replyingTo.rootId)
+                ? { authorName: replyingTo.authorName, content: replyingTo.content } : null;
+            const bubble = isReply
+                ? appendReplyBubble(replyingTo.rootId, CURRENT_USER_NAME, CURRENT_USER_PICTURE, content, quote)
+                : appendRootThread(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content).querySelector('[data-comment-id]');
+            document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
+                .forEach(el => el.innerText = (parseInt(el.innerText) || 0) + 1);
+
+            const params = new URLSearchParams();
+            params.append('content', content);
+            if (isReply) params.append('replyToCommentId', replyingTo.commentId);
+
+            fetch('/community/post/' + postId + '/comment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                body: params
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) throw new Error((data && data.error) || 'failed');
+                    if (bubble) {
+                        bubble.dataset.commentId = data.id;
+                        if (!isReply) {
+                            const thread = bubble.closest('.comment-thread');
+                            thread.dataset.threadRoot = data.id;
+                            const repliesDiv = thread.querySelector('.thread-replies');
+                            if (repliesDiv) repliesDiv.dataset.threadFor = data.id;
+                        }
+                    }
+                    document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
+                        .forEach(el => el.innerText = data.count);
+                })
+                .catch(err => {
+                    console.error('submitComment failed:', err);
+                    if (bubble) {
+                        const thread = bubble.closest('.comment-thread');
+                        (isReply ? bubble : thread).remove();
+                    }
+                    document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
+                        .forEach(el => el.innerText = Math.max(0, (parseInt(el.innerText) || 1) - 1));
+                });
+        }
+
+        // Load comments as soon as the page is ready
+        fetch('/community/post/' + POST_ID + '/comments')
+            .then(res => res.json())
+            .then(comments => renderComments(comments))
+            .catch(err => {
+                console.error('loading comments failed:', err);
+                document.getElementById('commentsList').innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Failed to load comments.</div>';
+            });
+    </script>
+</body>
+</html>

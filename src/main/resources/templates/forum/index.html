@@ -312,14 +312,13 @@
                              cards too: their state lives on the underlying Note document. -->
                         <div class="d-flex gap-3 mt-3" th:data-post-id="${post.id}">
                             <!-- Comment Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn"
-                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
-                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
-                                 th:data-post-id="${post.id}"
-                                 onclick="openComments(this.dataset.postId)">
+                            <a class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn text-decoration-none"
+                               style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
+                               onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
+                               th:href="@{'/community/post/' + ${post.id}}">
                                 <i class="bi bi-chat"></i>
                                 <span class="ms-2 fw-medium comment-count" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
-                            </div>
+                            </a>
 
                             <!-- Like Button -->
                             <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
@@ -419,31 +418,6 @@
             margin-bottom: 10px;
             transition: border-color 0.2s;
         }
-
-        /* Comments panel polish */
-        @keyframes commentSlideIn {
-            from { opacity: 0; transform: translateY(6px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .comment-enter { animation: commentSlideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
-        .comment-bubble { transition: background 0.18s ease; }
-        .comment-bubble:hover { background: rgba(255,255,255,0.09) !important; }
-        .comment-reply-btn {
-            background: none; border: none; margin: 0; padding-top: 0 !important; padding-bottom: 0 !important;
-            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2px; line-height: 1.4;
-            color: rgba(255,255,255,0.4); cursor: pointer;
-            display: inline-flex; align-items: center; gap: 4px;
-            transition: color 0.15s ease;
-        }
-        .comment-reply-btn:hover { color: #4ade80; }
-        .comment-reply-btn i { font-size: 0.78rem; }
-        .thread-replies {
-            margin-left: 42px; padding-left: 14px; margin-top: 8px;
-            border-left: 2px solid transparent;
-            border-image: linear-gradient(180deg, rgba(16,185,129,0.35), rgba(16,185,129,0.05)) 1;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .thread-replies:empty { margin-top: 0; border-image: none; border-left: none; }
     </style>
     <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="margin-top: 8px; max-width: 480px;">
@@ -481,43 +455,10 @@
         </div>
     </div>
 
-    <!-- Comments Modal -->
-    <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="margin-top: 8px; max-width: 480px;">
-            <div class="modal-content border-0" style="border-radius: 16px; background: #1f2937; border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); max-height: 85vh;">
-                <div class="modal-header border-0 pt-3 pb-1 px-3">
-                    <h5 class="modal-title fw-bold" id="commentsModalLabel" style="font-size: 1.05rem; color: #fff;">Comments</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; font-size: 0.8rem;"></button>
-                </div>
-                <div class="modal-body pt-0 px-3 pb-2" id="commentsList" style="overflow-y: auto; flex: 1;">
-                    <div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>
-                </div>
-                <div id="commentReplyContextBox" style="display: none; align-items: center; justify-content: space-between; margin: 0 12px; padding: 8px 12px; background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.05)); border: 1px solid rgba(16,185,129,0.18); border-radius: 10px 10px 0 0; border-bottom: none; animation: commentSlideIn 0.2s ease;">
-                    <div style="overflow: hidden;">
-                        <div id="commentReplyContextName" style="font-size: 0.75rem; font-weight: 800; color: #4ade80; display: flex; align-items: center; gap: 4px;"></div>
-                        <div id="commentReplyContextText" style="font-size: 0.78rem; color: rgba(255,255,255,0.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;"></div>
-                    </div>
-                    <button type="button" onclick="cancelCommentReply()" title="Cancel reply" style="background: rgba(255,255,255,0.08); border: none; color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#f87171';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.color='rgba(255,255,255,0.6)';">&times;</button>
-                </div>
-                <div class="px-3 pb-3 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.1) !important;">
-                    <form id="commentForm" class="d-flex gap-2" onsubmit="submitComment(event)">
-                        <input type="text" id="commentInput" class="glass-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0;">
-                        <button type="submit" class="btn border-0 shadow-sm" style="background: linear-gradient(135deg, #34d399, #059669); color: white; padding: 4px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; flex-shrink: 0;">Post</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <script th:src="@{/js/main.js}"></script>
-    <script th:inline="javascript">
-        // Used to show the comment author's name instantly (before the server
-        // confirms), matching how the backend brands admins as "4LAZIE".
-        const CURRENT_USER_NAME = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '4LAZIE' : (session.user != null ? session.user.name : 'You')}]]*/ 'You';
-        const CURRENT_USER_PICTURE = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '/images/logo.png' : (session.user != null ? session.user.profilePicture : null)}]]*/ null;
-
+    <script>
         // Navbar and Scroll to Top Logic
         let lastScrollTopY = window.scrollY;
         const topNavbar = document.getElementById('top-nav');
@@ -597,272 +538,11 @@
                 .finally(() => { element.dataset.pending = '0'; });
         }
 
-        // Comments — loaded/posted via GET+POST /community/post/{id}/comment(s)
-        let activeCommentPostId = null;
-        const escComment = s => String(s || '')
-            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-        // Same convention as the post header: an ADMIN/SUPER_ADMIN commenter is
-        // branded "4LAZIE" by the backend, shown here with a green verified badge.
-        function verifiedCommentName(name) {
-            const safe = escComment(name);
-            if (name === '4LAZIE') {
-                return `${safe} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.8em;" title="Verified Official"></i>`;
-            }
-            return safe;
-        }
-
-        function commentAvatarHtml(name, pic) {
-            if (pic) {
-                return `<img src="${escComment(pic)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
-            }
-            return `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.8rem;">${escComment(name).charAt(0).toUpperCase()}</div>`;
-        }
-
-        function openComments(postId) {
-            activeCommentPostId = postId;
-            cancelCommentReply();
-            const modalEl = document.getElementById('commentsModal');
-            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-            const list = document.getElementById('commentsList');
-            list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>';
-            modal.show();
-
-            fetch('/community/post/' + postId + '/comments')
-                .then(res => res.json())
-                .then(comments => renderComments(comments))
-                .catch(err => {
-                    console.error('openComments failed:', err);
-                    list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Failed to load comments.</div>';
-                });
-        }
-
-        // Escape for safe embedding inside a double-quoted HTML attribute
-        // (escComment alone doesn't escape quotes, which broke inline
-        // onclick="...JSON.stringify(...)..." handlers whenever a name or
-        // comment contained a double quote).
-        const escAttr = s => escComment(s).replace(/"/g, '&quot;');
-
-        // Small quoted chip shown inside a reply-to-a-reply, so it's clear
-        // exactly which comment within the thread is being answered (the
-        // thread's visual nesting alone isn't enough once there's more than
-        // one reply in it).
-        function quotedCommentHtml(authorName, content) {
-            if (!authorName) return '';
-            return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
-                        <div style="font-size: 0.64rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${escComment(authorName)}</div>
-                        <div style="font-size: 0.74rem; color: rgba(255,255,255,0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escComment(content || '')}</div>
-                    </div>`;
-        }
-
-        // Every comment — root or reply — can be replied to; replying to a
-        // reply still attaches flatly to the same thread (2-level
-        // threading) rather than nesting further, with a quoted chip
-        // marking exactly who's being answered.
-        function commentBubbleHtml(c, isReply, quote) {
-            const id = c.id || '';
-            const avatarPx = isReply ? 26 : 32;
-            const replyIndent = isReply ? 34 : 42;
-            return `
-                <div data-comment-id="${id}" class="comment-enter">
-                    <div class="d-flex gap-2">
-                        ${commentAvatarHtml(c.authorName, c.authorPicture).replace(/width:\d+px;height:\d+px/, `width:${avatarPx}px;height:${avatarPx}px`)}
-                        <div class="flex-grow-1 comment-bubble" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
-                            <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
-                            ${quote ? quotedCommentHtml(quote.authorName, quote.content) : ''}
-                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
-                        </div>
-                    </div>
-                    <span class="comment-reply-btn" role="button" tabindex="0" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
-                          style="padding-left: ${replyIndent}px;">
-                        <i class="bi bi-reply-fill"></i> Reply</span>
-                </div>`;
-        }
-
-        // A thread = one top-level comment plus its flat list of replies,
-        // visually connected with a gradient line so they read as one group
-        // instead of the whole modal being a single undifferentiated list.
-        function threadHtml(root, replies) {
-            return `
-                <div class="comment-thread mb-3" data-thread-root="${root.id || ''}">
-                    ${commentBubbleHtml(root, false, null)}
-                    <div class="thread-replies" data-thread-for="${root.id || ''}">
-                        ${replies.map(r => commentBubbleHtml(r, true,
-                            (r.replyToCommentId && r.replyToCommentId !== root.id)
-                                ? { authorName: r.replyToAuthorName, content: r.replyToContent } : null
-                        )).join('')}
-                    </div>
-                </div>`;
-        }
-
-        function renderComments(comments) {
-            const list = document.getElementById('commentsList');
-            if (!Array.isArray(comments) || comments.length === 0) {
-                list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">No comments yet. Be the first!</div>';
-                return;
-            }
-
-            // Group every comment under its top-level ancestor (walking up
-            // replyToCommentId), flattening reply-to-a-reply into the same
-            // thread rather than nesting further.
-            const byId = {};
-            comments.forEach(c => { byId[c.id] = c; });
-            function rootIdOf(c) {
-                let cur = c, guard = 0;
-                while (cur.replyToCommentId && byId[cur.replyToCommentId] && guard++ < 20) {
-                    cur = byId[cur.replyToCommentId];
-                }
-                return cur.id;
-            }
-            const order = [];
-            const rootsById = {};
-            const repliesByRoot = {};
-            comments.forEach(c => {
-                const rid = rootIdOf(c);
-                if (!(rid in rootsById) && byId[rid]) { rootsById[rid] = byId[rid]; order.push(rid); }
-                if (!repliesByRoot[rid]) repliesByRoot[rid] = [];
-                if (rid !== c.id) repliesByRoot[rid].push(c);
-            });
-
-            list.innerHTML = order.map(rid => threadHtml(rootsById[rid], repliesByRoot[rid])).join('');
-            list.scrollTop = list.scrollHeight;
-        }
-
-        // One delegated listener handles every Reply button, including ones
-        // added later while posting — reads the author/content back from
-        // data attributes instead of baking them into an inline handler.
-        // Reply target (which exact comment) and thread root (where the new
-        // bubble physically gets appended) are tracked separately, since any
-        // comment in a thread can now be replied to but replies always
-        // attach flatly to the thread's root container.
-        document.getElementById('commentsList').addEventListener('click', (e) => {
-            const btn = e.target.closest('.comment-reply-btn');
-            if (!btn) return;
-            const commentId = btn.closest('[data-comment-id]').dataset.commentId;
-            const rootId = btn.closest('.comment-thread').dataset.threadRoot;
-            initCommentReply(commentId, rootId, btn.dataset.replyAuthor, btn.dataset.replyContent);
-        });
-        // The Reply "button" is a <span role="button"> (see commentBubbleHtml —
-        // real <button> elements picked up a forced 48px min-height in this
-        // app's environment, which was the actual source of the visible gap
-        // under each comment), so Enter/Space needs to be wired up manually.
-        document.getElementById('commentsList').addEventListener('keydown', (e) => {
-            if (e.key !== 'Enter' && e.key !== ' ') return;
-            const btn = e.target.closest('.comment-reply-btn');
-            if (!btn) return;
-            e.preventDefault();
-            btn.click();
-        });
-
-        function appendRootThread(authorName, authorPicture, content) {
-            const list = document.getElementById('commentsList');
-            if (list.children.length === 1 && list.querySelector('.text-center')) list.innerHTML = '';
-            const wrap = document.createElement('div');
-            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '' }, []);
-            const thread = wrap.firstElementChild;
-            list.appendChild(thread);
-            list.scrollTop = list.scrollHeight;
-            return thread;
-        }
-
-        function appendReplyBubble(rootId, authorName, authorPicture, content, quote) {
-            const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
-            if (!container) return null;
-            const wrap = document.createElement('div');
-            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true, quote);
-            const bubble = wrap.firstElementChild;
-            container.appendChild(bubble);
-            // Scroll to the reply itself, not the bottom of the whole list —
-            // with hundreds of comments the thread being replied to could be
-            // anywhere, and jumping to the very end would lose the user's place.
-            bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            return bubble;
-        }
-
-        // Reply state — mirrors the PeerChat reply pattern (initReply/cancelReply)
-        let commentReplyState = { commentId: null, rootId: null, authorName: null, content: null };
-
-        function initCommentReply(commentId, rootId, authorName, content) {
-            commentReplyState = { commentId, rootId, authorName, content };
-            document.getElementById('commentReplyContextName').innerHTML = `<i class="bi bi-reply-fill"></i> Replying to ${escComment(authorName)}`;
-            document.getElementById('commentReplyContextText').textContent = content;
-            document.getElementById('commentReplyContextBox').style.display = 'flex';
-            document.getElementById('commentInput').focus();
-        }
-
-        function cancelCommentReply() {
-            commentReplyState = { commentId: null, rootId: null, authorName: null, content: null };
-            document.getElementById('commentReplyContextBox').style.display = 'none';
-        }
-
-        function submitComment(event) {
-            event.preventDefault();
-            if (!activeCommentPostId) return;
-            const postId = activeCommentPostId;
-            const input = document.getElementById('commentInput');
-            const content = input.value.trim();
-            if (!content) return;
-            const replyingTo = commentReplyState;
-
-            // Show the comment and bump the count immediately — don't make the
-            // user wait for the round trip to the server to see their comment.
-            input.value = '';
-            cancelCommentReply();
-
-            const isReply = !!replyingTo.commentId;
-            // Only show the quoted chip when replying to something other than
-            // the thread's own root — nesting already makes that case obvious.
-            const quote = (isReply && replyingTo.commentId !== replyingTo.rootId)
-                ? { authorName: replyingTo.authorName, content: replyingTo.content } : null;
-            const bubble = isReply
-                ? appendReplyBubble(replyingTo.rootId, CURRENT_USER_NAME, CURRENT_USER_PICTURE, content, quote)
-                : appendRootThread(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content).querySelector('[data-comment-id]');
-            document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
-                .forEach(el => el.innerText = (parseInt(el.innerText) || 0) + 1);
-
-            const params = new URLSearchParams();
-            params.append('content', content);
-            if (isReply) params.append('replyToCommentId', replyingTo.commentId);
-
-            fetch('/community/post/' + postId + '/comment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
-                body: params
-            })
-                .then(res => {
-                    if (res.status === 401) { window.location.href = '/login'; return null; }
-                    return res.json();
-                })
-                .then(data => {
-                    if (!data || data.error) throw new Error((data && data.error) || 'failed');
-                    if (bubble) {
-                        bubble.dataset.commentId = data.id; // let a follow-up reply target the real id
-                        if (!isReply) {
-                            const thread = bubble.closest('.comment-thread');
-                            thread.dataset.threadRoot = data.id;
-                            const repliesDiv = thread.querySelector('.thread-replies');
-                            if (repliesDiv) repliesDiv.dataset.threadFor = data.id;
-                        }
-                    }
-                    // Reconcile the count with the server's real value (in case
-                    // of concurrent comments from other users).
-                    document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
-                        .forEach(el => el.innerText = data.count);
-                })
-                .catch(err => {
-                    console.error('submitComment failed:', err);
-                    if (bubble) {
-                        const thread = bubble.closest('.comment-thread');
-                        (isReply ? bubble : thread).remove(); // roll back the optimistic bubble/thread on failure
-                    }
-                    document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
-                        .forEach(el => el.innerText = Math.max(0, (parseInt(el.innerText) || 1) - 1));
-                });
-        }
-
-        // Share — Web Share API where available, clipboard-copy fallback otherwise
+        // Share — Web Share API where available, clipboard-copy fallback otherwise.
+        // Links straight to the post's own permalink page (post + comments),
+        // not just the feed with an anchor scroll.
         function sharePost(postId, title) {
-            const url = window.location.origin + '/community' + (postId ? '#post-' + postId : '');
+            const url = window.location.origin + (postId ? '/community/post/' + postId : '/community');
             if (navigator.share) {
                 navigator.share({ title: title || '4LAZIE Community', url: url }).catch(() => {});
                 return;
