@@ -4,6 +4,7 @@ import com.school.auth.Role;
 import com.school.auth.User;
 import com.school.auth.UserRepository;
 import com.school.forum.model.ForumPost;
+import com.school.forum.repository.ForumCommentRepository;
 import com.school.forum.repository.ForumPostRepository;
 import com.school.notes.Note;
 import com.school.notes.NoteRepository;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class ForumService {
 
     @Autowired private ForumPostRepository forumPostRepository;
+    @Autowired private ForumCommentRepository forumCommentRepository;
     @Autowired private NoteRepository noteRepository;
     @Autowired private UserRepository userRepository;
 
@@ -55,8 +57,9 @@ public class ForumService {
                 ForumPost post = new ForumPost();
                 post.setAuthor(admin);
                 post.setCreatedAt(note.getUploadDate() != null ? note.getUploadDate() : java.time.LocalDateTime.now());
-                post.setLikesCount(note.getDownloadCount() != null ? note.getDownloadCount() : 0);
-                post.setCommentsCount(note.getViewCount() != null ? note.getViewCount() : 0);
+                post.setLikesCount(note.getLikesCount() != null ? note.getLikesCount() : 0);
+                post.setLikedBy(note.getLikedBy());
+                post.setCommentsCount((int) forumCommentRepository.countByPostId("note-" + note.getId()));
 
                 String category = note.getCategory() != null ? note.getCategory() : "Document";
                 String noteTitle = note.getTitle() != null ? note.getTitle() : "Untitled";

@@ -173,7 +173,7 @@
                 <p class="opacity-75">Be the first to start a conversation!</p>
             </div>
 
-        <div th:each="post : ${posts}" th:id="${post.noteId == null ? 'post-' + post.id : null}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+        <div th:each="post : ${posts}" th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
             <div style="padding: 16px;">
                 <div class="d-flex">
                     <!-- ── AVATAR (role-based) ── -->
@@ -308,26 +308,21 @@
                                  th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
                         </div>
                         
-                        <!-- Action Buttons (Like, Comment, Share) -->
-                        <div class="d-flex gap-3 mt-3" th:data-post-id="${post.noteId == null ? post.id : ''}">
+                        <!-- Action Buttons (Like, Comment, Share) — work for note-derived
+                             cards too: their state lives on the underlying Note document. -->
+                        <div class="d-flex gap-3 mt-3" th:data-post-id="${post.id}">
                             <!-- Comment Button -->
                             <div class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn"
                                  style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
                                  onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
-                                 th:if="${post.noteId == null}"
                                  th:data-post-id="${post.id}"
                                  onclick="openComments(this.dataset.postId)">
                                 <i class="bi bi-chat"></i>
                                 <span class="ms-2 fw-medium comment-count" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
                             </div>
-                            <div th:if="${post.noteId != null}" class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4); font-size: 13px;">
-                                <i class="bi bi-chat"></i>
-                                <span class="ms-2 fw-medium" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
-                            </div>
 
                             <!-- Like Button -->
-                            <div th:if="${post.noteId == null}"
-                                 class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
+                            <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
                                  th:classappend="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'liked' : ''"
                                  th:style="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 13px; cursor: pointer; transition: all 0.2s;' : 'background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;'"
                                  onmouseover="if(!this.classList.contains('liked')) { this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981' }" onmouseout="if(!this.classList.contains('liked')) { this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)' }"
@@ -336,16 +331,12 @@
                                 <i th:class="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
                                 <span class="ms-2 fw-medium like-count" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
                             </div>
-                            <div th:if="${post.noteId != null}" class="d-flex align-items-center rounded-pill px-3 py-1" style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4); font-size: 13px;">
-                                <i class="bi bi-heart"></i>
-                                <span class="ms-2 fw-medium" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
-                            </div>
 
                             <!-- Share Button -->
                             <div class="d-flex align-items-center rounded-pill px-3 py-1"
                                  style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
                                  onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
-                                 th:data-post-id="${post.noteId == null ? post.id : ''}"
+                                 th:data-post-id="${post.id}"
                                  th:data-post-title="${post.title != null ? post.title : '4LAZIE Community'}"
                                  onclick="sharePost(this.dataset.postId, this.dataset.postTitle)">
                                 <i class="bi bi-share"></i>

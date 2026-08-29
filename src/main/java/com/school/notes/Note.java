@@ -56,6 +56,8 @@ public class Note {
     private Boolean isPublic = true;
     private Integer downloadCount = 0;
     private Integer viewCount = 0;
+    private Integer likesCount = 0;
+    private java.util.Set<String> likedBy = new java.util.LinkedHashSet<>();
     private Integer unitNumber;
     
     @Indexed
@@ -127,6 +129,12 @@ public class Note {
     public void setIsPublic(Boolean isPublic) { this.isPublic = isPublic; }
     public Integer getDownloadCount() { return downloadCount; }
     public void setDownloadCount(Integer downloadCount) { this.downloadCount = downloadCount; }
+
+    public Integer getLikesCount() { return likesCount; }
+    public void setLikesCount(Integer likesCount) { this.likesCount = likesCount; }
+
+    public java.util.Set<String> getLikedBy() { return likedBy; }
+    public void setLikedBy(java.util.Set<String> likedBy) { this.likedBy = likedBy != null ? likedBy : new java.util.LinkedHashSet<>(); }
     public Integer getViewCount() { return viewCount; }
     public void setViewCount(Integer viewCount) { this.viewCount = viewCount; }
     public Integer getUnitNumber() { return unitNumber; }
