@@ -10,6 +10,7 @@ import com.school.notes.Note;
 import com.school.notes.NoteRepository;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -166,7 +167,11 @@ public class ForumService {
 
     /** Single-post lookup for the permalink page — mirrors how each post is
      * assembled inside getRandomizedFeed(), just for one id instead of the
-     * whole feed. Returns null if the post/note doesn't exist. */
+     * whole feed. Returns null if the post/note doesn't exist.
+     * Cached briefly (see CacheConfig) — reopening the same post repeatedly
+     * is otherwise a full re-fetch every time; evicted the moment that post's
+     * like/comment state actually changes. */
+    @Cacheable(value = "postDetail", key = "#id")
     public ForumPost getPostById(String id) {
         if (id != null && id.startsWith("note-")) {
             String noteId = id.substring("note-".length());
@@ -218,4 +223,10 @@ public class ForumService {
         if (isAuthority(role)) post.setAdminPost(true);
         return post;
     }
+
+    /** Called right after a like/comment changes a specific post, so the
+     * person who caused the change (and anyone else) never sees stale data
+     * from the postDetail cache while it's still within its TTL. */
+    @CacheEvict(value = "postDetail", key = "#id")
+    public void evictPostDetail(String id) {}
 }

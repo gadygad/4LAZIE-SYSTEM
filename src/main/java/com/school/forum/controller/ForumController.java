@@ -10,7 +10,10 @@ import com.school.forum.repository.ForumCommentRepository;
 import com.school.forum.repository.ForumPostRepository;
 import com.school.notes.Note;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -53,6 +56,20 @@ public class ForumController {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    // Called via CacheManager directly (not @CacheEvict) because these evictions
+    // happen from other methods *within this same controller* — Spring's
+    // caching proxy can't intercept that kind of self-invocation, only calls
+    // that come in from outside the bean.
+    private void evictPostCaches(String id) {
+        Cache postDetail = cacheManager.getCache("postDetail");
+        if (postDetail != null) postDetail.evict(id);
+        Cache postComments = cacheManager.getCache("postComments");
+        if (postComments != null) postComments.evict(id);
+    }
 
     private boolean isAdmin(User user) {
         return user != null && user.getRole() != null &&
@@ -149,6 +166,7 @@ public class ForumController {
             return ResponseEntity.status(404).body(Map.of("error", "Post not found"));
         }
         int count = isNotePost ? ((Note) updated).getLikesCount() : ((ForumPost) updated).getLikesCount();
+        evictPostCaches(id);
         return ResponseEntity.ok(Map.of("liked", nowLiked, "count", Math.max(0, count)));
     }
 
@@ -201,6 +219,8 @@ public class ForumController {
             count = post.getCommentsCount();
         }
 
+        evictPostCaches(id);
+
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("id", comment.getId());
         body.put("authorName", displayName(user));
@@ -214,8 +234,12 @@ public class ForumController {
         return ResponseEntity.ok(body);
     }
 
+    // Cached briefly and evicted the instant a comment is added to this post
+    // (see evictPostCaches) — reopening a post you already viewed seconds
+    // ago no longer re-runs the comment + author-batch queries at all.
     @GetMapping(value = "/post/{id}/comments", produces = "application/json")
     @ResponseBody
+    @Cacheable(value = "postComments", key = "#id")
     public ResponseEntity<?> listComments(@PathVariable String id) {
         List<ForumComment> comments = forumCommentRepository.findByPostIdOrderByCreatedAtAsc(id);
         List<String> authorIds = comments.stream().map(ForumComment::getAuthorId).distinct().collect(Collectors.toList());

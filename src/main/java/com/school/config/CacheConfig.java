@@ -33,6 +33,22 @@ public class CacheConfig {
                 .maximumSize(1)
                 .build());
 
+        // Opening a post's permalink page re-fetches the post AND its whole
+        // comment thread from MongoDB every single time, even if the same
+        // post was just viewed seconds ago — that round trip is what made
+        // reopening a post feel slow. Both are evicted immediately whenever
+        // that specific post changes (new comment/reply, like), so an
+        // interaction never shows stale data to the person who caused it —
+        // this cache only saves repeat *reads* of unchanged posts.
+        cacheManager.registerCustomCache("postDetail", Caffeine.newBuilder()
+                .expireAfterWrite(30, TimeUnit.SECONDS)
+                .maximumSize(200)
+                .build());
+        cacheManager.registerCustomCache("postComments", Caffeine.newBuilder()
+                .expireAfterWrite(30, TimeUnit.SECONDS)
+                .maximumSize(200)
+                .build());
+
         return cacheManager;
     }
 }
