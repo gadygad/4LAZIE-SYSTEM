@@ -412,6 +412,12 @@
         <i class="bi bi-plus-lg" style="font-size: 1.8rem;"></i>
     </button>
 
+    <!-- Messages — one tap straight into the peer-to-peer chat inbox, no
+         detour through dashboard/menus first. -->
+    <a th:if="${session.user != null}" href="/messages" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="position: fixed; bottom: 80px; left: 20px; width: 54px; height: 54px; background: #1f2937; color: #10b981; border: 1px solid rgba(16,185,129,0.35); z-index: 1050; transition: transform 0.2s;" title="Messages" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <i class="bi bi-chat-dots-fill" style="font-size: 1.5rem;"></i>
+    </a>
+
     <!-- Post Creation Modal -->
     <style>
         /* Blur everything behind the modal instead of just darkening it */
