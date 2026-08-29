@@ -207,6 +207,7 @@ public class ForumController {
         body.put("authorPicture", displayPicture(user));
         body.put("content", comment.getContent());
         body.put("createdAt", comment.getCreatedAt().format(COMMENT_TIME_FORMAT));
+        body.put("replyToCommentId", comment.getReplyToCommentId());
         body.put("replyToAuthorName", comment.getReplyToAuthorName());
         body.put("replyToContent", comment.getReplyToContent());
         body.put("count", count);
@@ -230,6 +231,7 @@ public class ForumController {
             m.put("authorPicture", author != null ? displayPicture(author) : null);
             m.put("content", c.getContent());
             m.put("createdAt", c.getCreatedAt().format(COMMENT_TIME_FORMAT));
+            m.put("replyToCommentId", c.getReplyToCommentId());
             m.put("replyToAuthorName", c.getReplyToAuthorName());
             m.put("replyToContent", c.getReplyToContent());
             return m;
