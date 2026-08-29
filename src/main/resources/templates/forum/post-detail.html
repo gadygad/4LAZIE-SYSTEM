@@ -355,7 +355,11 @@
                     <div class="d-flex gap-2">
                         ${commentAvatarHtml(c.authorName, c.authorPicture).replace(/width:\d+px;height:\d+px/, `width:${avatarPx}px;height:${avatarPx}px`)}
                         <div class="flex-grow-1 comment-bubble" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
-                            <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
+                            <div class="d-flex align-items-center" style="gap: 6px; flex-wrap: wrap;">
+                                <span class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</span>
+                                <span style="color: rgba(255,255,255,0.35); font-size: 0.7rem;">·</span>
+                                <span style="color: rgba(255,255,255,0.5); font-size: 0.68rem;">${escComment(c.createdAt || '')}</span>
+                            </div>
                             ${quote ? quotedCommentHtml(quote.authorName, quote.content) : ''}
                             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
@@ -421,11 +425,21 @@
             btn.click();
         });
 
+        // Matches the server's "dd MMM yyyy, HH:mm:ss" format, so the
+        // optimistic bubble's timestamp doesn't visibly change once the
+        // real comment comes back.
+        function formatNow() {
+            const d = new Date();
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const pad = n => String(n).padStart(2, '0');
+            return `${pad(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+
         function appendRootThread(authorName, authorPicture, content) {
             const list = document.getElementById('commentsList');
             if (list.children.length === 1 && list.querySelector('.text-center')) list.innerHTML = '';
             const wrap = document.createElement('div');
-            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '' }, []);
+            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '', createdAt: formatNow() }, []);
             const thread = wrap.firstElementChild;
             list.appendChild(thread);
             thread.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -436,7 +450,7 @@
             const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
             if (!container) return null;
             const wrap = document.createElement('div');
-            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true, quote);
+            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '', createdAt: formatNow() }, true, quote);
             const bubble = wrap.firstElementChild;
             container.appendChild(bubble);
             bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' });

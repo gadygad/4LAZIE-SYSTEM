@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,8 @@ public class ForumController {
     private String displayPicture(User user) {
         return isAdmin(user) ? "/images/logo.png" : user.getProfilePicture();
     }
+
+    private static final DateTimeFormatter COMMENT_TIME_FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss");
 
     @GetMapping
     public String showCommunityForum(Model model) {
@@ -201,6 +204,7 @@ public class ForumController {
         body.put("authorName", displayName(user));
         body.put("authorPicture", displayPicture(user));
         body.put("content", comment.getContent());
+        body.put("createdAt", comment.getCreatedAt().format(COMMENT_TIME_FORMAT));
         body.put("replyToAuthorName", comment.getReplyToAuthorName());
         body.put("replyToContent", comment.getReplyToContent());
         body.put("count", count);
@@ -223,6 +227,7 @@ public class ForumController {
             m.put("authorName", author != null ? displayName(author) : "Unknown");
             m.put("authorPicture", author != null ? displayPicture(author) : null);
             m.put("content", c.getContent());
+            m.put("createdAt", c.getCreatedAt().format(COMMENT_TIME_FORMAT));
             m.put("replyToAuthorName", c.getReplyToAuthorName());
             m.put("replyToContent", c.getReplyToContent());
             return m;
