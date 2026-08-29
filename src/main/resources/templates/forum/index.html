@@ -618,28 +618,38 @@
         // comment contained a double quote).
         const escAttr = s => escComment(s).replace(/"/g, '&quot;');
 
-        function quotedCommentHtml(replyToAuthorName, replyToContent) {
-            if (!replyToAuthorName) return '';
-            return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
-                        <div style="font-size: 0.65rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${escComment(replyToAuthorName)}</div>
-                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escComment(replyToContent || '')}</div>
-                    </div>`;
-        }
-
-        function commentBubbleHtml(c) {
+        // Only top-level comments show a Reply link — replying to a reply
+        // just attaches to the same thread (2-level threading), same as
+        // most simple comment systems, so nesting never gets deeper than one.
+        function commentBubbleHtml(c, isReply) {
             const id = c.id || '';
+            const avatarPx = isReply ? 26 : 32;
+            const replyBtn = isReply ? '' : `
+                <button type="button" class="comment-reply-btn" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
+                        style="background: none; border: none; padding: 2px 4px 0 42px; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer;">Reply</button>`;
             return `
-                <div class="mb-3" data-comment-id="${id}">
+                <div data-comment-id="${id}">
                     <div class="d-flex gap-2">
-                        ${commentAvatarHtml(c.authorName, c.authorPicture)}
+                        ${commentAvatarHtml(c.authorName, c.authorPicture).replace(/width:\d+px;height:\d+px/, `width:${avatarPx}px;height:${avatarPx}px`)}
                         <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
                             <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
-                            ${quotedCommentHtml(c.replyToAuthorName, c.replyToContent)}
                             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
                     </div>
-                    <button type="button" class="comment-reply-btn" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
-                            style="background: none; border: none; padding: 2px 4px 0 42px; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer;">Reply</button>
+                    ${replyBtn}
+                </div>`;
+        }
+
+        // A thread = one top-level comment plus its flat list of replies,
+        // visually connected with a left border so they read as one group
+        // instead of the whole modal being a single undifferentiated list.
+        function threadHtml(root, replies) {
+            return `
+                <div class="comment-thread mb-3">
+                    ${commentBubbleHtml(root, false)}
+                    <div class="thread-replies" data-thread-for="${root.id || ''}" style="margin-left: 42px; padding-left: 12px; margin-top: 6px; border-left: 2px solid rgba(255,255,255,0.12);">
+                        ${replies.map(r => commentBubbleHtml(r, true)).join('')}
+                    </div>
                 </div>`;
         }
 
@@ -649,13 +659,36 @@
                 list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">No comments yet. Be the first!</div>';
                 return;
             }
-            list.innerHTML = comments.map(commentBubbleHtml).join('');
+
+            // Group every comment under its top-level ancestor (walking up
+            // replyToCommentId), flattening reply-to-a-reply into the same
+            // thread rather than nesting further.
+            const byId = {};
+            comments.forEach(c => { byId[c.id] = c; });
+            function rootIdOf(c) {
+                let cur = c, guard = 0;
+                while (cur.replyToCommentId && byId[cur.replyToCommentId] && guard++ < 20) {
+                    cur = byId[cur.replyToCommentId];
+                }
+                return cur.id;
+            }
+            const order = [];
+            const rootsById = {};
+            const repliesByRoot = {};
+            comments.forEach(c => {
+                const rid = rootIdOf(c);
+                if (!(rid in rootsById) && byId[rid]) { rootsById[rid] = byId[rid]; order.push(rid); }
+                if (!repliesByRoot[rid]) repliesByRoot[rid] = [];
+                if (rid !== c.id) repliesByRoot[rid].push(c);
+            });
+
+            list.innerHTML = order.map(rid => threadHtml(rootsById[rid], repliesByRoot[rid])).join('');
             list.scrollTop = list.scrollHeight;
         }
 
         // One delegated listener handles every Reply button, including ones
-        // added later by appendCommentBubble — reads the author/content back
-        // from data attributes instead of baking them into an inline handler.
+        // added later while posting — reads the author/content back from
+        // data attributes instead of baking them into an inline handler.
         document.getElementById('commentsList').addEventListener('click', (e) => {
             const btn = e.target.closest('.comment-reply-btn');
             if (!btn) return;
@@ -663,20 +696,25 @@
             initCommentReply(commentId, btn.dataset.replyAuthor, btn.dataset.replyContent);
         });
 
-        function appendCommentBubble(authorName, authorPicture, content, replyToAuthorName, replyToContent) {
+        function appendRootThread(authorName, authorPicture, content) {
             const list = document.getElementById('commentsList');
-            // Replace the empty-state placeholder if this is the first comment shown
-            if (list.children.length === 1 && list.querySelector('.text-center')) {
-                list.innerHTML = '';
-            }
-            const div = document.createElement('div');
-            div.innerHTML = commentBubbleHtml({
-                authorName, authorPicture, content,
-                replyToAuthorName, replyToContent
-            });
-            const bubble = div.firstElementChild;
-            list.appendChild(bubble);
+            if (list.children.length === 1 && list.querySelector('.text-center')) list.innerHTML = '';
+            const wrap = document.createElement('div');
+            wrap.innerHTML = threadHtml({ authorName, authorPicture, content, id: '' }, []);
+            const thread = wrap.firstElementChild;
+            list.appendChild(thread);
             list.scrollTop = list.scrollHeight;
+            return thread;
+        }
+
+        function appendReplyBubble(rootId, authorName, authorPicture, content) {
+            const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
+            if (!container) return null;
+            const wrap = document.createElement('div');
+            wrap.innerHTML = commentBubbleHtml({ authorName, authorPicture, content, id: '' }, true);
+            const bubble = wrap.firstElementChild;
+            container.appendChild(bubble);
+            document.getElementById('commentsList').scrollTop = document.getElementById('commentsList').scrollHeight;
             return bubble;
         }
 
@@ -709,14 +747,17 @@
             // user wait for the round trip to the server to see their comment.
             input.value = '';
             cancelCommentReply();
-            const bubble = appendCommentBubble(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content,
-                replyingTo.commentId ? replyingTo.authorName : null, replyingTo.content);
+
+            const isReply = !!replyingTo.commentId;
+            const bubble = isReply
+                ? appendReplyBubble(replyingTo.commentId, CURRENT_USER_NAME, CURRENT_USER_PICTURE, content)
+                : appendRootThread(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content).querySelector('[data-comment-id]');
             document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
                 .forEach(el => el.innerText = (parseInt(el.innerText) || 0) + 1);
 
             const params = new URLSearchParams();
             params.append('content', content);
-            if (replyingTo.commentId) params.append('replyToCommentId', replyingTo.commentId);
+            if (isReply) params.append('replyToCommentId', replyingTo.commentId);
 
             fetch('/community/post/' + postId + '/comment', {
                 method: 'POST',
@@ -729,7 +770,13 @@
                 })
                 .then(data => {
                     if (!data || data.error) throw new Error((data && data.error) || 'failed');
-                    bubble.dataset.commentId = data.id; // let a follow-up reply target the real id
+                    if (bubble) {
+                        bubble.dataset.commentId = data.id; // let a follow-up reply target the real id
+                        if (!isReply) {
+                            const repliesDiv = bubble.parentElement.querySelector('.thread-replies');
+                            if (repliesDiv) repliesDiv.dataset.threadFor = data.id;
+                        }
+                    }
                     // Reconcile the count with the server's real value (in case
                     // of concurrent comments from other users).
                     document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
@@ -737,7 +784,10 @@
                 })
                 .catch(err => {
                     console.error('submitComment failed:', err);
-                    bubble.remove(); // roll back the optimistic bubble on failure
+                    if (bubble) {
+                        const thread = bubble.closest('.comment-thread');
+                        (isReply ? bubble : thread).remove(); // roll back the optimistic bubble/thread on failure
+                    }
                     document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
                         .forEach(el => el.innerText = Math.max(0, (parseInt(el.innerText) || 1) - 1));
                 });
