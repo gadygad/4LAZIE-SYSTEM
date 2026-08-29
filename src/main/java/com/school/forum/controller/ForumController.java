@@ -133,7 +133,8 @@ public class ForumController {
 
     @PostMapping(value = "/post/{id}/comment", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> addComment(@PathVariable String id, @RequestParam String content) {
+    public ResponseEntity<?> addComment(@PathVariable String id, @RequestParam String content,
+                                         @RequestParam(required = false) String replyToCommentId) {
         User user = authUtil.getLoggedInUser();
         if (user == null) {
             return ResponseEntity.status(401).body(Map.of("error", "Login required"));
@@ -142,6 +143,18 @@ public class ForumController {
             return ResponseEntity.badRequest().body(Map.of("error", "Comment cannot be empty"));
         }
         ForumComment comment = new ForumComment(id, user.getId(), content.trim());
+
+        // Snapshot the quoted comment server-side (rather than trusting whatever
+        // the client sends) so the reply preview can't be spoofed.
+        if (replyToCommentId != null && !replyToCommentId.isEmpty()) {
+            ForumComment target = forumCommentRepository.findById(replyToCommentId).orElse(null);
+            if (target != null) {
+                User targetAuthor = userRepository.findById(target.getAuthorId()).orElse(null);
+                comment.setReplyToCommentId(target.getId());
+                comment.setReplyToAuthorName(targetAuthor != null ? displayName(targetAuthor) : "Unknown");
+                comment.setReplyToContent(target.getContent());
+            }
+        }
         forumCommentRepository.save(comment);
 
         // Note-derived feed cards ("note-<noteId>") aren't real ForumPost documents,
@@ -172,6 +185,8 @@ public class ForumController {
         body.put("authorName", displayName(user));
         body.put("authorPicture", displayPicture(user));
         body.put("content", comment.getContent());
+        body.put("replyToAuthorName", comment.getReplyToAuthorName());
+        body.put("replyToContent", comment.getReplyToContent());
         body.put("count", count);
         return ResponseEntity.ok(body);
     }
@@ -192,6 +207,8 @@ public class ForumController {
             m.put("authorName", author != null ? displayName(author) : "Unknown");
             m.put("authorPicture", author != null ? displayPicture(author) : null);
             m.put("content", c.getContent());
+            m.put("replyToAuthorName", c.getReplyToAuthorName());
+            m.put("replyToContent", c.getReplyToContent());
             return m;
         }).collect(Collectors.toList());
 

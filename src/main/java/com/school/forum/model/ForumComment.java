@@ -27,6 +27,12 @@ public class ForumComment {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // Denormalized snapshot of the comment being replied to (same pattern as
+    // ChatMessage's replyTo* fields) — avoids a join just to render the quote.
+    private String replyToCommentId;
+    private String replyToAuthorName;
+    private String replyToContent;
+
     public ForumComment() {}
 
     public ForumComment(String postId, String authorId, String content) {
@@ -50,4 +56,13 @@ public class ForumComment {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getReplyToCommentId() { return replyToCommentId; }
+    public void setReplyToCommentId(String replyToCommentId) { this.replyToCommentId = replyToCommentId; }
+
+    public String getReplyToAuthorName() { return replyToAuthorName; }
+    public void setReplyToAuthorName(String replyToAuthorName) { this.replyToAuthorName = replyToAuthorName; }
+
+    public String getReplyToContent() { return replyToContent; }
+    public void setReplyToContent(String replyToContent) { this.replyToContent = replyToContent; }
 }

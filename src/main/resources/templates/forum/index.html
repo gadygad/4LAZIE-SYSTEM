@@ -467,6 +467,13 @@
                 <div class="modal-body pt-0 px-3 pb-2" id="commentsList" style="overflow-y: auto; flex: 1;">
                     <div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Loading...</div>
                 </div>
+                <div id="commentReplyContextBox" class="d-flex align-items-center justify-content-between px-3" style="display: none; padding-top: 8px; padding-bottom: 8px; background: rgba(16,185,129,0.08); border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="overflow: hidden;">
+                        <div id="commentReplyContextName" style="font-size: 0.78rem; font-weight: 700; color: #4ade80;"></div>
+                        <div id="commentReplyContextText" style="font-size: 0.78rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;"></div>
+                    </div>
+                    <button type="button" onclick="cancelCommentReply()" style="background: none; border: none; color: rgba(255,255,255,0.5); font-size: 1.1rem; line-height: 1; padding: 4px;">&times;</button>
+                </div>
                 <div class="px-3 pb-3 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.1) !important;">
                     <form id="commentForm" class="d-flex gap-2" onsubmit="submitComment(event)">
                         <input type="text" id="commentInput" class="glass-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0;">
@@ -589,6 +596,7 @@
 
         function openComments(postId) {
             activeCommentPostId = postId;
+            cancelCommentReply();
             const modalEl = document.getElementById('commentsModal');
             const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
             const list = document.getElementById('commentsList');
@@ -604,41 +612,74 @@
                 });
         }
 
+        // Comment ids/content aren't attacker-controlled HTML at this point (already
+        // escaped below), but store raw text on the element for initCommentReply
+        // to read back rather than re-parsing escaped HTML.
+        function quotedCommentHtml(replyToAuthorName, replyToContent) {
+            if (!replyToAuthorName) return '';
+            return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
+                        <div style="font-size: 0.65rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${escComment(replyToAuthorName)}</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escComment(replyToContent || '')}</div>
+                    </div>`;
+        }
+
+        function commentBubbleHtml(c) {
+            const id = c.id || '';
+            return `
+                <div class="d-flex mb-3 gap-2" data-comment-id="${id}">
+                    ${commentAvatarHtml(c.authorName, c.authorPicture)}
+                    <div class="flex-grow-1">
+                        <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
+                            <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
+                            ${quotedCommentHtml(c.replyToAuthorName, c.replyToContent)}
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
+                        </div>
+                        <button type="button" onclick="initCommentReply(this.closest('[data-comment-id]').dataset.commentId, ${JSON.stringify(c.authorName || '')}, ${JSON.stringify(c.content || '')})" style="background: none; border: none; padding: 2px 4px; margin-top: 2px; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer;">Reply</button>
+                    </div>
+                </div>`;
+        }
+
         function renderComments(comments) {
             const list = document.getElementById('commentsList');
             if (!Array.isArray(comments) || comments.length === 0) {
                 list.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">No comments yet. Be the first!</div>';
                 return;
             }
-            list.innerHTML = comments.map(c => `
-                <div class="d-flex mb-3 gap-2">
-                    ${commentAvatarHtml(c.authorName, c.authorPicture)}
-                    <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
-                        <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(c.authorName)}</div>
-                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
-                    </div>
-                </div>
-            `).join('');
+            list.innerHTML = comments.map(commentBubbleHtml).join('');
             list.scrollTop = list.scrollHeight;
         }
 
-        function appendCommentBubble(authorName, authorPicture, content) {
+        function appendCommentBubble(authorName, authorPicture, content, replyToAuthorName, replyToContent) {
             const list = document.getElementById('commentsList');
             // Replace the empty-state placeholder if this is the first comment shown
             if (list.children.length === 1 && list.querySelector('.text-center')) {
                 list.innerHTML = '';
             }
             const div = document.createElement('div');
-            div.className = 'd-flex mb-3 gap-2';
-            div.innerHTML = `
-                ${commentAvatarHtml(authorName, authorPicture)}
-                <div class="flex-grow-1" style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 12px;">
-                    <div class="fw-bold" style="font-size: 0.8rem; color: #fff;">${verifiedCommentName(authorName)}</div>
-                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(content)}</div>
-                </div>`;
-            list.appendChild(div);
+            div.innerHTML = commentBubbleHtml({
+                authorName, authorPicture, content,
+                replyToAuthorName, replyToContent
+            });
+            const bubble = div.firstElementChild;
+            list.appendChild(bubble);
             list.scrollTop = list.scrollHeight;
-            return div;
+            return bubble;
+        }
+
+        // Reply state — mirrors the PeerChat reply pattern (initReply/cancelReply)
+        let commentReplyState = { commentId: null, authorName: null, content: null };
+
+        function initCommentReply(commentId, authorName, content) {
+            commentReplyState = { commentId, authorName, content };
+            document.getElementById('commentReplyContextName').textContent = authorName;
+            document.getElementById('commentReplyContextText').textContent = content;
+            document.getElementById('commentReplyContextBox').style.display = 'flex';
+            document.getElementById('commentInput').focus();
+        }
+
+        function cancelCommentReply() {
+            commentReplyState = { commentId: null, authorName: null, content: null };
+            document.getElementById('commentReplyContextBox').style.display = 'none';
         }
 
         function submitComment(event) {
@@ -648,16 +689,20 @@
             const input = document.getElementById('commentInput');
             const content = input.value.trim();
             if (!content) return;
+            const replyingTo = commentReplyState;
 
             // Show the comment and bump the count immediately — don't make the
             // user wait for the round trip to the server to see their comment.
             input.value = '';
-            const bubble = appendCommentBubble(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content);
+            cancelCommentReply();
+            const bubble = appendCommentBubble(CURRENT_USER_NAME, CURRENT_USER_PICTURE, content,
+                replyingTo.commentId ? replyingTo.authorName : null, replyingTo.content);
             document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
                 .forEach(el => el.innerText = (parseInt(el.innerText) || 0) + 1);
 
             const params = new URLSearchParams();
             params.append('content', content);
+            if (replyingTo.commentId) params.append('replyToCommentId', replyingTo.commentId);
 
             fetch('/community/post/' + postId + '/comment', {
                 method: 'POST',
@@ -670,6 +715,7 @@
                 })
                 .then(data => {
                     if (!data || data.error) throw new Error((data && data.error) || 'failed');
+                    bubble.dataset.commentId = data.id; // let a follow-up reply target the real id
                     // Reconcile the count with the server's real value (in case
                     // of concurrent comments from other users).
                     document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
