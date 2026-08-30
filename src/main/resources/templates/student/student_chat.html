@@ -432,7 +432,11 @@
 
             const label = document.createElement('span');
             label.className = 'msg-label';
-            label.textContent = isAdmin ? '4LAZIE Admin' : 'You';
+            if (isAdmin || msg.senderHasVerifiedBadge) {
+                label.innerHTML = (isAdmin ? '4LAZIE Admin' : 'You') + ' <i class="bi bi-patch-check-fill ms-1" style="color: #10b981; font-size: 0.9em;" title="Verified"></i>';
+            } else {
+                label.textContent = 'You';
+            }
             col.appendChild(label);
 
             const bubble = document.createElement('div');

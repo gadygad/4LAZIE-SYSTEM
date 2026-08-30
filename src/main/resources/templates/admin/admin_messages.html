@@ -604,7 +604,12 @@
         
         const nameEl = document.createElement('span');
         nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
-        nameEl.textContent = isAdmin ? ADMIN_NAME : (msg.senderName || 'Student');
+        const baseName = isAdmin ? ADMIN_NAME : (msg.senderName || 'Student');
+        if (msg.senderHasVerifiedBadge) {
+            nameEl.innerHTML = esc(baseName) + ' <i class="bi bi-patch-check-fill ms-1" style="color: #10b981; font-size: 0.9em;" title="Verified"></i>';
+        } else {
+            nameEl.textContent = baseName;
+        }
         
         const timeEl = document.createElement('span');
         timeEl.style.cssText = 'font-size: 0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';

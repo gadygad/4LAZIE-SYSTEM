@@ -286,6 +286,16 @@ public class PeerChatController {
             m.put("replyToMessageText", msg.getReplyToMessageText());
             m.put("time", msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
             m.put("date", msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
+            
+            boolean hasBadge = false;
+            if (userRepoStatic != null) {
+                User senderUser = userRepoStatic.findById(msg.getSenderId()).orElse(null);
+                if (senderUser != null && Boolean.TRUE.equals(senderUser.getHasVerifiedBadge())) {
+                    hasBadge = true;
+                }
+            }
+            m.put("senderHasVerifiedBadge", hasBadge);
+            
             boolean isSelf = viewerId.equals(msg.getSenderId());
             m.put("isSelf", isSelf);
 

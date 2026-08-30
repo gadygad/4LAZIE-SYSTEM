@@ -1152,7 +1152,12 @@
                 
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
-                nameEl.textContent = msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN';
+                const baseName = msg.isSelf ? STUDENT_NM : '4LAZIE ADMIN';
+                if (msg.senderHasVerifiedBadge) {
+                    nameEl.innerHTML = esc(baseName) + ' <i class="bi bi-patch-check-fill ms-1" style="color: #10b981; font-size: 0.9em;" title="Verified"></i>';
+                } else {
+                    nameEl.textContent = baseName;
+                }
                 
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size: 0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
@@ -1561,9 +1566,9 @@
 
             // The backend brands ADMIN/SUPER_ADMIN senders as "4LAZIE" — show
             // that name with a green verified badge, same as the forum feed.
-            function verifiedNameHtml(name) {
-                if (name === '4LAZIE') {
-                    return `${esc(name)} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.85em;" title="Verified Official"></i>`;
+            function verifiedNameHtml(name, hasBadge) {
+                if (hasBadge || name === '4LAZIE' || name === '4LAZIE ADMIN') {
+                    return `${esc(name)} <i class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.85em;" title="Verified"></i>`;
                 }
                 return esc(name);
             }
@@ -1603,7 +1608,7 @@
                 headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;padding:0 56px;' + (msg.isSelf ? '' : 'flex-direction:row-reverse;');
                 const nameEl = document.createElement('span');
                 nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
-                nameEl.innerHTML = verifiedNameHtml(label);
+                nameEl.innerHTML = verifiedNameHtml(label, msg.senderHasVerifiedBadge);
                 const timeEl = document.createElement('span');
                 timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
                 timeEl.textContent = msg.time || '';
@@ -2242,9 +2247,9 @@
 
             // The backend brands ADMIN/SUPER_ADMIN senders as "4LAZIE" — show
             // that name with a green verified badge, same as the forum feed.
-            function verifiedNameHtml(name) {
-                if (name === '4LAZIE') {
-                    return `${esc(name)} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.85em;" title="Verified Official"></i>`;
+            function verifiedNameHtml(name, hasBadge) {
+                if (hasBadge || name === '4LAZIE' || name === '4LAZIE ADMIN') {
+                    return `${esc(name)} <i class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.85em;" title="Verified"></i>`;
                 }
                 return esc(name);
             }
@@ -2276,7 +2281,7 @@
                 if (!msg.isSelf) {
                     const nameEl = document.createElement('div');
                     nameEl.style.cssText = 'font-size:0.72rem;font-weight:700;color:#64748b;margin-bottom:2px;padding:0 4px;';
-                    nameEl.innerHTML = verifiedNameHtml(msg.senderName || '');
+                    nameEl.innerHTML = verifiedNameHtml(msg.senderName || '', msg.senderHasVerifiedBadge);
                     col.appendChild(nameEl);
                 }
 

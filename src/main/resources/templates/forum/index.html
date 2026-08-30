@@ -151,7 +151,7 @@
             <!-- Upande wa Kushoto (Far Left) -->
             <div class="d-flex align-items-center gap-3">
                 <!-- Hamburger Menu (Inaonekana kwenye Simu tu: d-lg-none inaficha kwenye Desktop) -->
-                <button class="btn btn-link d-lg-none p-0 text-white text-decoration-none" style="font-size: 1.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                <button class="btn btn-link d-lg-none p-0 text-white text-decoration-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenuOffcanvas" aria-controls="mobileMenuOffcanvas" style="font-size: 1.8rem; transition: transform 0.2s;">
                     <i class="bi bi-list"></i>
                 </button>
                 
@@ -799,6 +799,46 @@
     <button id="createPostFab" type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #0d9468; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
         <i class="bi bi-plus-lg" style="font-size: 1.8rem;"></i>
     </button>
+
+    <!-- Mobile Offcanvas Menu -->
+    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileMenuOffcanvas" aria-labelledby="mobileMenuOffcanvasLabel" style="background: #0f172a; color: white; width: 280px; border-right: 1px solid rgba(255,255,255,0.1);">
+        <div class="offcanvas-header border-bottom border-secondary" style="border-color: rgba(255,255,255,0.1) !important;">
+            <div class="d-flex align-items-center gap-2">
+                <div class="nav-logo-box" style="background: #111; border: 2px solid #10b981; padding: 2px 8px; border-radius: 4px;">
+                    <h5 class="m-0 text-white" style="font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: 1px;">4LAZIE</h5>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body custom-scroll" style="padding: 1rem 0;">
+
+            <!-- Student Materials -->
+            <div class="px-3 mb-4">
+                <h6 class="text-uppercase" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 1px; font-weight: 700;">Student Materials</h6>
+                <div class="d-flex flex-column gap-2 mt-2" th:if="${latestFolders != null}">
+                    <a th:each="folder : ${latestFolders}" th:href="@{/community/folder/{level}(level=${folder.levelNo})}" class="btn text-start text-white w-100 d-flex justify-content-between align-items-center py-2" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px;">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-folder-fill" style="color: #10b981;"></i> Level <span th:text="${folder.levelNo}"></span>
+                        </span>
+                        <span class="badge bg-success rounded-pill" th:text="${folder.count}"></span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Trending Discussions -->
+            <div class="px-3 mb-4">
+                <h6 class="text-uppercase" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 1px; font-weight: 700;">Trending Discussions</h6>
+                <div class="d-flex flex-column gap-2 mt-2" th:if="${trending != null}">
+                    <a th:each="tPost, iterStat : ${trending}" th:if="${iterStat.index < 4}" th:href="'/community/post/' + ${tPost.id}" class="text-decoration-none text-white d-flex align-items-center gap-2 p-2 rounded" style="background: rgba(255,255,255,0.02);">
+                        <i class="bi bi-fire text-danger"></i>
+                        <span class="text-truncate" style="font-size: 0.85rem;" th:text="${tPost.title}">Title</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Removed Logout per user request -->
+        </div>
+    </div>
 
     <!-- Post Creation Modal -->
     <style>

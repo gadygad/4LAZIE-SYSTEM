@@ -465,7 +465,12 @@
 
             const label = document.createElement('span');
             label.className = 'msg-label';
-            label.textContent = isSelf ? ADMIN_NAME : (msg.senderName || 'Student');
+            const baseName = isSelf ? ADMIN_NAME : (msg.senderName || 'Student');
+            if (msg.senderHasVerifiedBadge || isSelf) {
+                label.innerHTML = esc(baseName) + ' <i class="bi bi-patch-check-fill ms-1" style="color: #10b981; font-size: 0.9em;" title="Verified"></i>';
+            } else {
+                label.textContent = baseName;
+            }
             col.appendChild(label);
 
             const bubble = document.createElement('div');

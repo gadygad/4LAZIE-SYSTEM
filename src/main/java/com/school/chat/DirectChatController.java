@@ -116,6 +116,18 @@ public class DirectChatController {
             m.put("replyToMessageText",   msg.getReplyToMessageText());
             m.put("time",  msg.getTimestamp() != null ? fmt.format(msg.getTimestamp()) : "");
             m.put("date",  msg.getTimestamp() != null ? dateFmt.format(msg.getTimestamp()) : "");
+            
+            boolean hasBadge = false;
+            if ("ADMIN".equals(msg.getSenderId())) {
+                hasBadge = true;
+            } else if (userRepoStatic != null) {
+                User senderUser = userRepoStatic.findById(msg.getSenderId()).orElse(null);
+                if (senderUser != null && Boolean.TRUE.equals(senderUser.getHasVerifiedBadge())) {
+                    hasBadge = true;
+                }
+            }
+            m.put("senderHasVerifiedBadge", hasBadge);
+            
             boolean isSelf = "ADMIN".equals(viewerIdentifier)
                     ? "ADMIN".equals(msg.getSenderId())
                     : viewerIdentifier.equals(msg.getSenderId());
