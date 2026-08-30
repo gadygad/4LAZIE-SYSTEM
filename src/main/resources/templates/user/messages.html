@@ -1982,6 +1982,14 @@
             return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
+        // Top-level (not tucked inside PeerChat/GroupChat's own closures) so
+        // any inbox-list renderer on this page can show "name + green check"
+        // consistently with how the chat threads themselves already do it.
+        function verifiedNameBadgeHtml(name, hasBadge) {
+            if (!hasBadge) return escHtml(name);
+            return `${escHtml(name)} <i class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.85em;" title="Verified"></i>`;
+        }
+
         async function loadPeerInbox() {
             try {
                 const res = await fetch('/api/peer-chat/inbox', { credentials: 'same-origin' });
@@ -2004,7 +2012,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="inbox-name">${escHtml(c.otherUserName)}</span>
+                                <span class="inbox-name">${verifiedNameBadgeHtml(c.otherUserName, c.otherUserHasVerifiedBadge)}</span>
                                 <small class="inbox-time">${c.lastMessageTime || ''}</small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-1">
@@ -2030,7 +2038,7 @@
                         ${s.profilePicture ? `<img src="${s.profilePicture}" style="width:100%;height:100%;object-fit:cover;">` : (s.name || '?').charAt(0).toUpperCase()}
                     </div>
                     <div class="overflow-hidden flex-grow-1" style="cursor:pointer;" onclick="window.location.href='/students/${s.id}/profile'" title="View profile">
-                        <div class="fw-bold text-truncate" style="font-size:0.92rem;">${escHtml(s.name)}</div>
+                        <div class="fw-bold text-truncate" style="font-size:0.92rem;">${verifiedNameBadgeHtml(s.name, s.hasVerifiedBadge)}</div>
                         <div class="text-muted small text-truncate">${escHtml(s.courseProgram) || ''}${s.level ? ' · Level ' + escHtml(s.level) : ''}</div>
                     </div>
                     <button type="button" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"

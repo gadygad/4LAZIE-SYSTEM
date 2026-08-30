@@ -572,6 +572,7 @@ public class DirectChatController {
                 map.put("name", u.getName());
                 map.put("profilePicture", u.getProfilePicture());
                 map.put("courseProgram", u.getCourseProgram());
+                map.put("hasVerifiedBadge", Boolean.TRUE.equals(u.getHasVerifiedBadge()));
                 return map;
             })
             .collect(java.util.stream.Collectors.toList());
@@ -596,6 +597,7 @@ public class DirectChatController {
             resp.put("studentName", student.getName());
             resp.put("studentCourse", student.getCourseProgram());
             resp.put("studentPic", student.getProfilePicture());
+            resp.put("studentHasVerifiedBadge", Boolean.TRUE.equals(student.getHasVerifiedBadge()));
         }
         return ResponseEntity.ok(resp);
     }

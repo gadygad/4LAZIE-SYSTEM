@@ -72,6 +72,7 @@ public class PeerChatController {
             m.put("profilePicture", u.getProfilePicture());
             m.put("courseProgram", u.getCourseProgram());
             m.put("level", u.getLevel());
+            m.put("hasVerifiedBadge", Boolean.TRUE.equals(u.getHasVerifiedBadge()));
             result.add(m);
         }
         result.sort(Comparator.comparing(m -> String.valueOf(m.get("name"))));
@@ -99,6 +100,7 @@ public class PeerChatController {
             m.put("otherUserId", otherId);
             m.put("otherUserName", other != null ? other.getName() : chat.otherUserName(me.getId()));
             m.put("otherUserProfilePicture", other != null ? other.getProfilePicture() : null);
+            m.put("otherUserHasVerifiedBadge", other != null && Boolean.TRUE.equals(other.getHasVerifiedBadge()));
             m.put("lastMessage", last != null ? last.getMessageText() : "");
             m.put("lastMessageTime", last != null && last.getTimestamp() != null ? fmt.format(last.getTimestamp()) : "");
             m.put("hasUnread", chat.isUser1(me.getId()) ? chat.isHasUnreadForUser1() : chat.isHasUnreadForUser2());

@@ -377,7 +377,10 @@
 
                 <div style="flex:1;overflow:hidden;">
                     <div style="display:flex;justify-content:space-between;align-items:center; width: 100%;">
-                        <span class="inbox-name" style="font-weight:700;font-size:0.95rem;color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 70%;" th:text="${cv.chat.studentName}">Student</span>
+                        <span class="inbox-name" style="font-weight:700;font-size:0.95rem;color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 70%;">
+                            <span th:text="${cv.chat.studentName}">Student</span>
+                            <i th:if="${cv.student != null and cv.student.hasVerifiedBadge}" class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.85em;" title="Verified"></i>
+                        </span>
                         <small class="inbox-time" style="font-size:0.75rem;color:#94a3b8;flex-shrink:0;margin-left:6px; white-space:nowrap;" th:text="${cv.lastMsgTime}">Time</small>
                     </div>
                     <p class="inbox-msg-preview" style="margin:4px 0 0;font-size:0.85rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
@@ -1079,10 +1082,11 @@
                                 ? `<img src="${pic}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`
                                 : `<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;">${initial}</div>`;
                             
+                            const badgeHTML = student.hasVerifiedBadge ? ' <i class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.85em;" title="Verified"></i>' : '';
                             item.innerHTML = `
                                 ${avHTML}
                                 <div style="flex:1;overflow:hidden;">
-                                    <div style="font-size:0.85rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${student.name}</div>
+                                    <div style="font-size:0.85rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${student.name}${badgeHTML}</div>
                                     <div style="font-size:0.65rem;color:#64748b;">${course}</div>
                                 </div>
                             `;
@@ -1122,6 +1126,7 @@
                 
                 const avStyle = actualPic ? 'background:transparent;' : 'background:linear-gradient(135deg,#10b981,#059669);';
                 const avContent = actualPic ? `<img src="${actualPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : `<span>${initial}</span>`;
+                const badgeHTML = data.studentHasVerifiedBadge ? ' <i class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.85em;" title="Verified"></i>' : '';
 
                 const newItemHTML = `
                     <div class="inbox-item" id="inbox-${chatId}" 
@@ -1134,7 +1139,7 @@
                         <div class="av-ring" style="${avStyle}">${avContent}</div>
                         <div style="flex:1;overflow:hidden;">
                             <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <span style="font-weight:700;font-size:0.95rem;color:#1e293b;">${data.studentName}</span>
+                                <span style="font-weight:700;font-size:0.95rem;color:#1e293b;">${data.studentName}${badgeHTML}</span>
                                 <small style="font-size:0.75rem;color:#94a3b8;flex-shrink:0;margin-left:6px;">Now</small>
                             </div>
                             <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Started new chat</p>
