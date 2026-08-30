@@ -362,6 +362,7 @@
                  th:data-student-course="${cv.student != null and cv.student.courseProgram != null ? cv.student.courseProgram : ''}"
                  th:data-student-pic="${cv.student != null and cv.student.profilePicture != null ? cv.student.profilePicture : ''}"
                  th:data-student-initial="${cv.student != null ? #strings.substring(cv.student.name,0,1).toUpperCase() : 'S'}"
+                 th:data-student-verified="${cv.student != null and cv.student.hasVerifiedBadge}"
                  th:onclick="'openAdminChat(this)'"
             >
                 <!-- Avatar -->
@@ -856,6 +857,7 @@
         const course      = el.dataset.studentCourse || '';
         const pic         = el.dataset.studentPic || '';
         const initial     = el.dataset.studentInitial || 'S';
+        const isVerified  = el.dataset.studentVerified === 'true';
         currentChatId = chatId;
 
         // Highlight
@@ -877,7 +879,7 @@
                 avatarEl.style.background = 'linear-gradient(135deg,#10b981,#059669)';
             }
         }
-        document.getElementById('adminChatName').textContent = name;
+        document.getElementById('adminChatName').innerHTML = esc(name) + (isVerified ? ' <i class="bi bi-patch-check-fill ms-1" style="color:#10b981;font-size:0.8em;" title="Verified"></i>' : '');
         
         document.getElementById('adminChatDefault').style.display = 'none';
         
@@ -1135,6 +1137,7 @@
                          data-student-course="${data.studentCourse || ''}"
                          data-student-pic="${data.studentPic || ''}"
                          data-student-initial="${initial}"
+                         data-student-verified="${!!data.studentHasVerifiedBadge}"
                          onclick="openAdminChat(this)">
                         <div class="av-ring" style="${avStyle}">${avContent}</div>
                         <div style="flex:1;overflow:hidden;">
