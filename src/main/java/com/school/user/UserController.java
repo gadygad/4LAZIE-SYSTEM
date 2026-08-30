@@ -175,8 +175,7 @@ public class UserController {
         }
 
         User target = userRepository.findById(id).orElse(null);
-        if (target == null || target.getRole() != com.school.auth.Role.STUDENT
-                || Boolean.TRUE.equals(target.getIsSuspended())) {
+        if (target == null || Boolean.TRUE.equals(target.getIsSuspended())) {
             return "redirect:/messages";
         }
 
@@ -293,8 +292,19 @@ public class UserController {
             }
         }
         
-        // Update mutable fields
-        sessionUser.setName(formUser.getName());
+        // Update mutable fields - Enforce 4LAZIE system account properties
+        if ("kilingepazasauti@gmail.com".equalsIgnoreCase(sessionUser.getEmail())) {
+            sessionUser.setName("4LAZIE");
+            // Ensure photos remain system logos
+            sessionUser.setProfilePicture("../images/icon-512.png");
+            sessionUser.setCoverPhoto("../images/4lazie-cover.svg");
+            // Clear any uploads to prevent overriding
+            formUser.setFile(null);
+            formUser.setCoverPhotoFile(null);
+        } else {
+            sessionUser.setName(formUser.getName());
+        }
+        
         sessionUser.setEmail(formUser.getEmail());
         
         MultipartFile file = formUser.getFile();

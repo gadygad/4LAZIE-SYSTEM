@@ -31,6 +31,115 @@
             animation: none !important;
             transform: translateY(-100%) !important;
         }
+
+        /* Hide caret on nav dropdowns */
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        /* Magical Notification Dropdown Styles */
+        /* Magical Notification Dropdown Styles */
+        .noti-magic-dropdown {
+            width: 350px;
+            padding: 0;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.05) inset;
+            transform-origin: top center;
+            z-index: 9999 !important;
+            display: none;
+            opacity: 0;
+            position: absolute !important;
+            margin-top: 15px !important;
+        }
+
+        /* Upward arrow caret to connect to the button */
+        .noti-magic-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -7px;
+            right: 18px;
+            width: 14px;
+            height: 14px;
+            background: #1e293b; /* Matches the dropdown background */
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            z-index: -1;
+        }
+
+        /* Ensure header has rounded corners since we removed overflow: hidden */
+        .noti-magic-header {
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .noti-magic-dropdown.show {
+            display: block;
+            animation: notiDropdownSlide 0.3s ease-out forwards !important;
+        }
+
+        @keyframes notiDropdownSlide {
+            0% { opacity: 0; margin-top: 5px; }
+            100% { opacity: 1; margin-top: 15px; }
+        }
+
+        .noti-magic-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .noti-magic-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.25s ease;
+        }
+        .noti-magic-item:last-child {
+            border-bottom: none;
+        }
+        .noti-magic-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(6px);
+        }
+
+        .noti-magic-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .noti-bg-danger { background: linear-gradient(135deg, #f43f5e, #e11d48); color: white; }
+        .noti-bg-info { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; }
+        .noti-bg-success { background: linear-gradient(135deg, #34d399, #059669); color: white; }
+
+        .noti-magic-text {
+            color: #f1f5f9;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 0;
+            font-weight: 500;
+        }
+        .noti-magic-time {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body style="background: #1f2937 !important; min-height: 100vh; display: flex; flex-direction: column;">
@@ -65,14 +174,75 @@
                 </button>
 
                 <!-- Messages -->
-                <a th:if="${session.user != null}" href="/messages" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;" title="Messages">
-                    <i class="bi bi-chat-dots-fill" style="font-size: 1.1rem;"></i>
-                </a>
+                <div class="dropdown" th:if="${session.user != null}">
+                    <a href="#" class="d-flex align-items-center justify-content-center text-white text-decoration-none position-relative dropdown-toggle border-0" id="msgDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-display="static" aria-expanded="false" style="width: 42px; height: 42px; border-radius: 50%; background: #0d9468; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;" title="Messages">
+                        <i class="bi bi-chat-dots-fill" style="font-size: 1.1rem;"></i>
+                        <span th:if="${unreadMessageCount != null && unreadMessageCount > 0}" th:text="${unreadMessageCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.25em 0.5em; border: 2px solid #0f172a;">
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end noti-magic-dropdown" aria-labelledby="msgDropdown" style="margin-top: 15px;">
+                        <div class="noti-magic-header">
+                            <h6 class="mb-0 text-white fw-bold">Messages</h6>
+                            <a href="/messages" class="text-white text-decoration-none" style="font-size: 0.85rem;">View All</a>
+                        </div>
+                        
+                        <!-- Dynamic Messages -->
+                        <div th:if="${#lists.isEmpty(latestMessages)}" class="text-center p-4 text-white-50" style="font-size: 0.9rem;">
+                            No messages yet
+                        </div>
+                        <div th:if="${not #lists.isEmpty(latestMessages)}" class="custom-scroll" style="max-height: 350px; overflow-y: auto;">
+                            <a th:each="msg : ${latestMessages}" th:href="${msg.link}" class="noti-magic-item" th:style="${msg.unread} ? 'background: rgba(255,255,255,0.05);' : ''">
+                                <div class="noti-magic-icon-wrapper" style="overflow: hidden; padding: 0; border: none; background: transparent;">
+                                    <img th:if="${#strings.containsIgnoreCase(msg.senderName, 'Admin')}" src="/images/logo.png" class="rounded-circle" style="width: 100%; height: 100%; object-fit: contain; background: #ffffff; border: 1px solid #10b981; padding: 2px;">
+                                    
+                                    <img th:if="${not #strings.containsIgnoreCase(msg.senderName, 'Admin') and not #strings.isEmpty(msg.avatar)}" th:src="${msg.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    <img th:if="${not #strings.containsIgnoreCase(msg.senderName, 'Admin') and #strings.isEmpty(msg.avatar)}" th:src="'https://ui-avatars.com/api/?name=' + ${#strings.replace(msg.senderName == 'You' ? session.user.name : msg.senderName, ' ', '+')} + '&background=0d9468&color=fff&size=100'" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                </div>
+                                <div>
+                                    <p class="noti-magic-text d-flex align-items-center" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 2px; line-height: 1.2;">
+                                        <span th:text="${#strings.containsIgnoreCase(msg.senderName, 'Admin') ? '4LAZIE' : msg.senderName}">Sender Name</span>
+                                        <i th:if="${#strings.containsIgnoreCase(msg.senderName, 'Admin')}" class="bi bi-patch-check-fill ms-1" style="font-size: 0.8rem; color: #10b981;" title="Verified Admin"></i>
+                                    </p>
+                                    <p class="noti-magic-text" style="color: rgba(255,255,255,0.7); font-size: 0.75rem; line-height: 1.2; margin-bottom: 2px;" th:text="${msg.text}">Message text</p>
+                                    <div class="noti-magic-time" style="font-size: 0.65rem;" th:text="${#temporals.format(msg.time, 'dd MMM, HH:mm')}">Time</div>
+                                </div>
+                                <span th:if="${msg.unread}" class="ms-auto badge bg-danger rounded-pill" style="width: 8px; height: 8px; padding: 0;">&nbsp;</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Notifications -->
-                <a th:if="${session.user != null}" href="/notifications" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;" title="Notifications">
-                    <i class="bi bi-bell-fill" style="font-size: 1.1rem;"></i>
-                </a>
+                <div class="dropdown" th:if="${session.user != null}">
+                    <a href="#" class="d-flex align-items-center justify-content-center text-white text-decoration-none position-relative dropdown-toggle border-0" id="notiDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-display="static" aria-expanded="false" style="width: 42px; height: 42px; border-radius: 50%; background: #0d9468; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;" title="Notifications">
+                        <i class="bi bi-bell-fill" style="font-size: 1.1rem;"></i>
+                        <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.25em 0.5em; border: 2px solid #0f172a;">
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end noti-magic-dropdown" aria-labelledby="notiDropdown" style="margin-top: 15px;">
+                        <div class="noti-magic-header">
+                            <h6 class="mb-0 text-white fw-bold">Notifications</h6>
+                            <a href="/notifications" class="text-white text-decoration-none" style="font-size: 0.85rem;">View All</a>
+                        </div>
+                        
+                        <!-- Dynamic Notifications -->
+                        <div th:if="${#lists.isEmpty(notifications)}" class="text-center p-4 text-white-50" style="font-size: 0.9rem;">
+                            No new notifications
+                        </div>
+                        <div th:if="${not #lists.isEmpty(notifications)}" class="custom-scroll" style="max-height: 350px; overflow-y: auto;">
+                            <a th:each="noti : ${notifications}" th:href="@{'/api/notifications/click/' + ${noti.id}}" class="noti-magic-item" th:style="${!noti.read} ? 'background: rgba(255,255,255,0.05);' : ''">
+                                <div class="noti-magic-icon-wrapper" th:classappend="${#strings.containsIgnoreCase(noti.title, 'Message') ? 'noti-bg-danger' : 'noti-bg-success'}">
+                                    <i th:class="${#strings.containsIgnoreCase(noti.title, 'Message') ? 'bi bi-envelope-fill' : (#strings.containsIgnoreCase(noti.title, 'Download') ? 'bi bi-download' : (#strings.containsIgnoreCase(noti.title, 'Like') ? 'bi bi-heart-fill' : 'bi bi-chat-dots-fill'))}"></i>
+                                </div>
+                                <div>
+                                    <p class="noti-magic-text" th:text="${noti.title}"></p>
+                                    <div class="noti-magic-time" th:text="${#temporals.format(noti.createdAt, 'dd MMM, HH:mm')}"></div>
+                                </div>
+                                <span th:if="${!noti.read}" class="ms-auto badge bg-danger rounded-pill" style="width: 8px; height: 8px; padding: 0;">&nbsp;</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Profile / Login Icon -->
                 <!-- Logged in: show profile picture → goes to /profile -->
@@ -95,67 +265,52 @@
                              style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
                     </a>
                     
-                    <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2 profile-dropdown" aria-labelledby="forumProfileDropdown" style="border-radius: 24px; min-width: 220px; background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.1); transform-origin: top right;">
-                        <li class="px-3 py-2 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                            <p class="mb-0 fw-bold position-relative text-truncate" style="font-size: 1rem; font-family: 'Outfit', sans-serif; letter-spacing: -0.3px; color: #fff !important; max-width: 180px;" th:text="${session.user.name}">John Doe</p>
-                            <p class="mb-0 fw-bold position-relative" th:style="'font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: ' + (${session.user.role != null} ? (${session.user.role.name() == 'SUPER_ADMIN' or session.user.role.name() == 'ADMIN'} ? '#ef4444' : (${session.user.role.name() == 'CLASS_REPRESENTATIVE' or session.user.role.name() == 'LECTURE'} ? '#3b82f6' : '#10b981')) : '#10b981') + ' !important;'" th:text="${session.user.role != null ? (session.user.role.name() == 'SUPER_ADMIN' ? 'SUPER ADMIN' : (session.user.role.name() == 'CLASS_REPRESENTATIVE' ? 'CR' : session.user.role.name())) : 'STUDENT'}">STUDENT</p>
-                        </li>
+                    <div class="dropdown-menu dropdown-menu-end noti-magic-dropdown" aria-labelledby="forumProfileDropdown" style="width: 230px !important;">
+                        <div class="noti-magic-header" style="flex-direction: column; align-items: flex-start; padding: 14px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                            <h6 class="mb-1 text-white fw-bold text-truncate" style="width: 100%; font-size: 0.95rem; letter-spacing: -0.3px;" th:text="${session.user.name}">John Doe</h6>
+                            <span th:style="'font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: ' + (${session.user.role != null} ? (${session.user.role.name() == 'SUPER_ADMIN' or session.user.role.name() == 'ADMIN'} ? '#ef4444' : (${session.user.role.name() == 'CLASS_REPRESENTATIVE' or session.user.role.name() == 'LECTURE'} ? '#3b82f6' : '#10b981')) : '#10b981') + ' !important;'" th:text="${session.user.role != null ? (session.user.role.name() == 'SUPER_ADMIN' ? 'SUPER ADMIN' : (session.user.role.name() == 'CLASS_REPRESENTATIVE' ? 'CR' : session.user.role.name())) : 'STUDENT'}">STUDENT</span>
+                        </div>
                         
-                        <style>
-                            .forum-dropdown-item {
-                                transition: all 0.3s ease !important;
-                                border-radius: 14px;
-                                margin-bottom: 4px;
-                                display: flex;
-                                align-items: center;
-                                color: #d1d5db !important;
-                            }
-                            .forum-dropdown-item:hover {
-                                background: rgba(16, 185, 129, 0.15) !important;
-                                transform: translateX(8px);
-                                color: #fff !important;
-                                font-weight: 700 !important;
-                                border-left: 3px solid #10b981;
-                            }
-                            .icon-box-f {
-                                width: 36px; height: 36px;
-                                border-radius: 10px;
-                                display: flex; align-items: center; justify-content: center;
-                                background: rgba(255,255,255,0.05); color: #9ca3af;
-                                transition: all 0.3s ease;
-                            }
-                            .forum-dropdown-item:hover .icon-box-f {
-                                background: rgba(16, 185, 129, 0.25); color: #10b981;
-                                transform: scale(1.1);
-                            }
-                        </style>
-
-                        <li th:if="${session.user.role == 'ADMIN'}">
-                            <a class="dropdown-item py-2 px-3 fw-medium forum-dropdown-item" href="/upload" style="font-size: 0.95rem;">
-                                <div class="icon-box-f me-3"><i class="bi bi-speedometer2"></i></div>
-                                Admin Dashboard
+                        <div class="custom-scroll" style="padding: 6px 0;">
+                            <a th:if="${session.user.role == 'ADMIN'}" href="/upload" class="noti-magic-item" style="padding: 8px 16px; gap: 10px;">
+                                <div class="noti-magic-icon-wrapper noti-bg-success" style="width: 32px; height: 32px; min-width: 32px; font-size: 1rem; border-radius: 10px;">
+                                    <i class="bi bi-speedometer2"></i>
+                                </div>
+                                <div>
+                                    <p class="noti-magic-text" style="font-size: 0.85rem; font-weight: 600;">Admin Dashboard</p>
+                                </div>
                             </a>
-                        </li>
-                        <li th:unless="${session.user.role == 'ADMIN'}">
-                            <a class="dropdown-item py-2 px-3 fw-medium forum-dropdown-item" href="/dashboard" style="font-size: 0.95rem;">
-                                <div class="icon-box-f me-3"><i class="bi bi-grid-1x2-fill"></i></div>
-                                Dashboard
+                            
+                            <a th:unless="${session.user.role == 'ADMIN'}" href="/dashboard" class="noti-magic-item" style="padding: 8px 16px; gap: 10px;">
+                                <div class="noti-magic-icon-wrapper noti-bg-success" style="width: 32px; height: 32px; min-width: 32px; font-size: 1rem; border-radius: 10px;">
+                                    <i class="bi bi-grid-1x2-fill"></i>
+                                </div>
+                                <div>
+                                    <p class="noti-magic-text" style="font-size: 0.85rem; font-weight: 600;">Dashboard</p>
+                                </div>
                             </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item py-2 px-3 fw-medium forum-dropdown-item" href="/profile" style="font-size: 0.95rem;">
-                                <div class="icon-box-f me-3"><i class="bi bi-person-fill"></i></div>
-                                My Profile
+                            
+                            <a href="/profile" class="noti-magic-item" style="padding: 8px 16px; gap: 10px;">
+                                <div class="noti-magic-icon-wrapper noti-bg-success" style="width: 32px; height: 32px; min-width: 32px; font-size: 1rem; border-radius: 10px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div>
+                                    <p class="noti-magic-text" style="font-size: 0.85rem; font-weight: 600;">My Profile</p>
+                                </div>
                             </a>
-                        </li>
-                        <li><hr class="dropdown-divider my-2" style="border-color: rgba(255, 255, 255, 0.1);"></li>
-                        <li>
-                            <a class="dropdown-item py-2 px-3 mb-1 fw-bold text-danger" href="/logout" style="font-size: 0.95rem; border-radius: 14px; transition: all 0.3s ease; display: flex; align-items: center;" onmouseover="this.style.background='rgba(239, 68, 68, 0.15)'; this.style.borderLeft='3px solid #ef4444'; this.style.transform='translateX(5px)';" onmouseout="this.style.background='transparent'; this.style.borderLeft='none'; this.style.transform='none';">
-                                <div class="icon-box-f me-3" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;"><i class="bi bi-box-arrow-right"></i></div>
-                                Logout
+                            
+                            <div style="height: 1px; background: rgba(255, 255, 255, 0.08); margin: 6px 16px;"></div>
+                            
+                            <a href="/logout" class="noti-magic-item" style="padding: 8px 16px; gap: 10px;">
+                                <div class="noti-magic-icon-wrapper noti-bg-danger" style="width: 32px; height: 32px; min-width: 32px; font-size: 1rem; border-radius: 10px;">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </div>
+                                <div>
+                                    <p class="noti-magic-text text-danger" style="font-size: 0.85rem; font-weight: 600;">Logout</p>
+                                </div>
                             </a>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Not logged in: show generic person icon → goes to /login -->
@@ -183,12 +338,98 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
-    <main class="w-100 px-0 mx-auto flex-grow-1 position-relative z-2" style="max-width: 800px; padding-top: 85px; padding-bottom: 100px !important;">
+    <!-- Layout Wrapper for Sidebar & Feed -->
+    <div class="container-fluid px-0 px-md-4" style="max-width: 1250px; margin-top: 85px; display: flex; justify-content: center; gap: 24px;">
         
-        <!-- Post Creation Box Removed - Now in a Modal -->
-        <!-- Posts Feed -->
-        <div class="d-flex flex-column">
+        <!-- Left Sidebar (Trending Discussions) - Visible only on large screens -->
+        <aside class="d-none d-lg-block position-relative z-1" style="width: 280px; flex-shrink: 0;">
+            <div class="sticky-top" style="top: 100px; padding-bottom: 100px;">
+                
+                <!-- Premium Trending Component -->
+                <div class="rounded-4 p-3 mb-4" style="background: rgba(31, 41, 55, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <div class="mb-3 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+                        <h6 class="m-0 fw-bold" style="color: #f3f4f6; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;">TRENDING DISCUSSIONS</h6>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-1" th:if="${trending != null && !trending.isEmpty()}">
+                        
+                        <!-- Top 3 Trending -->
+                        <a th:each="tPost, iterStat : ${trending}" th:if="${iterStat.index < 3}" th:href="'/community/post/' + ${tPost.id}" class="text-decoration-none py-2 px-1 rounded-3 trending-item d-flex flex-column" style="transition: all 0.2s ease; border-left: 2px solid transparent;" onmouseover="this.style.borderLeftColor='#10b981'" onmouseout="this.style.borderLeftColor='transparent'">
+                            <h6 class="mb-1 fw-semibold text-truncate-2" style="color: #10b981; font-size: 13px; line-height: 1.4; letter-spacing: 0.2px;" th:text="${tPost.title}">Title</h6>
+                            <div class="d-flex justify-content-between align-items-center w-100 mt-1" style="font-size: 11px; color: #9ca3af; gap: 8px;">
+                                <div class="d-flex align-items-center gap-1" style="min-width: 0; flex-grow: 1;">
+                                    <img th:if="${tPost.adminPost}" src="/images/logo.png" class="rounded-circle flex-shrink-0" style="width: 18px; height: 18px; object-fit: contain; background: #ffffff; border: 1px solid #4ade80; padding: 2px;">
+                                    <img th:if="${!tPost.adminPost && tPost.author != null && tPost.author.profilePicture != null}" th:src="${tPost.author.profilePicture}" class="rounded-circle flex-shrink-0" style="width: 18px; height: 18px; object-fit: cover;">
+                                    <div th:if="${!tPost.adminPost && (tPost.author == null || tPost.author.profilePicture == null)}" class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width: 18px; height: 18px; background: linear-gradient(135deg, #10b981, #059669); font-size: 0.6rem;">
+                                        <span th:text="${tPost.author != null ? #strings.substring(tPost.author.name,0,1).toUpperCase() : 'U'}">U</span>
+                                    </div>
+                                    <span th:if="${tPost.adminPost}" class="text-truncate" style="color: #f3f4f6;">4LAZIE</span>
+                                    <i th:if="${tPost.adminPost}" class="bi bi-patch-check-fill flex-shrink-0" style="color: #4ade80; font-size: 0.9em;"></i>
+                                    <span th:if="${!tPost.adminPost}" class="text-truncate" th:style="${tPost.author != null && tPost.author.hasVerifiedBadge ? 'color: #4ade80;' : 'color: rgba(255,255,255,0.95);'}" th:text="${tPost.author != null ? tPost.author.name : 'Unknown'}"></span>
+                                    <i th:if="${!tPost.adminPost && tPost.author != null && tPost.author.hasVerifiedBadge}" class="bi bi-patch-check-fill flex-shrink-0" style="color: #4ade80; font-size: 0.9em;"></i>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span><i class="bi bi-eye"></i> <span th:text="${tPost.viewsCount}">0</span></span>
+                                    <span class="ms-1"><i class="bi bi-chat"></i> <span th:text="${tPost.commentsCount}">0</span></span>
+                                    <span class="ms-1"><i class="bi bi-heart"></i> <span th:text="${tPost.likesCount}">0</span></span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- More Trending (Collapsed) -->
+                        <div class="collapse" id="moreTrendingDiscussions" th:if="${trending.size() > 3}">
+                            <div class="d-flex flex-column gap-1 mt-1 border-top pt-2" style="border-color: rgba(255,255,255,0.05) !important;">
+                                <a th:each="tPost, iterStat : ${trending}" th:if="${iterStat.index >= 3}" th:href="'/community/post/' + ${tPost.id}" class="text-decoration-none py-2 px-1 rounded-3 trending-item d-flex flex-column" style="transition: all 0.2s ease; border-left: 2px solid transparent;" onmouseover="this.style.borderLeftColor='#10b981'" onmouseout="this.style.borderLeftColor='transparent'">
+                                    <h6 class="mb-1 fw-semibold text-truncate-2" style="color: #10b981; font-size: 13px; line-height: 1.4; letter-spacing: 0.2px;" th:text="${tPost.title}">Title</h6>
+                                    <div class="d-flex justify-content-between align-items-center w-100 mt-1" style="font-size: 11px; color: #9ca3af; gap: 8px;">
+                                        <div class="d-flex align-items-center gap-1" style="min-width: 0; flex-grow: 1;">
+                                            <img th:if="${tPost.adminPost}" src="/images/logo.png" class="rounded-circle flex-shrink-0" style="width: 18px; height: 18px; object-fit: contain; background: #ffffff; border: 1px solid #4ade80; padding: 2px;">
+                                            <img th:if="${!tPost.adminPost && tPost.author != null && tPost.author.profilePicture != null}" th:src="${tPost.author.profilePicture}" class="rounded-circle flex-shrink-0" style="width: 18px; height: 18px; object-fit: cover;">
+                                            <div th:if="${!tPost.adminPost && (tPost.author == null || tPost.author.profilePicture == null)}" class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width: 18px; height: 18px; background: linear-gradient(135deg, #10b981, #059669); font-size: 0.6rem;">
+                                                <span th:text="${tPost.author != null ? #strings.substring(tPost.author.name,0,1).toUpperCase() : 'U'}">U</span>
+                                            </div>
+                                            <span th:if="${tPost.adminPost}" class="text-truncate" style="color: #f3f4f6;">4LAZIE</span>
+                                            <i th:if="${tPost.adminPost}" class="bi bi-patch-check-fill flex-shrink-0" style="color: #4ade80; font-size: 0.9em;"></i>
+                                            <span th:if="${!tPost.adminPost}" class="text-truncate" th:style="${tPost.author != null && tPost.author.hasVerifiedBadge ? 'color: #4ade80;' : 'color: rgba(255,255,255,0.95);'}" th:text="${tPost.author != null ? tPost.author.name : 'Unknown'}"></span>
+                                            <i th:if="${!tPost.adminPost && tPost.author != null && tPost.author.hasVerifiedBadge}" class="bi bi-patch-check-fill flex-shrink-0" style="color: #4ade80; font-size: 0.9em;"></i>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <span><i class="bi bi-eye"></i> <span th:text="${tPost.viewsCount}">0</span></span>
+                                            <span class="ms-1"><i class="bi bi-chat"></i> <span th:text="${tPost.commentsCount}">0</span></span>
+                                            <span class="ms-1"><i class="bi bi-heart"></i> <span th:text="${tPost.likesCount}">0</span></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Toggle Button -->
+                        <button class="btn btn-sm w-100 mt-2 d-flex justify-content-center align-items-center gap-2" 
+                                type="button" data-bs-toggle="collapse" data-bs-target="#moreTrendingDiscussions" 
+                                aria-expanded="false" aria-controls="moreTrendingDiscussions"
+                                style="background: rgba(255,255,255,0.03); color: #9ca3af; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; font-size: 11px; padding: 6px 0; transition: all 0.3s ease;"
+                                onclick="this.classList.toggle('expanded'); const i = this.querySelector('i'); const s = this.querySelector('span'); if(this.classList.contains('expanded')){ i.classList.replace('bi-chevron-down','bi-chevron-up'); s.textContent='Show Less'; } else { i.classList.replace('bi-chevron-up','bi-chevron-down'); s.textContent='View More Trending'; }"
+                                onmouseover="this.style.background='rgba(255,255,255,0.08)'; this.style.color='#f3f4f6';"
+                                onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.color='#9ca3af';"
+                                th:if="${trending.size() > 3}">
+                            <span>View More Trending</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-2 text-center py-4" th:if="${trending == null || trending.isEmpty()}">
+                        <span style="font-size: 13px; color: rgba(255,255,255,0.4);">No trending discussions yet.</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="px-0 position-relative z-2 w-100" style="max-width: 680px; padding-bottom: 100px !important;">
+            
+            <!-- Post Creation Box Removed - Now in a Modal -->
+            <!-- Posts Feed -->
+            <div class="d-flex flex-column">
             <!-- Empty state -->
             <div th:if="${posts == null || posts.isEmpty()}" class="text-center p-5 rounded-4 text-white mx-3" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2);">
                 <i class="bi bi-chat-square-text" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -200,7 +441,11 @@
             <div style="padding: 16px;">
                 <div class="d-flex">
                     <!-- ── AVATAR (role-based) ── -->
-                    <div class="me-3 position-relative" style="flex-shrink: 0;">
+                    <a class="me-3 position-relative d-block text-decoration-none" 
+                       style="flex-shrink: 0; transition: transform 0.2s;"
+                       onmouseover="if(this.getAttribute('href')) this.style.transform='scale(1.05)'" 
+                       onmouseout="if(this.getAttribute('href')) this.style.transform='scale(1)'"
+                       th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null">
 
                         <!-- ADMIN / SUPER_ADMIN → 4LAZIE logo -->
                         <img th:if="${post.adminPost}"
@@ -240,7 +485,7 @@
                              style="width: 42px; height: 42px; background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.3); color: #fff; font-size: 1.1rem;">
                             <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'U'}">U</span>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- ── CONTENT RIGHT SIDE ── -->
                     <div style="flex-grow: 1; min-width: 0;">
@@ -248,15 +493,22 @@
                         <div class="d-flex align-items-center mb-2" style="flex-wrap: wrap; gap: 4px;">
 
                             <!-- ADMIN / SUPER_ADMIN → "4LAZIE" + green verified -->
-                            <span th:if="${post.adminPost}" class="fw-bold" style="font-size: 13.5px; color: #fff;">4LAZIE</span>
+                            <a th:if="${post.adminPost}" 
+                               th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
+                               class="fw-bold text-decoration-none" 
+                               style="font-size: 13.5px; color: #fff; transition: opacity 0.2s;"
+                               onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" 
+                               onmouseout="if(this.getAttribute('href')) this.style.opacity='1'">4LAZIE</a>
                             <span th:if="${post.adminPost}" style="color: #4ade80; font-size: 13px;" title="Verified Official">
                                 <i class="bi bi-patch-check-fill"></i>
                             </span>
 
                             <!-- LECTURE → real name + gold badge -->
-                            <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
-                                  class="fw-bold" style="font-size: 13.5px; color: #fde68a;"
-                                  th:text="${post.author != null ? post.author.name : 'Lecturer'}">Lecturer</span>
+                            <a th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
+                                  th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
+                                  class="fw-bold text-decoration-none" style="font-size: 13.5px; color: #fde68a; transition: opacity 0.2s;"
+                                  onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" onmouseout="if(this.getAttribute('href')) this.style.opacity='1'"
+                                  th:text="${post.author != null ? post.author.name : 'Lecturer'}">Lecturer</a>
                             <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
                                   class="d-inline-flex align-items-center px-1 rounded"
                                   style="background: rgba(245,158,11,0.2); color: #f59e0b; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
@@ -264,9 +516,11 @@
                             </span>
 
                             <!-- CLASS_REPRESENTATIVE → real name + blue badge -->
-                            <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
-                                  class="fw-bold" style="font-size: 13.5px; color: #bfdbfe;"
-                                  th:text="${post.author != null ? post.author.name : 'CR'}">CR</span>
+                            <a th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
+                                  th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
+                                  class="fw-bold text-decoration-none" style="font-size: 13.5px; color: #bfdbfe; transition: opacity 0.2s;"
+                                  onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" onmouseout="if(this.getAttribute('href')) this.style.opacity='1'"
+                                  th:text="${post.author != null ? post.author.name : 'CR'}">CR</a>
                             <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
                                   class="d-inline-flex align-items-center px-1 rounded"
                                   style="background: rgba(96,165,250,0.2); color: #60a5fa; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
@@ -274,18 +528,33 @@
                             </span>
 
                             <!-- STUDENT → real name; green + checkmark if community-verified -->
-                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}"
-                                  class="fw-bold"
-                                  th:style="'font-size: 13.5px; color: ' + (${post.author != null and post.author.hasVerifiedBadge} ? '#4ade80' : 'rgba(255,255,255,0.95)') + ';'"
-                                  th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</span>
+                            <a th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}"
+                                  th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
+                                  class="fw-bold text-decoration-none"
+                                  th:style="'font-size: 13.5px; transition: opacity 0.2s; color: ' + (${post.author != null and post.author.hasVerifiedBadge} ? '#4ade80' : 'rgba(255,255,255,0.95)') + ';'"
+                                  onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" onmouseout="if(this.getAttribute('href')) this.style.opacity='1'"
+                                  th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</a>
                             <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.hasVerifiedBadge}"
                                   style="color: #4ade80; font-size: 13px;" title="Verified">
                                 <i class="bi bi-patch-check-fill"></i>
                             </span>
 
-                            <span style="color: rgba(255,255,255,0.4); font-size: 12px;">·</span>
+                            <span style="color: rgba(255,255,255,0.4); font-size: 12px; margin: 0 4px;">·</span>
                             <span style="color: rgba(255,255,255,0.6); font-size: 12px;"
                                   th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm:ss')}">Date</span>
+                            <!-- Connect Button -->
+                            <th:block th:if="${user != null and post.author != null and !#strings.equals(user.id, post.author.id)}">
+                                <span style="color: rgba(255,255,255,0.4); font-size: 12px; margin: 0 4px;">·</span>
+                                <button type="button" 
+                                        th:data-author-id="${post.author.id}"
+                                        class="btn btn-sm p-0 text-decoration-none connect-btn"
+                                        style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.2s; border: none; background: transparent; outline: none;"
+                                        th:styleappend="${user.following != null and user.following.contains(post.author.id)} ? 'color: #10b981;' : 'color: #9ca3af;'"
+                                        onclick="togglePostConnection(this)">
+                                    <i th:class="${user.following != null and user.following.contains(post.author.id)} ? 'bi bi-person-check-fill me-1' : 'bi bi-person-plus-fill me-1'"></i>
+                                    <span class="connect-text" th:text="${user.following != null and user.following.contains(post.author.id)} ? 'Connected' : 'Connect'">Connect</span>
+                                </button>
+                            </th:block>
                         </div>
 
                         
@@ -394,7 +663,15 @@
 
         </div>
 
-    </main>
+        </main>
+        
+        <!-- Empty Right Spacer (keeps the main feed perfectly centered) -->
+        <div class="d-none d-lg-block" style="width: 280px; flex-shrink: 0;"></div>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <style>
         html {
@@ -436,7 +713,7 @@
     </button>
 
     <!-- Floating Action Button (FAB) -->
-    <button type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #0d9468; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <button id="createPostFab" type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #0d9468; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
         <i class="bi bi-plus-lg" style="font-size: 1.8rem;"></i>
     </button>
 
@@ -508,7 +785,19 @@
     </div>
 
     <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Confetti.js for celebration effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl)
+            });
+        });
+    </script>
     <script th:src="@{/js/main.js}"></script>
     <script>
         // Expandable search — the navbar only ever holds the icon; clicking
@@ -553,13 +842,29 @@
             }
             lastScrollTopY = window.scrollY;
 
-            // Scroll to Top Button
+            // Scroll to Top Button and Footer Overlap
             if (window.scrollY > 300) {
                 scrollToTopBtn.style.opacity = '1';
                 scrollToTopBtn.style.visibility = 'visible';
             } else {
                 scrollToTopBtn.style.opacity = '0';
                 scrollToTopBtn.style.visibility = 'hidden';
+            }
+
+            // Prevent floating buttons from overlapping the footer
+            const footer = document.querySelector('footer');
+            const fab = document.getElementById('createPostFab');
+            if (footer) {
+                const footerRect = footer.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                if (footerRect.top < windowHeight) {
+                    const visibleFooterHeight = windowHeight - footerRect.top;
+                    scrollToTopBtn.style.bottom = (170 + visibleFooterHeight) + 'px';
+                    if (fab) fab.style.bottom = (80 + visibleFooterHeight) + 'px';
+                } else {
+                    scrollToTopBtn.style.bottom = '170px';
+                    if (fab) fab.style.bottom = '80px';
+                }
             }
         });
 
@@ -684,6 +989,73 @@
                     list.innerHTML = html;
                 })
                 .catch(err => console.error('loadInlinePreview failed:', err));
+        }
+
+        async function togglePostConnection(btn) {
+            const userId = btn.getAttribute('data-author-id');
+            if (!userId) return;
+            
+            // Optimistic UI update
+            const isConnected = btn.querySelector('.connect-text').innerText.trim() === 'Connected';
+            const icon = btn.querySelector('i');
+            const text = btn.querySelector('.connect-text');
+            
+            if (isConnected) {
+                btn.style.color = '#9ca3af';
+                icon.className = 'bi bi-person-plus-fill me-1';
+                text.innerText = 'Connect';
+            } else {
+                btn.style.color = '#10b981';
+                icon.className = 'bi bi-person-check-fill me-1';
+                text.innerText = 'Connected';
+            }
+
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (typeof csrfToken === 'function') {
+                    headers['X-XSRF-TOKEN'] = csrfToken();
+                }
+                
+                const res = await fetch('/api/connections/' + userId + '/toggle', { 
+                    method: 'POST', 
+                    headers: headers,
+                    credentials: 'same-origin' 
+                });
+                
+                if (res.status === 401) { window.location.href = '/login'; return; }
+                if (!res.ok) throw new Error('Network error');
+                
+                // If it succeeds, update all other buttons for this same user on the page
+                const newIsConnected = !isConnected;
+                document.querySelectorAll('.connect-btn[data-author-id="' + userId + '"]').forEach(otherBtn => {
+                    if (otherBtn === btn) return;
+                    const oIcon = otherBtn.querySelector('i');
+                    const oText = otherBtn.querySelector('.connect-text');
+                    if (!newIsConnected) {
+                        otherBtn.style.color = '#9ca3af';
+                        oIcon.className = 'bi bi-person-plus-fill me-1';
+                        oText.innerText = 'Connect';
+                    } else {
+                        otherBtn.style.color = '#10b981';
+                        oIcon.className = 'bi bi-person-check-fill me-1';
+                        oText.innerText = 'Connected';
+                    }
+                });
+
+            } catch (err) {
+                console.error(err);
+                // Revert optimistic update on failure
+                if (isConnected) {
+                    btn.style.color = '#10b981';
+                    icon.className = 'bi bi-person-check-fill me-1';
+                    text.innerText = 'Connected';
+                } else {
+                    btn.style.color = '#9ca3af';
+                    icon.className = 'bi bi-person-plus-fill me-1';
+                    text.innerText = 'Connect';
+                }
+                alert('Tukio limeshindikana. Tafadhali jaribu tena.');
+            }
         }
 
         // Collapsed by default — one tap on the comment icon opens it (and

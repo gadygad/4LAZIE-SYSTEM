@@ -48,17 +48,26 @@ public class ForumService {
     // Short-lived cache (see CacheConfig — 8s TTL) so Back/repeat navigation
     // to /community within a few seconds is instant instead of re-running
     // ~9 sequential MongoDB round trips every single time.
-    @Cacheable("forumFeed")
-    public List<ForumPost> getRandomizedFeed() {
-
-        // ── 1. Find admin user to attribute uploaded notes to ──
-        User adminUser = userRepository.findByEmail("admin@school.com").orElse(null);
+    
+    private User getSystemAdminUser() {
+        User adminUser = userRepository.findByEmail("kilingepazasauti@gmail.com").orElse(null);
+        if (adminUser == null) {
+            adminUser = userRepository.findByEmail("admin@school.com").orElse(null);
+        }
         if (adminUser == null) {
             adminUser = userRepository.findByRole(Role.SUPER_ADMIN).stream().findFirst().orElse(null);
         }
         if (adminUser == null) {
             adminUser = userRepository.findByRole(Role.ADMIN).stream().findFirst().orElse(null);
         }
+        return adminUser;
+    }
+
+    @Cacheable("forumFeed")
+    public List<ForumPost> getRandomizedFeed() {
+
+        // ── 1. Find admin user to attribute uploaded notes to ──
+        User adminUser = getSystemAdminUser();
 
         // ── 2. Convert all uploaded Notes/Mitihani into ForumPost objects ──
         List<ForumPost> notePosts = new ArrayList<>();
@@ -132,7 +141,10 @@ public class ForumService {
             post.setAuthor(author);
             String role = resolveRole(author);
             post.setAuthorRole(role);
-            if (isAuthority(role)) post.setAdminPost(true);
+            if (isAuthority(role)) {
+                post.setAdminPost(true);
+                if (adminUser != null) post.setAuthor(adminUser);
+            }
         });
 
         // ── 4. Combine all posts ──
@@ -220,7 +232,11 @@ public class ForumService {
         post.setAuthor(author);
         String role = resolveRole(author);
         post.setAuthorRole(role);
-        if (isAuthority(role)) post.setAdminPost(true);
+        if (isAuthority(role)) {
+            post.setAdminPost(true);
+            User sysAdmin = getSystemAdminUser();
+            if (sysAdmin != null) post.setAuthor(sysAdmin);
+        }
         return post;
     }
 
@@ -229,4 +245,81 @@ public class ForumService {
      * from the postDetail cache while it's still within its TTL. */
     @CacheEvict(value = "postDetail", key = "#id")
     public void evictPostDetail(String id) {}
+
+    public List<ForumPost> getTrendingPosts() {
+        List<ForumPost> recentPosts = forumPostRepository.findTop50ByOrderByCreatedAtDesc();
+        if (recentPosts.isEmpty()) return new ArrayList<>();
+
+        List<ForumPost> trending = new ArrayList<>();
+        List<ForumPost> available = new ArrayList<>(recentPosts);
+
+        // 1. Highest Likes
+        ForumPost topLikes = available.stream()
+            .max((a, b) -> Integer.compare(a.getLikesCount(), b.getLikesCount()))
+            .orElse(null);
+        if (topLikes != null && topLikes.getLikesCount() > 0) {
+            trending.add(topLikes);
+            available.remove(topLikes);
+        }
+
+        // 2. Highest Comments
+        ForumPost topComments = available.stream()
+            .max((a, b) -> Integer.compare(a.getCommentsCount(), b.getCommentsCount()))
+            .orElse(null);
+        if (topComments != null && topComments.getCommentsCount() > 0) {
+            trending.add(topComments);
+            available.remove(topComments);
+        }
+
+        // 3. Highest Views
+        ForumPost topViews = available.stream()
+            .max((a, b) -> Integer.compare(a.getViewsCount(), b.getViewsCount()))
+            .orElse(null);
+        if (topViews != null && topViews.getViewsCount() > 0) {
+            trending.add(topViews);
+            available.remove(topViews);
+        }
+
+        // 4. Remaining with engagement
+        List<ForumPost> remaining = available.stream()
+            .filter(p -> p.getLikesCount() > 0 || p.getCommentsCount() > 0 || p.getViewsCount() > 0)
+            .sorted((a, b) -> {
+                int scoreA = a.getLikesCount() + a.getCommentsCount() + a.getViewsCount();
+                int scoreB = b.getLikesCount() + b.getCommentsCount() + b.getViewsCount();
+                return Integer.compare(scoreB, scoreA);
+            })
+            .collect(Collectors.toList());
+        
+        trending.addAll(remaining);
+
+        // Limit to top 10 max
+        if (trending.size() > 10) {
+            trending = trending.subList(0, 10);
+        }
+
+        if (trending.isEmpty()) return trending;
+
+        // Populate authors
+        List<String> authorIds = trending.stream()
+                .map(ForumPost::getAuthorId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<String, User> authorsById = authorIds.isEmpty()
+                ? Collections.emptyMap()
+                : userRepository.findAllById(authorIds).stream()
+                        .collect(Collectors.toMap(User::getId, u -> u));
+        trending.forEach(post -> {
+            User author = authorsById.get(post.getAuthorId());
+            post.setAuthor(author);
+            String role = resolveRole(author);
+            post.setAuthorRole(role);
+            if (isAuthority(role)) {
+                post.setAdminPost(true);
+                User sysAdmin = getSystemAdminUser();
+                if (sysAdmin != null) post.setAuthor(sysAdmin);
+            }
+        });
+        return trending;
+    }
 }

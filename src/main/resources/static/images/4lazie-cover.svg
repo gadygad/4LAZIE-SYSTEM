@@ -1,0 +1,31 @@
+<svg width="1920" height="640" viewBox="0 0 1920 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Premium gradient for the border to make it shine -->
+    <linearGradient id="greenGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="50%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    
+    <!-- Dark gradient for the background -->
+    <linearGradient id="darkBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    
+    <!-- Subtle glow effect for the text -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Background (Very Dark) -->
+  <rect width="1920" height="640" fill="url(#darkBg)" />
+
+  <!-- Inner Rectangle (The 4LAZIE Logo Box) -->
+  <rect x="100" y="100" width="1720" height="440" fill="#111111" stroke="url(#greenGlow)" stroke-width="24" rx="12" />
+
+  <!-- The 4LAZIE Text -->
+  <text x="960" y="375" font-family="'Outfit', 'Inter', system-ui, sans-serif" font-weight="900" font-size="240" fill="#ffffff" text-anchor="middle" letter-spacing="15" filter="url(#glow)">4LAZIE</text>
+</svg>

@@ -31,6 +31,7 @@ public class ForumPost {
 
     private int likesCount = 0;
     private int commentsCount = 0;
+    private int viewsCount = 0;
 
     // User ids who liked this post — likesCount is kept in sync with this set's
     // size so existing templates/consumers reading likesCount don't change.
@@ -133,6 +134,14 @@ public class ForumPost {
 
     public void setCommentsCount(int commentsCount) {
         this.commentsCount = commentsCount;
+    }
+
+    public int getViewsCount() {
+        return viewsCount;
+    }
+
+    public void setViewsCount(int viewsCount) {
+        this.viewsCount = viewsCount;
     }
 
     public Set<String> getLikedBy() {

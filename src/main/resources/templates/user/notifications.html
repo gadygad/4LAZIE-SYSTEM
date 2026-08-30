@@ -250,8 +250,8 @@
 
                 <div th:if="${not #lists.isEmpty(notifications)}">
                     <a th:each="noti : ${notifications}" th:href="@{'/api/notifications/click/' + ${noti.id}}" class="noti-card" th:classappend="${!noti.read} ? 'unread' : ''">
-                        <div class="noti-icon" th:classappend="${#strings.containsIgnoreCase(noti.title, 'Download') ? 'success' : (#strings.containsIgnoreCase(noti.title, 'Upload') ? 'info' : 'warning')}">
-                            <i th:class="${#strings.containsIgnoreCase(noti.title, 'Download') ? 'bi bi-download' : (#strings.containsIgnoreCase(noti.title, 'Upload') ? 'bi bi-upload' : 'bi bi-bell-fill')}"></i>
+                        <div class="noti-icon" th:classappend="${#strings.containsIgnoreCase(noti.title, 'Message') ? 'danger' : 'success'}">
+                            <i th:class="${#strings.containsIgnoreCase(noti.title, 'Download') ? 'bi bi-download' : (#strings.containsIgnoreCase(noti.title, 'Like') ? 'bi bi-heart-fill' : (#strings.containsIgnoreCase(noti.title, 'Comment') || #strings.containsIgnoreCase(noti.title, 'Reply') ? 'bi bi-chat-dots-fill' : (#strings.containsIgnoreCase(noti.title, 'Message') ? 'bi bi-envelope-fill' : (#strings.containsIgnoreCase(noti.title, 'Upload') ? 'bi bi-upload' : 'bi bi-bell-fill'))))}"></i>
                         </div>
                         <div class="flex-grow-1">
                             <div class="d-flex justify-content-between align-items-center mb-1">

@@ -7,6 +7,7 @@ import com.school.auth.User;
 import com.school.auth.UserRepository;
 import com.school.chat.PeerChatService;
 import com.school.auth.AuthUtil;
+import com.school.notification.NotificationService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.http.HttpStatus;
@@ -35,11 +36,13 @@ public class PeerChatController {
     private final PeerChatService peerChatService;
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
+    private final NotificationService notificationService;
 
-    public PeerChatController(PeerChatService peerChatService, UserRepository userRepository, AuthUtil authUtil) {
+    public PeerChatController(PeerChatService peerChatService, UserRepository userRepository, AuthUtil authUtil, NotificationService notificationService) {
         this.peerChatService = peerChatService;
         this.userRepository = userRepository;
         this.authUtil = authUtil;
+        this.notificationService = notificationService;
     }
 
     private static final Map<String, List<SseEmitter>> chatEmitters = new ConcurrentHashMap<>();
@@ -193,6 +196,17 @@ public class PeerChatController {
         if (updated == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp); }
 
         notifyChat(chatId, updated);
+        
+        // Send a bell notification to the receiver
+        String receiverId = existing.otherUserId(me.getId());
+        if (receiverId != null) {
+            notificationService.createNotification(
+                receiverId, 
+                "New Message ✉️", 
+                me.getName() + " amekutumia ujumbe mpya.", 
+                "/messages"
+            );
+        }
 
         ChatMessage last = updated.getMessages().get(updated.getMessages().size() - 1);
         resp.put("success", true);

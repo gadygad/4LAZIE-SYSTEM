@@ -11,4 +11,5 @@ public interface ForumPostRepository extends MongoRepository<ForumPost, String> 
     // Standard CRUD is provided by MongoRepository
     // Add any specific queries if needed in the future
     List<ForumPost> findTop50ByOrderByCreatedAtDesc();
+    List<ForumPost> findTop3ByOrderByLikesCountDesc();
 }

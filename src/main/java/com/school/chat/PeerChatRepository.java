@@ -13,4 +13,7 @@ public interface PeerChatRepository extends MongoRepository<PeerChat, String> {
 
     @Query("{ '$or': [ { 'user1Id': ?0 }, { 'user2Id': ?0 } ] }")
     List<PeerChat> findAllForUser(String userId);
+
+    @Query(value = "{ '$or': [ { 'user1Id': ?0, 'hasUnreadForUser1': true }, { 'user2Id': ?0, 'hasUnreadForUser2': true } ] }", count = true)
+    long countUnreadForUser(String userId);
 }

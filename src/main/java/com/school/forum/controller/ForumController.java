@@ -102,6 +102,8 @@ public class ForumController {
         List<ForumPost> feed = forumService.getRandomizedFeed();
         model.addAttribute("posts", feed);
 
+        model.addAttribute("trending", forumService.getTrendingPosts());
+
         return "forum/index";
     }
 

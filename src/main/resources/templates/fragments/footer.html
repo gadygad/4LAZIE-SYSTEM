@@ -38,8 +38,11 @@
 
             /* Mobile-specific footer adjustments */
             @media (max-width: 991px) {
+                footer {
+                    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+                }
                 .footer-mobile-pb {
-                    padding-bottom: 0 !important; /* Body already has padding-bottom: 85px for the bottom nav */
+                    padding-bottom: 0 !important;
                 }
                 .footer-links-grid {
                     display: flex !important;

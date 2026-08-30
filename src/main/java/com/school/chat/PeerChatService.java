@@ -164,4 +164,8 @@ public class PeerChatService {
                 Comparator.nullsLast(Comparator.reverseOrder())));
         return chats;
     }
+
+    public long getUnreadCount(String userId) {
+        return peerChatRepository.countUnreadForUser(userId);
+    }
 }
