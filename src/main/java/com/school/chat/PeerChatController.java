@@ -153,7 +153,13 @@ public class PeerChatController {
 
     @GetMapping(value = "/api/peer-chat/{chatId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseBody
-    public SseEmitter stream(@PathVariable String chatId, HttpSession session) {
+    public SseEmitter stream(@PathVariable String chatId, HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
+        // Render's edge proxy buffers streaming responses by default, which
+        // silently held every SSE event until the connection closed — chat
+        // messages never appeared live, only the separate push notification
+        // did. This nginx-style header tells it to pass bytes straight
+        // through instead of buffering them.
+        response.setHeader("X-Accel-Buffering", "no");
         User me = currentUser(session);
         SseEmitter emitter = new SseEmitter(180_000L);
         if (me == null) { emitter.complete(); return emitter; }

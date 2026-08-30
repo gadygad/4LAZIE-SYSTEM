@@ -311,7 +311,13 @@ public class DirectChatController {
     /** SSE stream for admin — GET /admin/chat/{chatId}/stream */
     @GetMapping(value = "/admin/chat/{chatId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseBody
-    public SseEmitter adminStream(@PathVariable String chatId, HttpSession session) {
+    public SseEmitter adminStream(@PathVariable String chatId, HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
+        // Render's edge proxy buffers streaming responses by default, which
+        // silently held every SSE event until the connection closed — chat
+        // messages never appeared live, only the separate push notification
+        // did. This nginx-style header tells it to pass bytes straight
+        // through instead of buffering them.
+        response.setHeader("X-Accel-Buffering", "no");
         User admin = (User) session.getAttribute("user");
         SseEmitter emitter = new SseEmitter(180_000L);
         if (admin == null) { emitter.complete(); return emitter; }
@@ -422,7 +428,9 @@ public class DirectChatController {
     /** SSE stream for student — GET /student/chat/{chatId}/stream */
     @GetMapping(value = "/student/chat/{chatId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseBody
-    public SseEmitter studentStream(@PathVariable String chatId, HttpSession session) {
+    public SseEmitter studentStream(@PathVariable String chatId, HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
+        // See adminStream() above for why this header matters on Render.
+        response.setHeader("X-Accel-Buffering", "no");
         User student = (User) session.getAttribute("user");
         SseEmitter emitter = new SseEmitter(180_000L);
         if (student == null) { emitter.complete(); return emitter; }

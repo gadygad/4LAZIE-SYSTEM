@@ -167,7 +167,9 @@ public class GroupChatController {
 
     @GetMapping(value = "/api/groups/{groupId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseBody
-    public SseEmitter stream(@PathVariable String groupId, HttpSession session) {
+    public SseEmitter stream(@PathVariable String groupId, HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
+        // See PeerChatController.stream() for why this header matters on Render.
+        response.setHeader("X-Accel-Buffering", "no");
         User me = currentUser(session);
         SseEmitter emitter = new SseEmitter(180_000L);
         if (me == null) { emitter.complete(); return emitter; }
