@@ -60,6 +60,9 @@ public class ForumController {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private com.school.notes.NoteRepository noteRepository;
+
     // Called via CacheManager directly (not @CacheEvict) because these evictions
     // happen from other methods *within this same controller* — Spring's
     // caching proxy can't intercept that kind of self-invocation, only calls
@@ -103,6 +106,30 @@ public class ForumController {
         model.addAttribute("posts", feed);
 
         model.addAttribute("trending", forumService.getTrendingPosts());
+
+        // Fetch real data for latest notes/folders, grouped by Level instead of Year for better UX
+        List<com.school.notes.Note> recentNotes = noteRepository.findTop50ByOrderByIdDesc();
+        java.util.Map<Integer, List<com.school.notes.Note>> notesByLevel = recentNotes.stream()
+            .filter(n -> n.getLevelNo() != null)
+            .collect(java.util.stream.Collectors.groupingBy(com.school.notes.Note::getLevelNo));
+        
+        List<java.util.Map<String, Object>> latestFolders = notesByLevel.entrySet().stream()
+            .sorted(java.util.Map.Entry.<Integer, List<com.school.notes.Note>>comparingByKey())
+            .limit(4)
+            .map(e -> {
+                java.util.Map<String, Object> map = new java.util.HashMap<>();
+                Integer lvl = e.getKey();
+                String levelStr = (lvl >= 4) ? "LEVEL " + lvl : "YEAR " + lvl;
+                map.put("year", levelStr); 
+                map.put("levelNo", lvl); 
+                map.put("count", (long) e.getValue().size());
+                // Get top 5 most recent notes for this level
+                map.put("notes", e.getValue().stream().limit(5).collect(java.util.stream.Collectors.toList()));
+                return map;
+            })
+            .collect(java.util.stream.Collectors.toList());
+            
+        model.addAttribute("latestFolders", latestFolders);
 
         return "forum/index";
     }

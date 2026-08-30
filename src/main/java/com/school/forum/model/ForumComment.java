@@ -23,6 +23,9 @@ public class ForumComment {
 
     private String authorId;
 
+    @org.springframework.data.annotation.Transient
+    private com.school.auth.User author;
+
     private String content;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -50,6 +53,9 @@ public class ForumComment {
 
     public String getAuthorId() { return authorId; }
     public void setAuthorId(String authorId) { this.authorId = authorId; }
+
+    public com.school.auth.User getAuthor() { return author; }
+    public void setAuthor(com.school.auth.User author) { this.author = author; }
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }

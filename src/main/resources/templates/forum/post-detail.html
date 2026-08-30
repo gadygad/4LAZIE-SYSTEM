@@ -34,8 +34,8 @@
     <nav id="top-nav" class="w-100 position-fixed top-0 z-3" style="background: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-bottom: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; padding: 15px 20px; animation: slideDownFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(-40px); transition: transform 0.3s ease-in-out;">
         <div class="container-fluid px-2 px-sm-3 d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <a th:href="@{/community}" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-                    <i class="bi bi-arrow-left" style="font-size: 1.3rem;"></i>
+                <a th:href="@{/community}" class="d-flex align-items-center justify-content-center text-white text-decoration-none" style="width: 42px; height: 42px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); backdrop-filter: blur(10px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);" onmouseover="this.style.transform='translateX(-3px) scale(1.05)'; this.style.background='rgba(16, 185, 129, 0.25)';" onmouseout="this.style.transform='translateX(0) scale(1)'; this.style.background='rgba(16, 185, 129, 0.15)';">
+                    <i class="bi bi-arrow-left" style="font-size: 1.3rem; color: #4ade80;"></i>
                 </a>
                 <a href="/dashboard" class="d-flex align-items-center text-decoration-none" style="transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                     <div style="background: #111; border: 3px solid #10b981; padding: 4px 14px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
@@ -49,14 +49,18 @@
                     <a href="#"
                        class="d-flex align-items-center justify-content-center text-white text-decoration-none dropdown-toggle"
                        id="forumProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                       style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #10b981; box-shadow: 0 2px 8px rgba(16,185,129,0.3); flex-shrink: 0; overflow: hidden; transition: transform 0.2s;"
+                       th:style="'width: 45px; height: 45px; border-radius: 50%; flex-shrink: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 2px solid ' + (${session.user.hasVerifiedBadge} ? '#10b981' : 'rgba(255,255,255,0.2)') + '; box-shadow: ' + (${session.user.hasVerifiedBadge} ? '0 0 15px rgba(16,185,129,0.4)' : '0 4px 10px rgba(0,0,0,0.3)') + ';'"
                        onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
-                        <img th:if="${session.user.profilePicture != null}" th:src="${session.user.profilePicture}" alt="Profile" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                        <img th:if="${session.user.profilePicture != null}" th:src="${#strings.replace(session.user.profilePicture, '../', '/')}" alt="Profile" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
                         <img th:unless="${session.user.profilePicture != null}" th:src="'https://ui-avatars.com/api/?name=' + ${session.user.name} + '&background=10b981&color=fff&size=100'" alt="Profile" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="forumProfileDropdown" style="border-radius: 24px; min-width: 220px; background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1);">
                         <li class="px-3 py-2 mb-2" style="background: rgba(16, 185, 129, 0.15); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                            <p class="mb-0 fw-bold text-truncate" style="font-size: 1rem; color: #fff !important; max-width: 180px;" th:text="${session.user.name}">John Doe</p>
+                            <h6 class="mb-1 text-white fw-bold text-truncate d-flex align-items-center" style="width: 100%; font-size: 0.95rem; letter-spacing: -0.3px;">
+                                <span th:text="${session.user.name}">John Doe</span>
+                                <i th:if="${session.user.hasVerifiedBadge}" class="bi bi-patch-check-fill ms-1" style="color: #10b981; font-size: 1rem; filter: drop-shadow(0 0 5px rgba(16,185,129,0.6));" title="Verified"></i>
+                            </h6>
+                            <span th:style="'font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: ' + (${session.user.role != null} ? (${session.user.role.name() == 'SUPER_ADMIN' or session.user.role.name() == 'ADMIN'} ? '#ef4444' : (${session.user.role.name() == 'CLASS_REPRESENTATIVE' or session.user.role.name() == 'LECTURE'} ? '#3b82f6' : '#10b981')) : '#10b981') + ' !important;'" th:text="${session.user.role != null ? (session.user.role.name() == 'SUPER_ADMIN' ? 'SUPER ADMIN' : (session.user.role.name() == 'CLASS_REPRESENTATIVE' ? 'CR' : session.user.role.name())) : 'STUDENT'}">STUDENT</span>
                         </li>
                         <li><a class="dropdown-item py-2 px-3 fw-medium" href="/dashboard" style="font-size: 0.95rem; color: #d1d5db;">Dashboard</a></li>
                         <li><a class="dropdown-item py-2 px-3 fw-medium" href="/profile" style="font-size: 0.95rem; color: #d1d5db;">My Profile</a></li>
@@ -91,7 +95,7 @@
                             <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'C'}">C</span>
                         </div>
 
-                        <img th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}" th:src="${post.author.profilePicture}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
+                        <img th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}" th:src="${#strings.replace(post.author.profilePicture, '../', '/')}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
                         <div th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}" class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.3); color: #fff; font-size: 1.1rem;">
                             <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'U'}">U</span>
                         </div>
@@ -250,7 +254,8 @@
         // Used to show the comment author's name/avatar instantly (before the
         // server confirms), matching how the backend brands admins as "4LAZIE".
         const CURRENT_USER_NAME = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '4LAZIE' : (session.user != null ? session.user.name : 'You')}]]*/ 'You';
-        const CURRENT_USER_PICTURE = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '/images/logo.png' : (session.user != null ? session.user.profilePicture : null)}]]*/ null;
+        const CURRENT_USER_PICTURE_RAW = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN') ? '/images/logo.png' : (session.user != null ? session.user.profilePicture : null)}]]*/ null;
+        const CURRENT_USER_PICTURE = CURRENT_USER_PICTURE_RAW ? CURRENT_USER_PICTURE_RAW.replace('../', '/') : null;
         // The community-granted trust badge (green name + check) — distinct
         // from the 4LAZIE admin brand above.
         const CURRENT_USER_VERIFIED = /*[[${session.user != null and session.user.role != null and session.user.role.name() != 'ADMIN' and session.user.role.name() != 'SUPER_ADMIN' and session.user.hasVerifiedBadge}]]*/ false;
@@ -350,8 +355,11 @@
 
         function quotedCommentHtml(authorName, content) {
             if (!authorName) return '';
+            const verifiedQuoteName = authorName === '4LAZIE' 
+                ? `${escComment(authorName)} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.9em;filter:drop-shadow(0 0 2px rgba(16,185,129,0.5));" title="Verified Official"></i>` 
+                : escComment(authorName);
             return `<div style="position: relative; background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 4px 8px 4px 10px; margin-bottom: 5px;">
-                        <div style="font-size: 0.64rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${escComment(authorName)}</div>
+                        <div style="font-size: 0.64rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.4px;">↩ ${verifiedQuoteName}</div>
                         <div style="font-size: 0.74rem; color: rgba(255,255,255,0.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escComment(content || '')}</div>
                     </div>`;
         }
@@ -471,7 +479,10 @@
 
         function initCommentReply(commentId, rootId, authorName, content) {
             commentReplyState = { commentId, rootId, authorName, content };
-            document.getElementById('commentReplyContextName').innerHTML = `<i class="bi bi-reply-fill"></i> Replying to ${escComment(authorName)}`;
+            const verifiedReplyName = authorName === '4LAZIE' 
+                ? `${escComment(authorName)} <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.9em;filter:drop-shadow(0 0 2px rgba(16,185,129,0.5));" title="Verified Official"></i>` 
+                : escComment(authorName);
+            document.getElementById('commentReplyContextName').innerHTML = `<i class="bi bi-reply-fill"></i> Replying to ${verifiedReplyName}`;
             document.getElementById('commentReplyContextText').textContent = content;
             document.getElementById('commentReplyContextBox').style.display = 'flex';
             document.getElementById('commentInput').focus();

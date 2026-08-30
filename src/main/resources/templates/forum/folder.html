@@ -458,7 +458,7 @@
                     <div th:each="folder : ${latestFolders}" th:id="'collapseLevel' + ${folder.levelNo}" class="collapse" data-bs-parent="#foldersAccordion">
                         <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                             <h6 class="m-0 fw-bold" style="color: #10b981; font-size: 11px; letter-spacing: 0.5px;" th:text="${folder.year} + ' NOTES'"></h6>
-                            <a th:href="@{/community/folder/{level}(level=${folder.levelNo})}" class="text-decoration-none" style="font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;">View All <i class="bi bi-arrow-right"></i></a>
+                            <a th:href="@{/notes(level=${folder.levelNo})}" class="text-decoration-none" style="font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;">View All <i class="bi bi-arrow-right"></i></a>
                         </div>
                         
                         <div class="d-flex flex-column gap-2">
@@ -490,261 +490,55 @@
         <!-- Main Content Area -->
         <main class="px-0 position-relative z-2 w-100" style="max-width: 680px; padding-bottom: 100px !important;">
             
-            <!-- Post Creation Box Removed - Now in a Modal -->
-            <!-- Posts Feed -->
-            <div class="d-flex flex-column">
-            <!-- Empty state -->
-            <div th:if="${posts == null || posts.isEmpty()}" class="text-center p-5 rounded-4 text-white mx-3" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2);">
-                <i class="bi bi-chat-square-text" style="font-size: 3rem; opacity: 0.5;"></i>
-                <h4 class="mt-3">No posts yet</h4>
-                <p class="opacity-75">Be the first to start a conversation!</p>
+            <!-- Folder Header -->
+            <div class="mb-4 d-flex align-items-center gap-3 p-4 rounded-4" style="background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px);">
+                <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px; background: rgba(16,185,129,0.15);">
+                    <i class="bi bi-folder-fill" style="font-size: 1.8rem; color: #10b981;"></i>
+                </div>
+                <div>
+                    <h4 class="mb-1 fw-bold text-white" th:text="${level >= 4 ? 'Level ' + level + ' Notes' : 'Year ' + level + ' Notes'}">Folder Title</h4>
+                    <p class="mb-0" style="color: rgba(255,255,255,0.6); font-size: 14px;" th:text="${notes.size()} + ' Resources available'">0 Resources available</p>
+                </div>
             </div>
 
-        <div th:each="post : ${posts}" th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
-            <div style="padding: 16px;">
-                <div class="d-flex">
-                    <!-- ── AVATAR (role-based) ── -->
-                    <a class="me-3 position-relative d-block text-decoration-none" 
-                       style="flex-shrink: 0; transition: transform 0.2s;"
-                       onmouseover="if(this.getAttribute('href')) this.style.transform='scale(1.05)'" 
-                       onmouseout="if(this.getAttribute('href')) this.style.transform='scale(1)'"
-                       th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null">
+            <!-- Notes List -->
+            <div class="d-flex flex-column gap-3">
+                <!-- Empty state -->
+                <div th:if="${notes == null || notes.isEmpty()}" class="text-center p-5 rounded-4 text-white mx-3" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2);">
+                    <i class="bi bi-folder-x" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h4 class="mt-3">No notes found</h4>
+                    <p class="opacity-75">There are currently no notes uploaded for this folder.</p>
+                </div>
 
-                        <!-- ADMIN / SUPER_ADMIN → 4LAZIE logo -->
-                        <img th:if="${post.adminPost}"
-                             src="/images/logo.png"
-                             class="rounded-circle"
-                             style="width: 42px; height: 42px; object-fit: contain; background: #ffffff; border: 2px solid #4ade80; padding: 3px;">
-
-                        <!-- LECTURE → profile pic or gold initial -->
-                        <img th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}"
-                             th:src="${post.author.profilePicture}"
-                             class="rounded-circle"
-                             style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #f59e0b;">
-                        <div th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}"
-                             class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                             style="width: 42px; height: 42px; background: linear-gradient(135deg,#92400e,#f59e0b); border: 2px solid #f59e0b; color: #fff; font-size: 1.1rem;">
-                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'L'}">L</span>
+                <!-- Note Item -->
+                <div th:each="note : ${notes}" class="p-4 rounded-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3" style="background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(31, 41, 55, 0.9)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.transform='translateY(0)';">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px; background: rgba(255,255,255,0.05);">
+                            <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.5rem; color: #ef4444;" th:if="${note.fileUrl != null && note.fileUrl.endsWith('.pdf')}"></i>
+                            <i class="bi bi-file-earmark-text-fill" style="font-size: 1.5rem; color: #3b82f6;" th:unless="${note.fileUrl != null && note.fileUrl.endsWith('.pdf')}"></i>
                         </div>
-
-                        <!-- CLASS_REPRESENTATIVE → profile pic or blue initial -->
-                        <img th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}"
-                             th:src="${post.author.profilePicture}"
-                             class="rounded-circle"
-                             style="width: 42px; height: 42px; object-fit: cover; border: 2px solid #60a5fa;">
-                        <div th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}"
-                             class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                             style="width: 42px; height: 42px; background: linear-gradient(135deg,#1e3a8a,#3b82f6); border: 2px solid #60a5fa; color: #fff; font-size: 1.1rem;">
-                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'C'}">C</span>
-                        </div>
-
-                        <!-- STUDENT → profile pic or grey initial -->
-                        <img th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.profilePicture != null}"
-                             th:src="${post.author.profilePicture}"
-                             class="rounded-circle"
-                             style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
-                        <div th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and (post.author == null or post.author.profilePicture == null)}"
-                             class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                             style="width: 42px; height: 42px; background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.3); color: #fff; font-size: 1.1rem;">
-                            <span th:text="${post.author != null ? post.author.name.substring(0,1) : 'U'}">U</span>
-                        </div>
-                    </a>
-
-                    <!-- ── CONTENT RIGHT SIDE ── -->
-                    <div style="flex-grow: 1; min-width: 0;">
-                        <!-- Header: Name + Badge + Time -->
-                        <div class="d-flex align-items-center mb-2" style="flex-wrap: wrap; gap: 4px;">
-
-                            <!-- ADMIN / SUPER_ADMIN → "4LAZIE" + green verified -->
-                            <a th:if="${post.adminPost}" 
-                               th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
-                               class="fw-bold text-decoration-none" 
-                               style="font-size: 13.5px; color: #fff; transition: opacity 0.2s;"
-                               onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" 
-                               onmouseout="if(this.getAttribute('href')) this.style.opacity='1'">4LAZIE</a>
-                            <span th:if="${post.adminPost}" style="color: #4ade80; font-size: 13px;" title="Verified Official">
-                                <i class="bi bi-patch-check-fill"></i>
-                            </span>
-
-                            <!-- LECTURE → real name + gold badge -->
-                            <a th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
-                                  th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
-                                  class="fw-bold text-decoration-none" style="font-size: 13.5px; color: #fde68a; transition: opacity 0.2s;"
-                                  onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" onmouseout="if(this.getAttribute('href')) this.style.opacity='1'"
-                                  th:text="${post.author != null ? post.author.name : 'Lecturer'}">Lecturer</a>
-                            <span th:if="${!post.adminPost and 'LECTURE'.equals(post.authorRole)}"
-                                  class="d-inline-flex align-items-center px-1 rounded"
-                                  style="background: rgba(245,158,11,0.2); color: #f59e0b; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
-                                🎓 LECTURER
-                            </span>
-
-                            <!-- CLASS_REPRESENTATIVE → real name + blue badge -->
-                            <a th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
-                                  th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
-                                  class="fw-bold text-decoration-none" style="font-size: 13.5px; color: #bfdbfe; transition: opacity 0.2s;"
-                                  onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" onmouseout="if(this.getAttribute('href')) this.style.opacity='1'"
-                                  th:text="${post.author != null ? post.author.name : 'CR'}">CR</a>
-                            <span th:if="${!post.adminPost and 'CLASS_REPRESENTATIVE'.equals(post.authorRole)}"
-                                  class="d-inline-flex align-items-center px-1 rounded"
-                                  style="background: rgba(96,165,250,0.2); color: #60a5fa; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
-                                🛡️ CR
-                            </span>
-
-                            <!-- STUDENT → real name; green + checkmark if community-verified -->
-                            <a th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole)}"
-                                  th:href="${post.author != null} ? @{/students/{id}/profile(id=${post.author.id})} : null"
-                                  class="fw-bold text-decoration-none"
-                                  th:style="'font-size: 13.5px; transition: opacity 0.2s; color: ' + (${post.author != null and post.author.hasVerifiedBadge} ? '#4ade80' : 'rgba(255,255,255,0.95)') + ';'"
-                                  onmouseover="if(this.getAttribute('href')) this.style.opacity='0.8'" onmouseout="if(this.getAttribute('href')) this.style.opacity='1'"
-                                  th:text="${post.author != null ? post.author.name : 'Unknown'}">Student</a>
-                            <span th:if="${!post.adminPost and 'STUDENT'.equals(post.authorRole) and post.author != null and post.author.hasVerifiedBadge}"
-                                  style="color: #4ade80; font-size: 13px;" title="Verified">
-                                <i class="bi bi-patch-check-fill"></i>
-                            </span>
-
-                            <span style="color: rgba(255,255,255,0.4); font-size: 12px; margin: 0 4px;">·</span>
-                            <span style="color: rgba(255,255,255,0.6); font-size: 12px;"
-                                  th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm:ss')}">Date</span>
-                            <!-- Connect Button -->
-                            <th:block th:if="${user != null and post.author != null and !#strings.equals(user.id, post.author.id)}">
-                                <span style="color: rgba(255,255,255,0.4); font-size: 12px; margin: 0 4px;">·</span>
-                                <button type="button" 
-                                        th:data-author-id="${post.author.id}"
-                                        class="btn btn-sm p-0 text-decoration-none connect-btn"
-                                        style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.2s; border: none; background: transparent; outline: none;"
-                                        th:styleappend="${user.following != null and user.following.contains(post.author.id)} ? 'color: #10b981;' : 'color: #9ca3af;'"
-                                        onclick="togglePostConnection(this)">
-                                    <i th:class="${user.following != null and user.following.contains(post.author.id)} ? 'bi bi-person-check-fill me-1' : 'bi bi-person-plus-fill me-1'"></i>
-                                    <span class="connect-text" th:text="${user.following != null and user.following.contains(post.author.id)} ? 'Connected' : 'Connect'">Connect</span>
-                                </button>
-                            </th:block>
-                        </div>
-
-                        
-                        <!-- Post Text -->
-                        <div style="font-size: 13.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.9); word-wrap: break-word; letter-spacing: 0.1px;">
-                            <div th:if="${post.title != null and !post.title.isEmpty()}" th:text="${post.title}" th:classappend="${post.adminPost ? 'text-uppercase' : ''}" class="fw-bold mb-0" style="font-size: 13px; line-height: 1.2; color: #4ade80; font-style: italic;"></div>
-                            
-                            <!-- Institution Placeholder (Faded text) -->
-                            <div th:text="${post.institutionPlaceholder != null and !post.institutionPlaceholder.isEmpty() ? post.institutionPlaceholder : 'SJUIT INSTITUTE'}" 
-                                 style="color: #9ca3af; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; margin-bottom: 4px; text-transform: uppercase;">
-                            </div>
-                            
-                            <!-- For admin note posts: show Read & Download buttons if logged in -->
-                            <div th:if="${post.adminPost and post.noteId != null}">
-                                <div th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap; margin-bottom: 10px;"></div>
-
-                                <!-- Logged in: show Read + Download buttons -->
-                                <div th:if="${session.user != null}" class="d-flex gap-2 mt-2 flex-wrap">
-                                    <a th:href="@{'/view/' + ${post.noteId}}"
-                                       target="_blank"
-                                       class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold"
-                                       style="background: rgba(16,185,129,0.15); color: #4ade80; border: 1px solid rgba(16,185,129,0.3); font-size: 12px; transition: all 0.2s;"
-                                       onmouseover="this.style.background='rgba(16,185,129,0.3)'; this.style.color='#ffffff';"
-                                       onmouseout="this.style.background='rgba(16,185,129,0.15)'; this.style.color='#4ade80';">
-                                        <i class="bi bi-eye-fill" style="font-size: 11px;"></i> Read
-                                    </a>
-                                    <a th:href="@{'/download/' + ${post.noteId}}"
-                                       class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold"
-                                       style="background: rgba(96,165,250,0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.3); font-size: 12px; transition: all 0.2s;"
-                                       onmouseover="this.style.background='rgba(96,165,250,0.3)'; this.style.color='#ffffff';"
-                                       onmouseout="this.style.background='rgba(96,165,250,0.15)'; this.style.color='#93c5fd';">
-                                        <i class="bi bi-download" style="font-size: 11px;"></i> Download
-                                    </a>
-                                </div>
-
-                                <!-- Not logged in: prompt to login -->
-                                <div th:if="${session.user == null}" class="mt-2">
-                                    <a href="/login"
-                                       class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill text-decoration-none fw-semibold"
-                                       style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); font-size: 12px;">
-                                        <i class="bi bi-lock-fill" style="font-size: 11px;"></i> Login to Read &amp; Download
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Regular student post: plain text -->
-                            <div th:if="${!post.adminPost or post.noteId == null}"
-                                 th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
-                        </div>
-                        
-                        <!-- Action Buttons (Like, Comment, Share) — work for note-derived
-                             cards too: their state lives on the underlying Note document. -->
-                        <div class="d-flex gap-3 mt-3" th:data-post-id="${post.id}">
-                            <!-- Comment Button — one tap opens the inline preview right
-                                 here instead of navigating away immediately. -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1 comment-btn"
-                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
-                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
-                                 th:data-post-id="${post.id}"
-                                 onclick="toggleInlineComments(this.dataset.postId)">
-                                <i class="bi bi-chat"></i>
-                                <span class="ms-2 fw-medium comment-count" th:text="${post.commentsCount != null ? post.commentsCount : 0}">0</span>
-                            </div>
-
-                            <!-- Like Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1 like-btn"
-                                 th:classappend="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'liked' : ''"
-                                 th:style="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 13px; cursor: pointer; transition: all 0.2s;' : 'background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;'"
-                                 onmouseover="if(!this.classList.contains('liked')) { this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981' }" onmouseout="if(!this.classList.contains('liked')) { this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)' }"
-                                 th:data-post-id="${post.id}"
-                                 onclick="toggleLike(this, this.dataset.postId)">
-                                <i th:class="${session.user != null and post.likedBy != null and post.likedBy.contains(session.user.id)} ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-                                <span class="ms-2 fw-medium like-count" th:text="${post.likesCount != null ? post.likesCount : 0}">0</span>
-                            </div>
-
-                            <!-- Share Button -->
-                            <div class="d-flex align-items-center rounded-pill px-3 py-1"
-                                 style="background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.8); font-size: 13px; cursor: pointer; transition: all 0.2s;"
-                                 onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='rgba(255, 255, 255, 0.8)'"
-                                 th:data-post-id="${post.id}"
-                                 th:data-post-title="${post.title != null ? post.title : '4LAZIE Community'}"
-                                 onclick="sharePost(this.dataset.postId, this.dataset.postTitle)">
-                                <i class="bi bi-share"></i>
+                        <div>
+                            <h5 class="fw-bold text-white mb-1" th:text="${note.title}">Note Title</h5>
+                            <div class="d-flex flex-wrap gap-2 align-items-center" style="font-size: 13px; color: rgba(255,255,255,0.5);">
+                                <span th:text="${note.moduleName}">Module Name</span>
+                                <span>&bull;</span>
+                                <span th:text="${note.author != null ? note.author.name : 'Unknown Author'}">Author</span>
+                                <span>&bull;</span>
+                                <span th:text="${#temporals.format(note.createdAt, 'MMM dd, yyyy')}">Date</span>
                             </div>
                         </div>
-
-                        <!-- Inline comment preview — shows up to 3 recent comments plus a
-                             quick reply box, right on the feed. -->
-                        <div class="inline-comments mt-3" th:data-post-id="${post.id}" th:data-comments-count="${post.commentsCount != null ? post.commentsCount : 0}">
-                            <!-- Existing comments -->
-                            <div class="inline-comments-list d-flex flex-column gap-2 mb-2" th:if="${post.recentComments != null && !post.recentComments.isEmpty()}">
-                                <div th:each="comment : ${post.recentComments}" class="d-flex gap-2 align-items-start p-2 rounded" style="background: rgba(255, 255, 255, 0.02);">
-                                    <div class="rounded-circle overflow-hidden flex-shrink-0" style="width: 28px; height: 28px; border: 1px solid rgba(255,255,255,0.1);">
-                                        <img th:src="${comment.author != null && comment.author.profilePicture != null && !comment.author.profilePicture.isEmpty()} ? ${comment.author.profilePicture} : '/images/default-avatar.png'" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
-                                    </div>
-                                    <div class="d-flex flex-column" style="min-width: 0;">
-                                        <div class="d-flex align-items-baseline gap-2">
-                                            <span class="fw-bold text-white text-truncate" style="font-size: 12px; max-width: 150px;" th:text="${comment.author != null ? comment.author.name : 'Unknown User'}">Name</span>
-                                            <span style="font-size: 10px; color: rgba(255,255,255,0.4);" th:text="${#temporals.format(comment.createdAt, 'MMM dd, HH:mm')}">Date</span>
-                                        </div>
-                                        <div class="text-white mt-1" style="font-size: 13px; word-break: break-word; opacity: 0.9;" th:text="${comment.content}">Comment text</div>
-                                    </div>
-                                </div>
-                                <a th:if="${post.commentsCount > 3}" th:href="@{/community/post/{id}(id=${post.id})}" class="text-decoration-none mt-1" style="font-size: 11px; color: #10b981; font-weight: 500;">
-                                    View all <span th:text="${post.commentsCount}"></span> comments...
-                                </a>
-                            </div>
-                            
-                            <!-- Comment Input Form -->
-                            <form class="d-flex gap-2" onsubmit="submitInlineComment(event, this)">
-                                <input type="text" class="glass-input inline-comment-input" placeholder="Write a comment..." maxlength="500" required style="margin-bottom: 0; font-size: 13px; padding: 8px 14px; flex: 1 1 auto; width: auto; min-width: 0; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-                                <button type="submit" class="btn border-0 flex-shrink-0 rounded-pill d-flex align-items-center justify-content-center" style="background: rgba(16,185,129,0.1); color: #10b981; padding: 0 16px; font-weight: 600; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.2)'" onmouseout="this.style.background='rgba(16,185,129,0.1)'">
-                                    <i class="bi bi-send-fill"></i>
-                                </button>
-                            </form>
-                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 flex-shrink-0">
+                        <a th:href="@{/view/{slug}(slug=${note.slug})}" class="btn px-4 py-2 fw-bold rounded-pill" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
+                            Read
+                        </a>
+                        <a th:href="@{/download/{slug}(slug=${note.slug})}" class="btn px-4 py-2 fw-bold rounded-pill" style="background: #10b981; color: #fff; border: 1px solid #10b981; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='#059669'; this.style.borderColor='#059669'" onmouseout="this.style.background='#10b981'; this.style.borderColor='#10b981'">
+                            Download
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- End of Feed Indicator -->
-        <div th:if="${posts != null && !posts.isEmpty()}" class="text-center py-4" style="color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500; letter-spacing: 1px;">
-            No more posts
-        </div>
-
-        </div>
 
         </main>
         

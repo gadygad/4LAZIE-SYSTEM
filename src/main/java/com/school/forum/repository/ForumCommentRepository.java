@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ForumCommentRepository extends MongoRepository<ForumComment, String> {
     List<ForumComment> findByPostIdOrderByCreatedAtAsc(String postId);
+    List<ForumComment> findTop3ByPostIdOrderByCreatedAtDesc(String postId);
     long countByPostId(String postId);
 }

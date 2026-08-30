@@ -174,6 +174,27 @@ public class ForumService {
             feed.addAll(olderPosts);
         }
 
+        // ── 6. Fetch recent comments for all feed posts ──
+        List<com.school.forum.model.ForumComment> allRecentComments = new ArrayList<>();
+        feed.forEach(post -> {
+            List<com.school.forum.model.ForumComment> comments = forumCommentRepository.findTop3ByPostIdOrderByCreatedAtDesc(post.getId());
+            post.setRecentComments(comments);
+            allRecentComments.addAll(comments);
+        });
+
+        // Batch resolve comment authors
+        List<String> commentAuthorIds = allRecentComments.stream()
+                .map(com.school.forum.model.ForumComment::getAuthorId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+        
+        if (!commentAuthorIds.isEmpty()) {
+            Map<String, User> commentAuthorsById = userRepository.findAllById(commentAuthorIds).stream()
+                    .collect(Collectors.toMap(User::getId, u -> u));
+            allRecentComments.forEach(c -> c.setAuthor(commentAuthorsById.get(c.getAuthorId())));
+        }
+
         return feed;
     }
 

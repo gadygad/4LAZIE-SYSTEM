@@ -62,6 +62,12 @@ public class ForumPost {
     public String getNoteId() { return noteId; }
     public void setNoteId(String noteId) { this.noteId = noteId; }
 
+    @org.springframework.data.annotation.Transient
+    private java.util.List<ForumComment> recentComments = new java.util.ArrayList<>();
+
+    public java.util.List<ForumComment> getRecentComments() { return recentComments; }
+    public void setRecentComments(java.util.List<ForumComment> recentComments) { this.recentComments = recentComments; }
+
     public ForumPost() {}
 
     public ForumPost(User author, String title, String content) {
