@@ -441,7 +441,7 @@
                 <div class="d-flex gap-3 overflow-x-auto pb-1" style="scrollbar-width: none; -ms-overflow-style: none;" th:if="${latestFolders != null && !latestFolders.isEmpty()}">
                     
                     <!-- Dynamic Folder Cards -->
-                    <a th:each="folder : ${latestFolders}" th:href="'#collapseLevel' + ${folder.levelNo}" data-bs-toggle="collapse" aria-expanded="false" class="text-decoration-none d-flex flex-column align-items-center p-3 rounded-4 flex-shrink-0" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); width: 110px; transition: all 0.3s ease;">
+                    <a th:each="folder : ${latestFolders}" th:href="@{/community/folder/{level}(level=${folder.levelNo})}" class="text-decoration-none d-flex flex-column align-items-center p-3 rounded-4 flex-shrink-0" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); width: 110px; transition: all 0.3s ease;">
                         <div class="position-relative mb-3">
                             <i class="bi bi-folder-fill" style="font-size: 3.5rem; color: #10b981; filter: drop-shadow(0 4px 8px rgba(16,185,129,0.3));"></i>
                             <div class="position-absolute bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 20px; height: 20px; top: 55%; left: 50%; transform: translate(-50%, -50%);">
@@ -491,13 +491,15 @@
         <main class="px-0 position-relative z-2 w-100" style="max-width: 680px; padding-bottom: 100px !important;">
             
             <!-- Folder Header -->
-            <div class="mb-4 d-flex align-items-center gap-3 p-4 rounded-4" style="background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px);">
-                <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px; background: rgba(16,185,129,0.15);">
-                    <i class="bi bi-folder-fill" style="font-size: 1.8rem; color: #10b981;"></i>
-                </div>
-                <div>
-                    <h4 class="mb-1 fw-bold text-white" th:text="${level >= 4 ? 'Level ' + level + ' Notes' : 'Year ' + level + ' Notes'}">Folder Title</h4>
-                    <p class="mb-0" style="color: rgba(255,255,255,0.6); font-size: 14px;" th:text="${notes.size()} + ' Resources available'">0 Resources available</p>
+            <div class="mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3 p-4 rounded-4" style="background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px; background: rgba(16,185,129,0.15);">
+                        <i class="bi bi-folder-fill" style="font-size: 1.8rem; color: #10b981;"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1 fw-bold text-white" th:text="${level >= 4 ? 'Level ' + level + ' Notes' : 'Year ' + level + ' Notes'}">Folder Title</h4>
+                        <p class="mb-0" style="color: rgba(255,255,255,0.6); font-size: 14px;" th:text="${notes.size()} + ' Resources available'">0 Resources available</p>
+                    </div>
                 </div>
             </div>
 

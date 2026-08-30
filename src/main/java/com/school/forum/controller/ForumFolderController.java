@@ -4,20 +4,32 @@ import com.school.auth.User;
 import com.school.auth.AuthUtil;
 import com.school.notes.Note;
 import com.school.notes.NoteRepository;
+import com.school.notes.NoteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 public class ForumFolderController {
 
+    private static final Logger log = LoggerFactory.getLogger(ForumFolderController.class);
+
     @Autowired private AuthUtil authUtil;
     @Autowired private NoteRepository noteRepository;
+    @Autowired private NoteService noteService;
 
     @GetMapping("/community/folder/{level}")
     public String showFolder(@PathVariable("level") Integer level, Model model) {
@@ -54,7 +66,30 @@ public class ForumFolderController {
             })
             .collect(Collectors.toList());
         model.addAttribute("latestFolders", latestFolders);
-        
+
         return "forum/folder";
+    }
+
+    /** Zips every note for this level, across every college/program — matches
+     * exactly what showFolder() above lists on the page, unlike the older
+     * /notes/download/level/{level} endpoint which is scoped to one program. */
+    @GetMapping("/community/folder/{level}/download-all")
+    @ResponseBody
+    public ResponseEntity<ByteArrayResource> downloadAll(@PathVariable("level") Integer level) {
+        try {
+            byte[] zipBytes = noteService.createAllNotesZipForLevel(level);
+            if (zipBytes == null) {
+                return ResponseEntity.notFound().build();
+            }
+            ByteArrayResource resource = new ByteArrayResource(zipBytes);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"level-" + level + "-all-materials.zip\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(zipBytes.length)
+                    .body(resource);
+        } catch (IOException e) {
+            log.error("Failed to generate level {} zip", level, e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

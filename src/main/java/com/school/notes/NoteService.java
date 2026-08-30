@@ -95,13 +95,38 @@ public class NoteService {
 
     public byte[] createLevelNotesZip(String program, Integer level) throws IOException {
         List<Note> notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level);
+        return zipNotes(notes);
+    }
+
+    /** Same as createLevelNotesZip, but no program filter — matches the
+     * /community folder pages, which show every note for a level across
+     * every college/program so students can browse other institutions'
+     * materials, not just their own. */
+    public byte[] createAllNotesZipForLevel(Integer level) throws IOException {
+        List<Note> notes = noteRepository.findByLevelNoOrderByIdDesc(level);
+        return zipNotes(notes);
+    }
+
+    private byte[] zipNotes(List<Note> notes) throws IOException {
         if (notes.isEmpty()) return null;
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(baos)) {
 
+            // Notes from different programs/colleges can share the same original
+            // filename, which would otherwise crash the zip with a duplicate-entry
+            // error — disambiguate repeats by appending the note id.
+            java.util.Set<String> usedNames = new java.util.HashSet<>();
+
             for (Note note : notes) {
                 String filename = note.getFilename() != null && !note.getFilename().isEmpty() ? note.getFilename() : "note-" + note.getId() + ".pdf";
+                if (!usedNames.add(filename)) {
+                    int dot = filename.lastIndexOf('.');
+                    filename = dot > 0
+                            ? filename.substring(0, dot) + "_" + note.getId() + filename.substring(dot)
+                            : filename + "_" + note.getId();
+                    usedNames.add(filename);
+                }
                 boolean fileAdded = false;
                 
                 if (note.getFileUrl() != null && !note.getFileUrl().isEmpty()) {

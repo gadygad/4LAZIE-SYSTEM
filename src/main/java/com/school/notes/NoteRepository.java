@@ -31,6 +31,12 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, String category);
 
+    // Level-only, no program filter — backs the /community folder pages,
+    // which are deliberately cross-college/cross-program so a student from
+    // any institution can browse and download another college's materials
+    // for the same level.
+    List<Note> findByLevelNoOrderByIdDesc(Integer levelNo);
+
     @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(String programType, Integer levelNo, Integer semesterNo, String category);
 
