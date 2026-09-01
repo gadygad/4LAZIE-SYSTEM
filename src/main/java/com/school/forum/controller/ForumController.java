@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,11 +29,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Controller
@@ -213,6 +218,48 @@ public class ForumController {
         return ResponseEntity.ok(Map.of("liked", nowLiked, "count", Math.max(0, count)));
     }
 
+    // ─────────────────────────────────────────────
+    //  Real-time comments — postId → list of open SSE connections. Any
+    //  logged-in user can comment/reply on any post with no depth limit
+    //  (ForumComment.replyToCommentId just points at whatever comment was
+    //  replied to); this registry is purely for pushing new comments live
+    //  to everyone currently viewing that post instead of them needing to
+    //  refresh the page to see it.
+    // ─────────────────────────────────────────────
+    private static final Map<String, List<SseEmitter>> commentEmitters = new ConcurrentHashMap<>();
+
+    @GetMapping(value = "/post/{id}/comments/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ResponseBody
+    public SseEmitter commentStream(@PathVariable String id, jakarta.servlet.http.HttpServletResponse response) {
+        // See DirectChatController for why this header matters on Render —
+        // without it the proxy buffers the stream and nothing arrives live.
+        response.setHeader("X-Accel-Buffering", "no");
+        SseEmitter emitter = new SseEmitter(180_000L);
+        List<SseEmitter> emitters = commentEmitters.computeIfAbsent(id, k -> new CopyOnWriteArrayList<>());
+        emitters.add(emitter);
+        Runnable cleanup = () -> emitters.remove(emitter);
+        emitter.onCompletion(cleanup);
+        emitter.onTimeout(cleanup);
+        emitter.onError(e -> cleanup.run());
+        return emitter;
+    }
+
+    private static void broadcastComment(String postId, Map<String, Object> commentPayload) {
+        List<SseEmitter> emitters = commentEmitters.get(postId);
+        if (emitters == null || emitters.isEmpty()) return;
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            List<SseEmitter> dead = new ArrayList<>();
+            for (SseEmitter emitter : emitters) {
+                try {
+                    emitter.send(SseEmitter.event().name("comment").data(commentPayload, MediaType.APPLICATION_JSON));
+                } catch (Exception e) {
+                    dead.add(emitter);
+                }
+            }
+            emitters.removeAll(dead);
+        });
+    }
+
     @PostMapping(value = "/post/{id}/comment", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> addComment(@PathVariable String id, @RequestParam String content,
@@ -266,6 +313,7 @@ public class ForumController {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("id", comment.getId());
+        body.put("authorId", user.getId());
         body.put("authorName", displayName(user));
         body.put("authorPicture", displayPicture(user));
         body.put("authorVerified", isVerifiedNonAdmin(user));
@@ -275,6 +323,12 @@ public class ForumController {
         body.put("replyToAuthorName", comment.getReplyToAuthorName());
         body.put("replyToContent", comment.getReplyToContent());
         body.put("count", count);
+
+        // Push it live to everyone else currently viewing this post; the
+        // sender already sees it via the optimistic bubble appended before
+        // this request was even sent.
+        broadcastComment(id, body);
+
         return ResponseEntity.ok(body);
     }
 

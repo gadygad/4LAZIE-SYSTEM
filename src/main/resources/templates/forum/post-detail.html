@@ -259,6 +259,11 @@
         // The community-granted trust badge (green name + check) — distinct
         // from the 4LAZIE admin brand above.
         const CURRENT_USER_VERIFIED = /*[[${session.user != null and session.user.role != null and session.user.role.name() != 'ADMIN' and session.user.role.name() != 'SUPER_ADMIN' and session.user.hasVerifiedBadge}]]*/ false;
+        // Lets the live comment stream skip our own comments outright —
+        // they're already rendered optimistically by submitComment(), and
+        // relying on id-based dedup alone is a race: the SSE push can land
+        // before the POST response sets the optimistic bubble's real id.
+        const CURRENT_USER_ID = /*[[${session.user != null ? session.user.id : null}]]*/ null;
 
         // CSRF token cookie set by Spring Security — required on every state-changing fetch()
         function csrfToken() {
@@ -559,6 +564,49 @@
                 console.error('loading comments failed:', err);
                 document.getElementById('commentsList').innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">Failed to load comments.</div>';
             });
+
+        // Live comments — anyone else viewing this post sees a new
+        // comment/reply the instant it's posted, no refresh needed. The
+        // sender's own comment is skipped here since it was already
+        // rendered optimistically by submitComment(); dedup is by id.
+        function appendIncomingComment(c) {
+            if (!c || !c.id) return;
+            // Own comment — already shown optimistically by submitComment();
+            // rendering it again here would race with that and duplicate it.
+            if (CURRENT_USER_ID && c.authorId === CURRENT_USER_ID) return;
+            if (document.querySelector('[data-comment-id="' + c.id + '"]')) return;
+            const list = document.getElementById('commentsList');
+            if (list.querySelector('.text-center')) list.innerHTML = '';
+
+            let rootId = c.id;
+            let quote = null;
+            if (c.replyToCommentId) {
+                const targetEl = document.querySelector('[data-comment-id="' + c.replyToCommentId + '"]');
+                const threadEl = targetEl ? targetEl.closest('.comment-thread') : null;
+                if (threadEl) {
+                    rootId = threadEl.dataset.threadRoot;
+                    if (c.replyToCommentId !== rootId) quote = { authorName: c.replyToAuthorName, content: c.replyToContent };
+                }
+            }
+            const wrap = document.createElement('div');
+            if (rootId === c.id) {
+                wrap.innerHTML = threadHtml(c, []);
+                list.appendChild(wrap.firstElementChild);
+            } else {
+                const container = document.querySelector('.thread-replies[data-thread-for="' + rootId + '"]');
+                if (!container) return;
+                wrap.innerHTML = commentBubbleHtml(c, true, quote);
+                container.appendChild(wrap.firstElementChild);
+            }
+            wrap.firstElementChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            document.querySelectorAll('[data-post-id="' + POST_ID + '"] .comment-count')
+                .forEach(el => el.innerText = c.count);
+        }
+
+        const commentSSE = new EventSource('/community/post/' + POST_ID + '/comments/stream');
+        commentSSE.addEventListener('comment', e => {
+            try { appendIncomingComment(JSON.parse(e.data)); } catch (err) {}
+        });
     </script>
 </body>
 </html>
