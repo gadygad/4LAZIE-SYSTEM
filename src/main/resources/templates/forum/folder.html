@@ -503,7 +503,8 @@
                 </div>
             </div>
 
-            <!-- Notes List -->
+            <!-- Notes List, grouped by subject so a student can tell at a
+                 glance which subject's materials each group holds -->
             <div class="d-flex flex-column gap-3">
                 <!-- Empty state -->
                 <div th:if="${notes == null || notes.isEmpty()}" class="text-center p-5 rounded-4 text-white mx-3" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2);">
@@ -512,32 +513,55 @@
                     <p class="opacity-75">There are currently no notes uploaded for this folder.</p>
                 </div>
 
-                <!-- Note Item -->
-                <div th:each="note : ${notes}" class="p-4 rounded-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3" style="background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(31, 41, 55, 0.9)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.transform='translateY(0)';">
-                    <div class="d-flex gap-3 align-items-start">
-                        <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px; background: rgba(255,255,255,0.05);">
-                            <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.5rem; color: #ef4444;" th:if="${note.fileUrl != null && note.fileUrl.endsWith('.pdf')}"></i>
-                            <i class="bi bi-file-earmark-text-fill" style="font-size: 1.5rem; color: #3b82f6;" th:unless="${note.fileUrl != null && note.fileUrl.endsWith('.pdf')}"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-white mb-1" th:text="${note.title}">Note Title</h5>
-                            <div class="d-flex flex-wrap gap-2 align-items-center" style="font-size: 13px; color: rgba(255,255,255,0.5);">
-                                <span th:text="${note.moduleName}">Module Name</span>
-                                <span>&bull;</span>
-                                <span th:text="${note.author != null ? note.author.name : 'Unknown Author'}">Author</span>
-                                <span>&bull;</span>
-                                <span th:text="${#temporals.format(note.createdAt, 'MMM dd, yyyy')}">Date</span>
+                <!-- Subject group -->
+                <div th:each="subjectEntry, subjectStat : ${notesBySubject}" class="rounded-4 overflow-hidden" style="background: rgba(31, 41, 55, 0.4); border: 1px solid rgba(255, 255, 255, 0.06);">
+                    <button class="btn w-100 d-flex justify-content-between align-items-center px-4 py-3 text-white" type="button"
+                            data-bs-toggle="collapse" th:data-bs-target="'#subjectGroup' + ${subjectStat.index}"
+                            th:attr="aria-expanded=${subjectStat.index == 0}"
+                            style="background: transparent; border: none; border-radius: 0;">
+                        <span class="d-flex align-items-center gap-2 fw-bold">
+                            <i class="bi bi-journal-bookmark-fill" style="color: #10b981;"></i>
+                            <span th:text="${subjectEntry.key}">Subject Name</span>
+                            <span class="badge rounded-pill" style="background: rgba(16,185,129,0.15); color: #10b981; font-size: 11px;" th:text="${subjectEntry.value.size()}">0</span>
+                        </span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div th:id="'subjectGroup' + ${subjectStat.index}" class="collapse" th:classappend="${subjectStat.index == 0} ? 'show' : ''">
+                        <div class="d-flex flex-column gap-2 px-3 pb-3">
+                            <!-- Note Item -->
+                            <div th:each="note : ${subjectEntry.value}" class="p-3 rounded-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3" style="background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(31, 41, 55, 0.9)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.transform='translateY(0)';">
+                                <div class="d-flex gap-3 align-items-start">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px; background: rgba(255,255,255,0.05);">
+                                        <i class="bi bi-file-earmark-pdf-fill" style="font-size: 1.5rem; color: #ef4444;" th:if="${note.fileUrl != null && note.fileUrl.endsWith('.pdf')}"></i>
+                                        <i class="bi bi-file-earmark-text-fill" style="font-size: 1.5rem; color: #3b82f6;" th:unless="${note.fileUrl != null && note.fileUrl.endsWith('.pdf')}"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold text-white mb-1" th:text="${note.title}">Note Title</h5>
+                                        <div class="d-flex flex-wrap gap-2 align-items-center" style="font-size: 13px; color: rgba(255,255,255,0.5);">
+                                            <!-- Which college this came from, so a student browsing
+                                                 another institution's materials always knows the source. -->
+                                            <span class="d-inline-flex align-items-center gap-1" th:if="${note.institution != null}">
+                                                <i class="bi bi-mortarboard-fill" style="color: #f59e0b; font-size: 11px;"></i>
+                                                <span th:text="${note.institution.name}">Institution</span>
+                                            </span>
+                                            <span th:if="${note.institution != null}">&bull;</span>
+                                            <span th:text="${note.category != null ? note.category : 'Note'}">Category</span>
+                                            <span th:if="${note.uploadDate != null}">&bull;</span>
+                                            <span th:if="${note.uploadDate != null}" th:text="${#temporals.format(note.uploadDate, 'MMM dd, yyyy')}">Date</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2 flex-shrink-0">
+                                    <a th:href="@{/view/{slug}(slug=${note.slug})}" class="btn px-4 py-2 fw-bold rounded-pill" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
+                                        Read
+                                    </a>
+                                    <a th:href="@{/download/{slug}(slug=${note.slug})}" class="btn px-4 py-2 fw-bold rounded-pill" style="background: #10b981; color: #fff; border: 1px solid #10b981; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='#059669'; this.style.borderColor='#059669'" onmouseout="this.style.background='#10b981'; this.style.borderColor='#10b981'">
+                                        Download
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="d-flex gap-2 flex-shrink-0">
-                        <a th:href="@{/view/{slug}(slug=${note.slug})}" class="btn px-4 py-2 fw-bold rounded-pill" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
-                            Read
-                        </a>
-                        <a th:href="@{/download/{slug}(slug=${note.slug})}" class="btn px-4 py-2 fw-bold rounded-pill" style="background: #10b981; color: #fff; border: 1px solid #10b981; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='#059669'; this.style.borderColor='#059669'" onmouseout="this.style.background='#10b981'; this.style.borderColor='#10b981'">
-                            Download
-                        </a>
                     </div>
                 </div>
             </div>

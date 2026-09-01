@@ -44,7 +44,19 @@ public class ForumFolderController {
             
         model.addAttribute("level", level);
         model.addAttribute("notes", levelNotes);
-        
+
+        // Group by subject (moduleName) so a student can tell at a glance
+        // which subject's materials a folder holds instead of one long
+        // undifferentiated list — levelNotes is already newest-first, and
+        // LinkedHashMap preserves that ordering across groups too.
+        java.util.Map<String, List<Note>> notesBySubject = new java.util.LinkedHashMap<>();
+        for (Note n : levelNotes) {
+            String subject = (n.getModuleName() != null && !n.getModuleName().isBlank())
+                    ? n.getModuleName() : "Other Materials";
+            notesBySubject.computeIfAbsent(subject, k -> new java.util.ArrayList<>()).add(n);
+        }
+        model.addAttribute("notesBySubject", notesBySubject);
+
         // We also need latestFolders for the sidebar
         List<Note> recentNotes = noteRepository.findTop50ByOrderByIdDesc();
         java.util.Map<Integer, List<Note>> notesByLevel = recentNotes.stream()
