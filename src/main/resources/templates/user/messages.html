@@ -1592,10 +1592,14 @@
                 return '<span style="color:#94a3b8;font-weight:600;">Sent</span>';
             }
 
-            function makeBubble(msg, isNew) {
+            function makeBubble(msg, isNew, grouped) {
                 const outer = document.createElement('div');
                 outer.id = 'peer-msg-' + msg.id;
-                outer.style.cssText = 'display:flex;flex-direction:column;margin-bottom:12px;max-width:100%;' + (msg.isSelf ? 'align-items:flex-start;' : 'align-items:flex-end;');
+                // Consecutive messages from the same sender sit close together
+                // with no repeated name/time header (grouped); a new sender's
+                // turn gets a bigger gap and its own header, WhatsApp-style.
+                outer.dataset.senderKey = msg.isSelf ? 'self' : 'other';
+                outer.style.cssText = 'display:flex;flex-direction:column;margin-top:' + (grouped ? '2px' : '14px') + ';margin-bottom:2px;max-width:100%;' + (msg.isSelf ? 'align-items:flex-start;' : 'align-items:flex-end;');
                 const label = msg.senderName;
 
                 // Your own messages (sender) sit on the left; the other
@@ -1603,18 +1607,20 @@
                 // usual convention, per request.
                 const entranceAnim = isNew ? 'animation:slidePeerBubbleIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;' : '';
 
-                // Name + time, always the real sender's name (never "You").
-                const headerRow = document.createElement('div');
-                headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;padding:0 56px;' + (msg.isSelf ? '' : 'flex-direction:row-reverse;');
-                const nameEl = document.createElement('span');
-                nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
-                nameEl.innerHTML = verifiedNameHtml(label, msg.senderHasVerifiedBadge);
-                const timeEl = document.createElement('span');
-                timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
-                timeEl.textContent = msg.time || '';
-                headerRow.appendChild(nameEl);
-                headerRow.appendChild(timeEl);
-                outer.appendChild(headerRow);
+                if (!grouped) {
+                    // Name + time, always the real sender's name (never "You").
+                    const headerRow = document.createElement('div');
+                    headerRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:2px;padding:0 56px;' + (msg.isSelf ? '' : 'flex-direction:row-reverse;');
+                    const nameEl = document.createElement('span');
+                    nameEl.style.cssText = 'font-weight:700;font-size:0.95rem;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;';
+                    nameEl.innerHTML = verifiedNameHtml(label, msg.senderHasVerifiedBadge);
+                    const timeEl = document.createElement('span');
+                    timeEl.style.cssText = 'font-size:0.8rem;color:#94a3b8;font-weight:500;white-space:nowrap;';
+                    timeEl.textContent = msg.time || '';
+                    headerRow.appendChild(nameEl);
+                    headerRow.appendChild(timeEl);
+                    outer.appendChild(headerRow);
+                }
 
                 // Avatar + bubble share one row, bottom-aligned with each
                 // other — nothing else lives in this row, so they always
@@ -1724,7 +1730,23 @@
                     historyResolved = true;
                 }
                 if (!Array.isArray(msgs) || !msgs.length) return;
-                if (currentChatId) cacheMessages(currentChatId, msgs);
+                if (currentChatId) {
+                    // A fresh fetch/SSE snapshot is authoritative for confirmed
+                    // messages, but if it landed before the server had actually
+                    // processed a just-sent message (e.g. the send request was
+                    // still in flight when the page reloaded), overwriting the
+                    // cache with it would silently erase that pending message
+                    // until the next snapshot happens to include it. Carry any
+                    // still-unconfirmed cached "temp-" entries forward instead
+                    // of dropping them, so a reopen keeps showing what was
+                    // actually sent — matched by text since its real id isn't
+                    // known yet, and cleared automatically once it does appear.
+                    const prevCached = readCachedMessages(currentChatId) || [];
+                    const stillPending = prevCached.filter(m =>
+                        typeof m.id === 'string' && m.id.indexOf('temp-') === 0 &&
+                        !msgs.some(real => real.isSelf && real.messageText === m.messageText));
+                    cacheMessages(currentChatId, msgs.concat(stillPending));
+                }
                 let added = 0;
                 msgs.forEach(msg => {
                     const id = msg.id || ('tmp-' + Math.random());
@@ -1755,7 +1777,9 @@
                         }
                     }
                     renderedIds.add(id);
-                    const newBubble = makeBubble(msg, isNew);
+                    const senderKey = msg.isSelf ? 'self' : 'other';
+                    const grouped = msgWrap.lastElementChild && msgWrap.lastElementChild.dataset.senderKey === senderKey;
+                    const newBubble = makeBubble(msg, isNew, grouped);
                     // Repainting a cached optimistic message (id still "temp-...",
                     // e.g. right after reopening a chat before the server
                     // confirmation arrived) — tag it so the later swap-in-place
@@ -1869,7 +1893,8 @@
                     optimisticMsg.replyToSenderName = replyState.senderName;
                     optimisticMsg.replyToMessageText = replyState.messageText;
                 }
-                const bubble = makeBubble(optimisticMsg, true);
+                const groupedSelf = msgWrap.lastElementChild && msgWrap.lastElementChild.dataset.senderKey === 'self';
+                const bubble = makeBubble(optimisticMsg, true, groupedSelf);
                 bubble.classList.add('temp-msg');
                 emptyEl.style.display = 'none';
                 msgWrap.appendChild(bubble);
@@ -2351,7 +2376,15 @@
                     historyResolved = true;
                 }
                 if (!Array.isArray(msgs) || !msgs.length) return;
-                if (currentGroupId) cacheMessages(currentGroupId, msgs);
+                if (currentGroupId) {
+                    // See PeerChat.renderMessages() for why still-unconfirmed
+                    // cached messages need to survive a cache overwrite.
+                    const prevCached = readCachedMessages(currentGroupId) || [];
+                    const stillPending = prevCached.filter(m =>
+                        typeof m.id === 'string' && m.id.indexOf('temp-') === 0 &&
+                        !msgs.some(real => real.isSelf && real.messageText === m.messageText));
+                    cacheMessages(currentGroupId, msgs.concat(stillPending));
+                }
                 let added = 0;
                 msgs.forEach(msg => {
                     const id = msg.id || ('tmp-' + Math.random());
