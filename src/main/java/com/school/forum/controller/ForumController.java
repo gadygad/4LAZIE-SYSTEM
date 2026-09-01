@@ -107,28 +107,35 @@ public class ForumController {
 
         model.addAttribute("trending", forumService.getTrendingPosts());
 
-        // Fetch real data for latest notes/folders, grouped by Level instead of Year for better UX
+        // Fetch real data for latest notes/folders, grouped by Level + Semester
+        // so a folder never mixes a level's Semester 1 and Semester 2 materials.
         List<com.school.notes.Note> recentNotes = noteRepository.findTop50ByOrderByIdDesc();
-        java.util.Map<Integer, List<com.school.notes.Note>> notesByLevel = recentNotes.stream()
+        java.util.Map<java.util.List<Integer>, List<com.school.notes.Note>> notesByLevelSemester = recentNotes.stream()
             .filter(n -> n.getLevelNo() != null)
-            .collect(java.util.stream.Collectors.groupingBy(com.school.notes.Note::getLevelNo));
-        
-        List<java.util.Map<String, Object>> latestFolders = notesByLevel.entrySet().stream()
-            .sorted(java.util.Map.Entry.<Integer, List<com.school.notes.Note>>comparingByKey())
-            .limit(4)
+            .collect(java.util.stream.Collectors.groupingBy(
+                n -> java.util.Arrays.asList(n.getLevelNo(), n.getSemesterNo() != null ? n.getSemesterNo() : 0)));
+
+        List<java.util.Map<String, Object>> latestFolders = notesByLevelSemester.entrySet().stream()
+            .sorted((a, b) -> {
+                int levelCompare = a.getKey().get(0).compareTo(b.getKey().get(0));
+                return levelCompare != 0 ? levelCompare : a.getKey().get(1).compareTo(b.getKey().get(1));
+            })
+            .limit(6)
             .map(e -> {
                 java.util.Map<String, Object> map = new java.util.HashMap<>();
-                Integer lvl = e.getKey();
-                String levelStr = (lvl >= 4) ? "LEVEL " + lvl : "YEAR " + lvl;
-                map.put("year", levelStr); 
-                map.put("levelNo", lvl); 
+                Integer lvl = e.getKey().get(0);
+                Integer sem = e.getKey().get(1);
+                String levelStr = (lvl >= 4) ? "NTA Level " + lvl : "Year " + lvl;
+                map.put("year", levelStr + (sem > 0 ? " · Sem " + sem : ""));
+                map.put("levelNo", lvl);
+                map.put("semesterNo", sem > 0 ? sem : 1);
                 map.put("count", (long) e.getValue().size());
-                // Get top 5 most recent notes for this level
+                // Get top 5 most recent notes for this level+semester
                 map.put("notes", e.getValue().stream().limit(5).collect(java.util.stream.Collectors.toList()));
                 return map;
             })
             .collect(java.util.stream.Collectors.toList());
-            
+
         model.addAttribute("latestFolders", latestFolders);
 
         return "forum/index";

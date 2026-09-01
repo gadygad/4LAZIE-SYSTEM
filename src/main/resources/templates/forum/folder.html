@@ -441,7 +441,7 @@
                 <div class="d-flex gap-3 overflow-x-auto pb-1" style="scrollbar-width: none; -ms-overflow-style: none;" th:if="${latestFolders != null && !latestFolders.isEmpty()}">
                     
                     <!-- Dynamic Folder Cards -->
-                    <a th:each="folder : ${latestFolders}" th:href="@{/community/folder/{level}(level=${folder.levelNo})}" class="text-decoration-none d-flex flex-column align-items-center p-3 rounded-4 flex-shrink-0" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); width: 110px; transition: all 0.3s ease;">
+                    <a th:each="folder : ${latestFolders}" th:href="@{/community/folder/{level}/{semester}(level=${folder.levelNo},semester=${folder.semesterNo})}" class="text-decoration-none d-flex flex-column align-items-center p-3 rounded-4 flex-shrink-0" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); width: 110px; transition: all 0.3s ease;">
                         <div class="position-relative mb-3">
                             <i class="bi bi-folder-fill" style="font-size: 3.5rem; color: #10b981; filter: drop-shadow(0 4px 8px rgba(16,185,129,0.3));"></i>
                             <div class="position-absolute bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 20px; height: 20px; top: 55%; left: 50%; transform: translate(-50%, -50%);">
@@ -455,7 +455,7 @@
                 
                 <!-- Accordion Panels for Inline Notes -->
                 <div class="accordion mt-3" id="foldersAccordion" th:if="${latestFolders != null && !latestFolders.isEmpty()}">
-                    <div th:each="folder : ${latestFolders}" th:id="'collapseLevel' + ${folder.levelNo}" class="collapse" data-bs-parent="#foldersAccordion">
+                    <div th:each="folder : ${latestFolders}" th:id="'collapseLevel' + ${folder.levelNo} + '_' + ${folder.semesterNo}" class="collapse" data-bs-parent="#foldersAccordion">
                         <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                             <h6 class="m-0 fw-bold" style="color: #10b981; font-size: 11px; letter-spacing: 0.5px;" th:text="${folder.year} + ' NOTES'"></h6>
                             <a th:href="@{/notes(level=${folder.levelNo})}" class="text-decoration-none" style="font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;">View All <i class="bi bi-arrow-right"></i></a>
@@ -497,7 +497,7 @@
                         <i class="bi bi-folder-fill" style="font-size: 1.8rem; color: #10b981;"></i>
                     </div>
                     <div>
-                        <h4 class="mb-1 fw-bold text-white" th:text="${level >= 4 ? 'Level ' + level + ' Notes' : 'Year ' + level + ' Notes'}">Folder Title</h4>
+                        <h4 class="mb-1 fw-bold text-white" th:text="${levelLabel} + ' · Semester ' + ${semester}">Folder Title</h4>
                         <p class="mb-0" style="color: rgba(255,255,255,0.6); font-size: 14px;" th:text="${notes.size()} + ' Resources available'">0 Resources available</p>
                     </div>
                 </div>
@@ -636,9 +636,9 @@
             <div class="px-3 mb-4">
                 <h6 class="text-uppercase" style="font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 1px; font-weight: 700;">Student Materials</h6>
                 <div class="d-flex flex-column gap-2 mt-2" th:if="${latestFolders != null}">
-                    <a th:each="folder : ${latestFolders}" th:href="@{/community/folder/{level}(level=${folder.levelNo})}" class="btn text-start text-white w-100 d-flex justify-content-between align-items-center py-2" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px;">
+                    <a th:each="folder : ${latestFolders}" th:href="@{/community/folder/{level}/{semester}(level=${folder.levelNo},semester=${folder.semesterNo})}" class="btn text-start text-white w-100 d-flex justify-content-between align-items-center py-2" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px;">
                         <span class="d-flex align-items-center gap-2">
-                            <i class="bi bi-folder-fill" style="color: #10b981;"></i> Level <span th:text="${folder.levelNo}"></span>
+                            <i class="bi bi-folder-fill" style="color: #10b981;"></i> <span th:text="${folder.year}"></span>
                         </span>
                         <span class="badge bg-success rounded-pill" th:text="${folder.count}"></span>
                     </a>

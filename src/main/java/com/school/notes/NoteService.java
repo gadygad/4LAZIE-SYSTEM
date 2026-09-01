@@ -107,6 +107,13 @@ public class NoteService {
         return zipNotes(notes);
     }
 
+    /** Same as createAllNotesZipForLevel, scoped to one semester now that
+     * /community folders are split per semester instead of per level. */
+    public byte[] createAllNotesZipForLevelAndSemester(Integer level, Integer semester) throws IOException {
+        List<Note> notes = noteRepository.findByLevelNoAndSemesterNoOrderByIdDesc(level, semester);
+        return zipNotes(notes);
+    }
+
     private byte[] zipNotes(List<Note> notes) throws IOException {
         if (notes.isEmpty()) return null;
 

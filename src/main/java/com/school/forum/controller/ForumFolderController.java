@@ -31,18 +31,21 @@ public class ForumFolderController {
     @Autowired private NoteRepository noteRepository;
     @Autowired private NoteService noteService;
 
-    @GetMapping("/community/folder/{level}")
-    public String showFolder(@PathVariable("level") Integer level, Model model) {
+    /** NTA levels (Diploma) start at 4; below that it's a Degree "Year". */
+    private static String levelLabel(Integer level) {
+        return (level != null && level >= 4) ? "NTA Level " + level : "Year " + level;
+    }
+
+    @GetMapping("/community/folder/{level}/{semester}")
+    public String showFolder(@PathVariable("level") Integer level, @PathVariable("semester") Integer semester, Model model) {
         User user = authUtil.getLoggedInUser();
         model.addAttribute("user", user);
-        
-        List<Note> allNotes = noteRepository.findAll();
-        List<Note> levelNotes = allNotes.stream()
-            .filter(n -> n.getLevelNo() != null && n.getLevelNo().equals(level))
-            .sorted((a, b) -> b.getId().compareTo(a.getId()))
-            .collect(Collectors.toList());
-            
+
+        List<Note> levelNotes = noteRepository.findByLevelNoAndSemesterNoOrderByIdDesc(level, semester);
+
         model.addAttribute("level", level);
+        model.addAttribute("semester", semester);
+        model.addAttribute("levelLabel", levelLabel(level));
         model.addAttribute("notes", levelNotes);
 
         // Group by subject (moduleName) so a student can tell at a glance
@@ -57,51 +60,61 @@ public class ForumFolderController {
         }
         model.addAttribute("notesBySubject", notesBySubject);
 
-        // We also need latestFolders for the sidebar
-        List<Note> recentNotes = noteRepository.findTop50ByOrderByIdDesc();
-        java.util.Map<Integer, List<Note>> notesByLevel = recentNotes.stream()
-            .filter(n -> n.getLevelNo() != null)
-            .collect(java.util.stream.Collectors.groupingBy(Note::getLevelNo));
-            
-        List<java.util.Map<String, Object>> latestFolders = notesByLevel.entrySet().stream()
-            .sorted(java.util.Map.Entry.<Integer, List<Note>>comparingByKey())
-            .limit(4)
-            .map(e -> {
-                java.util.Map<String, Object> map = new java.util.HashMap<>();
-                Integer lvl = e.getKey();
-                String levelStr = (lvl >= 4) ? "LEVEL " + lvl : "YEAR " + lvl;
-                map.put("year", levelStr);
-                map.put("levelNo", lvl);
-                map.put("count", (long) e.getValue().size());
-                map.put("notes", e.getValue().stream().limit(5).collect(Collectors.toList()));
-                return map;
-            })
-            .collect(Collectors.toList());
-        model.addAttribute("latestFolders", latestFolders);
+        model.addAttribute("latestFolders", buildLatestFolders());
 
         return "forum/folder";
     }
 
-    /** Zips every note for this level, across every college/program — matches
-     * exactly what showFolder() above lists on the page, unlike the older
-     * /notes/download/level/{level} endpoint which is scoped to one program. */
-    @GetMapping("/community/folder/{level}/download-all")
+    /** Zips every note for this level+semester, across every college/program
+     * — matches exactly what showFolder() above lists on the page, unlike
+     * the older /notes/download/level/{level} endpoint which is scoped to
+     * one program. */
+    @GetMapping("/community/folder/{level}/{semester}/download-all")
     @ResponseBody
-    public ResponseEntity<ByteArrayResource> downloadAll(@PathVariable("level") Integer level) {
+    public ResponseEntity<ByteArrayResource> downloadAll(@PathVariable("level") Integer level, @PathVariable("semester") Integer semester) {
         try {
-            byte[] zipBytes = noteService.createAllNotesZipForLevel(level);
+            byte[] zipBytes = noteService.createAllNotesZipForLevelAndSemester(level, semester);
             if (zipBytes == null) {
                 return ResponseEntity.notFound().build();
             }
             ByteArrayResource resource = new ByteArrayResource(zipBytes);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"level-" + level + "-all-materials.zip\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"level-" + level + "-semester-" + semester + "-all-materials.zip\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .contentLength(zipBytes.length)
                     .body(resource);
         } catch (IOException e) {
-            log.error("Failed to generate level {} zip", level, e);
+            log.error("Failed to generate level {} semester {} zip", level, semester, e);
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    /** Folder cards shown in sidebars — one per (level, semester) combo that
+     * actually has notes, newest-uploaded-first among the most recent 50. */
+    private List<java.util.Map<String, Object>> buildLatestFolders() {
+        List<Note> recentNotes = noteRepository.findTop50ByOrderByIdDesc();
+        java.util.Map<java.util.List<Integer>, List<Note>> grouped = recentNotes.stream()
+                .filter(n -> n.getLevelNo() != null)
+                .collect(java.util.stream.Collectors.groupingBy(
+                        n -> java.util.Arrays.asList(n.getLevelNo(), n.getSemesterNo() != null ? n.getSemesterNo() : 0)));
+
+        return grouped.entrySet().stream()
+                .sorted((a, b) -> {
+                    int levelCompare = a.getKey().get(0).compareTo(b.getKey().get(0));
+                    return levelCompare != 0 ? levelCompare : a.getKey().get(1).compareTo(b.getKey().get(1));
+                })
+                .limit(6)
+                .map(e -> {
+                    java.util.Map<String, Object> map = new java.util.HashMap<>();
+                    Integer lvl = e.getKey().get(0);
+                    Integer sem = e.getKey().get(1);
+                    map.put("year", levelLabel(lvl) + (sem > 0 ? " · Sem " + sem : ""));
+                    map.put("levelNo", lvl);
+                    map.put("semesterNo", sem > 0 ? sem : 1);
+                    map.put("count", (long) e.getValue().size());
+                    map.put("notes", e.getValue().stream().limit(5).collect(Collectors.toList()));
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 }

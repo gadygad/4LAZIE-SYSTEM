@@ -37,6 +37,11 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     // for the same level.
     List<Note> findByLevelNoOrderByIdDesc(Integer levelNo);
 
+    // Level + semester, no program filter — same cross-college intent as
+    // findByLevelNoOrderByIdDesc, but split per semester so a folder never
+    // mixes a level's Semester 1 and Semester 2 materials together.
+    List<Note> findByLevelNoAndSemesterNoOrderByIdDesc(Integer levelNo, Integer semesterNo);
+
     @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(String programType, Integer levelNo, Integer semesterNo, String category);
 
