@@ -682,13 +682,33 @@ public class NotesController {
             String cleanTitle = note.getTitle() != null ? note.getTitle().replaceAll("[^a-zA-Z0-9_-]", "_") : "Document";
             String ext = note.getFilename() != null && note.getFilename().contains(".") ? note.getFilename().substring(note.getFilename().lastIndexOf(".")) : ".pdf";
             String brandedName = "4LAZIE_" + cleanTitle + ext;
-            
-            String userAgent = request.getHeader("User-Agent");
-            boolean isMobile = userAgent != null && userAgent.toLowerCase().matches(".*(android|webos|iphone|ipad|ipod|blackberry|windows phone).*");
-            
-            // Native view works best on iOS/Android, skipping Google Docs iframe
-            
-            response.sendRedirect("/proxy/" + note.getId() + "/" + brandedName);
+            String proxyUrl = "/proxy/" + note.getId() + "/" + brandedName;
+
+            // Redirecting straight to the raw PDF response left "Read" at the
+            // mercy of whatever the browser/device does with an inline PDF
+            // navigation — plenty of mobile browsers save it to disk first
+            // and only open it from there regardless of the Content-Disposition
+            // header. Rendering our own page with the PDF embedded in an
+            // iframe instead means the top-level navigation is always just an
+            // HTML page — never a file the browser might offer to save — and
+            // "Download" stays a clearly separate, explicit action.
+            String safeTitle = note.getTitle() != null
+                    ? note.getTitle().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+                    : "Document";
+            String viewerHtml = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">"
+                    + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+                    + "<title>" + safeTitle + " | 4LAZIE</title>"
+                    + "<style>*{box-sizing:border-box;}html,body{margin:0;height:100%;background:#333;}"
+                    + "iframe{width:100%;height:100%;border:none;display:block;}"
+                    + ".fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;"
+                    + "background:#111;color:#fff;display:flex;align-items:center;justify-content:center;"
+                    + "box-shadow:0 10px 25px rgba(0,0,0,0.4);text-decoration:none;font-size:1.4rem;z-index:10;}"
+                    + "</style></head><body>"
+                    + "<iframe src=\"" + proxyUrl + "#toolbar=1\"></iframe>"
+                    + "<a class=\"fab\" href=\"/download/" + note.getId() + "\" title=\"Download\">&#8681;</a>"
+                    + "</body></html>";
+            response.setContentType(MediaType.TEXT_HTML_VALUE);
+            response.getWriter().write(viewerHtml);
             return;
         }
 
