@@ -1755,7 +1755,15 @@
                         }
                     }
                     renderedIds.add(id);
-                    msgWrap.appendChild(makeBubble(msg, isNew));
+                    const newBubble = makeBubble(msg, isNew);
+                    // Repainting a cached optimistic message (id still "temp-...",
+                    // e.g. right after reopening a chat before the server
+                    // confirmation arrived) — tag it so the later swap-in-place
+                    // logic above can still find and reconcile it, instead of
+                    // leaving it stuck forever and duplicating once the real
+                    // message shows up.
+                    if (typeof id === 'string' && id.indexOf('temp-') === 0) newBubble.classList.add('temp-msg');
+                    msgWrap.appendChild(newBubble);
                     added++;
                 });
                 if (added > 0) {
@@ -1866,6 +1874,12 @@
                 emptyEl.style.display = 'none';
                 msgWrap.appendChild(bubble);
                 scrollBottom(true);
+                // Cache this optimistic bubble too, not just server-confirmed
+                // ones — otherwise a reopen (backgrounding the tab, switching
+                // chats and back) before the SSE confirmation lands wipes the
+                // message from view entirely until the next real fetch, even
+                // though it was already sent successfully.
+                cacheMessages(currentChatId, (readCachedMessages(currentChatId) || []).concat([optimisticMsg]));
                 // The real confirmation later just swaps this temp bubble in
                 // place (doesn't count as "added" in renderMessages), so the
                 // inbox-refresh trigger there never fires for your own sends
@@ -2352,7 +2366,11 @@
                         }
                     }
                     renderedIds.add(id);
-                    msgWrap.appendChild(makeBubble(msg));
+                    const newBubble = makeBubble(msg);
+                    // See PeerChat.renderMessages() for why cached optimistic
+                    // ("temp-...") messages need this tag re-applied.
+                    if (typeof id === 'string' && id.indexOf('temp-') === 0) newBubble.classList.add('temp-msg');
+                    msgWrap.appendChild(newBubble);
                     added++;
                 });
                 if (added > 0) {
@@ -2421,6 +2439,8 @@
                 emptyEl.style.display = 'none';
                 msgWrap.appendChild(bubble);
                 scrollBottom(true);
+                // See PeerChat.sendMessage() for why this needs caching too.
+                cacheMessages(currentGroupId, (readCachedMessages(currentGroupId) || []).concat([optimisticMsg]));
                 scheduleInboxRefresh();
 
                 const body = new URLSearchParams({ messageText: text });
