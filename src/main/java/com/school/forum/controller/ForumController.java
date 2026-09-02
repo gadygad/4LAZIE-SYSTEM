@@ -149,7 +149,7 @@ public class ForumController {
                 Integer lvl = key.get(0);
                 Integer sem = key.get(1);
                 String levelStr = (lvl >= 4) ? "NTA Level " + lvl : "Year " + lvl;
-                map.put("year", levelStr + (sem > 0 ? " · Sem " + sem : ""));
+                map.put("year", levelStr + (sem > 0 ? " · Semester " + sem : ""));
                 map.put("levelNo", lvl);
                 map.put("semesterNo", sem > 0 ? sem : 1);
                 map.put("count", (long) notes.size());

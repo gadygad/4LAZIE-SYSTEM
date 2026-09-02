@@ -145,7 +145,7 @@ public class ForumFolderController {
                     java.util.Map<String, Object> map = new java.util.HashMap<>();
                     Integer lvl = key.get(0);
                     Integer sem = key.get(1);
-                    map.put("year", levelLabel(lvl) + (sem > 0 ? " · Sem " + sem : ""));
+                    map.put("year", levelLabel(lvl) + (sem > 0 ? " · Semester " + sem : ""));
                     map.put("levelNo", lvl);
                     map.put("semesterNo", sem > 0 ? sem : 1);
                     map.put("count", (long) notes.size());
