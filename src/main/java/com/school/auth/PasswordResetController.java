@@ -71,7 +71,10 @@ public class PasswordResetController {
         emailService.sendPasswordResetEmail(user.getEmail(), otp);
         redirectAttributes.addFlashAttribute("success", "A 6-digit OTP has been sent to your email. It will expire in 5 minutes.");
 
-        return "redirect:/verify-otp?email=" + email;
+        // cleanEmail (trimmed) and URL-encoded — an unencoded email containing
+        // "+", "&", or "%" would otherwise corrupt this redirect's query string.
+        String encodedEmail = java.net.URLEncoder.encode(cleanEmail, java.nio.charset.StandardCharsets.UTF_8);
+        return "redirect:/verify-otp?email=" + encodedEmail;
     }
 
     @GetMapping("/verify-otp")
