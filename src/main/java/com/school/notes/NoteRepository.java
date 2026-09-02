@@ -123,6 +123,13 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     // Fetch latest 10 notes across all categories
     List<Note> findTop10ByOrderByIdDesc();
     List<Note> findTop50ByOrderByIdDesc();
+    // Wide enough pool for the /community folder picker to reliably see
+    // every (level, semester) combo with notes, not just whichever ones
+    // happened to be uploaded most recently — findTop50 was recency-biased
+    // enough that an entire program type (e.g. all of Degree) could vanish
+    // from the picker just because Diploma content was uploaded more
+    // recently, even though Degree notes still existed.
+    List<Note> findTop500ByOrderByIdDesc();
     List<Note> findTop6ByOrderByIdDesc();
 
     @Aggregation(pipeline = {

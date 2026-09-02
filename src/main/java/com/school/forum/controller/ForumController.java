@@ -114,29 +114,43 @@ public class ForumController {
 
         // Fetch real data for latest notes/folders, grouped by Level + Semester
         // so a folder never mixes a level's Semester 1 and Semester 2 materials.
-        List<com.school.notes.Note> recentNotes = noteRepository.findTop50ByOrderByIdDesc();
+        // Pool is wide (500, not just the 50 most recent) and the picker takes
+        // a balanced, shuffled mix of Degree (level 1-3) and Diploma/NTA
+        // (level 4+) folders — otherwise whichever program type got uploaded
+        // most recently could crowd the other out of the picker entirely,
+        // and the same static top-N would show on every single page load.
+        List<com.school.notes.Note> recentNotes = noteRepository.findTop500ByOrderByIdDesc();
         java.util.Map<java.util.List<Integer>, List<com.school.notes.Note>> notesByLevelSemester = recentNotes.stream()
             .filter(n -> n.getLevelNo() != null)
             .collect(java.util.stream.Collectors.groupingBy(
                 n -> java.util.Arrays.asList(n.getLevelNo(), n.getSemesterNo() != null ? n.getSemesterNo() : 0)));
 
-        List<java.util.Map<String, Object>> latestFolders = notesByLevelSemester.entrySet().stream()
-            .sorted((a, b) -> {
-                int levelCompare = a.getKey().get(0).compareTo(b.getKey().get(0));
-                return levelCompare != 0 ? levelCompare : a.getKey().get(1).compareTo(b.getKey().get(1));
-            })
-            .limit(6)
-            .map(e -> {
+        List<java.util.List<Integer>> degreeKeys = new java.util.ArrayList<>();
+        List<java.util.List<Integer>> diplomaKeys = new java.util.ArrayList<>();
+        for (java.util.List<Integer> key : notesByLevelSemester.keySet()) {
+            (key.get(0) >= 4 ? diplomaKeys : degreeKeys).add(key);
+        }
+        java.util.Collections.shuffle(degreeKeys);
+        java.util.Collections.shuffle(diplomaKeys);
+
+        List<java.util.List<Integer>> pickedKeys = new java.util.ArrayList<>();
+        int perSide = 4; // up to 4 folders from each side, 8 total
+        pickedKeys.addAll(degreeKeys.subList(0, Math.min(perSide, degreeKeys.size())));
+        pickedKeys.addAll(diplomaKeys.subList(0, Math.min(perSide, diplomaKeys.size())));
+        java.util.Collections.shuffle(pickedKeys);
+
+        List<java.util.Map<String, Object>> latestFolders = pickedKeys.stream()
+            .map(key -> {
+                List<com.school.notes.Note> notes = notesByLevelSemester.get(key);
                 java.util.Map<String, Object> map = new java.util.HashMap<>();
-                Integer lvl = e.getKey().get(0);
-                Integer sem = e.getKey().get(1);
+                Integer lvl = key.get(0);
+                Integer sem = key.get(1);
                 String levelStr = (lvl >= 4) ? "NTA Level " + lvl : "Year " + lvl;
                 map.put("year", levelStr + (sem > 0 ? " · Sem " + sem : ""));
                 map.put("levelNo", lvl);
                 map.put("semesterNo", sem > 0 ? sem : 1);
-                map.put("count", (long) e.getValue().size());
-                // Get top 5 most recent notes for this level+semester
-                map.put("notes", e.getValue().stream().limit(5).collect(java.util.stream.Collectors.toList()));
+                map.put("count", (long) notes.size());
+                map.put("notes", notes.stream().limit(5).collect(java.util.stream.Collectors.toList()));
                 return map;
             })
             .collect(java.util.stream.Collectors.toList());
