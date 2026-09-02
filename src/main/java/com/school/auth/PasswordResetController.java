@@ -21,6 +21,8 @@ import java.util.Optional;
 @Controller
 public class PasswordResetController {
 
+        private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PasswordResetController.class);
+
         private UserRepository userRepository;
 
         private PasswordResetTokenRepository tokenRepository;
@@ -89,26 +91,27 @@ public class PasswordResetController {
                                    RedirectAttributes redirectAttributes) {
         String cleanOtp = otp != null ? otp.trim() : "";
         String cleanEmail = email != null ? email.trim() : "";
-        
+        String encodedEmail = java.net.URLEncoder.encode(cleanEmail, java.nio.charset.StandardCharsets.UTF_8);
+
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(cleanOtp);
-        
+
         if (tokenOpt.isEmpty()) {
-            System.out.println("OTP Verification Failed: Token not found -> " + cleanOtp);
+            log.warn("OTP verification failed: token not found for email {}", cleanEmail);
             redirectAttributes.addFlashAttribute("error", "The OTP is invalid or has expired. Please request a new one.");
-            return "redirect:/verify-otp?email=" + cleanEmail;
+            return "redirect:/verify-otp?email=" + encodedEmail;
         }
-        
+
         PasswordResetToken token = tokenOpt.get();
         if (token.isExpired()) {
-            System.out.println("OTP Verification Failed: Token expired -> " + cleanOtp);
+            log.warn("OTP verification failed: token expired for email {}", cleanEmail);
             redirectAttributes.addFlashAttribute("error", "The OTP has expired. Please request a new one.");
-            return "redirect:/verify-otp?email=" + cleanEmail;
+            return "redirect:/verify-otp?email=" + encodedEmail;
         }
-        
+
         if (!token.getUser().getEmail().equalsIgnoreCase(cleanEmail)) {
-            System.out.println("OTP Verification Failed: Email mismatch -> Expected: " + token.getUser().getEmail() + ", Got: " + cleanEmail);
+            log.warn("OTP verification failed: email mismatch (token belongs to a different account)");
             redirectAttributes.addFlashAttribute("error", "The OTP is invalid for this email.");
-            return "redirect:/verify-otp?email=" + cleanEmail;
+            return "redirect:/verify-otp?email=" + encodedEmail;
         }
         
         return "redirect:/reset-password?token=" + cleanOtp;

@@ -196,11 +196,8 @@ public class NoteService {
             pushNotificationService.sendToAllSubscribers(pushTitle, pushBody, pushUrl);
 
             if (notificationService != null && userRepository != null) {
-                List<com.school.auth.User> matchedUsers = userRepository.findAll().stream()
-                    .filter(u -> note.getProgramType().equals(u.getCourseProgram()) &&
-                                 note.getLevelNo().equals(u.getLevel()) &&
-                                 note.getSemesterNo().equals(u.getSemester()))
-                    .collect(java.util.stream.Collectors.toList());
+                List<com.school.auth.User> matchedUsers = userRepository.findByCourseProgramAndLevelAndSemester(
+                    note.getProgramType(), note.getLevelNo(), note.getSemesterNo());
 
                 for (com.school.auth.User u : matchedUsers) {
                     if (loggedInUser == null || !u.getId().equals(loggedInUser.getId())) {

@@ -605,10 +605,10 @@ public class AdminController {
                              @RequestParam("courseId") List<String> courseIds,
                              RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+        if (!adminService.hasPermission(user, "MANAGE_SUBJECTS")) {
             return "redirect:/login";
         }
-        
+
         if (name == null || name.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Subject name cannot be empty.");
             return "redirect:/admin/subjects";
@@ -706,7 +706,7 @@ public class AdminController {
             HttpSession session, RedirectAttributes redirectAttributes) {
         
         User user = getLoggedInUser();
-        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+        if (!adminService.hasPermission(user, "MANAGE_TIMETABLES")) {
             return "redirect:/login";
         }
 

@@ -54,6 +54,7 @@ public class EncryptionUtil {
             byte[] decodedBytes = Base64.getUrlDecoder().decode(encryptedValue);
             return new String(cipher.doFinal(decodedBytes), StandardCharsets.UTF_8);
         } catch (Exception e) {
+            log.debug("Decryption failed, falling back to raw value (likely a pre-encryption legacy URL): {}", e.getMessage());
             return encryptedValue; // Fallback to raw if decryption fails (e.g., old URLs)
         }
     }

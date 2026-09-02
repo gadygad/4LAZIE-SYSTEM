@@ -320,7 +320,9 @@ public class DirectChatController {
         response.setHeader("X-Accel-Buffering", "no");
         User admin = (User) session.getAttribute("user");
         SseEmitter emitter = new SseEmitter(180_000L);
-        if (admin == null) { emitter.complete(); return emitter; }
+        if (admin == null || (!admin.getRole().name().equals("ADMIN") && !admin.getRole().name().equals("SUPER_ADMIN"))) {
+            emitter.complete(); return emitter;
+        }
 
         // Register with ADMIN perspective
         registerEmitter(chatId, emitter, "ADMIN");
@@ -381,7 +383,9 @@ public class DirectChatController {
     public ResponseEntity<Map<String, Object>> adminPollMessages(@PathVariable String chatId, HttpSession session) {
         Map<String, Object> resp = new HashMap<>();
         User admin = (User) session.getAttribute("user");
-        if (admin == null) { resp.put("success", false); return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp); }
+        if (admin == null || (!admin.getRole().name().equals("ADMIN") && !admin.getRole().name().equals("SUPER_ADMIN"))) {
+            resp.put("success", false); return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
+        }
         DirectChat chat = directChatService.getChatById(chatId);
         if (chat == null) {
             resp.put("success", false); return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
@@ -435,12 +439,16 @@ public class DirectChatController {
         SseEmitter emitter = new SseEmitter(180_000L);
         if (student == null) { emitter.complete(); return emitter; }
 
+        DirectChat chat = directChatService.getChatById(chatId);
+        if (chat == null || !chat.getStudentId().equals(student.getId())) {
+            emitter.complete(); return emitter;
+        }
+
         // Register with student's own ID as perspective
         registerEmitter(chatId, emitter, student.getId());
 
         // Send current messages from student's perspective
-        DirectChat chat = directChatService.getChatById(chatId);
-        if (chat != null) {
+        {
             try {
                 emitter.send(SseEmitter.event().name("init")
                         .data(buildMessageListStatic(chat, student.getId()), MediaType.APPLICATION_JSON));
