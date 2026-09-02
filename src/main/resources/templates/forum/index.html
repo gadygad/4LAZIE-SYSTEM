@@ -1006,14 +1006,29 @@
                 + items.map(renderItem).join('');
         }
 
+        function personAvatarHtml(p) {
+            if (p.picture) {
+                return `<img src="${escSearch(p.picture)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
+            }
+            return `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700;font-size:0.8rem;">${escSearch((p.name || '?').charAt(0).toUpperCase())}</div>`;
+        }
+
         function renderSearchResults(data) {
-            const hasAny = (data.posts && data.posts.length) || (data.notes && data.notes.length) || (data.comments && data.comments.length);
+            const hasAny = (data.people && data.people.length) || (data.posts && data.posts.length) || (data.notes && data.notes.length) || (data.comments && data.comments.length);
             if (!hasAny) {
                 navSearchResults.innerHTML = '<div class="text-center py-4" style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">No results found.</div>';
                 navSearchResults.style.display = 'block';
                 return;
             }
             let html = '';
+            html += searchSectionHtml('People', data.people, p => `
+                <a href="${p.link}" class="d-flex align-items-center gap-2 text-decoration-none px-2 py-2 rounded-3 search-result-item">
+                    ${personAvatarHtml(p)}
+                    <div style="min-width: 0;">
+                        <div class="fw-bold text-white text-truncate" style="font-size: 0.85rem;">${escSearch(p.name)}${p.verified ? ' <i class="bi bi-patch-check-fill" style="color:#4ade80;font-size:0.75em;"></i>' : ''}</div>
+                        <div class="text-truncate" style="font-size: 0.72rem; color: rgba(255,255,255,0.5);">${p.institution ? escSearch(p.institution) : (p.role === 'LECTURE' ? 'Lecturer' : (p.role === 'CLASS_REPRESENTATIVE' ? 'Class Representative' : 'Student'))}</div>
+                    </div>
+                </a>`);
             html += searchSectionHtml('Discussions', data.posts, p => `
                 <a href="${p.link}" class="d-block text-decoration-none px-2 py-2 rounded-3 search-result-item">
                     <div class="fw-bold text-white" style="font-size: 0.85rem;">${escSearch(p.title || 'Untitled')}</div>

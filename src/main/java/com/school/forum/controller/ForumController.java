@@ -635,17 +635,21 @@ public class ForumController {
 
     // ─────────────────────────────────────────────
     //  Community search — the navbar search icon used to just toggle an
-    //  input open with nowhere for it to go. Searches across three things a
-    //  student might actually be looking for: real discussion posts (title
-    //  + content), uploaded notes/past-papers (title, module, category), and
-    //  comment content (surfaced with which post it belongs to, since a
-    //  comment has no page of its own). Capped small per section — this
-    //  backs a live dropdown, not a full results page.
+    //  input open with nowhere for it to go. Searches across four things a
+    //  student might actually be looking for: other students by name (the
+    //  whole point of a cross-college community — finding and connecting
+    //  with people at other institutions, not just this one's own), real
+    //  discussion posts (title + content), uploaded notes/past-papers
+    //  (title, module, category), and comment content (surfaced with which
+    //  post it belongs to, since a comment has no page of its own). Capped
+    //  small per section — this backs a live dropdown, not a full results
+    //  page.
     // ─────────────────────────────────────────────
     @GetMapping(value = "/search", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> search(@RequestParam("q") String q) {
         Map<String, Object> empty = new LinkedHashMap<>();
+        empty.put("people", List.of());
         empty.put("posts", List.of());
         empty.put("notes", List.of());
         empty.put("comments", List.of());
@@ -656,6 +660,31 @@ public class ForumController {
         // matched literally instead of being interpreted as regex syntax.
         String safe = java.util.regex.Pattern.quote(q.trim());
         int perSection = 5;
+
+        User currentUser = authUtil.getLoggedInUser();
+
+        // People — matched by name only (never email, to avoid turning this
+        // into an email-harvesting lookup). Admin/system accounts are always
+        // branded as "4LAZIE" elsewhere, not a real person to find, so
+        // they're excluded here regardless of what their stored name is.
+        List<User> matchedPeople = mongoTemplate.find(
+                Query.query(Criteria.where("name").regex(safe, "i")
+                        .and("role").nin(com.school.auth.Role.ADMIN, com.school.auth.Role.SUPER_ADMIN))
+                        .limit(perSection),
+                User.class);
+        List<Map<String, Object>> people = matchedPeople.stream()
+                .filter(u -> currentUser == null || !u.getId().equals(currentUser.getId()))
+                .map(u -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("id", u.getId());
+                    m.put("name", u.getName());
+                    m.put("picture", u.getProfilePicture());
+                    m.put("institution", u.getInstitution() != null ? u.getInstitution().getName() : null);
+                    m.put("role", u.getRole() != null ? u.getRole().name() : "STUDENT");
+                    m.put("verified", Boolean.TRUE.equals(u.getHasVerifiedBadge()));
+                    m.put("link", "/students/" + u.getId() + "/profile");
+                    return m;
+                }).collect(Collectors.toList());
 
         List<ForumPost> matchedPosts = mongoTemplate.find(
                 Query.query(new Criteria().orOperator(
@@ -712,6 +741,7 @@ public class ForumController {
         }).collect(Collectors.toList());
 
         Map<String, Object> result = new LinkedHashMap<>();
+        result.put("people", people);
         result.put("posts", posts);
         result.put("notes", notes);
         result.put("comments", comments);
