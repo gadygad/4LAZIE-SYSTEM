@@ -119,6 +119,16 @@ public class AdminController {
         return result;
     }
 
+    private void logAdminAction(User admin, String action, String details) {
+        try {
+            com.school.core.ActivityLog log = new com.school.core.ActivityLog(
+                admin.getId(), admin.getName(), admin.getRole().name(), action, details, null, "Admin Portal"
+            );
+            activityLogRepository.save(log);
+        } catch (Exception ignored) {
+        }
+    }
+
     @GetMapping({"", "/", "/dashboard"})
     public String adminDashboard(HttpSession session, Model model) {
         User user = getLoggedInUser();
@@ -290,6 +300,7 @@ public class AdminController {
                 return "redirect:/admin/users";
             }
             userRepository.deleteById(id);
+            logAdminAction(user, "DELETE_USER", "Deleted user " + targetUser.getName() + " (" + targetUser.getEmail() + ")");
             redirectAttributes.addFlashAttribute("success", "User deleted successfully.");
         } else {
             redirectAttributes.addFlashAttribute("error", "User not found.");
@@ -363,7 +374,8 @@ public class AdminController {
             userRepository.save(targetUser);
             
             emailService.sendAccountSuspensionEmail(targetUser.getEmail(), targetUser.getName(), !currentStatus);
-            
+            logAdminAction(admin, !currentStatus ? "SUSPEND_USER" : "REACTIVATE_USER", (!currentStatus ? "Suspended " : "Reactivated ") + targetUser.getName() + " (" + targetUser.getEmail() + ")");
+
             String msg = !currentStatus ? "User suspended successfully." : "User reactivated successfully.";
             redirectAttributes.addFlashAttribute("success", msg);
         } else {
@@ -387,7 +399,8 @@ public class AdminController {
         User targetUser = userRepository.findById(id).orElse(null);
         if (targetUser != null) {
             emailService.sendWarningEmail(targetUser.getEmail(), targetUser.getName(), warningMessage.trim());
-            
+            logAdminAction(admin, "WARN_USER", "Warned " + targetUser.getName() + ": " + warningMessage.trim());
+
             redirectAttributes.addFlashAttribute("success", "Warning sent to " + targetUser.getName() + " successfully.");
         } else {
             redirectAttributes.addFlashAttribute("error", "User not found.");
@@ -410,8 +423,10 @@ public class AdminController {
         
         User targetUser = userRepository.findById(id).orElse(null);
         if (targetUser != null) {
+            Role oldRole = targetUser.getRole();
             targetUser.setRole(role);
             userRepository.save(targetUser);
+            logAdminAction(user, "CHANGE_ROLE", "Changed " + targetUser.getName() + "'s role from " + oldRole + " to " + role);
             redirectAttributes.addFlashAttribute("success", "Role updated successfully.");
         } else {
             redirectAttributes.addFlashAttribute("error", "User not found.");
@@ -435,6 +450,7 @@ public class AdminController {
             }
             targetUser.setPermissions(newPermissions);
             userRepository.save(targetUser);
+            logAdminAction(user, "UPDATE_PERMISSIONS", "Set permissions for " + targetUser.getName() + " to " + newPermissions);
             redirectAttributes.addFlashAttribute("success", "Permissions updated successfully for " + targetUser.getName());
         } else {
             redirectAttributes.addFlashAttribute("error", "User not found.");
@@ -468,6 +484,7 @@ public class AdminController {
                 return "redirect:/admin/notes";
             }
             noteRepository.deleteById(id);
+            logAdminAction(user, "DELETE_NOTE", "Deleted note \"" + note.getTitle() + "\"");
             redirectAttributes.addFlashAttribute("success", "Note deleted successfully.");
         } else {
             redirectAttributes.addFlashAttribute("error", "Note not found.");

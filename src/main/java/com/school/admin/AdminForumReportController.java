@@ -43,9 +43,19 @@ public class AdminForumReportController {
     @Autowired private UserRepository userRepository;
     @Autowired private CacheManager cacheManager;
     @Autowired private AdminService adminService;
+    @Autowired private com.school.core.ActivityLogRepository activityLogRepository;
 
     private boolean canModerate(User user) {
         return adminService.hasPermission(user, "canModerateForum");
+    }
+
+    private void logAdminAction(User admin, String action, String details) {
+        try {
+            activityLogRepository.save(new com.school.core.ActivityLog(
+                admin.getId(), admin.getName(), admin.getRole().name(), action, details, null, "Admin Portal"
+            ));
+        } catch (Exception ignored) {
+        }
     }
 
     private void evictPostCaches(String id) {
@@ -127,6 +137,7 @@ public class AdminForumReportController {
             report.setReviewedByUserId(user.getId());
             report.setReviewedAt(LocalDateTime.now());
             forumReportRepository.save(report);
+            logAdminAction(user, "DISMISS_REPORT", "Dismissed a " + report.getContentType().toLowerCase() + " report (reason: " + report.getReason() + ")");
             redirectAttributes.addFlashAttribute("success", "Report dismissed.");
         }
         return "redirect:/admin/forum/reports";
@@ -160,6 +171,7 @@ public class AdminForumReportController {
                 sibling.setReviewedAt(LocalDateTime.now());
             }
             forumReportRepository.saveAll(siblings);
+            logAdminAction(user, "REMOVE_CONTENT", "Removed a reported " + report.getContentType().toLowerCase() + " (reason: " + report.getReason() + ")");
             redirectAttributes.addFlashAttribute("success", "Content removed.");
         }
         return "redirect:/admin/forum/reports";
