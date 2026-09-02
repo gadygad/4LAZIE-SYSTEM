@@ -16,15 +16,16 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
-    // This must be the SAME address the app authenticates to Gmail's SMTP with
-    // (spring.mail.username / MAIL_USERNAME) — every send*Email method's
-    // "From" header uses this. Gmail silently rejects (or bounces) mail sent
-    // with a From address that isn't the authenticated account or one of its
-    // verified "Send As" aliases, which is exactly why OTP emails were never
-    // arriving: the From was hardcoded to support@4lazie.com, a different,
-    // unverified address, regardless of which account actually logged in.
-    @org.springframework.beans.factory.annotation.Value("${spring.mail.username:kilingepazasauti@gmail.com}")
-    private String senderEmail;
+    // The branded "From" address every send*Email method uses. This only
+    // works if it's either the SAME account the app authenticates to Gmail's
+    // SMTP with (spring.mail.username / MAIL_USERNAME), or a verified
+    // "Send As" alias on that account (Settings > Accounts > Send mail as,
+    // in Gmail) — otherwise Gmail rejects or silently drops the message.
+    // support@4lazie.com is set up as exactly that kind of verified alias on
+    // the real authenticating account (kilingepazasauti@gmail.com), so this
+    // stays hardcoded to the branded address rather than the raw
+    // spring.mail.username value.
+    private static final String FROM_ADDRESS = "support@4lazie.com";
 
     @Async
     public void sendPasswordResetEmail(String to, String otp) {
@@ -35,7 +36,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("Password Reset OTP - 4LAZIE");
             
@@ -79,7 +80,7 @@ public class EmailService {
         }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            message.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             message.setTo(to);
             message.setSubject("Verify your email address - 4LAZIE");
             message.setText("Welcome to 4LAZIE!\n\n" +
@@ -98,7 +99,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("New Material Added: " + noteTitle);
             
@@ -136,7 +137,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("🔒 Your Secure 4LAZIE Activity Report");
             
@@ -168,7 +169,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("Security Alert: New Login Detected - 4LAZIE");
             
@@ -204,7 +205,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("Security Alert: Your Password Was Changed - 4LAZIE");
             
@@ -246,7 +247,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("⚠️ Official Warning from 4LAZIE Administration");
             
@@ -275,7 +276,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             
             String subject = isSuspended ? "🚫 Account Suspended - 4LAZIE" : "✅ Account Reactivated - 4LAZIE";
@@ -309,7 +310,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(to);
             helper.setSubject("🔐 Account Recovery Link - 4LAZIE");
             
@@ -344,7 +345,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
+            helper.setFrom("4LAZIE Student Community <" + FROM_ADDRESS + ">");
             helper.setTo(toEmail);
             helper.setSubject("Re: Your Message to 4LAZIE Support");
             
