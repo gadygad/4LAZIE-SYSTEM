@@ -63,6 +63,9 @@
             <a href="/admin/subjects" class="btn btn-sm rounded-pill px-3" style="background:rgba(59,130,246,0.08);color:#1d4ed8;border:1px solid rgba(59,130,246,0.2);font-weight:600;font-size:0.82rem;">
                 <i class="bi bi-book me-1"></i> Subjects
             </a>
+            <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-3 shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                <i class="bi bi-list me-2"></i> Admin Menu
+            </button>
         </div>
     </div>
 </nav>
@@ -272,5 +275,6 @@
     }
     toggleOptions();
 </script>
+<div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='questions')}"></div>
 </body>
 </html>

@@ -207,15 +207,20 @@
     <div class="container py-4">
 
         <!-- Back + breadcrumb -->
-        <div class="d-flex align-items-center gap-3 mb-4">
-            <a th:href="@{/admin/users}" class="btn-back">
-                <i class="bi bi-arrow-left"></i> Back to Users
-            </a>
-            <div style="color: #94a3b8; font-size: 0.8rem; font-weight: 500;">
-                <i class="bi bi-people-fill me-1"></i> User Management
-                <span class="mx-1">›</span>
-                <span style="color: #10b981;" th:text="${profileUser.name}">Profile</span>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <a th:href="@{/admin/users}" class="btn-back">
+                    <i class="bi bi-arrow-left"></i> Back to Users
+                </a>
+                <div style="color: #94a3b8; font-size: 0.8rem; font-weight: 500;">
+                    <i class="bi bi-people-fill me-1"></i> User Management
+                    <span class="mx-1">›</span>
+                    <span style="color: #10b981;" th:text="${profileUser.name}">Profile</span>
+                </div>
             </div>
+            <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-3 shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                <i class="bi bi-list me-2"></i> Admin Menu
+            </button>
         </div>
 
         <!-- Suspended Banner -->

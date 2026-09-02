@@ -29,6 +29,9 @@
                 <span class="ms-1" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #10b981;">ADMIN</span>
             </a>
             <a href="/admin/notes" class="btn btn-sm btn-outline-secondary rounded-pill px-3"><i class="bi bi-arrow-left me-1"></i> Back to Notes</a>
+            <button class="btn btn-sm btn-success d-flex align-items-center rounded-pill px-3 shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                <i class="bi bi-list me-2"></i> Admin Menu
+            </button>
         </div>
     </nav>
 
@@ -78,5 +81,7 @@
             </div>
         </form>
     </div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{fragments/admin_sidebar :: offcanvas(activePage='notes')}"></div>
 </body>
 </html>
