@@ -71,6 +71,9 @@ public class ForumController {
     @Autowired
     private com.school.notification.NotificationService notificationService;
 
+    @Autowired
+    private com.school.forum.repository.ForumReportRepository forumReportRepository;
+
     // Every notify* helper is fire-and-forget and silently swallows its own
     // failures — a broken notification must never break the like/comment/reply
     // action that triggered it. Each also skips notifying someone about their
@@ -752,5 +755,68 @@ public class ForumController {
         if (content == null) return "";
         String flat = content.replaceAll("\\s+", " ").trim();
         return flat.length() > 90 ? flat.substring(0, 90) + "…" : flat;
+    }
+
+    // ─────────────────────────────────────────────
+    //  Reporting — anyone logged in can flag a post or comment for review.
+    //  Reported content is never auto-hidden; it stays exactly as visible as
+    //  before until an admin or super-admin actually reviews the report (see
+    //  AdminForumReportController). You can't report your own content, and
+    //  re-reporting the same content while your earlier report is still
+    //  pending is a no-op rather than a duplicate queue entry.
+    // ─────────────────────────────────────────────
+    @PostMapping(value = "/post/{id}/report", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> reportPost(@PathVariable String id, @RequestParam String reason,
+                                         @RequestParam(required = false) String details) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        if (!com.school.forum.model.ForumReport.REASONS.contains(reason)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Please choose a valid reason"));
+        }
+        if (id.startsWith("note-")) {
+            return ResponseEntity.status(403).body(Map.of("error", "This post can't be reported"));
+        }
+        ForumPost post = forumPostRepository.findById(id).orElse(null);
+        if (post == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Post not found"));
+        }
+        if (user.getId().equals(post.getAuthorId())) {
+            return ResponseEntity.status(403).body(Map.of("error", "You can't report your own post"));
+        }
+        if (forumReportRepository.existsByContentIdAndReporterIdAndStatus(id, user.getId(), "PENDING")) {
+            return ResponseEntity.ok(Map.of("reported", true, "message", "You've already reported this — it's awaiting review."));
+        }
+        forumReportRepository.save(new com.school.forum.model.ForumReport("POST", id, id, user.getId(), reason,
+                details != null ? details.trim() : null));
+        return ResponseEntity.ok(Map.of("reported", true, "message", "Thanks — this has been sent to the moderators."));
+    }
+
+    @PostMapping(value = "/comment/{id}/report", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> reportComment(@PathVariable String id, @RequestParam String reason,
+                                            @RequestParam(required = false) String details) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        if (!com.school.forum.model.ForumReport.REASONS.contains(reason)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Please choose a valid reason"));
+        }
+        ForumComment comment = forumCommentRepository.findById(id).orElse(null);
+        if (comment == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Comment not found"));
+        }
+        if (user.getId().equals(comment.getAuthorId())) {
+            return ResponseEntity.status(403).body(Map.of("error", "You can't report your own comment"));
+        }
+        if (forumReportRepository.existsByContentIdAndReporterIdAndStatus(id, user.getId(), "PENDING")) {
+            return ResponseEntity.ok(Map.of("reported", true, "message", "You've already reported this — it's awaiting review."));
+        }
+        forumReportRepository.save(new com.school.forum.model.ForumReport("COMMENT", id, comment.getPostId(), user.getId(), reason,
+                details != null ? details.trim() : null));
+        return ResponseEntity.ok(Map.of("reported", true, "message", "Thanks — this has been sent to the moderators."));
     }
 }

@@ -25,12 +25,14 @@ public class GlobalModelAttributes {
 
         private DirectChatService directChatService;
         private com.school.chat.PeerChatService peerChatService;
+        private com.school.forum.repository.ForumReportRepository forumReportRepository;
 
-    public GlobalModelAttributes(NotificationService notificationService, UserRepository userRepository, DirectChatService directChatService, com.school.chat.PeerChatService peerChatService) {
+    public GlobalModelAttributes(NotificationService notificationService, UserRepository userRepository, DirectChatService directChatService, com.school.chat.PeerChatService peerChatService, com.school.forum.repository.ForumReportRepository forumReportRepository) {
         this.notificationService = notificationService;
         this.userRepository = userRepository;
         this.directChatService = directChatService;
         this.peerChatService = peerChatService;
+        this.forumReportRepository = forumReportRepository;
     }
 
 
@@ -77,6 +79,14 @@ public class GlobalModelAttributes {
                             unreadDirect = directChatService.getTotalUnreadForAdmin();
                             directChats = directChatService.getAllChats();
                             model.addAttribute("totalUnreadAdmin", unreadDirect);
+                            // Only queried for admins who can actually act on it — a
+                            // SUPER_ADMIN, or an ADMIN specifically granted the
+                            // "canModerateForum" permission (see admin_users.html).
+                            boolean canModerateForum = user.getRole().name().equals("SUPER_ADMIN")
+                                    || (user.getPermissions() != null && user.getPermissions().contains("canModerateForum"));
+                            if (canModerateForum) {
+                                model.addAttribute("pendingForumReportsCount", forumReportRepository.countByStatus("PENDING"));
+                            }
                         } else {
                             unreadDirect = directChatService.getUnreadCountForStudent(user.getId());
                             directChats = directChatService.getStudentInbox(user.getId());

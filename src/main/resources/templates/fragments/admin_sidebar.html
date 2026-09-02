@@ -110,6 +110,11 @@
                     <i class="bi bi-chat-dots-fill"></i>DIRECT MESSAGES
                     <span th:if="${totalUnreadAdmin != null and totalUnreadAdmin > 0}" class="badge rounded-pill bg-danger ms-auto" th:text="${totalUnreadAdmin}"></span>
                 </a>
+                <a th:if="${session.user != null and session.user.role != null and (session.user.role.name() == 'SUPER_ADMIN' or (session.user.permissions != null and session.user.permissions.contains('canModerateForum')))}"
+                   href="/admin/forum/reports" class="sidebar-nav-item" th:classappend="${activePage == 'forum-reports' ? 'active' : ''}">
+                    <i class="bi bi-flag-fill"></i>FORUM REPORTS
+                    <span th:if="${pendingForumReportsCount != null and pendingForumReportsCount > 0}" class="badge rounded-pill bg-danger ms-auto" th:text="${pendingForumReportsCount}"></span>
+                </a>
 
                 <p class="text-uppercase fw-bold mb-3 mt-4 ms-2" style="font-size: 0.7rem; color: #94a3b8; letter-spacing: 1px;">Academic Setup</p>
 
