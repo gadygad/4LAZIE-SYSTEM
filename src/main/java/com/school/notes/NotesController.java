@@ -703,8 +703,15 @@ public class NotesController {
                     + ".fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;"
                     + "background:#111;color:#fff;display:flex;align-items:center;justify-content:center;"
                     + "box-shadow:0 10px 25px rgba(0,0,0,0.4);text-decoration:none;font-size:1.4rem;z-index:10;}"
+                    + ".back-fab{position:fixed;top:20px;left:20px;width:44px;height:44px;border-radius:50%;"
+                    + "background:#111;color:#fff;display:flex;align-items:center;justify-content:center;"
+                    + "box-shadow:0 10px 25px rgba(0,0,0,0.4);border:none;font-size:1.2rem;z-index:10;cursor:pointer;}"
                     + "</style></head><body>"
                     + "<iframe src=\"" + proxyUrl + "#toolbar=1\"></iframe>"
+                    // A PWA/standalone window has no browser chrome, so with
+                    // nothing but the iframe on this page there was no way
+                    // back to wherever the student came from.
+                    + "<button type=\"button\" class=\"back-fab\" title=\"Back\" onclick=\"window.history.length > 1 ? window.history.back() : window.location.href = '/dashboard';\">&#8592;</button>"
                     + "<a class=\"fab\" href=\"/download/" + note.getId() + "\" title=\"Download\">&#8681;</a>"
                     + "</body></html>";
             response.setContentType(MediaType.TEXT_HTML_VALUE);
