@@ -85,7 +85,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/api/**", "/admin/assignments/reply/**", "/admin/assignments/chat/**",
                         "/admin/chat/**", "/student/chat/**",
-                        "/community/post/*/like", "/community/post/*/comment")
+                        "/community/post/*/like", "/community/post/*/comment", "/community/comment/*/like")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             )
             .sessionManagement(session -> session

@@ -36,6 +36,11 @@ public class ForumComment {
     private String replyToAuthorName;
     private String replyToContent;
 
+    // Same like pattern as ForumPost: likesCount mirrors likedBy's size so
+    // existing consumers reading a plain count don't need to change.
+    private int likesCount = 0;
+    private java.util.Set<String> likedBy = new java.util.LinkedHashSet<>();
+
     public ForumComment() {}
 
     public ForumComment(String postId, String authorId, String content) {
@@ -71,4 +76,10 @@ public class ForumComment {
 
     public String getReplyToContent() { return replyToContent; }
     public void setReplyToContent(String replyToContent) { this.replyToContent = replyToContent; }
+
+    public int getLikesCount() { return likesCount; }
+    public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
+
+    public java.util.Set<String> getLikedBy() { return likedBy; }
+    public void setLikedBy(java.util.Set<String> likedBy) { this.likedBy = likedBy != null ? likedBy : new java.util.LinkedHashSet<>(); }
 }

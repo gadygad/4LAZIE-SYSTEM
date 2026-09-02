@@ -75,8 +75,11 @@ public class ForumController {
     private void evictPostCaches(String id) {
         Cache postDetail = cacheManager.getCache("postDetail");
         if (postDetail != null) postDetail.evict(id);
+        // postComments is now keyed by postId + viewer (see listComments), so a
+        // single postId key no longer matches any entry — clear the whole
+        // cache instead. It's small and repopulates on the next comment view.
         Cache postComments = cacheManager.getCache("postComments");
-        if (postComments != null) postComments.evict(id);
+        if (postComments != null) postComments.clear();
     }
 
     private boolean isAdmin(User user) {
@@ -247,6 +250,49 @@ public class ForumController {
         return ResponseEntity.ok(Map.of("liked", nowLiked, "count", Math.max(0, count)));
     }
 
+    // Same atomic add/remove pattern as toggleLike above, but scoped to a
+    // single ForumComment — comments are always real documents (unlike
+    // posts, which can be note-derived), so there's no id-prefix branching.
+    @PostMapping(value = "/comment/{id}/like", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> toggleCommentLike(@PathVariable String id) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        String userId = user.getId();
+        FindAndModifyOptions returnNew = FindAndModifyOptions.options().returnNew(true);
+
+        Query addQuery = Query.query(Criteria.where("_id").is(id).and("likedBy").ne(userId));
+        Update addUpdate = new Update().addToSet("likedBy", userId).inc("likesCount", 1);
+        ForumComment updated = mongoTemplate.findAndModify(addQuery, addUpdate, returnNew, ForumComment.class);
+
+        boolean nowLiked = true;
+        if (updated == null) {
+            Query removeQuery = Query.query(Criteria.where("_id").is(id).and("likedBy").is(userId));
+            Update removeUpdate = new Update().pull("likedBy", userId).inc("likesCount", -1);
+            updated = mongoTemplate.findAndModify(removeQuery, removeUpdate, returnNew, ForumComment.class);
+            nowLiked = false;
+        }
+
+        if (updated == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Comment not found"));
+        }
+
+        int count = Math.max(0, updated.getLikesCount());
+        evictPostCaches(updated.getPostId());
+
+        // Let everyone else currently viewing this post see the like count
+        // update live, same as new comments do.
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("type", "commentLike");
+        payload.put("commentId", id);
+        payload.put("count", count);
+        broadcastComment(updated.getPostId(), payload);
+
+        return ResponseEntity.ok(Map.of("liked", nowLiked, "count", count));
+    }
+
     // ─────────────────────────────────────────────
     //  Real-time comments — postId → list of open SSE connections. Any
     //  logged-in user can comment/reply on any post with no depth limit
@@ -351,6 +397,8 @@ public class ForumController {
         body.put("replyToCommentId", comment.getReplyToCommentId());
         body.put("replyToAuthorName", comment.getReplyToAuthorName());
         body.put("replyToContent", comment.getReplyToContent());
+        body.put("likesCount", 0);
+        body.put("likedByMe", false);
         body.put("count", count);
 
         // Push it live to everyone else currently viewing this post; the
@@ -366,13 +414,17 @@ public class ForumController {
     // ago no longer re-runs the comment + author-batch queries at all.
     @GetMapping(value = "/post/{id}/comments", produces = "application/json")
     @ResponseBody
-    @Cacheable(value = "postComments", key = "#id")
+    // Keyed by postId + viewer, not just postId — likedByMe below is
+    // per-user, so a shared cache entry would leak one user's like state
+    // (or lack of it) to everyone else viewing the same post.
+    @Cacheable(value = "postComments", key = "#id + '::' + (@authUtil.getLoggedInUser() != null ? @authUtil.getLoggedInUser().getId() : 'anon')")
     public ResponseEntity<?> listComments(@PathVariable String id) {
         List<ForumComment> comments = forumCommentRepository.findByPostIdOrderByCreatedAtAsc(id);
         List<String> authorIds = comments.stream().map(ForumComment::getAuthorId).distinct().collect(Collectors.toList());
         Map<String, User> authors = authorIds.isEmpty()
                 ? Map.of()
                 : userRepository.findAllById(authorIds).stream().collect(Collectors.toMap(User::getId, u -> u));
+        User currentUser = authUtil.getLoggedInUser();
 
         List<Map<String, Object>> result = comments.stream().map(c -> {
             User author = authors.get(c.getAuthorId());
@@ -386,6 +438,8 @@ public class ForumController {
             m.put("replyToCommentId", c.getReplyToCommentId());
             m.put("replyToAuthorName", c.getReplyToAuthorName());
             m.put("replyToContent", c.getReplyToContent());
+            m.put("likesCount", Math.max(0, c.getLikesCount()));
+            m.put("likedByMe", currentUser != null && c.getLikedBy() != null && c.getLikedBy().contains(currentUser.getId()));
             return m;
         }).collect(Collectors.toList());
 

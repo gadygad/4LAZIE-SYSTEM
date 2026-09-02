@@ -373,6 +373,8 @@
             const id = c.id || '';
             const avatarPx = isReply ? 26 : 32;
             const replyIndent = isReply ? 34 : 42;
+            const liked = !!c.likedByMe;
+            const likeCount = c.likesCount || 0;
             return `
                 <div data-comment-id="${id}" class="comment-enter">
                     <div class="d-flex gap-2">
@@ -387,9 +389,14 @@
                             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
                     </div>
-                    <span class="comment-reply-btn" role="button" tabindex="0" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}"
-                          style="padding-left: ${replyIndent}px;">
-                        <i class="bi bi-reply-fill"></i> Reply</span>
+                    <div style="padding-left: ${replyIndent}px; display:flex; align-items:center; gap:14px;">
+                        <span class="comment-reply-btn" role="button" tabindex="0" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}">
+                            <i class="bi bi-reply-fill"></i> Reply</span>
+                        <span class="comment-like-btn" role="button" tabindex="0" data-liked="${liked ? '1' : '0'}"
+                              style="cursor:pointer; font-size:0.72rem; color:${liked ? '#4ade80' : 'rgba(255,255,255,0.5)'};">
+                            <i class="bi ${liked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                            <span class="comment-like-count">${likeCount > 0 ? likeCount : ''}</span></span>
+                    </div>
                 </div>`;
         }
 
@@ -434,19 +441,62 @@
         }
 
         document.getElementById('commentsList').addEventListener('click', (e) => {
-            const btn = e.target.closest('.comment-reply-btn');
-            if (!btn) return;
-            const commentId = btn.closest('[data-comment-id]').dataset.commentId;
-            const rootId = btn.closest('.comment-thread').dataset.threadRoot;
-            initCommentReply(commentId, rootId, btn.dataset.replyAuthor, btn.dataset.replyContent);
+            const replyBtn = e.target.closest('.comment-reply-btn');
+            if (replyBtn) {
+                const commentId = replyBtn.closest('[data-comment-id]').dataset.commentId;
+                const rootId = replyBtn.closest('.comment-thread').dataset.threadRoot;
+                initCommentReply(commentId, rootId, replyBtn.dataset.replyAuthor, replyBtn.dataset.replyContent);
+                return;
+            }
+            const likeBtn = e.target.closest('.comment-like-btn');
+            if (likeBtn) {
+                toggleCommentLike(likeBtn);
+            }
         });
         document.getElementById('commentsList').addEventListener('keydown', (e) => {
             if (e.key !== 'Enter' && e.key !== ' ') return;
-            const btn = e.target.closest('.comment-reply-btn');
+            const btn = e.target.closest('.comment-reply-btn, .comment-like-btn');
             if (!btn) return;
             e.preventDefault();
             btn.click();
         });
+
+        function setCommentLikeUi(btn, liked, count) {
+            btn.dataset.liked = liked ? '1' : '0';
+            btn.style.color = liked ? '#4ade80' : 'rgba(255,255,255,0.5)';
+            const icon = btn.querySelector('i');
+            if (icon) icon.className = 'bi ' + (liked ? 'bi-heart-fill' : 'bi-heart');
+            const countEl = btn.querySelector('.comment-like-count');
+            if (countEl) countEl.textContent = count > 0 ? count : '';
+        }
+
+        function toggleCommentLike(btn) {
+            const wrap = btn.closest('[data-comment-id]');
+            const commentId = wrap ? wrap.dataset.commentId : null;
+            if (!commentId) return; // still being saved — like isn't available until it has a real id
+            const wasLiked = btn.dataset.liked === '1';
+            const currentCount = parseInt((btn.querySelector('.comment-like-count').textContent || '0'), 10) || 0;
+
+            // Optimistic UI update; rolled back on failure below.
+            setCommentLikeUi(btn, !wasLiked, wasLiked ? Math.max(0, currentCount - 1) : currentCount + 1);
+
+            fetch('/community/comment/' + commentId + '/like', {
+                method: 'POST',
+                headers: { 'X-XSRF-TOKEN': csrfToken() }
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) throw new Error((data && data.error) || 'failed');
+                    setCommentLikeUi(btn, data.liked, data.count);
+                })
+                .catch(err => {
+                    console.error('toggleCommentLike failed:', err);
+                    setCommentLikeUi(btn, wasLiked, currentCount);
+                });
+        }
 
         // Matches the server's "dd MMM yyyy, HH:mm:ss" format, so the
         // optimistic bubble's timestamp doesn't visibly change once the
@@ -603,9 +653,26 @@
                 .forEach(el => el.innerText = c.count);
         }
 
+        // Live comment-like counts — when someone else likes a comment on this
+        // post, everyone currently viewing it sees the count update instantly.
+        function applyIncomingCommentLike(payload) {
+            const wrap = document.querySelector('[data-comment-id="' + payload.commentId + '"]');
+            const btn = wrap ? wrap.querySelector('.comment-like-btn') : null;
+            if (!btn) return;
+            const countEl = btn.querySelector('.comment-like-count');
+            if (countEl) countEl.textContent = payload.count > 0 ? payload.count : '';
+        }
+
         const commentSSE = new EventSource('/community/post/' + POST_ID + '/comments/stream');
         commentSSE.addEventListener('comment', e => {
-            try { appendIncomingComment(JSON.parse(e.data)); } catch (err) {}
+            try {
+                const payload = JSON.parse(e.data);
+                if (payload && payload.type === 'commentLike') {
+                    applyIncomingCommentLike(payload);
+                } else {
+                    appendIncomingComment(payload);
+                }
+            } catch (err) {}
         });
     </script>
 </body>
