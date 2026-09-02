@@ -257,7 +257,7 @@
                                                 <!-- Description -->
                                                 <div>
                                                     <span class="badge bg-light text-dark mb-2" th:text="${note.programType}">PROGRAM</span>
-                                                    <span class="badge bg-light text-dark mb-2 ms-2" th:text="'Level ' + ${note.levelNo}">LEVEL</span>
+                                                    <span class="badge bg-light text-dark mb-2 ms-2" th:text="${note.levelNo != null and note.levelNo >= 4 ? 'NTA Level ' + note.levelNo : 'Year ' + note.levelNo}">LEVEL</span>
                                                 </div>
 
                                                 <!-- Action Buttons -->

@@ -179,7 +179,7 @@
                                         <label class="form-check-label fw-medium ms-1 d-block" th:for="'check-' + ${sub.id}" onclick="event.stopPropagation();">
                                             <span class="text-dark" th:text="${sub.name}">Module Name</span>
                                             <div class="text-muted small mt-1">
-                                                <span class="badge bg-success-subtle text-success border border-success" th:text="'Level ' + ${sub.levelNo} + ' - Sem ' + ${sub.semesterNo}">L4 S1</span>
+                                                <span class="badge bg-success-subtle text-success border border-success" th:text="${(sub.levelNo != null and sub.levelNo >= 4 ? 'NTA Level ' + sub.levelNo : 'Year ' + sub.levelNo) + ' - Sem ' + sub.semesterNo}">L4 S1</span>
                                             </div>
                                         </label>
                                     </div>

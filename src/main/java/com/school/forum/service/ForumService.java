@@ -104,7 +104,7 @@ public class ForumService {
                 String instStr  = (note.getInstitution() != null && note.getInstitution().getShortName() != null) 
                                   ? note.getInstitution().getShortName() + " Institute" : "SJUIT INSTITUTE";
                 String program  = note.getProgramType() != null ? note.getProgramType() : "";
-                String level    = note.getLevelNo() != null ? "Level " + note.getLevelNo() : "";
+                String level    = note.getLevelNo() != null ? (note.getLevelNo() >= 4 ? "NTA Level " + note.getLevelNo() : "Year " + note.getLevelNo()) : "";
                 String sem      = note.getSemesterNo() != null ? "Sem " + note.getSemesterNo() : "";
                 String year     = note.getAcademicYear() != null ? " (" + note.getAcademicYear() + ")" : "";
 
@@ -232,7 +232,7 @@ public class ForumService {
             String instStr  = (note.getInstitution() != null && note.getInstitution().getShortName() != null)
                               ? note.getInstitution().getShortName() + " Institute" : "SJUIT INSTITUTE";
             String program  = note.getProgramType() != null ? note.getProgramType() : "";
-            String level    = note.getLevelNo() != null ? "Level " + note.getLevelNo() : "";
+            String level    = note.getLevelNo() != null ? (note.getLevelNo() >= 4 ? "NTA Level " + note.getLevelNo() : "Year " + note.getLevelNo()) : "";
             String sem      = note.getSemesterNo() != null ? "Sem " + note.getSemesterNo() : "";
             String year     = note.getAcademicYear() != null ? " (" + note.getAcademicYear() + ")" : "";
 
