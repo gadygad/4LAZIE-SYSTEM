@@ -122,6 +122,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     
     // Fetch latest 10 notes across all categories
     List<Note> findTop10ByOrderByIdDesc();
+    // Wider pool for the forum feed's "load more" pagination — the feed's
+    // first page only ever needed the newest 10 notes, but infinite scroll
+    // needs a much bigger pool of note-derived posts to page through.
+    List<Note> findTop100ByOrderByIdDesc();
     List<Note> findTop50ByOrderByIdDesc();
     // Wide enough pool for the /community folder picker to reliably see
     // every (level, semester) combo with notes, not just whichever ones

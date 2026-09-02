@@ -39,7 +39,11 @@
             /* Mobile-specific footer adjustments */
             @media (max-width: 991px) {
                 footer {
-                    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+                    /* Matches the bottom nav's own reserved height (see
+                       fragments/bottom_nav.html's body padding-bottom) —
+                       was 80px, 8px taller than the actual bar, which left
+                       a visible gap of empty space above the nav. */
+                    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
                 }
                 .footer-mobile-pb {
                     padding-bottom: 0 !important;

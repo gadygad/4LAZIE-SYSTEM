@@ -160,6 +160,21 @@ public class ForumController {
         return "forum/index";
     }
 
+    /** Infinite-scroll "load more" for the feed — returns just the postCard
+     * fragment's rendered HTML for the next batch, given how many posts the
+     * client has already shown (offset). Empty response means genuinely
+     * nothing left, which is when the client finally shows "No more posts"
+     * instead of that appearing after every single page load regardless of
+     * how many posts actually exist. */
+    @GetMapping("/feed/more")
+    public String feedMore(@org.springframework.web.bind.annotation.RequestParam("offset") int offset, Model model) {
+        User loggedInUser = authUtil.getLoggedInUser();
+        model.addAttribute("user", loggedInUser);
+        List<ForumPost> page = forumService.getFeedPage(offset, 20);
+        model.addAttribute("posts", page);
+        return "forum/index :: postCard(posts=${posts})";
+    }
+
     // Permalink page — the post plus all its comments open here instead of
     // in a modal, so Share has a real page to point at and a single post's
     // comment thread doesn't drag the whole feed's page length down with it.

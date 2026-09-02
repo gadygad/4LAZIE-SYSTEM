@@ -11,5 +11,9 @@ public interface ForumPostRepository extends MongoRepository<ForumPost, String> 
     // Standard CRUD is provided by MongoRepository
     // Add any specific queries if needed in the future
     List<ForumPost> findTop50ByOrderByCreatedAtDesc();
+    // Wider pool backing infinite-scroll pagination — findTop50 was only
+    // ever enough for the first page, so "load more" had nothing beyond
+    // it to actually page through.
+    List<ForumPost> findTop300ByOrderByCreatedAtDesc();
     List<ForumPost> findTop3ByOrderByLikesCountDesc();
 }

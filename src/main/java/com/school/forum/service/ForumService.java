@@ -65,7 +65,51 @@ public class ForumService {
 
     @Cacheable("forumFeed")
     public List<ForumPost> getRandomizedFeed() {
+        List<ForumPost> allPosts = buildAllPostsPool();
+        if (allPosts.isEmpty()) return new ArrayList<>();
 
+        // ── New Feed Algorithm: Newest at top, rest randomized ──
+        List<ForumPost> feed = new ArrayList<>();
+
+        // Take the top 10 newest posts (or less if not enough)
+        int newestLimit = Math.min(10, allPosts.size());
+        List<ForumPost> newestPosts = new ArrayList<>(allPosts.subList(0, newestLimit));
+        feed.addAll(newestPosts);
+
+        // Take the rest of the older posts and shuffle them randomly (capped, so the
+        // feed doesn't keep growing/reshuffling every request as the forum accumulates posts)
+        if (allPosts.size() > newestLimit) {
+            int olderLimit = Math.min(40, allPosts.size() - newestLimit);
+            List<ForumPost> olderPosts = new ArrayList<>(allPosts.subList(newestLimit, newestLimit + olderLimit));
+            Collections.shuffle(olderPosts);
+            feed.addAll(olderPosts);
+        }
+
+        populateRecentComments(feed);
+        return feed;
+    }
+
+    /** Backs infinite-scroll "load more" on the feed — plain chronological
+     * pagination (no shuffle) over the same pool getRandomizedFeed() builds
+     * its first page from. Since that first page is exactly allPosts[0..50)
+     * just reordered (newest 10 + a shuffle of the next 40, never pulling in
+     * anything beyond index 50), asking for offset=50 here picks up exactly
+     * where the first page left off with no gap or overlap. Not cached like
+     * the first page — offset varies per request, so there's nothing to
+     * usefully reuse. */
+    public List<ForumPost> getFeedPage(int offset, int limit) {
+        List<ForumPost> allPosts = buildAllPostsPool();
+        if (offset < 0 || offset >= allPosts.size()) return new ArrayList<>();
+        int end = Math.min(offset + limit, allPosts.size());
+        List<ForumPost> page = new ArrayList<>(allPosts.subList(offset, end));
+        populateRecentComments(page);
+        return page;
+    }
+
+    /** Combines note-derived and real forum posts into one date-sorted pool
+     * (newest first) — the shared source both getRandomizedFeed()'s first
+     * page and getFeedPage()'s "load more" pages are sliced from. */
+    private List<ForumPost> buildAllPostsPool() {
         // ── 1. Find admin user to attribute uploaded notes to ──
         User adminUser = getSystemAdminUser();
 
@@ -73,7 +117,7 @@ public class ForumService {
         List<ForumPost> notePosts = new ArrayList<>();
         if (adminUser != null) {
             final User admin = adminUser;
-            List<Note> allNotes = noteRepository.findTop10ByOrderByIdDesc();
+            List<Note> allNotes = noteRepository.findTop100ByOrderByIdDesc();
 
             // One aggregation for all notes' comment counts instead of a
             // countByPostId query per note (was a 10-query N+1 on every
@@ -126,7 +170,7 @@ public class ForumService {
 
         // ── 3. Fetch real forum posts, then resolve all authors in a single batch query
         //      instead of one lookup per post (avoids an N+1 query on the feed) ──
-        List<ForumPost> realPosts = forumPostRepository.findTop50ByOrderByCreatedAtDesc();
+        List<ForumPost> realPosts = forumPostRepository.findTop300ByOrderByCreatedAtDesc();
         List<String> authorIds = realPosts.stream()
                 .map(ForumPost::getAuthorId)
                 .filter(id -> id != null)
@@ -147,55 +191,36 @@ public class ForumService {
             }
         });
 
-        // ── 4. Combine all posts ──
+        // ── 4. Combine all posts, newest first ──
         List<ForumPost> allPosts = new ArrayList<>();
         allPosts.addAll(realPosts);
         allPosts.addAll(notePosts);
-
-        if (allPosts.isEmpty()) return new ArrayList<>();
-
-        // ── 5. New Feed Algorithm: Newest at top, rest randomized ──
-        // Sort all posts by date (newest first)
         allPosts.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
+        return allPosts;
+    }
 
-        List<ForumPost> feed = new ArrayList<>();
-        
-        // Take the top 10 newest posts (or less if not enough)
-        int newestLimit = Math.min(10, allPosts.size());
-        List<ForumPost> newestPosts = new ArrayList<>(allPosts.subList(0, newestLimit));
-        feed.addAll(newestPosts);
-
-        // Take the rest of the older posts and shuffle them randomly (capped, so the
-        // feed doesn't keep growing/reshuffling every request as the forum accumulates posts)
-        if (allPosts.size() > newestLimit) {
-            int olderLimit = Math.min(40, allPosts.size() - newestLimit);
-            List<ForumPost> olderPosts = new ArrayList<>(allPosts.subList(newestLimit, newestLimit + olderLimit));
-            Collections.shuffle(olderPosts);
-            feed.addAll(olderPosts);
-        }
-
-        // ── 6. Fetch recent comments for all feed posts ──
+    /** Fetches and attaches each post's most recent comments (with their
+     * authors resolved in one batch query), in place. Shared by both the
+     * first feed page and every "load more" page. */
+    private void populateRecentComments(List<ForumPost> posts) {
         List<com.school.forum.model.ForumComment> allRecentComments = new ArrayList<>();
-        feed.forEach(post -> {
+        posts.forEach(post -> {
             List<com.school.forum.model.ForumComment> comments = forumCommentRepository.findTop3ByPostIdOrderByCreatedAtDesc(post.getId());
             post.setRecentComments(comments);
             allRecentComments.addAll(comments);
         });
 
-        // Batch resolve comment authors
         List<String> commentAuthorIds = allRecentComments.stream()
                 .map(com.school.forum.model.ForumComment::getAuthorId)
                 .filter(id -> id != null)
                 .distinct()
                 .collect(Collectors.toList());
-        
+
         if (!commentAuthorIds.isEmpty()) {
             Map<String, User> commentAuthorsById = userRepository.findAllById(commentAuthorIds).stream()
                     .collect(Collectors.toMap(User::getId, u -> u));
             allRecentComments.forEach(c -> c.setAuthor(commentAuthorsById.get(c.getAuthorId())));
         }
-
-        return feed;
     }
 
     /** Single-post lookup for the permalink page — mirrors how each post is

@@ -492,7 +492,7 @@
             
             <!-- Post Creation Box Removed - Now in a Modal -->
             <!-- Posts Feed -->
-            <div class="d-flex flex-column">
+            <div id="postsFeed" class="d-flex flex-column">
             <!-- Empty state -->
             <div th:if="${posts == null || posts.isEmpty()}" class="text-center p-5 rounded-4 text-white mx-3" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2);">
                 <i class="bi bi-chat-square-text" style="font-size: 3rem; opacity: 0.5;"></i>
@@ -500,7 +500,7 @@
                 <p class="opacity-75">Be the first to start a conversation!</p>
             </div>
 
-        <div th:each="post : ${posts}" th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+        <div th:fragment="postCard(posts)" th:each="post : ${posts}" th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
             <div style="padding: 16px;">
                 <div class="d-flex">
                     <!-- ── AVATAR (role-based) ── -->
@@ -739,9 +739,15 @@
             </div>
         </div>
 
-        <!-- End of Feed Indicator -->
-        <div th:if="${posts != null && !posts.isEmpty()}" class="text-center py-4" style="color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500; letter-spacing: 1px;">
-            No more posts
+        <!-- Infinite-scroll sentinel — becomes visible as the user nears the
+             bottom, which triggers loadMoreFeedPosts() to fetch and append
+             the next batch. "No more posts" only ever shows once the server
+             has actually confirmed there's nothing left, instead of always
+             appearing after the first batch regardless of how many more
+             posts exist. -->
+        <div id="feedSentinel" th:if="${posts != null && !posts.isEmpty()}" th:attr="data-offset=${posts.size()}" class="text-center py-2" style="color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500; letter-spacing: 1px; min-height: 24px;">
+            <span id="feedLoadingIndicator" class="spinner-border spinner-border-sm" style="display:none; color: rgba(255,255,255,0.4);" role="status"></span>
+            <span id="feedEndText" style="display:none;">No more posts</span>
         </div>
 
         </div>
@@ -1225,6 +1231,55 @@
                     input.value = content; // give the text back so nothing's lost
                 });
         }
+
+        // ── Infinite scroll ── the feed used to render a fixed batch of
+        // posts and always show "No more posts" underneath regardless of
+        // how many more actually existed. The sentinel below the feed now
+        // triggers fetching the next batch as it nears the viewport, and
+        // "No more posts" only appears once the server genuinely returns
+        // nothing further.
+        let feedLoading = false;
+        let feedExhausted = false;
+
+        function loadMoreFeedPosts() {
+            const sentinel = document.getElementById('feedSentinel');
+            if (!sentinel || feedLoading || feedExhausted) return;
+            const offset = parseInt(sentinel.dataset.offset || '0', 10);
+            feedLoading = true;
+            const spinner = document.getElementById('feedLoadingIndicator');
+            const endText = document.getElementById('feedEndText');
+            if (spinner) spinner.style.display = 'inline-block';
+
+            fetch('/community/feed/more?offset=' + offset, { credentials: 'same-origin' })
+                .then(r => r.text())
+                .then(html => {
+                    const trimmed = html.trim();
+                    const wrap = document.createElement('div');
+                    wrap.innerHTML = trimmed;
+                    const newCards = Array.from(wrap.children);
+                    const feed = document.getElementById('postsFeed');
+                    newCards.forEach(card => feed.insertBefore(card, sentinel));
+                    sentinel.dataset.offset = offset + newCards.length;
+                    if (newCards.length === 0) {
+                        feedExhausted = true;
+                        if (endText) endText.style.display = 'inline';
+                    }
+                })
+                .catch(err => console.error('loadMoreFeedPosts failed:', err))
+                .finally(() => {
+                    feedLoading = false;
+                    if (spinner) spinner.style.display = 'none';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sentinel = document.getElementById('feedSentinel');
+            if (!sentinel) return;
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) loadMoreFeedPosts();
+            }, { rootMargin: '400px' });
+            observer.observe(sentinel);
+        });
     </script>
 </body>
 </html>
