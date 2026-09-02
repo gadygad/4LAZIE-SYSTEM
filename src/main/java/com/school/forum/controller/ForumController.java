@@ -632,4 +632,95 @@ public class ForumController {
 
         return ResponseEntity.ok(Map.of("deleted", true, "count", count));
     }
+
+    // ─────────────────────────────────────────────
+    //  Community search — the navbar search icon used to just toggle an
+    //  input open with nowhere for it to go. Searches across three things a
+    //  student might actually be looking for: real discussion posts (title
+    //  + content), uploaded notes/past-papers (title, module, category), and
+    //  comment content (surfaced with which post it belongs to, since a
+    //  comment has no page of its own). Capped small per section — this
+    //  backs a live dropdown, not a full results page.
+    // ─────────────────────────────────────────────
+    @GetMapping(value = "/search", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> search(@RequestParam("q") String q) {
+        Map<String, Object> empty = new LinkedHashMap<>();
+        empty.put("posts", List.of());
+        empty.put("notes", List.of());
+        empty.put("comments", List.of());
+        if (q == null || q.trim().length() < 2) {
+            return ResponseEntity.ok(empty);
+        }
+        // Pattern.quote so a search for something like "C++" or "a.b" is
+        // matched literally instead of being interpreted as regex syntax.
+        String safe = java.util.regex.Pattern.quote(q.trim());
+        int perSection = 5;
+
+        List<ForumPost> matchedPosts = mongoTemplate.find(
+                Query.query(new Criteria().orOperator(
+                        Criteria.where("title").regex(safe, "i"),
+                        Criteria.where("content").regex(safe, "i")
+                )).limit(perSection),
+                ForumPost.class);
+        List<String> postAuthorIds = matchedPosts.stream().map(ForumPost::getAuthorId).filter(java.util.Objects::nonNull).distinct().collect(Collectors.toList());
+        Map<String, User> postAuthors = postAuthorIds.isEmpty() ? Map.of()
+                : userRepository.findAllById(postAuthorIds).stream().collect(Collectors.toMap(User::getId, u -> u));
+        List<Map<String, Object>> posts = matchedPosts.stream().map(p -> {
+            User author = postAuthors.get(p.getAuthorId());
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("id", p.getId());
+            m.put("title", p.getTitle());
+            m.put("snippet", snippet(p.getContent()));
+            m.put("authorName", author != null ? displayName(author) : "Unknown");
+            m.put("link", "/community/post/" + p.getId());
+            return m;
+        }).collect(Collectors.toList());
+
+        List<Note> matchedNotes = mongoTemplate.find(
+                Query.query(new Criteria().orOperator(
+                        Criteria.where("title").regex(safe, "i"),
+                        Criteria.where("moduleName").regex(safe, "i"),
+                        Criteria.where("category").regex(safe, "i")
+                )).limit(perSection),
+                Note.class);
+        List<Map<String, Object>> notes = matchedNotes.stream().map(n -> {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("id", n.getId());
+            m.put("title", n.getTitle());
+            m.put("category", n.getCategory());
+            m.put("level", n.getLevelNo() != null ? (n.getLevelNo() >= 4 ? "NTA Level " + n.getLevelNo() : "Year " + n.getLevelNo()) : "");
+            m.put("link", "/view/" + n.getSlug());
+            return m;
+        }).collect(Collectors.toList());
+
+        List<ForumComment> matchedComments = mongoTemplate.find(
+                Query.query(Criteria.where("content").regex(safe, "i")).limit(perSection),
+                ForumComment.class);
+        List<String> commentPostIds = matchedComments.stream().map(ForumComment::getPostId).distinct().collect(Collectors.toList());
+        List<String> realPostIds = commentPostIds.stream().filter(id -> !id.startsWith("note-")).collect(Collectors.toList());
+        Map<String, ForumPost> commentParentPosts = realPostIds.isEmpty() ? Map.of()
+                : forumPostRepository.findAllById(realPostIds).stream().collect(Collectors.toMap(ForumPost::getId, p -> p));
+        List<Map<String, Object>> comments = matchedComments.stream().map(c -> {
+            ForumPost parent = commentParentPosts.get(c.getPostId());
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("id", c.getId());
+            m.put("snippet", snippet(c.getContent()));
+            m.put("postTitle", parent != null ? parent.getTitle() : "a note discussion");
+            m.put("link", "/community/post/" + c.getPostId());
+            return m;
+        }).collect(Collectors.toList());
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("posts", posts);
+        result.put("notes", notes);
+        result.put("comments", comments);
+        return ResponseEntity.ok(result);
+    }
+
+    private static String snippet(String content) {
+        if (content == null) return "";
+        String flat = content.replaceAll("\\s+", " ").trim();
+        return flat.length() > 90 ? flat.substring(0, 90) + "…" : flat;
+    }
 }
