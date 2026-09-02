@@ -68,6 +68,22 @@ public class ForumController {
     @Autowired
     private com.school.notes.NoteRepository noteRepository;
 
+    @Autowired
+    private com.school.notification.NotificationService notificationService;
+
+    // Every notify* helper is fire-and-forget and silently swallows its own
+    // failures — a broken notification must never break the like/comment/reply
+    // action that triggered it. Each also skips notifying someone about their
+    // own activity (liking/commenting/replying to yourself is not "new").
+    private void notify(String targetUserId, String actingUserId, String title, String message, String link) {
+        if (targetUserId == null || actingUserId == null || targetUserId.equals(actingUserId)) return;
+        try {
+            notificationService.createNotification(targetUserId, title, message, link);
+        } catch (Exception e) {
+            // Never let a notification failure surface as a failed like/comment.
+        }
+    }
+
     // Called via CacheManager directly (not @CacheEvict) because these evictions
     // happen from other methods *within this same controller* — Spring's
     // caching proxy can't intercept that kind of self-invocation, only calls
@@ -247,6 +263,16 @@ public class ForumController {
         }
         int count = isNotePost ? ((Note) updated).getLikesCount() : ((ForumPost) updated).getLikesCount();
         evictPostCaches(id);
+
+        // Note-derived cards ("note-<id>") show as posted by the admin/4LAZIE
+        // brand, not a real uploader — notifying "yourself" on every like a
+        // note gets would just spam the admin account, so those are skipped.
+        if (nowLiked && !isNotePost) {
+            String postAuthorId = ((ForumPost) updated).getAuthorId();
+            notify(postAuthorId, userId, "New Like ❤️",
+                    displayName(user) + " liked your post.", "/community/post/" + id);
+        }
+
         return ResponseEntity.ok(Map.of("liked", nowLiked, "count", Math.max(0, count)));
     }
 
@@ -289,6 +315,11 @@ public class ForumController {
         payload.put("commentId", id);
         payload.put("count", count);
         broadcastComment(updated.getPostId(), payload);
+
+        if (nowLiked) {
+            notify(updated.getAuthorId(), userId, "New Like ❤️",
+                    displayName(user) + " liked your comment.", "/community/post/" + updated.getPostId());
+        }
 
         return ResponseEntity.ok(Map.of("liked", nowLiked, "count", count));
     }
@@ -350,6 +381,7 @@ public class ForumController {
 
         // Snapshot the quoted comment server-side (rather than trusting whatever
         // the client sends) so the reply preview can't be spoofed.
+        String parentCommentAuthorId = null;
         if (replyToCommentId != null && !replyToCommentId.isEmpty()) {
             ForumComment target = forumCommentRepository.findById(replyToCommentId).orElse(null);
             if (target != null) {
@@ -357,15 +389,18 @@ public class ForumController {
                 comment.setReplyToCommentId(target.getId());
                 comment.setReplyToAuthorName(targetAuthor != null ? displayName(targetAuthor) : "Unknown");
                 comment.setReplyToContent(target.getContent());
+                parentCommentAuthorId = target.getAuthorId();
             }
         }
         forumCommentRepository.save(comment);
 
         // Note-derived feed cards ("note-<noteId>") aren't real ForumPost documents,
-        // so their comment count is kept on the underlying Note instead.
+        // so their comment count is kept on the underlying Note instead, and there's
+        // no real "author" to notify — those cards show as posted by 4LAZIE/admin.
         boolean isNotePost = id.startsWith("note-");
         FindAndModifyOptions returnNew = FindAndModifyOptions.options().returnNew(true);
         long count;
+        String postAuthorId = null;
         if (isNotePost) {
             String noteId = id.substring("note-".length());
             Note note = mongoTemplate.findById(noteId, Note.class);
@@ -382,6 +417,7 @@ public class ForumController {
                 return ResponseEntity.status(404).body(Map.of("error", "Post not found"));
             }
             count = post.getCommentsCount();
+            postAuthorId = post.getAuthorId();
         }
 
         evictPostCaches(id);
@@ -405,6 +441,18 @@ public class ForumController {
         // sender already sees it via the optimistic bubble appended before
         // this request was even sent.
         broadcastComment(id, body);
+
+        // A reply notifies the person being replied to directly — that's the
+        // more relevant signal than the post author hearing about every reply
+        // buried deep in a thread they started. A top-level comment notifies
+        // the post author instead. Either way only one notification fires.
+        if (parentCommentAuthorId != null) {
+            notify(parentCommentAuthorId, user.getId(), "New Reply 💬",
+                    displayName(user) + " replied to your comment.", "/community/post/" + id);
+        } else if (postAuthorId != null) {
+            notify(postAuthorId, user.getId(), "New Comment 💬",
+                    displayName(user) + " commented on your post.", "/community/post/" + id);
+        }
 
         return ResponseEntity.ok(body);
     }
