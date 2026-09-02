@@ -252,8 +252,13 @@ public class ExamGeneratorController {
             note.setModuleCode(request.moduleCode);
             note.setAcademicYear(request.academicYear);
             note.setContentJson(request.contentJson);
-            // category/uploadDate/isGeneral intentionally left untouched — this
-            // is an edit of the existing note, not a new upload.
+            // uploadDate/isGeneral intentionally left untouched — this is an
+            // edit of the existing note, not a new upload. Category CAN be
+            // corrected here (e.g. an exam saved as "CAT 2" that was really
+            // CAT 1), but only to one of the known values, never arbitrary text.
+            if (request.category != null && (request.category.equals("CAT 1") || request.category.equals("CAT 2") || request.category.equals("UE"))) {
+                note.setCategory(request.category);
+            }
             noteRepository.save(note);
             return ResponseEntity.ok(Map.of("success", true, "message", "Exam updated successfully", "noteId", note.getId()));
         } catch (Exception e) {

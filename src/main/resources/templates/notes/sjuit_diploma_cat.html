@@ -206,6 +206,14 @@
             <div class="text-center mb-4">
                 <h2 class="fw-bolder mb-1" style="font-family: 'Outfit'; color: #1e293b;" th:text="'SJUIT Diploma CAT ' + ${catNumber} + ' Generator'">SJUIT Diploma CAT Generator</h2>
                 <p class="text-muted small">Fixed St. Joseph College of Engineering &amp; Technology (SJCET) CAT format — 17 questions, Part A/B/C, 1 Hr 30 Min, 50 marks. Black &amp; white only.</p>
+                <div id="catCorrectionBox" class="d-inline-flex align-items-center gap-2 mt-2 p-2 px-3 rounded-pill" style="display:none; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25);">
+                    <i class="bi bi-exclamation-triangle-fill" style="color:#f59e0b;"></i>
+                    <span class="small fw-semibold" style="color:#92400e;">Saved as the wrong CAT?</span>
+                    <select id="catCorrectionSelect" class="form-select form-select-sm" style="width:auto;" onchange="CAT_CATEGORY = this.value;">
+                        <option value="CAT 1">CAT 1</option>
+                        <option value="CAT 2">CAT 2</option>
+                    </select>
+                </div>
             </div>
 
             <form id="examForm">
@@ -478,7 +486,7 @@
         window.addEventListener('DOMContentLoaded', initAllCustomSelects);
 
         const CAT_ROMAN = CAT_NUMBER === 2 ? 'II' : 'I';
-        const CAT_CATEGORY = 'CAT ' + CAT_NUMBER;
+        let CAT_CATEGORY = 'CAT ' + CAT_NUMBER;
 
         // ===== DRAFT AUTOSAVE =====
         // A tab left open for a long time (typing 17 questions takes a while)
@@ -590,6 +598,8 @@
             if (EDIT_NOTE_ID && EDIT_NOTE_DATA_RAW) {
                 enterEditMode();
                 restoreDraft(JSON.parse(EDIT_NOTE_DATA_RAW));
+                document.getElementById('catCorrectionBox').style.display = 'inline-flex';
+                document.getElementById('catCorrectionSelect').value = CAT_CATEGORY;
             } else {
                 checkForDraftOnLoad();
             }
