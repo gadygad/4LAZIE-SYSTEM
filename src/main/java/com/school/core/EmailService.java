@@ -11,22 +11,31 @@ import org.springframework.scheduling.annotation.Async;
 @Service
 public class EmailService {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(EmailService.class);
+
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
+    // This must be the SAME address the app authenticates to Gmail's SMTP with
+    // (spring.mail.username / MAIL_USERNAME) — every send*Email method's
+    // "From" header uses this. Gmail silently rejects (or bounces) mail sent
+    // with a From address that isn't the authenticated account or one of its
+    // verified "Send As" aliases, which is exactly why OTP emails were never
+    // arriving: the From was hardcoded to support@4lazie.com, a different,
+    // unverified address, regardless of which account actually logged in.
     @org.springframework.beans.factory.annotation.Value("${spring.mail.username:kilingepazasauti@gmail.com}")
     private String senderEmail;
 
     @Async
     public void sendPasswordResetEmail(String to, String otp) {
         if (mailSender == null) {
-            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            log.error("MailSender is not configured (spring.mail.* / MAIL_USERNAME+MAIL_PASSWORD missing) — cannot send password reset OTP to: {}", to);
             return;
         }
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("Password Reset OTP - 4LAZIE");
             
@@ -54,21 +63,23 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            // Log the error but don't crash, especially if credentials aren't set
-            System.err.println("Failed to send email: " + e.getMessage());
-            System.out.println("Please complete 'spring.mail.*' properties in application.properties");
+            // Logged with the full stack trace (not just getMessage()) because
+            // this is the exact failure a user reports as "I never got the
+            // OTP" — a one-line message alone isn't enough to diagnose an
+            // auth failure vs. a rejected From address vs. a network issue.
+            log.error("Failed to send password reset OTP email to {}: {}", to, e.getMessage(), e);
         }
     }
 
     @Async
     public void sendVerificationEmail(String to, String verificationLink) {
         if (mailSender == null) {
-            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            log.error("MailSender is not configured (spring.mail.* / MAIL_USERNAME+MAIL_PASSWORD missing) — cannot send email to: {}", to);
             return;
         }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            message.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             message.setTo(to);
             message.setSubject("Verify your email address - 4LAZIE");
             message.setText("Welcome to 4LAZIE!\n\n" +
@@ -77,7 +88,7 @@ public class EmailService {
                             "If you did not register for an account, please ignore this email.");
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send verification email: " + e.getMessage());
+            log.error("Failed to send verification email to {}: {}", to, e.getMessage(), e);
         }
     }
     
@@ -87,7 +98,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("New Material Added: " + noteTitle);
             
@@ -112,20 +123,20 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send notification email: " + e.getMessage());
+            log.error("Failed to send new-note notification email to {}: {}", to, e.getMessage(), e);
         }
     }
 
     @Async
     public void sendSecureActivityReport(String to, byte[] pdfData) {
         if (mailSender == null) {
-            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            log.error("MailSender is not configured (spring.mail.* / MAIL_USERNAME+MAIL_PASSWORD missing) — cannot send email to: {}", to);
             return;
         }
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("🔒 Your Secure 4LAZIE Activity Report");
             
@@ -145,19 +156,19 @@ public class EmailService {
             
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send secure report email: " + e.getMessage());
+            log.error("Failed to send secure activity report email to {}: {}", to, e.getMessage(), e);
         }
     }
     @Async
     public void sendNewLoginAlertEmail(String to, String ipAddress, String deviceDetails) {
         if (mailSender == null) {
-            System.err.println("MailSender is not configured. Cannot send email to: " + to);
+            log.error("MailSender is not configured (spring.mail.* / MAIL_USERNAME+MAIL_PASSWORD missing) — cannot send email to: {}", to);
             return;
         }
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("Security Alert: New Login Detected - 4LAZIE");
             
@@ -183,7 +194,7 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send login alert email: " + e.getMessage());
+            log.error("Failed to send new-login alert email to {}: {}", to, e.getMessage(), e);
         }
     }
 
@@ -193,7 +204,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("Security Alert: Your Password Was Changed - 4LAZIE");
             
@@ -225,7 +236,7 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send password change alert email: " + e.getMessage());
+            log.error("Failed to send password-change alert email to {}: {}", to, e.getMessage(), e);
         }
     }
 
@@ -235,7 +246,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("⚠️ Official Warning from 4LAZIE Administration");
             
@@ -254,7 +265,7 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send warning email: " + e.getMessage());
+            log.error("Failed to send warning email to {}: {}", to, e.getMessage(), e);
         }
     }
 
@@ -264,7 +275,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             
             String subject = isSuspended ? "🚫 Account Suspended - 4LAZIE" : "✅ Account Reactivated - 4LAZIE";
@@ -288,7 +299,7 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send suspension email: " + e.getMessage());
+            log.error("Failed to send suspension/reactivation email to {}: {}", to, e.getMessage(), e);
         }
     }
 
@@ -298,7 +309,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(to);
             helper.setSubject("🔐 Account Recovery Link - 4LAZIE");
             
@@ -324,7 +335,7 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send recovery magic link: " + e.getMessage());
+            log.error("Failed to send recovery magic link email to {}: {}", to, e.getMessage(), e);
         }
     }
     @Async
@@ -333,7 +344,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("4LAZIE Student Community <support@4lazie.com>");
+            helper.setFrom("4LAZIE Student Community <" + senderEmail + ">");
             helper.setTo(toEmail);
             helper.setSubject("Re: Your Message to 4LAZIE Support");
             
@@ -359,7 +370,7 @@ public class EmailService {
             helper.setText(htmlBody, true);
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Failed to send support reply email: " + e.getMessage());
+            log.error("Failed to send support reply email to {}: {}", toEmail, e.getMessage(), e);
         }
     }
 }

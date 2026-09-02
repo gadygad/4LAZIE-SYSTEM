@@ -64,7 +64,7 @@ public class PasswordResetController {
         tokenRepository.deleteByUser(user);
 
         // Generate new token (expire in 5 minutes)
-        String otp = String.format("%06d", new java.util.Random().nextInt(999999));
+        String otp = String.format("%06d", new java.security.SecureRandom().nextInt(1000000));
         PasswordResetToken resetToken = new PasswordResetToken(otp, user, 5);
         tokenRepository.save(resetToken);
 
