@@ -209,9 +209,9 @@ public class PeerChatController {
         String receiverId = existing.otherUserId(me.getId());
         if (receiverId != null) {
             notificationService.createNotification(
-                receiverId, 
-                "New Message ✉️", 
-                me.getName() + " amekutumia ujumbe mpya.", 
+                receiverId,
+                "New Message ✉️",
+                me.getName() + " sent you a new message.",
                 "/messages"
             );
         }
