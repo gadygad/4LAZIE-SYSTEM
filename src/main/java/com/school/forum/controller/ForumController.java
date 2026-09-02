@@ -430,6 +430,7 @@ public class ForumController {
             User author = authors.get(c.getAuthorId());
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("id", c.getId());
+            m.put("authorId", c.getAuthorId());
             m.put("authorName", author != null ? displayName(author) : "Unknown");
             m.put("authorPicture", author != null ? displayPicture(author) : null);
             m.put("authorVerified", isVerifiedNonAdmin(author));
@@ -444,5 +445,143 @@ public class ForumController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
+    }
+
+    // ─────────────────────────────────────────────
+    //  Post edit/delete — author-only edit, author-or-admin delete. Never
+    //  applies to note-derived pseudo-posts ("note-<id>"): those aren't real
+    //  documents, they're a live view of the underlying Note.
+    // ─────────────────────────────────────────────
+    @PostMapping(value = "/post/{id}/edit", produces = "application/json")
+    @ResponseBody
+    @CacheEvict(value = "forumFeed", allEntries = true)
+    public ResponseEntity<?> editPost(@PathVariable String id, @RequestParam String title, @RequestParam String content) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        if (id.startsWith("note-")) {
+            return ResponseEntity.status(403).body(Map.of("error", "This post can't be edited"));
+        }
+        if (title == null || title.trim().isEmpty() || content == null || content.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Title and content are required"));
+        }
+        ForumPost post = forumPostRepository.findById(id).orElse(null);
+        if (post == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Post not found"));
+        }
+        if (!user.getId().equals(post.getAuthorId())) {
+            return ResponseEntity.status(403).body(Map.of("error", "You can only edit your own post"));
+        }
+        post.setTitle(title.trim());
+        post.setContent(content.trim());
+        forumPostRepository.save(post);
+        evictPostCaches(id);
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("title", post.getTitle());
+        body.put("content", post.getContent());
+        return ResponseEntity.ok(body);
+    }
+
+    @PostMapping(value = "/post/{id}/delete", produces = "application/json")
+    @ResponseBody
+    @CacheEvict(value = "forumFeed", allEntries = true)
+    public ResponseEntity<?> deletePost(@PathVariable String id) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        if (id.startsWith("note-")) {
+            return ResponseEntity.status(403).body(Map.of("error", "This post can't be deleted"));
+        }
+        ForumPost post = forumPostRepository.findById(id).orElse(null);
+        if (post == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Post not found"));
+        }
+        if (!user.getId().equals(post.getAuthorId()) && !isAdmin(user)) {
+            return ResponseEntity.status(403).body(Map.of("error", "You can only delete your own post"));
+        }
+        forumCommentRepository.deleteAll(forumCommentRepository.findByPostIdOrderByCreatedAtAsc(id));
+        forumPostRepository.deleteById(id);
+        evictPostCaches(id);
+        return ResponseEntity.ok(Map.of("deleted", true));
+    }
+
+    // ─────────────────────────────────────────────
+    //  Comment edit/delete — same author-only-edit / author-or-admin-delete
+    //  rule as posts. A deleted comment's replies aren't cascade-deleted:
+    //  they already carry a denormalized snapshot of what they replied to
+    //  (see ForumComment.replyTo*), so they keep making sense standalone —
+    //  removing them too would silently destroy other people's contributions.
+    // ─────────────────────────────────────────────
+    @PostMapping(value = "/comment/{id}/edit", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> editComment(@PathVariable String id, @RequestParam String content) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        if (content == null || content.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Comment cannot be empty"));
+        }
+        ForumComment comment = forumCommentRepository.findById(id).orElse(null);
+        if (comment == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Comment not found"));
+        }
+        if (!user.getId().equals(comment.getAuthorId())) {
+            return ResponseEntity.status(403).body(Map.of("error", "You can only edit your own comment"));
+        }
+        comment.setContent(content.trim());
+        forumCommentRepository.save(comment);
+        evictPostCaches(comment.getPostId());
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("type", "commentEdited");
+        payload.put("commentId", id);
+        payload.put("content", comment.getContent());
+        broadcastComment(comment.getPostId(), payload);
+
+        return ResponseEntity.ok(Map.of("content", comment.getContent()));
+    }
+
+    @PostMapping(value = "/comment/{id}/delete", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> deleteComment(@PathVariable String id) {
+        User user = authUtil.getLoggedInUser();
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Login required"));
+        }
+        ForumComment comment = forumCommentRepository.findById(id).orElse(null);
+        if (comment == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "Comment not found"));
+        }
+        if (!user.getId().equals(comment.getAuthorId()) && !isAdmin(user)) {
+            return ResponseEntity.status(403).body(Map.of("error", "You can only delete your own comment"));
+        }
+        String postId = comment.getPostId();
+        forumCommentRepository.deleteById(id);
+
+        boolean isNotePost = postId.startsWith("note-");
+        long count;
+        if (isNotePost) {
+            count = forumCommentRepository.countByPostId(postId);
+        } else {
+            FindAndModifyOptions returnNew = FindAndModifyOptions.options().returnNew(true);
+            ForumPost post = mongoTemplate.findAndModify(
+                    Query.query(Criteria.where("_id").is(postId)),
+                    new Update().inc("commentsCount", -1),
+                    returnNew, ForumPost.class);
+            count = post != null ? Math.max(0, post.getCommentsCount()) : 0;
+        }
+        evictPostCaches(postId);
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("type", "commentDeleted");
+        payload.put("commentId", id);
+        payload.put("count", count);
+        broadcastComment(postId, payload);
+
+        return ResponseEntity.ok(Map.of("deleted", true, "count", count));
     }
 }

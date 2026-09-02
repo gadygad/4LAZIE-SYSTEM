@@ -79,7 +79,24 @@
     <main class="w-100 px-0 mx-auto flex-grow-1 position-relative z-2" style="max-width: 800px; padding-top: 85px; padding-bottom: 100px !important;">
 
         <!-- The Post (same card markup as the feed) -->
-        <div th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+        <div th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15); position: relative;">
+            <div class="dropdown position-absolute" style="top: 10px; right: 10px; z-index: 2;"
+                 th:if="${session.user != null and post.noteId == null and post.authorId != null and (#strings.equals(session.user.id, post.authorId) or (session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')))}">
+                <button class="btn btn-sm border-0 p-1 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="color: rgba(255,255,255,0.45); background: transparent; line-height: 1; width: 26px; height: 26px;">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end noti-magic-dropdown" style="min-width: 130px;">
+                    <li th:if="${#strings.equals(session.user.id, post.authorId)}">
+                        <a class="dropdown-item post-edit-trigger" href="#" th:data-post-id="${post.id}" style="font-size: 13px; cursor: pointer;">
+                            <i class="bi bi-pencil-fill me-2"></i>Edit</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" style="font-size: 13px; cursor: pointer;" onclick="deletePostThenGoHome()">
+                            <i class="bi bi-trash-fill me-2"></i>Delete</a>
+                    </li>
+                </ul>
+            </div>
             <div style="padding: 16px;">
                 <div class="d-flex">
                     <div class="me-3 position-relative" style="flex-shrink: 0;">
@@ -120,7 +137,7 @@
                         </div>
 
                         <div style="font-size: 13.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.9); word-wrap: break-word; letter-spacing: 0.1px;">
-                            <div th:if="${post.title != null and !post.title.isEmpty()}" th:text="${post.title}" th:classappend="${post.adminPost ? 'text-uppercase' : ''}" class="fw-bold mb-0" style="font-size: 13px; line-height: 1.2; color: #4ade80; font-style: italic;"></div>
+                            <div th:if="${post.title != null and !post.title.isEmpty()}" th:id="${'post-title-' + post.id}" th:text="${post.title}" th:classappend="${(post.adminPost ? 'text-uppercase' : '') + ' post-title-display'}" class="fw-bold mb-0" style="font-size: 13px; line-height: 1.2; color: #4ade80; font-style: italic;"></div>
                             <div th:text="${post.institutionPlaceholder != null and !post.institutionPlaceholder.isEmpty() ? post.institutionPlaceholder : 'SJUIT INSTITUTE'}" style="color: #9ca3af; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; margin-bottom: 4px; text-transform: uppercase;"></div>
 
                             <div th:if="${post.adminPost and post.noteId != null}">
@@ -140,7 +157,7 @@
                                 </div>
                             </div>
 
-                            <div th:if="${!post.adminPost or post.noteId == null}" th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
+                            <div th:if="${!post.adminPost or post.noteId == null}" th:id="${'post-content-' + post.id}" class="post-content-display" th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
                         </div>
 
                         <div class="d-flex gap-3 mt-3" th:data-post-id="${post.id}">
@@ -264,6 +281,15 @@
         // relying on id-based dedup alone is a race: the SSE push can land
         // before the POST response sets the optimistic bubble's real id.
         const CURRENT_USER_ID = /*[[${session.user != null ? session.user.id : null}]]*/ null;
+        const CURRENT_USER_IS_ADMIN = /*[[${session.user != null and session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')}]]*/ false;
+
+        document.addEventListener('click', (e) => {
+            const editTrigger = e.target.closest('.post-edit-trigger');
+            if (editTrigger) {
+                e.preventDefault();
+                startEditPost(editTrigger.dataset.postId);
+            }
+        });
 
         // CSRF token cookie set by Spring Security — required on every state-changing fetch()
         function csrfToken() {
@@ -316,6 +342,108 @@
                     applyLikeState(element, wasLiked, prevCount);
                 })
                 .finally(() => { element.dataset.pending = '0'; });
+        }
+
+        function escPostAttr(str) {
+            const div = document.createElement('div');
+            div.textContent = str || '';
+            return div.innerHTML.replace(/"/g, '&quot;');
+        }
+
+        function startEditPost(postId) {
+            const contentEl = document.getElementById('post-content-' + postId);
+            if (!contentEl) return;
+            const card = document.getElementById('post-' + postId);
+            if (card && card.querySelector('.post-edit-box')) return;
+
+            const titleEl = document.getElementById('post-title-' + postId);
+            const currentTitle = titleEl ? titleEl.textContent : '';
+            const currentContent = contentEl.textContent;
+
+            const editBox = document.createElement('div');
+            editBox.className = 'post-edit-box';
+            editBox.innerHTML =
+                '<input type="text" class="post-edit-title" maxlength="150" value="' + escPostAttr(currentTitle) + '" ' +
+                'style="margin-bottom:6px; font-size:13px; padding:6px 10px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#fff; width:100%;">' +
+                '<textarea class="post-edit-content" rows="3" maxlength="2000" ' +
+                'style="margin-bottom:6px; font-size:13px; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#fff; width:100%; resize:vertical;"></textarea>' +
+                '<div class="d-flex gap-2">' +
+                '<button type="button" class="btn btn-sm" style="background:#10b981; color:#fff; font-weight:600; font-size:12px;" onclick="saveEditPost(\'' + postId + '\')">Save</button>' +
+                '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.1); color:#fff; font-size:12px;" onclick="cancelEditPost(\'' + postId + '\')">Cancel</button>' +
+                '</div>';
+            editBox.querySelector('.post-edit-content').value = currentContent;
+
+            if (titleEl) titleEl.style.display = 'none';
+            contentEl.style.display = 'none';
+            contentEl.insertAdjacentElement('afterend', editBox);
+            editBox.querySelector('.post-edit-title').focus();
+        }
+
+        function cancelEditPost(postId) {
+            const card = document.getElementById('post-' + postId);
+            if (!card) return;
+            const editBox = card.querySelector('.post-edit-box');
+            if (editBox) editBox.remove();
+            const titleEl = document.getElementById('post-title-' + postId);
+            const contentEl = document.getElementById('post-content-' + postId);
+            if (titleEl) titleEl.style.display = '';
+            if (contentEl) contentEl.style.display = '';
+        }
+
+        function saveEditPost(postId) {
+            const card = document.getElementById('post-' + postId);
+            const editBox = card ? card.querySelector('.post-edit-box') : null;
+            if (!editBox) return;
+            const title = editBox.querySelector('.post-edit-title').value.trim();
+            const content = editBox.querySelector('.post-edit-content').value.trim();
+            if (!title || !content) return;
+
+            const params = new URLSearchParams();
+            params.append('title', title);
+            params.append('content', content);
+
+            fetch('/community/post/' + postId + '/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                body: params
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { alert((data && data.error) || 'Failed to save changes.'); return; }
+                    const titleEl = document.getElementById('post-title-' + postId);
+                    const contentEl = document.getElementById('post-content-' + postId);
+                    if (titleEl) titleEl.textContent = data.title;
+                    if (contentEl) contentEl.textContent = data.content;
+                    cancelEditPost(postId);
+                    document.title = data.title + ' - 4LAZIE Community';
+                })
+                .catch(err => {
+                    console.error('saveEditPost failed:', err);
+                    alert('Failed to save changes.');
+                });
+        }
+
+        // Deleting the post you're currently reading has nowhere sensible to
+        // stay on afterward, so this sends you back to the feed instead of
+        // just removing the (now empty) page in place.
+        function deletePostThenGoHome() {
+            if (!confirm('Delete this post? This cannot be undone.')) return;
+            fetch('/community/post/' + POST_ID + '/delete', { method: 'POST', headers: { 'X-XSRF-TOKEN': csrfToken() } })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { alert((data && data.error) || 'Failed to delete post.'); return; }
+                    window.location.href = '/community';
+                })
+                .catch(err => {
+                    console.error('deletePostThenGoHome failed:', err);
+                    alert('Failed to delete post.');
+                });
         }
 
         // Share
@@ -386,16 +514,18 @@
                                 <span style="color: rgba(255,255,255,0.5); font-size: 0.68rem;">${escComment(c.createdAt || '')}</span>
                             </div>
                             ${quote ? quotedCommentHtml(quote.authorName, quote.content) : ''}
-                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
+                            <div class="comment-content-display" style="font-size: 0.85rem; color: rgba(255,255,255,0.85); white-space: pre-wrap;">${escComment(c.content)}</div>
                         </div>
                     </div>
-                    <div style="padding-left: ${replyIndent}px; display:flex; align-items:center; gap:14px;">
+                    <div style="padding-left: ${replyIndent}px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
                         <span class="comment-reply-btn" role="button" tabindex="0" data-reply-author="${escAttr(c.authorName || '')}" data-reply-content="${escAttr(c.content || '')}">
                             <i class="bi bi-reply-fill"></i> Reply</span>
                         <span class="comment-like-btn" role="button" tabindex="0" data-liked="${liked ? '1' : '0'}"
                               style="cursor:pointer; font-size:0.72rem; color:${liked ? '#4ade80' : 'rgba(255,255,255,0.5)'};">
                             <i class="bi ${liked ? 'bi-heart-fill' : 'bi-heart'}"></i>
                             <span class="comment-like-count">${likeCount > 0 ? likeCount : ''}</span></span>
+                        ${(id && c.authorId === CURRENT_USER_ID) ? `<span class="comment-edit-btn" role="button" tabindex="0" style="cursor:pointer; font-size:0.72rem; color:rgba(255,255,255,0.5);"><i class="bi bi-pencil-fill"></i> Edit</span>` : ''}
+                        ${(id && (c.authorId === CURRENT_USER_ID || CURRENT_USER_IS_ADMIN)) ? `<span class="comment-delete-btn" role="button" tabindex="0" style="cursor:pointer; font-size:0.72rem; color:rgba(239,68,68,0.75);"><i class="bi bi-trash-fill"></i> Delete</span>` : ''}
                     </div>
                 </div>`;
         }
@@ -451,15 +581,120 @@
             const likeBtn = e.target.closest('.comment-like-btn');
             if (likeBtn) {
                 toggleCommentLike(likeBtn);
+                return;
+            }
+            const editBtn = e.target.closest('.comment-edit-btn');
+            if (editBtn) {
+                const wrap = editBtn.closest('[data-comment-id]');
+                if (wrap) startEditComment(wrap.dataset.commentId);
+                return;
+            }
+            const deleteBtn = e.target.closest('.comment-delete-btn');
+            if (deleteBtn) {
+                const wrap = deleteBtn.closest('[data-comment-id]');
+                if (wrap) deleteComment(wrap.dataset.commentId);
             }
         });
         document.getElementById('commentsList').addEventListener('keydown', (e) => {
             if (e.key !== 'Enter' && e.key !== ' ') return;
-            const btn = e.target.closest('.comment-reply-btn, .comment-like-btn');
+            const btn = e.target.closest('.comment-reply-btn, .comment-like-btn, .comment-edit-btn, .comment-delete-btn');
             if (!btn) return;
             e.preventDefault();
             btn.click();
         });
+
+        // Edit Comment — swaps just that bubble's content line for a small
+        // inline textarea, matching the post-level edit UX above.
+        function startEditComment(commentId) {
+            const wrap = document.querySelector('[data-comment-id="' + commentId + '"]');
+            if (!wrap) return;
+            const contentEl = wrap.querySelector('.comment-content-display');
+            if (!contentEl || wrap.querySelector('.comment-edit-box')) return;
+
+            const currentContent = contentEl.textContent;
+            const editBox = document.createElement('div');
+            editBox.className = 'comment-edit-box';
+            editBox.innerHTML =
+                '<textarea class="comment-edit-content" rows="2" maxlength="500" ' +
+                'style="margin-top:4px; font-size:0.82rem; padding:6px 8px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#fff; width:100%; resize:vertical;"></textarea>' +
+                '<div class="d-flex gap-2 mt-1">' +
+                '<button type="button" class="btn btn-sm" style="background:#10b981; color:#fff; font-weight:600; font-size:11px; padding:2px 10px;" onclick="saveEditComment(\'' + commentId + '\')">Save</button>' +
+                '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.1); color:#fff; font-size:11px; padding:2px 10px;" onclick="cancelEditComment(\'' + commentId + '\')">Cancel</button>' +
+                '</div>';
+            editBox.querySelector('.comment-edit-content').value = currentContent;
+
+            contentEl.style.display = 'none';
+            contentEl.insertAdjacentElement('afterend', editBox);
+            editBox.querySelector('.comment-edit-content').focus();
+        }
+
+        function cancelEditComment(commentId) {
+            const wrap = document.querySelector('[data-comment-id="' + commentId + '"]');
+            if (!wrap) return;
+            const editBox = wrap.querySelector('.comment-edit-box');
+            if (editBox) editBox.remove();
+            const contentEl = wrap.querySelector('.comment-content-display');
+            if (contentEl) contentEl.style.display = '';
+        }
+
+        function saveEditComment(commentId) {
+            const wrap = document.querySelector('[data-comment-id="' + commentId + '"]');
+            if (!wrap) return;
+            const editBox = wrap.querySelector('.comment-edit-box');
+            if (!editBox) return;
+            const content = editBox.querySelector('.comment-edit-content').value.trim();
+            if (!content) return;
+
+            const params = new URLSearchParams();
+            params.append('content', content);
+
+            fetch('/community/comment/' + commentId + '/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                body: params
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { alert((data && data.error) || 'Failed to save changes.'); return; }
+                    const contentEl = wrap.querySelector('.comment-content-display');
+                    if (contentEl) contentEl.textContent = data.content;
+                    cancelEditComment(commentId);
+                })
+                .catch(err => {
+                    console.error('saveEditComment failed:', err);
+                    alert('Failed to save changes.');
+                });
+        }
+
+        // Delete Comment — removes just that bubble; replies to it (if any)
+        // are left in place since they already carry a snapshot of what they
+        // replied to (see quotedCommentHtml), so they still read fine alone.
+        function deleteComment(commentId) {
+            if (!confirm('Delete this comment? This cannot be undone.')) return;
+            fetch('/community/comment/' + commentId + '/delete', { method: 'POST', headers: { 'X-XSRF-TOKEN': csrfToken() } })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { alert((data && data.error) || 'Failed to delete comment.'); return; }
+                    // Only the deleted bubble itself is removed — the server
+                    // never cascade-deletes replies (they keep their quoted
+                    // snapshot and still read fine standalone), so leaving
+                    // the thread-replies container in place matches that.
+                    const wrap = document.querySelector('[data-comment-id="' + commentId + '"]');
+                    if (wrap) wrap.remove();
+                    document.querySelectorAll('[data-post-id="' + POST_ID + '"] .comment-count')
+                        .forEach(el => el.innerText = data.count);
+                })
+                .catch(err => {
+                    console.error('deleteComment failed:', err);
+                    alert('Failed to delete comment.');
+                });
+        }
 
         function setCommentLikeUi(btn, liked, count) {
             btn.dataset.liked = liked ? '1' : '0';
@@ -591,6 +826,26 @@
                             const repliesDiv = thread.querySelector('.thread-replies');
                             if (repliesDiv) repliesDiv.dataset.threadFor = data.id;
                         }
+                        // The bubble was rendered before the real id existed, so
+                        // commentBubbleHtml() couldn't show Edit/Delete yet —
+                        // add them now that we know this comment is really ours.
+                        const actionsRow = bubble.querySelector('.comment-reply-btn').parentElement;
+                        if (actionsRow && !actionsRow.querySelector('.comment-edit-btn')) {
+                            const editSpan = document.createElement('span');
+                            editSpan.className = 'comment-edit-btn';
+                            editSpan.setAttribute('role', 'button');
+                            editSpan.setAttribute('tabindex', '0');
+                            editSpan.style.cssText = 'cursor:pointer; font-size:0.72rem; color:rgba(255,255,255,0.5);';
+                            editSpan.innerHTML = '<i class="bi bi-pencil-fill"></i> Edit';
+                            const deleteSpan = document.createElement('span');
+                            deleteSpan.className = 'comment-delete-btn';
+                            deleteSpan.setAttribute('role', 'button');
+                            deleteSpan.setAttribute('tabindex', '0');
+                            deleteSpan.style.cssText = 'cursor:pointer; font-size:0.72rem; color:rgba(239,68,68,0.75);';
+                            deleteSpan.innerHTML = '<i class="bi bi-trash-fill"></i> Delete';
+                            actionsRow.appendChild(editSpan);
+                            actionsRow.appendChild(deleteSpan);
+                        }
                     }
                     document.querySelectorAll('[data-post-id="' + postId + '"] .comment-count')
                         .forEach(el => el.innerText = data.count);
@@ -663,12 +918,31 @@
             if (countEl) countEl.textContent = payload.count > 0 ? payload.count : '';
         }
 
+        // Someone else editing/deleting a comment updates it live for anyone
+        // else currently viewing this post, same as likes above.
+        function applyIncomingCommentEdit(payload) {
+            const wrap = document.querySelector('[data-comment-id="' + payload.commentId + '"]');
+            const contentEl = wrap ? wrap.querySelector('.comment-content-display') : null;
+            if (contentEl) contentEl.textContent = payload.content;
+        }
+
+        function applyIncomingCommentDelete(payload) {
+            const wrap = document.querySelector('[data-comment-id="' + payload.commentId + '"]');
+            if (wrap) wrap.remove();
+            document.querySelectorAll('[data-post-id="' + POST_ID + '"] .comment-count')
+                .forEach(el => el.innerText = payload.count);
+        }
+
         const commentSSE = new EventSource('/community/post/' + POST_ID + '/comments/stream');
         commentSSE.addEventListener('comment', e => {
             try {
                 const payload = JSON.parse(e.data);
                 if (payload && payload.type === 'commentLike') {
                     applyIncomingCommentLike(payload);
+                } else if (payload && payload.type === 'commentEdited') {
+                    applyIncomingCommentEdit(payload);
+                } else if (payload && payload.type === 'commentDeleted') {
+                    applyIncomingCommentDelete(payload);
                 } else {
                     appendIncomingComment(payload);
                 }

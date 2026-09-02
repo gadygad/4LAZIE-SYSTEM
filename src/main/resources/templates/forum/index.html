@@ -500,7 +500,25 @@
                 <p class="opacity-75">Be the first to start a conversation!</p>
             </div>
 
-        <div th:fragment="postCard(posts)" th:each="post : ${posts}" th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+        <div th:fragment="postCard(posts)" th:each="post : ${posts}" th:id="${'post-' + post.id}" class="mb-3 rounded-0" style="background: #374151; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.15); position: relative;">
+            <!-- Edit/Delete menu — own posts only (never note-derived pseudo-posts), plus admin can always delete for moderation -->
+            <div class="dropdown position-absolute" style="top: 10px; right: 10px; z-index: 2;"
+                 th:if="${session.user != null and post.noteId == null and post.authorId != null and (#strings.equals(session.user.id, post.authorId) or (session.user.role != null and (session.user.role.name() == 'ADMIN' or session.user.role.name() == 'SUPER_ADMIN')))}">
+                <button class="btn btn-sm border-0 p-1 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="color: rgba(255,255,255,0.45); background: transparent; line-height: 1; width: 26px; height: 26px;">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end noti-magic-dropdown" style="min-width: 130px;">
+                    <li th:if="${#strings.equals(session.user.id, post.authorId)}">
+                        <a class="dropdown-item post-edit-trigger" href="#" th:data-post-id="${post.id}" style="font-size: 13px; cursor: pointer;">
+                            <i class="bi bi-pencil-fill me-2"></i>Edit</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-danger post-delete-trigger" href="#" th:data-post-id="${post.id}" style="font-size: 13px; cursor: pointer;">
+                            <i class="bi bi-trash-fill me-2"></i>Delete</a>
+                    </li>
+                </ul>
+            </div>
             <div style="padding: 16px;">
                 <div class="d-flex">
                     <!-- ── AVATAR (role-based) ── -->
@@ -623,8 +641,8 @@
                         
                         <!-- Post Text -->
                         <div style="font-size: 13.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.9); word-wrap: break-word; letter-spacing: 0.1px;">
-                            <div th:if="${post.title != null and !post.title.isEmpty()}" th:text="${post.title}" th:classappend="${post.adminPost ? 'text-uppercase' : ''}" class="fw-bold mb-0" style="font-size: 13px; line-height: 1.2; color: #4ade80; font-style: italic;"></div>
-                            
+                            <div th:if="${post.title != null and !post.title.isEmpty()}" th:id="${'post-title-' + post.id}" th:text="${post.title}" th:classappend="${(post.adminPost ? 'text-uppercase' : '') + ' post-title-display'}" class="fw-bold mb-0" style="font-size: 13px; line-height: 1.2; color: #4ade80; font-style: italic;"></div>
+
                             <!-- Institution Placeholder (Faded text) -->
                             <div th:text="${post.institutionPlaceholder != null and !post.institutionPlaceholder.isEmpty() ? post.institutionPlaceholder : 'SJUIT INSTITUTE'}" 
                                  style="color: #9ca3af; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; margin-bottom: 4px; text-transform: uppercase;">
@@ -664,7 +682,7 @@
                             </div>
 
                             <!-- Regular student post: plain text -->
-                            <div th:if="${!post.adminPost or post.noteId == null}"
+                            <div th:if="${!post.adminPost or post.noteId == null}" th:id="${'post-content-' + post.id}" class="post-content-display"
                                  th:text="${post.content != null ? post.content.replace('\n\n', '\n') : ''}" style="white-space: pre-wrap;"></div>
                         </div>
                         
@@ -997,6 +1015,24 @@
             }
         });
 
+        // Post edit/delete menu — delegated on document since postCard
+        // fragments loaded via infinite scroll didn't exist when the page
+        // first loaded. Thymeleaf disallows inline th:onclick with string
+        // concatenation for these attributes, hence data-post-id + delegation.
+        document.addEventListener('click', (e) => {
+            const editTrigger = e.target.closest('.post-edit-trigger');
+            if (editTrigger) {
+                e.preventDefault();
+                startEditPost(editTrigger.dataset.postId);
+                return;
+            }
+            const deleteTrigger = e.target.closest('.post-delete-trigger');
+            if (deleteTrigger) {
+                e.preventDefault();
+                deletePost(deleteTrigger.dataset.postId);
+            }
+        });
+
         // CSRF token cookie set by Spring Security — required on every state-changing fetch()
         function csrfToken() {
             const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
@@ -1068,6 +1104,114 @@
             } else {
                 prompt('Copy this link:', url);
             }
+        }
+
+        // Escapes text pulled back out of the DOM (via textContent, so it's
+        // already unescaped) before it gets rebuilt into an HTML attribute
+        // string for the edit box below.
+        function escPostAttr(str) {
+            const div = document.createElement('div');
+            div.textContent = str || '';
+            return div.innerHTML.replace(/"/g, '&quot;');
+        }
+
+        // Edit Post — swaps the title/content display for an inline form;
+        // Save posts to the server and updates the display in place, Cancel
+        // just restores the original text with no request made.
+        function startEditPost(postId) {
+            const contentEl = document.getElementById('post-content-' + postId);
+            if (!contentEl) return;
+            const card = document.getElementById('post-' + postId);
+            if (card && card.querySelector('.post-edit-box')) return; // already editing
+
+            const titleEl = document.getElementById('post-title-' + postId);
+            const currentTitle = titleEl ? titleEl.textContent : '';
+            const currentContent = contentEl.textContent;
+
+            const editBox = document.createElement('div');
+            editBox.className = 'post-edit-box';
+            editBox.innerHTML =
+                '<input type="text" class="post-edit-title" maxlength="150" value="' + escPostAttr(currentTitle) + '" ' +
+                'style="margin-bottom:6px; font-size:13px; padding:6px 10px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#fff; width:100%;">' +
+                '<textarea class="post-edit-content" rows="3" maxlength="2000" ' +
+                'style="margin-bottom:6px; font-size:13px; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#fff; width:100%; resize:vertical;"></textarea>' +
+                '<div class="d-flex gap-2">' +
+                '<button type="button" class="btn btn-sm" style="background:#10b981; color:#fff; font-weight:600; font-size:12px;" onclick="saveEditPost(\'' + postId + '\')">Save</button>' +
+                '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.1); color:#fff; font-size:12px;" onclick="cancelEditPost(\'' + postId + '\')">Cancel</button>' +
+                '</div>';
+            editBox.querySelector('.post-edit-content').value = currentContent;
+
+            if (titleEl) titleEl.style.display = 'none';
+            contentEl.style.display = 'none';
+            contentEl.insertAdjacentElement('afterend', editBox);
+            editBox.querySelector('.post-edit-title').focus();
+        }
+
+        function cancelEditPost(postId) {
+            const card = document.getElementById('post-' + postId);
+            if (!card) return;
+            const editBox = card.querySelector('.post-edit-box');
+            if (editBox) editBox.remove();
+            const titleEl = document.getElementById('post-title-' + postId);
+            const contentEl = document.getElementById('post-content-' + postId);
+            if (titleEl) titleEl.style.display = '';
+            if (contentEl) contentEl.style.display = '';
+        }
+
+        function saveEditPost(postId) {
+            const card = document.getElementById('post-' + postId);
+            const editBox = card ? card.querySelector('.post-edit-box') : null;
+            if (!editBox) return;
+            const title = editBox.querySelector('.post-edit-title').value.trim();
+            const content = editBox.querySelector('.post-edit-content').value.trim();
+            if (!title || !content) return;
+
+            const params = new URLSearchParams();
+            params.append('title', title);
+            params.append('content', content);
+
+            fetch('/community/post/' + postId + '/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                body: params
+            })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { alert((data && data.error) || 'Failed to save changes.'); return; }
+                    const titleEl = document.getElementById('post-title-' + postId);
+                    const contentEl = document.getElementById('post-content-' + postId);
+                    if (titleEl) titleEl.textContent = data.title;
+                    if (contentEl) contentEl.textContent = data.content;
+                    cancelEditPost(postId);
+                })
+                .catch(err => {
+                    console.error('saveEditPost failed:', err);
+                    alert('Failed to save changes.');
+                });
+        }
+
+        // Delete Post — removes the card from the DOM the instant the server
+        // confirms; note-derived cards never show this option (server-side
+        // enforced too, in case someone bypasses the UI).
+        function deletePost(postId) {
+            if (!confirm('Delete this post? This cannot be undone.')) return;
+            fetch('/community/post/' + postId + '/delete', { method: 'POST', headers: { 'X-XSRF-TOKEN': csrfToken() } })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return null; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.error) { alert((data && data.error) || 'Failed to delete post.'); return; }
+                    const card = document.getElementById('post-' + postId);
+                    if (card) card.remove();
+                })
+                .catch(err => {
+                    console.error('deletePost failed:', err);
+                    alert('Failed to delete post.');
+                });
         }
 
         // Inline comment preview — up to 2 recent comments shown right on
