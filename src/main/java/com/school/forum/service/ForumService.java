@@ -338,6 +338,21 @@ public class ForumService {
         
         trending.addAll(remaining);
 
+        // Fallback: with no likes/comments/views recorded yet anywhere (a new
+        // community, or one where engagement hasn't caught up), "trending"
+        // would otherwise come back completely empty even though there are
+        // real discussions to show — fill any leftover slots with the most
+        // recent posts that just didn't have engagement, newest first.
+        if (trending.size() < 10) {
+            List<ForumPost> withoutEngagement = available.stream()
+                    .filter(p -> p.getLikesCount() == 0 && p.getCommentsCount() == 0 && p.getViewsCount() == 0)
+                    .collect(Collectors.toList());
+            for (ForumPost p : withoutEngagement) {
+                if (trending.size() >= 10) break;
+                trending.add(p);
+            }
+        }
+
         // Limit to top 10 max
         if (trending.size() > 10) {
             trending = trending.subList(0, 10);
