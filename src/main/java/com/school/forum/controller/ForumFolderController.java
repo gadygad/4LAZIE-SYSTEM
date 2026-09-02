@@ -52,8 +52,20 @@ public class ForumFolderController {
         // which subject's materials a folder holds instead of one long
         // undifferentiated list — levelNotes is already newest-first, and
         // LinkedHashMap preserves that ordering across groups too.
+        // Two notes only look identical in the list if their title, category
+        // AND academic year all match — that combination means the same
+        // document was genuinely uploaded twice, so only the newest copy is
+        // kept. A same title+category but different year (e.g. last year's
+        // CAT 2 vs this year's) is a real, distinct document and stays.
         java.util.Map<String, List<Note>> notesBySubject = new java.util.LinkedHashMap<>();
+        java.util.Set<String> seenDuplicateKeys = new java.util.HashSet<>();
         for (Note n : levelNotes) {
+            String dupKey = String.join("|",
+                    n.getTitle() != null ? n.getTitle().trim().toLowerCase() : "",
+                    n.getCategory() != null ? n.getCategory().trim().toLowerCase() : "",
+                    n.getAcademicYear() != null ? n.getAcademicYear().trim().toLowerCase() : "");
+            if (!seenDuplicateKeys.add(dupKey)) continue;
+
             String subject = (n.getModuleName() != null && !n.getModuleName().isBlank())
                     ? n.getModuleName() : "Other Materials";
             notesBySubject.computeIfAbsent(subject, k -> new java.util.ArrayList<>()).add(n);

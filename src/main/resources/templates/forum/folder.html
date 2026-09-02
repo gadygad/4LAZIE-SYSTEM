@@ -546,6 +546,11 @@
                                             </span>
                                             <span th:if="${note.institution != null}">&bull;</span>
                                             <span th:text="${note.category != null ? note.category : 'Note'}">Category</span>
+                                            <!-- Academic year — the one field that tells two otherwise
+                                                 identical-looking entries (same title/category/date format)
+                                                 apart, e.g. last year's CAT 2 vs this year's. -->
+                                            <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}">&bull;</span>
+                                            <span th:if="${note.academicYear != null and !note.academicYear.isEmpty()}" th:text="${note.academicYear}">2026</span>
                                             <span th:if="${note.uploadDate != null}">&bull;</span>
                                             <span th:if="${note.uploadDate != null}" th:text="${#temporals.format(note.uploadDate, 'MMM dd, yyyy')}">Date</span>
                                         </div>
