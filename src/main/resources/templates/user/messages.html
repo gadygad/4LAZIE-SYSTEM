@@ -1820,7 +1820,13 @@
 
                 fetch('/api/peer-chat/' + chatId + '/messages', { credentials: 'same-origin' })
                     .then(r => r.json())
-                    .then(d => { if (d.success) renderMessages(d.messages, false); })
+                    .then(d => {
+                        if (d.success) {
+                            renderMessages(d.messages, false);
+                            otherIsOnline = !!d.otherOnline;
+                            renderStatus();
+                        }
+                    })
                     .catch(() => {});
 
                 const es = new EventSource('/api/peer-chat/' + chatId + '/stream');
@@ -1848,7 +1854,13 @@
                         pollTimer = setInterval(() => {
                             if (sseActive || currentChatId !== chatId) { clearInterval(pollTimer); pollTimer = null; return; }
                             fetch('/api/peer-chat/' + chatId + '/messages', { credentials: 'same-origin' })
-                                .then(r => r.json()).then(d => { if (d.success) renderMessages(d.messages, true); }).catch(() => {});
+                                .then(r => r.json()).then(d => {
+                                    if (d.success) {
+                                        renderMessages(d.messages, true);
+                                        otherIsOnline = !!d.otherOnline;
+                                        renderStatus();
+                                    }
+                                }).catch(() => {});
                         }, 3000);
                     }
                 };

@@ -148,7 +148,13 @@ public class PeerChatController {
         // Push the now-read status back out so the SENDER's open chat (if any)
         // flips "Delivered" to "Read" live instead of only on their next reload.
         if (updatedChat != null) notifyChat(chatId, updatedChat);
-        return ResponseEntity.ok(Map.of("success", true, "messages", buildMessageList(chat, me.getId())));
+        // Include the other participant's online status so the polling
+        // fallback (used once the SSE stream drops, e.g. on mobile
+        // backgrounding) can keep the status dot accurate instead of it
+        // freezing on whatever it last was when the stream died.
+        String otherUserId = chat.getUser1Id().equals(me.getId()) ? chat.getUser2Id() : chat.getUser1Id();
+        boolean otherOnline = isViewerOnline(chatId, otherUserId);
+        return ResponseEntity.ok(Map.of("success", true, "messages", buildMessageList(chat, me.getId()), "otherOnline", otherOnline));
     }
 
     @GetMapping(value = "/api/peer-chat/{chatId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -338,27 +344,32 @@ public class PeerChatController {
         PeerChatController.peerChatServiceStatic = this.peerChatService;
     }
 
+    /** Shared by the SSE presence broadcast and the polling-fallback /messages
+     * endpoint, so a user's status is computed identically however the client
+     * currently finds out about it. */
+    private static boolean isViewerOnline(String chatId, String viewerId) {
+        List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
+        for (SseEmitter emitter : emitters) {
+            if (viewerId.equals(emitterViewers.get(emitter))) return true;
+        }
+        if (userRepoStatic != null) {
+            User u = userRepoStatic.findById(viewerId).orElse(null);
+            if (u != null && u.getLastActiveTime() != null
+                    && u.getLastActiveTime().isAfter(LocalDateTime.now().minusMinutes(2))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void broadcastPresence(String chatId) {
         CompletableFuture.runAsync(() -> {
-            List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
-            Set<String> onlineViewers = new HashSet<>();
-            for (SseEmitter emitter : emitters) {
-                String viewer = emitterViewers.get(emitter);
-                if (viewer != null) onlineViewers.add(viewer);
-            }
-
             PeerChat chat = peerChatServiceStatic != null ? peerChatServiceStatic.getChatById(chatId) : null;
             if (chat == null) return;
+            List<SseEmitter> emitters = chatEmitters.getOrDefault(chatId, Collections.emptyList());
 
             for (String viewerId : List.of(chat.getUser1Id(), chat.getUser2Id())) {
-                boolean online = onlineViewers.contains(viewerId);
-                if (!online && userRepoStatic != null) {
-                    User u = userRepoStatic.findById(viewerId).orElse(null);
-                    if (u != null && u.getLastActiveTime() != null
-                            && u.getLastActiveTime().isAfter(LocalDateTime.now().minusMinutes(2))) {
-                        online = true;
-                    }
-                }
+                boolean online = isViewerOnline(chatId, viewerId);
                 Map<String, Object> data = new HashMap<>();
                 data.put("userId", viewerId);
                 data.put("online", online);
