@@ -547,7 +547,7 @@
                 onChange: function(value) {
                     if(value) {
                         const opt = this.options[value];
-                        document.getElementById('moduleName').value = opt.text.replace(/ \\(.*\\)$/, '');
+                        document.getElementById('moduleName').value = opt.text.replace(/ \(.*\)$/, '');
                         document.getElementById('moduleCode').value = opt.code || '';
                     }
                 }
@@ -700,7 +700,27 @@
             const icon = btn.querySelector('.bi');
             const spinner = btn.querySelector('.spinner-border');
             
-            // Make sure the form is actually valid before showing animation
+            // Make sure the form is actually valid before showing animation.
+            // Tom Select hides the real <select> it wraps, and a hidden form
+            // control is exempt from HTML5 constraint validation — so
+            // form.checkValidity() silently ignores programType/levelNo/
+            // semesterNo/category/moduleSelect no matter what "required"
+            // says. Check those underlying values directly instead.
+            const requiredSelects = [
+                { id: 'programType', label: 'Course Program' },
+                { id: 'levelNo', label: 'Level' },
+                { id: 'semesterNo', label: 'Semester' },
+                { id: 'category', label: 'Content Category' },
+                { id: 'moduleSelect', label: 'Subject / Module' }
+            ];
+            for (const field of requiredSelects) {
+                const el = document.getElementById(field.id);
+                if (el && !el.value) {
+                    alert('Please select ' + field.label + ' before publishing.');
+                    return false;
+                }
+            }
+
             if (!form.checkValidity()) {
                 return true; // Let browser handle HTML5 validation UI
             }

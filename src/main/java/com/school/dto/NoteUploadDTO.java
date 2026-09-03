@@ -9,6 +9,7 @@ public class NoteUploadDTO {
     @NotBlank(message = "Title is required")
     private String title;
 
+    @NotBlank(message = "Course Program is required")
     private String programType = "DIPLOMA";
 
     @NotNull(message = "Level is required")
