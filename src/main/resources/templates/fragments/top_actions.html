@@ -73,15 +73,16 @@
                                         <div class="accent-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #10b981, #059669); transform: scaleY(0); transition: transform 0.3s ease; transform-origin: top;"></div>
                                         <div class="d-flex w-100 justify-content-between align-items-start">
                                             <div class="d-flex align-items-start">
-                                                <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.15)); box-shadow: 0 4px 10px rgba(16,185,129,0.1); flex-shrink: 0;">
-                                                    <i class="bi bi-info-circle-fill" style="font-size: 1.1rem; color: #10b981;"></i>
+                                                <div class="me-3 mt-1 notif-icon-wrap" th:classappend="'notif-cat-' + ${notification.category}">
+                                                    <i th:class="'bi ' + ${notification.iconClass}"></i>
                                                 </div>
                                                 <div>
                                                     <h6 class="mb-1 fw-bold" style="font-size: 0.9rem; color: #0f172a !important;" th:text="${notification.title}">System Update</h6>
                                                     <p class="mb-1" style="font-size: 0.8rem; line-height: 1.4; color: #475569 !important;" th:text="${notification.message}">Message</p>
-                                                    <small class="fw-bold text-muted" style="font-size: 0.7rem;" th:text="${#temporals.format(notification.createdAt, 'dd MMM, HH:mm')}">2 hours ago</small>
+                                                    <small class="fw-bold text-muted" style="font-size: 0.7rem;" th:text="${notification.relativeTime}">2 hours ago</small>
                                                 </div>
                                             </div>
+                                            <span th:unless="${notification.read}" class="notif-unread-dot mt-2"></span>
                                         </div>
                                     </a>
                                 </div>
@@ -92,6 +93,32 @@
                         </ul>
                         
                         <style>
+                            /* Each notification kind gets its own icon + tint instead of one
+                               flat generic "i" for everything — lets an admin recognize what
+                               a notification is about at a glance, before reading the text. */
+                            .notif-icon-wrap { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+                            .notif-icon-wrap i { font-size: 1.1rem; }
+                            .notif-cat-report { background: rgba(249, 115, 22, 0.12); }
+                            .notif-cat-report i { color: #f97316; }
+                            .notif-cat-offender { background: rgba(239, 68, 68, 0.12); }
+                            .notif-cat-offender i { color: #ef4444; }
+                            .notif-cat-verify { background: rgba(59, 130, 246, 0.12); }
+                            .notif-cat-verify i { color: #3b82f6; }
+                            .notif-cat-question { background: rgba(139, 92, 246, 0.12); }
+                            .notif-cat-question i { color: #8b5cf6; }
+                            .notif-cat-approval { background: rgba(236, 72, 153, 0.12); }
+                            .notif-cat-approval i { color: #ec4899; }
+                            .notif-cat-like { background: rgba(244, 63, 94, 0.12); }
+                            .notif-cat-like i { color: #f43f5e; }
+                            .notif-cat-reply { background: rgba(6, 182, 212, 0.12); }
+                            .notif-cat-reply i { color: #06b6d4; }
+                            .notif-cat-magic { background: rgba(245, 158, 11, 0.12); }
+                            .notif-cat-magic i { color: #f59e0b; }
+                            .notif-cat-message, .notif-cat-notes, .notif-cat-default { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.15)); }
+                            .notif-cat-message i, .notif-cat-notes i, .notif-cat-default i { color: #10b981; }
+
+                            .notif-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; flex-shrink: 0; box-shadow: 0 0 6px rgba(16, 185, 129, 0.6); }
+
                             /* Premium Smooth Dropdown Animation */
                             @keyframes premiumDropdownGlow {
                                 0% {

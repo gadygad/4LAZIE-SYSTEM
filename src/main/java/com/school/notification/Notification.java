@@ -61,4 +61,53 @@ public class Notification {
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // Derived, not persisted — Spring Data maps this document by its fields,
+    // so a getter-only method is invisible to the Mongo converter. Classifies
+    // by the title's fixed prefix so the dropdown can give each kind of
+    // notification its own icon and color instead of one flat generic look.
+    public String getCategory() {
+        if (title == null) return "default";
+        if (title.startsWith("New Forum Report")) return "report";
+        if (title.startsWith("Repeat Offender")) return "offender";
+        if (title.startsWith("New Verification Request")) return "verify";
+        if (title.startsWith("New Student Question") || title.startsWith("New Contact Message")) return "question";
+        if (title.startsWith("Approval Needed")) return "approval";
+        if (title.startsWith("New Like")) return "like";
+        if (title.startsWith("New Reply") || title.startsWith("New Comment")) return "reply";
+        if (title.startsWith("New Message")) return "message";
+        if (title.startsWith("Magic Reply")) return "magic";
+        if (title.startsWith("New Notes Added")) return "notes";
+        return "default";
+    }
+
+    public String getIconClass() {
+        switch (getCategory()) {
+            case "report": return "bi-flag-fill";
+            case "offender": return "bi-exclamation-octagon-fill";
+            case "verify": return "bi-patch-check-fill";
+            case "question": return "bi-question-circle-fill";
+            case "approval": return "bi-stamp";
+            case "like": return "bi-heart-fill";
+            case "reply": return "bi-chat-left-text-fill";
+            case "message": return "bi-envelope-fill";
+            case "magic": return "bi-magic";
+            case "notes": return "bi-journal-plus";
+            default: return "bi-info-circle-fill";
+        }
+    }
+
+    public String getRelativeTime() {
+        if (createdAt == null) return "";
+        long seconds = java.time.Duration.between(createdAt, LocalDateTime.now()).getSeconds();
+        if (seconds < 5) return "Just now";
+        if (seconds < 60) return seconds + "s ago";
+        long minutes = seconds / 60;
+        if (minutes < 60) return minutes + "m ago";
+        long hours = minutes / 60;
+        if (hours < 24) return hours + "h ago";
+        long days = hours / 24;
+        if (days < 7) return days + "d ago";
+        return createdAt.format(java.time.format.DateTimeFormatter.ofPattern("dd MMM"));
+    }
 }
