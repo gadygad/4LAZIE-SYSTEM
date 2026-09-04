@@ -94,7 +94,7 @@ public class NoteService {
     }
 
     public byte[] createLevelNotesZip(String program, Integer level) throws IOException {
-        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoOrderByIdDesc(program, level);
+        List<Note> notes = noteRepository.findByProgramTypeAndLevelNoWithGeneral(program, level);
         return zipNotes(notes);
     }
 
@@ -319,7 +319,14 @@ public class NoteService {
         }
 
         if (program != null && !program.isEmpty()) {
-            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("programType").is(program));
+            // "General" notes carry their owner's programType but list other
+            // courses that also teach the subject in applicablePrograms — a
+            // strict programType-only match silently hid every general note
+            // from students in those other courses.
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+                org.springframework.data.mongodb.core.query.Criteria.where("programType").is(program),
+                org.springframework.data.mongodb.core.query.Criteria.where("applicablePrograms").is(program)
+            ));
         }
 
         if (level != null) {
@@ -351,9 +358,12 @@ public class NoteService {
     }
     public List<Note> fetchDashboardNotes(String programPrefix, String sortBy, int limit) {
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
-        
+
         if (programPrefix != null && !programPrefix.isEmpty()) {
-            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programPrefix));
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+                org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programPrefix),
+                org.springframework.data.mongodb.core.query.Criteria.where("applicablePrograms").is(programPrefix)
+            ));
         }
 
         query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, sortBy));
@@ -366,9 +376,13 @@ public class NoteService {
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
         
         if (programPrefix != null && !programPrefix.isEmpty()) {
+            // A blanket isGeneral==true check here would show a general note to
+            // every program at every level, not just the specific courses that
+            // actually teach the subject — the same bug already fixed for the
+            // toggle itself (see resolveApplicablePrograms).
             query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
                 org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programPrefix),
-                org.springframework.data.mongodb.core.query.Criteria.where("isGeneral").is(true)
+                org.springframework.data.mongodb.core.query.Criteria.where("applicablePrograms").is(programPrefix)
             ));
         }
 
@@ -385,9 +399,13 @@ public class NoteService {
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
         
         if (programPrefix != null && !programPrefix.isEmpty()) {
+            // A blanket isGeneral==true check here would show a general note to
+            // every program at every level, not just the specific courses that
+            // actually teach the subject — the same bug already fixed for the
+            // toggle itself (see resolveApplicablePrograms).
             query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
                 org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programPrefix),
-                org.springframework.data.mongodb.core.query.Criteria.where("isGeneral").is(true)
+                org.springframework.data.mongodb.core.query.Criteria.where("applicablePrograms").is(programPrefix)
             ));
         }
 
