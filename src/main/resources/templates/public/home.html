@@ -1268,13 +1268,19 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                      .badge-tz-blue:hover { background: #00a3dd; color: #ffffff !important; box-shadow: 0 8px 20px rgba(0, 163, 221, 0.4); }
                                      .badge-tz-yellow:hover { background: #000000; color: #ffffff !important; box-shadow: 0 8px 20px rgba(17, 17, 17, 0.5); }
                                      .badge-tz-black:hover { background: #0f172a; color: #ffffff !important; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.4); }
-                                     .badge-tz-flag:hover { 
-                                         background: linear-gradient(135deg, #1eb53a 20%, #fcd116 35%, #0f172a 50%, #fcd116 65%, #00a3dd 80%); 
+                                     .badge-tz-flag:hover {
+                                         background: linear-gradient(135deg, #1eb53a 20%, #fcd116 35%, #0f172a 50%, #fcd116 65%, #00a3dd 80%);
                                          color: #ffffff !important;
-                                         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
+                                         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
                                          background-size: 200% 200%;
                                          animation: gradient-move 3s ease infinite;
                                      }
+
+                                     /* Mobile-only: mirrors the "LEARN JAVA" link from the desktop
+                                        secondary-nav-strip (d-none d-md-block), which never renders
+                                        below md — so this and that link never appear at the same time. */
+                                     .badge-tz-java { background: #fef3e2; color: #b45309 !important; }
+                                     .badge-tz-java:hover { background: #f59e0b; color: #ffffff !important; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4); }
                                      
                                      @keyframes gradient-move {
                                          0% { background-position: 0% 50%; }
@@ -1343,6 +1349,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                             <a href="/quizzes" class="study-badge badge-tz-yellow"><i class="bi bi-lightbulb-fill"></i> Possible Qns</a>
                                             <a href="/quizzes" class="study-badge badge-tz-black"><i class="bi bi-journal-check"></i> UE Qns</a>
                                             <a href="/quizzes" class="study-badge badge-tz-flag"><i class="bi bi-file-earmark-bar-graph"></i> CATs Qns</a>
+                                            <a href="https://www.w3schools.com/java/" target="_blank" class="study-badge badge-tz-java d-md-none"><i class="bi bi-cup-hot-fill"></i> Learn Java</a>
                                         </div>
                                         
                                         <a href="/quizzes" class="study-hub-btn" style="text-decoration: none;">
@@ -1416,9 +1423,9 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                                                 font-size: 0.85rem !important;
                                             }
                                             .gpa-inline-calc-btn {
-                                                padding: 8px 14px !important;
+                                                padding: 0 14px !important;
                                                 font-size: 0.85rem !important;
-                                                height: auto !important;
+                                                height: 32px !important;
                                             }
                                         }
                                         .gpa-inline-inputs-wrapper {
