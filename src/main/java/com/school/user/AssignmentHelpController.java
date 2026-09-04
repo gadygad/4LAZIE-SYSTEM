@@ -231,7 +231,7 @@ public class AssignmentHelpController {
                             "REPLY"
                         );
                         pendingActionRepository.save(pendingAction);
-                        notificationService.notifySuperAdmins("Approval Needed",
+                        notificationService.notifySuperAdmins("Approval needed",
                                 admin.getName() + " drafted a reply to " + req.getFullName() + " needing your approval.",
                                 "/admin/approvals");
 

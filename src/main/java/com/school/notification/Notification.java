@@ -68,11 +68,11 @@ public class Notification {
     // notification its own icon and color instead of one flat generic look.
     public String getCategory() {
         if (title == null) return "default";
-        if (title.startsWith("New Forum Report")) return "report";
-        if (title.startsWith("Repeat Offender")) return "offender";
-        if (title.startsWith("New Verification Request")) return "verify";
-        if (title.startsWith("New Student Question") || title.startsWith("New Contact Message")) return "question";
-        if (title.startsWith("Approval Needed")) return "approval";
+        if (title.startsWith("New forum report")) return "report";
+        if (title.startsWith("Repeat offender")) return "offender";
+        if (title.startsWith("New verification request")) return "verify";
+        if (title.startsWith("New student question") || title.startsWith("New contact message")) return "question";
+        if (title.startsWith("Approval needed")) return "approval";
         if (title.startsWith("New Like")) return "like";
         if (title.startsWith("New Reply") || title.startsWith("New Comment")) return "reply";
         if (title.startsWith("New Message")) return "message";

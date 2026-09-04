@@ -33,7 +33,7 @@ public class AdminService {
         } else {
             PendingAction pa = new PendingAction(admin.getId(), admin.getName(), entityType, entityId, entityDesc, "DELETE");
             pendingActionRepository.save(pa);
-            notificationService.notifySuperAdmins("Approval Needed",
+            notificationService.notifySuperAdmins("Approval needed",
                     admin.getName() + " requested to delete " + entityDesc, "/admin/approvals");
             return "PENDING";
         }

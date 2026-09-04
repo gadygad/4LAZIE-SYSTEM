@@ -791,7 +791,7 @@ public class ForumController {
         }
         forumReportRepository.save(new com.school.forum.model.ForumReport("POST", id, id, user.getId(), reason,
                 details != null ? details.trim() : null));
-        notificationService.notifyAdminsWithPermission("canModerateForum", "New Forum Report",
+        notificationService.notifyAdminsWithPermission("canModerateForum", "New forum report",
                 user.getName() + " reported a post for: " + reason, "/admin/forum/reports");
         return ResponseEntity.ok(Map.of("reported", true, "message", "Thanks — this has been sent to the moderators."));
     }
@@ -819,7 +819,7 @@ public class ForumController {
         }
         forumReportRepository.save(new com.school.forum.model.ForumReport("COMMENT", id, comment.getPostId(), user.getId(), reason,
                 details != null ? details.trim() : null));
-        notificationService.notifyAdminsWithPermission("canModerateForum", "New Forum Report",
+        notificationService.notifyAdminsWithPermission("canModerateForum", "New forum report",
                 user.getName() + " reported a comment for: " + reason, "/admin/forum/reports");
         return ResponseEntity.ok(Map.of("reported", true, "message", "Thanks — this has been sent to the moderators."));
     }

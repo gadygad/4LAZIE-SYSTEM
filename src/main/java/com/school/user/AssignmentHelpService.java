@@ -49,7 +49,7 @@ public class AssignmentHelpService {
 
         AssignmentRequest saved = assignmentRequestRepository.save(request);
         String studentName = userRepository.findById(userId).map(User::getName).orElse("A student");
-        notificationService.notifyAdminsWithPermission(null, "New Student Question",
+        notificationService.notifyAdminsWithPermission(null, "New student question",
                 studentName + " asked a question about " + subjectName + ".", "/admin/assignments");
         return saved;
     }
@@ -63,7 +63,7 @@ public class AssignmentHelpService {
         request.setSubjectName("CONTACT: " + subject);
         request.setQuestionText(message);
         AssignmentRequest saved = assignmentRequestRepository.save(request);
-        notificationService.notifyAdminsWithPermission(null, "New Contact Message",
+        notificationService.notifyAdminsWithPermission(null, "New contact message",
                 fullName + " sent a message via the public contact form.", "/admin/assignments");
         return saved;
     }

@@ -507,7 +507,7 @@ public class AdminController {
             // territory, so admins get a heads-up without being re-pinged on
             // every warning after the third.
             if (targetUser.getWarningCount() == 3) {
-                notificationService.notifyAdminsWithPermission("MANAGE_USERS", "Repeat Offender Flagged",
+                notificationService.notifyAdminsWithPermission("MANAGE_USERS", "Repeat offender flagged",
                         targetUser.getName() + " has now been warned 3 times and may need a final decision.",
                         "/admin/dashboard#repeatOffendersSection");
             }
