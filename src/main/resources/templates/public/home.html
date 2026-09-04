@@ -933,9 +933,17 @@
                                     .apple-note-meta { gap: 6px; flex-wrap: wrap; }
                                     .apple-note-tag { font-size: 0.55rem; padding: 2px 6px; }
                                     .apple-note-stat { display: flex; }
-                                    .apple-note-actions { display: flex; gap: 8px; width: 100%; margin-left: 0; justify-content: space-between; margin-top: 5px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
-                                    .apple-btn-read { flex: 1; justify-content: center; padding: 8px 12px; font-size: 0.65rem; }
-                                    .apple-btn-dl { flex: 1; justify-content: center; padding: 8px 12px; font-size: 0.65rem; display: inline-flex; }
+                                    /* Read stays a labelled pill (it's the primary action); Download
+                                       shrinks to an icon-only circle instead of matching it flex:1 for
+                                       flex:1 — two half-width chunky pills for two very different-weight
+                                       actions was what made this row feel oversized on a phone. */
+                                    .apple-note-actions { display: flex; align-items: center; gap: 10px; width: 100%; margin-left: 0; justify-content: flex-end; margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+                                    .apple-btn-read { flex: none; padding: 8px 20px; font-size: 0.68rem; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25); }
+                                    .apple-btn-read:active { transform: scale(0.96); }
+                                    .apple-btn-dl { flex: none; width: 36px; height: 36px; padding: 0; border-radius: 50%; display: inline-flex; }
+                                    .apple-btn-dl i { font-size: 0.95rem; }
+                                    .apple-btn-dl:active { transform: scale(0.92); }
+                                    .apple-btn-dl-label { display: none; }
                                     .apple-note-module { max-width: 100%; font-size: 0.55rem; }
                                 }
                             </style>
@@ -974,7 +982,7 @@
                                                 <i class="bi bi-eye"></i> READ
                                             </a>
                                             <a th:href="@{'/download/' + ${note.encryptedSlug}}" class="apple-btn-dl">
-                                                <i class="bi bi-cloud-arrow-down"></i> DOWNLOAD
+                                                <i class="bi bi-cloud-arrow-down"></i> <span class="apple-btn-dl-label">DOWNLOAD</span>
                                             </a>
                                         </div>
                                     </div>
