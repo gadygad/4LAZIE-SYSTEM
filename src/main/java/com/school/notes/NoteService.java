@@ -177,9 +177,35 @@ public class NoteService {
         note.setUploadDate(java.time.LocalDateTime.now());
         note.setIsPublic(true);
         note.setInstitution(loggedInUser.getInstitution());
+        if (Boolean.TRUE.equals(note.getIsGeneral())) {
+            note.setApplicablePrograms(resolveApplicablePrograms(note));
+        }
         noteRepository.save(note);
 
         triggerNotificationsForNote(note, loggedInUser, appUrl);
+    }
+
+    // "General Subject" is meant to mean "shared by the other courses that
+    // also teach this subject" — not "visible to literally every program at
+    // this level/semester" (which is what a blanket isGeneral==true check
+    // used to do). Each Subject is tied to exactly one Course, so a subject
+    // taught in several courses exists as several separate Subject documents
+    // with the same name/level/semester — this resolves all of them to their
+    // owning courses' programTypes.
+    public List<String> resolveApplicablePrograms(Note note) {
+        List<String> programs = new java.util.ArrayList<>();
+        if (note.getModuleName() == null || note.getModuleName().isBlank()
+                || note.getLevelNo() == null || note.getSemesterNo() == null) {
+            return programs;
+        }
+        List<com.school.academic.Subject> matches = subjectRepository.findByNameIgnoreCaseAndLevelNoAndSemesterNo(
+                note.getModuleName().trim(), note.getLevelNo(), note.getSemesterNo());
+        for (com.school.academic.Subject s : matches) {
+            if (s.getCourse() != null && s.getCourse().getProgramType() != null) {
+                programs.add(s.getCourse().getProgramType());
+            }
+        }
+        return programs;
     }
 
     public void triggerNotificationsForNote(Note note, com.school.auth.User loggedInUser, String appUrl) {

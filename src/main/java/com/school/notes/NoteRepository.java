@@ -14,19 +14,19 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     @Query("{ 'programType': ?0, 'levelNo': ?1, '$or': [ { 'title': { $regex: ?2, $options: 'i' } }, { 'category': { $regex: ?2, $options: 'i' } } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramAndLevel(String programType, Integer levelNo, String query, org.springframework.data.domain.Pageable pageable);
 
-    @Query("{ 'levelNo': ?1, '$and': [ { '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }, { '$or': [ { 'title': { $regex: ?2, $options: 'i' } }, { 'category': { $regex: ?2, $options: 'i' } } ] } ] }")
+    @Query("{ 'levelNo': ?1, '$and': [ { '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }, { '$or': [ { 'title': { $regex: ?2, $options: 'i' } }, { 'category': { $regex: ?2, $options: 'i' } } ] } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramAndLevelWithGeneral(String programType, Integer levelNo, String query, org.springframework.data.domain.Pageable pageable);
 
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelAndSemester(String programType, Integer levelNo, Integer semesterNo, String query, org.springframework.data.domain.Pageable pageable);
 
-    @Query("{ 'levelNo': ?1, 'semesterNo': ?2, '$and': [ { '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }, { '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] } ] }")
+    @Query("{ 'levelNo': ?1, 'semesterNo': ?2, '$and': [ { '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }, { '$or': [ { 'title': { $regex: ?3, $options: 'i' } }, { 'category': { $regex: ?3, $options: 'i' } } ] } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelAndSemesterWithGeneral(String programType, Integer levelNo, Integer semesterNo, String query, org.springframework.data.domain.Pageable pageable);
 
     @Query("{ 'programType': ?0, 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, 'title': { $regex: ?4, $options: 'i' } }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelSemesterAndCategory(String programType, Integer levelNo, Integer semesterNo, String category, String query, org.springframework.data.domain.Pageable pageable);
 
-    @Query("{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$and': [ { '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }, { 'title': { $regex: ?4, $options: 'i' } } ] }")
+    @Query("{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$and': [ { '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }, { 'title': { $regex: ?4, $options: 'i' } } ] }")
     org.springframework.data.domain.Page<Note> searchNotesByProgramLevelSemesterAndCategoryWithGeneral(String programType, Integer levelNo, Integer semesterNo, String category, String query, org.springframework.data.domain.Pageable pageable);
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, String category);
@@ -42,27 +42,27 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     // mixes a level's Semester 1 and Semester 2 materials together.
     List<Note> findByLevelNoAndSemesterNoOrderByIdDesc(Integer levelNo, Integer semesterNo);
 
-    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, 'category': ?3, '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }", sort = "{ '_id': -1 }")
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoAndCategoryWithGeneral(String programType, Integer levelNo, Integer semesterNo, String category);
 
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo);
 
-    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }", sort = "{ '_id': -1 }")
     List<Note> findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(String programType, Integer levelNo, Integer semesterNo);
     
     org.springframework.data.domain.Page<Note> findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(String programType, Integer levelNo, Integer semesterNo, org.springframework.data.domain.Pageable pageable);
     
-    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    @Query(value = "{ 'levelNo': ?1, 'semesterNo': ?2, '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }", sort = "{ '_id': -1 }")
     org.springframework.data.domain.Page<Note> findByProgramTypeAndLevelNoAndSemesterNoWithGeneral(String programType, Integer levelNo, Integer semesterNo, org.springframework.data.domain.Pageable pageable);
     
     org.springframework.data.domain.Page<Note> findAllByOrderByIdDesc(org.springframework.data.domain.Pageable pageable);
 
     List<Note> findByProgramTypeAndLevelNoOrderByIdDesc(String programType, Integer levelNo);
 
-    @Query("{ '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }")
+    @Query("{ '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }")
     List<Note> findByProgramTypeWithGeneral(String programType, org.springframework.data.domain.Pageable pageable);
 
-    @Query(value = "{ 'levelNo': ?1, '$or': [ { 'programType': ?0 }, { 'isGeneral': true } ] }", sort = "{ '_id': -1 }")
+    @Query(value = "{ 'levelNo': ?1, '$or': [ { 'programType': ?0 }, { 'applicablePrograms': ?0 } ] }", sort = "{ '_id': -1 }")
     List<Note> findByProgramTypeAndLevelNoWithGeneral(String programType, Integer levelNo);
 
     List<Note> findAllByOrderByIdDesc();

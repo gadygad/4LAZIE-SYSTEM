@@ -78,7 +78,12 @@ public class SearchApiController {
                 .filter(n -> {
                     if (loggedInUser != null && loggedInUser.getRole() != com.school.auth.Role.ADMIN && loggedInUser.getRole() != com.school.auth.Role.SUPER_ADMIN) {
                         String userProg = loggedInUser.getCourseProgram();
-                        return userProg != null && (userProg.equalsIgnoreCase(n.getProgramType()) || Boolean.TRUE.equals(n.getIsGeneral()));
+                        if (userProg == null) return false;
+                        if (userProg.equalsIgnoreCase(n.getProgramType())) return true;
+                        // "General" means visible to the specific other courses that
+                        // also teach this subject, not every program at that level.
+                        return n.getApplicablePrograms() != null
+                                && n.getApplicablePrograms().stream().anyMatch(userProg::equalsIgnoreCase);
                     }
                     return true;
                 })
@@ -133,9 +138,11 @@ public class SearchApiController {
 
         if (program != null && !program.isEmpty()) {
             String safeProgram = java.util.regex.Pattern.quote(program);
+            // "General" means visible to the specific other courses that also
+            // teach this subject (applicablePrograms), not every program.
             query.addCriteria(new Criteria().orOperator(
                 Criteria.where("programType").regex(safeProgram, "i"),
-                Criteria.where("isGeneral").is(true)
+                Criteria.where("applicablePrograms").regex("^" + safeProgram + "$", "i")
             ));
         }
         if (semester != null) {

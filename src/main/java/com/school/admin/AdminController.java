@@ -502,6 +502,13 @@ public class AdminController {
         if (note != null) {
             boolean current = note.getIsGeneral() != null ? note.getIsGeneral() : false;
             note.setIsGeneral(!current);
+            // Recompute which other courses actually teach this subject —
+            // toggling this flag doesn't go through uploadAndSaveNote(), so
+            // applicablePrograms has to be resolved here too, or a note
+            // toggled General from this page would be General in name only
+            // (every WithGeneral query checks applicablePrograms, not the
+            // flag itself).
+            note.setApplicablePrograms(!current ? noteService.resolveApplicablePrograms(note) : new java.util.ArrayList<>());
             noteRepository.save(note);
             redirectAttributes.addFlashAttribute("success", "Note updated to " + (!current ? "General" : "Specific") + " Subject successfully.");
         } else {

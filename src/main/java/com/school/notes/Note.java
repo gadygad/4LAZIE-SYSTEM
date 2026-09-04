@@ -63,6 +63,14 @@ public class Note {
     @Indexed
     private Boolean isGeneral = false;
 
+    // When isGeneral is set, this is computed at save time as every
+    // programType whose own Subject catalog also has a subject with this
+    // note's moduleName at this levelNo/semesterNo — i.e. "general" means
+    // visible to the other courses that actually teach this subject, not
+    // blanket-visible to every course at that level/semester regardless of
+    // whether they offer it at all.
+    private java.util.List<String> applicablePrograms = new java.util.ArrayList<>();
+
     @DBRef(lazy = true)
     private com.school.academic.Institution institution;
 
@@ -141,6 +149,8 @@ public class Note {
     public void setUnitNumber(Integer unitNumber) { this.unitNumber = unitNumber; }
     public Boolean getIsGeneral() { return isGeneral != null ? isGeneral : false; }
     public void setIsGeneral(Boolean isGeneral) { this.isGeneral = isGeneral; }
+    public java.util.List<String> getApplicablePrograms() { return applicablePrograms; }
+    public void setApplicablePrograms(java.util.List<String> applicablePrograms) { this.applicablePrograms = applicablePrograms != null ? applicablePrograms : new java.util.ArrayList<>(); }
     public com.school.academic.Institution getInstitution() { return institution; }
     public void setInstitution(com.school.academic.Institution institution) { this.institution = institution; }
 
