@@ -104,7 +104,25 @@ public class TimetableController {
         }
         
         if (timetableOpt.isPresent()) {
-            model.addAttribute("timetable", timetableOpt.get());
+            Timetable timetable = timetableOpt.get();
+            // Defense in depth: /admin/timetables/upload already sanitizes
+            // htmlContent before saving, but at least one existing DB record
+            // was found to contain a second, full <html>...<body> document
+            // (an accidentally-saved error page) concatenated after the real
+            // table — the browser "recovers" from that malformed markup by
+            // rendering both, so a broken error card shows up below a
+            // student's real timetable. Re-sanitizing here means any already-
+            // corrupted or otherwise-unsafe stored content is cleaned up on
+            // render, without needing a one-off data migration.
+            if (timetable.getHtmlContent() != null) {
+                org.owasp.html.PolicyFactory policy = org.owasp.html.Sanitizers.FORMATTING
+                        .and(org.owasp.html.Sanitizers.LINKS)
+                        .and(org.owasp.html.Sanitizers.BLOCKS)
+                        .and(org.owasp.html.Sanitizers.STYLES)
+                        .and(org.owasp.html.Sanitizers.TABLES);
+                timetable.setHtmlContent(policy.sanitize(timetable.getHtmlContent()));
+            }
+            model.addAttribute("timetable", timetable);
             boolean isCurrentYear = (selectedYear != null && selectedYear.equals(currentYear)) ||
                                     (timetableOpt.get().getAcademicYear() != null && timetableOpt.get().getAcademicYear().equals(currentYear));
             model.addAttribute("isCurrentYear", isCurrentYear);
@@ -145,33 +163,14 @@ public class TimetableController {
         return "timetable/timetable_archive";
     }
 
-    @GetMapping("/timetable/seed")
-    @org.springframework.web.bind.annotation.ResponseBody
-    public String seedTimetable() {
-        try {
-            org.springframework.core.io.Resource resource = new org.springframework.core.io.ClassPathResource("templates/view_timetable.html");
-            String html = new String(resource.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("<div id=\"timetable-wrapper\">(.*?)<button class=\"print-btn\"", java.util.regex.Pattern.DOTALL).matcher(html);
-            if (matcher.find()) {
-                String tableHtml = matcher.group(1).trim();
-                tableHtml += "\n        <button class=\"print-btn\" onclick=\"window.print()\">\n            <i class=\"bi bi-printer-fill\" style=\"margin-right: 8px;\"></i> Save as PDF / Print\n        </button>";
-                
-                Timetable t = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DIPLOMA", 5, 2)
-                        .orElse(new Timetable());
-                
-                t.setProgramType("DIPLOMA");
-                t.setLevelNo(5);
-                t.setSemesterNo(2);
-                t.setAcademicYear("2025/2026");
-                t.setHtmlContent(tableHtml);
-                t.setUploadDate(java.time.LocalDateTime.now());
-                
-                timetableRepository.save(t);
-                return "Successfully seeded timetable for DIPLOMA Level 5 Semester 2 (2025/2026)";
-            }
-            return "Failed to find timetable wrapper in HTML";
-        } catch (Exception e) {
-            return "Error: " + e.getMessage();
-        }
-    }
+    // A "/timetable/seed" debug endpoint used to live here: unauthenticated
+    // (this whole /timetable/** prefix is permitAll in SecurityConfig),
+    // triggerable by anyone with a GET request, and it read the raw
+    // view_timetable.html template file off disk, regex-extracted whatever
+    // fell between two HTML markers, and overwrote the real DIPLOMA
+    // Level 5 Semester 2 timetable's stored content with it. That's almost
+    // certainly how a live timetable record ended up with a second, garbled
+    // HTML document (a rendered error page) appended after the real table —
+    // removed entirely rather than fixed, since a template-scraping seed
+    // utility has no legitimate reason to be reachable in production.
 }

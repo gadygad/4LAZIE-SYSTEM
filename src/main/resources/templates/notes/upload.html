@@ -63,6 +63,15 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.02) !important;
         }
+        /* Without this, the selected option's text wraps to a second line in
+           narrow columns (e.g. the Category/Unit half-width pair on mobile),
+           silently doubling the control's height and breaking row alignment. */
+        .ts-wrapper.form-select .ts-control > .item {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            display: block !important;
+        }
         .ts-wrapper.form-select:hover .ts-control {
             background: rgba(255, 255, 255, 0.6) !important;
             border-color: rgba(16, 185, 129, 0.4) !important;
