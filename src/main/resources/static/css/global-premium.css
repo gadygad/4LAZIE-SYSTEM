@@ -718,9 +718,14 @@ body.sidebar-is-open {
     text-decoration: none;
     letter-spacing: 0.3px;
     gap: 6px;
+    transition: filter 0.2s ease;
+}
+/* A quiet hover cue only — no color swap, no slide, no movement. */
+.magic-auth-btn:hover {
+    filter: brightness(1.15);
 }
 .magic-auth-btn i {
-    /* Static — no hover-triggered color slide, transform, or icon animation. */
+    /* Static — no hover-triggered transform or icon animation. */
 }
 
 /* ==========================================================================
