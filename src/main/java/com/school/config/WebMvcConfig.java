@@ -35,8 +35,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(activeUserInterceptor);
         registry.addInterceptor(siteVisitInterceptor);
         
-        // Register Rate Limiting for critical endpoints (Notes views and downloads)
+        // Register Rate Limiting for critical endpoints (Notes views and downloads).
+        // The two /api/search* routes are public, unauthenticated, and build a
+        // MongoDB $regex from the request param — even with the value now
+        // escaped against ReDoS, they're still an easy target for volumetric
+        // abuse without this.
         registry.addInterceptor(rateLimitInterceptor)
-                .addPathPatterns("/download/**", "/view/**", "/proxy/**");
+                .addPathPatterns("/download/**", "/view/**", "/proxy/**", "/api/search", "/api/notes/filter");
     }
 }

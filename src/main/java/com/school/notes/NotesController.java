@@ -44,6 +44,21 @@ public class NotesController {
         return authUtil.getLoggedInUser();
     }
 
+    // Shared by /download, /view, and /proxy — proxy is the endpoint that
+    // actually streams the file bytes (both /download and /view redirect
+    // into it), so this check must be enforced there too, not just in its
+    // two callers, or a guest can bypass the whitelist entirely by hitting
+    // /proxy/{id} directly with a restricted note's id.
+    private boolean isGuestAllowedCategory(Note note) {
+        if (note.getCategory() == null || note.getCategory().trim().isEmpty()) {
+            return true;
+        }
+        String cat = note.getCategory().toUpperCase().trim().replaceAll("\\s+", "");
+        // Default-deny: only the recognized safe categories are let through.
+        // An unrecognized category is treated the same as a restricted one.
+        return cat.contains("NOTE") || cat.equals("MODULE") || cat.contains("COURSEMATERIAL");
+    }
+
     // Utility to prevent ReDoS by escaping Regex special characters
     private String escapeRegex(String input) {
         if (input == null) return null;
@@ -520,18 +535,7 @@ public class NotesController {
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
-            boolean isAllowed = false;
-            if (note.getCategory() == null || note.getCategory().trim().isEmpty()) {
-                isAllowed = true;
-            } else {
-                String cat = note.getCategory().toUpperCase().trim().replaceAll("\\s+", "");
-                if (cat.contains("NOTE") || cat.equals("MODULE") || cat.contains("COURSEMATERIAL")) {
-                    isAllowed = true;
-                } else if (cat.contains("ASSIGNMENT") || cat.contains("PROJECT") || cat.contains("UE") || cat.contains("CAT") || cat.contains("PASTPAPER") || cat.contains("EXAM") || cat.contains("TEST")) {
-                    isAllowed = false;
-                }
-            }
-            if (!isAllowed) {
+            if (!isGuestAllowedCategory(note)) {
                 response.sendRedirect("/login");
                 return;
             }
@@ -651,18 +655,7 @@ public class NotesController {
         
         // Strict Whitelist: Only allow 'Note' or empty category for Guests
         if (loggedInUser == null) {
-            boolean isAllowed = false;
-            if (note.getCategory() == null || note.getCategory().trim().isEmpty()) {
-                isAllowed = true;
-            } else {
-                String cat = note.getCategory().toUpperCase().trim().replaceAll("\\s+", "");
-                if (cat.contains("NOTE") || cat.equals("MODULE") || cat.contains("COURSEMATERIAL")) {
-                    isAllowed = true;
-                } else if (cat.contains("ASSIGNMENT") || cat.contains("PROJECT") || cat.contains("UE") || cat.contains("CAT") || cat.contains("PASTPAPER") || cat.contains("EXAM") || cat.contains("TEST")) {
-                    isAllowed = false;
-                }
-            }
-            if (!isAllowed) {
+            if (!isGuestAllowedCategory(note)) {
                 response.sendRedirect("/login");
                 return;
             }
@@ -815,6 +808,14 @@ public class NotesController {
         Note note = noteRepository.findById(id).orElse(null);
         if (note == null || note.getFileUrl() == null || note.getFileUrl().isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+        // /download and /view both redirect into this endpoint to actually
+        // stream the file, but this is also a public, directly-callable route
+        // in its own right — without this check a guest blocked by those two
+        // could fetch a restricted note's file bytes straight from here.
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null && (!Boolean.TRUE.equals(note.getIsPublic()) || !isGuestAllowedCategory(note))) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/login").build();
         }
         try {
             java.net.URL url = new java.net.URL(note.getFileUrl());

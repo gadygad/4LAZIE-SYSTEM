@@ -47,7 +47,12 @@ public class LoginController {
         List<Note> notes = new java.util.ArrayList<>();
         try {
             if (search != null && !search.trim().isEmpty()) {
-                notes = noteRepository.searchNotesByProgramAndLevelWithGeneral(program, level, search.trim(), org.springframework.data.domain.PageRequest.of(0, 10)).getContent().stream()
+                // This is a public, unauthenticated, unrate-limited endpoint —
+                // the search term must never reach $regex unescaped, or a
+                // pathological pattern (e.g. catastrophic-backtracking) lets
+                // anyone trigger a ReDoS against the notes collection.
+                String safeSearch = java.util.regex.Pattern.quote(search.trim());
+                notes = noteRepository.searchNotesByProgramAndLevelWithGeneral(program, level, safeSearch, org.springframework.data.domain.PageRequest.of(0, 10)).getContent().stream()
                         .filter(n -> n != null && Boolean.TRUE.equals(n.getIsPublic()))
                         .limit(3)
                         .collect(Collectors.toList());

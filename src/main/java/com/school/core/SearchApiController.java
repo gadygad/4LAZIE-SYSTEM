@@ -68,7 +68,10 @@ public class SearchApiController {
             }
         }
 
-        org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(query.trim(), org.springframework.data.domain.PageRequest.of(0, 50));
+        // Public, unauthenticated endpoint — escape before it reaches $regex so a
+        // pathological pattern can't trigger a ReDoS against the notes collection.
+        String safeQuery = java.util.regex.Pattern.quote(query.trim());
+        org.springframework.data.domain.Page<Note> matchesPage = noteRepository.searchNotes(safeQuery, org.springframework.data.domain.PageRequest.of(0, 50));
         List<Note> allMatches = matchesPage.getContent();
         List<Note> topResults = allMatches.stream()
                 .filter(n -> n != null && (loggedInUser != null || Boolean.TRUE.equals(n.getIsPublic())))
@@ -117,17 +120,21 @@ public class SearchApiController {
             program = loggedInUser.getCourseProgram();
         }
 
+        // Both are public/permitAll endpoints — escape before building any
+        // $regex so a pathological pattern can't trigger a ReDoS.
+        String safeCategory = java.util.regex.Pattern.quote(category);
         Query query = new Query();
-        query.addCriteria(Criteria.where("category").regex("^" + category + "$", "i"));
-        
+        query.addCriteria(Criteria.where("category").regex("^" + safeCategory + "$", "i"));
+
         if (loggedInUser == null) {
             // Only public notes for guests
             query.addCriteria(Criteria.where("isPublic").is(true));
         }
-        
+
         if (program != null && !program.isEmpty()) {
+            String safeProgram = java.util.regex.Pattern.quote(program);
             query.addCriteria(new Criteria().orOperator(
-                Criteria.where("programType").regex(program, "i"),
+                Criteria.where("programType").regex(safeProgram, "i"),
                 Criteria.where("isGeneral").is(true)
             ));
         }

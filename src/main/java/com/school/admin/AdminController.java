@@ -495,7 +495,7 @@ public class AdminController {
     @PostMapping("/notes/{id}/toggle-general")
     public String toggleGeneralNote(@PathVariable String id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+        if (!adminService.hasPermission(user, "MANAGE_NOTES")) {
             return "redirect:/login";
         }
         Note note = noteRepository.findById(id).orElse(null);
@@ -870,7 +870,7 @@ public class AdminController {
             HttpSession session, RedirectAttributes redirectAttributes) {
 
         User user = getLoggedInUser();
-        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+        if (!adminService.hasPermission(user, "MANAGE_CALENDAR")) {
             return "redirect:/login";
         }
 
@@ -1059,7 +1059,7 @@ public class AdminController {
                             @RequestParam("startLevel") int startLevel,
                             RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+        if (!adminService.hasPermission(user, "MANAGE_COURSES")) {
             return "redirect:/login";
         }
 
@@ -1449,10 +1449,10 @@ public class AdminController {
                                       jakarta.servlet.http.HttpServletRequest request,
                                       RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
-        if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
+        if (!adminService.hasPermission(user, "MANAGE_NOTES")) {
             return "redirect:/login";
         }
-        
+
         if (targetCourses == null || targetCourses.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please select at least one course/module.");
             return "redirect:/admin/upload-shared";

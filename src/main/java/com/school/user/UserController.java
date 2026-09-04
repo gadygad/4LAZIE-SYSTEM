@@ -361,8 +361,12 @@ public class UserController {
             emailService.sendPasswordChangeAlert(sessionUser.getEmail(), sessionUser.getName(), deviceDetails + " (IP: " + ipAddress + ")", securityToken, appUrl);
         }
 
-        sessionUser.setLevel(formUser.getLevel());
-        sessionUser.setSemester(formUser.getSemester());
+        // Only overwrite if actually submitted — these come from a JS-driven
+        // hidden input rather than a native <select>, so a stripped/tampered
+        // POST body or a JS hiccup sending an empty value would otherwise
+        // silently null out the student's level/semester on every save.
+        if (formUser.getLevel() != null) sessionUser.setLevel(formUser.getLevel());
+        if (formUser.getSemester() != null) sessionUser.setSemester(formUser.getSemester());
         sessionUser.setBio(formUser.getBio());
         sessionUser.setGithubLink(formUser.getGithubLink());
         sessionUser.setLinkedinLink(formUser.getLinkedinLink());
