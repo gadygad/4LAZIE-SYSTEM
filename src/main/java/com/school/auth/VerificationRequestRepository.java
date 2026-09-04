@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface VerificationRequestRepository extends MongoRepository<VerificationRequest, String> {
     List<VerificationRequest> findByStatusOrderByRequestDateDesc(String status);
     Optional<VerificationRequest> findByUserIdAndStatus(String userId, String status);
+    long countByStatus(String status);
 }

@@ -14,4 +14,5 @@ public interface AssignmentRequestRepository extends MongoRepository<AssignmentR
     // Pagination & Filtering
     org.springframework.data.domain.Page<AssignmentRequest> findAllByOrderByCreatedAtDesc(org.springframework.data.domain.Pageable pageable);
     org.springframework.data.domain.Page<AssignmentRequest> findByStatusOrderByCreatedAtDesc(String status, org.springframework.data.domain.Pageable pageable);
+    long countByStatus(String status);
 }

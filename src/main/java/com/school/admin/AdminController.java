@@ -83,6 +83,9 @@ public class AdminController {
         @org.springframework.beans.factory.annotation.Autowired
         private com.school.auth.VerificationRequestRepository verificationRequestRepository;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.forum.repository.ForumReportRepository forumReportRepository;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -216,7 +219,41 @@ public class AdminController {
         } catch (Exception e) {
             log.warn("Failed to get activity logs: {}", e.getMessage(), e);
         }
-        
+
+        // "Needs Your Attention" queue counts — each is left null (hidden in the
+        // view) unless this admin actually has permission to act on that queue,
+        // so nobody sees a number they can't click through and do anything about.
+        Long pendingForumReports = null;
+        Long pendingVerifications = null;
+        Long pendingAssignments = null;
+        Long pendingApprovals = null;
+        try {
+            if (adminService.hasPermission(user, "canModerateForum")) {
+                pendingForumReports = forumReportRepository.countByStatus("PENDING");
+            }
+        } catch (Exception e) {
+            log.warn("Failed to count pending forum reports: {}", e.getMessage(), e);
+        }
+        try {
+            if (adminService.hasPermission(user, "canVerifyUsers")) {
+                pendingVerifications = verificationRequestRepository.countByStatus("PENDING");
+            }
+        } catch (Exception e) {
+            log.warn("Failed to count pending verification requests: {}", e.getMessage(), e);
+        }
+        try {
+            pendingAssignments = assignmentRequestRepository.countByStatus("PENDING");
+        } catch (Exception e) {
+            log.warn("Failed to count pending assignment requests: {}", e.getMessage(), e);
+        }
+        try {
+            if (user.getRole() == Role.SUPER_ADMIN) {
+                pendingApprovals = pendingActionRepository.countByStatus("PENDING");
+            }
+        } catch (Exception e) {
+            log.warn("Failed to count pending approvals: {}", e.getMessage(), e);
+        }
+
         log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, UniqueVisitors: {}",
                 totalUsers, totalNotes, totalDownloads, totalUniqueVisitors);
         
@@ -236,7 +273,12 @@ public class AdminController {
         model.addAttribute("recentUsers", recentUsers);
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("recentLogs", recentLogs);
-        
+
+        model.addAttribute("pendingForumReports", pendingForumReports);
+        model.addAttribute("pendingVerifications", pendingVerifications);
+        model.addAttribute("pendingAssignments", pendingAssignments);
+        model.addAttribute("pendingApprovals", pendingApprovals);
+
         return "admin/admin_dashboard";
     }
 

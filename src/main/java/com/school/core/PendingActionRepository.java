@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface PendingActionRepository extends MongoRepository<PendingAction, String> {
     List<PendingAction> findByStatusOrderByRequestDateDesc(String status);
+    long countByStatus(String status);
 }

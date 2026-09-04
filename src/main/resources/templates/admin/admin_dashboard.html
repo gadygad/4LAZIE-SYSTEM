@@ -114,6 +114,34 @@
             margin: 0;
             line-height: 1;
         }
+        /* Attention cards default to a neutral/grey icon (nothing pending);
+           .has-items switches them to red so an admin's eye is drawn straight
+           to whichever queues actually need action today. */
+        .attention-card .stat-icon-wrapper {
+            background: rgba(100, 116, 139, 0.08);
+            color: #64748b;
+        }
+        .attention-card.has-items .stat-icon-wrapper {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .attention-card.has-items .stat-value {
+            color: #ef4444;
+        }
+        .attention-pulse {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            /* pulse-red is defined further down in this file's offcanvas
+               <style> block; CSS keyframes are global regardless of source
+               order, so it's safe to reference here without redefining it. */
+            animation: pulse-red 1.6s infinite;
+        }
+
         .premium-list-card {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(20px);
@@ -185,6 +213,65 @@
                     </div>
                     <div class="d-none d-md-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(16,185,129,0.1); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 4px 15px rgba(16,185,129,0.1); position: relative; z-index: 1; transform: rotate(5deg); transition: all 0.5s;" onmouseover="this.style.transform='rotate(0deg) scale(1.1)';" onmouseout="this.style.transform='rotate(5deg) scale(1)';">
                         <i class="bi bi-bar-chart-fill text-success" style="font-size: 1.3rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Needs Your Attention -->
+                <div class="row g-3 mb-3" th:if="${pendingForumReports != null || pendingVerifications != null || pendingAssignments != null || pendingApprovals != null}">
+                    <div class="col-12 d-flex align-items-center mb-1">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.1rem; margin-right: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                            <i class="bi bi-bell-fill"></i>
+                        </div>
+                        <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.75rem !important; letter-spacing: 1.5px;">Needs Your Attention</h5>
+                    </div>
+
+                    <div class="col-6 col-xl-3" th:if="${pendingForumReports != null}">
+                        <a th:href="@{/admin/forum/reports}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${pendingForumReports > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-flag-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Forum Reports</p>
+                                    <h3 class="stat-value" th:text="${pendingForumReports}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${pendingForumReports > 0}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${pendingVerifications != null}">
+                        <a th:href="@{/admin/verification-requests}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${pendingVerifications > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-patch-check-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Verification Requests</p>
+                                    <h3 class="stat-value" th:text="${pendingVerifications}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${pendingVerifications > 0}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${pendingAssignments != null}">
+                        <a th:href="@{/admin/assignments}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${pendingAssignments > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-question-circle-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Student Questions</p>
+                                    <h3 class="stat-value" th:text="${pendingAssignments}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${pendingAssignments > 0}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${pendingApprovals != null}">
+                        <a th:href="@{/admin/approvals}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${pendingApprovals > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-shield-lock-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Approvals Needed</p>
+                                    <h3 class="stat-value" th:text="${pendingApprovals}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${pendingApprovals > 0}"></span>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
