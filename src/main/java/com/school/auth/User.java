@@ -84,6 +84,11 @@ public class User {
     private Boolean isSuspended = false;
     private Set<String> permissions = new HashSet<>();
 
+    // Bumped by AdminController.warnUser() each time an admin sends this user a
+    // formal warning — lets the dashboard flag repeat offenders automatically
+    // instead of an admin having to remember each user's warning history.
+    private Integer warningCount = 0;
+
     // Community "verified" trust badge (green name + checkmark on posts/comments/chat) —
     // distinct from isVerified above, which gates login/account-email verification.
     // Granted via admin approval of a VerificationRequest, or directly by an admin.
@@ -176,6 +181,8 @@ public class User {
     public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) { this.tokenExpiryDate = tokenExpiryDate; }
     public Boolean getIsSuspended() { return isSuspended; }
     public void setIsSuspended(Boolean isSuspended) { this.isSuspended = isSuspended; }
+    public Integer getWarningCount() { return warningCount != null ? warningCount : 0; }
+    public void setWarningCount(Integer warningCount) { this.warningCount = warningCount; }
     public Set<String> getPermissions() { return permissions; }
     public void setPermissions(Set<String> permissions) { this.permissions = permissions; }
     public Boolean getHasVerifiedBadge() { return hasVerifiedBadge; }

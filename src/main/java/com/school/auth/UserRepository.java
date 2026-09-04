@@ -21,4 +21,5 @@ public interface UserRepository extends MongoRepository<User, String> {
     long countByLastActiveTimeAfter(java.time.LocalDateTime time);
     java.util.List<User> findByLastActiveTimeAfterOrderByLastActiveTimeDesc(java.time.LocalDateTime time);
     java.util.List<User> findByCourseProgramAndLevelAndSemester(String courseProgram, Integer level, Integer semester);
+    java.util.List<User> findByWarningCountGreaterThanEqual(Integer warningCount);
 }

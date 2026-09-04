@@ -217,7 +217,7 @@
                 </div>
 
                 <!-- Needs Your Attention -->
-                <div class="row g-3 mb-3" th:if="${pendingForumReports != null || pendingVerifications != null || pendingAssignments != null || pendingApprovals != null}">
+                <div class="row g-3 mb-3" th:if="${pendingForumReports != null || pendingVerifications != null || pendingAssignments != null || pendingApprovals != null || repeatOffenders != null}">
                     <div class="col-12 d-flex align-items-center mb-1">
                         <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.1rem; margin-right: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
                             <i class="bi bi-bell-fill"></i>
@@ -272,6 +272,53 @@
                                 <span class="attention-pulse" th:if="${pendingApprovals > 0}"></span>
                             </div>
                         </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${repeatOffenders != null}">
+                        <a href="#repeatOffendersSection" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${!repeatOffenders.empty} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-exclamation-octagon-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Repeat Offenders</p>
+                                    <h3 class="stat-value" th:text="${repeatOffenders.size()}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${!repeatOffenders.empty}"></span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Repeat Offenders List -->
+                <div class="row g-4 mb-3" th:if="${repeatOffenders != null and !repeatOffenders.empty}" id="repeatOffendersSection">
+                    <div class="col-12">
+                        <div class="premium-list-card" style="border-left: 4px solid #ef4444;">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.4rem; margin-right: 16px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                                    <i class="bi bi-exclamation-octagon-fill"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bolder mb-0 text-uppercase" style="font-family: 'Outfit', sans-serif; color: #1e293b; font-size: 0.7rem !important; letter-spacing: 1.5px;">Repeat Offenders</h5>
+                                    <div class="small" style="color: #94a3b8; font-size: 0.75rem;">Users warned 3+ times, or reported 3+ times and not dismissed — may need a final decision.</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column gap-1">
+                                <a th:each="ru : ${repeatOffenders}" th:href="@{'/admin/users/' + ${ru.id} + '/profile'}" class="list-item-row d-flex justify-content-between align-items-center text-decoration-none" style="border-bottom: 1px solid rgba(0,0,0,0.03);">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #fef2f2; display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.2rem; border: 1px solid rgba(239, 68, 68, 0.2);">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-capitalize" style="color: #1e293b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 3px;" th:text="${#strings.toLowerCase(ru.name)}">User Name</div>
+                                            <div class="small" style="color: #64748b; font-size: 0.8rem;" th:text="${ru.email}">user@email.com</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-shrink-0">
+                                        <span th:if="${ru.warningCount >= 3}" class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" style="font-size: 0.7rem; padding: 0.4em 0.7em; letter-spacing: 0.3px;" th:text="${ru.warningCount + ' warnings'}">3 warnings</span>
+                                        <span th:if="${repeatOffenderReportCounts.get(ru.id) != null}" class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25" style="font-size: 0.7rem; padding: 0.4em 0.7em; letter-spacing: 0.3px;" th:text="${repeatOffenderReportCounts.get(ru.id) + ' reports'}">3 reports</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

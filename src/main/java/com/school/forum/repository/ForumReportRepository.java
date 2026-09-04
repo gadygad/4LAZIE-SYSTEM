@@ -17,4 +17,6 @@ public interface ForumReportRepository extends MongoRepository<ForumReport, Stri
     boolean existsByContentIdAndReporterIdAndStatus(String contentId, String reporterId, String status);
 
     long countByStatus(String status);
+
+    List<ForumReport> findByStatusNot(String status);
 }

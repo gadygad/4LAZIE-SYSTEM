@@ -86,6 +86,12 @@ public class AdminController {
         @org.springframework.beans.factory.annotation.Autowired
         private com.school.forum.repository.ForumReportRepository forumReportRepository;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.forum.repository.ForumPostRepository forumPostRepository;
+
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.forum.repository.ForumCommentRepository forumCommentRepository;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -254,6 +260,52 @@ public class AdminController {
             log.warn("Failed to count pending approvals: {}", e.getMessage(), e);
         }
 
+        // Repeat Offenders — users an admin has already warned 3+ times, or
+        // whose posts/comments have drawn 3+ non-dismissed forum reports, so
+        // a pattern of behavior surfaces on its own instead of relying on an
+        // admin to remember each user's history across separate queues.
+        List<User> repeatOffenders = null;
+        java.util.Map<String, Long> repeatOffenderReportCounts = java.util.Collections.emptyMap();
+        try {
+            if (adminService.hasPermission(user, "MANAGE_USERS")) {
+                final int OFFENDER_THRESHOLD = 3;
+                java.util.Map<String, User> offenders = new java.util.LinkedHashMap<>();
+                java.util.Map<String, Long> reportCounts = new java.util.HashMap<>();
+
+                for (User u : userRepository.findByWarningCountGreaterThanEqual(OFFENDER_THRESHOLD)) {
+                    offenders.put(u.getId(), u);
+                }
+
+                java.util.Map<String, Long> countsByAuthor = new java.util.HashMap<>();
+                for (com.school.forum.model.ForumReport r : forumReportRepository.findByStatusNot("DISMISSED")) {
+                    String authorId = null;
+                    if ("POST".equals(r.getContentType())) {
+                        authorId = forumPostRepository.findById(r.getContentId())
+                                .map(com.school.forum.model.ForumPost::getAuthorId).orElse(null);
+                    } else if ("COMMENT".equals(r.getContentType())) {
+                        authorId = forumCommentRepository.findById(r.getContentId())
+                                .map(com.school.forum.model.ForumComment::getAuthorId).orElse(null);
+                    }
+                    if (authorId != null) {
+                        countsByAuthor.merge(authorId, 1L, Long::sum);
+                    }
+                }
+                for (java.util.Map.Entry<String, Long> entry : countsByAuthor.entrySet()) {
+                    if (entry.getValue() >= OFFENDER_THRESHOLD) {
+                        reportCounts.put(entry.getKey(), entry.getValue());
+                        if (!offenders.containsKey(entry.getKey())) {
+                            userRepository.findById(entry.getKey()).ifPresent(u -> offenders.put(u.getId(), u));
+                        }
+                    }
+                }
+
+                repeatOffenders = new java.util.ArrayList<>(offenders.values());
+                repeatOffenderReportCounts = reportCounts;
+            }
+        } catch (Exception e) {
+            log.warn("Failed to compute repeat offenders: {}", e.getMessage(), e);
+        }
+
         log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, UniqueVisitors: {}",
                 totalUsers, totalNotes, totalDownloads, totalUniqueVisitors);
         
@@ -278,6 +330,9 @@ public class AdminController {
         model.addAttribute("pendingVerifications", pendingVerifications);
         model.addAttribute("pendingAssignments", pendingAssignments);
         model.addAttribute("pendingApprovals", pendingApprovals);
+
+        model.addAttribute("repeatOffenders", repeatOffenders);
+        model.addAttribute("repeatOffenderReportCounts", repeatOffenderReportCounts);
 
         return "admin/admin_dashboard";
     }
@@ -441,6 +496,8 @@ public class AdminController {
         User targetUser = userRepository.findById(id).orElse(null);
         if (targetUser != null) {
             emailService.sendWarningEmail(targetUser.getEmail(), targetUser.getName(), warningMessage.trim());
+            targetUser.setWarningCount(targetUser.getWarningCount() + 1);
+            userRepository.save(targetUser);
             logAdminAction(admin, "WARN_USER", "Warned " + targetUser.getName() + ": " + warningMessage.trim());
 
             redirectAttributes.addFlashAttribute("success", "Warning sent to " + targetUser.getName() + " successfully.");
