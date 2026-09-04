@@ -242,36 +242,57 @@ public class NoteService {
         String originalFilename = file.getOriginalFilename();
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
 
-        // Create a note for each selected target course
+        // Targets that share the same (level, semester, moduleName) are the
+        // same subject taught in several courses — group them so that case
+        // becomes ONE Note record (with applicablePrograms listing the extra
+        // courses) instead of a separate, duplicate Note per course all
+        // pointing at the identical fileUrl. A target with a genuinely
+        // different level/semester/module still gets its own Note, since one
+        // Note can't represent two different subjects at once.
+        Map<String, List<String[]>> groups = new java.util.LinkedHashMap<>();
         for (String target : targetCourses) {
             // target format: "programType|levelNo|semesterNo|moduleName|moduleCode"
             String[] parts = target.split("\\|");
-            if (parts.length >= 5) {
-                Note note = new Note();
-                note.setTitle(title);
-                note.setCategory(category);
-                note.setAcademicYear(academicYear);
-                note.setFilename(originalFilename);
-                note.setFileUrl(fileUrl);
-                note.setUploadDate(now);
-                note.setIsPublic(true);
-                note.setInstitution(loggedInUser.getInstitution());
-                
-                note.setProgramType(parts[0]);
-                try {
-                    note.setLevelNo(Integer.parseInt(parts[1]));
-                    note.setSemesterNo(Integer.parseInt(parts[2]));
-                } catch(NumberFormatException e) {
-                    log.error("Invalid level/semester format in shared note upload: " + target);
-                    continue;
-                }
-                note.setModuleName(parts[3]);
-                note.setModuleCode(parts[4]);
+            if (parts.length < 5) continue;
+            String key = parts[1] + "|" + parts[2] + "|" + parts[3].trim().toUpperCase();
+            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(parts);
+        }
 
-                noteRepository.save(note);
-                
-                // We can add push notifications here if needed, but skipped for brevity or add it similarly
+        for (List<String[]> group : groups.values()) {
+            String[] first = group.get(0);
+            Note note = new Note();
+            note.setTitle(title);
+            note.setCategory(category);
+            note.setAcademicYear(academicYear);
+            note.setFilename(originalFilename);
+            note.setFileUrl(fileUrl);
+            note.setUploadDate(now);
+            note.setIsPublic(true);
+            note.setInstitution(loggedInUser.getInstitution());
+
+            note.setProgramType(first[0]);
+            try {
+                note.setLevelNo(Integer.parseInt(first[1]));
+                note.setSemesterNo(Integer.parseInt(first[2]));
+            } catch (NumberFormatException e) {
+                log.error("Invalid level/semester format in shared note upload: " + first[1] + "/" + first[2]);
+                continue;
             }
+            note.setModuleName(first[3]);
+            note.setModuleCode(first[4]);
+
+            if (group.size() > 1) {
+                note.setIsGeneral(true);
+                List<String> extraPrograms = new ArrayList<>();
+                for (int i = 1; i < group.size(); i++) {
+                    extraPrograms.add(group.get(i)[0]);
+                }
+                note.setApplicablePrograms(extraPrograms);
+            }
+
+            noteRepository.save(note);
+
+            // We can add push notifications here if needed, but skipped for brevity or add it similarly
         }
     }
         private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
