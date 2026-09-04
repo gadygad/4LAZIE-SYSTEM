@@ -208,84 +208,22 @@
 
     <!-- Premium Header Navbar -->
     <nav class="navbar sticky-top py-2" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(16, 185, 129,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 1040;">
-        <div class="container d-flex justify-content-between align-items-center">
-            <!-- Brand -->
-            <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
-                <div class="d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129,0.3);">
-                    <i class="bi bi-journal-bookmark-fill text-white" style="font-size: 1.1rem;"></i>
-                </div>
-                <div class="d-flex align-items-center" style="transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.03) translateY(-1px)';" onmouseout="this.style.transform='none';">
-                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+        <div class="container-fluid px-2 px-md-4">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center text-decoration-none" th:href="${session.user != null ? '/dashboard' : '/'}">
+                    <div style="background-color: #111111; border: 3px solid #10b981; padding: 6px 12px; margin-right: 8px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
                         <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.25rem; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">4LAZIE</span>
                     </div>
-                    <div class="ms-2 position-relative d-inline-flex align-items-center">
-                        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 4px 15px rgba(16, 185, 129,0.4); position: relative; z-index: 2; padding-right: 2px;">UPLOAD</span>
-                        <div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(16, 185, 129,0.2) 0%, transparent 70%); z-index: 1; filter: blur(4px);"></div>
-                    </div>
-                </div>
-            </a>
-            
-            <!-- Actions (Notifications, Profile) -->
-            <div class="d-flex align-items-center" style="gap: 1.2rem;">
-                
+                </a>
 
-                <!-- Notification Button -->
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center justify-content-center text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                       style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #f8fafc); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(16, 185, 129,0.08);"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'; this.querySelector('i').style.color='#10b981';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.08)'; this.style.transform='none'; this.querySelector('i').style.color='#64748b';">
-                        <i class="bi bi-bell-fill" style="color: #64748b; font-size: 1.2rem; transition: color 0.3s;"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #10b981; color: white !important; font-size: 0.65rem; padding: 0.35em 0.5em; border: 2px solid #fff; transform: translate(-30%, 30%) !important; animation: pulse-orange 2s infinite;">
-                            3
-                        </span>
-                    </a>
-                    <!-- Notification Dropdown -->
-                    <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-0" aria-labelledby="notificationDropdown" style="border-radius: 14px; min-width: 320px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
-                        <li class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center" style="background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px);">
-                            <span class="fw-bold" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #1e293b !important;">Notifications</span>
-                            <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #10b981, #059669); color: white !important; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129,0.3);">3 New</span>
-                        </li>
-                        <li>
-                            <div class="list-group list-group-flush">
-                                <a href="/notifications" class="list-group-item list-group-item-action py-3 px-4 border-bottom text-decoration-none" style="transition: background 0.2s; background: rgba(16, 185, 129, 0.03); background-color: #ffffff;">
-                                    <div class="d-flex w-100 justify-content-between align-items-start">
-                                        <div class="d-flex align-items-start">
-                                            <div class="me-3 d-flex justify-content-center align-items-center mt-1" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129,0.15), rgba(5, 150, 105,0.25)); box-shadow: 0 2px 10px rgba(16, 185, 129,0.1);">
-                                                <i class="bi bi-file-earmark-text-fill" style="font-size: 1.2rem; color: #10b981;"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-1 fw-bold" style="font-size: 0.95rem; color: #0f172a !important;">New Notes Added</h6>
-                                                <p class="mb-1" style="font-size: 0.85rem; line-height: 1.4; color: #475569 !important;">New materials have been added to the portal.</p>
-                                                <small class="fw-bold" style="font-size: 0.75rem; color: #10b981 !important;">Just now</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Profile Dropdown -->
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
-                       style="background: #ffffff; border: 1px solid rgba(16, 185, 129,0.2); padding: 5px; border-radius: 50px; box-shadow: 0 4px 15px rgba(16, 185, 129,0.05); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);"
-                       onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129,0.2)'; this.style.transform='translateY(-2px)';" 
-                       onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.05)'; this.style.transform='none';">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=e67e22&color=fff" alt="Profile" class="rounded-circle" style="width: 38px; height: 38px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(16, 185, 129,0.2);">
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 mt-3 p-2" aria-labelledby="profileDropdown" style="border-radius: 14px; min-width: 240px; overflow: hidden; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top right; box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); background-color: #ffffff;">
-                        <li class="px-3 py-2 mb-2 rounded-4" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(16, 185, 129,0.1);">
-                            <p class="mb-1 fw-bold" style="font-size: 1rem; font-family: 'Outfit', sans-serif; color: #1e293b !important;">System Admin</p>
-                            <p class="mb-0 fw-medium" style="font-size: 0.8rem; color: #10b981 !important;">ADMINISTRATOR</p>
-                        </li>
-                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/dashboard" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129,0.1);"><i class="bi bi-grid-1x2-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>Dashboard</a></li>
-                        <li><a class="dropdown-item py-2 px-3 mb-1 rounded-3 fw-medium text-decoration-none d-flex align-items-center" href="/profile" style="font-size: 0.95rem; transition: all 0.3s ease; color: #334155 !important;" onmouseover="this.style.background='rgba(16, 185, 129,0.08)'; this.style.color='#10b981 !important'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.color='#334155 !important'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129,0.1);"><i class="bi bi-person-fill" style="color: #10b981; font-size: 1.1rem;"></i></div>My Profile</a></li>
-                        <li><hr class="dropdown-divider my-2 opacity-50 mx-3"></li>
-                        <li><a class="dropdown-item py-2 px-3 mt-1 rounded-3 fw-bold text-decoration-none d-flex align-items-center" href="/logout" style="font-size: 0.95rem; transition: all 0.3s ease; color: #dc2626 !important;" onmouseover="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.transform='translateX(6px)';" onmouseout="this.style.background='transparent'; this.style.transform='none';"><div class="d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(220, 38, 38, 0.1);"><i class="bi bi-box-arrow-right" style="color: #dc2626; font-size: 1.1rem;"></i></div>Logout</a></li>
-                    </ul>
-                </div>
+                <!-- Same shared actions (search, messages, notifications, profile
+                     menu) every other page uses — this used to be a hand-rolled
+                     copy with hardcoded fake data (a permanent "3" badge, a
+                     single made-up "New Notes Added" notification, and a
+                     profile card literally reading "Admin" / "System Admin"
+                     regardless of who was actually logged in). -->
+                <div th:replace="~{fragments/top_actions :: actions}"></div>
             </div>
         </div>
         <!-- Premium Horizontal Separator Line -->
