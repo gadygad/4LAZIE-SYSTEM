@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class AdminService {
 
         private PendingActionRepository pendingActionRepository;
+        private com.school.notification.NotificationService notificationService;
 
-    public AdminService(PendingActionRepository pendingActionRepository) {
+    public AdminService(PendingActionRepository pendingActionRepository, com.school.notification.NotificationService notificationService) {
         this.pendingActionRepository = pendingActionRepository;
+        this.notificationService = notificationService;
     }
 
 
@@ -31,6 +33,8 @@ public class AdminService {
         } else {
             PendingAction pa = new PendingAction(admin.getId(), admin.getName(), entityType, entityId, entityDesc, "DELETE");
             pendingActionRepository.save(pa);
+            notificationService.notifySuperAdmins("Approval Needed",
+                    admin.getName() + " requested to delete " + entityDesc, "/admin/approvals");
             return "PENDING";
         }
     }

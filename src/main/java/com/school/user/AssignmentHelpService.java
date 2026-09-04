@@ -47,7 +47,11 @@ public class AssignmentHelpService {
             request.setAttachmentUrl(attachmentUrl);
         }
 
-        return assignmentRequestRepository.save(request);
+        AssignmentRequest saved = assignmentRequestRepository.save(request);
+        String studentName = userRepository.findById(userId).map(User::getName).orElse("A student");
+        notificationService.notifyAdminsWithPermission(null, "New Student Question",
+                studentName + " asked a question about " + subjectName + ".", "/admin/assignments");
+        return saved;
     }
 
     public AssignmentRequest createPublicContactRequest(String fullName, String email, String phoneNumber, String subject, String message) {
@@ -58,7 +62,10 @@ public class AssignmentHelpService {
         request.setPhoneNumber(phoneNumber);
         request.setSubjectName("CONTACT: " + subject);
         request.setQuestionText(message);
-        return assignmentRequestRepository.save(request);
+        AssignmentRequest saved = assignmentRequestRepository.save(request);
+        notificationService.notifyAdminsWithPermission(null, "New Contact Message",
+                fullName + " sent a message via the public contact form.", "/admin/assignments");
+        return saved;
     }
 
     public List<AssignmentRequest> getUserRequests(String userId) {

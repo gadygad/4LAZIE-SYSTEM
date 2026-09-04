@@ -92,6 +92,9 @@ public class AdminController {
         @org.springframework.beans.factory.annotation.Autowired
         private com.school.forum.repository.ForumCommentRepository forumCommentRepository;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.notification.NotificationService notificationService;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -499,6 +502,15 @@ public class AdminController {
             targetUser.setWarningCount(targetUser.getWarningCount() + 1);
             userRepository.save(targetUser);
             logAdminAction(admin, "WARN_USER", "Warned " + targetUser.getName() + ": " + warningMessage.trim());
+
+            // Fires once, right as the user crosses into "repeat offender"
+            // territory, so admins get a heads-up without being re-pinged on
+            // every warning after the third.
+            if (targetUser.getWarningCount() == 3) {
+                notificationService.notifyAdminsWithPermission("MANAGE_USERS", "Repeat Offender Flagged",
+                        targetUser.getName() + " has now been warned 3 times and may need a final decision.",
+                        "/admin/dashboard#repeatOffendersSection");
+            }
 
             redirectAttributes.addFlashAttribute("success", "Warning sent to " + targetUser.getName() + " successfully.");
         } else {

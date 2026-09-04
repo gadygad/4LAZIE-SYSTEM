@@ -47,6 +47,9 @@ public class AssignmentHelpController {
     @Autowired
     private com.school.notification.PushNotificationService pushNotificationService;
 
+    @Autowired
+    private com.school.notification.NotificationService notificationService;
+
     // --- USER ENDPOINTS ---
 
     @GetMapping("/messages")
@@ -228,7 +231,10 @@ public class AssignmentHelpController {
                             "REPLY"
                         );
                         pendingActionRepository.save(pendingAction);
-                        
+                        notificationService.notifySuperAdmins("Approval Needed",
+                                admin.getName() + " drafted a reply to " + req.getFullName() + " needing your approval.",
+                                "/admin/approvals");
+
                         redirectAttributes.addFlashAttribute("success", "Reply drafted and sent to Super Admin for approval.");
                     }
                 } else {

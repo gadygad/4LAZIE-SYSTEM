@@ -156,6 +156,8 @@ public class UserController {
             return "redirect:/profile";
         }
         verificationRequestRepository.save(new com.school.auth.VerificationRequest(user.getId(), category, reason.trim()));
+        notificationService.notifyAdminsWithPermission("canVerifyUsers", "New Verification Request",
+                user.getName() + " requested the verified badge (" + category + ").", "/admin/verification-requests");
         redirectAttributes.addFlashAttribute("success", "Verification request submitted — an admin will review it soon.");
         return "redirect:/profile";
     }
