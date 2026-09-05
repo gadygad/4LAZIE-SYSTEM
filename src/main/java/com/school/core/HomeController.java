@@ -192,4 +192,23 @@ public class HomeController {
     public String contact() {
         return "public/contact"; // in case they ask for contact too
     }
+
+    // Renders the current Academic Calendar through the same PDF.js viewer
+    // used for notes, instead of a raw target="_blank" link that leaves
+    // rendering entirely up to whatever PDF support the visitor's browser
+    // happens to have (unreliable on several mobile browsers).
+    @GetMapping("/calendar/view")
+    public org.springframework.http.ResponseEntity<String> viewAcademicCalendar() {
+        AcademicCalendar current = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
+        String fileUrl = current != null ? current.getFileUrl() : null;
+        if (fileUrl == null || fileUrl.isBlank()) {
+            return org.springframework.http.ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(org.springframework.http.HttpHeaders.LOCATION, "/dashboard").build();
+        }
+        String resolvedUrl = fileUrl.startsWith("http") ? fileUrl : "/uploads/" + fileUrl;
+        String html = PdfViewerHtml.render("Academic Calendar", resolvedUrl, resolvedUrl);
+        return org.springframework.http.ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.TEXT_HTML)
+                .body(html);
+    }
 }
