@@ -23,17 +23,21 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 
 - **Notes & past papers** — upload, browse, search, and download PDFs
 - **Course-based access** — students only see materials for their program (e.g. DIP_CSE)
+- **General Subject sharing** — a note marked "general" is automatically shared with every other course that actually teaches that subject at the same level and semester, instead of just its own course
+- **Built-in PDF reader** — notes open in an in-page viewer (PDF.js) that renders every page onto a canvas, so it works reliably on every device — including mobile browsers that don't display PDFs inline on their own
 - **Timetables** — view schedules by program, level, and semester
 - **Academic calendar** — CAT and UE dates for each semester
 - **User accounts** — register with email or Google Sign-In
 - **Email verification** — new users must verify their email before logging in
 - **Admin dashboard** — manage users, notes, subjects, courses, and timetables
+- **Admin insights panel** — a "Needs Your Attention" summary on the admin dashboard that surfaces pending forum reports, verification requests, student questions, and approvals at a glance, plus automatic flagging of accounts with repeated warnings or upheld reports
+- **Real-time admin notifications** — admins get an in-app notification the moment something needs them (new report, new question, new approval, etc.), each categorized with its own icon and color
 - **Super Admin approvals** — sensitive delete actions need approval
 - **Push notifications** — works as a PWA on mobile (installable, offline support)
 - **Exam Generator Hub** — built-in tools for admins to generate beautiful PDF past papers (UE, CAT 1, CAT 2) for multiple universities, with live preview and database-driven course/module selection
 - **Student profiles** — every student has a public profile (bio, course, social links) that other students can view
 - **Verified Badges** — admins can grant or revoke verified badges for trusted users to highlight authentic content
-- **Community Forum** — discuss topics and notes with inline comment previews for faster engagement
+- **Community Forum** — discuss topics and notes with inline comment previews for faster engagement, with a report/moderation queue admins can review and act on
 - **Connect / Connections** — students can follow ("Connect" with) each other; a profile shows its Connections (follower) count
 - **Peer-to-peer chat** — students can message each other directly (not just admin), with reply-to-message quoting, typing indicators, online presence, and read receipts, all delivered in real time over Server-Sent Events (SSE)
 - **Admin ↔ Student chat** — direct messaging with admins, same real-time reply/read-receipt experience
