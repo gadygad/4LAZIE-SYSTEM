@@ -905,33 +905,70 @@
                 const pageHeightPx = pageH * pxPerMm;
                 const breaksPx = safeBreakOffsetsDom.map(y => y * SCALE).filter(y => y > 0 && y < canvasH);
 
-                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-                let sliceStart = 0;
-                let isFirstPage = true;
-                while (sliceStart < canvasH) {
-                    const idealEnd = sliceStart + pageHeightPx;
-                    let sliceEnd;
-                    if (idealEnd >= canvasH) {
-                        sliceEnd = canvasH;
-                    } else {
-                        const candidates = breaksPx.filter(y => y > sliceStart && y <= idealEnd);
-                        // No safe break fits on this page (a single question taller
-                        // than a whole A4 page) — fall back to a hard cut rather
-                        // than looping forever.
-                        sliceEnd = candidates.length ? candidates[candidates.length - 1] : idealEnd;
+                // Work out every page's [start, end) boundaries first. Only a page
+                // that's genuinely full gets a real A4 (297mm) sheet — the last
+                // page (or the only page, for a short exam) is sized to its exact
+                // remaining content instead, so the exam ends right after the
+                // footer with no blank space padded in beneath it.
+                const slices = [];
+                {
+                    let cursor = 0;
+                    while (cursor < canvasH) {
+                        const idealEnd = cursor + pageHeightPx;
+                        let end;
+                        if (idealEnd >= canvasH) {
+                            end = canvasH;
+                        } else {
+                            const candidates = breaksPx.filter(y => y > cursor && y <= idealEnd);
+                            // No safe break fits on this page (a single question
+                            // taller than a whole A4 page) — fall back to a hard
+                            // cut rather than looping forever.
+                            end = candidates.length ? candidates[candidates.length - 1] : idealEnd;
+                        }
+                        slices.push([cursor, end]);
+                        cursor = end;
                     }
+                }
+
+                // jsPDF's addPage()/constructor SWAPS a custom [w, h] array's
+                // dimensions whenever they don't already match the requested
+                // orientation — a short trailing page (210mm wide, only e.g.
+                // 50mm tall) is technically wider than it is tall, so passing
+                // 'portrait' flips it into a narrow 50mm-wide, 210mm-tall page
+                // and the exam image ends up drawn far too large for it,
+                // leaving the rest blank. Deriving orientation from the actual
+                // width/height keeps every page's real physical size intact.
+                function pageOrientationFor(heightMm) {
+                    return heightMm >= pageW ? 'portrait' : 'landscape';
+                }
+
+                const firstSliceHeightMm = (slices[0][1] - slices[0][0]) / pxPerMm;
+                const pdf = new jsPDF({
+                    unit: 'mm',
+                    format: firstSliceHeightMm < pageH - 0.01 ? [pageW, firstSliceHeightMm] : 'a4',
+                    orientation: firstSliceHeightMm < pageH - 0.01 ? pageOrientationFor(firstSliceHeightMm) : 'portrait',
+                    compress: true
+                });
+
+                slices.forEach(function (bounds, idx) {
+                    const sliceStart = bounds[0];
+                    const sliceEnd = bounds[1];
                     const sliceHeight = sliceEnd - sliceStart;
+                    const sliceHeightMm = sliceHeight / pxPerMm;
                     const sliceCanvas = document.createElement('canvas');
                     sliceCanvas.width = canvasW;
                     sliceCanvas.height = sliceHeight;
                     sliceCanvas.getContext('2d').drawImage(pdfCanvas, 0, sliceStart, canvasW, sliceHeight, 0, 0, canvasW, sliceHeight);
 
-                    if (!isFirstPage) pdf.addPage();
-                    isFirstPage = false;
-                    pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pageW, sliceHeight / pxPerMm, undefined, 'FAST');
-
-                    sliceStart = sliceEnd;
-                }
+                    if (idx > 0) {
+                        if (sliceHeightMm < pageH - 0.01) {
+                            pdf.addPage([pageW, sliceHeightMm], pageOrientationFor(sliceHeightMm));
+                        } else {
+                            pdf.addPage('a4', 'portrait');
+                        }
+                    }
+                    pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pageW, sliceHeightMm, undefined, 'FAST');
+                });
 
                 const cleanFileName = ((noteData && noteData.title) || 'Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');;
 
