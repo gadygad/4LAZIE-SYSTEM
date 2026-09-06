@@ -316,7 +316,7 @@
             
             <!-- IF DB HAS HTML CONTENT, RENDER IT inside a scroll zone -->
             <div class="table-scroll-zone" th:if="${timetable != null and timetable.htmlContent != null and !#strings.isEmpty(timetable.htmlContent)}">
-                <div th:utext="${timetable.htmlContent}"></div>
+                <div id="ttContent" th:utext="${timetable.htmlContent}"></div>
             </div>
             
             <!-- ELSE (FALLBACK) RENDER HARDCODED HTML inside a scroll zone -->
@@ -457,5 +457,61 @@
     <script src="/js/bootstrap.bundle.min.js"></script>
     <!-- FLOATING BOTTOM NAV BAR (Included globally) -->
     <div th:replace="~{fragments/bottom_nav :: nav('timetable')}"></div>
+
+    <!-- The uploaded timetable HTML has a real fixed-width layout (min-width:
+         680px, see .table-scroll-zone table above) so its columns don't
+         collapse into an unreadable mess — that's exactly why it used to
+         need horizontal scrolling on any phone narrower than that. Rather
+         than fight that layout, this shrinks the whole thing down (as one
+         unit, via CSS transform) until it exactly fits the screen's width,
+         so the entire timetable is visible at once with no scrolling.
+         Students can still pinch-zoom the page itself to read small text,
+         since the viewport meta tag above never disables that. -->
+    <script>
+    (function () {
+        function fitTimetableToScreen() {
+            var zone = document.querySelector('.table-scroll-zone');
+            if (!zone) return;
+
+            // Normalize to a single scalable wrapper — a transform can only
+            // shrink one element as a cohesive unit, but the no-data
+            // fallback content above renders as several sibling elements
+            // directly inside .table-scroll-zone instead of one wrapper div.
+            var content = zone.querySelector('#ttContent');
+            if (!content) {
+                content = document.createElement('div');
+                content.id = 'ttContent';
+                while (zone.firstChild) { content.appendChild(zone.firstChild); }
+                zone.appendChild(content);
+            }
+
+            content.style.transform = '';
+            content.style.transformOrigin = '';
+            zone.style.height = '';
+
+            var naturalWidth = content.scrollWidth;
+            var availableWidth = zone.clientWidth;
+            if (naturalWidth > 0 && availableWidth > 0 && naturalWidth > availableWidth) {
+                var scale = availableWidth / naturalWidth;
+                content.style.transformOrigin = 'top left';
+                content.style.transform = 'scale(' + scale + ')';
+                zone.style.height = content.getBoundingClientRect().height + 'px';
+            }
+
+            // No longer needed once the content is scaled to fit — left in
+            // the markup (and still shown by the mobile CSS below) purely
+            // as a graceful fallback for the rare visitor with JS disabled.
+            var hint = document.getElementById('swipeHint');
+            if (hint) hint.style.display = 'none';
+        }
+
+        window.addEventListener('load', fitTimetableToScreen);
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(fitTimetableToScreen, 150);
+        });
+    })();
+    </script>
 </body>
 </html>
