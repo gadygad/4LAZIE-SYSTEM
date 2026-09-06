@@ -63,10 +63,10 @@ public final class PdfViewerHtml {
             <div id="errorOverlay">
                 <div class="icon">&#128193;</div>
                 <h2>Couldn't open this document</h2>
-                <p>The preview failed to load. You can try again, or download it instead.</p>
+                <p>__ERROR_MESSAGE__</p>
                 <div class="actions">
                     <button type="button" class="pillBtn ghost" onclick="location.reload();">Try again</button>
-                    <a class="pillBtn primary" href="__DOWNLOAD_URL__">&#8681; Download</a>
+                    __DOWNLOAD_ERROR_BTN__
                 </div>
             </div>
 
@@ -82,7 +82,7 @@ public final class PdfViewerHtml {
 
             <div id="viewerContainer"></div>
 
-            <a class="downloadFab" href="__DOWNLOAD_URL__" title="Download">&#8681;</a>
+            __DOWNLOAD_FAB__
 
             <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3/build/pdf.min.js"></script>
             <script>
@@ -196,12 +196,34 @@ public final class PdfViewerHtml {
             """;
 
     public static String render(String title, String pdfUrl, String downloadUrl) {
+        return render(title, pdfUrl, downloadUrl, true);
+    }
+
+    // allowDownload=false drops the download FAB and the error screen's
+    // download button entirely, rather than just hiding them with CSS —
+    // used for the currently-active class timetable / academic calendar so
+    // students have a reason to keep coming back to the site to check them
+    // instead of downloading once and never returning. Once either moves to
+    // the archive it's rendered with allowDownload=true again, same as
+    // notes always are.
+    public static String render(String title, String pdfUrl, String downloadUrl, boolean allowDownload) {
         String safeTitle = title != null
                 ? title.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
                 : "Document";
+        String errorMessage = allowDownload
+                ? "The preview failed to load. You can try again, or download it instead."
+                : "The preview failed to load. Please try again.";
+        String downloadFab = allowDownload
+                ? "<a class=\"downloadFab\" href=\"" + downloadUrl + "\" title=\"Download\">&#8681;</a>"
+                : "";
+        String downloadErrorBtn = allowDownload
+                ? "<a class=\"pillBtn primary\" href=\"" + downloadUrl + "\">&#8681; Download</a>"
+                : "";
         return TEMPLATE
                 .replace("__TITLE__", safeTitle)
                 .replace("__PROXY_URL__", pdfUrl)
-                .replace("__DOWNLOAD_URL__", downloadUrl);
+                .replace("__ERROR_MESSAGE__", errorMessage)
+                .replace("__DOWNLOAD_FAB__", downloadFab)
+                .replace("__DOWNLOAD_ERROR_BTN__", downloadErrorBtn);
     }
 }

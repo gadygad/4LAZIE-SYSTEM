@@ -223,7 +223,10 @@ public class HomeController {
         String title = calendar.getAcademicYear() != null && !calendar.getAcademicYear().isBlank()
                 ? "Academic Calendar " + calendar.getAcademicYear()
                 : "Academic Calendar";
-        String html = PdfViewerHtml.render(title, resolvedUrl, resolvedUrl);
+        // Downloading is only offered for a calendar once it's no longer
+        // current — while it's the active one, viewing it here (rather than
+        // saving a copy) is the whole point of keeping it on the site.
+        String html = PdfViewerHtml.render(title, resolvedUrl, resolvedUrl, !calendar.getIsCurrent());
         return org.springframework.http.ResponseEntity.ok()
                 .contentType(org.springframework.http.MediaType.TEXT_HTML)
                 .body(html);
