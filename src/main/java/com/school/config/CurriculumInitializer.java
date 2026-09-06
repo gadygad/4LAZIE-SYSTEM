@@ -526,11 +526,27 @@ public class CurriculumInitializer {
             }
             
             
-            // Seed DEG_CE Year 4 Sem 1 Timetable
-            com.school.academic.Timetable tt_ce_y4_s1 = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo("DEG_CE", 4, 1).orElse(new com.school.academic.Timetable());
+            // Seed DEG_CE Year 4 Sem 1 Timetable. findByProgramTypeAndLevelNoAndSemesterNo
+            // returns a single Optional and throws
+            // IncorrectResultSizeDataAccessException the moment this group
+            // ever gains a second academic year (now the normal case once
+            // anything's been archived) — findDistinctAcademicYears returns
+            // a List for the same 3-field filter, so it stays safe, and
+            // preferring the pre-existing null-academicYear record (rather
+            // than always the first) keeps updating that same document
+            // across restarts instead of accumulating duplicates once it's
+            // finally given a real year below.
+            java.util.List<com.school.academic.Timetable> existingCeY4S1 = timetableRepository.findDistinctAcademicYears("DEG_CE", 4, 1);
+            com.school.academic.Timetable tt_ce_y4_s1 = existingCeY4S1.stream()
+                    .filter(t -> t.getAcademicYear() == null || t.getAcademicYear().isBlank())
+                    .findFirst()
+                    .or(() -> existingCeY4S1.stream().findFirst())
+                    .orElse(new com.school.academic.Timetable());
             tt_ce_y4_s1.setProgramType("DEG_CE");
             tt_ce_y4_s1.setLevelNo(4);
             tt_ce_y4_s1.setSemesterNo(1);
+            tt_ce_y4_s1.setAcademicYear("2025/2026");
+            tt_ce_y4_s1.setIsCurrent(true);
             tt_ce_y4_s1.setHtmlContent("<div style=\"font-family: Arial, sans-serif; padding: 20px; background: #ffffff; color: #000; max-width: 1000px; margin: auto;\">\n" +
 "        <!-- HEADER -->\n" +
 "        <div style=\"text-align: center; margin-bottom: 20px;\">\n" +
@@ -645,6 +661,38 @@ public class CurriculumInitializer {
             org.springframework.cache.Cache allCoursesCache = cacheManager.getCache("allCourses");
             if (allCoursesCache != null) allCoursesCache.clear();
             System.out.println("[CurriculumInitializer] All subject/course caches evicted after seeding.");
+        };
+    }
+
+    // One-time backfill for Timetable records saved before the isCurrent
+    // field existed. Groups every timetable by (programType, levelNo,
+    // semesterNo); a group that already has an isCurrent=true record (set
+    // here on an earlier run, by the seed above, or by an admin upload) is
+    // left untouched, so this is safe to run on every startup. A group
+    // that doesn't gets one — whichever of its records has the latest
+    // academicYear string, matching what students used to see under the
+    // old (buggy, cross-program) "largest year wins" logic, just scoped
+    // correctly to its own program/level/semester this time.
+    @Bean
+    public CommandLineRunner backfillTimetableIsCurrent(TimetableRepository timetableRepository) {
+        return args -> {
+            List<Timetable> all = timetableRepository.findAll();
+            java.util.Map<String, List<Timetable>> groups = all.stream()
+                    .collect(java.util.stream.Collectors.groupingBy(t ->
+                            t.getProgramType() + "|" + t.getLevelNo() + "|" + t.getSemesterNo()));
+
+            for (List<Timetable> group : groups.values()) {
+                boolean alreadyHasCurrent = group.stream().anyMatch(Timetable::getIsCurrent);
+                if (alreadyHasCurrent) continue;
+
+                group.stream()
+                        .max(java.util.Comparator.comparing(
+                                t -> t.getAcademicYear() != null ? t.getAcademicYear() : ""))
+                        .ifPresent(latest -> {
+                            latest.setIsCurrent(true);
+                            timetableRepository.save(latest);
+                        });
+            }
         };
     }
 }

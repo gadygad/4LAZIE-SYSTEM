@@ -821,8 +821,9 @@ public class AdminController {
             @RequestParam("levelNo") Integer levelNo,
             @RequestParam("semesterNo") Integer semesterNo,
             @RequestParam("academicYear") String academicYear,
+            @RequestParam(value = "isCurrent", required = false) boolean isCurrent,
             HttpSession session, RedirectAttributes redirectAttributes) {
-        
+
         User user = getLoggedInUser();
         if (!adminService.hasPermission(user, "MANAGE_TIMETABLES")) {
             return "redirect:/login";
@@ -841,13 +842,27 @@ public class AdminController {
             timetable.setProgramType(programType);
             timetable.setLevelNo(levelNo);
             timetable.setSemesterNo(semesterNo);
-            
+
             org.owasp.html.PolicyFactory policy = org.owasp.html.Sanitizers.FORMATTING.and(org.owasp.html.Sanitizers.LINKS).and(org.owasp.html.Sanitizers.BLOCKS).and(org.owasp.html.Sanitizers.STYLES).and(org.owasp.html.Sanitizers.TABLES);
             String safeHtml = policy.sanitize(htmlContent.trim());
-            
+
             timetable.setHtmlContent(safeHtml);
             timetable.setUploadDate(java.time.LocalDateTime.now());
             timetable.setAcademicYear(academicYear);
+
+            // "Current" is scoped to this exact program/level/semester, never
+            // global — unsetting the previous current here must never touch
+            // a different program's or level's own current timetable.
+            if (isCurrent) {
+                timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndIsCurrentTrue(programType, levelNo, semesterNo)
+                        .filter(old -> !old.getId().equals(timetable.getId()))
+                        .ifPresent(old -> {
+                            old.setIsCurrent(false);
+                            timetableRepository.save(old);
+                        });
+            }
+            boolean hasAnyExisting = timetableRepository.existsByProgramTypeAndLevelNoAndSemesterNo(programType, levelNo, semesterNo);
+            timetable.setIsCurrent(isCurrent || !hasAnyExisting);
 
             timetableRepository.save(timetable);
 

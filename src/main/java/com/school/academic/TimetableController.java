@@ -84,27 +84,27 @@ public class TimetableController {
 
         model.addAttribute("availableYears", availableYears);
 
-        // Determine which academicYear to load
+        // Determine which academicYear to load. An explicit year always
+        // wins; otherwise this program/level/semester's own isCurrent
+        // record wins — never "whichever year string sorts highest across
+        // the whole site", which used to pick a different program's newer
+        // upload over this one's actual current year.
         String selectedYear = academicYear;
-        if ((selectedYear == null || selectedYear.isEmpty()) && !availableYears.isEmpty()) {
-            selectedYear = availableYears.get(0); // default to the latest year
-        }
-
-        // Determine the "Current" Academic Year (the one with the largest string value)
-        java.util.List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
-        String currentYear = allTimetables.stream()
-                .map(Timetable::getAcademicYear)
-                .filter(y -> y != null && !y.isEmpty())
-                .max(String::compareTo)
-                .orElse("0000/0000");
-
         Optional<Timetable> timetableOpt;
         if (selectedYear != null && !selectedYear.isEmpty()) {
             timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(programType, level, semester, selectedYear);
         } else {
-            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNo(programType, level, semester);
+            timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndIsCurrentTrue(programType, level, semester);
+            if (timetableOpt.isEmpty() && !availableYears.isEmpty()) {
+                // Defensive fallback for a group the isCurrent backfill
+                // hasn't reached yet — should be unreachable in practice.
+                selectedYear = availableYears.get(0);
+                timetableOpt = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(programType, level, semester, selectedYear);
+            } else if (timetableOpt.isPresent()) {
+                selectedYear = timetableOpt.get().getAcademicYear();
+            }
         }
-        
+
         if (timetableOpt.isPresent()) {
             Timetable timetable = timetableOpt.get();
             // Defense in depth: /admin/timetables/upload already sanitizes
@@ -125,9 +125,7 @@ public class TimetableController {
                 timetable.setHtmlContent(policy.sanitize(timetable.getHtmlContent()));
             }
             model.addAttribute("timetable", timetable);
-            boolean isCurrentYear = (selectedYear != null && selectedYear.equals(currentYear)) ||
-                                    (timetableOpt.get().getAcademicYear() != null && timetableOpt.get().getAcademicYear().equals(currentYear));
-            model.addAttribute("isCurrentYear", isCurrentYear);
+            model.addAttribute("isCurrentYear", timetable.getIsCurrent());
         } else {
             model.addAttribute("errorMsg", "No timetable found for " + program + " Level " + level + " Semester " + semester + (selectedYear != null ? " (" + selectedYear + ")" : "") + ". Please check back later.");
         }
@@ -143,25 +141,21 @@ public class TimetableController {
     @GetMapping("/timetable/archive")
     public String viewArchive(Model model) {
         java.util.List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
-        
-        // Determine the "Current" Academic Year
-        String currentYear = allTimetables.stream()
-                .map(Timetable::getAcademicYear)
-                .filter(y -> y != null && !y.isEmpty())
-                .max(String::compareTo)
-                .orElse("0000/0000");
-                
-        // Group past timetables by academic year
+
+        // A timetable is "past" purely by its own isCurrent flag now — never
+        // by comparing academic year strings against some single site-wide
+        // "current" year, which used to lump a still-current timetable from
+        // one program in with genuinely archived ones just because another
+        // program had since uploaded a newer year.
         java.util.Map<String, java.util.List<Timetable>> pastTimetablesMap = allTimetables.stream()
-                .filter(t -> t.getAcademicYear() != null && !t.getAcademicYear().equals(currentYear))
+                .filter(t -> !t.getIsCurrent() && t.getAcademicYear() != null && !t.getAcademicYear().isEmpty())
                 .collect(java.util.stream.Collectors.groupingBy(Timetable::getAcademicYear));
-                
+
         // Sort years descending
         java.util.Map<String, java.util.List<Timetable>> sortedPastTimetables = new java.util.TreeMap<>(java.util.Collections.reverseOrder());
         sortedPastTimetables.putAll(pastTimetablesMap);
 
         model.addAttribute("pastTimetables", sortedPastTimetables);
-        model.addAttribute("currentYear", currentYear);
 
         // Academic calendars (CAT/UE exam dates) live in their own
         // collection with an explicit isCurrent flag, so — unlike

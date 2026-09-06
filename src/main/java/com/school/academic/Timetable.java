@@ -28,6 +28,14 @@ public class Timetable {
 
     private LocalDateTime uploadDate;
 
+    // Which academicYear is "current" for this exact (programType, levelNo,
+    // semesterNo) combination — set explicitly rather than inferred, since
+    // inferring it from the single largest academicYear string across the
+    // WHOLE collection (the old approach) meant uploading a newer year for
+    // one program silently marked every other program's still-current-for-
+    // itself timetable as "past" the moment that string comparison lost.
+    private boolean isCurrent;
+
     public Timetable() {
         this.uploadDate = LocalDateTime.now();
     }
@@ -58,4 +66,6 @@ public class Timetable {
     public void setHtmlContent(String htmlContent) { this.htmlContent = htmlContent; }
     public LocalDateTime getUploadDate() { return uploadDate; }
     public void setUploadDate(LocalDateTime uploadDate) { this.uploadDate = uploadDate; }
+    public boolean getIsCurrent() { return isCurrent; }
+    public void setIsCurrent(boolean isCurrent) { this.isCurrent = isCurrent; }
 }
