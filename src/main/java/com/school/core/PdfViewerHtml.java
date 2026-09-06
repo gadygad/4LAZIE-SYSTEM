@@ -31,7 +31,7 @@ public final class PdfViewerHtml {
                 .zoomGroup { display: flex; align-items: center; gap: 6px; }
 
                 #viewerContainer { position: absolute; top: 56px; left: 0; right: 0; bottom: 0; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; align-items: center; padding: 16px 10px 100px; }
-                .pageWrap { position: relative; margin-bottom: 14px; box-shadow: 0 6px 24px rgba(0,0,0,0.45); border-radius: 4px; overflow: hidden; background: #fff; line-height: 0; }
+                .pageWrap { position: relative; flex-shrink: 0; margin-bottom: 14px; box-shadow: 0 6px 24px rgba(0,0,0,0.45); border-radius: 4px; overflow: hidden; background: #fff; line-height: 0; }
                 .pageWrap canvas { display: block; }
                 .pageNumBadge { position: absolute; bottom: 8px; right: 8px; background: rgba(17,17,17,0.65); color: #e5e7eb; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
 
