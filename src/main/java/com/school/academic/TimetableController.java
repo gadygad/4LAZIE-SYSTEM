@@ -17,9 +17,11 @@ import java.util.Optional;
 public class TimetableController {
 
         private TimetableRepository timetableRepository;
+        private AcademicCalendarRepository academicCalendarRepository;
 
-    public TimetableController(TimetableRepository timetableRepository) {
+    public TimetableController(TimetableRepository timetableRepository, AcademicCalendarRepository academicCalendarRepository) {
         this.timetableRepository = timetableRepository;
+        this.academicCalendarRepository = academicCalendarRepository;
     }
 
 
@@ -160,6 +162,21 @@ public class TimetableController {
 
         model.addAttribute("pastTimetables", sortedPastTimetables);
         model.addAttribute("currentYear", currentYear);
+
+        // Academic calendars (CAT/UE exam dates) live in their own
+        // collection with an explicit isCurrent flag, so — unlike
+        // timetables — there's no need to infer "current" by comparing
+        // year strings. Every calendar ever uploaded is shown here now;
+        // before this, a calendar that lost isCurrent when a newer one was
+        // uploaded became reachable only from the admin panel.
+        java.util.List<AcademicCalendar> academicCalendars = academicCalendarRepository.findAll();
+        academicCalendars.sort((a, b) -> {
+            String ay = a.getAcademicYear() != null ? a.getAcademicYear() : "";
+            String by = b.getAcademicYear() != null ? b.getAcademicYear() : "";
+            return by.compareTo(ay);
+        });
+        model.addAttribute("academicCalendars", academicCalendars);
+
         return "timetable/timetable_archive";
     }
 

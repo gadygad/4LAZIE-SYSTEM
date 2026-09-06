@@ -200,13 +200,30 @@ public class HomeController {
     @GetMapping("/calendar/view")
     public org.springframework.http.ResponseEntity<String> viewAcademicCalendar() {
         AcademicCalendar current = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
-        String fileUrl = current != null ? current.getFileUrl() : null;
+        return renderCalendarOrRedirect(current);
+    }
+
+    // Same viewer, but for a specific past calendar (not necessarily the
+    // current one) — used by the Records Archive so old calendars stay
+    // reachable instead of being admin-only once superseded.
+    @GetMapping("/calendar/view/{id}")
+    public org.springframework.http.ResponseEntity<String> viewAcademicCalendarById(
+            @org.springframework.web.bind.annotation.PathVariable String id) {
+        AcademicCalendar calendar = academicCalendarRepository.findById(id).orElse(null);
+        return renderCalendarOrRedirect(calendar);
+    }
+
+    private org.springframework.http.ResponseEntity<String> renderCalendarOrRedirect(AcademicCalendar calendar) {
+        String fileUrl = calendar != null ? calendar.getFileUrl() : null;
         if (fileUrl == null || fileUrl.isBlank()) {
             return org.springframework.http.ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(org.springframework.http.HttpHeaders.LOCATION, "/dashboard").build();
         }
         String resolvedUrl = fileUrl.startsWith("http") ? fileUrl : "/uploads/" + fileUrl;
-        String html = PdfViewerHtml.render("Academic Calendar", resolvedUrl, resolvedUrl);
+        String title = calendar.getAcademicYear() != null && !calendar.getAcademicYear().isBlank()
+                ? "Academic Calendar " + calendar.getAcademicYear()
+                : "Academic Calendar";
+        String html = PdfViewerHtml.render(title, resolvedUrl, resolvedUrl);
         return org.springframework.http.ResponseEntity.ok()
                 .contentType(org.springframework.http.MediaType.TEXT_HTML)
                 .body(html);
