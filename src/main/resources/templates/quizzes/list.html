@@ -761,6 +761,14 @@
                 border: none !important;
                 width: 100%;
             }
+            /* Short modals (like the difficulty picker) shouldn't stretch
+               to fill the full viewport height just because the bottom-sheet
+               container is min-height:100% — size the card to its own
+               content instead, so it stays compact near the bottom. */
+            #difficultyModal .modal-content {
+                height: auto !important;
+                flex: 0 0 auto !important;
+            }
             /* Aesthetic Drag Handle */
             .modal-content::before {
                 content: '';
