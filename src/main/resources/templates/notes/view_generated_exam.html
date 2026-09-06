@@ -799,6 +799,26 @@
 
                 const SCALE = 2;
 
+                // Record where each question (and the part-header right before
+                // it, so the two never get separated) sits vertically, while
+                // layout is settled and matches what html2canvas is about to
+                // capture. Multi-page pagination below is only ever allowed to
+                // break at these offsets, so a page boundary can never fall in
+                // the middle of a question's text.
+                const contentBodyEl = document.getElementById('pdf-content-body');
+                const elementTopForBreaks = element.getBoundingClientRect().top;
+                const safeBreakOffsetsDom = [];
+                let pendingHeaderTop = null;
+                Array.from(contentBodyEl.children).forEach(child => {
+                    const top = child.getBoundingClientRect().top - elementTopForBreaks;
+                    if (child.classList.contains('pdf-part-header')) {
+                        pendingHeaderTop = top;
+                    } else {
+                        safeBreakOffsetsDom.push(pendingHeaderTop !== null ? pendingHeaderTop : top);
+                        pendingHeaderTop = null;
+                    }
+                });
+
                 window.scrollTo(0, 0);
 
                 const canvas = await html2canvas(element, {
@@ -870,19 +890,48 @@
                 console.log("[4LAZIE PDF] canvas.height (raw):", canvas.height, "| trimmed to (real scan):", lastContentY);
 
                 // ==========================================
-                // 3. Ukurasa MMOJA tu, bila mgawanyo — mtihani wote (maswali +
-                //    footer) unaingia kwenye page moja ndefu inayoishia mara
-                //    baada ya footer, bila nafasi tupu wala kupasuka.
+                // 3. Kurasa za kawaida za A4 (sio ukurasa mmoja mrefu) — kila
+                //    ukurasa unachukua maswali kamili tu, ukikatika kwenye
+                //    safeBreakOffsetsDom iliyopimwa hapo juu, hivyo swali halikatiki
+                //    katikati kati ya kurasa mbili.
                 // ==========================================
                 document.getElementById('status-text').innerText = "Finalizing...";
                 const { jsPDF } = window.jspdf;
                 const canvasW = pdfCanvas.width;
                 const canvasH = pdfCanvas.height;
                 const pageW = 210;
-                const drawHeight = pageW * (canvasH / canvasW);
+                const pageH = 297;
+                const pxPerMm = canvasW / pageW;
+                const pageHeightPx = pageH * pxPerMm;
+                const breaksPx = safeBreakOffsetsDom.map(y => y * SCALE).filter(y => y > 0 && y < canvasH);
 
-                const pdf = new jsPDF({ unit: 'mm', format: [pageW, drawHeight], orientation: 'portrait', compress: true });
-                pdf.addImage(pdfCanvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pageW, drawHeight, undefined, 'FAST');
+                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+                let sliceStart = 0;
+                let isFirstPage = true;
+                while (sliceStart < canvasH) {
+                    const idealEnd = sliceStart + pageHeightPx;
+                    let sliceEnd;
+                    if (idealEnd >= canvasH) {
+                        sliceEnd = canvasH;
+                    } else {
+                        const candidates = breaksPx.filter(y => y > sliceStart && y <= idealEnd);
+                        // No safe break fits on this page (a single question taller
+                        // than a whole A4 page) — fall back to a hard cut rather
+                        // than looping forever.
+                        sliceEnd = candidates.length ? candidates[candidates.length - 1] : idealEnd;
+                    }
+                    const sliceHeight = sliceEnd - sliceStart;
+                    const sliceCanvas = document.createElement('canvas');
+                    sliceCanvas.width = canvasW;
+                    sliceCanvas.height = sliceHeight;
+                    sliceCanvas.getContext('2d').drawImage(pdfCanvas, 0, sliceStart, canvasW, sliceHeight, 0, 0, canvasW, sliceHeight);
+
+                    if (!isFirstPage) pdf.addPage();
+                    isFirstPage = false;
+                    pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pageW, sliceHeight / pxPerMm, undefined, 'FAST');
+
+                    sliceStart = sliceEnd;
+                }
 
                 const cleanFileName = ((noteData && noteData.title) || 'Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');;
 
