@@ -279,9 +279,9 @@
             opacity: 0;
             transform: translateY(30px);
         }
-        .modal.show .col-md-4:nth-child(1) .diff-card { animation-delay: 0.1s; }
-        .modal.show .col-md-4:nth-child(2) .diff-card { animation-delay: 0.2s; }
-        .modal.show .col-md-4:nth-child(3) .diff-card { animation-delay: 0.3s; }
+        .modal.show .flex-fill:nth-child(1) .diff-card { animation-delay: 0.1s; }
+        .modal.show .flex-fill:nth-child(2) .diff-card { animation-delay: 0.2s; }
+        .modal.show .flex-fill:nth-child(3) .diff-card { animation-delay: 0.3s; }
         
         @keyframes slideUpFade {
             to { opacity: 1; transform: translateY(0); }
@@ -359,23 +359,29 @@
         }
 
         @media (max-width: 767.98px) {
+            /* Three cards side by side instead of stacked — the full
+               description sentence doesn't fit a ~1/3-width column, so it's
+               dropped here; the icon + title alone are enough to convey
+               Easy/Medium/Hard at a glance and keep the modal short. */
+            #difficultyModal .modal-body {
+                padding: 1rem !important;
+            }
             .diff-card {
-                padding: 20px 15px;
-                border-radius: 16px;
+                padding: 14px 4px;
+                border-radius: 14px;
             }
             .diff-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 2rem;
-                margin-bottom: 10px;
+                width: 42px;
+                height: 42px;
+                font-size: 1.3rem;
+                margin-bottom: 8px;
             }
             .diff-title {
-                font-size: 1.15rem;
-                margin-bottom: 4px;
+                font-size: 0.8rem;
+                margin-bottom: 0;
             }
             .diff-desc {
-                font-size: 0.85rem;
-                line-height: 1.3;
+                display: none;
             }
         }
         /* Tanzanian Flag Colors for Cards - Mobile Friendly Edition */
@@ -1143,22 +1149,22 @@
                     <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Choose a level that matches your current confidence</p>
                 </div>
                 <div class="modal-body p-4 p-md-5 pt-4">
-                    <div class="row g-4">
-                        <div class="col-md-4">
+                    <div class="d-flex gap-2 gap-md-4">
+                        <div class="flex-fill" style="min-width: 0;">
                             <div class="diff-card diff-card-easy" onclick="selectDifficulty('EASY')">
                                 <div class="diff-icon"><i class="bi bi-emoji-smile-fill"></i></div>
                                 <div class="diff-title">Easy</div>
                                 <div class="diff-desc">Basic concepts and straightforward questions to warm up.</div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="flex-fill" style="min-width: 0;">
                             <div class="diff-card diff-card-medium" onclick="selectDifficulty('MEDIUM')">
                                 <div class="diff-icon"><i class="bi bi-emoji-sunglasses-fill"></i></div>
                                 <div class="diff-title">Medium</div>
                                 <div class="diff-desc">Standard exam-level questions requiring solid understanding.</div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="flex-fill" style="min-width: 0;">
                             <div class="diff-card diff-card-hard" onclick="selectDifficulty('HARD')">
                                 <div class="diff-icon"><i class="bi bi-fire"></i></div>
                                 <div class="diff-title">Hard</div>
