@@ -11,6 +11,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3/build/pdf.min.js"></script>
     
     <style>
         body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; display: flex; align-items: flex-start; justify-content: center; height: 100vh; overflow: auto; padding: 20px 0; }
@@ -91,6 +92,23 @@
         @keyframes slideInTick { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 60% { transform: scale(1.3) rotate(15deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
         @keyframes shimmer { 0% { left: -100%; } 100% { left: 200%; } }
         @keyframes pulseCircle { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+        /* Inline PDF.js viewer the generated exam is handed off to for "read" —
+           replaces document.body once the PDF bytes exist in memory, so viewing
+           never depends on the device's native blob/PDF handling (unreliable on
+           mobile Chrome — see openPdfViewer() below). Mirrors PdfViewerHtml.java's
+           viewer used for notes and the academic calendar, prefixed gexv- to stay
+           clear of this page's own exam-template class names. */
+        #gexv-topbar { position: fixed; top: 0; left: 0; right: 0; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: rgba(17, 17, 17, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 30; border-bottom: 1px solid rgba(255,255,255,0.06); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        #gexv-topbar .gexv-title { color: #f1f5f9; font-size: 0.85rem; font-weight: 600; max-width: 40vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #gexv-topbar .gexv-pageindicator { color: #9ca3af; font-size: 0.8rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .gexv-iconbtn { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; flex-shrink: 0; }
+        .gexv-zoomgroup { display: flex; align-items: center; gap: 6px; }
+        #gexv-container { position: fixed; top: 56px; left: 0; right: 0; bottom: 0; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; align-items: center; padding: 16px 10px 100px; background: #14151a; z-index: 25; }
+        .gexv-pagewrap { position: relative; flex-shrink: 0; margin-bottom: 14px; box-shadow: 0 6px 24px rgba(0,0,0,0.45); border-radius: 4px; overflow: hidden; background: #fff; line-height: 0; }
+        .gexv-pagewrap canvas { display: block; }
+        .gexv-badge { position: absolute; bottom: 8px; right: 8px; background: rgba(17,17,17,0.65); color: #e5e7eb; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+        .gexv-fab { position: fixed; bottom: 22px; right: 18px; width: 52px; height: 52px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45); text-decoration: none; font-size: 1.25rem; z-index: 30; }
     </style>
     <link rel="stylesheet" th:href="@{/css/responsive-system.css}">
 </head>
@@ -114,26 +132,6 @@
             <a href="/dashboard" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 text-decoration-none"
                style="background: linear-gradient(135deg, #64748b 0%, #475569 100%); color: white; border: none; box-shadow: 0 10px 25px rgba(71, 85, 105, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.15); letter-spacing: 1px;">
                 <i class="bi bi-house-door-fill" style="font-size: 1.2rem;"></i> Back Home
-            </a>
-        </div>
-    </div>
-
-    <!-- Shown on mobile once the PDF is ready: opening it needs a real tap (browsers block
-         window.open()/location navigation to blob: URLs that aren't a direct user gesture). -->
-    <div class="loading-container" id="open-pdf-ui" style="display:none; text-align: center; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.2); padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-width: 450px; width: 90%;">
-        <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px; color: #10b981;"></i>
-        </div>
-        <h3 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; color: #f8fafc; font-size: 1.5rem;">Your Exam Is Ready</h3>
-        <p class="mb-4" style="font-size: 0.9rem; line-height: 1.5; color: #94a3b8;">Tap below to open it, or save it to your device.</p>
-        <div class="d-flex flex-column gap-2">
-            <a id="open-pdf-btn" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 border-0"
-               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">
-                <i class="bi bi-eye-fill" style="font-size: 1.2rem;"></i> Open Exam
-            </a>
-            <a id="download-pdf-btn" class="rounded-pill px-5 py-3 fw-bold d-inline-flex justify-content-center align-items-center gap-2 border-0"
-               style="background: rgba(255,255,255,0.08); color: #f8fafc;">
-                <i class="bi bi-download" style="font-size: 1.2rem;"></i> Download
             </a>
         </div>
     </div>
@@ -368,6 +366,134 @@
             document.getElementById('error-ui').style.display = 'block';
         }
 
+        // Hands a finished jsPDF document off to a PDF.js canvas viewer rendered
+        // straight into this page, instead of trying to open/download the blob
+        // via the browser's own PDF handling. That native path is exactly what
+        // was already unreliable for notes (mobile Chrome sometimes downloads a
+        // blob: PDF instead of displaying it, or blocks a non-gesture blob
+        // navigation entirely) — this sidesteps it completely since nothing here
+        // opens a new tab or navigates anywhere; the bytes are already in memory
+        // and get painted onto canvases in place, the same approach used by
+        // PdfViewerHtml.java for notes and the academic calendar.
+        function openPdfViewer(pdf, title, cleanFileName) {
+            const pdfBytes = pdf.output('arraybuffer');
+            const downloadUrl = URL.createObjectURL(pdf.output('blob'));
+            const safeTitle = (title || 'Exam').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            document.body.style.margin = '0';
+            document.body.style.background = '#14151a';
+            document.body.style.overflow = 'hidden';
+            document.body.innerHTML = `
+                <div id="gexv-topbar">
+                    <button type="button" class="gexv-iconbtn" id="gexv-back" title="Back">&#8592;</button>
+                    <span class="gexv-title">${safeTitle}</span>
+                    <div class="gexv-zoomgroup">
+                        <span class="gexv-pageindicator"><span id="gexv-pagenum">1</span>/<span id="gexv-pagecount">&ndash;</span></span>
+                        <button type="button" class="gexv-iconbtn" id="gexv-zoomout" title="Zoom out">&minus;</button>
+                        <button type="button" class="gexv-iconbtn" id="gexv-zoomin" title="Zoom in">+</button>
+                    </div>
+                </div>
+                <div id="gexv-container"></div>
+                <a class="gexv-fab" id="gexv-download" href="${downloadUrl}" download="4LAZIE_${cleanFileName}.pdf" title="Download">&#8681;</a>
+            `;
+
+            document.getElementById('gexv-back').addEventListener('click', function () {
+                if (window.history.length > 1) window.history.back();
+                else window.location.href = '/dashboard';
+            });
+
+            const container = document.getElementById('gexv-container');
+            const pageNumEl = document.getElementById('gexv-pagenum');
+            const pageCountEl = document.getElementById('gexv-pagecount');
+            let pdfDoc = null;
+            let zoomStep = 0;
+            let observer = null;
+
+            function baseScaleFor(step) { return Math.pow(1.15, step); }
+
+            function renderAllPages() {
+                if (observer) observer.disconnect();
+                container.innerHTML = '';
+                const containerWidth = container.clientWidth - 20;
+                let renderQueue = Promise.resolve();
+                const queuePage = function (num) {
+                    renderQueue = renderQueue.then(function () {
+                        return pdfDoc.getPage(num).then(function (page) {
+                            const unscaledViewport = page.getViewport({ scale: 1 });
+                            const fitScale = (containerWidth / unscaledViewport.width) * baseScaleFor(zoomStep);
+                            const viewport = page.getViewport({ scale: fitScale });
+
+                            const wrap = document.createElement('div');
+                            wrap.className = 'gexv-pagewrap';
+                            wrap.dataset.page = num;
+
+                            const canvas = document.createElement('canvas');
+                            const outputScale = window.devicePixelRatio || 1;
+                            canvas.width = Math.floor(viewport.width * outputScale);
+                            canvas.height = Math.floor(viewport.height * outputScale);
+                            canvas.style.width = Math.floor(viewport.width) + 'px';
+                            canvas.style.height = Math.floor(viewport.height) + 'px';
+
+                            const badge = document.createElement('div');
+                            badge.className = 'gexv-badge';
+                            badge.textContent = num + ' / ' + pdfDoc.numPages;
+
+                            wrap.appendChild(canvas);
+                            wrap.appendChild(badge);
+                            container.appendChild(wrap);
+
+                            const ctx = canvas.getContext('2d');
+                            const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+                            return page.render({ canvasContext: ctx, viewport: viewport, transform: transform }).promise;
+                        });
+                    });
+                };
+                for (let num = 1; num <= pdfDoc.numPages; num++) queuePage(num);
+                renderQueue.then(setupPageTracking);
+            }
+
+            function setupPageTracking() {
+                const wraps = container.querySelectorAll('.gexv-pagewrap');
+                observer = new IntersectionObserver(function (entries) {
+                    let best = null;
+                    entries.forEach(function (e) {
+                        if (e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) best = e;
+                    });
+                    if (best) pageNumEl.textContent = best.target.dataset.page;
+                }, { root: container, threshold: [0.25, 0.5, 0.75] });
+                wraps.forEach(function (w) { observer.observe(w); });
+            }
+
+            function applyZoom(delta) {
+                const next = zoomStep + delta;
+                if (next < -2 || next > 4) return;
+                zoomStep = next;
+                const currentTopPage = pageNumEl.textContent;
+                renderAllPages();
+                const target = container.querySelector('.gexv-pagewrap[data-page="' + currentTopPage + '"]');
+                if (target) target.scrollIntoView({ block: 'start' });
+            }
+
+            document.getElementById('gexv-zoomin').addEventListener('click', function () { applyZoom(1); });
+            document.getElementById('gexv-zoomout').addEventListener('click', function () { applyZoom(-1); });
+
+            let resizeTimer = null;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () { if (pdfDoc) renderAllPages(); }, 250);
+            });
+
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3/build/pdf.worker.min.js";
+            pdfjsLib.getDocument({ data: pdfBytes }).promise.then(function (doc) {
+                pdfDoc = doc;
+                pageCountEl.textContent = doc.numPages;
+                renderAllPages();
+            }).catch(function (err) {
+                console.error('PDF.js failed to render generated exam:', err);
+                container.innerHTML = '<p style="color:#9ca3af; font-size:0.85rem; text-align:center; margin-top:40px;">The preview failed to render — use the download button below instead.</p>';
+            });
+        }
+
         function catYearFromLevel(level) {
             return { 4: 'I', 5: 'II', 6: 'III' }[level] || 'I';
         }
@@ -498,44 +624,7 @@
                 const cleanFileName = ((noteData && noteData.title) || 'CAT_Exam').replace(/[^a-zA-Z0-9_\-]/g, '_');
 
                 if (actionParam === 'read') {
-                    const blob = pdf.output('blob');
-                    const blobUrl = URL.createObjectURL(blob);
-                    const isMobile = /android|iphone|ipad|ipod|webos|blackberry|windows phone/i.test(navigator.userAgent);
-                    if (isMobile) {
-                        document.getElementById('loading-ui').style.display = 'none';
-                        document.getElementById('open-pdf-ui').style.display = 'block';
-                        const openBtn = document.getElementById('open-pdf-btn');
-                        openBtn.href = blobUrl;
-                        openBtn.target = '_blank';
-                        const downloadBtn = document.getElementById('download-pdf-btn');
-                        downloadBtn.href = blobUrl;
-                        downloadBtn.download = `4LAZIE_${cleanFileName}.pdf`;
-                    } else {
-                        document.body.style.margin = '0';
-                        document.body.style.padding = '0';
-                        document.body.style.background = '#333';
-                        document.body.innerHTML = `
-                            <iframe src="${blobUrl}#toolbar=0&navpanes=0&scrollbar=0" style="width:100%; height:100vh; border:none; margin:0; padding:0; display:block;"></iframe>
-                            <button id="back-btn" title="Back" type="button" class="d-flex align-items-center justify-content-center border-0"
-                                style="position: fixed; top: 20px; left: 20px; width: 44px; height: 44px; border-radius: 50%; background: #111; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 10;">
-                                <i class="bi bi-arrow-left" style="font-size: 1.2rem;"></i>
-                            </button>
-                            <a id="download-pdf-btn" title="Download" class="d-flex align-items-center justify-content-center border-0"
-                                style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: #111; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 10;">
-                                <i class="bi bi-download" style="font-size: 1.4rem;"></i>
-                            </a>`;
-                        // Replacing document.body entirely leaves PWA/standalone
-                        // windows with no browser chrome and no way back — the
-                        // page itself now provides that instead of relying on
-                        // a browser back button that may not exist.
-                        document.getElementById('back-btn').addEventListener('click', () => {
-                            if (window.history.length > 1) window.history.back();
-                            else window.location.href = '/dashboard';
-                        });
-                        document.getElementById('download-pdf-btn').addEventListener('click', () => {
-                            pdf.save(`4LAZIE_${cleanFileName}.pdf`);
-                        });
-                    }
+                    openPdfViewer(pdf, noteData.title, cleanFileName);
                 } else {
                     pdf.save(`4LAZIE_${cleanFileName}.pdf`);
                     document.getElementById('loading-ui').style.display = 'none';
@@ -802,55 +891,7 @@
                 if (actionParam === 'read') {
                     // 6. View Mode
                     document.getElementById('status-text').innerText = "Opening PDF...";
-                    const blob = pdf.output('blob');
-                    const blobUrl = URL.createObjectURL(blob);
-
-                    // Mobile Chrome/Safari frequently fail to render a blob: PDF embedded
-                    // in an <iframe> — it can flash the content and then replace it with
-                    // "This content is blocked. Contact the site owner to fix the issue."
-                    // Modern Chrome also silently blocks both `location.href = blobUrl`
-                    // and `window.open(blobUrl)` when they aren't triggered by a direct
-                    // user tap/click (confirmed: window.open() returns null here). So on
-                    // mobile we show a button and let the user's own tap open the PDF —
-                    // that's a real user gesture, which browsers always allow through.
-                    // Desktop keeps the iframe for the toolbar-free reading view.
-                    const isMobile = /android|iphone|ipad|ipod|webos|blackberry|windows phone/i.test(navigator.userAgent);
-                    if (isMobile) {
-                        document.getElementById('loading-ui').style.display = 'none';
-                        const openUi = document.getElementById('open-pdf-ui');
-                        openUi.style.display = 'block';
-                        const openBtn = document.getElementById('open-pdf-btn');
-                        openBtn.href = blobUrl;
-                        openBtn.target = '_blank';
-                        const downloadBtn = document.getElementById('download-pdf-btn');
-                        downloadBtn.href = blobUrl;
-                        downloadBtn.download = `4LAZIE_${cleanFileName}.pdf`;
-                    } else {
-                        document.body.style.margin = '0';
-                        document.body.style.padding = '0';
-                        document.body.style.background = '#333';
-                        document.body.innerHTML = `
-                            <iframe src="${blobUrl}#toolbar=0&navpanes=0&scrollbar=0" style="width:100%; height:100vh; border:none; margin:0; padding:0; display:block;"></iframe>
-                            <button id="back-btn" title="Back" type="button" class="d-flex align-items-center justify-content-center border-0"
-                                style="position: fixed; top: 20px; left: 20px; width: 44px; height: 44px; border-radius: 50%; background: #111; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 10;">
-                                <i class="bi bi-arrow-left" style="font-size: 1.2rem;"></i>
-                            </button>
-                            <a id="download-pdf-btn" title="Download" class="d-flex align-items-center justify-content-center border-0"
-                                style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); z-index: 10;">
-                                <i class="bi bi-download" style="font-size: 1.4rem;"></i>
-                            </a>`;
-                        // Replacing document.body entirely leaves PWA/standalone
-                        // windows with no browser chrome and no way back — the
-                        // page itself now provides that instead of relying on
-                        // a browser back button that may not exist.
-                        document.getElementById('back-btn').addEventListener('click', () => {
-                            if (window.history.length > 1) window.history.back();
-                            else window.location.href = '/dashboard';
-                        });
-                        document.getElementById('download-pdf-btn').addEventListener('click', () => {
-                            pdf.save(`4LAZIE_${cleanFileName}.pdf`);
-                        });
-                    }
+                    openPdfViewer(pdf, noteData.title, cleanFileName);
                 } else {
                     // 6. Download Mode
                     document.getElementById('status-text').innerText = "Saving file to your device...";
