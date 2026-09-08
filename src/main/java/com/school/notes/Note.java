@@ -36,6 +36,10 @@ public class Note {
     @Indexed
     private Integer semesterNo; // 1, 2
 
+    // Indexed since the upload page's live duplicate-checker now queries by
+    // this field alone (findByModuleNameIgnoreCase) on every module pick —
+    // without an index that's a full collection scan each time.
+    @Indexed
     private String moduleName;
     private String moduleCode;
 

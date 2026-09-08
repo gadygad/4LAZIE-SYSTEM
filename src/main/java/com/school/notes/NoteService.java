@@ -435,7 +435,13 @@ public class NoteService {
         List<Map<String, Object>> similarMatches = new ArrayList<>();
         if (title != null && !title.isBlank()) {
             List<Note> candidates;
-            if (moduleName != null && !moduleName.isBlank()) {
+            if (moduleName != null && !moduleName.isBlank() && levelNo != null && semesterNo != null) {
+                // Scoped by Level/Semester too — the same subject name can
+                // legitimately recur at a different level (e.g. a first-year
+                // and a final-year "Communication Skills"), and those
+                // shouldn't be flagged as similar to each other.
+                candidates = noteRepository.findByModuleNameIgnoreCaseAndLevelNoAndSemesterNo(moduleName.trim(), levelNo, semesterNo);
+            } else if (moduleName != null && !moduleName.isBlank()) {
                 candidates = noteRepository.findByModuleNameIgnoreCase(moduleName.trim());
             } else if (programType != null && levelNo != null && semesterNo != null) {
                 candidates = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(programType, levelNo, semesterNo);

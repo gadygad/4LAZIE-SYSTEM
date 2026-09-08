@@ -91,6 +91,11 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     // the fuzzy title-similarity check across every category in that module.
     List<Note> findByFileHash(String fileHash);
     List<Note> findByModuleNameIgnoreCase(String moduleName);
+    // Same module name, but same Level/Semester too — the same subject name
+    // can legitimately recur at a different level (e.g. a first-year and a
+    // final-year "Communication Skills"), and those shouldn't be compared
+    // against each other for title similarity.
+    List<Note> findByModuleNameIgnoreCaseAndLevelNoAndSemesterNo(String moduleName, Integer levelNo, Integer semesterNo);
 
     class AggregationCount {
         private Long total;
