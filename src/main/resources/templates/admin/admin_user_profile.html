@@ -91,7 +91,7 @@
         /* Stat card */
         .stat-card {
             background: rgba(255,255,255,0.8);
-            border-radius: 18px;
+            border-radius: 20px;
             border: 1px solid rgba(16,185,129,0.1);
             padding: 20px;
             text-align: center;
@@ -426,7 +426,7 @@
 
                 <!-- Account Status Card -->
                 <div class="section-title mb-3">Account Status</div>
-                <div style="background: rgba(255,255,255,0.95); border-radius: 18px; border: 1px solid rgba(16,185,129,0.1); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px;">
+                <div style="background: rgba(255,255,255,0.95); border-radius: 20px; border: 1px solid rgba(16,185,129,0.1); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">Email Verified</span>
                         <span th:if="${profileUser.isVerified}" class="badge" style="background: rgba(16,185,129,0.12); color: #059669; padding: 5px 12px; border-radius: 50px; font-size: 0.72rem; font-weight: 700;">
@@ -459,7 +459,7 @@
                 <!-- Permissions Card (if admin) -->
                 <div th:if="${profileUser.role != null and (profileUser.role.name() == 'ADMIN' or profileUser.role.name() == 'SUPER_ADMIN')}">
                     <div class="section-title mb-3">Permissions</div>
-                    <div style="background: rgba(255,255,255,0.95); border-radius: 18px; border: 1px solid rgba(16,185,129,0.1); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                    <div style="background: rgba(255,255,255,0.95); border-radius: 20px; border: 1px solid rgba(16,185,129,0.1); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
                         <div th:if="${profileUser.role.name() == 'SUPER_ADMIN'}" class="d-flex align-items-center gap-2 mb-2">
                             <i class="bi bi-shield-fill-check text-success"></i>
                             <span style="font-size: 0.82rem; font-weight: 600; color: #059669;">All Permissions (Super Admin)</span>

@@ -312,7 +312,7 @@
                                             <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></span>
                                             <span class="fw-bold text-muted" style="font-size:0.8rem; text-transform:uppercase;">4LAZIE Admin</span>
                                         </div>
-                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:20px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
                                             <div class="mb-0" style="white-space:pre-wrap;" th:text="${msg.messageText}"></div>
                                             <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: #10b981;"><i class="bi bi-file-earmark-pdf"></i> View Attachment</a>
                                         </div>
@@ -337,7 +337,7 @@
                                                 <span class="fw-bold" style="font-size:0.85rem; color:#1e293b; letter-spacing:0.3px; text-transform:uppercase;" th:text="${msg.senderName}">Student</span>
                                                 <span class="text-muted" style="font-size:0.75rem;" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></span>
                                             </div>
-                                            <div style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:18px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
+                                            <div style="font-size:1.05rem;color:#334155;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:rgba(255,255,255,0.95);padding:10px 16px;border-radius:20px 18px 18px 4px;box-shadow:0 4px 15px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.04);backdrop-filter:blur(10px);text-align:left;">
                                                 <div class="chat-message-text" th:classappend="${msg.senderId != 'ADMIN'} ? 'typing-text-admin' : ''" style="white-space:pre-wrap;" th:text="${msg.messageText}"></div>
                                                 <a th:if="${msg.attachmentUrl != null}" th:href="${msg.attachmentUrl.startsWith('http') ? msg.attachmentUrl : '/uploads/' + msg.attachmentUrl}" target="_blank" class="text-decoration-none fw-bold mt-2 d-inline-block" style="font-size: 0.85rem; color: #3b82f6;"><i class="bi bi-paperclip"></i> View Attachment</a>
                                             </div>
@@ -450,7 +450,7 @@
                                             <span class="text-muted" style="font-size:0.75rem;">${data.time}</span>
                                             <span class="fw-bold text-muted" style="font-size:0.8rem; text-transform:uppercase;">4LAZIE Admin</span>
                                         </div>
-                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
+                                        <div style="font-size:1.05rem;color:#ffffff;line-height:1.5;word-break:break-word;width:fit-content;max-width:100%;background:linear-gradient(135deg,#1f2937 0%,#000000 100%);padding:10px 16px;border-radius:20px 18px 4px 18px;box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);text-shadow:0 1px 2px rgba(0,0,0,0.2);text-align:left;">
                                             <div class="admin-dynamic-typing-text mb-0" style="white-space:pre-wrap;"></div>
                                             ${attachmentHtml}
                                         </div>

@@ -169,13 +169,13 @@
                 <!-- Search — icon-only in the navbar; clicking it drops the real
                      input down below the navbar instead of living inline, which
                      is what was crowding out everything else next to it. -->
-                <button type="button" id="navSearchToggle" class="d-flex align-items-center justify-content-center text-white border-0" style="width: 42px; height: 42px; border-radius: 50%; background: #0d9468; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;">
+                <button type="button" id="navSearchToggle" class="d-flex align-items-center justify-content-center text-white border-0" style="width: 42px; height: 42px; border-radius: 50%; background: #059669; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;">
                     <i class="bi bi-search" style="font-size: 1.1rem;"></i>
                 </button>
 
                 <!-- Messages -->
                 <div class="dropdown" th:if="${session.user != null}">
-                    <a href="#" class="d-flex align-items-center justify-content-center text-white text-decoration-none position-relative dropdown-toggle border-0" id="msgDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="width: 42px; height: 42px; border-radius: 50%; background: #0d9468; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;" title="Messages">
+                    <a href="#" class="d-flex align-items-center justify-content-center text-white text-decoration-none position-relative dropdown-toggle border-0" id="msgDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="width: 42px; height: 42px; border-radius: 50%; background: #059669; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;" title="Messages">
                         <i class="bi bi-chat-dots-fill" style="font-size: 1.1rem;"></i>
                         <span th:if="${unreadMessageCount != null && unreadMessageCount > 0}" th:text="${unreadMessageCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.25em 0.5em; border: 2px solid #0f172a;">
                         </span>
@@ -214,7 +214,7 @@
 
                 <!-- Notifications -->
                 <div class="dropdown" th:if="${session.user != null}">
-                    <a href="#" class="d-flex align-items-center justify-content-center text-white text-decoration-none position-relative dropdown-toggle border-0" id="notiDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="width: 42px; height: 42px; border-radius: 50%; background: #0d9468; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;" title="Notifications">
+                    <a href="#" class="d-flex align-items-center justify-content-center text-white text-decoration-none position-relative dropdown-toggle border-0" id="notiDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="width: 42px; height: 42px; border-radius: 50%; background: #059669; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;" title="Notifications">
                         <i class="bi bi-bell-fill" style="font-size: 1.1rem;"></i>
                         <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}" th:text="${unreadNotificationCount}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.25em 0.5em; border: 2px solid #0f172a;">
                         </span>
@@ -320,7 +320,7 @@
                 <a th:if="${session.user == null}"
                    href="/login"
                    class="d-flex align-items-center justify-content-center text-white text-decoration-none"
-                   style="width: 45px; height: 45px; border-radius: 50%; background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;">
+                   style="width: 45px; height: 45px; border-radius: 50%; background: #059669; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0;">
                     <i class="bi bi-person-fill" style="font-size: 1.4rem;"></i>
                 </a>
 
@@ -333,7 +333,7 @@
         <div id="navSearchPanel" class="w-100" style="max-height: 0; overflow: hidden; transition: max-height 0.25s ease, padding 0.25s ease; padding: 0 20px;">
             <div class="position-relative w-100 mx-auto" style="max-width: 500px; padding: 10px 0 4px;">
                 <i class="bi bi-search position-absolute text-white" style="left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.7;"></i>
-                <input type="text" id="navSearchInput" class="form-control text-white search-input" placeholder="Search community..." style="background: #0d9468; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; padding-left: 45px; padding-right: 40px; height: 45px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <input type="text" id="navSearchInput" class="form-control text-white search-input" placeholder="Search community..." style="background: #059669; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; padding-left: 45px; padding-right: 40px; height: 45px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <button type="button" id="navSearchClose" class="position-absolute d-flex align-items-center justify-content-center border-0 bg-transparent text-white" style="right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; opacity: 0.8;">
                     <i class="bi bi-x-lg"></i>
                 </button>
@@ -838,7 +838,7 @@
     </button>
 
     <!-- Floating Action Button (FAB) -->
-    <button id="createPostFab" type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #0d9468; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <button id="createPostFab" type="button" class="btn rounded-circle shadow-lg d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#createPostModal" style="position: fixed; bottom: 80px; right: 20px; width: 60px; height: 60px; background: #059669; color: white; border: none; z-index: 1050; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
         <i class="bi bi-plus-lg" style="font-size: 1.8rem;"></i>
     </button>
 
