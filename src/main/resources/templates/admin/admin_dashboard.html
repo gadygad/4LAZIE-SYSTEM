@@ -217,7 +217,7 @@
                 </div>
 
                 <!-- Needs Your Attention -->
-                <div class="row g-3 mb-3" th:if="${pendingForumReports != null || pendingVerifications != null || pendingAssignments != null || pendingApprovals != null || repeatOffenders != null}">
+                <div class="row g-3 mb-3" th:if="${pendingForumReports != null || pendingVerifications != null || pendingAssignments != null || pendingApprovals != null || repeatOffenders != null || contentGapsCount != null || staleCalendarCount != null || timetableGapsCount != null}">
                     <div class="col-12 d-flex align-items-center mb-1">
                         <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.1rem; margin-right: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
                             <i class="bi bi-bell-fill"></i>
@@ -270,6 +270,42 @@
                                     <h3 class="stat-value" th:text="${pendingApprovals}">0</h3>
                                 </div>
                                 <span class="attention-pulse" th:if="${pendingApprovals > 0}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${contentGapsCount != null}">
+                        <a th:href="@{/admin/questions/gaps}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${contentGapsCount > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-patch-question-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Content Gaps</p>
+                                    <h3 class="stat-value" th:text="${contentGapsCount}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${contentGapsCount > 0}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${staleCalendarCount != null}">
+                        <a th:href="@{/admin/calendar}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${staleCalendarCount > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-calendar-x-fill"></i></div>
+                                <div>
+                                    <p class="stat-label">Academic Calendar</p>
+                                    <h3 class="stat-value" th:text="${staleCalendarCount > 0} ? 'Stale' : 'OK'">OK</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${staleCalendarCount > 0}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-xl-3" th:if="${timetableGapsCount != null}">
+                        <a th:href="@{/admin/timetables}" class="text-decoration-none">
+                            <div class="premium-stat-card attention-card" th:classappend="${timetableGapsCount > 0} ? 'has-items' : ''">
+                                <div class="stat-icon-wrapper"><i class="bi bi-table"></i></div>
+                                <div>
+                                    <p class="stat-label">Timetable Gaps</p>
+                                    <h3 class="stat-value" th:text="${timetableGapsCount}">0</h3>
+                                </div>
+                                <span class="attention-pulse" th:if="${timetableGapsCount > 0}"></span>
                             </div>
                         </a>
                     </div>

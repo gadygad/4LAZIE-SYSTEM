@@ -95,6 +95,9 @@ public class AdminController {
         @org.springframework.beans.factory.annotation.Autowired
         private com.school.notification.NotificationService notificationService;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private com.school.exam.QuestionService questionService;
+
     private User getLoggedInUser() {
         return authUtil.getLoggedInUser();
     }
@@ -309,9 +312,43 @@ public class AdminController {
             log.warn("Failed to compute repeat offenders: {}", e.getMessage(), e);
         }
 
+        // Content Gaps — subjects still missing one or more of the 5 practice
+        // categories, so incomplete curriculum content doesn't rely on the
+        // admin remembering what's been entered so far.
+        Long contentGapsCount = null;
+        try {
+            contentGapsCount = questionService.countSubjectsWithGaps(subjectRepository.findAll());
+        } catch (Exception e) {
+            log.warn("Failed to compute content gaps: {}", e.getMessage(), e);
+        }
+
+        // Academic Calendar staleness — every exam date on the current
+        // calendar has already passed (or there's no current calendar at
+        // all), meaning it's overdue for a replacement.
+        Long staleCalendarCount = null;
+        try {
+            if (adminService.hasPermission(user, "MANAGE_CALENDAR")) {
+                AcademicCalendar currentCal = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
+                staleCalendarCount = isAcademicCalendarStale(currentCal) ? 1L : 0L;
+            }
+        } catch (Exception e) {
+            log.warn("Failed to check academic calendar staleness: {}", e.getMessage(), e);
+        }
+
+        // Timetable gaps — (programType, levelNo, semesterNo) groups that
+        // exist in the curriculum but have no timetable flagged as current.
+        Long timetableGapsCount = null;
+        try {
+            if (adminService.hasPermission(user, "MANAGE_TIMETABLES")) {
+                timetableGapsCount = countTimetableGroupsMissingCurrent();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to compute timetable gaps: {}", e.getMessage(), e);
+        }
+
         log.info("Dashboard data loaded - Users: {}, Notes: {}, Downloads: {}, UniqueVisitors: {}",
                 totalUsers, totalNotes, totalDownloads, totalUniqueVisitors);
-        
+
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalNotes", totalNotes);
         model.addAttribute("totalDownloads", totalDownloads != null ? totalDownloads : 0L);
@@ -337,7 +374,72 @@ public class AdminController {
         model.addAttribute("repeatOffenders", repeatOffenders);
         model.addAttribute("repeatOffenderReportCounts", repeatOffenderReportCounts);
 
+        model.addAttribute("contentGapsCount", contentGapsCount);
+        model.addAttribute("staleCalendarCount", staleCalendarCount);
+        model.addAttribute("timetableGapsCount", timetableGapsCount);
+
         return "admin/admin_dashboard";
+    }
+
+    // Mirrors HomeController's exam-date-passed check (kept local rather than
+    // shared, since it's a small self-contained parser used in exactly these
+    // two places): dates are free-text like "13 Jan 2026" or a range like
+    // "23 Mar 2026 - 02 Apr 2026", in which case the END date is what counts.
+    private boolean hasDatePassed(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) return false;
+        try {
+            String cleaned = dateStr.trim();
+            if (cleaned.contains("-")) {
+                String[] parts = cleaned.split("-");
+                cleaned = parts[parts.length - 1].trim();
+            }
+            java.time.format.DateTimeFormatter formatter =
+                    java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy", java.util.Locale.ENGLISH);
+            java.time.LocalDate examDate = java.time.LocalDate.parse(cleaned, formatter);
+            return java.time.LocalDate.now().isAfter(examDate);
+        } catch (java.time.format.DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    // A calendar is stale once every exam date on it (CAT 1, CAT 2 and UE,
+    // both programs, both semesters) is already in the past — or there's no
+    // current calendar at all — meaning it's overdue for a replacement.
+    private boolean isAcademicCalendarStale(AcademicCalendar cal) {
+        if (cal == null) return true;
+        String[] dates = {
+            cal.getSem1Cat1DegreeDate(), cal.getSem1Cat1DiplomaDate(),
+            cal.getSem2Cat1DegreeDate(), cal.getSem2Cat1DiplomaDate(),
+            cal.getSem1Cat2DegreeDate(), cal.getSem1Cat2DiplomaDate(),
+            cal.getSem2Cat2DegreeDate(), cal.getSem2Cat2DiplomaDate(),
+            cal.getSem1UeDegreeDate(), cal.getSem1UeDiplomaDate(),
+            cal.getSem2UeDegreeDate(), cal.getSem2UeDiplomaDate()
+        };
+        for (String d : dates) {
+            if (!hasDatePassed(d)) return false;
+        }
+        return true;
+    }
+
+    // Every (programType, levelNo, semesterNo) group implied by the seeded
+    // courses that has no Timetable flagged isCurrent — mirrors the grouping
+    // CurriculumInitializer.backfillTimetableIsCurrent() uses.
+    private long countTimetableGroupsMissingCurrent() {
+        long missing = 0;
+        for (Course course : courseRepository.findAll()) {
+            if (course.getProgramType() == null) continue;
+            int startLevel = course.getStartLevel();
+            int endLevelExclusive = startLevel + course.getDuration();
+            for (int level = startLevel; level < endLevelExclusive; level++) {
+                for (int semester = 1; semester <= 2; semester++) {
+                    boolean hasCurrent = timetableRepository
+                            .findByProgramTypeAndLevelNoAndSemesterNoAndIsCurrentTrue(course.getProgramType(), level, semester)
+                            .isPresent();
+                    if (!hasCurrent) missing++;
+                }
+            }
+        }
+        return missing;
     }
 
     @GetMapping("/users")
