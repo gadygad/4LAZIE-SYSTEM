@@ -682,7 +682,39 @@ public class AdminController {
         List<Note> notes = noteRepository.findAll();
         model.addAttribute("notes", notes);
         model.addAttribute("isSuperAdmin", user.getRole() == Role.SUPER_ADMIN);
+        model.addAttribute("courses", courseRepository.findAll());
         return "admin/admin_notes";
+    }
+
+    // For a note the admin only now realizes another course also needs —
+    // whether it was never marked General, or that course's own Subject
+    // catalog doesn't have a matching entry so General's auto-detection
+    // could never have found it on its own. Reuses NoteService's existing
+    // link-without-reupload logic (built for the upload page's duplicate
+    // warning) with the note's own Level/Semester/Module/Category, so this
+    // always just extends applicablePrograms — never a second file, never a
+    // second note.
+    @PostMapping("/notes/{id}/link-course")
+    public String linkNoteToCourse(@PathVariable String id, @RequestParam String targetProgramType,
+                                    HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (!adminService.hasPermission(user, "MANAGE_NOTES")) {
+            return "redirect:/login";
+        }
+        Note note = noteRepository.findById(id).orElse(null);
+        if (note == null) {
+            redirectAttributes.addFlashAttribute("error", "Note not found.");
+            return "redirect:/admin/notes";
+        }
+        try {
+            noteService.linkExistingNoteToCourse(note.getId(), note.getTitle(), targetProgramType,
+                    note.getLevelNo(), note.getSemesterNo(), note.getModuleName(), note.getModuleCode(),
+                    note.getCategory(), note.getAcademicYear(), note.getUnitNumber(), user);
+            redirectAttributes.addFlashAttribute("success", "Linked to the selected course — no new file was stored.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to link: " + e.getMessage());
+        }
+        return "redirect:/admin/notes";
     }
 
     @PostMapping("/notes/{id}/delete")
