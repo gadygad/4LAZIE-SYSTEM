@@ -81,9 +81,19 @@ public class DirectChatService {
         }
 
         ChatMessage msg = new ChatMessage(senderId, senderName, profilePicture, messageText, null);
-        msg.setReplyToMessageId(replyToMessageId);
-        msg.setReplyToSenderName(replyToSenderName);
-        msg.setReplyToMessageText(replyToMessageText);
+        // Re-derived from this chat's own history, never trusted as sent by
+        // the client — see the identical fix (and its full reasoning) in
+        // PeerChatService.sendMessage().
+        if (replyToMessageId != null && !replyToMessageId.isBlank()) {
+            ChatMessage original = chat.getMessages().stream()
+                    .filter(m -> replyToMessageId.equals(m.getId()))
+                    .findFirst().orElse(null);
+            if (original != null) {
+                msg.setReplyToMessageId(original.getId());
+                msg.setReplyToSenderName(original.getSenderName());
+                msg.setReplyToMessageText(original.getMessageText());
+            }
+        }
         chat.getMessages().add(msg);
         chat.setLastMessageAt(LocalDateTime.now());
 

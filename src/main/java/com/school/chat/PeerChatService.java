@@ -101,9 +101,25 @@ public class PeerChatService {
         String profilePicture = brandedPicture(sender);
 
         ChatMessage msg = new ChatMessage(senderId, brandedSenderName, profilePicture, messageText, null);
-        msg.setReplyToMessageId(replyToMessageId);
-        msg.setReplyToSenderName(replyToSenderName);
-        msg.setReplyToMessageText(replyToMessageText);
+        // The client sends replyToSenderName/replyToMessageText purely for
+        // instant optimistic rendering — never trusted as-is. The quote
+        // actually stored is re-derived from the real message in THIS
+        // chat's own history, so a reply can never end up displaying
+        // another conversation's name/text (stale client state, a race
+        // between switching chats and sending, or a tampered request).
+        if (replyToMessageId != null && !replyToMessageId.isBlank()) {
+            ChatMessage original = chat.getMessages().stream()
+                    .filter(m -> replyToMessageId.equals(m.getId()))
+                    .findFirst().orElse(null);
+            if (original != null) {
+                msg.setReplyToMessageId(original.getId());
+                msg.setReplyToSenderName(original.getSenderName());
+                msg.setReplyToMessageText(original.getMessageText());
+            }
+            // If the referenced message isn't actually in this chat, the
+            // reply is sent as a normal message instead — no quote at all,
+            // rather than trusting unverified client-supplied text.
+        }
         chat.getMessages().add(msg);
         chat.setLastMessageAt(LocalDateTime.now());
 
