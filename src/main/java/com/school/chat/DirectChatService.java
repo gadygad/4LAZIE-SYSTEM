@@ -141,6 +141,11 @@ public class DirectChatService {
         return directChatRepository.findByStudentIdOrderByLastMessageAtDesc(studentId);
     }
 
+    /** Same as getStudentInbox, capped at 5 — for the navbar preview only. */
+    public List<DirectChat> getRecentStudentInbox(String studentId) {
+        return directChatRepository.findTop5ByStudentIdOrderByLastMessageAtDesc(studentId);
+    }
+
     public List<DirectChat> getAdminChats(String adminId) {
         return directChatRepository.findByAdminIdOrderByLastMessageAtDesc(adminId);
     }
@@ -156,6 +161,11 @@ public class DirectChatService {
     /** Returns ALL chats sorted by latest activity (for admin inbox) */
     public List<DirectChat> getAllChats() {
         return directChatRepository.findAllByOrderByLastMessageAtDesc();
+    }
+
+    /** Same as getAllChats, capped at 5 — for the navbar preview only. */
+    public List<DirectChat> getRecentChats() {
+        return directChatRepository.findTop5ByOrderByLastMessageAtDesc();
     }
 
     /** Total unread messages across all students for any admin */

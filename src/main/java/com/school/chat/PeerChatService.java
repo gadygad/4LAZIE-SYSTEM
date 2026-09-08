@@ -165,6 +165,14 @@ public class PeerChatService {
         return chats;
     }
 
+    /** Same as getInbox, capped at 5 (sorted at the query level) — for the
+     *  navbar preview dropdown, shown on every page. */
+    public List<PeerChat> getRecentInbox(String userId) {
+        return peerChatRepository.findForUser(userId,
+                org.springframework.data.domain.PageRequest.of(0, 5,
+                        org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "lastMessageAt")));
+    }
+
     public long getUnreadCount(String userId) {
         return peerChatRepository.countUnreadForUser(userId);
     }

@@ -40,6 +40,13 @@ public class NotificationService {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
+    // For the navbar preview dropdown, shown on every page — fetches only
+    // the 10 it actually displays instead of a user's entire notification
+    // history every single request.
+    public List<Notification> getRecentUserNotifications(String userId) {
+        return notificationRepository.findTop10ByUserIdOrderByCreatedAtDesc(userId);
+    }
+
     public List<Notification> getUnreadNotifications(String userId) {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
             .filter(n -> !n.isRead())

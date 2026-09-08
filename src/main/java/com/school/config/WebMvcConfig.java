@@ -14,7 +14,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @org.springframework.beans.factory.annotation.Autowired
     private ActiveUserInterceptor activeUserInterceptor;
-    
+
     @org.springframework.beans.factory.annotation.Autowired
     @org.springframework.beans.factory.annotation.Qualifier("siteVisitInterceptor")
     private org.springframework.web.servlet.HandlerInterceptor siteVisitInterceptor;

@@ -3,8 +3,18 @@ package com.school.notification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import java.time.LocalDateTime;
 
+// The navbar bell (GlobalModelAttributes) queries this on every single page
+// load for every logged-in user — filtered by userId, sorted by createdAt.
+// A single-field index on userId alone still forces an in-memory sort of
+// every notification that user has ever received; this compound index lets
+// Mongo satisfy the filter+sort together.
+@CompoundIndexes({
+    @CompoundIndex(name = "user_recent_idx", def = "{'userId': 1, 'createdAt': -1}")
+})
 @Document(collection = "notifications")
 public class Notification {
     

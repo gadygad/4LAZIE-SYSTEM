@@ -1,8 +1,6 @@
 package com.school.config;
 
-import com.school.core.ActivityLog;
 import com.school.auth.User;
-import com.school.core.ActivityLogRepository;
 import com.school.auth.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,18 +11,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.time.LocalDateTime;
-
 @Component
 public class ActiveUserInterceptor implements HandlerInterceptor {
 
         private UserRepository userRepository;
 
-        private ActivityLogRepository activityLogRepository;
+        private UserActivityTracker userActivityTracker;
 
-    public ActiveUserInterceptor(UserRepository userRepository, ActivityLogRepository activityLogRepository) {
+    public ActiveUserInterceptor(UserRepository userRepository, UserActivityTracker userActivityTracker) {
         this.userRepository = userRepository;
-        this.activityLogRepository = activityLogRepository;
+        this.userActivityTracker = userActivityTracker;
     }
 
 
@@ -70,44 +66,26 @@ public class ActiveUserInterceptor implements HandlerInterceptor {
                     // Filter out static resources and frequent background polling if any
                     if (!uri.startsWith("/css") && !uri.startsWith("/js") && !uri.startsWith("/images") && !uri.startsWith("/webjars")) {
                         String action = determineAction(method, uri);
-                        
-                        try {
-                            // Update User
-                            user.setLastActiveTime(LocalDateTime.now());
-                            user.setLastAction(action);
-                            userRepository.save(user);
-                        } catch (Exception e) {
-                            // Don't let user tracking failures break page loading
-                        }
 
-                        try {
-                            // Save Activity Log
-                            String ipAddress = request.getHeader("X-Forwarded-For");
-                            if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-                                ipAddress = request.getRemoteAddr();
-                            } else {
-                                // If multiple IPs are present in X-Forwarded-For, take the first one
-                                if (ipAddress.contains(",")) {
-                                    ipAddress = ipAddress.split(",")[0].trim();
-                                }
-                            }
-                            
-                            String rawUserAgent = request.getHeader("User-Agent");
-                            String deviceInfo = parseUserAgent(rawUserAgent);
-                            
-                            ActivityLog log = new ActivityLog(
-                                user.getId(),
-                                user.getName(),
-                                user.getRole() != null ? user.getRole().name() : "STUDENT",
-                                action,
-                                uri,
-                                ipAddress,
-                                deviceInfo
-                            );
-                            activityLogRepository.save(log);
-                        } catch (Exception e) {
-                            // Don't let activity logging failures break page loading
+                        String ipAddress = request.getHeader("X-Forwarded-For");
+                        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+                            ipAddress = request.getRemoteAddr();
+                        } else if (ipAddress.contains(",")) {
+                            // If multiple IPs are present in X-Forwarded-For, take the first one
+                            ipAddress = ipAddress.split(",")[0].trim();
                         }
+                        String deviceInfo = parseUserAgent(request.getHeader("User-Agent"));
+
+                        // Neither of these two writes affects what gets
+                        // rendered for this request — handed off to a
+                        // separate @Async bean so activity tracking never
+                        // adds to page load time. Must be a genuinely
+                        // different bean, not a method on this class: Spring
+                        // only applies @Async through the proxy, and a class
+                        // calling its own method bypasses that proxy
+                        // entirely (mirrors SiteVisitInterceptor's intent,
+                        // fixed to actually take effect).
+                        userActivityTracker.recordActivity(user, action, uri, ipAddress, deviceInfo);
                     }
                 }
             }

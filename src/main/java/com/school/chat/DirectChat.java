@@ -26,8 +26,12 @@ public class DirectChat {
     private List<ChatMessage> messages = new ArrayList<>();
 
     private LocalDateTime createdAt;
+    @Indexed
     private LocalDateTime lastMessageAt;
 
+    // Indexed: countByHasUnreadForAdminTrue() runs on every page load for
+    // every admin (navbar badge), and was a full collection scan without this.
+    @Indexed
     private boolean hasUnreadForAdmin   = false;
     private boolean hasUnreadForStudent = false;
 

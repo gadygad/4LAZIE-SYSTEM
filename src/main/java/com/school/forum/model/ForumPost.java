@@ -3,6 +3,7 @@ package com.school.forum.model;
 import com.school.auth.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -27,6 +28,10 @@ public class ForumPost {
 
     private String content;
 
+    // The forum feed sorts by this constantly (findTop50/300ByOrderByCreatedAtDesc,
+    // and getTrendingPosts() which isn't even cached) — without an index every
+    // one of those was a full collection scan.
+    @Indexed
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private int likesCount = 0;

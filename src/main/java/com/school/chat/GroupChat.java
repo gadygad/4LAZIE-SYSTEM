@@ -1,6 +1,7 @@
 package com.school.chat;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public class GroupChat {
     private String name;
     private String groupPicture;
     private String createdBy;
+    // GroupChatRepository.findByMemberIdsContaining(userId) filters on this.
+    @Indexed
     private Set<String> memberIds = new LinkedHashSet<>();
     private List<ChatMessage> messages = new ArrayList<>();
     private LocalDateTime createdAt = LocalDateTime.now();

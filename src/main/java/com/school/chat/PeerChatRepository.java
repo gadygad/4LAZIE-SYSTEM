@@ -14,6 +14,13 @@ public interface PeerChatRepository extends MongoRepository<PeerChat, String> {
     @Query("{ '$or': [ { 'user1Id': ?0 }, { 'user2Id': ?0 } ] }")
     List<PeerChat> findAllForUser(String userId);
 
+    // Same, but lets the caller cap it at the query level via Pageable (e.g.
+    // PageRequest.of(0, 5, Sort.by(DESC, "lastMessageAt"))) — for the navbar
+    // preview dropdown, shown on every page, which only needs the 5 most
+    // recent instead of a user's entire peer-chat history.
+    @Query("{ '$or': [ { 'user1Id': ?0 }, { 'user2Id': ?0 } ] }")
+    List<PeerChat> findForUser(String userId, org.springframework.data.domain.Pageable pageable);
+
     @Query(value = "{ '$or': [ { 'user1Id': ?0, 'hasUnreadForUser1': true }, { 'user2Id': ?0, 'hasUnreadForUser2': true } ] }", count = true)
     long countUnreadForUser(String userId);
 }

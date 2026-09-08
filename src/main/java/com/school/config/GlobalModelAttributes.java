@@ -67,17 +67,24 @@ public class GlobalModelAttributes {
                     model.addAttribute("user", user);
                     // Add notification details
                     try {
-                        java.util.List<com.school.notification.Notification> allNotifs = notificationService.getUserNotifications(user.getId());
-                        java.util.List<com.school.notification.Notification> recentNotifs = allNotifs.stream().limit(10).toList();
+                        // Only the 10 most recent are ever shown in the navbar
+                        // dropdown — fetched at the query level (see
+                        // NotificationRepository.findTop10...) instead of a
+                        // user's entire notification history on every page.
+                        java.util.List<com.school.notification.Notification> recentNotifs = notificationService.getRecentUserNotifications(user.getId());
                         model.addAttribute("notifications", recentNotifs);
                         model.addAttribute("unreadNotificationCount", notificationService.getUnreadCount(user.getId()));
-                        
-                        // Add DirectChat unread counts globally
+
+                        // Add DirectChat unread counts globally. Only the 5
+                        // most recent chats are needed for the preview
+                        // dropdown below — getAllChats()/getStudentInbox()
+                        // (every chat, each with its full embedded message
+                        // history) are for the actual inbox pages, not this.
                         long unreadDirect = 0;
-                        java.util.List<com.school.chat.DirectChat> directChats = new java.util.ArrayList<>();
+                        java.util.List<com.school.chat.DirectChat> directChats;
                         if (user.getRole() != null && (user.getRole().name().equals("ADMIN") || user.getRole().name().equals("SUPER_ADMIN"))) {
                             unreadDirect = directChatService.getTotalUnreadForAdmin();
-                            directChats = directChatService.getAllChats();
+                            directChats = directChatService.getRecentChats();
                             model.addAttribute("totalUnreadAdmin", unreadDirect);
                             // Only queried for admins who can actually act on it — a
                             // SUPER_ADMIN, or an ADMIN specifically granted the
@@ -89,13 +96,14 @@ public class GlobalModelAttributes {
                             }
                         } else {
                             unreadDirect = directChatService.getUnreadCountForStudent(user.getId());
-                            directChats = directChatService.getStudentInbox(user.getId());
+                            directChats = directChatService.getRecentStudentInbox(user.getId());
                             model.addAttribute("totalUnreadStudent", unreadDirect);
                         }
 
-                        // Add PeerChat unread counts globally
+                        // Add PeerChat unread counts globally — same reasoning,
+                        // capped to the 5 most recent for the preview dropdown.
                         long unreadPeer = peerChatService.getUnreadCount(user.getId());
-                        java.util.List<com.school.chat.PeerChat> peerChats = peerChatService.getInbox(user.getId());
+                        java.util.List<com.school.chat.PeerChat> peerChats = peerChatService.getRecentInbox(user.getId());
                         
                         model.addAttribute("unreadMessageCount", unreadDirect + unreadPeer);
 
