@@ -193,6 +193,69 @@ public class NoteService {
         triggerNotificationsForNote(note, loggedInUser, appUrl);
     }
 
+    // Called instead of uploadAndSaveNote() when the admin confirms, from the
+    // duplicate-file warning, that what they're about to upload is the exact
+    // same file (byte-for-byte, per fileHash) as one already on the site —
+    // the whole point is to make ANOTHER course able to see it without ever
+    // touching FileStorageService again, so no second copy of the PDF is
+    // ever written to Cloudinary/disk. The existing Note's own fileUrl and
+    // fileHash are simply reused.
+    public Map<String, Object> linkExistingNoteToCourse(String existingNoteId, String title, String programType,
+                                                          Integer levelNo, Integer semesterNo, String moduleName,
+                                                          String moduleCode, String category, String academicYear,
+                                                          Integer unitNumber, com.school.auth.User loggedInUser) {
+        Note existing = noteRepository.findById(existingNoteId)
+                .orElseThrow(() -> new IllegalArgumentException("The original file no longer exists."));
+
+        boolean sameSlot = java.util.Objects.equals(existing.getLevelNo(), levelNo)
+                && java.util.Objects.equals(existing.getSemesterNo(), semesterNo)
+                && java.util.Objects.equals(existing.getCategory(), category)
+                && existing.getModuleName() != null && moduleName != null
+                && existing.getModuleName().trim().equalsIgnoreCase(moduleName.trim());
+
+        Map<String, Object> result = new HashMap<>();
+        if (sameSlot) {
+            // Same Level/Semester/Module/Category as the existing note — this
+            // is just another course teaching the identical slot, so extend
+            // that ONE note's visibility instead of creating a second record.
+            java.util.LinkedHashSet<String> programs = new java.util.LinkedHashSet<>();
+            if (existing.getApplicablePrograms() != null) programs.addAll(existing.getApplicablePrograms());
+            programs.add(programType);
+            programs.remove(existing.getProgramType());
+            existing.setApplicablePrograms(new ArrayList<>(programs));
+            existing.setIsGeneral(true);
+            noteRepository.save(existing);
+            result.put("mode", "linked");
+            result.put("noteId", existing.getId());
+            return result;
+        }
+
+        // Different slot (level/semester/module/category) — that genuinely
+        // needs its own record so browsing/filtering for THIS slot finds it,
+        // but the file itself is never re-uploaded: same fileUrl + fileHash
+        // as the original, so storage only ever holds the one copy.
+        Note note = new Note();
+        note.setTitle(title);
+        note.setProgramType(programType);
+        note.setLevelNo(levelNo);
+        note.setSemesterNo(semesterNo);
+        note.setModuleName(moduleName != null && !moduleName.isBlank() ? moduleName.trim().toUpperCase() : "GENERAL MODULE");
+        note.setModuleCode(moduleCode != null ? moduleCode.trim().toUpperCase() : "");
+        note.setCategory(category == null || category.isBlank() ? "Note" : category);
+        note.setUnitNumber(unitNumber);
+        note.setAcademicYear(academicYear != null ? academicYear.trim() : null);
+        note.setFilename(existing.getFilename());
+        note.setFileUrl(existing.getFileUrl());
+        note.setFileHash(existing.getFileHash());
+        note.setUploadDate(java.time.LocalDateTime.now());
+        note.setIsPublic(true);
+        note.setInstitution(loggedInUser.getInstitution());
+        noteRepository.save(note);
+        result.put("mode", "created");
+        result.put("noteId", note.getId());
+        return result;
+    }
+
     // "General Subject" is meant to mean "shared by the other courses that
     // also teach this subject" — not "visible to literally every program at
     // this level/semester" (which is what a blanket isGeneral==true check

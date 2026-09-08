@@ -438,6 +438,9 @@
                                 <div style="min-width: 0; flex: 1;">
                                     <div class="fw-bold" id="duplicateWarningTitle" style="color: #92400e; font-size: 0.85rem;">This might already be uploaded</div>
                                     <div id="duplicateWarningList" style="font-size: 0.78rem; color: #92400e;"></div>
+                                    <button type="button" id="linkExistingBtn" onclick="linkExistingInstead()" style="display: none; margin-top: 8px; border: 1px solid rgba(217, 119, 6, 0.4); background: rgba(217, 119, 6, 0.12); color: #92400e; font-weight: 600; font-size: 0.75rem; padding: 6px 12px; border-radius: 10px;">
+                                        <i class="bi bi-link-45deg me-1"></i>Link this course to it instead (no re-upload)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -751,10 +754,13 @@
             return d.innerHTML;
         }
 
+        let linkableExistingNoteId = null;
+
         function renderDuplicateWarning(exactMatches, slotMatches, similarMatches) {
             const box = document.getElementById('duplicateWarning');
             const titleEl = document.getElementById('duplicateWarningTitle');
             const listEl = document.getElementById('duplicateWarningList');
+            const linkBtn = document.getElementById('linkExistingBtn');
 
             window.__hasUnconfirmedExactDuplicate = exactMatches.length > 0;
 
@@ -767,12 +773,22 @@
             if (exactMatches.length > 0) {
                 items = exactMatches;
                 message = 'This exact file is already uploaded';
+                // Only offer the storage-free "link instead" shortcut when
+                // we're CERTAIN (byte-identical file) it's the same document —
+                // never for a slot or title match, which could still be a
+                // genuinely different file.
+                linkableExistingNoteId = exactMatches[0].id;
+                linkBtn.style.display = 'inline-block';
             } else if (slotMatches.length > 0) {
                 items = slotMatches;
                 message = 'Something is already uploaded for this exact Program / Level / Semester / Module / Category';
+                linkableExistingNoteId = null;
+                linkBtn.style.display = 'none';
             } else {
                 items = similarMatches;
                 message = 'A similarly-titled file already exists';
+                linkableExistingNoteId = null;
+                linkBtn.style.display = 'none';
             }
             titleEl.textContent = message;
 
@@ -787,7 +803,67 @@
         function hideDuplicateWarning() {
             const box = document.getElementById('duplicateWarning');
             if (box) box.style.display = 'none';
+            const linkBtn = document.getElementById('linkExistingBtn');
+            if (linkBtn) linkBtn.style.display = 'none';
             window.__hasUnconfirmedExactDuplicate = false;
+            linkableExistingNoteId = null;
+        }
+
+        // The header value Spring's CSRF filter actually validates against —
+        // read from the same per-render token Thymeleaf embeds in the upload
+        // <form>'s hidden _csrf field, NOT the raw XSRF-TOKEN cookie (Spring
+        // Security 6 masks the cookie value before comparing, so a header
+        // built from the raw cookie fails silently with a 403).
+        function csrfHeader() {
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const headerName = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            const headers = {};
+            headers[headerName] = token;
+            return headers;
+        }
+
+        function linkExistingInstead() {
+            if (!linkableExistingNoteId) return;
+            const btn = document.getElementById('linkExistingBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Linking...';
+
+            const params = new URLSearchParams();
+            params.set('existingNoteId', linkableExistingNoteId);
+            params.set('title', document.getElementById('title').value.trim());
+            params.set('programType', document.getElementById('programType').value);
+            params.set('levelNo', document.getElementById('levelNo').value);
+            params.set('semesterNo', document.getElementById('semesterNo').value);
+            params.set('moduleName', document.getElementById('moduleName').value.trim());
+            params.set('moduleCode', document.getElementById('moduleCode').value.trim());
+            params.set('category', document.getElementById('category').value);
+            params.set('academicYear', document.getElementById('academicYear').value.trim());
+            const unitNumber = document.getElementById('unitNumber').value;
+            if (unitNumber) params.set('unitNumber', unitNumber);
+
+            fetch('/upload/link-existing', {
+                method: 'POST',
+                headers: Object.assign({ 'Content-Type': 'application/x-www-form-urlencoded' }, csrfHeader()),
+                body: params.toString()
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-link-45deg me-1"></i>Link this course to it instead (no re-upload)';
+                        return;
+                    }
+                    const msg = data.mode === 'linked'
+                        ? 'Linked! This subject now shows for the selected course too — no extra copy stored.'
+                        : 'Linked! Added for this Level/Semester without storing a second copy of the file.';
+                    window.location.href = '/upload?success=' + encodeURIComponent(msg);
+                })
+                .catch(() => {
+                    alert('Could not link the existing file. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-link-45deg me-1"></i>Link this course to it instead (no re-upload)';
+                });
         }
 
         document.getElementById('title').addEventListener('input', scheduleDuplicateCheck);

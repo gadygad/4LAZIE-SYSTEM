@@ -443,6 +443,36 @@ public class NotesController {
                 category, academicYear, unitNumber);
     }
 
+    // Offered as a one-click alternative right in the duplicate-file warning
+    // once check-duplicate has confirmed (via SHA-256) that the picked file
+    // is byte-identical to one already on the site — makes it visible to
+    // this course too without ever re-uploading the same PDF a second time.
+    // A real write, so unlike check-duplicate this stays CSRF-protected.
+    @PostMapping("/upload/link-existing")
+    @ResponseBody
+    public Map<String, Object> linkExisting(
+            @RequestParam String existingNoteId,
+            @RequestParam String title,
+            @RequestParam String programType,
+            @RequestParam Integer levelNo,
+            @RequestParam Integer semesterNo,
+            @RequestParam(required = false) String moduleName,
+            @RequestParam(required = false) String moduleCode,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String academicYear,
+            @RequestParam(required = false) Integer unitNumber) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) {
+            return Map.of("error", "Please log in again.");
+        }
+        try {
+            return noteService.linkExistingNoteToCourse(existingNoteId, title, programType, levelNo, semesterNo,
+                    moduleName, moduleCode, category, academicYear, unitNumber, loggedInUser);
+        } catch (Exception e) {
+            return Map.of("error", e.getMessage() != null ? e.getMessage() : "Failed to link the existing file.");
+        }
+    }
+
     @PostMapping("/upload")
     public String uploadNote(@jakarta.validation.Valid @ModelAttribute("noteDTO") com.school.dto.NoteUploadDTO noteDTO,
                              org.springframework.validation.BindingResult bindingResult,
