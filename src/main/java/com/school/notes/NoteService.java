@@ -12,11 +12,18 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,6 +181,7 @@ public class NoteService {
         String fileUrl = fileStorageService.uploadFile(file);
         note.setFilename(file.getOriginalFilename());
         note.setFileUrl(fileUrl);
+        note.setFileHash(sha256(file.getBytes()));
         note.setUploadDate(java.time.LocalDateTime.now());
         note.setIsPublic(true);
         note.setInstitution(loggedInUser.getInstitution());
@@ -240,6 +248,7 @@ public class NoteService {
         // Upload the file once
         String fileUrl = fileStorageService.uploadFile(file);
         String originalFilename = file.getOriginalFilename();
+        String fileHash = sha256(file.getBytes());
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
 
         // Targets that share the same (level, semester, moduleName) are the
@@ -266,6 +275,7 @@ public class NoteService {
             note.setAcademicYear(academicYear);
             note.setFilename(originalFilename);
             note.setFileUrl(fileUrl);
+            note.setFileHash(fileHash);
             note.setUploadDate(now);
             note.setIsPublic(true);
             note.setInstitution(loggedInUser.getInstitution());
@@ -295,6 +305,110 @@ public class NoteService {
             // We can add push notifications here if needed, but skipped for brevity or add it similarly
         }
     }
+
+    private String sha256(byte[] bytes) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(bytes);
+            StringBuilder sb = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // SHA-256 is guaranteed available on every JVM — this can't
+            // actually happen, but a null hash just disables exact-match
+            // duplicate detection for this one upload rather than failing it.
+            log.warn("SHA-256 unavailable, skipping file hash", e);
+            return null;
+        }
+    }
+
+    // Warns an admin uploading a file about anything that looks like it's
+    // already on the site — an exact byte-for-byte re-upload (any title,
+    // any category), or a title that's suspiciously similar to something
+    // already filed under the same module (any category). Returns at most
+    // a handful of each, ranked by how confident the match is.
+    public Map<String, Object> checkForDuplicates(String fileHash, String title, String moduleName,
+                                                    String programType, Integer levelNo, Integer semesterNo) {
+        List<Map<String, Object>> exactMatches = new ArrayList<>();
+        Set<String> exactMatchIds = new HashSet<>();
+        if (fileHash != null && !fileHash.isBlank()) {
+            for (Note n : noteRepository.findByFileHash(fileHash)) {
+                exactMatches.add(noteSummary(n, 1.0));
+                exactMatchIds.add(n.getId());
+            }
+        }
+
+        List<Map<String, Object>> similarMatches = new ArrayList<>();
+        if (title != null && !title.isBlank()) {
+            List<Note> candidates;
+            if (moduleName != null && !moduleName.isBlank()) {
+                candidates = noteRepository.findByModuleNameIgnoreCase(moduleName.trim());
+            } else if (programType != null && levelNo != null && semesterNo != null) {
+                candidates = noteRepository.findByProgramTypeAndLevelNoAndSemesterNoOrderByIdDesc(programType, levelNo, semesterNo);
+            } else {
+                candidates = Collections.emptyList();
+            }
+            final double SIMILARITY_THRESHOLD = 0.62;
+            for (Note n : candidates) {
+                if (exactMatchIds.contains(n.getId())) continue;
+                double sim = titleSimilarity(title, n.getTitle());
+                if (sim >= SIMILARITY_THRESHOLD) {
+                    similarMatches.add(noteSummary(n, sim));
+                }
+            }
+            similarMatches.sort(Comparator.comparingDouble((Map<String, Object> m) -> (Double) m.get("similarity")).reversed());
+            if (similarMatches.size() > 5) {
+                similarMatches = similarMatches.subList(0, 5);
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("exactMatches", exactMatches);
+        result.put("similarMatches", similarMatches);
+        return result;
+    }
+
+    private Map<String, Object> noteSummary(Note n, double similarity) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("id", n.getId());
+        m.put("title", n.getTitle());
+        m.put("category", n.getCategory());
+        m.put("moduleName", n.getModuleName());
+        m.put("uploadDate", n.getUploadDate() != null ? n.getUploadDate().toString() : null);
+        m.put("similarity", similarity);
+        return m;
+    }
+
+    private double titleSimilarity(String a, String b) {
+        String na = normalizeTitle(a);
+        String nb = normalizeTitle(b);
+        if (na.isEmpty() || nb.isEmpty()) return 0;
+        int dist = levenshtein(na, nb);
+        int maxLen = Math.max(na.length(), nb.length());
+        return 1.0 - ((double) dist / maxLen);
+    }
+
+    private String normalizeTitle(String s) {
+        return s == null ? "" : s.toLowerCase().replaceAll("[^a-z0-9]+", " ").trim();
+    }
+
+    private int levenshtein(String a, String b) {
+        int[] prev = new int[b.length() + 1];
+        int[] curr = new int[b.length() + 1];
+        for (int j = 0; j <= b.length(); j++) prev[j] = j;
+        for (int i = 1; i <= a.length(); i++) {
+            curr[0] = i;
+            for (int j = 1; j <= b.length(); j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                curr[j] = Math.min(Math.min(curr[j - 1] + 1, prev[j] + 1), prev[j - 1] + cost);
+            }
+            int[] tmp = prev; prev = curr; curr = tmp;
+        }
+        return prev[b.length()];
+    }
+
         private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
 
     public NoteService(NoteRepository noteRepository, CourseRepository courseRepository, SubjectRepository subjectRepository, com.school.core.FileStorageService fileStorageService, com.school.notification.NotificationService notificationService, com.school.core.EmailService emailService, com.school.auth.UserRepository userRepository, org.springframework.data.mongodb.core.MongoTemplate mongoTemplate) {

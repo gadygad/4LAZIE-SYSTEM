@@ -431,6 +431,17 @@
                             </div>
                         </div>
 
+                        <!-- Duplicate/Similarity Warning -->
+                        <div id="duplicateWarning" class="mt-2" style="display: none; border-radius: 14px; padding: 12px 14px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3);">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-exclamation-triangle-fill" style="color: #d97706; font-size: 1.1rem; margin-top: 1px;"></i>
+                                <div style="min-width: 0; flex: 1;">
+                                    <div class="fw-bold" id="duplicateWarningTitle" style="color: #92400e; font-size: 0.85rem;">This might already be uploaded</div>
+                                    <div id="duplicateWarningList" style="font-size: 0.78rem; color: #92400e;"></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="d-grid mt-2">
                             <button type="submit" id="uploadSubmitBtn" class="btn text-white fw-bold py-2 d-flex justify-content-center align-items-center" style="border-radius: 14px; font-size: 1.05rem; font-family: 'Outfit', sans-serif; letter-spacing: 1px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.95) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(16, 185, 129, 0.5); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden;" onmouseover="if(!this.classList.contains('loading')) { this.style.transform='translateY(-2px) scale(1.01)'; this.style.boxShadow='0 12px 25px rgba(16, 185, 129, 0.4)'; this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 1) 0%, rgba(5, 150, 105, 1) 100%)'; }" onmouseout="if(!this.classList.contains('loading')) { this.style.transform='none'; this.style.boxShadow='0 6px 15px rgba(16, 185, 129, 0.3)'; this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.95) 100%)'; }">
@@ -496,6 +507,7 @@
                         const opt = this.options[value];
                         document.getElementById('moduleName').value = opt.text.replace(/ \(.*\)$/, '');
                         document.getElementById('moduleCode').value = opt.code || '';
+                        scheduleDuplicateCheck();
                     }
                 }
             });
@@ -639,6 +651,115 @@
             // Deprecated logic: handled in Tom Select onChange event now
         }
 
+        // ---- Duplicate / similarity detection ----
+        // Warns before submit if this looks like something already on the
+        // site — an exact re-upload of the same file (any title/category),
+        // or a suspiciously similar title within the same module — so a
+        // solo admin doesn't have to remember everything they've uploaded.
+        function csrfToken() {
+            const match = document.cookie.match(new RegExp('(^| )XSRF-TOKEN=([^;]+)'));
+            return match ? match[2] : '';
+        }
+
+        let duplicateCheckTimer = null;
+        let currentFileHash = null;
+        window.__hasUnconfirmedExactDuplicate = false;
+
+        async function computeFileHash(file) {
+            const buffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function scheduleDuplicateCheck() {
+            clearTimeout(duplicateCheckTimer);
+            duplicateCheckTimer = setTimeout(runDuplicateCheck, 400);
+        }
+
+        async function runDuplicateCheck() {
+            const title = document.getElementById('title').value.trim();
+            if (!title && !currentFileHash) {
+                hideDuplicateWarning();
+                return;
+            }
+
+            const params = new URLSearchParams();
+            if (currentFileHash) params.set('fileHash', currentFileHash);
+            if (title) params.set('title', title);
+            const moduleName = document.getElementById('moduleName').value.trim();
+            if (moduleName) params.set('moduleName', moduleName);
+            const programType = document.getElementById('programType').value;
+            if (programType) params.set('programType', programType);
+            const levelNo = document.getElementById('levelNo').value;
+            if (levelNo) params.set('levelNo', levelNo);
+            const semesterNo = document.getElementById('semesterNo').value;
+            if (semesterNo) params.set('semesterNo', semesterNo);
+
+            try {
+                const res = await fetch('/upload/check-duplicate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': csrfToken() },
+                    body: params.toString()
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                renderDuplicateWarning(data.exactMatches || [], data.similarMatches || []);
+            } catch (e) {
+                console.error('Duplicate check failed', e);
+            }
+        }
+
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s == null ? '' : String(s);
+            return d.innerHTML;
+        }
+
+        function renderDuplicateWarning(exactMatches, similarMatches) {
+            const box = document.getElementById('duplicateWarning');
+            const titleEl = document.getElementById('duplicateWarningTitle');
+            const listEl = document.getElementById('duplicateWarningList');
+
+            window.__hasUnconfirmedExactDuplicate = exactMatches.length > 0;
+
+            if (exactMatches.length === 0 && similarMatches.length === 0) {
+                hideDuplicateWarning();
+                return;
+            }
+
+            const items = exactMatches.length > 0 ? exactMatches : similarMatches;
+            titleEl.textContent = exactMatches.length > 0
+                ? 'This exact file is already uploaded'
+                : 'A similarly-titled file already exists';
+
+            listEl.innerHTML = items.map(function(m) {
+                const when = m.uploadDate ? ' on ' + escapeHtml(String(m.uploadDate).substring(0, 10)) : '';
+                return '&bull; "' + escapeHtml(m.title) + '" &mdash; uploaded as <strong>' + escapeHtml(m.category || '?') + '</strong>' + when;
+            }).join('<br>');
+
+            box.style.display = 'block';
+        }
+
+        function hideDuplicateWarning() {
+            const box = document.getElementById('duplicateWarning');
+            if (box) box.style.display = 'none';
+            window.__hasUnconfirmedExactDuplicate = false;
+        }
+
+        document.getElementById('title').addEventListener('input', scheduleDuplicateCheck);
+
+        document.getElementById('file').addEventListener('change', async function() {
+            const f = this.files && this.files[0];
+            if (!f) { currentFileHash = null; return; }
+            try {
+                currentFileHash = await computeFileHash(f);
+            } catch (e) {
+                console.error('Hashing failed', e);
+                currentFileHash = null;
+            }
+            scheduleDuplicateCheck();
+        });
+
         // Upload Button Loading Animation (Premium Glassmorphism Effect)
         function showUploadLoading(form) {
             const btn = document.getElementById('uploadSubmitBtn');
@@ -670,6 +791,16 @@
 
             if (!form.checkValidity()) {
                 return true; // Let browser handle HTML5 validation UI
+            }
+
+            // An exact byte-for-byte match of an already-uploaded file is a
+            // near-certain accidental re-upload (possibly under a different
+            // category) — worth one last confirmation, unlike the softer
+            // title-similarity warning which never blocks submission.
+            if (window.__hasUnconfirmedExactDuplicate) {
+                if (!confirm('This exact file already appears to be uploaded (see the warning above). Upload it again anyway?')) {
+                    return false;
+                }
             }
 
             // Set loading state

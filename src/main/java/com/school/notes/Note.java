@@ -45,6 +45,14 @@ public class Note {
 
     private String filename;
     private String fileUrl;
+
+    // SHA-256 of the uploaded file's bytes, computed at upload time — lets
+    // the upload page catch the exact same file being re-uploaded under a
+    // different title/category (e.g. already filed as CAT 1, now being
+    // uploaded again as Notes) regardless of filename or metadata.
+    @Indexed
+    private String fileHash;
+
     private String academicYear;
 
     // JSON content for dynamically generated exams (client-side PDF generation)
@@ -127,6 +135,8 @@ public class Note {
     public void setFilename(String filename) { this.filename = filename; }
     public String getFileUrl() { return fileUrl; }
     public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+    public String getFileHash() { return fileHash; }
+    public void setFileHash(String fileHash) { this.fileHash = fileHash; }
     public String getContentJson() { return contentJson; }
     public void setContentJson(String contentJson) { this.contentJson = contentJson; }
     public String getAcademicYear() { return academicYear; }

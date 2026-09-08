@@ -419,6 +419,26 @@ public class NotesController {
         return "notes/upload";
     }
 
+    // Called from the upload form via fetch() as soon as the admin picks a
+    // file / types a title, so a duplicate is caught before they submit
+    // instead of after — the hash is computed client-side (Web Crypto) so
+    // the whole file doesn't need to be sent just to check it.
+    @PostMapping("/upload/check-duplicate")
+    @ResponseBody
+    public Map<String, Object> checkDuplicate(
+            @RequestParam(required = false) String fileHash,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String moduleName,
+            @RequestParam(required = false) String programType,
+            @RequestParam(required = false) Integer levelNo,
+            @RequestParam(required = false) Integer semesterNo) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) {
+            return Map.of("exactMatches", List.of(), "similarMatches", List.of());
+        }
+        return noteService.checkForDuplicates(fileHash, title, moduleName, programType, levelNo, semesterNo);
+    }
+
     @PostMapping("/upload")
     public String uploadNote(@jakarta.validation.Valid @ModelAttribute("noteDTO") com.school.dto.NoteUploadDTO noteDTO,
                              org.springframework.validation.BindingResult bindingResult,

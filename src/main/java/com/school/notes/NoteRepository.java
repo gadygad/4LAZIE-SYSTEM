@@ -86,6 +86,12 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     List<Note> findByCategoryIgnoreCaseOrderByIdDesc(String category);
 
+    // Duplicate-upload detection: an exact file-hash match is the same file
+    // re-uploaded regardless of title/category; the module-scoped list feeds
+    // the fuzzy title-similarity check across every category in that module.
+    List<Note> findByFileHash(String fileHash);
+    List<Note> findByModuleNameIgnoreCase(String moduleName);
+
     class AggregationCount {
         private Long total;
         public Long getTotal() { return total; }

@@ -88,7 +88,8 @@ public class SecurityConfig {
                         "/community/post/*/like", "/community/post/*/comment", "/community/comment/*/like",
                         "/community/post/*/edit", "/community/post/*/delete",
                         "/community/comment/*/edit", "/community/comment/*/delete",
-                        "/community/post/*/report", "/community/comment/*/report")
+                        "/community/post/*/report", "/community/comment/*/report",
+                        "/upload/check-duplicate")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             )
             .sessionManagement(session -> session
