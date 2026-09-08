@@ -525,8 +525,11 @@
             });
             categoryTs.on('change', function() {
                 toggleUnit();
+                scheduleDuplicateCheck();
             });
-            
+            unitTs.on('change', scheduleDuplicateCheck);
+            document.getElementById('academicYear').addEventListener('input', scheduleDuplicateCheck);
+
             toggleUnit(); // initial call
             
             // Initial fetch if program selected
@@ -694,6 +697,12 @@
             if (levelNo) params.set('levelNo', levelNo);
             const semesterNo = document.getElementById('semesterNo').value;
             if (semesterNo) params.set('semesterNo', semesterNo);
+            const category = document.getElementById('category').value;
+            if (category) params.set('category', category);
+            const academicYear = document.getElementById('academicYear').value.trim();
+            if (academicYear) params.set('academicYear', academicYear);
+            const unitNumber = document.getElementById('unitNumber').value;
+            if (unitNumber) params.set('unitNumber', unitNumber);
 
             try {
                 const res = await fetch('/upload/check-duplicate', {
@@ -703,7 +712,7 @@
                 });
                 if (!res.ok) return;
                 const data = await res.json();
-                renderDuplicateWarning(data.exactMatches || [], data.similarMatches || []);
+                renderDuplicateWarning(data.exactMatches || [], data.slotMatches || [], data.similarMatches || []);
             } catch (e) {
                 console.error('Duplicate check failed', e);
             }
@@ -715,22 +724,30 @@
             return d.innerHTML;
         }
 
-        function renderDuplicateWarning(exactMatches, similarMatches) {
+        function renderDuplicateWarning(exactMatches, slotMatches, similarMatches) {
             const box = document.getElementById('duplicateWarning');
             const titleEl = document.getElementById('duplicateWarningTitle');
             const listEl = document.getElementById('duplicateWarningList');
 
             window.__hasUnconfirmedExactDuplicate = exactMatches.length > 0;
 
-            if (exactMatches.length === 0 && similarMatches.length === 0) {
+            if (exactMatches.length === 0 && slotMatches.length === 0 && similarMatches.length === 0) {
                 hideDuplicateWarning();
                 return;
             }
 
-            const items = exactMatches.length > 0 ? exactMatches : similarMatches;
-            titleEl.textContent = exactMatches.length > 0
-                ? 'This exact file is already uploaded'
-                : 'A similarly-titled file already exists';
+            let items, message;
+            if (exactMatches.length > 0) {
+                items = exactMatches;
+                message = 'This exact file is already uploaded';
+            } else if (slotMatches.length > 0) {
+                items = slotMatches;
+                message = 'Something is already uploaded for this exact Program / Level / Semester / Module / Category';
+            } else {
+                items = similarMatches;
+                message = 'A similarly-titled file already exists';
+            }
+            titleEl.textContent = message;
 
             listEl.innerHTML = items.map(function(m) {
                 const when = m.uploadDate ? ' on ' + escapeHtml(String(m.uploadDate).substring(0, 10)) : '';

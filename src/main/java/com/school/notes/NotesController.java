@@ -431,12 +431,16 @@ public class NotesController {
             @RequestParam(required = false) String moduleName,
             @RequestParam(required = false) String programType,
             @RequestParam(required = false) Integer levelNo,
-            @RequestParam(required = false) Integer semesterNo) {
+            @RequestParam(required = false) Integer semesterNo,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String academicYear,
+            @RequestParam(required = false) Integer unitNumber) {
         User loggedInUser = getLoggedInUser();
         if (loggedInUser == null) {
-            return Map.of("exactMatches", List.of(), "similarMatches", List.of());
+            return Map.of("exactMatches", List.of(), "slotMatches", List.of(), "similarMatches", List.of());
         }
-        return noteService.checkForDuplicates(fileHash, title, moduleName, programType, levelNo, semesterNo);
+        return noteService.checkForDuplicates(fileHash, title, moduleName, programType, levelNo, semesterNo,
+                category, academicYear, unitNumber);
     }
 
     @PostMapping("/upload")

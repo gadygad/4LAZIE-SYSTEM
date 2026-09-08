@@ -325,18 +325,47 @@ public class NoteService {
     }
 
     // Warns an admin uploading a file about anything that looks like it's
-    // already on the site — an exact byte-for-byte re-upload (any title,
-    // any category), or a title that's suspiciously similar to something
-    // already filed under the same module (any category). Returns at most
-    // a handful of each, ranked by how confident the match is.
+    // already on the site, ranked by how confident the match is:
+    //  1. exactMatches   — byte-for-byte the same file (any title/category)
+    //  2. slotMatches    — a note already filed for this exact
+    //                      Program/Level/Semester/Module/Category (and Year/
+    //                      Unit, once those are filled in), just under a
+    //                      different title — e.g. re-uploading "CAT 1" for a
+    //                      subject that already has one, worded differently
+    //  3. similarMatches — a suspiciously similar title anywhere in the same
+    //                      module, across every category
+    // Returns at most a handful of each.
     public Map<String, Object> checkForDuplicates(String fileHash, String title, String moduleName,
-                                                    String programType, Integer levelNo, Integer semesterNo) {
+                                                    String programType, Integer levelNo, Integer semesterNo,
+                                                    String category, String academicYear, Integer unitNumber) {
         List<Map<String, Object>> exactMatches = new ArrayList<>();
-        Set<String> exactMatchIds = new HashSet<>();
+        Set<String> matchedIds = new HashSet<>();
         if (fileHash != null && !fileHash.isBlank()) {
             for (Note n : noteRepository.findByFileHash(fileHash)) {
                 exactMatches.add(noteSummary(n, 1.0));
-                exactMatchIds.add(n.getId());
+                matchedIds.add(n.getId());
+            }
+        }
+
+        List<Map<String, Object>> slotMatches = new ArrayList<>();
+        if (programType != null && !programType.isBlank() && levelNo != null && semesterNo != null
+                && moduleName != null && !moduleName.isBlank() && category != null && !category.isBlank()) {
+            org.springframework.data.mongodb.core.query.Query slotQuery = new org.springframework.data.mongodb.core.query.Query();
+            slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("programType").is(programType));
+            slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("levelNo").is(levelNo));
+            slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("semesterNo").is(semesterNo));
+            slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("moduleName").regex("^" + java.util.regex.Pattern.quote(moduleName.trim()) + "$", "i"));
+            slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("category").is(category));
+            if (academicYear != null && !academicYear.isBlank()) {
+                slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("academicYear").is(academicYear.trim().toUpperCase()));
+            }
+            if (unitNumber != null) {
+                slotQuery.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("unitNumber").is(unitNumber));
+            }
+            for (Note n : mongoTemplate.find(slotQuery, Note.class)) {
+                if (matchedIds.contains(n.getId())) continue;
+                slotMatches.add(noteSummary(n, -1));
+                matchedIds.add(n.getId());
             }
         }
 
@@ -352,7 +381,7 @@ public class NoteService {
             }
             final double SIMILARITY_THRESHOLD = 0.62;
             for (Note n : candidates) {
-                if (exactMatchIds.contains(n.getId())) continue;
+                if (matchedIds.contains(n.getId())) continue;
                 double sim = titleSimilarity(title, n.getTitle());
                 if (sim >= SIMILARITY_THRESHOLD) {
                     similarMatches.add(noteSummary(n, sim));
@@ -366,6 +395,7 @@ public class NoteService {
 
         Map<String, Object> result = new HashMap<>();
         result.put("exactMatches", exactMatches);
+        result.put("slotMatches", slotMatches);
         result.put("similarMatches", similarMatches);
         return result;
     }
