@@ -574,7 +574,13 @@
                         var val = start + i;
                         levelTs.addOption({value: String(val), text: prefix + " " + val});
                     }
-                    levelTs.addItem(String(start));
+                    // Silent: this already runs right before fetchModules() in
+                    // the programType change handler below, so firing levelTs's
+                    // own 'change' here too would trigger a SECOND, redundant
+                    // /api/subjects request racing the first — whichever
+                    // response happened to arrive last would win, sometimes
+                    // leaving the wrong (previous level's) subjects showing.
+                    levelTs.addItem(String(start), true);
                 }
             } else {
                 levelLabel.innerText = "Level";
@@ -583,49 +589,69 @@
                     levelTs.addOption({value: "4", text: "Level 4"});
                     levelTs.addOption({value: "5", text: "Level 5"});
                     levelTs.addOption({value: "6", text: "Level 6"});
-                    levelTs.addItem("5");
+                    levelTs.addItem("5", true);
                 }
             }
         }
 
-        // AJAX to fetch modules based on Program, Level, and Semester
+        // AJAX to fetch modules based on Program, Level, and Semester.
+        // Debounced + sequence-guarded: picking Level then Semester in quick
+        // succession used to fire two overlapping requests, and whichever
+        // response happened to arrive back LAST would win — not whichever was
+        // sent last — so the dropdown could settle on the wrong level's
+        // subjects. Coalescing rapid changes into one request, and ignoring
+        // any response that isn't from the most recent request, fixes both
+        // the flicker and the wasted network calls.
+        let moduleFetchSeq = 0;
+        let moduleFetchTimer = null;
+
         function fetchModules() {
             const programType = document.getElementById('programType').value;
-            const levelNo = document.getElementById('levelNo').value;
-            const semesterNo = document.getElementById('semesterNo').value;
             const loading = document.getElementById('moduleLoading');
 
             if (!programType) return; // Don't fetch if program isn't selected
 
             loading.style.display = 'block';
-            
+
             if(moduleTs) {
                 moduleTs.clearOptions();
                 moduleTs.clear();
                 moduleTs.disable();
                 moduleTs.addOption({value: "", text: "Loading..."});
-                moduleTs.addItem("");
+                moduleTs.addItem("", true);
             }
 
-            fetch(`/api/subjects?programType=${programType}&levelNo=${levelNo}&semesterNo=${semesterNo}`)
+            clearTimeout(moduleFetchTimer);
+            moduleFetchTimer = setTimeout(runModuleFetch, 150);
+        }
+
+        function runModuleFetch() {
+            const programType = document.getElementById('programType').value;
+            const levelNo = document.getElementById('levelNo').value;
+            const semesterNo = document.getElementById('semesterNo').value;
+            const loading = document.getElementById('moduleLoading');
+            const seq = ++moduleFetchSeq;
+
+            fetch(`/api/subjects?programType=${encodeURIComponent(programType)}&levelNo=${encodeURIComponent(levelNo)}&semesterNo=${encodeURIComponent(semesterNo)}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (seq !== moduleFetchSeq) return; // superseded by a newer request
                     loading.style.display = 'none';
                     if(moduleTs) {
                         moduleTs.enable();
                         moduleTs.clearOptions();
                         moduleTs.clear();
-                        
+
                         if (data.length === 0) {
                             moduleTs.addOption({value: "", text: "No modules found"});
-                            moduleTs.addItem("");
+                            moduleTs.addItem("", true);
                             document.getElementById('moduleName').value = '';
                             document.getElementById('moduleCode').value = '';
                             return;
                         }
 
                         moduleTs.addOption({value: "", text: "Select Subject / Module"});
-                        
+
                         data.forEach(subject => {
                             moduleTs.addOption({
                                 value: subject.name,
@@ -637,6 +663,7 @@
                     }
                 })
                 .catch(error => {
+                    if (seq !== moduleFetchSeq) return;
                     console.error('Error fetching modules:', error);
                     loading.style.display = 'none';
                     if(moduleTs) {
@@ -644,7 +671,7 @@
                         moduleTs.clearOptions();
                         moduleTs.clear();
                         moduleTs.addOption({value: "", text: "Error loading modules"});
-                        moduleTs.addItem("");
+                        moduleTs.addItem("", true);
                     }
                 });
         }
