@@ -822,7 +822,7 @@ public class AdminController {
 
         note.setTitle(title);
         note.setModuleCode(moduleCode);
-        note.setModuleName(moduleName);
+        note.setModuleName(moduleName != null && !moduleName.isBlank() ? moduleName : "GENERAL MODULE");
         note.setAcademicYear(academicYear);
         note.setLevelNo(levelNo);
         note.setSemesterNo(semesterNo);

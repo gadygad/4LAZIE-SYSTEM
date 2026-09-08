@@ -85,6 +85,7 @@ public class HomeController {
         
         // Fetch distinct module names from database and map to advice
         List<ModuleAdvice> criticalModules = noteRepository.findDistinctModuleNames().stream()
+                .filter(m -> m != null && !m.isBlank())
                 .map(HomeController::getAdviceForModule)
                 .collect(Collectors.toList());
 
