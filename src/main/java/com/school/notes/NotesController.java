@@ -159,8 +159,7 @@ public class NotesController {
             if (program == null || program.isEmpty()) program = "DIP_CSE";
         } else if (program == null || program.isEmpty()) {
             // Fallback for admins/guests when program is empty
-            String role = loggedInUser.getRole() != null ? loggedInUser.getRole().name() : Role.STUDENT.name();
-            program = (loggedInUser != null && loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty()) 
+            program = (loggedInUser != null && loggedInUser.getCourseProgram() != null && !loggedInUser.getCourseProgram().isEmpty())
                       ? loggedInUser.getCourseProgram() : "DIP_CSE";
         }
 
