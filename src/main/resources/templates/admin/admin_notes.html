@@ -173,35 +173,6 @@
                                                 </button>
                                             </form>
                                         </div>
-
-                                        <!-- Link-to-Course modal: reuses the same no-reupload linking logic
-                                             the upload page's duplicate warning offers, but for a note that's
-                                             already been sitting on the site — for when General was never
-                                             checked, or the target course's Subject catalog never had a
-                                             matching entry so General's own auto-detection couldn't find it. -->
-                                        <div class="modal fade" th:id="'linkModal' + ${note.id}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content" style="border-radius: 20px; border: none;">
-                                                    <form th:action="@{'/admin/notes/' + ${note.id} + '/link-course'}" method="post">
-                                                        <div class="modal-header border-0 pb-0">
-                                                            <h6 class="modal-title fw-bold" style="color: #1e293b;">Link "<span th:text="${note.title}">Note</span>" to another course</h6>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p class="small text-muted mb-3">Makes this exact file visible to students in the selected course too — no second copy is stored.</p>
-                                                            <select name="targetProgramType" class="form-select" required>
-                                                                <option value="" disabled selected>Select course...</option>
-                                                                <option th:each="c : ${courses}" th:if="${c.programType != note.programType}" th:value="${c.programType}" th:text="${c.name}">Course</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="modal-footer border-0 pt-0">
-                                                            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" class="btn btn-primary rounded-pill px-3"><i class="bi bi-link-45deg me-1"></i>Link</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(notes)}">
@@ -305,6 +276,40 @@
         }
     </script>
 
+    <!-- Link-to-Course modals: one per note, reusing the same no-reupload
+         linking logic the upload page's duplicate warning offers, but for a
+         note already sitting on the site — for when General was never
+         checked, or the target course's Subject catalog never had a
+         matching entry so General's own auto-detection couldn't find it.
+         Deliberately placed here, as a direct child of <body>, rather than
+         nested inside each table row: a Bootstrap modal is position:fixed,
+         and CSS transform on ANY ancestor (several row/button hover effects
+         above use inline transform) turns that into a new containing block,
+         so the modal renders relative to that ancestor instead of the
+         viewport — the backdrop shows, but the dialog itself doesn't. -->
+    <div th:each="note : ${notes}" class="modal fade" th:id="'linkModal' + ${note.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; border: none;">
+                <form th:action="@{'/admin/notes/' + ${note.id} + '/link-course'}" method="post">
+                    <div class="modal-header border-0 pb-0">
+                        <h6 class="modal-title fw-bold" style="color: #1e293b;">Link "<span th:text="${note.title}">Note</span>" to another course</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="small text-muted mb-3">Makes this exact file visible to students in the selected course too — no second copy is stored.</p>
+                        <select name="targetProgramType" class="form-select" required>
+                            <option value="" disabled selected>Select course...</option>
+                            <option th:each="c : ${courses}" th:if="${c.programType != note.programType}" th:value="${c.programType}" th:text="${c.name}">Course</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-3"><i class="bi bi-link-45deg me-1"></i>Link</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
