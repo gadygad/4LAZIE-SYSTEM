@@ -17,14 +17,22 @@ public class EncryptionUtil {
 
     private static final Logger log = LoggerFactory.getLogger(EncryptionUtil.class);
 
-    @Value("${app.encryption.secret-key:4lazieSecretKeyForEncryption2024}")
+    @Value("${app.encryption.secret-key:}")
     private String injectedSecretKey;
 
-    private static String SECRET_KEY; 
+    private static String SECRET_KEY;
     private static final String ALGORITHM = "AES";
 
+    // Fails startup rather than silently falling back to a predictable key
+    // (e.g. SHA-256 of an empty string) that would leave note-ID URL
+    // encryption with no real secret behind it. Set ENCRYPTION_SECRET_KEY
+    // in the environment to configure this.
     @PostConstruct
     public void init() {
+        if (injectedSecretKey == null || injectedSecretKey.isBlank()) {
+            throw new IllegalStateException(
+                "ENCRYPTION_SECRET_KEY is not set. Refusing to start with no encryption key configured.");
+        }
         SECRET_KEY = this.injectedSecretKey;
     }
 
