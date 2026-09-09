@@ -1010,6 +1010,9 @@
                 </button>
                 <a href="/home" class="btn btn-outline-secondary rounded-pill px-4">Back to Dashboard</a>
             </div>
+            <a th:unless="${isGuest}" href="/progress" class="d-inline-flex align-items-center gap-1 mt-3 text-decoration-none" style="color: #059669; font-size: 0.85rem; font-weight: 600;">
+                <i class="bi bi-graph-up-arrow"></i> View My Progress
+            </a>
         </div>
     </div>
 
@@ -1210,6 +1213,12 @@
         let answeredCount = 0;
         let startTime = null;
         let timerInterval = null;
+        // Captured once at the start of a session so showResults() can save
+        // the attempt without having to re-derive them from form state that
+        // may have changed (or been re-rendered) by the time the user finishes.
+        let currentSubjectId = null;
+        let currentCategory = null;
+        let currentDifficulty = null;
 
         function updateTimerDisplay() {
             if (!startTime) return;
@@ -1486,6 +1495,9 @@
                     score = 0;
                     answeredCount = 0;
                     startTime = Date.now();
+                    currentSubjectId = subjectId;
+                    currentCategory = category;
+                    currentDifficulty = difficultyLevel;
                     if (timerInterval) clearInterval(timerInterval);
                     timerInterval = setInterval(updateTimerDisplay, 1000);
                     updateTimerDisplay();
@@ -1738,6 +1750,24 @@
             document.getElementById('finalTotal').innerText = questions.length;
             document.getElementById('progressFill').style.width = '100%';
             if (isGuest) localStorage.removeItem('quizState');
+
+            // Guests have no account for this to attach to — only logged-in
+            // students build up a My Progress history. Fire-and-forget: a
+            // failed save should never block the results screen itself.
+            if (!isGuest && questions.length > 0) {
+                fetch('/api/public/quizzes/attempt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subjectId: currentSubjectId,
+                        category: currentCategory,
+                        difficulty: currentDifficulty,
+                        score: score,
+                        totalQuestions: questions.length,
+                        timeTakenSeconds: elapsed
+                    })
+                }).catch(() => {});
+            }
         }
     </script>
     
