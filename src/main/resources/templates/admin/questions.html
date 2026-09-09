@@ -272,7 +272,18 @@
 <script>
     function toggleOptions() {
         const type = document.getElementById('questionType').value;
-        document.getElementById('optionsSection').style.display = (type === 'MULTIPLE_CHOICE') ? 'block' : 'none';
+        const isMcq = (type === 'MULTIPLE_CHOICE');
+        document.getElementById('optionsSection').style.display = isMcq ? 'block' : 'none';
+        // Hiding the section alone left these 4 inputs in the form — a
+        // browser still submits a hidden (but not disabled) field, so every
+        // True/False or Short Answer question was saved with
+        // options=["","","",""] instead of no options at all, which broke
+        // how the practice page recognizes and auto-generates choices for
+        // non-multiple-choice questions. Disabling excludes them from
+        // submission entirely, same as never having rendered them.
+        document.querySelectorAll('#optionsSection input[name="options"]').forEach(function(input) {
+            input.disabled = !isMcq;
+        });
     }
     toggleOptions();
 </script>

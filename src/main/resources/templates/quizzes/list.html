@@ -1540,8 +1540,14 @@
 
             let html = `<p class="question-text">${displayText}</p>`;
 
-            // ALWAYS render as Multiple Choice - no textarea/reveal cheating allowed
-            if (!q.options || q.options.length < 2) {
+            // ALWAYS render as Multiple Choice - no textarea/reveal cheating allowed.
+            // A TRUE_FALSE/SHORT_ANSWER question saved via the admin form
+            // still arrives here with options=["","","",""] (4 present-but-
+            // blank strings — the admin form's hidden option inputs used to
+            // submit empty values instead of being excluded), so checking
+            // just .length missed them entirely and rendered 4 blank
+            // buttons. Count only options with actual text.
+            if (!q.options || q.options.filter(o => o && o.trim()).length < 2) {
                 // Auto-generate options from other questions' answers as distractors
                 let distractors = [];
                 for (let i = 0; i < questions.length; i++) {
