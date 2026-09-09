@@ -941,7 +941,8 @@
             const percentEl = btn.querySelector('.btn-percent');
             const fillEl = btn.querySelector('.upload-progress-fill');
             icon.style.display = 'none';
-            btnLabel.style.fontSize = '0.9rem';
+            btnLabel.style.fontSize = '0.8rem';
+            btnLabel.style.letterSpacing = '0.5px';
             percentEl.style.opacity = '1';
 
             // Real upload sent via XHR (not a native form submit) so we can
@@ -960,7 +961,9 @@
                 const pct = Math.round((e.loaded / e.total) * 100);
                 fillEl.style.width = pct + '%';
                 percentEl.textContent = pct + '%';
-                btnLabel.innerHTML = pct < 100 ? 'UPLOADING' : 'FINALIZING...';
+                btnLabel.innerHTML = pct < 100
+                    ? formatBytes(e.loaded) + ' / ' + formatBytes(e.total)
+                    : 'FINALIZING...';
             });
 
             xhr.upload.addEventListener('load', function () {
@@ -997,6 +1000,12 @@
             return false; // We're driving the submit ourselves via XHR above
         }
 
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
         function resetUploadButton(btn, btnText, btnLabel, icon, fillEl, percentEl) {
             btn.classList.remove('loading');
             btn.style.transform = '';
@@ -1005,6 +1014,7 @@
             btn.style.cursor = '';
             btn.style.pointerEvents = '';
             btnLabel.style.fontSize = '';
+            btnLabel.style.letterSpacing = '';
             btnLabel.innerHTML = 'UPLOAD';
             icon.style.display = '';
             icon.className = 'bi bi-cloud-arrow-up-fill me-2';
