@@ -372,7 +372,7 @@
                 <div class="av-ring"
                      th:style="${cv.student != null and cv.student.profilePicture != null} ? 'background:transparent;' : 'background:linear-gradient(135deg,#10b981,#059669);'">
                     <img th:if="${cv.student != null and cv.student.profilePicture != null}"
-                         th:src="${cv.student.profilePicture.startsWith('http') ? cv.student.profilePicture : '/uploads/' + cv.student.profilePicture}"
+                         th:src="${cv.student.profilePicture.startsWith('http') or cv.student.profilePicture.startsWith('/') ? cv.student.profilePicture : '/uploads/' + cv.student.profilePicture}"
                          alt="Student" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
                     <span th:unless="${cv.student != null and cv.student.profilePicture != null}"
                           th:text="${cv.student != null ? #strings.substring(cv.student.name,0,1).toUpperCase() : 'S'}">S</span>
@@ -1080,7 +1080,7 @@
                     } else {
                         data.forEach(student => {
                             const initial = student.name.charAt(0).toUpperCase();
-                            const pic = student.profilePicture ? (student.profilePicture.startsWith('http') ? student.profilePicture : '/uploads/' + student.profilePicture) : null;
+                            const pic = student.profilePicture ? ((student.profilePicture.startsWith('http') || student.profilePicture.startsWith('/')) ? student.profilePicture : '/uploads/' + student.profilePicture) : null;
                             const course = student.courseProgram || 'Student';
                             
                             const item = document.createElement('div');
