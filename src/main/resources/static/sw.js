@@ -1,5 +1,5 @@
-// Service Worker v10 - Network-First for all dynamic content
-const CACHE_NAME = '4lazie-cache-v10';
+// Service Worker v11 - Network-First for all dynamic content, never intercept non-GET requests
+const CACHE_NAME = '4lazie-cache-v11';
 const OFFLINE_URL = '/offline.html';
 
 // Only cache truly static rarely-changing assets
@@ -33,6 +33,18 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Never intercept mutating requests (POST/PUT/PATCH/DELETE) — a request
+  // body stream can only be read once, so re-issuing event.request inside
+  // fetch() here fails (the original body was already consumed dispatching
+  // the fetch event), the .catch() falls through to caches.match() (which
+  // is never populated for a POST), and respondWith() then rejects with
+  // "Failed to convert value to 'Response'" — turning a normal upload or
+  // form submission into a network error from the page's point of view.
+  // Only GET requests are safe/meaningful to cache anyway.
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   const requestUrl = new URL(event.request.url);
 
   // For Cloudinary files, PDFs, or /download endpoint, use Cache-First
