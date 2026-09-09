@@ -794,7 +794,13 @@
 
             listEl.innerHTML = items.map(function(m) {
                 const when = m.uploadDate ? ' on ' + escapeHtml(String(m.uploadDate).substring(0, 10)) : '';
-                return '&bull; "' + escapeHtml(m.title) + '" &mdash; uploaded as <strong>' + escapeHtml(m.category || '?') + '</strong>' + when;
+                const courseBits = [];
+                if (m.programType) courseBits.push(escapeHtml(m.programType));
+                if (m.levelNo != null) courseBits.push('Level ' + escapeHtml(m.levelNo));
+                if (m.semesterNo != null) courseBits.push('Semester ' + escapeHtml(m.semesterNo));
+                if (m.academicYear) courseBits.push('Year ' + escapeHtml(m.academicYear));
+                const courseInfo = courseBits.length ? ' &mdash; ' + courseBits.join(', ') : '';
+                return '&bull; "' + escapeHtml(m.title) + '" &mdash; uploaded as <strong>' + escapeHtml(m.category || '?') + '</strong>' + when + courseInfo;
             }).join('<br>');
 
             box.style.display = 'block';

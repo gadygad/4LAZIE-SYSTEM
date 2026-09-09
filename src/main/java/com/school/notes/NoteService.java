@@ -475,6 +475,10 @@ public class NoteService {
         m.put("title", n.getTitle());
         m.put("category", n.getCategory());
         m.put("moduleName", n.getModuleName());
+        m.put("programType", n.getProgramType());
+        m.put("levelNo", n.getLevelNo());
+        m.put("semesterNo", n.getSemesterNo());
+        m.put("academicYear", n.getAcademicYear());
         m.put("uploadDate", n.getUploadDate() != null ? n.getUploadDate().toString() : null);
         m.put("similarity", similarity);
         return m;
