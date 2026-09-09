@@ -451,9 +451,9 @@
                                 <span class="btn-text d-flex align-items-center justify-content-center" style="transition: all 0.3s ease;">
                                     <i class="bi bi-cloud-arrow-up-fill me-2" style="font-size: 1.2rem;"></i> <span class="btn-label">UPLOAD</span>
                                 </span>
-                                <div class="spinner-border spinner-border-sm text-white position-absolute" role="status" style="opacity: 0; transition: all 0.3s ease; width: 1.5rem; height: 1.5rem; border-width: 0.15em; transform: scale(0.5);">
-                                    <span class="visually-hidden">Uploading...</span>
-                                </div>
+                                <span class="btn-percent position-absolute" style="opacity: 0; right: 16px; font-size: 0.85rem; font-weight: 700; transition: opacity 0.3s ease; font-variant-numeric: tabular-nums;"></span>
+                                <!-- Fills left-to-right with real upload progress (xhr.upload.onprogress), not a fake timer -->
+                                <div class="upload-progress-fill position-absolute top-0 start-0 h-100" style="width: 0%; background: rgba(255, 255, 255, 0.22); transition: width 0.15s ease-out; pointer-events: none;"></div>
                             </button>
                         </div>
                     </form>
@@ -886,8 +886,7 @@
             const btnText = btn.querySelector('.btn-text');
             const btnLabel = btn.querySelector('.btn-label');
             const icon = btn.querySelector('.bi');
-            const spinner = btn.querySelector('.spinner-border');
-            
+
             // Make sure the form is actually valid before showing animation.
             // Tom Select hides the real <select> it wraps, and a hidden form
             // control is exempt from HTML5 constraint validation — so
@@ -925,35 +924,101 @@
 
             // Set loading state
             btn.classList.add('loading');
-            
+
             // Glassmorphism styling update for loading state
             btn.style.transform = 'scale(0.98)';
-            btn.style.background = 'rgba(16, 185, 129, 0.6)';
             btn.style.boxShadow = 'inset 0 0 20px rgba(255, 255, 255, 0.2), 0 4px 10px rgba(16, 185, 129, 0.1)';
             btn.style.border = '1px solid rgba(255, 255, 255, 0.4)';
             btn.style.cursor = 'wait';
             btn.style.pointerEvents = 'none'; // Prevent double clicking
-            
-            // Animation for text out, spinner in
-            icon.style.display = 'none';
-            btnLabel.innerHTML = 'UPLOADING...';
-            btnLabel.style.fontSize = '0.9rem';
-            btnText.style.transform = 'translateX(15px)';
-            
-            spinner.style.opacity = '1';
-            spinner.style.transform = 'scale(1) translateX(-45px)';
 
-            // Simulate progress phases for UX impression
-            setTimeout(() => {
-                if(btn.classList.contains('loading')) {
-                    btnLabel.innerHTML = 'PROCESSING...';
-                    btn.style.background = 'rgba(5, 150, 105, 0.7)';
+            const percentEl = btn.querySelector('.btn-percent');
+            const fillEl = btn.querySelector('.upload-progress-fill');
+            icon.style.display = 'none';
+            btnLabel.style.fontSize = '0.9rem';
+            percentEl.style.opacity = '1';
+
+            // Real upload sent via XHR (not a native form submit) so we can
+            // track actual bytes-sent progress instead of a fake timer — the
+            // server-side handler and response are unchanged, we just drive
+            // the same multipart POST manually to get upload.onprogress.
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', form.action, true);
+            const csrfHeaders = csrfHeader();
+            Object.keys(csrfHeaders).forEach(function (name) {
+                xhr.setRequestHeader(name, csrfHeaders[name]);
+            });
+
+            xhr.upload.addEventListener('progress', function (e) {
+                if (!e.lengthComputable) return;
+                const pct = Math.round((e.loaded / e.total) * 100);
+                fillEl.style.width = pct + '%';
+                percentEl.textContent = pct + '%';
+                btnLabel.innerHTML = pct < 100 ? 'UPLOADING' : 'FINALIZING...';
+            });
+
+            xhr.upload.addEventListener('load', function () {
+                // All bytes are sent, but the server still has to save the
+                // file and write the note to the database — switch to an
+                // indeterminate shimmer instead of sitting frozen at 100%.
+                fillEl.style.width = '100%';
+                fillEl.classList.add('shimmer');
+                btnLabel.innerHTML = 'FINALIZING...';
+                percentEl.style.opacity = '0';
+            });
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    btnLabel.innerHTML = 'DONE';
+                    icon.style.display = '';
+                    icon.className = 'bi bi-check-circle-fill me-2';
+                    fillEl.classList.remove('shimmer');
+                    fillEl.style.width = '100%';
+                    window.location.href = xhr.responseURL || form.action;
+                } else {
+                    resetUploadButton(btn, btnText, btnLabel, icon, fillEl, percentEl);
+                    alert('Upload failed (status ' + xhr.status + '). Please try again.');
                 }
-            }, 3000);
-            
-            return true;
+            };
+
+            xhr.onerror = function () {
+                resetUploadButton(btn, btnText, btnLabel, icon, fillEl, percentEl);
+                alert('Upload failed due to a network error. Please check your connection and try again.');
+            };
+
+            xhr.send(new FormData(form));
+
+            return false; // We're driving the submit ourselves via XHR above
+        }
+
+        function resetUploadButton(btn, btnText, btnLabel, icon, fillEl, percentEl) {
+            btn.classList.remove('loading');
+            btn.style.transform = '';
+            btn.style.boxShadow = '';
+            btn.style.border = '';
+            btn.style.cursor = '';
+            btn.style.pointerEvents = '';
+            btnLabel.style.fontSize = '';
+            btnLabel.innerHTML = 'UPLOAD';
+            icon.style.display = '';
+            icon.className = 'bi bi-cloud-arrow-up-fill me-2';
+            fillEl.classList.remove('shimmer');
+            fillEl.style.width = '0%';
+            percentEl.style.opacity = '0';
+            percentEl.textContent = '';
         }
     </script>
+    <style>
+        #uploadSubmitBtn .upload-progress-fill.shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0.15) 100%);
+            background-size: 200% 100%;
+            animation: uploadShimmer 1.1s linear infinite;
+        }
+        @keyframes uploadShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
 
     <!-- PWA Service Worker Registration -->
     <script>
