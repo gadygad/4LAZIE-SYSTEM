@@ -419,6 +419,7 @@
                                     <div style="font-size: 0.75rem; color: #475569; line-height: 1.2;">Checking this will make the note visible to every course that also teaches this exact subject at this Level and Semester — not every program.</div>
                                 </label>
                             </div>
+                            <div id="sharedCoursesInfo" style="display: none; margin-top: 8px; padding: 10px 14px; border-radius: 10px; background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.25); font-size: 0.78rem; color: #1e3a8a;"></div>
                         </div>
 
                         <!-- File Upload Area -->
@@ -511,6 +512,9 @@
                         document.getElementById('moduleName').value = opt.text.replace(/ \(.*\)$/, '');
                         document.getElementById('moduleCode').value = opt.code || '';
                         scheduleDuplicateCheck();
+                        checkSharedCourses();
+                    } else {
+                        hideSharedCoursesInfo();
                     }
                 }
             });
@@ -813,6 +817,57 @@
             if (linkBtn) linkBtn.style.display = 'none';
             window.__hasUnconfirmedExactDuplicate = false;
             linkableExistingNoteId = null;
+        }
+
+        // ---- "Also taught in..." shared-course detection ----
+        // Exact match on the real Subject catalog (moduleName here always
+        // comes from the moduleSelect dropdown, never free-typed), so this
+        // is complete — not a fuzzy guess — and safe to show as-is.
+        let sharedCoursesTimer = null;
+
+        function hideSharedCoursesInfo() {
+            const box = document.getElementById('sharedCoursesInfo');
+            if (box) box.style.display = 'none';
+        }
+
+        function checkSharedCourses() {
+            clearTimeout(sharedCoursesTimer);
+            sharedCoursesTimer = setTimeout(runSharedCoursesCheck, 250);
+        }
+
+        async function runSharedCoursesCheck() {
+            const moduleName = document.getElementById('moduleName').value.trim();
+            const levelNo = document.getElementById('levelNo').value;
+            const semesterNo = document.getElementById('semesterNo').value;
+            const programType = document.getElementById('programType').value;
+            const box = document.getElementById('sharedCoursesInfo');
+            if (!moduleName || !levelNo || !semesterNo) {
+                hideSharedCoursesInfo();
+                return;
+            }
+            const params = new URLSearchParams();
+            params.set('moduleName', moduleName);
+            params.set('levelNo', levelNo);
+            params.set('semesterNo', semesterNo);
+            if (programType) params.set('excludeProgramType', programType);
+            try {
+                const res = await fetch('/upload/matching-courses?' + params.toString());
+                if (!res.ok) { hideSharedCoursesInfo(); return; }
+                const data = await res.json();
+                const courses = data.courses || [];
+                if (courses.length === 0) {
+                    hideSharedCoursesInfo();
+                    return;
+                }
+                const names = courses.map(c => escapeHtml(c.name || c.programType)).join(', ');
+                box.innerHTML = '<i class="bi bi-signpost-split-fill me-1"></i><strong>' + courses.length +
+                    ' other course' + (courses.length === 1 ? '' : 's') + '</strong> also teach' +
+                    (courses.length === 1 ? 'es' : '') + ' this subject at this Level/Semester: ' + names +
+                    '. Tick "General Subject" above to also make this note visible there.';
+                box.style.display = 'block';
+            } catch (e) {
+                hideSharedCoursesInfo();
+            }
         }
 
         // The header value Spring's CSRF filter actually validates against —

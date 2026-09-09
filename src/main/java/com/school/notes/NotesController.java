@@ -442,6 +442,25 @@ public class NotesController {
                 category, academicYear, unitNumber);
     }
 
+    // Read-only lookup for the upload page's live "also taught in..." panel —
+    // lets the admin see, before ticking "General Subject", exactly which
+    // other courses share this module at this Level/Semester (per the real
+    // Subject catalog, not a guess), so nothing gets missed as more colleges
+    // get added over time.
+    @GetMapping("/upload/matching-courses")
+    @ResponseBody
+    public Map<String, Object> matchingCourses(
+            @RequestParam(required = false) String moduleName,
+            @RequestParam(required = false) Integer levelNo,
+            @RequestParam(required = false) Integer semesterNo,
+            @RequestParam(required = false) String excludeProgramType) {
+        User loggedInUser = getLoggedInUser();
+        if (loggedInUser == null) {
+            return Map.of("courses", List.of());
+        }
+        return Map.of("courses", noteService.findCoursesTeachingSubject(moduleName, levelNo, semesterNo, excludeProgramType));
+    }
+
     // Offered as a one-click alternative right in the duplicate-file warning
     // once check-duplicate has confirmed (via SHA-256) that the picked file
     // is byte-identical to one already on the site — makes it visible to

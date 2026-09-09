@@ -279,6 +279,33 @@ public class NoteService {
         return programs;
     }
 
+    // Powers the upload page's live "this subject is also taught in..."
+    // readout: same exact-match Subject-catalog lookup resolveApplicablePrograms
+    // uses (not a fuzzy/text match — moduleName comes from a dropdown of real
+    // Subject records, so an exact match is the correct and complete one),
+    // just surfaced BEFORE saving instead of silently applied after the
+    // "General Subject" checkbox is ticked, so the admin can see exactly
+    // which courses will be affected up front.
+    public List<Map<String, String>> findCoursesTeachingSubject(String moduleName, Integer levelNo, Integer semesterNo, String excludeProgramType) {
+        List<Map<String, String>> result = new ArrayList<>();
+        if (moduleName == null || moduleName.isBlank() || levelNo == null || semesterNo == null) {
+            return result;
+        }
+        List<Subject> matches = subjectRepository.findByNameIgnoreCaseAndLevelNoAndSemesterNo(moduleName.trim(), levelNo, semesterNo);
+        Set<String> seen = new HashSet<>();
+        for (Subject s : matches) {
+            Course c = s.getCourse();
+            if (c == null || c.getProgramType() == null) continue;
+            if (c.getProgramType().equals(excludeProgramType)) continue;
+            if (!seen.add(c.getProgramType())) continue;
+            Map<String, String> entry = new HashMap<>();
+            entry.put("programType", c.getProgramType());
+            entry.put("name", c.getName());
+            result.add(entry);
+        }
+        return result;
+    }
+
     public void triggerNotificationsForNote(Note note, com.school.auth.User loggedInUser, String appUrl) {
         if (pushNotificationService != null) {
             String pushTitle = "New Notes Added! 🎉";
