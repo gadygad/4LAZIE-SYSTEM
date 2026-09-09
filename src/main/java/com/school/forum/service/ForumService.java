@@ -203,9 +203,27 @@ public class ForumService {
      * authors resolved in one batch query), in place. Shared by both the
      * first feed page and every "load more" page. */
     private void populateRecentComments(List<ForumPost> posts) {
+        List<String> postIds = posts.stream().map(ForumPost::getId).collect(Collectors.toList());
+
+        // One query for every post in this page instead of one findTop3...
+        // per post (20 posts on a "load more" batch used to mean 20
+        // sequential comment queries). Already globally sorted by
+        // createdAt desc, so each post's own comments stay in that same
+        // relative order once grouped below — taking the first 3 seen per
+        // post is still "top 3 most recent" per post.
+        Map<String, List<com.school.forum.model.ForumComment>> commentsByPost = new HashMap<>();
+        if (!postIds.isEmpty()) {
+            for (com.school.forum.model.ForumComment c : forumCommentRepository.findByPostIdInOrderByCreatedAtDesc(postIds)) {
+                List<com.school.forum.model.ForumComment> forPost = commentsByPost.computeIfAbsent(c.getPostId(), k -> new ArrayList<>());
+                if (forPost.size() < 3) {
+                    forPost.add(c);
+                }
+            }
+        }
+
         List<com.school.forum.model.ForumComment> allRecentComments = new ArrayList<>();
         posts.forEach(post -> {
-            List<com.school.forum.model.ForumComment> comments = forumCommentRepository.findTop3ByPostIdOrderByCreatedAtDesc(post.getId());
+            List<com.school.forum.model.ForumComment> comments = commentsByPost.getOrDefault(post.getId(), Collections.emptyList());
             post.setRecentComments(comments);
             allRecentComments.addAll(comments);
         });
