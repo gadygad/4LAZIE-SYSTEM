@@ -122,7 +122,13 @@ public final class PdfViewerHtml {
                                 wrap.dataset.page = num;
 
                                 var canvas = document.createElement('canvas');
-                                var outputScale = window.devicePixelRatio || 1;
+                                // Rendered above the screen's own pixel density so a
+                                // native pinch/ctrl-scroll zoom (which just rescales this
+                                // raster, unlike the +/- buttons which re-render at the
+                                // new target scale) still looks sharp instead of blurry.
+                                // Capped so very high-DPI devices don't blow up memory/CPU
+                                // rendering every page of a long document at once.
+                                var outputScale = Math.min((window.devicePixelRatio || 1) * 1.5, 4);
                                 canvas.width = Math.floor(viewport.width * outputScale);
                                 canvas.height = Math.floor(viewport.height * outputScale);
                                 canvas.style.width = Math.floor(viewport.width) + 'px';
