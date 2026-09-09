@@ -1,6 +1,7 @@
 package com.school.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,12 +33,21 @@ public class SecurityConfig {
         private LoginRateLimitFilter loginRateLimitFilter;
         private com.school.auth.CustomUserDetailsService customUserDetailsService;
 
+    // Signs the "remember me" cookie. Must come from an env var in production —
+    // anyone who knows this key can forge a valid remember-me cookie for any
+    // account (including admins) just by knowing their email. The literal
+    // default here only applies when REMEMBER_ME_KEY is unset, which is fine
+    // for local dev but must never be relied on in production.
+    @Value("${REMEMBER_ME_KEY:4lazie-remember-me-9f3c7a1e}")
+    private String rememberMeKey;
+
     public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, LoginRateLimitFilter loginRateLimitFilter,
                            com.school.auth.CustomUserDetailsService customUserDetailsService) {
         this.successHandler = successHandler;
         this.loginRateLimitFilter = loginRateLimitFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
+
 
 
     @Bean
@@ -77,7 +87,7 @@ public class SecurityConfig {
             // bump below (application.properties) covers everyone who leaves
             // it unchecked.
             .rememberMe(remember -> remember
-                .key("4lazie-remember-me-9f3c7a1e")
+                .key(rememberMeKey)
                 .rememberMeParameter("remember")
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
                 .userDetailsService(customUserDetailsService)
