@@ -803,7 +803,13 @@
         // 1. Fetch history immediately via HTTP (most reliable)
         fetch('/admin/chat/' + chatId + '/messages', { credentials: 'same-origin' })
             .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-            .then(d => { if (d.success && Array.isArray(d.messages)) renderMessages(d.messages, false); })
+            .then(d => {
+                // Switching to another chat before this resolves must not let
+                // it paint the PREVIOUS chat's messages into the one now open
+                // — same guard already used below for the polling fallback.
+                if (currentChatId !== chatId) return;
+                if (d.success && Array.isArray(d.messages)) renderMessages(d.messages, false);
+            })
             .catch(e => console.log('Admin history fetch failed:', e));
 
         // 2. Connect SSE for live updates

@@ -1821,6 +1821,11 @@
                 fetch('/api/peer-chat/' + chatId + '/messages', { credentials: 'same-origin' })
                     .then(r => r.json())
                     .then(d => {
+                        // Switching to another chat before this resolves must
+                        // not let it paint the PREVIOUS chat's messages into
+                        // the one now open — same guard already used below
+                        // for the polling fallback.
+                        if (currentChatId !== chatId) return;
                         if (d.success) {
                             renderMessages(d.messages, false);
                             otherIsOnline = !!d.otherOnline;
@@ -2432,7 +2437,14 @@
 
                 fetch('/api/groups/' + groupId + '/messages', { credentials: 'same-origin' })
                     .then(r => r.json())
-                    .then(d => { if (d.success) { renderMessages(d.messages, false); renderGroupAvatar(d.picture); } })
+                    .then(d => {
+                        // Same guard as the peer-chat and admin-chat modules:
+                        // switching groups before this resolves must not let
+                        // it paint the PREVIOUS group's messages into the one
+                        // now open.
+                        if (currentGroupId !== groupId) return;
+                        if (d.success) { renderMessages(d.messages, false); renderGroupAvatar(d.picture); }
+                    })
                     .catch(() => {});
 
                 const es = new EventSource('/api/groups/' + groupId + '/stream');
