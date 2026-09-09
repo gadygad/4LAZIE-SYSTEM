@@ -37,7 +37,13 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Value("${app.admin.email:admin@school.com}")
     private String adminEmail;
 
-    @Value("${app.admin.password:change_me_please_2024}")
+    // No hardcoded fallback here on purpose — a password default checked
+    // into source control (and visible to anyone with repo access) that
+    // silently activates whenever an env var goes missing is exactly the
+    // kind of thing this class used to do. Left blank, seedUserIfMissing()
+    // below simply declines to create the account and logs a warning
+    // instead of ever encoding a known password.
+    @Value("${app.admin.password:}")
     private String adminPassword;
 
     @Value("${app.admin2.email:alex@school.edu}")
@@ -46,7 +52,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Value("${app.student.email:john@student.edu}")
     private String studentEmail;
 
-    @Value("${app.student.password:student_change_me_2024}")
+    @Value("${app.student.password:}")
     private String studentPassword;
 
         private AcademicCalendarRepository academicCalendarRepository;
@@ -65,23 +71,18 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. Initialize or Update Users
+        // 1. Seed default accounts — but ONLY the first time each one is
+        // created, and ONLY when a real password was actually configured.
+        // This used to re-encode and re-save the password on EVERY startup
+        // regardless of whether the account already existed, which meant a
+        // momentarily-missing env var silently reset a real admin's
+        // password back to whatever was configured here — and would do so
+        // again on every future restart, even after someone had since
+        // changed it through the app itself.
         try {
-            // Lecturer
-            User lecturer = userRepository.findByEmail(lecturerEmail).orElse(new User("Dr. Alex Carter", lecturerEmail, "", Role.ADMIN));
-            lecturer.setPassword(passwordEncoder.encode(adminPassword));
-            userRepository.save(lecturer);
-
-            // Student
-            User student = userRepository.findByEmail(studentEmail).orElse(new User("John Doe", studentEmail, "", Role.STUDENT));
-            student.setPassword(passwordEncoder.encode(studentPassword));
-            userRepository.save(student);
-
-            // Admin
-            User admin = userRepository.findByEmail(adminEmail).orElse(new User("System Admin", adminEmail, "", Role.ADMIN));
-            admin.setPassword(passwordEncoder.encode(adminPassword));
-            userRepository.save(admin);
-            
+            seedUserIfMissing(lecturerEmail, "Dr. Alex Carter", Role.ADMIN, adminPassword);
+            seedUserIfMissing(studentEmail, "John Doe", Role.STUDENT, studentPassword);
+            seedUserIfMissing(adminEmail, "System Admin", Role.ADMIN, adminPassword);
         } catch (Exception e) {
             log.warn("Could not seed users: " + e.getMessage());
         }
@@ -282,6 +283,23 @@ public class DatabaseInitializer implements CommandLineRunner {
         }
 
         log.info("Database Initialization complete (Users only).");
+    }
+
+    // Creates the account only if it doesn't already exist, and only if a
+    // real password was configured for it — never re-touches (and never
+    // resets the password on) an account that's already there.
+    private void seedUserIfMissing(String email, String name, Role role, String rawPassword) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            return;
+        }
+        if (rawPassword == null || rawPassword.isBlank()) {
+            log.warn("Skipped creating default account for '{}': no password configured. Set the corresponding *_PASSWORD environment variable to seed it.", email);
+            return;
+        }
+        User user = new User(name, email, "", role);
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        userRepository.save(user);
+        log.info("Seeded default account: {}", email);
     }
 
     private Note createNote(String title, String filename, String program, int level, int semester, String type,
