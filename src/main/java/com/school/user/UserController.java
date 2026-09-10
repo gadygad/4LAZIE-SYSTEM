@@ -453,8 +453,22 @@ public class UserController {
 
     @PostMapping("/profile/sessions/revoke")
     public String revokeSession(@RequestParam("sessionId") String sessionId, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        User me = getLoggedInUser();
+        if (me == null) {
+            return "redirect:/login";
+        }
         org.springframework.security.core.session.SessionInformation sessionInformation = sessionRegistry.getSessionInformation(sessionId);
-        if (sessionInformation != null) {
+        // A raw sessionId alone proves nothing — without checking it actually
+        // belongs to the caller, any logged-in user could pass any other
+        // user's session id (these aren't secret/random-looking to a client
+        // that already sees its own) and force-log them out. Same
+        // email-on-the-principal ownership check the "active sessions" list
+        // above already uses to decide which sessions to even show someone.
+        boolean ownsSession = sessionInformation != null
+                && sessionInformation.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails
+                && ((org.springframework.security.core.userdetails.UserDetails) sessionInformation.getPrincipal())
+                        .getUsername().equals(me.getEmail());
+        if (ownsSession) {
             sessionInformation.expireNow();
             redirectAttributes.addFlashAttribute("success", "Device logged out successfully.");
         } else {

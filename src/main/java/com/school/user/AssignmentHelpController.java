@@ -108,15 +108,24 @@ public class AssignmentHelpController {
     public ResponseEntity<Map<String, Object>> markAsRead(@PathVariable String id, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         User user = (User) session.getAttribute("user");
-        
-        if (user != null) {
-            assignmentHelpService.markAsRead(id, user.getId());
-            response.put("success", true);
-            return ResponseEntity.ok(response);
+
+        if (user == null) {
+            response.put("success", false);
+            return ResponseEntity.status(401).body(response);
         }
-        
-        response.put("success", false);
-        return ResponseEntity.status(401).body(response);
+
+        // Without this, any logged-in student could pass ANY other student's
+        // assignment-request id here — a request id is not a secret to the
+        // caller who might have seen it in a URL or a shared screenshot.
+        AssignmentRequest req = assignmentRequestRepository.findById(id).orElse(null);
+        if (req == null || !user.getId().equals(req.getUserId())) {
+            response.put("success", false);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        assignmentHelpService.markAsRead(id, user.getId());
+        response.put("success", true);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/api/assignments/admin-read/{id}")
@@ -273,7 +282,19 @@ public class AssignmentHelpController {
             response.put("success", false);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        
+
+        // Same ownership check as markAsRead above — this endpoint lets the
+        // caller inject a chat message (optionally with a file attachment)
+        // into the assignment-help thread for id {id}; without checking that
+        // thread actually belongs to them, any student could message into
+        // (and read the AJAX response revealing) someone else's private
+        // conversation with an admin.
+        AssignmentRequest existing = assignmentRequestRepository.findById(id).orElse(null);
+        if (existing == null || !user.getId().equals(existing.getUserId())) {
+            response.put("success", false);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
         try {
             AssignmentRequest req = assignmentHelpService.addChatMessage(id, user.getId(), user.getName(), messageText, file, replyToMessageId, replyToSenderName, replyToMessageText);
             if (req != null && req.getMessages() != null && !req.getMessages().isEmpty()) {
