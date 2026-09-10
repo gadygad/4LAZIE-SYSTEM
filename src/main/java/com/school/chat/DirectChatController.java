@@ -539,12 +539,21 @@ public class DirectChatController {
         List<DirectChat> allChats = directChatService.getAllChats();
         long unreadCount = directChatService.getTotalUnreadForAdmin();
 
+        // One batched lookup for every student across the whole inbox instead
+        // of a separate findById() per chat — this page loads EVERY student
+        // who has ever messaged an admin, so with dozens of them this was
+        // turning one page load into dozens of round trips to the database,
+        // which is exactly what made "My Messages" feel so slow to open.
+        List<String> studentIds = allChats.stream().map(DirectChat::getStudentId).distinct().collect(java.util.stream.Collectors.toList());
+        Map<String, User> studentsById = new HashMap<>();
+        for (User u : userRepository.findAllById(studentIds)) studentsById.put(u.getId(), u);
+
         // Enrich with student user objects for profile pictures
         List<Map<String, Object>> chatViews = new ArrayList<>();
         for (DirectChat chat : allChats) {
             Map<String, Object> cv = new HashMap<>();
             cv.put("chat", chat);
-            User student = userRepository.findById(chat.getStudentId()).orElse(null);
+            User student = studentsById.get(chat.getStudentId());
             cv.put("student", student);
             // Last message preview
             if (!chat.getMessages().isEmpty()) {

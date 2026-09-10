@@ -89,10 +89,19 @@ public class PeerChatController {
         if (me == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("hh:mm a");
+        List<PeerChat> inbox = peerChatService.getInbox(me.getId());
+        // One batched lookup for every "other participant" across the whole
+        // inbox instead of a separate findById() per chat — with dozens of
+        // conversations this was turning a single page load into dozens of
+        // round trips to the (already latency-heavy, free-tier) database.
+        List<String> otherIds = inbox.stream().map(c -> c.otherUserId(me.getId())).distinct().collect(java.util.stream.Collectors.toList());
+        Map<String, User> othersById = new HashMap<>();
+        for (User u : userRepository.findAllById(otherIds)) othersById.put(u.getId(), u);
+
         List<Map<String, Object>> result = new ArrayList<>();
-        for (PeerChat chat : peerChatService.getInbox(me.getId())) {
+        for (PeerChat chat : inbox) {
             String otherId = chat.otherUserId(me.getId());
-            User other = userRepository.findById(otherId).orElse(null);
+            User other = othersById.get(otherId);
             ChatMessage last = chat.getMessages().isEmpty() ? null : chat.getMessages().get(chat.getMessages().size() - 1);
 
             Map<String, Object> m = new LinkedHashMap<>();
