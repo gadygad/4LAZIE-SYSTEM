@@ -41,6 +41,8 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 - **Connect / Connections** — students can follow ("Connect" with) each other; a profile shows its Connections (follower) count
 - **Peer-to-peer chat** — students can message each other directly (not just admin), with reply-to-message quoting, typing indicators, online presence, and read receipts, all delivered in real time over Server-Sent Events (SSE)
 - **Admin ↔ Student chat** — direct messaging with admins, same real-time reply/read-receipt experience
+- **GPA Calculator** — students pick their course and modules, enter grades, and see their classification calculated instantly
+- **Practice & Quizzes** — a practice center with Quizzes, Exercises, Possible Questions, UE Questions, and CAT Questions per subject, for self-testing before exams
 - **Premium section** — optional upgrade area for extra features
 
 ---
