@@ -32,6 +32,7 @@ public class SecurityConfig {
         private CustomAuthenticationSuccessHandler successHandler;
         private LoginRateLimitFilter loginRateLimitFilter;
         private SensitiveAuthRateLimitFilter sensitiveAuthRateLimitFilter;
+        private UploadRateLimitFilter uploadRateLimitFilter;
         private com.school.auth.CustomUserDetailsService customUserDetailsService;
 
     // Signs the "remember me" cookie. Must come from an env var in production —
@@ -44,10 +45,12 @@ public class SecurityConfig {
 
     public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, LoginRateLimitFilter loginRateLimitFilter,
                            SensitiveAuthRateLimitFilter sensitiveAuthRateLimitFilter,
+                           UploadRateLimitFilter uploadRateLimitFilter,
                            com.school.auth.CustomUserDetailsService customUserDetailsService) {
         this.successHandler = successHandler;
         this.loginRateLimitFilter = loginRateLimitFilter;
         this.sensitiveAuthRateLimitFilter = sensitiveAuthRateLimitFilter;
+        this.uploadRateLimitFilter = uploadRateLimitFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -58,10 +61,11 @@ public class SecurityConfig {
         http
             .addFilterBefore(loginRateLimitFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(sensitiveAuthRateLimitFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(uploadRateLimitFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR, jakarta.servlet.DispatcherType.INCLUDE).permitAll()
                 // Allow public access to static resources and public pages
-                .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/register/google", "/login", "/forgot-password", "/reset-password", "/verify-email", "/verify-otp", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/search", "/api/subjects", "/api/courses", "/api/notes/filter", "/policy", "/terms", "/contact", "/api/public/contact", "/sw.js", "/manifest.json", "/offline.html", "/api/notifications/**", "/quizzes", "/api/public/quizzes/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/", "/home", "/index", "/about", "/premium", "/ue-exams", "/register", "/register/google", "/login", "/forgot-password", "/reset-password", "/verify-email", "/verify-otp", "/css/**", "/js/**", "/images/**", "/uploads/**", "/api/search", "/api/subjects", "/api/courses", "/api/notes/filter", "/policy", "/terms", "/contact", "/api/public/contact", "/sw.js", "/manifest.json", "/offline.html", "/api/notifications/public-key", "/api/notifications/subscribe", "/quizzes", "/api/public/quizzes/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/community", "/community/**", "/guest-notes", "/notes", "/view/**", "/download/**", "/stream/**", "/proxy/**", "/timetable/**", "/mobile-viewer/**", "/view-generated-exam/**", "/calendar/view", "/calendar/view/**").permitAll()
                 .requestMatchers("/generate-exam", "/generator-hub").authenticated()
                 // /actuator/health must stay reachable without auth — Render's own

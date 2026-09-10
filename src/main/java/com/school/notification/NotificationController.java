@@ -42,11 +42,21 @@ public class NotificationController {
     }
     
     @GetMapping("/click/{id}")
-    public ResponseEntity<?> clickNotification(@PathVariable String id) {
+    public ResponseEntity<?> clickNotification(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails) {
         Notification n = notificationService.findById(id);
-        if (n != null) {
+        boolean owns = n != null && userDetails != null
+                && userRepository.findByEmail(userDetails.getUsername())
+                        .map(User::getId)
+                        .map(userId -> userId.equals(n.getUserId()))
+                        .orElse(false);
+        if (owns) {
             notificationService.markAsRead(id);
-            String target = n.getLink() != null ? n.getLink() : "/dashboard";
+            // The stored link is always an internal path from our own
+            // notification-creation call sites, but redirecting on an
+            // unvalidated value is a needless open-redirect risk — enforce
+            // that shape rather than trust it.
+            String link = n.getLink();
+            String target = (link != null && link.startsWith("/")) ? link : "/dashboard";
             return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(target)).build();
         }
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/dashboard")).build();
