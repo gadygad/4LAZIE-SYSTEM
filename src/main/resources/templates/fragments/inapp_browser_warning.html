@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!--
+      WhatsApp/Instagram/Facebook/Messenger's built-in in-app browser often
+      fails to persist cookies between a page load and a form submission on
+      that same page — the CSRF cookie set on GET /login or /register never
+      makes it back on the POST, so every login/signup attempt opened via a
+      link tapped inside those apps fails with a CSRF 403, no matter how many
+      times the user retries. We can't fix their WebView's cookie handling,
+      so the only real fix is telling the user to open the page in their
+      actual browser instead.
+    -->
+    <div th:fragment="inappBrowserWarning" id="inAppBrowserWarning" style="display:none; position:sticky; top:0; z-index:2000; background:#92400e; color:#fff; padding:10px 14px; font-size:0.85rem; line-height:1.4; text-align:center;">
+        <span>⚠️ Umefungua ukurasa huu ndani ya WhatsApp/Instagram — hii mara nyingi husababisha "login/signup" kushindwa. Bonyeza <strong>⋮</strong> au <strong>...</strong> juu kulia, kisha chagua <strong>"Open in Browser" / "Fungua kwa Chrome"</strong>.</span>
+    </div>
+    <script th:inline="none">
+        (function () {
+            var ua = navigator.userAgent || '';
+            // FBAN/FBAV = Facebook/Messenger, Instagram = Instagram's own token,
+            // WhatsApp appears directly on recent Android builds; "; wv)" is the
+            // generic Android WebView marker most other in-app browsers fall back to.
+            var isInApp = /FBAN|FBAV|Instagram|WhatsApp|; wv\)/i.test(ua);
+            if (isInApp) {
+                var el = document.getElementById('inAppBrowserWarning');
+                if (el) el.style.display = 'block';
+            }
+        })();
+    </script>
+</body>
+</html>
