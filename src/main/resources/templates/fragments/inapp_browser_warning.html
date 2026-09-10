@@ -7,12 +7,13 @@
       that same page — the CSRF cookie set on GET /login or /register never
       makes it back on the POST, so every login/signup attempt opened via a
       link tapped inside those apps fails with a CSRF 403, no matter how many
-      times the user retries. We can't fix their WebView's cookie handling,
-      so the only real fix is telling the user to open the page in their
-      actual browser instead.
+      times the user retries. We can't fix their WebView's cookie handling.
+      On Android we can at least bounce the page straight into Chrome via an
+      intent:// URL, which usually fixes it with zero taps; iOS has no
+      equivalent escape hatch, so there the banner is the whole fix.
     -->
     <div th:fragment="inappBrowserWarning" id="inAppBrowserWarning" style="display:none; position:sticky; top:0; z-index:2000; background:#92400e; color:#fff; padding:10px 14px; font-size:0.85rem; line-height:1.4; text-align:center;">
-        <span>⚠️ Umefungua ukurasa huu ndani ya WhatsApp/Instagram — hii mara nyingi husababisha "login/signup" kushindwa. Bonyeza <strong>⋮</strong> au <strong>...</strong> juu kulia, kisha chagua <strong>"Open in Browser" / "Fungua kwa Chrome"</strong>.</span>
+        <span>⚠️ You're viewing this inside an app's built-in browser, which usually blocks sign-in and sign-up from working. Tap <strong>⋮</strong> or <strong>•••</strong> at the top, then choose <strong>"Open in Browser"</strong> (or Chrome) to continue.</span>
     </div>
     <script th:inline="none">
         (function () {
@@ -21,9 +22,22 @@
             // WhatsApp appears directly on recent Android builds; "; wv)" is the
             // generic Android WebView marker most other in-app browsers fall back to.
             var isInApp = /FBAN|FBAV|Instagram|WhatsApp|; wv\)/i.test(ua);
-            if (isInApp) {
-                var el = document.getElementById('inAppBrowserWarning');
-                if (el) el.style.display = 'block';
+            if (!isInApp) return;
+
+            var el = document.getElementById('inAppBrowserWarning');
+            if (el) el.style.display = 'block';
+
+            var isAndroid = /Android/i.test(ua);
+            if (isAndroid) {
+                // Hands the current URL to Android's intent system asking
+                // specifically for Chrome; if Chrome isn't installed, the
+                // fallback URL just reopens this same page in whatever
+                // browser the user picks instead. One redirect, no taps.
+                var target = location.href.replace(/^https?:\/\//, '');
+                var intentUrl = 'intent://' + target +
+                    '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
+                    encodeURIComponent(location.href) + ';end';
+                location.href = intentUrl;
             }
         })();
     </script>
