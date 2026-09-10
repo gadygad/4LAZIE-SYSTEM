@@ -43,7 +43,15 @@ public class PasswordResetController {
 
 
     @GetMapping("/forgot-password")
-    public String showForgotPasswordForm() {
+    public String showForgotPasswordForm(HttpServletRequest request, Model model) {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object rateLimitError = session.getAttribute(com.school.config.SensitiveAuthRateLimitFilter.SESSION_ERROR_ATTR);
+            if (rateLimitError != null) {
+                model.addAttribute("error", rateLimitError);
+                session.removeAttribute(com.school.config.SensitiveAuthRateLimitFilter.SESSION_ERROR_ATTR);
+            }
+        }
         return "auth/forgot_password";
     }
 

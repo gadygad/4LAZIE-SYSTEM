@@ -31,6 +31,7 @@ public class SecurityConfig {
 
         private CustomAuthenticationSuccessHandler successHandler;
         private LoginRateLimitFilter loginRateLimitFilter;
+        private SensitiveAuthRateLimitFilter sensitiveAuthRateLimitFilter;
         private com.school.auth.CustomUserDetailsService customUserDetailsService;
 
     // Signs the "remember me" cookie. Must come from an env var in production —
@@ -42,9 +43,11 @@ public class SecurityConfig {
     private String rememberMeKey;
 
     public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, LoginRateLimitFilter loginRateLimitFilter,
+                           SensitiveAuthRateLimitFilter sensitiveAuthRateLimitFilter,
                            com.school.auth.CustomUserDetailsService customUserDetailsService) {
         this.successHandler = successHandler;
         this.loginRateLimitFilter = loginRateLimitFilter;
+        this.sensitiveAuthRateLimitFilter = sensitiveAuthRateLimitFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -54,6 +57,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(loginRateLimitFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(sensitiveAuthRateLimitFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR, jakarta.servlet.DispatcherType.INCLUDE).permitAll()
                 // Allow public access to static resources and public pages

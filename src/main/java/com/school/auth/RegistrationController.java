@@ -65,6 +65,11 @@ public class RegistrationController {
         if (redirectUrl != null && !redirectUrl.isEmpty() && redirectUrl.startsWith("/")) {
             session.setAttribute("redirectUrl", redirectUrl);
         }
+        Object rateLimitError = session.getAttribute(com.school.config.SensitiveAuthRateLimitFilter.SESSION_ERROR_ATTR);
+        if (rateLimitError != null) {
+            model.addAttribute("error", rateLimitError);
+            session.removeAttribute(com.school.config.SensitiveAuthRateLimitFilter.SESSION_ERROR_ATTR);
+        }
         model.addAttribute("user", new User());
         try {
             model.addAttribute("institutions", institutionRepository.findAll());
