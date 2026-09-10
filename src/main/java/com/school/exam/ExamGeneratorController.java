@@ -44,6 +44,9 @@ public class ExamGeneratorController {
     @Autowired
     private NoteService noteService;
 
+    @Autowired
+    private com.school.config.AppUrlResolver appUrlResolver;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private User getLoggedInUser() {
@@ -213,8 +216,7 @@ public class ExamGeneratorController {
             noteRepository.save(note);
             
             // --- NEW: Trigger Notifications ---
-            String appUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + 
-                            (httpRequest.getServerPort() != 80 && httpRequest.getServerPort() != 443 ? ":" + httpRequest.getServerPort() : "");
+            String appUrl = appUrlResolver.resolve(httpRequest);
             noteService.triggerNotificationsForNote(note, user, appUrl);
             // ----------------------------------
             

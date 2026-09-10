@@ -69,6 +69,9 @@ public class UserController {
     @Autowired
     private com.school.core.EmailService emailService;
 
+    @Autowired
+    private com.school.config.AppUrlResolver appUrlResolver;
+
     @GetMapping("/explore")
     public String getExplorePage() {
         return "notes/explore";
@@ -359,7 +362,7 @@ public class UserController {
             sessionUser.setSecurityToken(securityToken);
             String deviceDetails = request.getHeader("User-Agent");
             String ipAddress = request.getRemoteAddr();
-            String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String appUrl = appUrlResolver.resolve(request);
             emailService.sendPasswordChangeAlert(sessionUser.getEmail(), sessionUser.getName(), deviceDetails + " (IP: " + ipAddress + ")", securityToken, appUrl);
         }
 

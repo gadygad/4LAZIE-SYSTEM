@@ -49,6 +49,9 @@ public class AdminController {
 
         @Autowired
         private com.school.notes.NoteService noteService;
+
+        @Autowired
+        private com.school.config.AppUrlResolver appUrlResolver;
     
         private PasswordResetTokenRepository passwordResetTokenRepository;
     
@@ -1726,9 +1729,8 @@ public class AdminController {
         }
         
         try {
-            String appUrl = request.getScheme() + "://" + request.getServerName() + 
-                            ("http".equals(request.getScheme()) && request.getServerPort() == 80 || "https".equals(request.getScheme()) && request.getServerPort() == 443 ? "" : ":" + request.getServerPort());
-                            
+            String appUrl = appUrlResolver.resolve(request);
+
             noteService.uploadSharedNote(title, category, academicYear, file, targetCourses, user, appUrl);
             redirectAttributes.addFlashAttribute("success", "Shared document uploaded and assigned successfully to " + targetCourses.size() + " modules!");
         } catch (Exception e) {

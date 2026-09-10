@@ -90,6 +90,9 @@ public class NotesController {
 
         private EmailService emailService;
 
+    @Autowired
+    private com.school.config.AppUrlResolver appUrlResolver;
+
     public NotesController(com.school.auth.AuthUtil authUtil, NoteRepository noteRepository, NoteService noteService, UserRepository userRepository, CourseRepository courseRepository, InstitutionRepository institutionRepository, SubjectRepository subjectRepository, com.school.core.ActivityLogRepository activityLogRepository, FileStorageService fileStorageService, NotificationService notificationService, EmailService emailService) {
         this.authUtil = authUtil;
         this.noteRepository = noteRepository;
@@ -532,10 +535,7 @@ public class NotesController {
             note.setAcademicYear(noteDTO.getAcademicYear() != null ? noteDTO.getAcademicYear().trim() : null);
             note.setIsGeneral(noteDTO.getIsGeneral());
 
-            String appUrl = "https://" + request.getServerName();
-            if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-                appUrl += ":" + request.getServerPort();
-            }
+            String appUrl = appUrlResolver.resolve(request);
 
             noteService.uploadAndSaveNote(note, file, loggedInUser, appUrl);
             

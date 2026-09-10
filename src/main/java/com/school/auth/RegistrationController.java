@@ -49,10 +49,13 @@ public class RegistrationController {
 
         private com.school.core.EmailService emailService;
 
-    public RegistrationController(UserService userService, UserRepository userRepository, InstitutionRepository institutionRepository, CourseRepository courseRepository, com.school.core.GoogleAuthService googleAuthService, com.school.core.EmailService emailService) {
+        private com.school.config.AppUrlResolver appUrlResolver;
+
+    public RegistrationController(UserService userService, UserRepository userRepository, InstitutionRepository institutionRepository, CourseRepository courseRepository, com.school.core.GoogleAuthService googleAuthService, com.school.core.EmailService emailService, com.school.config.AppUrlResolver appUrlResolver) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.institutionRepository = institutionRepository;
+        this.appUrlResolver = appUrlResolver;
         this.courseRepository = courseRepository;
         this.googleAuthService = googleAuthService;
         this.emailService = emailService;
@@ -118,7 +121,7 @@ public class RegistrationController {
             userService.registerUser(user, profilePic);
             
             // Send verification email
-            String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String appUrl = appUrlResolver.resolve(request);
             String verifyLink = appUrl + "/verify-email?token=" + user.getVerificationToken();
             emailService.sendVerificationEmail(user.getEmail(), verifyLink);
             
