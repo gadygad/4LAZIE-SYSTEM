@@ -109,6 +109,25 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
                 .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-src 'self' blob:; img-src 'self' https: data: blob:; frame-ancestors 'self'"))
+            )
+            // A CSRF failure almost always means the form the user submitted was
+            // stale — served from a cached page (old PWA install, a tab left open
+            // across a deploy) whose embedded token no longer matches their current
+            // cookie — not a real attack. Bouncing them to a dead "403 Forbidden"
+            // error page leaves them stuck; sending them back to where they came
+            // from instead gets them a fresh token for free and usually lets them
+            // just retry immediately.
+            .exceptionHandling(exceptions -> exceptions
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    if (accessDeniedException instanceof org.springframework.security.web.csrf.CsrfException) {
+                        String referer = request.getHeader("Referer");
+                        String target = (referer != null && referer.contains(request.getServerName()))
+                                ? referer : request.getContextPath() + "/";
+                        response.sendRedirect(target);
+                    } else {
+                        response.sendError(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN);
+                    }
+                })
             );
 
         return http.build();
