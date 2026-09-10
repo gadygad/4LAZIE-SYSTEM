@@ -24,6 +24,8 @@ public class CloudinaryStorageServiceImpl implements FileStorageService {
 
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
+        FileStorageService.validateUploadOrThrow(file);
+
         String originalFilename = file.getOriginalFilename();
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {
