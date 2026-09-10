@@ -989,12 +989,6 @@
                     // Explicitly call inline onchange if present (as dispatchEvent sometimes ignores it for programmatic changes)
                     if (typeof select.onchange === 'function') {
                         select.onchange();
-                    } else if (select.hasAttribute('onchange')) {
-                        try {
-                            new Function(select.getAttribute('onchange')).bind(select)();
-                        } catch (err) {
-                            console.error('Error executing onchange:', err);
-                        }
                     }
                 });
                 optionsContainer.appendChild(optDiv);
