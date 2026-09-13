@@ -81,6 +81,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     boolean existsByInstitutionIdAndProgramType(String institutionId, String programType);
 
+    // College-scoped admin views — see AdminService#scopeInstitutionId.
+    long countByInstitutionId(String institutionId);
+    List<Note> findByInstitutionIdOrderByIdDesc(String institutionId);
+
     boolean existsByTitleIgnoreCaseAndProgramTypeAndLevelNoAndSemesterNoAndModuleNameIgnoreCaseAndUnitNumber(String title, String programType, Integer levelNo, Integer semesterNo, String moduleName, Integer unitNumber);
 
 

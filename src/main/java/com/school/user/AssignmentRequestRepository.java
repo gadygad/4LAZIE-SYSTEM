@@ -10,6 +10,10 @@ import java.util.List;
 public interface AssignmentRequestRepository extends MongoRepository<AssignmentRequest, String> {
     List<AssignmentRequest> findByUserIdOrderByCreatedAtDesc(String userId);
     List<AssignmentRequest> findAllByOrderByCreatedAtDesc();
+    // Unpaginated, for college-scoped filtering by the requester's
+    // institution before paginating in memory — see
+    // AssignmentHelpService#getAdminRequestsPaginated.
+    List<AssignmentRequest> findByStatusOrderByCreatedAtDesc(String status);
     
     // Pagination & Filtering
     org.springframework.data.domain.Page<AssignmentRequest> findAllByOrderByCreatedAtDesc(org.springframework.data.domain.Pageable pageable);

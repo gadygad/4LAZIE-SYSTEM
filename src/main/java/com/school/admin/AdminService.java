@@ -27,6 +27,19 @@ public class AdminService {
         return user.getPermissions() != null && user.getPermissions().contains(requiredPermission);
     }
 
+    // Which college's data this admin should see. SUPER_ADMIN is a
+    // platform-wide role and always gets null (no filter — every college at
+    // once), matching the precedent that only SUPER_ADMIN can delete a whole
+    // institution. A plain ADMIN is scoped to their own account's college;
+    // one predating this scoping with no institution set falls back to "1"
+    // (St. Joseph), the same default DatabaseInitializer backfilled onto
+    // every pre-existing account.
+    public String scopeInstitutionId(User user) {
+        if (user == null || user.getRole() == Role.SUPER_ADMIN) return null;
+        com.school.academic.Institution institution = user.getInstitution();
+        return institution != null ? institution.getId() : "1";
+    }
+
     public String processDeletionRequest(User admin, String entityType, String entityId, String entityDesc) {
         if (admin.getRole() == Role.SUPER_ADMIN) {
             return "PROCEED";

@@ -19,4 +19,8 @@ public interface SubjectRepository extends MongoRepository<Subject, String> {
     // exact name at this level/semester, for the "General Subject" upload
     // toggle — deliberately not scoped to a single course.
     List<Subject> findByNameIgnoreCaseAndLevelNoAndSemesterNo(String name, Integer levelNo, Integer semesterNo);
+
+    // Content-gap scoping to one college's own courses — see
+    // AdminService#scopeInstitutionId.
+    List<Subject> findByCourseIn(List<Course> courses);
 }

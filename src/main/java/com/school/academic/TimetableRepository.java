@@ -26,4 +26,10 @@ public interface TimetableRepository extends MongoRepository<Timetable, String> 
 
     // To list all timetables for the admin panel
     List<Timetable> findAllByOrderByUploadDateDesc();
+
+    // College-scoped listing — Timetable has no institution field of its
+    // own, so scoping goes through the set of programTypes that belong to
+    // the admin's institution (programType is globally unique per college,
+    // see CurriculumInitializer). See AdminService#scopeInstitutionId.
+    List<Timetable> findByProgramTypeInOrderByUploadDateDesc(List<String> programTypes);
 }

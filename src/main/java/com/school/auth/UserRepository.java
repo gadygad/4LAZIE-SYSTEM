@@ -22,4 +22,11 @@ public interface UserRepository extends MongoRepository<User, String> {
     java.util.List<User> findByLastActiveTimeAfterOrderByLastActiveTimeDesc(java.time.LocalDateTime time);
     java.util.List<User> findByCourseProgramAndLevelAndSemester(String courseProgram, Integer level, Integer semester);
     java.util.List<User> findByWarningCountGreaterThanEqual(Integer warningCount);
+
+    // College-scoped views for admins whose access is limited to their own
+    // institution — see AdminService#scopeInstitutionId.
+    long countByInstitutionId(String institutionId);
+    java.util.List<User> findByInstitutionId(String institutionId);
+    java.util.List<User> findTop5ByInstitutionIdOrderByDateJoinedDesc(String institutionId);
+    java.util.List<User> findByWarningCountGreaterThanEqualAndInstitutionId(Integer warningCount, String institutionId);
 }
