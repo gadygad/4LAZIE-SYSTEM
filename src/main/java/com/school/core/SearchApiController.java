@@ -49,17 +49,27 @@ public class SearchApiController {
     private static final Logger logger = LoggerFactory.getLogger(SearchApiController.class);
 
     @GetMapping("/api/search")
-    public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query) {
+    public ResponseEntity<Map<String, Object>> searchNotes(@RequestParam("q") String query, jakarta.servlet.http.HttpServletRequest request) {
         User loggedInUser = getLoggedInUser();
-        
+
+        // A guest who has picked a college (see CollegePickerController) only
+        // gets that college's own results — same "see notes made for you"
+        // scoping already applied to the homepage's latest-notes list. A
+        // logged-in student is already effectively scoped by courseProgram
+        // (unique per college), and ADMIN/SUPER_ADMIN search across every
+        // college on purpose, so neither is further restricted here.
+        String guestInstitutionId = loggedInUser == null
+                ? com.school.core.CollegePickerController.readSelectedInstitutionId(request)
+                : null;
+
         // Secure Cache Key based on user context
         String cacheKey = query.trim().toLowerCase();
         if (loggedInUser != null) {
             cacheKey += "-" + loggedInUser.getRole() + "-" + (loggedInUser.getCourseProgram() != null ? loggedInUser.getCourseProgram() : "");
         } else {
-            cacheKey += "-guest";
+            cacheKey += "-guest-" + (guestInstitutionId != null ? guestInstitutionId : "any");
         }
-        
+
         Cache cache = cacheManager.getCache("searchResults");
         if (cache != null) {
             Map<String, Object> cachedResponse = cache.get(cacheKey, Map.class);
@@ -75,6 +85,7 @@ public class SearchApiController {
         List<Note> allMatches = matchesPage.getContent();
         List<Note> topResults = allMatches.stream()
                 .filter(n -> n != null && (loggedInUser != null || Boolean.TRUE.equals(n.getIsPublic())))
+                .filter(n -> guestInstitutionId == null || (n.getInstitution() != null && guestInstitutionId.equals(n.getInstitution().getId())))
                 .filter(n -> {
                     if (loggedInUser != null && loggedInUser.getRole() != com.school.auth.Role.ADMIN && loggedInUser.getRole() != com.school.auth.Role.SUPER_ADMIN) {
                         String userProg = loggedInUser.getCourseProgram();
@@ -116,8 +127,9 @@ public class SearchApiController {
             @RequestParam("category") String category,
             @RequestParam(value = "program", required = false) String program,
             @RequestParam(value = "semester", required = false) Integer semester,
-            @RequestParam(value = "level", required = false) Integer level) {
-            
+            @RequestParam(value = "level", required = false) Integer level,
+            jakarta.servlet.http.HttpServletRequest request) {
+
         logger.info("API Called with: category={}, program={}, semester={}, level={}", category, program, semester, level);
 
         User loggedInUser = getLoggedInUser();
@@ -134,6 +146,13 @@ public class SearchApiController {
         if (loggedInUser == null) {
             // Only public notes for guests
             query.addCriteria(Criteria.where("isPublic").is(true));
+            // Same college-cookie scoping as /api/search and the homepage's
+            // latest notes — a guest who has picked a college only browses
+            // that college's own materials here.
+            String guestInstitutionId = com.school.core.CollegePickerController.readSelectedInstitutionId(request);
+            if (guestInstitutionId != null) {
+                query.addCriteria(Criteria.where("institution.$id").is(guestInstitutionId));
+            }
         }
 
         if (program != null && !program.isEmpty()) {
