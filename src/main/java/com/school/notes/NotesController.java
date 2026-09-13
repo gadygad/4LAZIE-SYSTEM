@@ -49,6 +49,9 @@ public class NotesController {
     // into it), so this check must be enforced there too, not just in its
     // two callers, or a guest can bypass the whitelist entirely by hitting
     // /proxy/{id} directly with a restricted note's id.
+    // Category half of Note#isGuestAccessible() — kept here too since some
+    // call sites (like this one) intentionally check category without also
+    // re-checking isPublic (already handled separately at those sites).
     private boolean isGuestAllowedCategory(Note note) {
         if (note.getCategory() == null || note.getCategory().trim().isEmpty()) {
             return true;

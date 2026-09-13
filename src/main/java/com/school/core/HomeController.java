@@ -85,8 +85,13 @@ public class HomeController {
         List<Note> notePool = cookieInstitutionId != null
                 ? noteRepository.findTop50ByInstitutionIdOrderByIdDesc(cookieInstitutionId)
                 : noteRepository.findTop50ByOrderByIdDesc();
+        // Guest-accessible only (isPublic AND an allowed category — see
+        // Note#isGuestAccessible) — every note this list shows must
+        // actually be openable without an account by any guest, from any
+        // college, whether or not they've picked one, or a note could show
+        // up here only to bounce the guest to /login when they click it.
         List<Note> popularNotes = notePool.stream()
-                .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
+                .filter(n -> n != null && n.isGuestAccessible())
                 .filter(n -> seenTitles.add(n.getTitle())) // only keep the first occurrence of each title
                 .limit(10)
                 .collect(Collectors.toList());
