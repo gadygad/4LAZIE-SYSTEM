@@ -375,6 +375,16 @@
                     <input type="file" name="file" class="form-control" required>
                 </div>
             </div>
+
+            <div class="row mb-3" th:if="${institutions != null and institutions.size() > 1}">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Which College</label>
+                    <select name="institutionId" class="form-select" required>
+                        <option value="" disabled selected>Choose a college...</option>
+                        <option th:each="inst : ${institutions}" th:value="${inst.id}" th:text="${inst.name}"></option>
+                    </select>
+                </div>
+            </div>
             
 
 
@@ -568,7 +578,12 @@
                 </thead>
                 <tbody>
                     <tr th:each="cal : ${calendars}">
-                        <td data-label="Academic Year" th:text="${cal.academicYear}" class="fw-bold" style="color: #111827;">2025/2026</td>
+                        <td data-label="Academic Year">
+                            <span th:text="${cal.academicYear}" class="fw-bold" style="color: #111827;">2025/2026</span>
+                            <span th:if="${cal.institution != null}" class="badge rounded-pill ms-1" style="background: rgba(16,185,129,0.1); color: #10b981; font-weight: 600; font-size: 0.7rem;">
+                                <i class="bi bi-bank2 me-1"></i><span th:text="${cal.institution.shortName != null ? cal.institution.shortName : cal.institution.name}">College</span>
+                            </span>
+                        </td>
                         <td data-label="Status">
                             <span th:if="${cal.isCurrent}" class="badge badge-premium bg-success">Current</span>
                             <span th:unless="${cal.isCurrent}" class="badge badge-premium bg-secondary">Archived</span>

@@ -373,8 +373,17 @@ public class AdminController {
         Long staleCalendarCount = null;
         try {
             if (adminService.hasPermission(user, "MANAGE_CALENDAR")) {
-                AcademicCalendar currentCal = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
-                staleCalendarCount = isAcademicCalendarStale(currentCal) ? 1L : 0L;
+                if (scopeInstitutionId != null) {
+                    AcademicCalendar currentCal = academicCalendarRepository.findByInstitutionIdAndIsCurrentTrue(scopeInstitutionId).orElse(null);
+                    staleCalendarCount = isAcademicCalendarStale(currentCal) ? 1L : 0L;
+                } else {
+                    // SUPER_ADMIN: how many colleges (not just one) are
+                    // overdue for a calendar replacement.
+                    staleCalendarCount = institutionRepository.findAll().stream()
+                            .filter(inst -> isAcademicCalendarStale(
+                                    academicCalendarRepository.findByInstitutionIdAndIsCurrentTrue(inst.getId()).orElse(null)))
+                            .count();
+                }
             }
         } catch (Exception e) {
             log.warn("Failed to check academic calendar staleness: {}", e.getMessage(), e);
@@ -1249,15 +1258,28 @@ public class AdminController {
             return "redirect:/login";
         }
         
-        List<AcademicCalendar> calendars = academicCalendarRepository.findAll();
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<AcademicCalendar> calendars = scopeInstitutionId != null
+                ? academicCalendarRepository.findByInstitutionId(scopeInstitutionId)
+                : academicCalendarRepository.findAll();
         model.addAttribute("calendars", calendars);
+        model.addAttribute("institutions", scopeInstitutionId != null
+                ? institutionRepository.findById(scopeInstitutionId).map(java.util.List::of).orElse(java.util.List.of())
+                : institutionRepository.findAll());
         return "admin/admin_calendar";
     }
 
     @org.springframework.web.bind.annotation.GetMapping("/calendar/force-autofill")
     @org.springframework.web.bind.annotation.ResponseBody
     public String forceAutofill() {
-        AcademicCalendar cal = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
+        User user = getLoggedInUser();
+        if (!adminService.hasPermission(user, "MANAGE_CALENDAR")) {
+            return "Not authorized.";
+        }
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        AcademicCalendar cal = scopeInstitutionId != null
+                ? academicCalendarRepository.findByInstitutionIdAndIsCurrentTrue(scopeInstitutionId).orElse(null)
+                : academicCalendarRepository.findByIsCurrentTrue().orElse(null);
         if (cal == null) {
             return "No current calendar found.";
         }
@@ -1340,12 +1362,21 @@ public class AdminController {
             @RequestParam(value = "sem2Cat2DiplomaFile", required = false) MultipartFile sem2Cat2DiplomaFile,
             @RequestParam(value = "sem2UeDegreeFile", required = false) MultipartFile sem2UeDegreeFile,
             @RequestParam(value = "sem2UeDiplomaFile", required = false) MultipartFile sem2UeDiplomaFile,
+            @RequestParam(value = "institutionId", required = false) String institutionId,
             HttpSession session, RedirectAttributes redirectAttributes) {
 
         User user = getLoggedInUser();
         if (!adminService.hasPermission(user, "MANAGE_CALENDAR")) {
             return "redirect:/login";
         }
+
+        // A scoped ADMIN can only ever upload a calendar for their own
+        // college — same pattern as addCourse — so whatever the form
+        // submits is ignored in favor of their actual account institution.
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        String resolvedInstitutionId = scopeInstitutionId != null
+                ? scopeInstitutionId
+                : (institutionId != null && !institutionId.trim().isEmpty() ? institutionId.trim() : "1");
 
         try {
             java.util.Map<String, String> extractedDates = new java.util.HashMap<>();
@@ -1401,14 +1432,19 @@ public class AdminController {
             calendar.setSem2UeDiplomaDate(sem2UeDiplomaDate);
             calendar.setSem2UeDiplomaEndDate(sem2UeDiplomaEndDate);
             
+            institutionRepository.findById(resolvedInstitutionId).ifPresent(calendar::setInstitution);
+
             if (isCurrent) {
-                // unset others
-                academicCalendarRepository.findByIsCurrentTrue().ifPresent(old -> {
+                // unset this college's previous current calendar only —
+                // "current" is scoped per institution now, so uploading for
+                // one college must never touch another college's own
+                // current calendar.
+                academicCalendarRepository.findByInstitutionIdAndIsCurrentTrue(resolvedInstitutionId).ifPresent(old -> {
                     old.setIsCurrent(false);
                     academicCalendarRepository.save(old);
                 });
             }
-            calendar.setIsCurrent(isCurrent || academicCalendarRepository.count() == 0);
+            calendar.setIsCurrent(isCurrent || !academicCalendarRepository.existsByInstitutionId(resolvedInstitutionId));
 
             if (file != null && !file.isEmpty()) {
                 String fileUrl = fileStorageService.uploadFile(file);
@@ -1468,6 +1504,9 @@ public class AdminController {
         }
         
         AcademicCalendar calendar = academicCalendarRepository.findById(id).orElse(null);
+        if (calendar != null && isOutOfScope(calendar.getInstitution(), adminService.scopeInstitutionId(user))) {
+            calendar = null;
+        }
         if (calendar != null) {
             String desc = "Calendar " + calendar.getAcademicYear();
             if ("PENDING".equals(handleDeletionRequest(user, "CALENDAR", id, desc, redirectAttributes))) {
