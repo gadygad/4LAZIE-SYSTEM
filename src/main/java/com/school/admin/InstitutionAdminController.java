@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 
 // Lets an admin add the colleges 4LAZIE serves, instead of the previous
 // approach of hand-editing DatabaseInitializer.java and redeploying every
-// time a new college joins. Courses still default to the first institution
-// on creation (see AdminController#addCourse) until that form also gets an
-// institution picker.
+// time a new college joins. A new college's own courses (added afterward
+// from Manage Courses) automatically group into the same Diploma/Degree
+// sidebar layout St. Joseph uses — see sidebar_fragments.html, which groups
+// by programType prefix for any institution, not just St. Joseph — so
+// there's nothing to copy here, only the college itself to create.
 @Controller
 @RequestMapping("/admin")
 public class InstitutionAdminController {
@@ -94,7 +96,7 @@ public class InstitutionAdminController {
             institution.setLogoUrl(logoUrl.trim());
         }
         institutionRepository.save(institution);
-        redirectAttributes.addFlashAttribute("success", "College '" + name.trim() + "' added. Add its courses next from Manage Courses.");
+        redirectAttributes.addFlashAttribute("success", "College '" + name.trim() + "' added. Add its courses next from Manage Courses — they'll group into the same Diploma/Degree sidebar layout St. Joseph uses.");
         return "redirect:/admin/institutions";
     }
 
