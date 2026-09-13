@@ -38,6 +38,10 @@ public class GlobalSidebarAdvice {
     @ModelAttribute
     public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
         com.school.auth.User user = (com.school.auth.User) session.getAttribute("user");
+        // Set inside the try block below, then reused by the Academic
+        // Calendar lookup further down so both sections resolve "which
+        // college" the exact same way.
+        String currentInstitutionId = null;
         try {
             // A guest who has picked a college via /choose-college carries
             // that choice in a cookie (see CollegePickerController) — use it
@@ -110,6 +114,7 @@ public class GlobalSidebarAdvice {
             model.addAttribute("currentInstitution", currentInstitution);
             model.addAttribute("diplomaCourses", diplomaCourses);
             model.addAttribute("degreeCourses", degreeCourses);
+            currentInstitutionId = currentInstitution != null ? currentInstitution.getId() : null;
         } catch (Exception e) {
             model.addAttribute("currentInstitution", null);
             model.addAttribute("diplomaCourses", java.util.Collections.emptyList());
@@ -136,7 +141,13 @@ public class GlobalSidebarAdvice {
 
         try {
             com.school.academic.AcademicCalendar[] calHolder = new com.school.academic.AcademicCalendar[1];
-            academicCalendarRepository.findByIsCurrentTrue().ifPresent(calendar -> {
+            // Same currentInstitutionId the courses above just resolved — a
+            // calendar with no institution field yet (pre-multi-college
+            // records) is only found by the unscoped fallback.
+            java.util.Optional<com.school.academic.AcademicCalendar> currentCal = currentInstitutionId != null
+                    ? academicCalendarRepository.findByInstitutionIdAndIsCurrentTrue(currentInstitutionId)
+                    : academicCalendarRepository.findByIsCurrentTrue();
+            currentCal.ifPresent(calendar -> {
                 model.addAttribute("currentCalendar", calendar);
                 calHolder[0] = calendar;
             });

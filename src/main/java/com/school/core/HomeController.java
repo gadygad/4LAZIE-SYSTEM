@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @Controller
 public class HomeController {
@@ -100,66 +97,19 @@ public class HomeController {
                 .map(HomeController::getAdviceForModule)
                 .collect(Collectors.toList());
 
-        // Fetch current academic calendar and compute exam-passed flags
-        AcademicCalendar[] calHolder = new AcademicCalendar[1];
-        academicCalendarRepository.findByIsCurrentTrue().ifPresent(calendar -> {
-            model.addAttribute("currentCalendar", calendar);
-            calHolder[0] = calendar;
-        });
-
-        // Determine if each exam type's dates have ALL passed
-        if (calHolder[0] != null) {
-            AcademicCalendar cal = calHolder[0];
-            model.addAttribute("cat1Passed", 
-                hasDatePassed(cal.getSem1Cat1DegreeDate()) && hasDatePassed(cal.getSem1Cat1DiplomaDate()) && 
-                hasDatePassed(cal.getSem2Cat1DegreeDate()) && hasDatePassed(cal.getSem2Cat1DiplomaDate()));
-            model.addAttribute("cat2Passed", 
-                hasDatePassed(cal.getSem1Cat2DegreeDate()) && hasDatePassed(cal.getSem1Cat2DiplomaDate()) && 
-                hasDatePassed(cal.getSem2Cat2DegreeDate()) && hasDatePassed(cal.getSem2Cat2DiplomaDate()));
-            model.addAttribute("uePassed", 
-                hasDatePassed(cal.getSem1UeDegreeDate()) && hasDatePassed(cal.getSem1UeDiplomaDate()) && 
-                hasDatePassed(cal.getSem2UeDegreeDate()) && hasDatePassed(cal.getSem2UeDiplomaDate()));
-        } else {
-            model.addAttribute("cat1Passed", false);
-            model.addAttribute("cat2Passed", false);
-            model.addAttribute("uePassed", false);
-        }
-
-        // diplomaCourses/degreeCourses are NOT set here on purpose — this
-        // used to duplicate GlobalSidebarAdvice's logic with an unfiltered
-        // courseRepository.findAll(), and because @ControllerAdvice
-        // model attributes are added before the handler runs, this
-        // method's own model.addAttribute() calls silently overwrote
-        // GlobalSidebarAdvice's institution-scoped lists on every load of
-        // "/" — the one page most guests actually land on. Let that single
-        // source of truth stand instead of recomputing (and re-breaking) it
-        // here.
+        // currentCalendar/cat1Passed/cat2Passed/uePassed and
+        // diplomaCourses/degreeCourses are NOT set here on purpose — both
+        // used to duplicate GlobalSidebarAdvice's logic with an unscoped
+        // query, and because @ControllerAdvice model attributes are added
+        // before the handler runs, this method's own model.addAttribute()
+        // calls silently overwrote GlobalSidebarAdvice's institution-scoped
+        // values on every load of "/" — the one page most guests actually
+        // land on. Let that single source of truth stand instead of
+        // recomputing (and re-breaking) it here.
 
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
         return "public/home";
-    }
-
-    /**
-     * Parses a date string like "13 Jan 2026" or a range like "23 Mar 2026 - 02 Apr 2026"
-     * and returns true if the date (or the END date of a range) is in the past.
-     */
-    private boolean hasDatePassed(String dateStr) {
-        if (dateStr == null || dateStr.isBlank()) return false;
-        try {
-            // If it's a range like "23 Mar 2026 - 02 Apr 2026", take the last part
-            String cleaned = dateStr.trim();
-            if (cleaned.contains("-")) {
-                String[] parts = cleaned.split("-");
-                cleaned = parts[parts.length - 1].trim();
-            }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH);
-            LocalDate examDate = LocalDate.parse(cleaned, formatter);
-            return LocalDate.now().isAfter(examDate);
-        } catch (DateTimeParseException e) {
-            // If parsing fails, don't hide the button
-            return false;
-        }
     }
 
     @Autowired
@@ -210,8 +160,19 @@ public class HomeController {
     // rendering entirely up to whatever PDF support the visitor's browser
     // happens to have (unreliable on several mobile browsers).
     @GetMapping("/calendar/view")
-    public org.springframework.http.ResponseEntity<String> viewAcademicCalendar() {
-        AcademicCalendar current = academicCalendarRepository.findByIsCurrentTrue().orElse(null);
+    public org.springframework.http.ResponseEntity<String> viewAcademicCalendar(
+            jakarta.servlet.http.HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
+        // Same institution resolution as GlobalSidebarAdvice: a logged-in
+        // user's own college first, then the guest college-picker cookie,
+        // falling back to the unscoped lookup for a pre-multi-college
+        // record with no institution set at all.
+        com.school.auth.User user = (com.school.auth.User) session.getAttribute("user");
+        String institutionId = user != null && user.getInstitution() != null
+                ? user.getInstitution().getId()
+                : com.school.core.CollegePickerController.readSelectedInstitutionId(request);
+        AcademicCalendar current = institutionId != null
+                ? academicCalendarRepository.findByInstitutionIdAndIsCurrentTrue(institutionId).orElse(null)
+                : academicCalendarRepository.findByIsCurrentTrue().orElse(null);
         return renderCalendarOrRedirect(current);
     }
 
