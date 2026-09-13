@@ -7,7 +7,8 @@
     <div class="p-3 pb-5 custom-scrollbar position-relative" id="mobileSidebarBody">
         <!-- College Name Link (St. Joseph College) -->
         <a href="https://sjuit.ac.tz/" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="background: rgba(16, 185, 129, 0.05); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.05)'; this.style.borderColor='rgba(16, 185, 129, 0.1)';">
-            <i class="bi bi-building" style="color: #10b981; font-size: 1rem; flex-shrink: 0;"></i>
+            <img th:if="${currentInstitution != null and currentInstitution.logoUrl != null and !currentInstitution.logoUrl.isEmpty()}" th:src="${currentInstitution.logoUrl}" alt="logo" style="width: 20px; height: 20px; border-radius: 5px; object-fit: cover; flex-shrink: 0;">
+            <i th:if="${currentInstitution == null or currentInstitution.logoUrl == null or currentInstitution.logoUrl.isEmpty()}" class="bi bi-building" style="color: #10b981; font-size: 1rem; flex-shrink: 0;"></i>
             <span class="text-truncate" style="color: #1e293b; font-size: 0.85rem; font-weight: 500; font-family: 'Outfit', sans-serif; letter-spacing: 0.3px;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Eng. & Tech'}">St. Joseph College of Eng. & Tech</span>
             <i class="bi bi-box-arrow-up-right ms-auto flex-shrink-0" style="color: #94a3b8; font-size: 0.85rem;"></i>
         </a>
