@@ -6,9 +6,11 @@ import com.school.academic.CourseRepository;
 import com.school.auth.AuthUtil;
 import com.school.auth.Role;
 import com.school.auth.User;
+import com.school.core.FileStorageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -29,12 +31,14 @@ public class InstitutionAdminController {
     private final CourseRepository courseRepository;
     private final AuthUtil authUtil;
     private final AdminService adminService;
+    private final FileStorageService fileStorageService;
 
-    public InstitutionAdminController(InstitutionRepository institutionRepository, CourseRepository courseRepository, AuthUtil authUtil, AdminService adminService) {
+    public InstitutionAdminController(InstitutionRepository institutionRepository, CourseRepository courseRepository, AuthUtil authUtil, AdminService adminService, FileStorageService fileStorageService) {
         this.institutionRepository = institutionRepository;
         this.courseRepository = courseRepository;
         this.authUtil = authUtil;
         this.adminService = adminService;
+        this.fileStorageService = fileStorageService;
     }
 
     private User getLoggedInUser() {
@@ -62,7 +66,7 @@ public class InstitutionAdminController {
     @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution"}, allEntries = true)
     public String addInstitution(@RequestParam("name") String name,
                                   @RequestParam("shortName") String shortName,
-                                  @RequestParam(value = "logoUrl", required = false) String logoUrl,
+                                  @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
                                   RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (!adminService.hasPermission(user, "MANAGE_INSTITUTIONS")) {
@@ -92,8 +96,13 @@ public class InstitutionAdminController {
         Institution institution = new Institution();
         institution.setName(name.trim());
         institution.setShortName(shortName.trim());
-        if (logoUrl != null && !logoUrl.trim().isEmpty()) {
-            institution.setLogoUrl(logoUrl.trim());
+        if (logoFile != null && !logoFile.isEmpty()) {
+            try {
+                institution.setLogoUrl(fileStorageService.uploadFile(logoFile));
+            } catch (java.io.IOException e) {
+                redirectAttributes.addFlashAttribute("error", "College name/short name were fine, but the logo failed to upload: " + e.getMessage());
+                return "redirect:/admin/institutions";
+            }
         }
         institutionRepository.save(institution);
         redirectAttributes.addFlashAttribute("success", "College '" + name.trim() + "' added. Add its courses next from Manage Courses — they'll group into the same Diploma/Degree sidebar layout St. Joseph uses.");
@@ -105,7 +114,7 @@ public class InstitutionAdminController {
     public String editInstitution(@PathVariable String id,
                                    @RequestParam("name") String name,
                                    @RequestParam("shortName") String shortName,
-                                   @RequestParam(value = "logoUrl", required = false) String logoUrl,
+                                   @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
                                    RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (!adminService.hasPermission(user, "MANAGE_INSTITUTIONS")) {
@@ -150,7 +159,17 @@ public class InstitutionAdminController {
 
         institution.setName(name.trim());
         institution.setShortName(shortName.trim());
-        institution.setLogoUrl(logoUrl != null && !logoUrl.trim().isEmpty() ? logoUrl.trim() : null);
+        // A new file replaces the logo; leaving the picker empty keeps
+        // whatever logo (if any) the college already had — editing the
+        // name shouldn't force re-uploading the logo every time.
+        if (logoFile != null && !logoFile.isEmpty()) {
+            try {
+                institution.setLogoUrl(fileStorageService.uploadFile(logoFile));
+            } catch (java.io.IOException e) {
+                redirectAttributes.addFlashAttribute("error", "Name/short name were fine, but the new logo failed to upload: " + e.getMessage());
+                return "redirect:/admin/institutions";
+            }
+        }
         institutionRepository.save(institution);
         redirectAttributes.addFlashAttribute("success", "College '" + name.trim() + "' updated.");
         return "redirect:/admin/institutions";
