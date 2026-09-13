@@ -336,6 +336,15 @@
                             <input type="text" name="title" id="title" class="form-control" style="border-radius: 14px; padding: 8px 12px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none;" placeholder="e.g. Introduction to Programming Notes..." required onfocus="this.style.borderColor='#10b981'; this.style.background='#fff'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129,0.1)';" onblur="this.style.borderColor='#f1f5f9'; this.style.background='#f8fafc'; this.style.boxShadow='none';">
                         </div>
 
+                        <!-- Which College -->
+                        <div class="form-group">
+                            <label for="institutionId" class="form-label fw-bold small mb-1 d-flex align-items-center" style="color: #475569; letter-spacing: 1px; text-transform: uppercase;"><i class="bi bi-bank2 text-muted me-2" style="color: #10b981 !important;"></i>Which College</label>
+                            <select name="institutionId" id="institutionId" class="form-select ts-enabled" style="border-radius: 14px; padding: 8px 12px; border: 2px solid #f1f5f9; font-size: 1rem; background: #f8fafc; transition: all 0.3s ease; box-shadow: none; color: #1e293b; cursor: pointer;">
+                                <option value="">Use my own college</option>
+                                <option th:each="inst : ${institutions}" th:value="${inst.id}" th:text="${inst.name}"></option>
+                            </select>
+                        </div>
+
                         <!-- Course Parameters Grid -->
                         <div class="px-1" style="position: relative;">
                             <div class="row g-2 g-md-3">
@@ -494,6 +503,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Tom Select for static fields
+            new TomSelect('#institutionId', { create: false });
             programTs = new TomSelect('#programType', { create: false });
             levelTs = new TomSelect('#levelNo', { create: false });
             semesterTs = new TomSelect('#semesterNo', { create: false });

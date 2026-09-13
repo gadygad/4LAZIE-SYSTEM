@@ -22,6 +22,10 @@ public class NoteUploadDTO {
     private String moduleCode;
     private String category;
     private Integer unitNumber;
+    // Which college this note is for — optional so the upload form keeps
+    // working even if the dropdown is somehow skipped; NotesController falls
+    // back to the uploader's own account institution when this is blank.
+    private String institutionId;
     @NotBlank(message = "Academic Year is required (e.g. 2024 or 2025/2026)")
     private String academicYear;
     private Boolean isGeneral = false;
@@ -54,6 +58,9 @@ public class NoteUploadDTO {
 
     public Integer getUnitNumber() { return unitNumber; }
     public void setUnitNumber(Integer unitNumber) { this.unitNumber = unitNumber; }
+
+    public String getInstitutionId() { return institutionId; }
+    public void setInstitutionId(String institutionId) { this.institutionId = institutionId; }
 
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }

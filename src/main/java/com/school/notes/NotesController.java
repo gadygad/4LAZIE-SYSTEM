@@ -418,6 +418,7 @@ public class NotesController {
         // SecurityConfig already enforces ADMIN/SUPER_ADMIN access via hasAnyRole
         model.addAttribute("user", loggedInUser);
         model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("institutions", institutionRepository.findAll());
         return "notes/upload";
     }
 
@@ -534,6 +535,14 @@ public class NotesController {
             note.setUnitNumber(noteDTO.getUnitNumber());
             note.setAcademicYear(noteDTO.getAcademicYear() != null ? noteDTO.getAcademicYear().trim() : null);
             note.setIsGeneral(noteDTO.getIsGeneral());
+
+            // Which college this note belongs to — from the form's dropdown
+            // when the admin picked one; NoteService only falls back to the
+            // uploader's own account institution when this is left unset,
+            // so a college is never silently guessed wrong.
+            if (noteDTO.getInstitutionId() != null && !noteDTO.getInstitutionId().isBlank()) {
+                institutionRepository.findById(noteDTO.getInstitutionId()).ifPresent(note::setInstitution);
+            }
 
             String appUrl = appUrlResolver.resolve(request);
 

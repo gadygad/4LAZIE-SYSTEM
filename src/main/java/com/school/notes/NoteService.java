@@ -184,7 +184,13 @@ public class NoteService {
         note.setFileHash(sha256(file.getBytes()));
         note.setUploadDate(java.time.LocalDateTime.now());
         note.setIsPublic(true);
-        note.setInstitution(loggedInUser.getInstitution());
+        // Only default to the uploader's own college when the caller hasn't
+        // already picked one (see NotesController#uploadNote) — otherwise an
+        // admin uploading on behalf of a different college would have that
+        // choice silently overwritten with their own account's institution.
+        if (note.getInstitution() == null) {
+            note.setInstitution(loggedInUser.getInstitution());
+        }
         if (Boolean.TRUE.equals(note.getIsGeneral())) {
             note.setApplicablePrograms(resolveApplicablePrograms(note));
         }
