@@ -1966,8 +1966,11 @@ public class AdminController {
             return "redirect:/login";
         }
         
-        List<Course> allCourses = courseRepository.findAll();
-        
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<Course> allCourses = scopeInstitutionId != null
+                ? courseRepository.findByInstitutionId(scopeInstitutionId)
+                : courseRepository.findAll();
+
         // Use MongoTemplate to fetch raw documents and avoid N+1 DBRef lazy loading queries
         List<Document> rawSubjects = mongoTemplate.findAll(Document.class, "subjects");
         java.util.Map<String, java.util.List<Subject>> subjectsByCourseId = new java.util.HashMap<>();
@@ -2013,7 +2016,27 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Please select at least one course/module.");
             return "redirect:/admin/upload-shared";
         }
-        
+
+        // Same ownership boundary as elsewhere: a scoped ADMIN can only
+        // assign a shared upload to their own college's courses, even
+        // though each target here is a "programType|level|semester|..."
+        // string rather than a plain course id.
+        String uploadScopeInstitutionId = adminService.scopeInstitutionId(user);
+        if (uploadScopeInstitutionId != null) {
+            java.util.Set<String> allowedProgramTypes = courseRepository.findByInstitutionId(uploadScopeInstitutionId).stream()
+                    .map(Course::getProgramType)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toSet());
+            boolean outOfScope = targetCourses.stream().anyMatch(target -> {
+                String[] parts = target.split("\\|");
+                return parts.length < 1 || !allowedProgramTypes.contains(parts[0]);
+            });
+            if (outOfScope) {
+                redirectAttributes.addFlashAttribute("error", "One of the selected courses isn't in your college.");
+                return "redirect:/admin/upload-shared";
+            }
+        }
+
         try {
             String appUrl = appUrlResolver.resolve(request);
 
