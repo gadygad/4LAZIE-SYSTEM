@@ -490,6 +490,17 @@ public class AdminController {
         return missing;
     }
 
+    // A scoped ADMIN's list pages already hide another college's
+    // notes/courses/subjects — but a list is just what's shown, not an
+    // access boundary on its own. Without this, a scoped ADMIN who simply
+    // knows (or guesses) another college's id could still act on it by
+    // POSTing straight to a delete/edit/link endpoint. scopeInstitutionId
+    // null means SUPER_ADMIN, unrestricted.
+    private boolean isOutOfScope(com.school.academic.Institution institution, String scopeInstitutionId) {
+        if (scopeInstitutionId == null) return false;
+        return institution == null || !scopeInstitutionId.equals(institution.getId());
+    }
+
     // None of ForumReport, VerificationRequest or AssignmentRequest carry an
     // institution of their own — each is scoped by looking up the student
     // behind it and checking THEIR institution instead. A public/anonymous
@@ -806,9 +817,18 @@ public class AdminController {
             return "redirect:/login";
         }
         Note note = noteRepository.findById(id).orElse(null);
-        if (note == null) {
+        if (note == null || isOutOfScope(note.getInstitution(), adminService.scopeInstitutionId(user))) {
             redirectAttributes.addFlashAttribute("error", "Note not found.");
             return "redirect:/admin/notes";
+        }
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        if (scopeInstitutionId != null) {
+            Course targetCourse = courseRepository.findByProgramType(targetProgramType)
+                    .stream().findFirst().orElse(null);
+            if (targetCourse == null || isOutOfScope(targetCourse.getInstitution(), scopeInstitutionId)) {
+                redirectAttributes.addFlashAttribute("error", "That course isn't in your college.");
+                return "redirect:/admin/notes";
+            }
         }
         try {
             noteService.linkExistingNoteToCourse(note.getId(), note.getTitle(), targetProgramType,
@@ -828,6 +848,9 @@ public class AdminController {
             return "redirect:/login";
         }
         Note note = noteRepository.findById(id).orElse(null);
+        if (note != null && isOutOfScope(note.getInstitution(), adminService.scopeInstitutionId(user))) {
+            note = null;
+        }
         if (note != null) {
             if ("PENDING".equals(handleDeletionRequest(user, "NOTE", id, note.getTitle(), redirectAttributes))) {
                 return "redirect:/admin/notes";
@@ -848,6 +871,9 @@ public class AdminController {
             return "redirect:/login";
         }
         Note note = noteRepository.findById(id).orElse(null);
+        if (note != null && isOutOfScope(note.getInstitution(), adminService.scopeInstitutionId(user))) {
+            note = null;
+        }
         if (note != null) {
             boolean current = note.getIsGeneral() != null ? note.getIsGeneral() : false;
             note.setIsGeneral(!current);
@@ -975,9 +1001,13 @@ public class AdminController {
             return "redirect:/admin/subjects";
         }
 
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
         int addedCount = 0;
         for (String courseId : courseIds) {
             Course course = courseRepository.findById(courseId).orElse(null);
+            if (course != null && isOutOfScope(course.getInstitution(), scopeInstitutionId)) {
+                continue;
+            }
             if (course != null) {
                 Subject subject = new Subject();
                 subject.setName(name.trim().toUpperCase());
@@ -1006,6 +1036,9 @@ public class AdminController {
             return "redirect:/login";
         }
         Subject subject = subjectRepository.findById(id).orElse(null);
+        if (subject != null && isOutOfScope(subject.getCourse() != null ? subject.getCourse().getInstitution() : null, adminService.scopeInstitutionId(user))) {
+            subject = null;
+        }
         if (subject != null) {
             if ("PENDING".equals(handleDeletionRequest(user, "SUBJECT", id, subject.getName(), redirectAttributes))) {
                 return "redirect:/admin/subjects";
@@ -1520,6 +1553,9 @@ public class AdminController {
             return "redirect:/login";
         }
         Course course = courseRepository.findById(id).orElse(null);
+        if (course != null && isOutOfScope(course.getInstitution(), adminService.scopeInstitutionId(user))) {
+            course = null;
+        }
         if (course != null) {
             if ("PENDING".equals(handleDeletionRequest(user, "COURSE", id, course.getName(), redirectAttributes))) {
                 return "redirect:/admin/courses";
