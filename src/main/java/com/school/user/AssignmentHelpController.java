@@ -42,6 +42,9 @@ public class AssignmentHelpController {
     private com.school.core.PendingActionRepository pendingActionRepository;
 
     @Autowired
+    private com.school.admin.AdminService adminService;
+
+    @Autowired
     private com.school.core.EmailService emailService;
 
     @Autowired
@@ -177,7 +180,8 @@ public class AssignmentHelpController {
             return "redirect:/login";
         }
         
-        org.springframework.data.domain.Page<AssignmentRequest> requestsPage = assignmentHelpService.getAdminRequestsPaginated(status, page, size);
+        org.springframework.data.domain.Page<AssignmentRequest> requestsPage =
+                assignmentHelpService.getAdminRequestsPaginated(status, page, size, adminService.scopeInstitutionId(admin));
         model.addAttribute("requestsPage", requestsPage);
         model.addAttribute("requests", requestsPage.getContent());
         model.addAttribute("currentStatus", status);

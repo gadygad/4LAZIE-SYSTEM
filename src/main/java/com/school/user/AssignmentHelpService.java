@@ -77,12 +77,48 @@ public class AssignmentHelpService {
     }
 
     public org.springframework.data.domain.Page<AssignmentRequest> getAdminRequestsPaginated(String status, int page, int size) {
+        return getAdminRequestsPaginated(status, page, size, null);
+    }
+
+    // scopeInstitutionId == null keeps the original DB-level pagination
+    // (SUPER_ADMIN, seeing every college). Scoped to one college, a request
+    // is only attributable via the requesting student's own institution —
+    // AssignmentRequest has no institution field of its own — so filtering
+    // has to happen in memory after fetching the (unpaginated) status match,
+    // then the filtered list is paginated by hand. A public/anonymous
+    // contact-form request has no student behind it at all, so it always
+    // passes the filter: it isn't any one college's to claim, but someone
+    // still has to see it and reply.
+    public org.springframework.data.domain.Page<AssignmentRequest> getAdminRequestsPaginated(String status, int page, int size, String scopeInstitutionId) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-        if (status == null || status.isEmpty() || status.equalsIgnoreCase("ALL")) {
-            return assignmentRequestRepository.findAllByOrderByCreatedAtDesc(pageable);
-        } else {
-            return assignmentRequestRepository.findByStatusOrderByCreatedAtDesc(status.toUpperCase(), pageable);
+        if (scopeInstitutionId == null) {
+            if (status == null || status.isEmpty() || status.equalsIgnoreCase("ALL")) {
+                return assignmentRequestRepository.findAllByOrderByCreatedAtDesc(pageable);
+            } else {
+                return assignmentRequestRepository.findByStatusOrderByCreatedAtDesc(status.toUpperCase(), pageable);
+            }
         }
+
+        List<AssignmentRequest> all = (status == null || status.isEmpty() || status.equalsIgnoreCase("ALL"))
+                ? assignmentRequestRepository.findAllByOrderByCreatedAtDesc()
+                : assignmentRequestRepository.findByStatusOrderByCreatedAtDesc(status.toUpperCase());
+
+        List<AssignmentRequest> scoped = new java.util.ArrayList<>();
+        for (AssignmentRequest r : all) {
+            if (r.isPublicContact() || r.getUserId() == null) {
+                scoped.add(r);
+                continue;
+            }
+            User requester = userRepository.findById(r.getUserId()).orElse(null);
+            if (requester != null && requester.getInstitution() != null
+                    && scopeInstitutionId.equals(requester.getInstitution().getId())) {
+                scoped.add(r);
+            }
+        }
+
+        int start = Math.min((int) pageable.getOffset(), scoped.size());
+        int end = Math.min(start + pageable.getPageSize(), scoped.size());
+        return new org.springframework.data.domain.PageImpl<>(scoped.subList(start, end), pageable, scoped.size());
     }
 
     public Optional<AssignmentRequest> getRequestById(String id) {
