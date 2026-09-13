@@ -109,7 +109,9 @@ public class AdminController {
         
         private com.school.core.SiteVisitRepository siteVisitRepository;
 
-    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.core.EmailService emailService, PasswordEncoder passwordEncoder, com.school.core.PendingActionRepository pendingActionRepository, com.school.core.ActivityLogRepository activityLogRepository, com.school.auth.AuthUtil authUtil, com.school.admin.AdminService adminService, com.school.core.SiteVisitRepository siteVisitRepository) {
+        private com.school.academic.InstitutionRepository institutionRepository;
+
+    public AdminController(UserRepository userRepository, NoteRepository noteRepository, PasswordResetTokenRepository passwordResetTokenRepository, TimetableRepository timetableRepository, PdfParsingService pdfParsingService, AcademicCalendarRepository academicCalendarRepository, SubjectRepository subjectRepository, CourseRepository courseRepository, FileStorageService fileStorageService, com.school.core.EmailService emailService, PasswordEncoder passwordEncoder, com.school.core.PendingActionRepository pendingActionRepository, com.school.core.ActivityLogRepository activityLogRepository, com.school.auth.AuthUtil authUtil, com.school.admin.AdminService adminService, com.school.core.SiteVisitRepository siteVisitRepository, com.school.academic.InstitutionRepository institutionRepository) {
         this.userRepository = userRepository;
         this.noteRepository = noteRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
@@ -126,6 +128,7 @@ public class AdminController {
         this.authUtil = authUtil;
         this.adminService = adminService;
         this.siteVisitRepository = siteVisitRepository;
+        this.institutionRepository = institutionRepository;
     }
 
 
@@ -1317,7 +1320,7 @@ public class AdminController {
     }
 
     @PostMapping("/courses/add")
-    @org.springframework.cache.annotation.CacheEvict(value = {"allCourses", "coursesByProgram"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"allCourses", "coursesByProgram", "coursesByInstitution"}, allEntries = true)
     public String addCourse(@RequestParam("name") String name,
                             @RequestParam("programType") String programType,
                             @RequestParam("shortName") String shortName,
@@ -1366,13 +1369,20 @@ public class AdminController {
                 levelPrefix.trim(),
                 startLevel
         );
+        // Without this, the course has no institution and silently
+        // disappears from every guest/admin sidebar, since that list is now
+        // scoped by institution — see GlobalSidebarAdvice. Defaults to the
+        // single institution this platform currently serves; once the admin
+        // panel can manage more than one, this should become a form field
+        // instead of a hardcoded id.
+        institutionRepository.findById("1").ifPresent(course::setInstitution);
         courseRepository.save(course);
         redirectAttributes.addFlashAttribute("success", "Course '" + name.trim().toUpperCase() + "' added successfully!");
         return "redirect:/admin/courses";
     }
 
     @PostMapping("/courses/{id}/delete")
-    @org.springframework.cache.annotation.CacheEvict(value = {"allCourses", "coursesByProgram"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"allCourses", "coursesByProgram", "coursesByInstitution"}, allEntries = true)
     public String deleteCourse(@PathVariable String id, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (!adminService.hasPermission(user, "MANAGE_COURSES")) {
