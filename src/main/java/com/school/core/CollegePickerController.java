@@ -23,7 +23,14 @@ import java.util.List;
 public class CollegePickerController {
 
     public static final String COOKIE_NAME = "selected_institution_id";
-    private static final int COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 180; // ~6 months
+    private static final int COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365; // 1 year
+
+    // Below this many registered colleges, the homepage banner (see
+    // fragments/college_banner.html) lists them as one-click pills right
+    // there instead of sending the guest to the full /choose-college page —
+    // not worth a page load to pick from a handful of names. Once the
+    // roster grows past this, the searchable full page takes over.
+    public static final int INLINE_PICKER_MAX_INSTITUTIONS = 5;
 
     private final InstitutionRepository institutionRepository;
 

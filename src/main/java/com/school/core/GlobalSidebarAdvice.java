@@ -49,6 +49,20 @@ public class GlobalSidebarAdvice {
                     ? institutionRepository.findById(cookieInstitutionId).orElseGet(() -> institutionRepository.findById("1").orElse(null))
                     : institutionRepository.findById("1").orElse(null);
 
+            // Powers fragments/college_banner.html — only a first-time guest
+            // (no account, no cookie yet) sees it, so a returning guest or a
+            // registered student (whose college is already known) never
+            // gets asked. Only fetch the full institution list when the
+            // banner will actually render, to avoid the extra query on
+            // every other page load.
+            boolean showCollegeBanner = user == null && cookieInstitutionId == null;
+            model.addAttribute("showCollegeBanner", showCollegeBanner);
+            if (showCollegeBanner) {
+                List<Institution> bannerInstitutions = institutionRepository.findAll();
+                model.addAttribute("bannerInstitutions", bannerInstitutions);
+                model.addAttribute("showInlineCollegePicker", bannerInstitutions.size() <= CollegePickerController.INLINE_PICKER_MAX_INSTITUTIONS);
+            }
+
             List<com.school.academic.Course> diplomaCourses;
             List<com.school.academic.Course> degreeCourses;
 

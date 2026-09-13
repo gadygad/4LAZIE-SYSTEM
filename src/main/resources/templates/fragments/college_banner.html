@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- First-visit "which college" prompt. Only rendered by callers when
+     showCollegeBanner is true (see GlobalSidebarAdvice) — a guest who
+     already chose, or any logged-in user, never sees this markup at all. -->
+<div th:fragment="banner" th:if="${showCollegeBanner}" style="background: linear-gradient(90deg, #05552b 0%, #0c8245 100%); border-top: 2px solid #f9c004; padding: 10px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;" id="collegeBanner">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f9c004" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+    <p style="margin:0; font-size:0.85rem; color:#eafff2; flex-shrink:0;"><strong style="color:#fff; font-weight:600;">Pick your College/University</strong> — see notes made for you.</p>
+
+    <!-- Few colleges registered: pick right here, no page change. -->
+    <div th:if="${showInlineCollegePicker}" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1;">
+        <form th:each="inst : ${bannerInstitutions}" th:action="@{/choose-college/select}" method="post" style="margin:0;">
+            <input type="hidden" name="institutionId" th:value="${inst.id}">
+            <input type="hidden" name="redirect" value="/">
+            <button type="submit" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color:#fff; font-size:0.78rem; font-weight:600; border-radius:20px; padding:6px 14px; white-space:nowrap;" th:text="${inst.shortName != null ? inst.shortName : inst.name}">College</button>
+        </form>
+    </div>
+
+    <!-- Many colleges registered: send them to the searchable picker page. -->
+    <a th:unless="${showInlineCollegePicker}" href="/choose-college?redirect=/" style="background:#f9c004; color:#3a2b00; font-weight:700; font-size:0.8rem; border-radius:6px; padding:7px 16px; text-decoration:none; white-space:nowrap;">Choose your College/University</a>
+
+    <button type="button" onclick="document.getElementById('collegeBanner').style.display='none';" aria-label="Dismiss" style="background:transparent; border:none; color:rgba(255,255,255,0.65); font-size:1.1rem; line-height:1; padding:0 4px; margin-left:auto;">&times;</button>
+</div>
+
+</body>
+</html>
