@@ -118,12 +118,26 @@
 
         h1 {
             font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            line-height: 1.22;
+            font-weight: 800;
+            font-size: 2rem;
+            line-height: 1.08;
             color: var(--ink);
-            letter-spacing: -0.3px;
-            margin: 0 0 9px;
+            letter-spacing: -1px;
+            margin: 0 0 10px;
+        }
+        h1 .accent {
+            background: linear-gradient(135deg, var(--emerald-dark), var(--emerald));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h1 .sub {
+            display: block;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: -0.2px;
+            color: var(--slate);
+            margin-top: 4px;
         }
 
         p.lead {
@@ -131,7 +145,7 @@
             font-size: 0.89rem;
             margin: 0 0 24px;
             line-height: 1.55;
-            max-width: 38ch;
+            max-width: 40ch;
         }
 
         .search-box {
@@ -336,8 +350,8 @@
     <div class="logo-badge"><span class="dot"></span><span>4LAZIE</span></div>
 
     <p class="eyebrow">One quick step</p>
-    <h1>Which College or University are you from?</h1>
-    <p class="lead">Pick your college to see notes, courses, past papers and discussions made for you. You can change this anytime.</p>
+    <h1>Find your <span class="accent">College</span><span class="sub">or university</span></h1>
+    <p class="lead">Pick yours to see notes, courses, past papers and discussions made for you. You can change this anytime.</p>
 
     <div class="search-box">
         <input type="text" id="collegeSearch" placeholder="Search your college or university…" autocomplete="off">
