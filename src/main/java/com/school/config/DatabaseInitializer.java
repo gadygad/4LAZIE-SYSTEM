@@ -119,6 +119,20 @@ public class DatabaseInitializer implements CommandLineRunner {
                     });
                 }
             });
+
+            // Fix notes with no institution — Note only started getting one
+            // set on new uploads (NoteService/NotesController), so every
+            // note uploaded before that change has institution == null and
+            // would otherwise never appear once a guest scopes "latest
+            // notes" to a specific college (see HomeController#home).
+            noteRepository.findAll().forEach(n -> {
+                if (n.getInstitution() == null) {
+                    institutionRepository.findById("1").ifPresent(inst -> {
+                        n.setInstitution(inst);
+                        noteRepository.save(n);
+                    });
+                }
+            });
         } catch (Exception e) {
             log.warn("Could not seed institutions: " + e.getMessage());
         }
