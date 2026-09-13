@@ -36,14 +36,18 @@ public class GlobalSidebarAdvice {
 
 
     @ModelAttribute
-    public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {
+    public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
         com.school.auth.User user = (com.school.auth.User) session.getAttribute("user");
         try {
-            // TODO: once guests can pick their own college (cookie-based
-            // selection), read that id here instead of the hardcoded "1" —
-            // everything below already keys off currentInstitution, so that
-            // will be the only line that needs to change.
-            Institution currentInstitution = institutionRepository.findById("1").orElse(null);
+            // A guest who has picked a college via /choose-college carries
+            // that choice in a cookie (see CollegePickerController) — use it
+            // when present and still valid, otherwise fall back to the
+            // platform's original single institution so everyone who
+            // hasn't seen the picker yet keeps seeing what they always have.
+            String cookieInstitutionId = com.school.core.CollegePickerController.readSelectedInstitutionId(request);
+            Institution currentInstitution = cookieInstitutionId != null
+                    ? institutionRepository.findById(cookieInstitutionId).orElseGet(() -> institutionRepository.findById("1").orElse(null))
+                    : institutionRepository.findById("1").orElse(null);
 
             List<com.school.academic.Course> diplomaCourses;
             List<com.school.academic.Course> degreeCourses;

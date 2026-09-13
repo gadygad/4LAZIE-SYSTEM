@@ -114,15 +114,15 @@ public class HomeController {
             model.addAttribute("uePassed", false);
         }
 
-        List<com.school.academic.Course> allCourses = courseRepository.findAll();
-        List<com.school.academic.Course> diplomaCourses = allCourses.stream()
-                .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
-                .collect(Collectors.toList());
-        List<com.school.academic.Course> degreeCourses = allCourses.stream()
-                .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
-                .collect(Collectors.toList());
-        model.addAttribute("diplomaCourses", diplomaCourses);
-        model.addAttribute("degreeCourses", degreeCourses);
+        // diplomaCourses/degreeCourses are NOT set here on purpose — this
+        // used to duplicate GlobalSidebarAdvice's logic with an unfiltered
+        // courseRepository.findAll(), and because @ControllerAdvice
+        // model attributes are added before the handler runs, this
+        // method's own model.addAttribute() calls silently overwrote
+        // GlobalSidebarAdvice's institution-scoped lists on every load of
+        // "/" — the one page most guests actually land on. Let that single
+        // source of truth stand instead of recomputing (and re-breaking) it
+        // here.
 
         model.addAttribute("popularNotes", popularNotes);
         model.addAttribute("criticalModules", criticalModules);
