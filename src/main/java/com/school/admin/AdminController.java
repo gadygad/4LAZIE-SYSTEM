@@ -1316,6 +1316,7 @@ public class AdminController {
         model.addAttribute("allCourses", allCourses);
         model.addAttribute("diplomaList", diplomaCourses);
         model.addAttribute("degreeList", degreeCourses);
+        model.addAttribute("institutions", institutionRepository.findAll());
         return "admin/admin_courses";
     }
 
@@ -1330,6 +1331,7 @@ public class AdminController {
                             @RequestParam("duration") int duration,
                             @RequestParam("levelPrefix") String levelPrefix,
                             @RequestParam("startLevel") int startLevel,
+                            @RequestParam(value = "institutionId", required = false) String institutionId,
                             RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (!adminService.hasPermission(user, "MANAGE_COURSES")) {
@@ -1371,11 +1373,12 @@ public class AdminController {
         );
         // Without this, the course has no institution and silently
         // disappears from every guest/admin sidebar, since that list is now
-        // scoped by institution — see GlobalSidebarAdvice. Defaults to the
-        // single institution this platform currently serves; once the admin
-        // panel can manage more than one, this should become a form field
-        // instead of a hardcoded id.
-        institutionRepository.findById("1").ifPresent(course::setInstitution);
+        // scoped by institution — see GlobalSidebarAdvice. Falls back to the
+        // platform's original institution if the form somehow submits
+        // without picking one (e.g. an institution deleted between page
+        // load and submit), rather than leaving the course orphaned.
+        String resolvedInstitutionId = (institutionId != null && !institutionId.trim().isEmpty()) ? institutionId.trim() : "1";
+        institutionRepository.findById(resolvedInstitutionId).ifPresent(course::setInstitution);
         courseRepository.save(course);
         redirectAttributes.addFlashAttribute("success", "Course '" + name.trim().toUpperCase() + "' added successfully!");
         return "redirect:/admin/courses";

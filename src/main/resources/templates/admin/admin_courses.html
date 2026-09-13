@@ -421,6 +421,9 @@
                                             <div>
                                                 <div class="fw-bold" style="font-size: 0.85rem; color: #1e293b; line-height: 1.2;" th:text="${course.name}">Course Full Name</div>
                                                 <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;" th:text="${course.subtitle}">Subtitle</div>
+                                                <div style="font-size: 0.65rem; color: #a855f7; font-weight: 600; margin-top: 2px;">
+                                                    <i class="bi bi-bank2 me-1"></i><span th:text="${course.institution != null ? course.institution.shortName : 'No college assigned'}">College</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -473,6 +476,9 @@
                                             <div>
                                                 <div class="fw-bold" style="font-size: 0.85rem; color: #1e293b; line-height: 1.2;" th:text="${course.name}">Course Full Name</div>
                                                 <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;" th:text="${course.subtitle}">Subtitle</div>
+                                                <div style="font-size: 0.65rem; color: #a855f7; font-weight: 600; margin-top: 2px;">
+                                                    <i class="bi bi-bank2 me-1"></i><span th:text="${course.institution != null ? course.institution.shortName : 'No college assigned'}">College</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -538,6 +544,14 @@
                         </div>
 
                         <div class="row g-3">
+                            <!-- College -->
+                            <div class="col-12">
+                                <label class="form-label">Which College</label>
+                                <select name="institutionId" class="form-select" required>
+                                    <option th:each="inst : ${institutions}" th:value="${inst.id}" th:text="${inst.name}">College Name</option>
+                                </select>
+                                <div class="form-text" style="font-size: 0.7rem;">This course will only appear in this college's sidebar.</div>
+                            </div>
                             <!-- Course Name -->
                             <div class="col-12">
                                 <label class="form-label">Full Course Name</label>
