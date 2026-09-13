@@ -5,9 +5,9 @@
 <!-- First-visit "which college" prompt. Only rendered by callers when
      showCollegeBanner is true (see GlobalSidebarAdvice) — a guest who
      already chose, or any logged-in user, never sees this markup at all. -->
-<div th:fragment="banner" th:if="${showCollegeBanner}" style="background: linear-gradient(90deg, #05552b 0%, #0c8245 100%); border-top: 2px solid #f9c004; padding: 10px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;" id="collegeBanner">
+<div th:fragment="banner" th:if="${showCollegeBanner}" style="background: #282A35; border-top: 2px solid #f9c004; padding: 10px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;" id="collegeBanner">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f9c004" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-    <p style="margin:0; font-size:0.85rem; color:#eafff2; flex-shrink:0;"><strong style="color:#fff; font-weight:600;">Pick your College/University</strong> — see notes made for you.</p>
+    <p style="margin:0; font-size:0.85rem; color:#f1f5f9; flex-shrink:0;"><strong style="color:#fff; font-weight:600;">Pick your College/University</strong> — see notes made for you.</p>
 
     <!-- Few colleges registered: pick right here, no page change. -->
     <div th:if="${showInlineCollegePicker}" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1;">
