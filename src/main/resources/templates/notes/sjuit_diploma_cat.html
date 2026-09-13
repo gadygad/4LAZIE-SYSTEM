@@ -348,23 +348,7 @@
         <!-- Promo banner stays full-color like UE's — it's 4LAZIE branding,
              not part of the exam paper itself, so the black & white rule
              doesn't apply to it. -->
-        <div class="header-bar" style="background: linear-gradient(90deg, #05552b 0%, #0c8245 100%); border-bottom: 3px solid #f9c004;">
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="background:#111; border-radius:4px; padding:4px 10px; border:2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                    <div style="font-family:'Inter',sans-serif; font-size:16pt; font-weight:900; color:#ffffff; letter-spacing:0.5px;">4LAZIE</div>
-                </div>
-                <div style="color:rgba(255,255,255,0.9); font-family:'Outfit',sans-serif; font-size:9.5pt; font-weight:500; border-left:1px solid rgba(255,255,255,0.3); padding-left:15px;">
-                    Unlock Past Papers &amp; Notes For Free!
-                </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="color:#f9c004; font-family:'Outfit',sans-serif; font-weight:900; font-size:13pt; letter-spacing:1px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">www.4lazie.com</div>
-                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px;">
-                    <span style="color: #10b981; font-size: 10pt; line-height: 1;"><i class="bi bi-envelope-fill"></i></span>
-                    <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-size: 8.5pt; font-weight: 600;">support@4lazie.com</span>
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/exam_branding :: header_bar}"></div>
 
         <div class="content">
             <div class="uni-block">
@@ -391,28 +375,8 @@
         <!-- Bottom footer stays full-color like UE's — it's 4LAZIE branding,
              not part of the exam paper itself, so the black & white rule
              doesn't apply to it. Same structure/colors as UE's #pdf-bottom-footer. -->
-        <div id="pdf-cat-bottom-footer" style="margin-top: 20px; width: 100%;">
-            <div style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 18mm;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="background: #111; border-radius: 4px; padding: 3px 8px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                            <div style="font-family: 'Inter', sans-serif; font-size: 10pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1;">4LAZIE</div>
-                        </div>
-                        <div style="color: #065e31; font-weight: 700; font-size: 9.5pt;">
-                            Built out of necessity. Built by a student. Built for students.
-                        </div>
-                    </div>
-                    <div style="color: #4b6b55; font-weight: 600; font-size: 9pt;">
-                        Digitized for students, by students.
-                    </div>
-                </div>
-                <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
-                    <div id="pdf-cat-copyright-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
-                        &copy; 2026 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="pdf-cat-bottom-footer" style="margin-top: 20px; width: 100%;"
+             th:insert="~{fragments/exam_branding :: bottom_footer('pdf-cat-copyright-text', '© 2026 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.')}"></div>
     </div>
 
     <!-- Offcanvas Admin Sidebar -->

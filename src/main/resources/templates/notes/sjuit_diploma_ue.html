@@ -808,32 +808,7 @@
     <!-- Hidden Template that will be converted to PDF -->
     <div id="exam-pdf-template" class="exam-theme">
       <!-- TOP HEADER (4LAZIE BANNER) -->
-      <div class="header-bar" style="background: linear-gradient(90deg, #05552b 0%, #0c8245 100%); padding: 10px 15mm; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #f9c004; position: relative;">
-        
-        <!-- LEFT: LOGO & TAGLINE -->
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <!-- Logo Box -->
-            <div style="background: #111; border-radius: 4px; padding: 4px 10px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                <div style="font-family: 'Inter', sans-serif; font-size: 16pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1; margin: 0;">4LAZIE</div>
-            </div>
-            <!-- Tagline -->
-            <div style="color: rgba(255,255,255,0.9); font-family: 'Outfit', sans-serif; font-size: 9.5pt; font-weight: 500; letter-spacing: 0.5px; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 15px;">
-                Unlock Past Papers & Notes For Free!
-            </div>
-        </div>
-
-        <!-- RIGHT: PROMO & CONTACT -->
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="color: #f9c004; font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 13pt; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
-                www.4lazie.com
-            </div>
-            <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px;">
-                <span style="color: #10b981; font-size: 10pt; line-height: 1;"><i class="bi bi-envelope-fill"></i></span>
-                <span style="color: #ffffff; font-family: 'Outfit', sans-serif; font-size: 8.5pt; font-weight: 600;">support@4lazie.com</span>
-            </div>
-        </div>
-
-      </div>
+      <div th:replace="~{fragments/exam_branding :: header_bar}"></div>
 
       <!-- CONTENT -->
       <div class="content" style="padding: 10mm 15mm;">
@@ -876,21 +851,7 @@
         </div>
 
         <!-- SECURITY BANNER -->
-        <div style="background: #c3e2cc; border-left: 3px solid #08693c; padding: 8px 12px; margin: 0 0 25px 0; display: flex; align-items: center; gap: 12px; font-family: 'Inter', 'Outfit', sans-serif;">
-            <!-- QR Code -->
-            <div style="background: #ffffff; padding: 3px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8AQMAAAAAMksxAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA10lEQVQokXXRsQqDMBAG4JMMbnXt5iu0W13qq0QEfYAuHYQIDi4FV4eCzyIF3fQVBIeuAVfpNcGqscR/+oZwd7kDmMMwBeJit4KS4souoCAcUh454wbFOd5D3CYbUJKX41TwB4Z5409N/yFymGebwAZs++qm4A4MSEV08F6pW+DQrQi5yaMKFATkfR4x04GC3SayxQpLzCzrLAhOtGF1rIOHsdXjA1YAHI3C4ArETz++k3UaUJKefPlmgdgqt+VgCnLr6eAOyg4iBeKCVlJzBXLPkYk6zPkCX1v1ldFRyt8AAAAASUVORK5CYII=" alt="QR Code" style="width: 40px; height: 40px; display: block;" />
-            </div>
-            <!-- Text Content -->
-            <div>
-                <div style="color: #08693c; font-weight: 800; font-size: 9.5pt; letter-spacing: 0.5px; margin-bottom: 2px;">
-                    OFFICIAL 4LAZIE DOCUMENT
-                </div>
-                <div style="color: #222; font-style: italic; font-size: 8pt;">
-                    Scan to verify authenticity & access marking schemes. Commercial distribution is strictly prohibited.
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/exam_branding :: qr_verification_banner}"></div>
 
         <div class="pdf-content" id="pdf-content-body" style="font-family:'Times New Roman', serif;">
             <!-- Content injected here from structured builder -->
@@ -899,39 +860,8 @@
       </div><!-- end content -->
 
       <!-- BOTTOM SECTION (Flows naturally) -->
-      <div id="pdf-bottom-footer" style="margin-top: 20px; width: 100%;">
-          
-          <!-- BOTTOM FOOTER -->
-          <div style="border-top: 3px solid #08693c; background: linear-gradient(180deg, #d3ebd6 0%, #c4e4c8 100%); width: 100%; position: relative; font-family: 'Inter', 'Outfit', sans-serif;">
-          <!-- Top Row -->
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 18mm;">
-              <!-- Left side -->
-              <div style="display: flex; align-items: center; gap: 8px;">
-                  <!-- Logo Box -->
-                  <div style="background: #111; border-radius: 4px; padding: 3px 8px; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                      <div style="font-family: 'Inter', sans-serif; font-size: 10pt; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; line-height: 1;">4LAZIE</div>
-                  </div>
-                  <!-- Slogan -->
-                  <div style="color: #065e31; font-weight: 700; font-size: 9.5pt;">
-                      Built out of necessity. Built by a student. Built for students.
-                  </div>
-              </div>
-              
-              <!-- Right side -->
-              <div style="color: #4b6b55; font-weight: 600; font-size: 9pt;">
-                  Digitized for students, by students.
-              </div>
-          </div>
-          
-          <!-- Bottom Copyright Row -->
-          <div style="background: rgba(0, 0, 0, 0.05); padding: 6px 0; text-align: center; border-top: 1px solid rgba(0,0,0,0.04);">
-              <div id="pdf-copyright-text" style="color: #555; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.5px;">
-                  © 2025 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.
-              </div>
-          </div>
-      </div>
-      <!-- End of Wrapper -->
-      </div>
+      <div id="pdf-bottom-footer" style="margin-top: 20px; width: 100%;"
+           th:insert="~{fragments/exam_branding :: bottom_footer('pdf-copyright-text', '© 2025 4LAZIE STUDENT COMMUNITY FORUM. ALL RIGHTS RESERVED.')}"></div>
     </div>
 
     <!-- Offcanvas Admin Sidebar -->
