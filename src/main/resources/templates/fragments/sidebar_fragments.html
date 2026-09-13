@@ -11,7 +11,10 @@
             <span class="text-truncate" style="color: #1e293b; font-size: 0.85rem; font-weight: 500; font-family: 'Outfit', sans-serif; letter-spacing: 0.3px;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Eng. & Tech'}">St. Joseph College of Eng. & Tech</span>
             <i class="bi bi-box-arrow-up-right ms-auto flex-shrink-0" style="color: #94a3b8; font-size: 0.85rem;"></i>
         </a>
-        <a href="/choose-college" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="font-size: 0.75rem; color: #059669; font-weight: 500; padding: 0 4px;">
+        <!-- Guests only — a logged-in user's college comes from their own
+             account (set at registration), not the guest picker's cookie,
+             so this link would do nothing for them. -->
+        <a th:if="${session.user == null}" href="/choose-college" class="text-decoration-none d-flex align-items-center gap-2 mb-3" style="font-size: 0.75rem; color: #059669; font-weight: 500; padding: 0 4px;">
             <i class="bi bi-arrow-left-right" style="font-size: 0.75rem;"></i>
             Change college
         </a>
