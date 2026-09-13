@@ -5,152 +5,353 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Your College/University - 4LAZIE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
+
+        :root {
+            --forest-deep: #052e1c;
+            --forest-mid: #0a5c34;
+            --forest-bright: #0c8245;
+            --emerald: #10b981;
+            --emerald-dark: #059669;
+            --gold: #f9c004;
+            --ink: #0f172a;
+            --slate: #64748b;
+            --slate-light: #94a3b8;
+            --hairline: #e9eef0;
+        }
+
+        html, body { height: 100%; }
+
         body {
             margin: 0;
             min-height: 100vh;
-            background: linear-gradient(180deg, #06331d 0%, #0a5c34 55%, #0c8245 100%);
+            background:
+                radial-gradient(circle at 18% 12%, rgba(249, 192, 4, 0.10) 0%, transparent 42%),
+                radial-gradient(circle at 88% 82%, rgba(16, 185, 129, 0.22) 0%, transparent 48%),
+                linear-gradient(165deg, var(--forest-deep) 0%, var(--forest-mid) 52%, var(--forest-bright) 100%);
             font-family: 'Inter', -apple-system, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px 16px;
+            padding: 28px 16px;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* Faint concentric rings behind the card — a quiet "radar/locate"
+           motif that echoes what this page actually does (finding your
+           place among many colleges) without being literal about it. */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 760px; height: 760px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.055);
+            box-shadow: 0 0 0 90px rgba(255,255,255,0.022), 0 0 0 180px rgba(255,255,255,0.012);
+            pointer-events: none;
+        }
+
         .picker-card {
             width: 100%;
-            max-width: 420px;
-            background: rgba(255,255,255,0.97);
-            border-radius: 24px;
-            padding: 32px 26px 26px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+            max-width: 436px;
+            background: rgba(255,255,255,0.985);
+            border-radius: 26px;
+            padding: 36px 28px 28px;
+            box-shadow:
+                0 2px 0 rgba(255,255,255,0.5) inset,
+                0 40px 90px -20px rgba(2, 20, 12, 0.55),
+                0 12px 30px -10px rgba(2, 20, 12, 0.35);
+            position: relative;
+            z-index: 1;
+            animation: riseIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .picker-card, .college-option-form { animation: none !important; }
+        }
+
         .logo-badge {
-            background: #111;
-            border: 2px solid #10b981;
-            border-radius: 8px;
-            padding: 6px 14px;
-            display: inline-block;
-            margin-bottom: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: linear-gradient(135deg, #0b1512, #131f1a);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            border-radius: 9px;
+            padding: 7px 14px 7px 11px;
+            margin-bottom: 22px;
+            box-shadow: 0 6px 16px -6px rgba(16, 185, 129, 0.4);
+        }
+        .logo-badge .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px rgba(249, 192, 4, 0.85);
+            flex-shrink: 0;
         }
         .logo-badge span {
             color: #fff;
             font-family: 'Outfit', sans-serif;
-            font-weight: 900;
-            font-size: 1.15rem;
+            font-weight: 800;
+            font-size: 1.05rem;
             letter-spacing: 1.5px;
         }
+
+        .eyebrow {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.68rem;
+            letter-spacing: 2.2px;
+            text-transform: uppercase;
+            color: var(--emerald-dark);
+            margin: 0 0 8px;
+        }
+
         h1 {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 1.35rem;
-            color: #0f172a;
-            margin: 0 0 6px;
+            font-size: 1.5rem;
+            line-height: 1.22;
+            color: var(--ink);
+            letter-spacing: -0.3px;
+            margin: 0 0 9px;
         }
+
         p.lead {
-            color: #64748b;
-            font-size: 0.88rem;
-            margin: 0 0 22px;
-            line-height: 1.5;
+            color: var(--slate);
+            font-size: 0.89rem;
+            margin: 0 0 24px;
+            line-height: 1.55;
+            max-width: 38ch;
         }
+
         .search-box {
             position: relative;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
         .search-box i {
             position: absolute;
-            left: 14px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
+            color: var(--slate-light);
             font-size: 0.95rem;
+            transition: color 0.2s ease;
+            pointer-events: none;
         }
         .search-box input {
             width: 100%;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 11px 14px 11px 40px;
+            border: 1.5px solid var(--hairline);
+            background: #f8faf9;
+            border-radius: 13px;
+            padding: 12px 14px 12px 41px;
+            font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
+            color: var(--ink);
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
         }
+        .search-box input::placeholder { color: var(--slate-light); }
         .search-box input:focus {
-            border-color: #10b981;
+            border-color: var(--emerald);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
         }
+        .search-box input:focus + i,
+        .search-box:has(input:focus) i { color: var(--emerald-dark); }
+
+        .list-caption {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: var(--slate-light);
+            margin: 0 2px 9px;
+        }
+        .list-caption span.count {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--emerald-dark);
+            border-radius: 999px;
+            padding: 2px 9px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
         .college-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 7px;
             max-height: 320px;
             overflow-y: auto;
+            margin: 0 -4px;
+            padding: 2px 4px 4px;
         }
+        .college-list::-webkit-scrollbar { width: 6px; }
+        .college-list::-webkit-scrollbar-track { background: transparent; }
+        .college-list::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.25); border-radius: 10px; }
+
+        .college-option-form { margin: 0; animation: itemIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+        @keyframes itemIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         .college-option {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 13px;
             width: 100%;
             text-align: left;
-            border: 2px solid #eef2f0;
-            border-radius: 14px;
-            padding: 12px 14px;
+            border: 1.5px solid var(--hairline);
+            border-radius: 15px;
+            padding: 11px 13px;
             background: #fff;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+            font-family: inherit;
         }
-        .college-option:hover {
-            border-color: #10b981;
-            background: rgba(16,185,129,0.05);
+        .college-option:hover,
+        .college-option:focus-visible {
+            border-color: var(--emerald);
+            background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02));
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px -12px rgba(16, 185, 129, 0.5);
+            outline: none;
         }
+        .college-option:active { transform: translateY(0); }
+
         .college-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: rgba(16,185,129,0.1);
-            color: #059669;
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.06));
+            border: 1px solid rgba(16,185,129,0.18);
+            color: var(--emerald-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 1.05rem;
             flex-shrink: 0;
+            overflow: hidden;
         }
         .college-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
-        .college-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-        .college-text .name { font-weight: 600; font-size: 0.88rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .college-text .short { font-size: 0.75rem; color: #94a3b8; }
+
+        .college-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+        .college-text .name {
+            font-weight: 600;
+            font-size: 0.885rem;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Outfit', sans-serif;
+        }
+        .college-text .short {
+            font-size: 0.735rem;
+            color: var(--slate-light);
+            letter-spacing: 0.3px;
+        }
+
+        .go-arrow {
+            color: var(--slate-light);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: transform 0.18s ease, color 0.18s ease;
+        }
+        .college-option:hover .go-arrow { transform: translateX(3px); color: var(--emerald-dark); }
+
         .empty-state {
             text-align: center;
-            padding: 24px 8px;
-            color: #94a3b8;
+            padding: 30px 10px;
+            color: var(--slate-light);
             font-size: 0.85rem;
         }
-        .not-listed {
-            display: block;
-            text-align: center;
-            margin-top: 18px;
-            font-size: 0.8rem;
-            color: #059669;
-            text-decoration: none;
-            font-weight: 500;
+        .empty-state i { font-size: 1.4rem; display: block; margin-bottom: 8px; color: #cbd5e1; }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0 16px;
         }
-        .not-listed:hover { text-decoration: underline; }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--hairline);
+        }
+        .divider span {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--slate-light);
+        }
+
+        .not-listed {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.83rem;
+            color: var(--emerald-dark);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 11px;
+            border-radius: 12px;
+            border: 1.5px dashed rgba(16, 185, 129, 0.35);
+            transition: background 0.18s ease, border-color 0.18s ease;
+        }
+        .not-listed:hover {
+            background: rgba(16, 185, 129, 0.06);
+            border-color: var(--emerald);
+        }
+        .not-listed i { font-size: 0.9rem; }
+
+        @media (max-width: 400px) {
+            .picker-card { padding: 28px 20px 22px; border-radius: 22px; }
+            h1 { font-size: 1.3rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="picker-card">
-    <div class="logo-badge"><span>4LAZIE</span></div>
-    <h1>Which College/University are you from?</h1>
-    <p class="lead">Choose your college to see notes, courses, past papers and discussions relevant to you. You can change this anytime.</p>
+    <div class="logo-badge"><span class="dot"></span><span>4LAZIE</span></div>
+
+    <p class="eyebrow">One quick step</p>
+    <h1>Which College or University are you from?</h1>
+    <p class="lead">Pick your college to see notes, courses, past papers and discussions made for you. You can change this anytime.</p>
 
     <div class="search-box">
+        <input type="text" id="collegeSearch" placeholder="Search your college or university…" autocomplete="off">
         <i class="bi bi-search"></i>
-        <input type="text" id="collegeSearch" placeholder="Search your College/University..." autocomplete="off">
+    </div>
+
+    <div class="list-caption" th:if="${!institutions.isEmpty()}">
+        <span>Registered colleges</span>
+        <span class="count" th:text="${institutions.size()}">0</span>
     </div>
 
     <div class="college-list" id="collegeList">
-        <form th:each="inst : ${institutions}" th:action="@{/choose-college/select}" method="post" class="college-option-form" style="margin:0;">
+        <form th:each="inst, iter : ${institutions}" th:action="@{/choose-college/select}" method="post"
+              class="college-option-form" th:style="'animation-delay:' + ${iter.index * 35} + 'ms'">
             <input type="hidden" name="institutionId" th:value="${inst.id}">
             <input type="hidden" name="redirect" th:value="${redirectTo}">
             <button type="submit" class="college-option" th:attr="data-search=${#strings.toLowerCase(inst.name + ' ' + inst.shortName)}">
@@ -162,16 +363,26 @@
                     <span class="name" th:text="${inst.name}">College Name</span>
                     <span class="short" th:text="${inst.shortName}">Short Name</span>
                 </span>
+                <i class="bi bi-arrow-right go-arrow"></i>
             </button>
         </form>
         <div class="empty-state" th:if="${institutions.isEmpty()}">
+            <i class="bi bi-bank2"></i>
             No colleges are set up yet.
         </div>
     </div>
 
-    <div class="empty-state" id="noMatch" style="display:none;">No college matches that search.</div>
+    <div class="empty-state" id="noMatch" style="display:none;">
+        <i class="bi bi-search"></i>
+        No college matches that search.
+    </div>
 
-    <a class="not-listed" th:href="@{${redirectTo}}">Just exploring — skip for now</a>
+    <div class="divider"><span>or</span></div>
+
+    <a class="not-listed" th:href="@{${redirectTo}}">
+        Just exploring — skip for now
+        <i class="bi bi-arrow-right"></i>
+    </a>
 </div>
 
 <script>
