@@ -80,32 +80,27 @@
             .picker-card, .college-option-form { animation: none !important; }
         }
 
+        /* Same brand mark used site-wide (see e.g. user/dashboard.html's
+           navbar-brand) — solid black chip, 3px green border, bold
+           uppercase wordmark. Kept exactly as-is rather than introducing
+           a different logo asset, so this page reads as unmistakably
+           4LAZIE the instant it loads. */
         .logo-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #0b1512, #131f1a);
-            border: 1px solid rgba(16, 185, 129, 0.45);
-            border-radius: 9px;
-            padding: 6px 14px 6px 8px;
+            display: inline-block;
+            background-color: #111111;
+            border: 3px solid #10b981;
+            padding: 6px 12px;
             margin-bottom: 22px;
             box-shadow: 0 6px 16px -6px rgba(16, 185, 129, 0.4);
         }
-        .logo-badge img {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #fff;
-            object-fit: contain;
-            padding: 2px;
-            flex-shrink: 0;
-        }
         .logo-badge span {
-            color: #fff;
+            color: #ffffff;
             font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 1.05rem;
-            letter-spacing: 1.5px;
+            font-weight: 900;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            line-height: 1;
+            text-transform: uppercase;
         }
 
         .eyebrow {
@@ -349,7 +344,7 @@
 <body>
 
 <div class="picker-card">
-    <div class="logo-badge"><img src="/images/logo.png" alt="4LAZIE"><span>4LAZIE</span></div>
+    <div class="logo-badge"><span>4LAZIE</span></div>
 
     <p class="eyebrow">One quick step</p>
     <h1>Find your <span class="accent">College</span><span class="sub">or university</span></h1>
