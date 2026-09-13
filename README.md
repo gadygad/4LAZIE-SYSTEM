@@ -1,9 +1,9 @@
 # 4LAZIE
 
-**4LAZIE** is a student notes platform for technical colleges in Tanzania.  
-Students can find and download notes, past papers, timetables, and the academic calendar in one place — organized by course, level, and semester.
+**4LAZIE** is a multi-college student notes platform for technical colleges and universities in Tanzania.  
+Students can find and download notes, past papers, timetables, and the academic calendar in one place — organized by college, course, level, and semester.
 
-Built for **St. Joseph University in Tanzania (SJUIT)** and similar institutions.
+Started as a single platform for **St. Joseph University in Tanzania (SJUIT)**, now built to onboard any number of colleges — each with its own courses, timetables, academic calendar, and logo, while notes can still be shared across colleges when useful to students.
 
 ---
 
@@ -21,6 +21,7 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 
 ## Main features
 
+- **Multi-college support** — any number of colleges/universities can be onboarded, each with its own courses, timetables, academic calendar (CAT/UE dates), and logo. A first-time guest picks their college (or skips it) and sees notes, courses, and timetables scoped to that choice; a registered student's college is set at signup. Admins can be scoped to manage only their own college, while a Super Admin manages every college on the platform.
 - **Notes & past papers** — upload, browse, search, and download PDFs
 - **Course-based access** — students only see materials for their program (e.g. DIP_CSE)
 - **General Subject sharing** — a note marked "general" is automatically shared with every other course that actually teaches that subject at the same level and semester, instead of just its own course
@@ -34,7 +35,7 @@ Many students get study materials from WhatsApp groups, random folders, or scatt
 - **Real-time admin notifications** — admins get an in-app notification the moment something needs them (new report, new question, new approval, etc.), each categorized with its own icon and color
 - **Super Admin approvals** — sensitive delete actions need approval
 - **Push notifications** — works as a PWA on mobile (installable, offline support)
-- **Exam Generator Hub** — built-in tools for admins to generate beautiful PDF past papers (UE, CAT 1, CAT 2) for multiple universities, with live preview and database-driven course/module selection
+- **Exam Generator Hub** — built-in tools for admins to generate beautiful PDF past papers (UE, CAT 1, CAT 2), with live preview, database-driven course/module selection, and a letterhead that automatically matches the selected course's own college
 - **Student profiles** — every student has a public profile (bio, course, social links) that other students can view
 - **Verified Badges** — admins can grant or revoke verified badges for trusted users to highlight authentic content
 - **Community Forum** — discuss topics and notes with inline comment previews for faster engagement, with a report/moderation queue admins can review and act on
@@ -148,7 +149,9 @@ Go to: **http://localhost:8080**
 | **Admin** | Manage notes, users, subjects, courses (based on permissions) |
 | **Super Admin** | Full access + approve delete requests from other admins |
 
-Admin permissions include: `MANAGE_USERS`, `MANAGE_NOTES`, `MANAGE_SUBJECTS`, `MANAGE_COURSES`, `MANAGE_TIMETABLES`, `MANAGE_CALENDAR`.
+Admin permissions include: `MANAGE_USERS`, `MANAGE_NOTES`, `MANAGE_SUBJECTS`, `MANAGE_COURSES`, `MANAGE_TIMETABLES`, `MANAGE_CALENDAR`, `MANAGE_INSTITUTIONS`.
+
+An Admin's view of the dashboard, notes, users, courses, timetables, and calendar is scoped to their own college — a Super Admin sees and manages every college on the platform, including adding new colleges and deleting one that has no courses left.
 
 ---
 
@@ -194,12 +197,14 @@ java -jar target/school-system-1.0-SNAPSHOT.jar
 | URL | Page |
 |-----|------|
 | `/` or `/home` | Public home page |
+| `/choose-college` | Guest college picker |
 | `/login` | Login |
-| `/register` | Create account |
+| `/register` | Create account (choose your college) |
 | `/dashboard` | Student dashboard (login required) |
 | `/notes` | Browse notes |
 | `/upload` | Upload notes (admin only) |
 | `/admin/dashboard` | Admin panel |
+| `/admin/institutions` | Manage Colleges (add/edit/remove colleges) |
 
 ---
 
