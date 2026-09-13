@@ -1066,7 +1066,11 @@ background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow
                                 </a>
 
                                 <!-- Class Timetable Card -->
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#timetableModal"
+                                <!-- No college chosen yet: send the guest to pick one first (see
+                                     GlobalSidebarAdvice#showCollegeBanner) instead of silently opening
+                                     the class picker on one particular college's courses. -->
+                                <a th:href="${showCollegeBanner} ? '/choose-college?redirect=/' : '#'"
+                                    th:attr="data-bs-toggle=${showCollegeBanner} ? null : 'modal', data-bs-target=${showCollegeBanner} ? null : '#timetableModal'"
                                     class="premium-glass-card"
                                     style="max-width: 100%; border: 1px solid rgba(16, 185, 129, 0.4); background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);">
                                     <div class="d-flex align-items-center gap-3">

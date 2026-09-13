@@ -18,10 +18,12 @@ public class TimetableController {
 
         private TimetableRepository timetableRepository;
         private AcademicCalendarRepository academicCalendarRepository;
+        private CourseRepository courseRepository;
 
-    public TimetableController(TimetableRepository timetableRepository, AcademicCalendarRepository academicCalendarRepository) {
+    public TimetableController(TimetableRepository timetableRepository, AcademicCalendarRepository academicCalendarRepository, CourseRepository courseRepository) {
         this.timetableRepository = timetableRepository;
         this.academicCalendarRepository = academicCalendarRepository;
+        this.courseRepository = courseRepository;
     }
 
 
@@ -32,11 +34,25 @@ public class TimetableController {
             @RequestParam(name = "level", required = false) Integer level,
             @RequestParam(name = "semester", required = false) Integer semester,
             @RequestParam(name = "academicYear", required = false) String academicYear,
-            HttpSession session, 
+            HttpSession session,
+            jakarta.servlet.http.HttpServletRequest request,
             Model model) {
-        
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        // The session key every login path actually sets is "user" — this
+        // was reading "loggedInUser", which no login path has ever set, so
+        // every visitor (including real logged-in students) was silently
+        // treated as a guest here.
+        User loggedInUser = (User) session.getAttribute("user");
         model.addAttribute("loggedInUser", loggedInUser);
+
+        // A guest with no college chosen yet and no course specified either
+        // has given this page nothing to resolve a timetable from — send
+        // them to pick a college first rather than silently falling back to
+        // one particular college's courses in the selection modal.
+        if (loggedInUser == null && (course == null || course.isEmpty())
+                && com.school.core.CollegePickerController.readSelectedInstitutionId(request) == null) {
+            return "redirect:/choose-college?redirect=/timetable/view";
+        }
 
         // Enforce course boundaries for students
         if (loggedInUser != null && loggedInUser.getRole() != com.school.auth.Role.ADMIN && loggedInUser.getRole() != com.school.auth.Role.SUPER_ADMIN) {
@@ -45,7 +61,7 @@ public class TimetableController {
             if (level == null) level = loggedInUser.getLevel();
             if (semester == null) semester = loggedInUser.getSemester();
         } else if (loggedInUser != null && program == null && level == null) {
-            program = loggedInUser.getCourseProgram(); 
+            program = loggedInUser.getCourseProgram();
             level = loggedInUser.getLevel();
             semester = loggedInUser.getSemester();
         }
@@ -139,8 +155,31 @@ public class TimetableController {
     }
 
     @GetMapping("/timetable/archive")
-    public String viewArchive(Model model) {
-        java.util.List<Timetable> allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
+    public String viewArchive(HttpSession session, jakarta.servlet.http.HttpServletRequest request, Model model) {
+        User loggedInUser = (User) session.getAttribute("user");
+        String institutionId = loggedInUser != null && loggedInUser.getInstitution() != null
+                ? loggedInUser.getInstitution().getId()
+                : com.school.core.CollegePickerController.readSelectedInstitutionId(request);
+
+        // Same reasoning as viewTimetable: a guest with no college chosen
+        // yet has nothing for this page to scope its records to.
+        if (loggedInUser == null && institutionId == null) {
+            return "redirect:/choose-college?redirect=/timetable/archive";
+        }
+
+        // Timetable has no institution of its own — programType belongs to
+        // exactly one college (see CurriculumInitializer), so scope is
+        // resolved through the courses that own it.
+        java.util.List<Timetable> allTimetables;
+        if (institutionId != null) {
+            java.util.List<String> programTypes = courseRepository.findByInstitutionId(institutionId).stream()
+                    .map(Course::getProgramType)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toList());
+            allTimetables = timetableRepository.findByProgramTypeInOrderByUploadDateDesc(programTypes);
+        } else {
+            allTimetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        }
 
         // A timetable is "past" purely by its own isCurrent flag now — never
         // by comparing academic year strings against some single site-wide
@@ -160,10 +199,13 @@ public class TimetableController {
         // Academic calendars (CAT/UE exam dates) live in their own
         // collection with an explicit isCurrent flag, so — unlike
         // timetables — there's no need to infer "current" by comparing
-        // year strings. Every calendar ever uploaded is shown here now;
-        // before this, a calendar that lost isCurrent when a newer one was
-        // uploaded became reachable only from the admin panel.
-        java.util.List<AcademicCalendar> academicCalendars = academicCalendarRepository.findAll();
+        // year strings. Every calendar this college has ever uploaded is
+        // shown here now; before this, a calendar that lost isCurrent when
+        // a newer one was uploaded became reachable only from the admin
+        // panel.
+        java.util.List<AcademicCalendar> academicCalendars = institutionId != null
+                ? academicCalendarRepository.findByInstitutionId(institutionId)
+                : academicCalendarRepository.findAll();
         academicCalendars.sort((a, b) -> {
             String ay = a.getAcademicYear() != null ? a.getAcademicYear() : "";
             String by = b.getAcademicYear() != null ? b.getAcademicYear() : "";
