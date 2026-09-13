@@ -501,6 +501,10 @@ public class AdminController {
         return institution == null || !scopeInstitutionId.equals(institution.getId());
     }
 
+    private boolean isUserOutOfScope(User target, String scopeInstitutionId) {
+        return target == null || isOutOfScope(target.getInstitution(), scopeInstitutionId);
+    }
+
     // Timetable has no institution of its own — a programType belongs to
     // exactly one college (programType is globally unique, see
     // CurriculumInitializer), so scope is resolved through the Course that
@@ -613,7 +617,7 @@ public class AdminController {
             return "redirect:/login";
         }
         User profileUser = userRepository.findById(id).orElse(null);
-        if (profileUser == null) {
+        if (isUserOutOfScope(profileUser, adminService.scopeInstitutionId(admin))) {
             return "redirect:/admin/users";
         }
         model.addAttribute("loggedInUser", admin);
@@ -634,6 +638,9 @@ public class AdminController {
         }
         
         User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null && isUserOutOfScope(targetUser, adminService.scopeInstitutionId(user))) {
+            targetUser = null;
+        }
         if (targetUser != null) {
             if ("PENDING".equals(handleDeletionRequest(user, "USER", id, targetUser.getName(), redirectAttributes))) {
                 return "redirect:/admin/users";
@@ -655,6 +662,9 @@ public class AdminController {
         }
         
         User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null && isUserOutOfScope(targetUser, adminService.scopeInstitutionId(user))) {
+            targetUser = null;
+        }
         if (targetUser != null) {
             targetUser.setPassword(passwordEncoder.encode("SJUIT@123"));
             userRepository.save(targetUser);
@@ -673,6 +683,9 @@ public class AdminController {
         }
         
         User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null && isUserOutOfScope(targetUser, adminService.scopeInstitutionId(admin))) {
+            targetUser = null;
+        }
         if (targetUser != null) {
             // Delete old tokens
             passwordResetTokenRepository.deleteByUser(targetUser);
@@ -707,6 +720,9 @@ public class AdminController {
         }
         
         User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null && isUserOutOfScope(targetUser, adminService.scopeInstitutionId(admin))) {
+            targetUser = null;
+        }
         if (targetUser != null) {
             boolean currentStatus = Boolean.TRUE.equals(targetUser.getIsSuspended());
             targetUser.setIsSuspended(!currentStatus);
@@ -736,6 +752,9 @@ public class AdminController {
         }
         
         User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null && isUserOutOfScope(targetUser, adminService.scopeInstitutionId(admin))) {
+            targetUser = null;
+        }
         if (targetUser != null) {
             emailService.sendWarningEmail(targetUser.getEmail(), targetUser.getName(), warningMessage.trim());
             targetUser.setWarningCount(targetUser.getWarningCount() + 1);
@@ -1777,7 +1796,7 @@ public class AdminController {
             return "redirect:/login";
         }
         User target = userRepository.findById(id).orElse(null);
-        if (target != null) {
+        if (!isUserOutOfScope(target, adminService.scopeInstitutionId(admin))) {
             target.setHasVerifiedBadge(true);
             userRepository.save(target);
             redirectAttributes.addFlashAttribute("success", target.getName() + " is now verified.");
@@ -1792,7 +1811,7 @@ public class AdminController {
             return "redirect:/login";
         }
         User target = userRepository.findById(id).orElse(null);
-        if (target != null) {
+        if (!isUserOutOfScope(target, adminService.scopeInstitutionId(admin))) {
             target.setHasVerifiedBadge(false);
             userRepository.save(target);
             redirectAttributes.addFlashAttribute("success", "Badge revoked from " + target.getName() + ".");
