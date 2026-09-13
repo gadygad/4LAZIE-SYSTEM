@@ -501,6 +501,33 @@ public class AdminController {
         return institution == null || !scopeInstitutionId.equals(institution.getId());
     }
 
+    // Timetable has no institution of its own — a programType belongs to
+    // exactly one college (programType is globally unique, see
+    // CurriculumInitializer), so scope is resolved through the Course that
+    // owns it instead.
+    private boolean isProgramTypeOutOfScope(String programType, String scopeInstitutionId) {
+        if (scopeInstitutionId == null) return false;
+        Course course = courseRepository.findByProgramType(programType).stream().findFirst().orElse(null);
+        return course == null || isOutOfScope(course.getInstitution(), scopeInstitutionId);
+    }
+
+    // VerificationRequest and ForumReport have no institution of their own
+    // either — scope is resolved through the student behind the request
+    // (the requester) or behind the reported content (its author).
+    private boolean isRequesterOutOfScope(String userId, String scopeInstitutionId) {
+        if (scopeInstitutionId == null) return false;
+        User requester = userId != null ? userRepository.findById(userId).orElse(null) : null;
+        return requester == null || isOutOfScope(requester.getInstitution(), scopeInstitutionId);
+    }
+
+    private boolean isReportedContentOutOfScope(com.school.forum.model.ForumReport report, String scopeInstitutionId) {
+        if (scopeInstitutionId == null) return false;
+        String authorId = "POST".equals(report.getContentType())
+                ? forumPostRepository.findById(report.getContentId()).map(com.school.forum.model.ForumPost::getAuthorId).orElse(null)
+                : forumCommentRepository.findById(report.getContentId()).map(com.school.forum.model.ForumComment::getAuthorId).orElse(null);
+        return isRequesterOutOfScope(authorId, scopeInstitutionId);
+    }
+
     // None of ForumReport, VerificationRequest or AssignmentRequest carry an
     // institution of their own — each is scoped by looking up the student
     // behind it and checking THEIR institution instead. A public/anonymous
@@ -1120,6 +1147,11 @@ public class AdminController {
             return "redirect:/admin/timetables";
         }
 
+        if (isProgramTypeOutOfScope(programType, adminService.scopeInstitutionId(user))) {
+            redirectAttributes.addFlashAttribute("error", "That course isn't in your college.");
+            return "redirect:/admin/timetables";
+        }
+
         try {
             // Check if timetable already exists for this semester and year to overwrite or create new
             Timetable timetable = timetableRepository.findByProgramTypeAndLevelNoAndSemesterNoAndAcademicYear(programType, levelNo, semesterNo, academicYear)
@@ -1168,6 +1200,9 @@ public class AdminController {
         }
         
         Timetable timetable = timetableRepository.findById(id).orElse(null);
+        if (timetable != null && isProgramTypeOutOfScope(timetable.getProgramType(), adminService.scopeInstitutionId(user))) {
+            timetable = null;
+        }
         if (timetable != null) {
             String desc = timetable.getProgramType() + " Sem " + timetable.getSemesterNo() + " (" + timetable.getAcademicYear() + ")";
             if ("PENDING".equals(handleDeletionRequest(user, "TIMETABLE", id, desc, redirectAttributes))) {
@@ -1696,6 +1731,9 @@ public class AdminController {
             return "redirect:/login";
         }
         com.school.auth.VerificationRequest req = verificationRequestRepository.findById(id).orElse(null);
+        if (req != null && isRequesterOutOfScope(req.getUserId(), adminService.scopeInstitutionId(user))) {
+            req = null;
+        }
         if (req != null && "PENDING".equals(req.getStatus())) {
             req.setStatus("APPROVED");
             req.setReviewedByUserId(user.getId());
@@ -1717,6 +1755,9 @@ public class AdminController {
             return "redirect:/login";
         }
         com.school.auth.VerificationRequest req = verificationRequestRepository.findById(id).orElse(null);
+        if (req != null && isRequesterOutOfScope(req.getUserId(), adminService.scopeInstitutionId(user))) {
+            req = null;
+        }
         if (req != null && "PENDING".equals(req.getStatus())) {
             req.setStatus("REJECTED");
             req.setReviewedByUserId(user.getId());
