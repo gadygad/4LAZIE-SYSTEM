@@ -79,9 +79,31 @@ public class AdminForumReportController {
                 .limit(30)
                 .collect(Collectors.toList());
 
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        if (scopeInstitutionId != null) {
+            pending = filterByReportedAuthorInstitution(pending, scopeInstitutionId);
+            resolved = filterByReportedAuthorInstitution(resolved, scopeInstitutionId);
+        }
+
         model.addAttribute("pendingReports", enrich(pending));
         model.addAttribute("resolvedReports", enrich(resolved));
         return "admin/admin_forum_reports";
+    }
+
+    // Keeps only reports whose reported content was authored by a student
+    // from this college — a report on someone else's college isn't this
+    // scoped admin's to moderate. A report whose content or author can no
+    // longer be resolved (already deleted) is dropped rather than shown to
+    // everyone by default.
+    private List<ForumReport> filterByReportedAuthorInstitution(List<ForumReport> reports, String institutionId) {
+        return reports.stream().filter(r -> {
+            String authorId = "POST".equals(r.getContentType())
+                    ? forumPostRepository.findById(r.getContentId()).map(ForumPost::getAuthorId).orElse(null)
+                    : forumCommentRepository.findById(r.getContentId()).map(ForumComment::getAuthorId).orElse(null);
+            if (authorId == null) return false;
+            User author = userRepository.findById(authorId).orElse(null);
+            return author != null && author.getInstitution() != null && institutionId.equals(author.getInstitution().getId());
+        }).collect(Collectors.toList());
     }
 
     // Bundles each report with the actual content (if it still exists — it
