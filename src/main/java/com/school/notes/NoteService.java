@@ -555,10 +555,17 @@ public class NoteService {
 
     public org.springframework.data.domain.Page<Note> fetchFilteredNotes(String institutionId, String program, Integer level, Integer semester, String category, String search, int page) {
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
-        
+        // Every condition is collected here and combined with a single
+        // andOperator() at the end. Calling query.addCriteria() more than
+        // once when two of those conditions are each their own orOperator()
+        // (program and search both are) throws
+        // InvalidMongoDbApiUsageException — Spring Data Mongo can't merge
+        // two separate '$or' criteria into one query document.
+        List<org.springframework.data.mongodb.core.query.Criteria> andCriteria = new ArrayList<>();
+
         if (institutionId != null && !institutionId.isEmpty()) {
             if (institutionId.length() == 24 && institutionId.matches("^[0-9a-fA-F]+$")) {
-                query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("institution.$id").is(new org.bson.types.ObjectId(institutionId)));
+                andCriteria.add(org.springframework.data.mongodb.core.query.Criteria.where("institution.$id").is(new org.bson.types.ObjectId(institutionId)));
             }
         }
 
@@ -567,28 +574,32 @@ public class NoteService {
             // courses that also teach the subject in applicablePrograms — a
             // strict programType-only match silently hid every general note
             // from students in those other courses.
-            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+            andCriteria.add(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
                 org.springframework.data.mongodb.core.query.Criteria.where("programType").is(program),
                 org.springframework.data.mongodb.core.query.Criteria.where("applicablePrograms").is(program)
             ));
         }
 
         if (level != null) {
-            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("levelNo").is(level));
+            andCriteria.add(org.springframework.data.mongodb.core.query.Criteria.where("levelNo").is(level));
         }
         if (semester != null) {
-            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("semesterNo").is(semester));
+            andCriteria.add(org.springframework.data.mongodb.core.query.Criteria.where("semesterNo").is(semester));
         }
         if (category != null && !category.isEmpty()) {
-            query.addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("category").is(category));
+            andCriteria.add(org.springframework.data.mongodb.core.query.Criteria.where("category").is(category));
         }
-        
+
         if (search != null && !search.trim().isEmpty()) {
             String safeSearch = search.trim().replaceAll("([\\\\\\.\\[\\{\\(\\*\\+\\?\\^\\$\\|])", "\\\\$1");
-            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
+            andCriteria.add(new org.springframework.data.mongodb.core.query.Criteria().orOperator(
                 org.springframework.data.mongodb.core.query.Criteria.where("title").regex(safeSearch, "i"),
                 org.springframework.data.mongodb.core.query.Criteria.where("category").regex(safeSearch, "i")
             ));
+        }
+
+        if (!andCriteria.isEmpty()) {
+            query.addCriteria(new org.springframework.data.mongodb.core.query.Criteria().andOperator(andCriteria.toArray(new org.springframework.data.mongodb.core.query.Criteria[0])));
         }
 
         long total = mongoTemplate.count(query, Note.class);

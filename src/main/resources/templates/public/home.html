@@ -748,26 +748,6 @@
                                     text-decoration: none !important;
                                     gap: 12px;
                                 }
-                                .apple-note-card::before {
-                                    content: '';
-                                    position: absolute;
-                                    inset: 0;
-                                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(52, 211, 153, 0.04));
-                                    opacity: 0;
-                                    transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-                                    border-radius: inherit;
-                                }
-                                .apple-note-card:hover {
-                                    transform: translateY(-2px) scale(1.008);
-                                    border-color: rgba(16, 185, 129, 0.35);
-                                    box-shadow: 
-                                        0 8px 25px rgba(16, 185, 129, 0.12),
-                                        0 4px 10px rgba(16, 185, 129, 0.06),
-                                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-                                }
-                                .apple-note-card:hover::before {
-                                    opacity: 1;
-                                }
                                 .apple-note-card:active {
                                     transform: translateY(0) scale(0.995);
                                     transition-duration: 0.1s;
@@ -791,11 +771,6 @@
                                     z-index: 1;
                                     flex-shrink: 0;
                                 }
-                                .apple-note-card:hover .apple-note-icon {
-                                    transform: scale(1.08) rotate(-3deg);
-                                    box-shadow: 0 5px 14px rgba(16, 185, 129, 0.35);
-                                }
-
                                 /* Title & meta */
                                 .apple-note-info {
                                     flex: 1;
@@ -1830,7 +1805,7 @@ background-clip: text; -webkit-text-fill-color: transparent;">Free Account</span
                     });
                     if (data.totalMatches > 5) {
                         const viewAll = document.createElement('a');
-                        viewAll.href = `/guest-notes?search=${encodeURIComponent(query)}`;
+                        viewAll.href = `/notes?search=${encodeURIComponent(query)}`;
                         viewAll.className = 'list-group-item text-center fw-bold p-2 border-0';
                         viewAll.style.cssText = 'font-size:0.8rem;color:#059669;background:#f0fdf4';
                         viewAll.innerHTML = `View all ${data.totalMatches} results <i class="bi bi-arrow-right ms-1"></i>`;
