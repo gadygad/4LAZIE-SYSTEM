@@ -63,7 +63,7 @@ public class InstitutionAdminController {
     }
 
     @PostMapping("/institutions/add")
-    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution", "allInstitutions"}, allEntries = true)
     public String addInstitution(@RequestParam("name") String name,
                                   @RequestParam("shortName") String shortName,
                                   @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
@@ -110,7 +110,7 @@ public class InstitutionAdminController {
     }
 
     @PostMapping("/institutions/{id}/edit")
-    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution", "allInstitutions"}, allEntries = true)
     public String editInstitution(@PathVariable String id,
                                    @RequestParam("name") String name,
                                    @RequestParam("shortName") String shortName,
@@ -176,7 +176,7 @@ public class InstitutionAdminController {
     }
 
     @PostMapping("/institutions/{id}/delete")
-    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution", "allInstitutions"}, allEntries = true)
     public String deleteInstitution(@PathVariable String id, RedirectAttributes redirectAttributes) {
         User user = getLoggedInUser();
         if (user == null || user.getRole() != Role.SUPER_ADMIN) {
