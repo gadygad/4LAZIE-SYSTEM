@@ -27,6 +27,13 @@ public class Course {
     @DBRef
     private List<Subject> subjects = new ArrayList<>();
 
+    // Which college/university offers this programme. Null on courses seeded
+    // before this field existed — treat null as "belongs to the default
+    // institution" rather than "belongs to no institution", since every
+    // course in the system today was seeded for a single college.
+    @DBRef(lazy = true)
+    private Institution institution;
+
     public Course() {}
 
     public Course(String name, String programType) {
@@ -70,6 +77,9 @@ public class Course {
     public void setLevelPrefix(String levelPrefix) { this.levelPrefix = levelPrefix; }
     public int getStartLevel() { return startLevel; }
     public void setStartLevel(int startLevel) { this.startLevel = startLevel; }
+
+    public Institution getInstitution() { return institution; }
+    public void setInstitution(Institution institution) { this.institution = institution; }
 
     public List<Subject> getSubjects() { return subjects; }
     public void setSubjects(List<Subject> subjects) { this.subjects = subjects; }

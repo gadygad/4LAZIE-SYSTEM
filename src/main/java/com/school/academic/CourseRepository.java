@@ -11,6 +11,9 @@ public interface CourseRepository extends MongoRepository<Course, String> {
     @Cacheable(value = "coursesByProgram", key = "#programType")
     List<Course> findByProgramType(String programType);
 
+    @Cacheable(value = "coursesByInstitution", key = "#institutionId")
+    List<Course> findByInstitutionId(String institutionId);
+
     @Override
     @Cacheable("allCourses")
     List<Course> findAll();

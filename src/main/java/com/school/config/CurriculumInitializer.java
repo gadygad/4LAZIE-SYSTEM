@@ -4,6 +4,8 @@ import com.school.academic.Subject;
 import com.school.academic.Course;
 import com.school.academic.SubjectRepository;
 import com.school.academic.CourseRepository;
+import com.school.academic.Institution;
+import com.school.academic.InstitutionRepository;
 import com.school.academic.Timetable;
 import com.school.academic.TimetableRepository;
 import com.school.exam.QuestionRepository;
@@ -46,10 +48,11 @@ public class CurriculumInitializer {
     }
 
 
-    private void seedCourse(CourseRepository repo, String name, String type, String shortName, String subtitle, String icon, String color, String bg, int duration, String levelPrefix, int startLevel) {
+    private void seedCourse(CourseRepository repo, Institution defaultInstitution, String name, String type, String shortName, String subtitle, String icon, String color, String bg, int duration, String levelPrefix, int startLevel) {
         List<Course> existingCourses = repo.findByProgramType(type);
         if (existingCourses.isEmpty()) {
             Course course = new Course(name, type, shortName, subtitle, icon, color, bg, duration, levelPrefix, startLevel);
+            course.setInstitution(defaultInstitution);
             repo.save(course);
             // Evict the stale empty-list entry cached by the findByProgramType() call above,
             // so callers later in the same startup run (e.g. line 100) see the new course.
@@ -57,6 +60,8 @@ public class CurriculumInitializer {
             if (courseCache != null) courseCache.evict(type);
             org.springframework.cache.Cache allCoursesCache = cacheManager.getCache("allCourses");
             if (allCoursesCache != null) allCoursesCache.clear();
+            org.springframework.cache.Cache coursesByInstitutionCache = cacheManager.getCache("coursesByInstitution");
+            if (coursesByInstitutionCache != null) coursesByInstitutionCache.clear();
         } else {
             for (Course course : existingCourses) {
                 boolean updated = false;
@@ -96,6 +101,10 @@ public class CurriculumInitializer {
                     course.setStartLevel(startLevel);
                     updated = true;
                 }
+                if (course.getInstitution() == null && defaultInstitution != null) {
+                    course.setInstitution(defaultInstitution);
+                    updated = true;
+                }
                 if (updated) {
                     repo.save(course);
                 }
@@ -104,26 +113,31 @@ public class CurriculumInitializer {
     }
 
     @Bean
-    public CommandLineRunner initCurriculumData(CourseRepository courseRepository, SubjectRepository subjectRepository, TimetableRepository timetableRepository) {
+    public CommandLineRunner initCurriculumData(CourseRepository courseRepository, SubjectRepository subjectRepository, TimetableRepository timetableRepository, InstitutionRepository institutionRepository) {
         return args -> {
+            // Every course seeded below belongs to this college until a second
+            // institution is added — new institutions get their own courses
+            // seeded (or entered via the admin panel) with their own id here.
+            Institution defaultInstitution = institutionRepository.findById("1").orElse(null);
+
             // Seed Diplomas
-            seedCourse(courseRepository, "DIPLOMA IN INFORMATION TECHNOLOGY", "DIP_IT", "Diploma in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 3, "Level", 4);
-            seedCourse(courseRepository, "DIPLOMA IN COMPUTER SCIENCE ENGINEERING", "DIP_CSE", "Diploma in CSE", "Computer Science Eng.", "bi-code-slash", "#10b981", "rgba(52, 211, 153, 0.1)", 3, "Level", 4);
-            seedCourse(courseRepository, "DIPLOMA IN CIVIL ENGINEERING", "DIP_CE", "Diploma in CE", "Civil Engineering", "bi-cone-striped", "#f59e0b", "rgba(245, 158, 11, 0.1)", 3, "Level", 4);
-            seedCourse(courseRepository, "DIPLOMA IN MECHANICAL ENGINEERING", "DIP_ME", "Diploma in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 3, "Level", 4);
-            seedCourse(courseRepository, "DIPLOMA IN MECHATRONICS ENGINEERING", "DIP_MTE", "Diploma in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 3, "Level", 4);
-            seedCourse(courseRepository, "DIPLOMA IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DIP_EEE", "Diploma in EEE", "Electrical & Electronics", "bi-lightning-charge-fill", "#d97706", "rgba(251, 191, 36, 0.1)", 3, "Level", 4);
-            seedCourse(courseRepository, "DIPLOMA IN ELECTRONICS AND COMMUNICATION ENGINEERING", "DIP_ECE", "Diploma in ECE", "Electronics & Comm.", "bi-broadcast", "#06b6d4", "rgba(6, 182, 212, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN INFORMATION TECHNOLOGY", "DIP_IT", "Diploma in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN COMPUTER SCIENCE ENGINEERING", "DIP_CSE", "Diploma in CSE", "Computer Science Eng.", "bi-code-slash", "#10b981", "rgba(52, 211, 153, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN CIVIL ENGINEERING", "DIP_CE", "Diploma in CE", "Civil Engineering", "bi-cone-striped", "#f59e0b", "rgba(245, 158, 11, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN MECHANICAL ENGINEERING", "DIP_ME", "Diploma in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN MECHATRONICS ENGINEERING", "DIP_MTE", "Diploma in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DIP_EEE", "Diploma in EEE", "Electrical & Electronics", "bi-lightning-charge-fill", "#d97706", "rgba(251, 191, 36, 0.1)", 3, "Level", 4);
+            seedCourse(courseRepository, defaultInstitution, "DIPLOMA IN ELECTRONICS AND COMMUNICATION ENGINEERING", "DIP_ECE", "Diploma in ECE", "Electronics & Comm.", "bi-broadcast", "#06b6d4", "rgba(6, 182, 212, 0.1)", 3, "Level", 4);
 
             // Seed Degrees
-            seedCourse(courseRepository, "DEGREE IN INFORMATION TECHNOLOGY", "DEG_IT", "Degree in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 4, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN COMPUTER SCIENCE", "DEG_CS", "Degree in CS", "Computer Science", "bi-display", "#8b5cf6", "rgba(139, 92, 246, 0.1)", 3, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN COMPUTER SCIENCE ENGINEERING", "DEG_CSE", "Degree in CSE", "Computer Science Eng.", "bi-code-slash", "#10b981", "rgba(52, 211, 153, 0.1)", 4, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN CIVIL ENGINEERING", "DEG_CE", "Degree in CE", "Civil Engineering", "bi-cone-striped", "#f59e0b", "rgba(245, 158, 11, 0.1)", 4, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN MECHANICAL ENGINEERING", "DEG_ME", "Degree in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 4, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN MECHATRONICS ENGINEERING", "DEG_MTE", "Degree in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 4, "Year", 1);
-            seedCourse(courseRepository, "DEGREE IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DEG_EEE", "Degree in EEE", "Electrical & Electronics", "bi-lightning-charge-fill", "#d97706", "rgba(251, 191, 36, 0.1)", 4, "Year", 1);
-            seedCourse(courseRepository, "BACHELOR DEGREE IN ELECTRONICS AND COMMUNICATION ENGINEERING", "DEG_ECE", "Degree in ECE", "Electronics & Comm.", "bi-broadcast", "#06b6d4", "rgba(6, 182, 212, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN INFORMATION TECHNOLOGY", "DEG_IT", "Degree in IT", "Information Technology", "bi-laptop", "#3b82f6", "rgba(96, 165, 250, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN COMPUTER SCIENCE", "DEG_CS", "Degree in CS", "Computer Science", "bi-display", "#8b5cf6", "rgba(139, 92, 246, 0.1)", 3, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN COMPUTER SCIENCE ENGINEERING", "DEG_CSE", "Degree in CSE", "Computer Science Eng.", "bi-code-slash", "#10b981", "rgba(52, 211, 153, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN CIVIL ENGINEERING", "DEG_CE", "Degree in CE", "Civil Engineering", "bi-cone-striped", "#f59e0b", "rgba(245, 158, 11, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN MECHANICAL ENGINEERING", "DEG_ME", "Degree in ME", "Mechanical Engineering", "bi-gear-fill", "#a78bfa", "rgba(167, 139, 250, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN MECHATRONICS ENGINEERING", "DEG_MTE", "Degree in MTE", "Mechatronics Engineering", "bi-cpu", "#dc2626", "rgba(248, 113, 113, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "DEGREE IN ELECTRICAL AND ELECTRONICS ENGINEERING", "DEG_EEE", "Degree in EEE", "Electrical & Electronics", "bi-lightning-charge-fill", "#d97706", "rgba(251, 191, 36, 0.1)", 4, "Year", 1);
+            seedCourse(courseRepository, defaultInstitution, "BACHELOR DEGREE IN ELECTRONICS AND COMMUNICATION ENGINEERING", "DEG_ECE", "Degree in ECE", "Electronics & Comm.", "bi-broadcast", "#06b6d4", "rgba(6, 182, 212, 0.1)", 4, "Year", 1);
 
             Course diplomaCSE = courseRepository.findByProgramType("DIP_CSE").get(0);
             Course diplomaIT = courseRepository.findByProgramType("DIP_IT").get(0);
@@ -660,6 +674,8 @@ public class CurriculumInitializer {
             if (courseCache != null) courseCache.clear();
             org.springframework.cache.Cache allCoursesCache = cacheManager.getCache("allCourses");
             if (allCoursesCache != null) allCoursesCache.clear();
+            org.springframework.cache.Cache coursesByInstitutionCache2 = cacheManager.getCache("coursesByInstitution");
+            if (coursesByInstitutionCache2 != null) coursesByInstitutionCache2.clear();
             System.out.println("[CurriculumInitializer] All subject/course caches evicted after seeding.");
         };
     }

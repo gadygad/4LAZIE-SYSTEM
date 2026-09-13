@@ -39,21 +39,25 @@ public class GlobalSidebarAdvice {
     public void addSidebarDataToModel(Model model, jakarta.servlet.http.HttpSession session) {
         com.school.auth.User user = (com.school.auth.User) session.getAttribute("user");
         try {
+            // TODO: once guests can pick their own college (cookie-based
+            // selection), read that id here instead of the hardcoded "1" —
+            // everything below already keys off currentInstitution, so that
+            // will be the only line that needs to change.
             Institution currentInstitution = institutionRepository.findById("1").orElse(null);
-            
-            List<com.school.academic.Course> allCourses = courseRepository.findAll();
+
             List<com.school.academic.Course> diplomaCourses;
             List<com.school.academic.Course> degreeCourses;
-            
+
             if (user != null && user.getRole() == com.school.auth.Role.STUDENT) {
                 // Students only see their own course
+                List<com.school.academic.Course> allCourses = courseRepository.findAll();
                 diplomaCourses = allCourses.stream()
                         .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(user.getCourseProgram()) && c.getProgramType().startsWith("DIP_"))
                         .collect(Collectors.toList());
                 degreeCourses = allCourses.stream()
                         .filter(c -> c.getProgramType() != null && c.getProgramType().equalsIgnoreCase(user.getCourseProgram()) && c.getProgramType().startsWith("DEG_"))
                         .collect(Collectors.toList());
-                
+
                 // Fetch other universities that have this course
                 List<Institution> allInstitutions = institutionRepository.findAll();
                 List<Institution> otherUniversities = allInstitutions.stream()
@@ -62,14 +66,21 @@ public class GlobalSidebarAdvice {
                         .collect(Collectors.toList());
                 model.addAttribute("otherUniversities", otherUniversities);
             } else {
-                // Admin/Guests see all
-                diplomaCourses = allCourses.stream()
+                // Admin/Guests see only the current institution's own
+                // programmes — a college offering only degrees (or only
+                // diplomas) simply gets an empty list here, and the sidebar
+                // template already hides that whole section when the list
+                // is empty, so no extra "not offered" branching is needed.
+                List<com.school.academic.Course> institutionCourses = currentInstitution != null
+                        ? courseRepository.findByInstitutionId(currentInstitution.getId())
+                        : courseRepository.findAll();
+                diplomaCourses = institutionCourses.stream()
                         .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
                         .collect(Collectors.toList());
-                degreeCourses = allCourses.stream()
+                degreeCourses = institutionCourses.stream()
                         .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DEG_"))
                         .collect(Collectors.toList());
-                
+
                 // Show all other universities for non-students
                 List<Institution> allInstitutions = institutionRepository.findAll();
                 List<Institution> otherUniversities = allInstitutions.stream()
