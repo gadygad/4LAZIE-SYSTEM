@@ -100,6 +100,62 @@ public class InstitutionAdminController {
         return "redirect:/admin/institutions";
     }
 
+    @PostMapping("/institutions/{id}/edit")
+    @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution"}, allEntries = true)
+    public String editInstitution(@PathVariable String id,
+                                   @RequestParam("name") String name,
+                                   @RequestParam("shortName") String shortName,
+                                   @RequestParam(value = "logoUrl", required = false) String logoUrl,
+                                   RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (!adminService.hasPermission(user, "MANAGE_INSTITUTIONS")) {
+            return "redirect:/login";
+        }
+
+        Institution institution = institutionRepository.findById(id).orElse(null);
+        if (institution == null) {
+            redirectAttributes.addFlashAttribute("error", "College not found.");
+            return "redirect:/admin/institutions";
+        }
+
+        // A scoped ADMIN (granted MANAGE_INSTITUTIONS without being
+        // SUPER_ADMIN) can only ever edit their own college — same
+        // ownership boundary already enforced for notes/subjects/courses.
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        if (scopeInstitutionId != null && !scopeInstitutionId.equals(id)) {
+            redirectAttributes.addFlashAttribute("error", "You can only edit your own college.");
+            return "redirect:/admin/institutions";
+        }
+
+        if (name == null || name.trim().isEmpty() || shortName == null || shortName.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "College name and short name are required.");
+            return "redirect:/admin/institutions";
+        }
+
+        List<Institution> others = institutionRepository.findAll().stream()
+                .filter(inst -> !inst.getId().equals(id))
+                .collect(Collectors.toList());
+        boolean nameExists = others.stream()
+                .anyMatch(inst -> inst.getName() != null && inst.getName().equalsIgnoreCase(name.trim()));
+        if (nameExists) {
+            redirectAttributes.addFlashAttribute("error", "A college named '" + name.trim() + "' already exists.");
+            return "redirect:/admin/institutions";
+        }
+        boolean shortNameExists = others.stream()
+                .anyMatch(inst -> inst.getShortName() != null && inst.getShortName().equalsIgnoreCase(shortName.trim()));
+        if (shortNameExists) {
+            redirectAttributes.addFlashAttribute("error", "A college with short name '" + shortName.trim() + "' already exists — short names must be unique since they're shown in the sidebar.");
+            return "redirect:/admin/institutions";
+        }
+
+        institution.setName(name.trim());
+        institution.setShortName(shortName.trim());
+        institution.setLogoUrl(logoUrl != null && !logoUrl.trim().isEmpty() ? logoUrl.trim() : null);
+        institutionRepository.save(institution);
+        redirectAttributes.addFlashAttribute("success", "College '" + name.trim() + "' updated.");
+        return "redirect:/admin/institutions";
+    }
+
     @PostMapping("/institutions/{id}/delete")
     @org.springframework.cache.annotation.CacheEvict(value = {"coursesByInstitution"}, allEntries = true)
     public String deleteInstitution(@PathVariable String id, RedirectAttributes redirectAttributes) {

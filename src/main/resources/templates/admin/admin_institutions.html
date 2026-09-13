@@ -279,6 +279,9 @@
                                         <span th:if="${courseCounts.get(inst.id) == 0}" style="background: rgba(245, 158, 11, 0.08); color: #d97706; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">No courses yet</span>
                                     </td>
                                     <td class="text-end" style="padding: 16px; border-bottom: 1px solid #f1f5f9;">
+                                        <button type="button" class="btn btn-sm" style="padding: 6px 14px; font-size: 0.75rem; border-radius: 8px; border: 1px solid rgba(16,185,129,0.3); color: #059669; background: rgba(16,185,129,0.06); font-weight: 600;" data-bs-toggle="modal" th:data-bs-target="'#editInstitutionModal' + ${inst.id}">
+                                            <i class="bi bi-pencil-fill me-1"></i>Edit
+                                        </button>
                                         <form th:action="@{'/admin/institutions/' + ${inst.id} + '/delete'}" method="post" onsubmit="return confirm('Remove this college? This only works if it has no courses left.');" style="display:inline;">
                                             <button type="submit" class="btn btn-sm btn-delete-course" style="padding: 6px 14px; font-size: 0.75rem;">
                                                 <i class="bi bi-trash3-fill me-1"></i>Delete
@@ -294,6 +297,44 @@
                     <div th:if="${institutions.isEmpty()}" class="text-center py-5">
                         <i class="bi bi-bank2" style="font-size: 3rem; color: #cbd5e1;"></i>
                         <p class="text-muted mt-2">No colleges registered yet. Click "ADD NEW COLLEGE" to get started.</p>
+                    </div>
+
+                    <!-- ============ EDIT COLLEGE MODALS (one per row) ============ -->
+                    <div th:each="inst : ${institutions}" class="modal fade modal-glass" th:id="'editInstitutionModal' + ${inst.id}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold d-flex align-items-center" style="font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;">
+                                        <i class="bi bi-pencil-fill me-2" style="font-size: 1.1rem;"></i>EDIT COLLEGE
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form th:action="@{'/admin/institutions/' + ${inst.id} + '/edit'}" method="post">
+                                    <div class="modal-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <label class="form-label">College Full Name</label>
+                                                <input type="text" name="name" class="form-control" required th:value="${inst.name}">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Short Name</label>
+                                                <input type="text" name="shortName" class="form-control" required th:value="${inst.shortName}">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Logo URL (optional)</label>
+                                                <input type="text" name="logoUrl" class="form-control" placeholder="/images/udsm-logo.png" th:value="${inst.logoUrl}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background: #f8fafc; border-radius: 0 0 24px 24px;">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 12px; font-weight: 600; padding: 8px 20px;">Cancel</button>
+                                        <button type="submit" class="btn-add-course" style="font-size: 0.9rem;">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
