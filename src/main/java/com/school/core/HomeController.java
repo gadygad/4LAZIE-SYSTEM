@@ -67,6 +67,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session,
+                        jakarta.servlet.http.HttpServletRequest request,
                         @org.springframework.web.bind.annotation.RequestParam(value = "openGpa", required = false) String openGpa) {
         // Logged-in users are normally sent straight to their dashboard, but the
         // GPA Calculator only exists on this page, so the "GPA CALCULATOR" nav
@@ -75,9 +76,19 @@ public class HomeController {
         if (session.getAttribute("user") != null && !"true".equals(openGpa)) {
             return "redirect:/dashboard";
         }
-        // Fetch the absolute 10 most recent uploads (Public Quick Access), filtering duplicates
+        // Fetch the absolute 10 most recent uploads (Public Quick Access), filtering duplicates.
+        // Once a guest has picked a college (the college-picker cookie), this
+        // is scoped to just that college — the picker's own banner promises
+        // "see notes made for you", so the very first notes a guest sees
+        // shouldn't be a random mix from every college. No cookie yet (the
+        // guest hasn't chosen, or dismissed the banner) falls back to the
+        // cross-college pool, same as before.
+        String cookieInstitutionId = com.school.core.CollegePickerController.readSelectedInstitutionId(request);
         java.util.Set<String> seenTitles = new java.util.HashSet<>();
-        List<Note> popularNotes = noteRepository.findTop50ByOrderByIdDesc().stream()
+        List<Note> notePool = cookieInstitutionId != null
+                ? noteRepository.findTop50ByInstitutionIdOrderByIdDesc(cookieInstitutionId)
+                : noteRepository.findTop50ByOrderByIdDesc();
+        List<Note> popularNotes = notePool.stream()
                 .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                 .filter(n -> seenTitles.add(n.getTitle())) // only keep the first occurrence of each title
                 .limit(10)

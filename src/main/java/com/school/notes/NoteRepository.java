@@ -142,6 +142,10 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     // needs a much bigger pool of note-derived posts to page through.
     List<Note> findTop100ByOrderByIdDesc();
     List<Note> findTop50ByOrderByIdDesc();
+    // Same pool, scoped to one college — backs the guest homepage's "latest
+    // notes" quick-access list once a guest has picked a college (see
+    // HomeController#home), so "see notes made for you" is actually true.
+    List<Note> findTop50ByInstitutionIdOrderByIdDesc(String institutionId);
     // Wide enough pool for the /community folder picker to reliably see
     // every (level, semester) combo with notes, not just whichever ones
     // happened to be uploaded most recently — findTop50 was recency-biased
