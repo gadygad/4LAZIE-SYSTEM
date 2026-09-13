@@ -108,6 +108,17 @@ public class DatabaseInitializer implements CommandLineRunner {
                     });
                 }
             });
+
+            // Fix academic calendars with no institution (predating
+            // per-college calendars) — same backfill pattern as users above.
+            academicCalendarRepository.findAll().forEach(cal -> {
+                if (cal.getInstitution() == null) {
+                    institutionRepository.findById("1").ifPresent(inst -> {
+                        cal.setInstitution(inst);
+                        academicCalendarRepository.save(cal);
+                    });
+                }
+            });
         } catch (Exception e) {
             log.warn("Could not seed institutions: " + e.getMessage());
         }
@@ -115,6 +126,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         try {
             if (academicCalendarRepository.count() == 0) {
                 com.school.academic.AcademicCalendar cal = new com.school.academic.AcademicCalendar();
+                institutionRepository.findById("1").ifPresent(cal::setInstitution);
                 cal.setAcademicYear("2025/2026");
                 cal.setFileUrl("academic_calendar_2025.pdf");
                 cal.setSem1Cat1DegreeDate("2026-01-13");

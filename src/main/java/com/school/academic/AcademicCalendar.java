@@ -1,6 +1,7 @@
 package com.school.academic;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,17 @@ public class AcademicCalendar {
     private String id;
     private String academicYear;
     private String fileUrl;
+
+    // Which college this calendar's CAT/UE dates apply to — colleges can run
+    // different exam schedules, so "current" is scoped per institution, not
+    // platform-wide. Null on a calendar predating multi-college support
+    // means the platform's original institution (backfilled by
+    // DatabaseInitializer, same pattern as Course).
+    @DBRef(lazy = true)
+    private Institution institution;
+
+    public Institution getInstitution() { return institution; }
+    public void setInstitution(Institution institution) { this.institution = institution; }
     
     // Timetable URLs (Degree & Diploma)
     private String sem1Cat1DegreeUrl;
