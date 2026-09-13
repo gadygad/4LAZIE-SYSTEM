@@ -814,7 +814,7 @@
       <div class="content" style="padding: 10mm 15mm;">
 
         <div class="uni-block" style="text-align:center; border-bottom: 2px solid #000; padding-bottom:15px; margin-bottom:10px; font-family:'Times New Roman', serif;">
-          <div style="font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">ST. JOSEPH UNIVERSITY IN TANZANIA</div>
+          <div id="pdf-institution-name" style="font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">ST. JOSEPH UNIVERSITY IN TANZANIA</div>
           <div class="prog-name" id="pdf-program" style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">DIPLOMA IN INFORMATION TECHNOLOGY</div>
           <div style="font-size: 13pt; margin: 8px 0;" id="pdf-semester">SEM: I</div>
           <div class="subj-name" id="pdf-module-code" style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">CST04101 &mdash; BASIC CONCEPTS OF COMPUTERS</div>
@@ -1485,6 +1485,18 @@
             // Populate hidden template header
             let programName = overrideProgramName || document.getElementById('mProgram').value.toUpperCase();
             const level = document.getElementById('mLevel').value;
+
+            // Letterhead reflects whichever college this course actually
+            // belongs to (see /api/courses' institutionName), not a name
+            // hardcoded into the template — falls back to the original
+            // St. Joseph wording only for a course with no institution set.
+            const selectedProgramValue = document.getElementById('mProgram').value;
+            const selectedCourseForInstitution = (currentCourses || []).find(c => c.name.toUpperCase() === selectedProgramValue.toUpperCase());
+            const institutionName = (selectedCourseForInstitution && selectedCourseForInstitution.institutionName)
+                ? selectedCourseForInstitution.institutionName
+                : 'ST. JOSEPH UNIVERSITY IN TANZANIA';
+            const institutionNameEl = document.querySelector('#exam-pdf-template #pdf-institution-name');
+            if (institutionNameEl) institutionNameEl.innerText = institutionName.toUpperCase();
             
             if (level === 'DIPLOMA') {
                 const ntaLevel = document.getElementById('mNtaLevel').value;

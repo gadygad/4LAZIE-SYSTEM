@@ -209,7 +209,16 @@ public class ExamGeneratorController {
             note.setUploadDate(LocalDateTime.now());
             note.setIsPublic(true);
             note.setIsGeneral(false);
-            
+
+            // Which college this exam's course belongs to — drives the
+            // letterhead in view_generated_exam.html. programType is unique
+            // per college (see CurriculumInitializer), so this always
+            // resolves to the one course it was generated for.
+            courseRepository.findByProgramType(request.programType).stream()
+                    .findFirst()
+                    .map(Course::getInstitution)
+                    .ifPresent(note::setInstitution);
+
             // Dummy filename since we don't have a real file
             note.setFilename(request.moduleCode + "_Generated.pdf");
 

@@ -69,6 +69,11 @@ public class CourseApiController {
             Map<String, Object> map = new HashMap<>();
             map.put("code", c.getProgramType()); // Uses programType as unique code identifier (e.g. DIP_CSE)
             map.put("name", c.getName());
+            // Lets the exam generator print the exam letterhead for whichever
+            // college this course actually belongs to, instead of a name
+            // hardcoded into the template — see sjuit_diploma_ue.html /
+            // sjuit_diploma_cat.html.
+            map.put("institutionName", c.getInstitution() != null ? c.getInstitution().getName() : "");
 
             List<Map<String, Object>> subjList = subjectsByCourseId.getOrDefault(c.getId(), List.of());
             map.put("subjects", subjList);

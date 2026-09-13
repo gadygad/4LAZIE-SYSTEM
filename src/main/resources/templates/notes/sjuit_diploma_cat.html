@@ -352,7 +352,7 @@
 
         <div class="content">
             <div class="uni-block">
-                <div style="font-size:15pt; font-weight:bold; text-transform:uppercase;">ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</div>
+                <div id="pdf-institution-name" style="font-size:15pt; font-weight:bold; text-transform:uppercase;">ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</div>
                 <div id="pdf-cat-program" style="font-size:12pt; font-weight:bold; text-transform:uppercase; margin-top:4px;">NTA LEVEL 5 - TECHNICIAN CERTIFICATE</div>
                 <div id="pdf-cat-title" style="font-size:12.5pt; font-weight:bold; text-transform:uppercase; margin-top:6px;">CONTINUOUS ASSESSMENT TEST - I - JUNE-2026</div>
                 <div id="pdf-cat-module" style="font-size:13pt; font-weight:bold; text-transform:uppercase; margin-top:6px;">CODE - NAME</div>
@@ -745,6 +745,18 @@
             // (e.g. avoid "TECHNICIAN CERTIFICATE IN DIPLOMA IN X").
             const cleanedProgram = program.replace(/^(BASIC TECHNICIAN CERTIFICATE|TECHNICIAN CERTIFICATE|ORDINARY DIPLOMA|DIPLOMA)\s+IN\s+/, '');
             document.getElementById('pdf-cat-program').innerText = 'NTA LEVEL ' + ntaLevel + ' - ' + (certByLevel[ntaLevel] || '') + ' IN ' + cleanedProgram;
+
+            // Letterhead reflects whichever college this exact target course
+            // belongs to (see /api/courses' institutionName) — looked up
+            // fresh by name rather than reusing `currentCourse`, since a
+            // multi-target generate loops this with each checked "extra"
+            // course's own name via overrideProgramName.
+            const courseForInstitution = (allCourses || []).find(c => c.name.toUpperCase() === program) || currentCourse;
+            const institutionName = (courseForInstitution && courseForInstitution.institutionName)
+                ? courseForInstitution.institutionName
+                : 'ST. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY';
+            const institutionNameEl = document.getElementById('pdf-institution-name');
+            if (institutionNameEl) institutionNameEl.innerText = institutionName.toUpperCase();
             document.getElementById('pdf-cat-title').innerText = 'CONTINUOUS ASSESSMENT TEST - ' + CAT_ROMAN + ' - ' + date;
             document.getElementById('pdf-cat-module').innerText = code + ' - ' + name;
             document.getElementById('pdf-cat-semester').innerText = semNo === 1 ? 'I' : 'II';
