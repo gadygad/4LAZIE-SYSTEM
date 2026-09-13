@@ -64,7 +64,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpSession session,
-                        jakarta.servlet.http.HttpServletRequest request,
                         @org.springframework.web.bind.annotation.RequestParam(value = "openGpa", required = false) String openGpa) {
         // Logged-in users are normally sent straight to their dashboard, but the
         // GPA Calculator only exists on this page, so the "GPA CALCULATOR" nav
@@ -74,24 +73,19 @@ public class HomeController {
             return "redirect:/dashboard";
         }
         // Fetch the absolute 10 most recent uploads (Public Quick Access), filtering duplicates.
-        // Once a guest has picked a college (the college-picker cookie), this
-        // is scoped to just that college — the picker's own banner promises
-        // "see notes made for you", so the very first notes a guest sees
-        // shouldn't be a random mix from every college. No cookie yet (the
-        // guest hasn't chosen, or dismissed the banner) falls back to the
-        // cross-college pool, same as before.
-        String cookieInstitutionId = com.school.core.CollegePickerController.readSelectedInstitutionId(request);
+        // Deliberately NOT scoped by the guest's chosen college — this is a
+        // "what's new across all of 4LAZIE" feed, showing the latest
+        // uploads regardless of which college they came from. It also
+        // deliberately shows every category (Note, CAT, UE, Assignment,
+        // Past Paper, ...), not just the ones a guest can open without an
+        // account — clicking through to /view or /download already handles
+        // that distinction on its own (Note#isGuestAccessible-eligible
+        // categories open directly, anything else redirects to /login), so
+        // this list's job is just to show what's new, not to pre-filter
+        // what a guest is allowed to open.
         java.util.Set<String> seenTitles = new java.util.HashSet<>();
-        List<Note> notePool = cookieInstitutionId != null
-                ? noteRepository.findTop50ByInstitutionIdOrderByIdDesc(cookieInstitutionId)
-                : noteRepository.findTop50ByOrderByIdDesc();
-        // Guest-accessible only (isPublic AND an allowed category — see
-        // Note#isGuestAccessible) — every note this list shows must
-        // actually be openable without an account by any guest, from any
-        // college, whether or not they've picked one, or a note could show
-        // up here only to bounce the guest to /login when they click it.
-        List<Note> popularNotes = notePool.stream()
-                .filter(n -> n != null && n.isGuestAccessible())
+        List<Note> popularNotes = noteRepository.findTop50ByOrderByIdDesc().stream()
+                .filter(n -> n != null && (n.getIsPublic() == null || Boolean.TRUE.equals(n.getIsPublic())))
                 .filter(n -> seenTitles.add(n.getTitle())) // only keep the first occurrence of each title
                 .limit(10)
                 .collect(Collectors.toList());

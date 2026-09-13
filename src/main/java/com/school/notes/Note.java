@@ -149,23 +149,6 @@ public class Note {
     public void setUploadDate(LocalDateTime uploadDate) { this.uploadDate = uploadDate; }
     public Boolean getIsPublic() { return isPublic; }
     public void setIsPublic(Boolean isPublic) { this.isPublic = isPublic; }
-
-    // Whether a guest with no account (from any college) can read/download
-    // this exact note without logging in — the single source of truth
-    // NotesController's view/download/proxy endpoints check, and what any
-    // guest-facing "latest notes" listing must filter by so nothing shown
-    // there turns out to require login when clicked. Two conditions, both
-    // required: isPublic (every note defaults to and stays true unless an
-    // admin says otherwise), AND its category being one of the recognized
-    // safe ones — CAT/UE/Assignment/Past Paper stay login-gated even when
-    // marked public, since those are the higher-value content used to
-    // encourage registration.
-    public boolean isGuestAccessible() {
-        if (!Boolean.TRUE.equals(isPublic)) return false;
-        if (category == null || category.trim().isEmpty()) return true;
-        String cat = category.toUpperCase().trim().replaceAll("\\s+", "");
-        return cat.contains("NOTE") || cat.equals("MODULE") || cat.contains("COURSEMATERIAL");
-    }
     public Integer getDownloadCount() { return downloadCount; }
     public void setDownloadCount(Integer downloadCount) { this.downloadCount = downloadCount; }
 
