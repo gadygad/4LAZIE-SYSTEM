@@ -96,14 +96,22 @@ public class AdminForumReportController {
     // longer be resolved (already deleted) is dropped rather than shown to
     // everyone by default.
     private List<ForumReport> filterByReportedAuthorInstitution(List<ForumReport> reports, String institutionId) {
-        return reports.stream().filter(r -> {
-            String authorId = "POST".equals(r.getContentType())
-                    ? forumPostRepository.findById(r.getContentId()).map(ForumPost::getAuthorId).orElse(null)
-                    : forumCommentRepository.findById(r.getContentId()).map(ForumComment::getAuthorId).orElse(null);
-            if (authorId == null) return false;
-            User author = userRepository.findById(authorId).orElse(null);
-            return author != null && author.getInstitution() != null && institutionId.equals(author.getInstitution().getId());
-        }).collect(Collectors.toList());
+        return reports.stream().filter(r -> !isReportOutOfScope(r, institutionId)).collect(Collectors.toList());
+    }
+
+    // Same check as filterByReportedAuthorInstitution, for a single report
+    // — used on dismiss/remove so a scoped admin can't act on another
+    // college's report just by knowing or guessing its id, even though it
+    // was already hidden from their queue. institutionId == null means
+    // SUPER_ADMIN, unrestricted.
+    private boolean isReportOutOfScope(ForumReport report, String institutionId) {
+        if (institutionId == null) return false;
+        String authorId = "POST".equals(report.getContentType())
+                ? forumPostRepository.findById(report.getContentId()).map(ForumPost::getAuthorId).orElse(null)
+                : forumCommentRepository.findById(report.getContentId()).map(ForumComment::getAuthorId).orElse(null);
+        if (authorId == null) return true;
+        User author = userRepository.findById(authorId).orElse(null);
+        return author == null || author.getInstitution() == null || !institutionId.equals(author.getInstitution().getId());
     }
 
     // Bundles each report with the actual content (if it still exists — it
@@ -154,6 +162,9 @@ public class AdminForumReportController {
             return "redirect:/admin/dashboard";
         }
         ForumReport report = forumReportRepository.findById(id).orElse(null);
+        if (report != null && isReportOutOfScope(report, adminService.scopeInstitutionId(user))) {
+            report = null;
+        }
         if (report != null && "PENDING".equals(report.getStatus())) {
             report.setStatus("DISMISSED");
             report.setReviewedByUserId(user.getId());
@@ -172,20 +183,24 @@ public class AdminForumReportController {
             return "redirect:/admin/dashboard";
         }
         ForumReport report = forumReportRepository.findById(id).orElse(null);
+        if (report != null && isReportOutOfScope(report, adminService.scopeInstitutionId(user))) {
+            report = null;
+        }
         if (report != null && "PENDING".equals(report.getStatus())) {
-            if ("POST".equals(report.getContentType())) {
-                forumCommentRepository.deleteAll(forumCommentRepository.findByPostIdOrderByCreatedAtAsc(report.getContentId()));
-                forumPostRepository.deleteById(report.getContentId());
+            final ForumReport removedReport = report;
+            if ("POST".equals(removedReport.getContentType())) {
+                forumCommentRepository.deleteAll(forumCommentRepository.findByPostIdOrderByCreatedAtAsc(removedReport.getContentId()));
+                forumPostRepository.deleteById(removedReport.getContentId());
             } else {
-                forumCommentRepository.deleteById(report.getContentId());
+                forumCommentRepository.deleteById(removedReport.getContentId());
             }
-            evictPostCaches(report.getPostId());
+            evictPostCaches(removedReport.getPostId());
 
             // Anyone else who separately reported this exact same content
             // gets auto-resolved too — it's already gone, so leaving their
             // report sitting in the pending queue would just be noise.
             List<ForumReport> siblings = forumReportRepository.findByStatusOrderByCreatedAtDesc("PENDING").stream()
-                    .filter(r -> r.getContentId().equals(report.getContentId()))
+                    .filter(r -> r.getContentId().equals(removedReport.getContentId()))
                     .collect(Collectors.toList());
             for (ForumReport sibling : siblings) {
                 sibling.setStatus("REMOVED");
