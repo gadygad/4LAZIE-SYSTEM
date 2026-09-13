@@ -158,7 +158,14 @@ public class AdminController {
         }
         
         org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
-        
+
+        // null = SUPER_ADMIN, sees every college at once; otherwise this
+        // admin's own institution id, and every metric below is filtered to
+        // just that college. See AdminService#scopeInstitutionId.
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        model.addAttribute("dashboardInstitution",
+                scopeInstitutionId != null ? institutionRepository.findById(scopeInstitutionId).orElse(null) : null);
+
         // Use safe defaults in case any query fails
         long totalUsers = 0;
         long totalNotes = 0;
@@ -178,17 +185,23 @@ public class AdminController {
         List<com.school.core.ActivityLog> recentLogs = java.util.Collections.emptyList();
         
         try {
-            totalUsers = userRepository.count();
+            totalUsers = scopeInstitutionId != null ? userRepository.countByInstitutionId(scopeInstitutionId) : userRepository.count();
         } catch (Exception e) {
             log.warn("Failed to count users: {}", e.getMessage(), e);
         }
         try {
-            totalNotes = noteRepository.count();
+            totalNotes = scopeInstitutionId != null ? noteRepository.countByInstitutionId(scopeInstitutionId) : noteRepository.count();
         } catch (Exception e) {
             log.warn("Failed to count notes: {}", e.getMessage(), e);
         }
         try {
-            totalDownloads = noteRepository.getTotalDownloadCount();
+            if (scopeInstitutionId != null) {
+                totalDownloads = noteRepository.findByInstitutionIdOrderByIdDesc(scopeInstitutionId).stream()
+                        .mapToLong(n -> n.getDownloadCount() != null ? n.getDownloadCount().longValue() : 0L)
+                        .sum();
+            } else {
+                totalDownloads = noteRepository.getTotalDownloadCount();
+            }
         } catch (Exception e) {
             log.warn("Failed to get download count: {}", e.getMessage(), e);
         }
@@ -220,12 +233,16 @@ public class AdminController {
         }
         
         try {
-            recentUsers = userRepository.findTop5ByOrderByDateJoinedDesc();
+            recentUsers = scopeInstitutionId != null
+                    ? userRepository.findTop5ByInstitutionIdOrderByDateJoinedDesc(scopeInstitutionId)
+                    : userRepository.findTop5ByOrderByDateJoinedDesc();
         } catch (Exception e) {
             log.warn("Failed to get recent users: {}", e.getMessage(), e);
         }
         try {
-            popularNotes = noteRepository.findTop5ByOrderByDownloadCountDesc();
+            popularNotes = scopeInstitutionId != null
+                    ? noteRepository.findTop5ByInstitutionIdOrderByDownloadCountDesc(scopeInstitutionId)
+                    : noteRepository.findTop5ByOrderByDownloadCountDesc();
         } catch (Exception e) {
             log.warn("Failed to get popular notes: {}", e.getMessage(), e);
         }
@@ -247,20 +264,26 @@ public class AdminController {
         Long pendingApprovals = null;
         try {
             if (adminService.hasPermission(user, "canModerateForum")) {
-                pendingForumReports = forumReportRepository.countByStatus("PENDING");
+                pendingForumReports = scopeInstitutionId != null
+                        ? countPendingForumReportsForInstitution(scopeInstitutionId)
+                        : forumReportRepository.countByStatus("PENDING");
             }
         } catch (Exception e) {
             log.warn("Failed to count pending forum reports: {}", e.getMessage(), e);
         }
         try {
             if (adminService.hasPermission(user, "canVerifyUsers")) {
-                pendingVerifications = verificationRequestRepository.countByStatus("PENDING");
+                pendingVerifications = scopeInstitutionId != null
+                        ? countPendingVerificationsForInstitution(scopeInstitutionId)
+                        : verificationRequestRepository.countByStatus("PENDING");
             }
         } catch (Exception e) {
             log.warn("Failed to count pending verification requests: {}", e.getMessage(), e);
         }
         try {
-            pendingAssignments = assignmentRequestRepository.countByStatus("PENDING");
+            pendingAssignments = scopeInstitutionId != null
+                    ? countPendingAssignmentsForInstitution(scopeInstitutionId)
+                    : assignmentRequestRepository.countByStatus("PENDING");
         } catch (Exception e) {
             log.warn("Failed to count pending assignment requests: {}", e.getMessage(), e);
         }
@@ -284,7 +307,10 @@ public class AdminController {
                 java.util.Map<String, User> offenders = new java.util.LinkedHashMap<>();
                 java.util.Map<String, Long> reportCounts = new java.util.HashMap<>();
 
-                for (User u : userRepository.findByWarningCountGreaterThanEqual(OFFENDER_THRESHOLD)) {
+                List<User> warnedUsers = scopeInstitutionId != null
+                        ? userRepository.findByWarningCountGreaterThanEqualAndInstitutionId(OFFENDER_THRESHOLD, scopeInstitutionId)
+                        : userRepository.findByWarningCountGreaterThanEqual(OFFENDER_THRESHOLD);
+                for (User u : warnedUsers) {
                     offenders.put(u.getId(), u);
                 }
 
@@ -304,10 +330,20 @@ public class AdminController {
                 }
                 for (java.util.Map.Entry<String, Long> entry : countsByAuthor.entrySet()) {
                     if (entry.getValue() >= OFFENDER_THRESHOLD) {
-                        reportCounts.put(entry.getKey(), entry.getValue());
-                        if (!offenders.containsKey(entry.getKey())) {
-                            userRepository.findById(entry.getKey()).ifPresent(u -> offenders.put(u.getId(), u));
+                        User author = offenders.containsKey(entry.getKey())
+                                ? offenders.get(entry.getKey())
+                                : userRepository.findById(entry.getKey()).orElse(null);
+                        if (author == null) continue;
+                        // Same-institution check for an author not already
+                        // pulled in above by warning count — a report on
+                        // someone from a different college than this scoped
+                        // admin isn't theirs to see.
+                        if (scopeInstitutionId != null
+                                && (author.getInstitution() == null || !scopeInstitutionId.equals(author.getInstitution().getId()))) {
+                            continue;
                         }
+                        reportCounts.put(entry.getKey(), entry.getValue());
+                        offenders.put(entry.getKey(), author);
                     }
                 }
 
@@ -323,7 +359,10 @@ public class AdminController {
         // admin remembering what's been entered so far.
         Long contentGapsCount = null;
         try {
-            contentGapsCount = questionService.countSubjectsWithGaps(subjectRepository.findAll());
+            List<Subject> scopedSubjects = scopeInstitutionId != null
+                    ? subjectRepository.findByCourseIn(courseRepository.findByInstitutionId(scopeInstitutionId))
+                    : subjectRepository.findAll();
+            contentGapsCount = questionService.countSubjectsWithGaps(scopedSubjects);
         } catch (Exception e) {
             log.warn("Failed to compute content gaps: {}", e.getMessage(), e);
         }
@@ -346,7 +385,7 @@ public class AdminController {
         Long timetableGapsCount = null;
         try {
             if (adminService.hasPermission(user, "MANAGE_TIMETABLES")) {
-                timetableGapsCount = countTimetableGroupsMissingCurrent();
+                timetableGapsCount = countTimetableGroupsMissingCurrent(scopeInstitutionId);
             }
         } catch (Exception e) {
             log.warn("Failed to compute timetable gaps: {}", e.getMessage(), e);
@@ -430,9 +469,12 @@ public class AdminController {
     // Every (programType, levelNo, semesterNo) group implied by the seeded
     // courses that has no Timetable flagged isCurrent — mirrors the grouping
     // CurriculumInitializer.backfillTimetableIsCurrent() uses.
-    private long countTimetableGroupsMissingCurrent() {
+    private long countTimetableGroupsMissingCurrent(String scopeInstitutionId) {
         long missing = 0;
-        for (Course course : courseRepository.findAll()) {
+        List<Course> courses = scopeInstitutionId != null
+                ? courseRepository.findByInstitutionId(scopeInstitutionId)
+                : courseRepository.findAll();
+        for (Course course : courses) {
             if (course.getProgramType() == null) continue;
             int startLevel = course.getStartLevel();
             int endLevelExclusive = startLevel + course.getDuration();
@@ -446,6 +488,54 @@ public class AdminController {
             }
         }
         return missing;
+    }
+
+    // None of ForumReport, VerificationRequest or AssignmentRequest carry an
+    // institution of their own — each is scoped by looking up the student
+    // behind it and checking THEIR institution instead. A public/anonymous
+    // contact-form AssignmentRequest has no student at all, so it always
+    // counts — it isn't any one college's to claim, but it still needs
+    // someone to pick it up.
+
+    private long countPendingForumReportsForInstitution(String institutionId) {
+        long count = 0;
+        for (com.school.forum.model.ForumReport r : forumReportRepository.findByStatusOrderByCreatedAtDesc("PENDING")) {
+            String authorId = "POST".equals(r.getContentType())
+                    ? forumPostRepository.findById(r.getContentId()).map(com.school.forum.model.ForumPost::getAuthorId).orElse(null)
+                    : forumCommentRepository.findById(r.getContentId()).map(com.school.forum.model.ForumComment::getAuthorId).orElse(null);
+            if (authorId == null) continue;
+            User author = userRepository.findById(authorId).orElse(null);
+            if (author != null && author.getInstitution() != null && institutionId.equals(author.getInstitution().getId())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private long countPendingVerificationsForInstitution(String institutionId) {
+        long count = 0;
+        for (com.school.auth.VerificationRequest r : verificationRequestRepository.findByStatusOrderByRequestDateDesc("PENDING")) {
+            User requester = userRepository.findById(r.getUserId()).orElse(null);
+            if (requester != null && requester.getInstitution() != null && institutionId.equals(requester.getInstitution().getId())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private long countPendingAssignmentsForInstitution(String institutionId) {
+        long count = 0;
+        for (com.school.user.AssignmentRequest r : assignmentRequestRepository.findByStatusOrderByCreatedAtDesc("PENDING")) {
+            if (r.isPublicContact() || r.getUserId() == null) {
+                count++;
+                continue;
+            }
+            User requester = userRepository.findById(r.getUserId()).orElse(null);
+            if (requester != null && requester.getInstitution() != null && institutionId.equals(requester.getInstitution().getId())) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @GetMapping("/users")
@@ -469,8 +559,11 @@ public class AdminController {
         }
         
         model.addAttribute("loggedInUser", user);
-        
-        List<User> users = userRepository.findAll();
+
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<User> users = scopeInstitutionId != null
+                ? userRepository.findByInstitutionId(scopeInstitutionId)
+                : userRepository.findAll();
         model.addAttribute("users", users);
         return "admin/admin_users";
     }
@@ -685,10 +778,15 @@ public class AdminController {
         if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
             return "redirect:/login";
         }
-        List<Note> notes = noteRepository.findAll();
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<Note> notes = scopeInstitutionId != null
+                ? noteRepository.findByInstitutionIdOrderByIdDesc(scopeInstitutionId)
+                : noteRepository.findAll();
         model.addAttribute("notes", notes);
         model.addAttribute("isSuperAdmin", user.getRole() == Role.SUPER_ADMIN);
-        model.addAttribute("courses", courseRepository.findAll());
+        model.addAttribute("courses", scopeInstitutionId != null
+                ? courseRepository.findByInstitutionId(scopeInstitutionId)
+                : courseRepository.findAll());
         return "admin/admin_notes";
     }
 
@@ -848,8 +946,13 @@ public class AdminController {
         if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
             return "redirect:/login";
         }
-        List<Subject> subjects = subjectRepository.findAll();
-        List<Course> courses = courseRepository.findAll();
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<Course> courses = scopeInstitutionId != null
+                ? courseRepository.findByInstitutionId(scopeInstitutionId)
+                : courseRepository.findAll();
+        List<Subject> subjects = scopeInstitutionId != null
+                ? subjectRepository.findByCourseIn(courses)
+                : subjectRepository.findAll();
         model.addAttribute("subjects", subjects);
         model.addAttribute("courses", courses);
         return "admin/admin_subjects";
@@ -949,7 +1052,17 @@ public class AdminController {
         if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
             return "redirect:/login";
         }
-        List<Timetable> timetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<Timetable> timetables;
+        if (scopeInstitutionId != null) {
+            List<String> programTypes = courseRepository.findByInstitutionId(scopeInstitutionId).stream()
+                    .map(Course::getProgramType)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toList());
+            timetables = timetableRepository.findByProgramTypeInOrderByUploadDateDesc(programTypes);
+        } else {
+            timetables = timetableRepository.findAllByOrderByUploadDateDesc();
+        }
         model.addAttribute("timetables", timetables);
         return "admin/admin_timetables";
     }
@@ -1306,7 +1419,10 @@ public class AdminController {
         if (user == null || (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPER_ADMIN)) {
             return "redirect:/login";
         }
-        List<Course> allCourses = courseRepository.findAll();
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
+        List<Course> allCourses = scopeInstitutionId != null
+                ? courseRepository.findByInstitutionId(scopeInstitutionId)
+                : courseRepository.findAll();
         List<Course> diplomaCourses = allCourses.stream()
                 .filter(c -> c.getProgramType() != null && c.getProgramType().startsWith("DIP_"))
                 .collect(java.util.stream.Collectors.toList());
@@ -1316,7 +1432,13 @@ public class AdminController {
         model.addAttribute("allCourses", allCourses);
         model.addAttribute("diplomaList", diplomaCourses);
         model.addAttribute("degreeList", degreeCourses);
-        model.addAttribute("institutions", institutionRepository.findAll());
+        // A scoped ADMIN can only ever add to their own college, so the
+        // "Which College" picker only needs to offer every option to
+        // SUPER_ADMIN — see addCourse, which enforces this the same way
+        // server-side regardless of what the form actually submits.
+        model.addAttribute("institutions", scopeInstitutionId != null
+                ? institutionRepository.findById(scopeInstitutionId).map(java.util.List::of).orElse(java.util.List.of())
+                : institutionRepository.findAll());
         return "admin/admin_courses";
     }
 
@@ -1377,7 +1499,13 @@ public class AdminController {
         // platform's original institution if the form somehow submits
         // without picking one (e.g. an institution deleted between page
         // load and submit), rather than leaving the course orphaned.
-        String resolvedInstitutionId = (institutionId != null && !institutionId.trim().isEmpty()) ? institutionId.trim() : "1";
+        // A scoped ADMIN can only ever create courses for their own college
+        // — whatever the form submitted is ignored in favor of their actual
+        // account institution, so this can't be tampered with client-side.
+        String scopedInstitutionId = adminService.scopeInstitutionId(user);
+        String resolvedInstitutionId = scopedInstitutionId != null
+                ? scopedInstitutionId
+                : (institutionId != null && !institutionId.trim().isEmpty() ? institutionId.trim() : "1");
         institutionRepository.findById(resolvedInstitutionId).ifPresent(course::setInstitution);
         courseRepository.save(course);
         redirectAttributes.addFlashAttribute("success", "Course '" + name.trim().toUpperCase() + "' added successfully!");
@@ -1505,10 +1633,20 @@ public class AdminController {
         if (!canManageVerification(user)) {
             return "redirect:/login";
         }
+        String scopeInstitutionId = adminService.scopeInstitutionId(user);
         List<com.school.auth.VerificationRequest> requests = verificationRequestRepository.findByStatusOrderByRequestDateDesc("PENDING");
         java.util.Map<String, User> requesters = new java.util.HashMap<>();
         for (com.school.auth.VerificationRequest r : requests) {
             userRepository.findById(r.getUserId()).ifPresent(u -> requesters.put(r.getUserId(), u));
+        }
+        if (scopeInstitutionId != null) {
+            requests = requests.stream()
+                    .filter(r -> {
+                        User requester = requesters.get(r.getUserId());
+                        return requester != null && requester.getInstitution() != null
+                                && scopeInstitutionId.equals(requester.getInstitution().getId());
+                    })
+                    .collect(java.util.stream.Collectors.toList());
         }
         model.addAttribute("requests", requests);
         model.addAttribute("requesters", requesters);
