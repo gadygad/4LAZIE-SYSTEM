@@ -327,7 +327,7 @@
             <div class="doc-header">
                 <h1>St. JOSEPH COLLEGE OF ENGINEERING AND TECHNOLOGY</h1>
                 <h2>DEPARTMENT OF COMPUTER SCIENCE INFORMATION SYSTEMS AND NETWORK ENGINEERING</h2>
-                <h3>NTA 5 SEMESTER IV - DIPLOMA TIMETABLE APRIL 2026</h3>
+                <h3 th:text="${(level != null and level >= 4 ? 'NTA ' + level : 'YEAR ' + level) + ' SEMESTER ' + (semester == 1 ? 'I' : 'II') + ' - ' + (program != null ? program : '') + ' TIMETABLE'}">NTA 5 SEMESTER II - DIPLOMA TIMETABLE</h3>
                 
                 <div class="info-row">
                     <div>CLASS TEACHER: MR STEVEN</div>

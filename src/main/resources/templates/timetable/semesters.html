@@ -91,10 +91,10 @@
                     <span style="font-size:0.9rem; font-weight:600; font-family:'Outfit',sans-serif; line-height:1.4;" th:text="${currentInstitution != null ? currentInstitution.name : 'St. Joseph College of Engineering and Technology'}">St. Joseph College of Engineering and Technology</span>
                 </a>
 
-                <!-- NTA Levels Dropdown Menu -->
-                <div style="flex-grow: 1; overflow-y: auto;">
+                <!-- NTA Levels Dropdown Menu (Diploma: NTA Level 4-6) -->
+                <div style="flex-grow: 1; overflow-y: auto;" th:if="${selectedLevel >= 4}">
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Selected Level</div>
-                    
+
                     <div class="sidebar-hover-item" th:if="${selectedLevel == 4}">
                         <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
                             <span><i class="bi bi-book me-2" style="color: #60a5fa;"></i> NTA LEVEL 4</span>
@@ -105,7 +105,7 @@
                             <a th:href="@{'/notes?level=4&semester=2'}">Semester 2</a>
                         </div>
                     </div>
-                    
+
                     <div class="sidebar-hover-item" th:if="${selectedLevel == 5}">
                         <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
                             <span><i class="bi bi-book me-2" style="color: #a78bfa;"></i> NTA LEVEL 5</span>
@@ -116,7 +116,7 @@
                             <a th:href="@{'/notes?level=5&semester=2'}">Semester 2</a>
                         </div>
                     </div>
-                    
+
                     <div class="sidebar-hover-item" th:if="${selectedLevel == 6}">
                         <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
                             <span><i class="bi bi-book me-2" style="color: #f472b6;"></i> NTA LEVEL 6</span>
@@ -140,7 +140,7 @@
                             <a th:href="@{'/notes?level=4&semester=2'}">Semester 2</a>
                         </div>
                     </div>
-                    
+
                     <div class="sidebar-hover-item" th:if="${selectedLevel != 5}">
                         <div class="sidebar-hover-btn">
                             <span><i class="bi bi-book me-2" style="color: #a78bfa;"></i> NTA LEVEL 5</span>
@@ -151,7 +151,7 @@
                             <a th:href="@{'/notes?level=5&semester=2'}">Semester 2</a>
                         </div>
                     </div>
-                    
+
                     <div class="sidebar-hover-item" th:if="${selectedLevel != 6}">
                         <div class="sidebar-hover-btn">
                             <span><i class="bi bi-book me-2" style="color: #f472b6;"></i> NTA LEVEL 6</span>
@@ -160,6 +160,79 @@
                         <div class="sidebar-hover-content">
                             <a th:href="@{'/notes?level=6&semester=1'}">Semester 1</a>
                             <a th:href="@{'/notes?level=6&semester=2'}">Semester 2</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Year Dropdown Menu (Degree: Year 1-3) -->
+                <div style="flex-grow: 1; overflow-y: auto;" th:if="${selectedLevel < 4}">
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; font-family:'Outfit',sans-serif;">Selected Year</div>
+
+                    <div class="sidebar-hover-item" th:if="${selectedLevel == 1}">
+                        <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
+                            <span><i class="bi bi-book me-2" style="color: #60a5fa;"></i> YEAR 1</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/notes?level=1&semester=1'}">Semester 1</a>
+                            <a th:href="@{'/notes?level=1&semester=2'}">Semester 2</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item" th:if="${selectedLevel == 2}">
+                        <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
+                            <span><i class="bi bi-book me-2" style="color: #a78bfa;"></i> YEAR 2</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/notes?level=2&semester=1'}">Semester 1</a>
+                            <a th:href="@{'/notes?level=2&semester=2'}">Semester 2</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item" th:if="${selectedLevel == 3}">
+                        <div class="sidebar-hover-btn" style="background: rgba(255,255,255,0.15);">
+                            <span><i class="bi bi-book me-2" style="color: #f472b6;"></i> YEAR 3</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/notes?level=3&semester=1'}">Semester 1</a>
+                            <a th:href="@{'/notes?level=3&semester=2'}">Semester 2</a>
+                        </div>
+                    </div>
+
+                    <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:15px; margin-top: 25px; font-family:'Outfit',sans-serif;">Other Years</div>
+
+                    <div class="sidebar-hover-item" th:if="${selectedLevel != 1}">
+                        <div class="sidebar-hover-btn">
+                            <span><i class="bi bi-book me-2" style="color: #60a5fa;"></i> YEAR 1</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/notes?level=1&semester=1'}">Semester 1</a>
+                            <a th:href="@{'/notes?level=1&semester=2'}">Semester 2</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item" th:if="${selectedLevel != 2}">
+                        <div class="sidebar-hover-btn">
+                            <span><i class="bi bi-book me-2" style="color: #a78bfa;"></i> YEAR 2</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/notes?level=2&semester=1'}">Semester 1</a>
+                            <a th:href="@{'/notes?level=2&semester=2'}">Semester 2</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-hover-item" th:if="${selectedLevel != 3}">
+                        <div class="sidebar-hover-btn">
+                            <span><i class="bi bi-book me-2" style="color: #f472b6;"></i> YEAR 3</span>
+                            <i class="bi bi-chevron-down chevron" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="sidebar-hover-content">
+                            <a th:href="@{'/notes?level=3&semester=1'}">Semester 1</a>
+                            <a th:href="@{'/notes?level=3&semester=2'}">Semester 2</a>
                         </div>
                     </div>
                 </div>
