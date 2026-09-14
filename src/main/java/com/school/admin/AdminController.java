@@ -616,6 +616,9 @@ public class AdminController {
                 ? userRepository.findByInstitutionId(scopeInstitutionId)
                 : userRepository.findAll();
         model.addAttribute("users", users);
+        model.addAttribute("courses", scopeInstitutionId != null
+                ? courseRepository.findByInstitutionId(scopeInstitutionId)
+                : courseRepository.findAll());
         return "admin/admin_users";
     }
 
@@ -830,6 +833,34 @@ public class AdminController {
             userRepository.save(targetUser);
             logAdminAction(user, "UPDATE_PERMISSIONS", "Set permissions for " + targetUser.getName() + " to " + newPermissions);
             redirectAttributes.addFlashAttribute("success", "Permissions updated successfully for " + targetUser.getName());
+        } else {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+        }
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/course")
+    public String changeUserCourse(@PathVariable String id, @RequestParam("courseProgram") String courseProgram, RedirectAttributes redirectAttributes) {
+        User user = getLoggedInUser();
+        if (!adminService.hasPermission(user, "MANAGE_USERS")) {
+            return "redirect:/login";
+        }
+
+        User targetUser = userRepository.findById(id).orElse(null);
+        if (targetUser != null && isUserOutOfScope(targetUser, adminService.scopeInstitutionId(user))) {
+            targetUser = null;
+        }
+        if (targetUser != null) {
+            Course newCourse = courseRepository.findByProgramType(courseProgram).stream().findFirst().orElse(null);
+            if (newCourse == null) {
+                redirectAttributes.addFlashAttribute("error", "Selected course not found.");
+                return "redirect:/admin/users";
+            }
+            String oldCourseProgram = targetUser.getCourseProgram();
+            targetUser.setCourseProgram(courseProgram);
+            userRepository.save(targetUser);
+            logAdminAction(user, "CHANGE_COURSE", "Changed " + targetUser.getName() + "'s course from " + oldCourseProgram + " to " + courseProgram + " (" + newCourse.getName() + ")");
+            redirectAttributes.addFlashAttribute("success", "Course updated to " + newCourse.getName() + " for " + targetUser.getName() + ".");
         } else {
             redirectAttributes.addFlashAttribute("error", "User not found.");
         }
